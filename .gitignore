@@ -42,3 +42,4 @@ TestResults/
 _ReSharper.Caches/
 
 .fake/
+AssemblyInfo.Generated.cs
