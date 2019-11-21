@@ -1,5 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -8,21 +8,11 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="DocumentFormat.OpenXml" Version="2.9.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
-    <PackageReference Include="xunit" Version="2.4.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
-    <PackageReference Include="xunit.runner.console" Version="2.4.0" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\OpenXmlPowerTools\OpenXmlPowerTools.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
-
+  <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
