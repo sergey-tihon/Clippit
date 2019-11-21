@@ -13,7 +13,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using System.Globalization;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public class MetricsGetterSettings
     {

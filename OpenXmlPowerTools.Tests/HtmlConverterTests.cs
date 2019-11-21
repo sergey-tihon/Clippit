@@ -3,7 +3,7 @@
 
 #define COPY_FILES_FOR_DEBUGGING
 
-// DO_CONVERSION_VIA_WORD is defined in the project OpenXmlPowerTools.Tests.OA.csproj, but not in the OpenXmlPowerTools.Tests.csproj
+// DO_CONVERSION_VIA_WORD is defined in the project Clippit.Tests.OA.csproj, but not in the Clippit.Tests.csproj
 
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
+using Clippit;
 using Xunit;
 
 #if DO_CONVERSION_VIA_WORD

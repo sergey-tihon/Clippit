@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public class OpenXmlRegex
     {

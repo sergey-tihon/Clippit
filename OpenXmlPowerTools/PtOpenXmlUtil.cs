@@ -18,7 +18,7 @@ using FontFamily = System.Drawing.FontFamily;
 
 // ReSharper disable InconsistentNaming
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public static class PtOpenXmlExtensions
     {

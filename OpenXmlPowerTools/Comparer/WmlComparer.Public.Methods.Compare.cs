@@ -40,7 +40,7 @@ using DocumentFormat.OpenXml.Packaging;
 // or what not.  We don't need to be concerned about what the unids are for descendants of the paragraph.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public static partial class WmlComparer
     {

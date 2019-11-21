@@ -8,7 +8,7 @@ using System.Text;
 using System.IO;
 using ExcelFormula;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
+using Clippit;
 
 namespace ExampleFormulas
 {

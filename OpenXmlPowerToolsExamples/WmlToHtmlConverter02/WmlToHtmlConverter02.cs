@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
+using Clippit;
 using System.Collections.Generic;
 
 class WmlToHtmlConverterHelper

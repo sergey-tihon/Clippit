@@ -7,6 +7,8 @@
     <!-- <Nullable>enable</Nullable> -->
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <RootNamespace>Clippit.Tests</RootNamespace>
+    <AssemblyName>Clippit.Tests</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenXmlPowerTools\OpenXmlPowerTools.csproj" />

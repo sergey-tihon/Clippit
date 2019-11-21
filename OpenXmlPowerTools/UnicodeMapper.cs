@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public class UnicodeMapper
     {

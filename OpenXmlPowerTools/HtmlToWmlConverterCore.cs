@@ -105,12 +105,12 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
-using OpenXmlPowerTools.HtmlToWml;
-using OpenXmlPowerTools.HtmlToWml.CSS;
+using Clippit;
+using Clippit.HtmlToWml;
+using Clippit.HtmlToWml.CSS;
 using System.Text.RegularExpressions;
 
-namespace OpenXmlPowerTools.HtmlToWml
+namespace Clippit.HtmlToWml
 {
     public class ElementToStyleMap
     {

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using OpenXmlPowerTools;
+using Clippit;
 using Xunit;
 
 #if !ELIDE_XUNIT_TESTS

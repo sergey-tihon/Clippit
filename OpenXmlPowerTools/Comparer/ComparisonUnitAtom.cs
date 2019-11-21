@@ -7,7 +7,7 @@ using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public class ComparisonUnitAtom : ComparisonUnit
     {

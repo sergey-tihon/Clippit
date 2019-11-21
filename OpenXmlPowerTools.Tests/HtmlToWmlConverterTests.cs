@@ -13,7 +13,7 @@ using System.Xml;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
-using OpenXmlPowerTools;
+using Clippit;
 using Xunit;
 using System.Text.RegularExpressions;
 

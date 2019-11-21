@@ -12,7 +12,7 @@ using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using System.Drawing;
 using System.Security.Cryptography;
-using OpenXmlPowerTools;
+using Clippit;
 
 // It is possible to optimize DescendantContentAtoms
 
@@ -43,7 +43,7 @@ using OpenXmlPowerTools;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-namespace OpenXmlPowerTools.Previous
+namespace Clippit.Previous
 {
     public class WmlComparerSettings
     {

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     internal class ComparisonUnitGroup : ComparisonUnit
     {

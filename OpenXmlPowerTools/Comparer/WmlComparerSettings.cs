@@ -5,7 +5,7 @@ using System;
 using System.Globalization;
 using System.IO;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public class WmlComparerSettings
     {

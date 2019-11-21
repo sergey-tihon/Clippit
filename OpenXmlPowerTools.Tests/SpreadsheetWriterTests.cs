@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
-using Sw = OpenXmlPowerTools;
+using Sw = Clippit;
 using Xunit;
 
 #if !ELIDE_XUNIT_TESTS

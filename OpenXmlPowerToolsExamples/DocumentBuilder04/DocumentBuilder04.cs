@@ -9,7 +9,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
+using Clippit;
 
 namespace ExampleDocumentBuilder04
 {

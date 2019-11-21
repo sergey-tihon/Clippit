@@ -12,7 +12,7 @@ using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using System.IO;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public partial class SmlDocument
     {

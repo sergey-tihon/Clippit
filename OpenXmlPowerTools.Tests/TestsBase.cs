@@ -6,7 +6,7 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 
-namespace OpenXmlPowerTools.Tests
+namespace Clippit.Tests
 {
     /// <summary>
     /// Base class for unit tests providing utility methods.

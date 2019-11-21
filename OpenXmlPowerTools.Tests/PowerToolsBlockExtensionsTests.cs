@@ -11,7 +11,7 @@ using Xunit;
 
 #if !ELIDE_XUNIT_TESTS
 
-namespace OpenXmlPowerTools.Tests
+namespace Clippit.Tests
 {
     public class PowerToolsBlockExtensionsTests : TestsBase
     {

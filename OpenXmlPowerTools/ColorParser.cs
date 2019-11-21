@@ -3,7 +3,7 @@
 
 using System.Drawing;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public static class ColorParser
     {

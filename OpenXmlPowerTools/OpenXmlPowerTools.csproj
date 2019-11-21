@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <LangVersion>8.0</LangVersion>
+    <AssemblyName>Clippit</AssemblyName>
+    <RootNamespace>Clippit</RootNamespace>
     <!-- <Nullable>enable</Nullable> -->
   </PropertyGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />

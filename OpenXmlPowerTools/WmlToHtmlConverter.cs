@@ -18,7 +18,7 @@ using DocumentFormat.OpenXml.Packaging;
 // Content-Language: en-US
 // Content-Language: fr-FR
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public partial class WmlDocument
     {

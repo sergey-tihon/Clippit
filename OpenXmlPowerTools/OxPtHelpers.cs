@@ -11,12 +11,12 @@ using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Validation;
-using OpenXmlPowerTools;
+using Clippit;
 using System.Text;
 using DocumentFormat.OpenXml;
 using System.Drawing.Imaging;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public static class AddDocxTextHelper
     {
