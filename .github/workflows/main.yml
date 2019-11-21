@@ -1,4 +1,4 @@
-name: Build and test
+name: Build and Test
 
 on:
   push:
@@ -27,12 +27,7 @@ jobs:
         dotnet-version: ${{ matrix.dotnet }}
     - name: Install local tools
       run: dotnet tool restore
-    - name: Paket restore
+    - name: Paket Restore
       run: dotnet paket restore
-    #- name: Build
-    #  run: dotnet fake run build.fsx
-    - name: dotnet build
-      run: dotnet build
-
-    - name: test
-      run: dotnet test ./OpenXmlPowerTools.Tests
+    - name: Build and Test
+      run: dotnet fake run build.fsx
