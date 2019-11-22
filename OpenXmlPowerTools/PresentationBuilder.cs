@@ -133,7 +133,7 @@ namespace Clippit
             catch (PresentationBuilderInternalException dbie)
             {
                 if (dbie.Message.Contains("{0}"))
-                    throw new PresentationBuilderException(string.Format(dbie.Message, sourceNum));
+                    throw new PresentationBuilderException(string.Format(dbie.Message, slideNumber));
                 else
                     throw dbie;
             }
@@ -184,7 +184,7 @@ namespace Clippit
             CleanupDocument(output);
         }
 
-        private static void GetDefaultRelationshipMarkup() =>
+        private static Dictionary<XName, XName[]> GetDefaultRelationshipMarkup() =>
             new Dictionary<XName, XName[]>()
                 {
                     { A.audioFile,        new [] { R.link }},
