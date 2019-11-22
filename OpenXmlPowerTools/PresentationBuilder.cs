@@ -95,39 +95,55 @@ namespace Clippit
             }
         }
 
+        public static IEnumerable<PmlDocument> PublishSlides(PmlDocument src)
+        {
+            using var streamSrcDoc = new OpenXmlMemoryStreamDocument(src);
+            using var srcDoc = streamSrcDoc.GetPresentationDocument();
+
+            var slideList = srcDoc.PresentationPart.GetXDocument().Root.Descendants(P.sldId).ToList();
+            for (var i=0; i<slideList.Count; i++)
+            {
+                using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument();
+                using var output = streamDoc.GetPresentationDocument();
+
+                ExtractSlide(srcDoc, i+1, output);
+                output.Close();
+                yield return streamDoc.GetModifiedPmlDocument();
+            }
+        }
+
+        private static void ExtractSlide(PresentationDocument srcDoc, int slideNumber, PresentationDocument output)
+        {
+            RelationshipMarkup ??= GetDefaultRelationshipMarkup();
+
+            List<ImageData> images = new List<ImageData>();
+            List<MediaData> mediaList = new List<MediaData>();
+            XDocument mainPart = output.PresentationPart.GetXDocument();
+            mainPart.Declaration.Standalone = "yes";
+            mainPart.Declaration.Encoding = "UTF-8";
+            output.PresentationPart.PutXDocument();
+
+            CopyStartingParts(srcDoc, output);
+
+            try
+            {
+                CopyPresentationParts(srcDoc, output, images, mediaList);
+                AppendSlides(srcDoc, output, slideNumber, 1, true, images, null, mediaList);
+            }
+            catch (PresentationBuilderInternalException dbie)
+            {
+                if (dbie.Message.Contains("{0}"))
+                    throw new PresentationBuilderException(string.Format(dbie.Message, sourceNum));
+                else
+                    throw dbie;
+            }
+
+            CleanupDocument(output);
+        }
+
         private static void BuildPresentation(List<SlideSource> sources, PresentationDocument output)
         {
-            if (RelationshipMarkup == null)
-                RelationshipMarkup = new Dictionary<XName, XName[]>()
-                {
-                    { A.audioFile,        new [] { R.link }},
-                    { A.videoFile,        new [] { R.link }},
-                    { A.quickTimeFile,    new [] { R.link }},
-                    { A.wavAudioFile,     new [] { R.embed }},
-                    { A.blip,             new [] { R.embed, R.link }},
-                    { A.hlinkClick,       new [] { R.id }},
-                    { A.hlinkMouseOver,   new [] { R.id }},
-                    { A.hlinkHover,       new [] { R.id }},
-                    { A.relIds,           new [] { R.cs, R.dm, R.lo, R.qs }},
-                    { C.chart,            new [] { R.id }},
-                    { C.externalData,     new [] { R.id }},
-                    { C.userShapes,       new [] { R.id }},
-                    { DGM.relIds,         new [] { R.cs, R.dm, R.lo, R.qs }},
-                    { A14.imgLayer,       new [] { R.embed }},
-                    { P14.media,          new [] { R.embed, R.link }},
-                    { P.oleObj,           new [] { R.id }},
-                    { P.externalData,     new [] { R.id }},
-                    { P.control,          new [] { R.id }},
-                    { P.snd,              new [] { R.embed }},
-                    { P.sndTgt,           new [] { R.embed }},
-                    { PAV.srcMedia,       new [] { R.embed, R.link }},
-                    { P.contentPart,      new [] { R.id }},
-                    { VML.fill,           new [] { R.id }},
-                    { VML.imagedata,      new [] { R.href, R.id, R.pict, O.relid }},
-                    { VML.stroke,         new [] { R.id }},
-                    { WNE.toolbarData,    new [] { R.id }},
-                    { Plegacy.textdata,   new [] { XName.Get("id") }},
-                };
+            RelationshipMarkup ??= GetDefaultRelationshipMarkup();
 
             List<ImageData> images = new List<ImageData>();
             List<MediaData> mediaList = new List<MediaData>();
@@ -165,7 +181,44 @@ namespace Clippit
                 }
                 sourceNum++;
             }
-            foreach (var part in output.GetAllParts())
+            CleanupDocument(output);
+        }
+
+        private static void GetDefaultRelationshipMarkup() =>
+            new Dictionary<XName, XName[]>()
+                {
+                    { A.audioFile,        new [] { R.link }},
+                    { A.videoFile,        new [] { R.link }},
+                    { A.quickTimeFile,    new [] { R.link }},
+                    { A.wavAudioFile,     new [] { R.embed }},
+                    { A.blip,             new [] { R.embed, R.link }},
+                    { A.hlinkClick,       new [] { R.id }},
+                    { A.hlinkMouseOver,   new [] { R.id }},
+                    { A.hlinkHover,       new [] { R.id }},
+                    { A.relIds,           new [] { R.cs, R.dm, R.lo, R.qs }},
+                    { C.chart,            new [] { R.id }},
+                    { C.externalData,     new [] { R.id }},
+                    { C.userShapes,       new [] { R.id }},
+                    { DGM.relIds,         new [] { R.cs, R.dm, R.lo, R.qs }},
+                    { A14.imgLayer,       new [] { R.embed }},
+                    { P14.media,          new [] { R.embed, R.link }},
+                    { P.oleObj,           new [] { R.id }},
+                    { P.externalData,     new [] { R.id }},
+                    { P.control,          new [] { R.id }},
+                    { P.snd,              new [] { R.embed }},
+                    { P.sndTgt,           new [] { R.embed }},
+                    { PAV.srcMedia,       new [] { R.embed, R.link }},
+                    { P.contentPart,      new [] { R.id }},
+                    { VML.fill,           new [] { R.id }},
+                    { VML.imagedata,      new [] { R.href, R.id, R.pict, O.relid }},
+                    { VML.stroke,         new [] { R.id }},
+                    { WNE.toolbarData,    new [] { R.id }},
+                    { Plegacy.textdata,   new [] { XName.Get("id") }},
+                };
+
+        private static void CleanupDocument(PresentationDocument document)
+        {
+            foreach (var part in document.GetAllParts())
             {
                 if (part.ContentType == "application/vnd.openxmlformats-officedocument.presentationml.slide+xml" ||
                     part.ContentType == "application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml" ||
@@ -710,7 +763,7 @@ namespace Clippit
                 ExternalRelationship tempEr2 = newContentPart.ExternalRelationships.FirstOrDefault(er => er.Id == relId);
                 if (tempEr2 != null)
                     continue;
-                
+
                 oldPart = oldContentPart.GetPartById(relId);
                 newPart = newContentPart.AddNewPart<DiagramLayoutDefinitionPart>();
                 newPart.GetXDocument().Add(oldPart.GetXDocument().Root);
@@ -1308,7 +1361,7 @@ namespace Clippit
                         temp.AddContentPartRelTypeResourceIdTupple(newContentPart, imagePart.RelationshipType, newId);
                         imageReference.Attribute(attributeName).Value = newId;
                     }
-                    
+
                 }
             }
             else
@@ -1508,7 +1561,7 @@ namespace Clippit
 
             var newId = "R" + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
             EmbeddedControlPersistencePart newPart = newContentPart.AddNewPart<EmbeddedControlPersistencePart>("application/vnd.ms-office.activeX+xml", newId);
-            
+
             newPart.FeedData(oldPart.GetStream());
             activeXPartReference.Attribute(attributeName).Value = newId;
 
