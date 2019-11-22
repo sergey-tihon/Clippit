@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
-using OpenXmlPowerTools.HtmlToWml;
+using Clippit;
+using Clippit.HtmlToWml;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     class Program
     {

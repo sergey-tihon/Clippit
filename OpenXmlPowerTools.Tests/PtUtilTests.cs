@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
+using Clippit;
 using Xunit;
 
 #if !ELIDE_XUNIT_TESTS
@@ -20,8 +20,8 @@ namespace OxPt
 {
     public class PtUtilTests
     {
-        [Theory(Skip = "This is failing on AppVeyor")]
-        [InlineData("PU/PU001-Test001.mht")]
+        //[Theory(Skip = "This is failing on AppVeyor")]
+        //[InlineData("PU/PU001-Test001.mht")]
         public void PU001(string name)
         {
             DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");

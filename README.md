@@ -1,6 +1,5 @@
-﻿NuGet Feed for CI build: https://ci.appveyor.com/nuget/open-xml-powertools
+﻿> README is outdated
 
-No NuGet.org feed at this time. We are working on it.
 
 News
 ====

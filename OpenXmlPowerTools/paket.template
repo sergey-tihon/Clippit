@@ -1,0 +1,27 @@
+type file
+id
+    Clippit
+owners
+    Sergey Tihon
+authors
+    Microsoft Corporation, Eric White
+projectUrl
+    https://github.com/sergey-tihon/Clippit
+iconUrl
+    https://raw.githubusercontent.com/sergey-tihon/Clippit/master/docs/files/img/logo.jpeg
+licenseUrl
+    https://github.com/sergey-tihon/Clippit/LICENSE
+requireLicenseAcceptance
+    false
+copyright
+    Copyright 2012-2019
+tags
+    OpenXML PowerTools PowerPoint Word Excel HTML
+description
+    Unofficial fork of OpenXmlPowerTools with new features
+files
+    bin/Release/netstandard2.0/Clippit.dll ==> lib/netstandard2.0
+
+dependencies
+    framework: netstandard20
+        DocumentFormat.OpenXml >= LOCKEDVERSION

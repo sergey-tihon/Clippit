@@ -7,9 +7,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using OpenXmlPowerTools;
-using OpenXmlPowerTools.HtmlToWml;
-using OpenXmlPowerTools.HtmlToWml.CSS;
+using Clippit;
+using Clippit.HtmlToWml;
+using Clippit.HtmlToWml.CSS;
 using System.Globalization;
 
 #if false
@@ -115,7 +115,7 @@ Following is my new theory of the correct algorithm:
       return value
 #endif
 
-namespace OpenXmlPowerTools.HtmlToWml
+namespace Clippit.HtmlToWml
 {
     class CssApplier
     {
@@ -133,8 +133,8 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "color" },
                 Inherits = true,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "black", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
-                ComputedValue = (element, assignedValue, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = GetWmlColorFromExpression(assignedValue), Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "black", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
+                ComputedValue = (element, assignedValue, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = GetWmlColorFromExpression(assignedValue), Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
             },
 
             // direction
@@ -149,7 +149,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "direction" },
                 Inherits = true,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "ltr", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "ltr", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
                 ComputedValue = null,
             },
 
@@ -165,7 +165,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "line-height" },
                 Inherits = true,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "normal", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "normal", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
@@ -187,7 +187,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "visibility" },
                 Inherits = true,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "visible", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "visible", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
                 ComputedValue = null,
             },
 
@@ -212,7 +212,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return true;
                     return false;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "disc", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "disc", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
                 ComputedValue = null,
             },
 
@@ -234,7 +234,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return true;
                     return false;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "none", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "none", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
                 ComputedValue = null,
             },
 
@@ -256,7 +256,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return true;
                     return false;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "none", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "none", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
                 ComputedValue = null,
             },
 
@@ -273,7 +273,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "font-family" },
                 Inherits = true,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = settings.MinorLatinFont, Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = settings.MinorLatinFont, Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
                 ComputedValue = (element, assignedValue, settings) => assignedValue,
             },
 
@@ -289,7 +289,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "font-style" },
                 Inherits = true,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "normal", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "normal", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
                 ComputedValue = null,
             },
 
@@ -305,7 +305,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "font-variant" },
                 Inherits = true,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "normal", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "normal", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
                 ComputedValue = null,
             },
 
@@ -322,7 +322,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "font-weight" },
                 Inherits = true,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "normal", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "normal", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
                 ComputedValue = null,
             },
 
@@ -339,7 +339,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "font-size" },
                 Inherits = true,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = ((double)settings.DefaultFontSize).ToString(CultureInfo.InvariantCulture), Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String, Unit = CssUnit.PT } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = ((double)settings.DefaultFontSize).ToString(CultureInfo.InvariantCulture), Type = Clippit.HtmlToWml.CSS.CssTermType.String, Unit = CssUnit.PT } } },
                 ComputedValue = (element, assignedValue, settings) => ComputeAbsoluteFontSize(element, assignedValue, settings),
             },
 
@@ -361,7 +361,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return true;
                     return false;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0", Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } },
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
@@ -390,7 +390,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return true;
                     return false;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "left", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String, } } },  // todo should be based on the direction property
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "left", Type = Clippit.HtmlToWml.CSS.CssTermType.String, } } },  // todo should be based on the direction property
                 ComputedValue = null,
             },
 
@@ -406,7 +406,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "text-decoration" },
                 Inherits = true,   // todo need to read css 16.3.1 in full detail to understand how this is implemented.
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "none", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "none", Type = Clippit.HtmlToWml.CSS.CssTermType.String, } } },
                 ComputedValue = null,
             },
 
@@ -430,7 +430,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "letter-spacing", "word-spacing" },
                 Inherits = true,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "normal", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "normal", Type = Clippit.HtmlToWml.CSS.CssTermType.String, } } },
                 ComputedValue = (element, assignedValue, settings) => ComputeAbsoluteLength(element, assignedValue, settings, null),
             },
 
@@ -446,7 +446,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "white-space" },
                 Inherits = true,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "normal", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "normal", Type = Clippit.HtmlToWml.CSS.CssTermType.String, } } },
                 ComputedValue = null,
             },
 
@@ -468,7 +468,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return true;
                     return false;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "top", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "top", Type = Clippit.HtmlToWml.CSS.CssTermType.String, } } },
                 ComputedValue = null,
             },
 
@@ -490,7 +490,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return true;
                     return false;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "separate", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "separate", Type = Clippit.HtmlToWml.CSS.CssTermType.String, } } },
                 ComputedValue = null,
             },
 
@@ -512,7 +512,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return true;
                     return false;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0", Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } },
                 ComputedValue = (element, assignedValue, settings) => ComputeAbsoluteLength(element, assignedValue, settings, null),  // todo need to handle two lengths here
             },
 
@@ -562,19 +562,19 @@ namespace OpenXmlPowerTools.HtmlToWml
                         if (settings.DefaultBlockContentMargin != null)
                         {
                             if (settings.DefaultBlockContentMargin == "auto")
-                                return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "auto", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } };
+                                return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "auto", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } };
                             else if (settings.DefaultBlockContentMargin.ToLower().EndsWith("pt"))
                             {
                                 string s1 = settings.DefaultBlockContentMargin.Substring(0, settings.DefaultBlockContentMargin.Length - 2);
                                 double d1;
                                 if (double.TryParse(s1, NumberStyles.Float, CultureInfo.InvariantCulture, out d1))
                                 {
-                                    return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = d1.ToString(CultureInfo.InvariantCulture), Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT } } };
+                                    return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = d1.ToString(CultureInfo.InvariantCulture), Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT } } };
                                 }
                             }
                             throw new OpenXmlPowerToolsException("invalid setting");
                         }
-                        return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT } } };
+                        return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0", Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT } } };
                     },
                 ComputedValue = (element, assignedValue, settings) =>
                 {
@@ -604,7 +604,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return false;
                     return true;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0", Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } },
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
@@ -636,7 +636,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return false;
                     return true;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0", Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } },
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
@@ -658,16 +658,16 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "border-top-width", "border-right-width", "border-bottom-width", "border-left-width", },
                 Inherits = false,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0", Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } },
                 ComputedValue = (element, assignedValue, settings) =>
                     {
                         string assignedValueStr = assignedValue.ToString();
                         if (assignedValueStr == "thin")
-                            return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0.75", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
+                            return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0.75", Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
                         if (assignedValueStr == "medium")
-                            return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "3.0", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
+                            return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "3.0", Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
                         if (assignedValueStr == "thick")
-                            return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "4.5", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
+                            return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "4.5", Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
                         return ComputeAbsoluteLength(element, assignedValue, settings, null);
                     },
             },
@@ -684,7 +684,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "border-top-style", "border-right-style", "border-bottom-style", "border-left-style", },
                 Inherits = false,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "none", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "none", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
                 ComputedValue = null,
             },
 
@@ -703,7 +703,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "display", },
                 Inherits = false,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "inline", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "inline", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
                 ComputedValue = null,
             },
 
@@ -719,7 +719,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "position", },
                 Inherits = false,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "static", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "static", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
                 ComputedValue = null,
             },
 
@@ -735,7 +735,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "float", },
                 Inherits = false,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "none", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "none", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
                 ComputedValue = null,
             },
 
@@ -751,7 +751,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "unicode-bidi", },
                 Inherits = false,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "normal", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "normal", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
                 ComputedValue = null,
             },
 
@@ -767,8 +767,8 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "background-color", },
                 Inherits = false,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "transparent", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
-                ComputedValue = (element, assignedValue, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = GetWmlColorFromExpression(assignedValue), Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "transparent", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
+                ComputedValue = (element, assignedValue, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = GetWmlColorFromExpression(assignedValue), Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
             },
 
             // text-transform
@@ -783,7 +783,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 Names = new[] { "text-transform", },
                 Inherits = true,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "none", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "none", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
                 ComputedValue = null,
             },
 
@@ -805,7 +805,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return true;
                     return false;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "auto", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "auto", Type = Clippit.HtmlToWml.CSS.CssTermType.String, } } },
                 ComputedValue = null,
             },
 
@@ -827,7 +827,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return true;
                     return false;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "show", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "show", Type = Clippit.HtmlToWml.CSS.CssTermType.String, } } },
                 ComputedValue = null,
             },
 
@@ -848,7 +848,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                     var display = GetComputedPropertyValue(null, e, "color", settings);
                     return display;
                 },
-                ComputedValue = (element, assignedValue, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = GetWmlColorFromExpression(assignedValue), Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } },
+                ComputedValue = (element, assignedValue, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = GetWmlColorFromExpression(assignedValue), Type = Clippit.HtmlToWml.CSS.CssTermType.String } } },
             },
 
             // width
@@ -886,9 +886,9 @@ namespace OpenXmlPowerTools.HtmlToWml
                         if (rightMargin == null)
                             rightMargin = 1440;
                         double width = (double)(pageWidth - leftMargin - rightMargin) / 20;
-                        return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = width.ToString(CultureInfo.InvariantCulture), Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String, Unit = CssUnit.PT, } } };
+                        return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = width.ToString(CultureInfo.InvariantCulture), Type = Clippit.HtmlToWml.CSS.CssTermType.String, Unit = CssUnit.PT, } } };
                     }
-                    return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "auto", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String, } } };
+                    return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "auto", Type = Clippit.HtmlToWml.CSS.CssTermType.String, } } };
                 },
                 ComputedValue = (element, assignedValue, settings) =>
                 {
@@ -943,7 +943,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return false;
                     return true;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0", Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } },
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
@@ -972,7 +972,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return false;
                     return true;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "none", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "none", Type = Clippit.HtmlToWml.CSS.CssTermType.String, } } },
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
@@ -1003,7 +1003,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return false;
                     return true;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "auto", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "auto", Type = Clippit.HtmlToWml.CSS.CssTermType.String, } } },
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
@@ -1032,7 +1032,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return false;
                     return true;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "0", Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } },
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
@@ -1061,7 +1061,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return false;
                     return true;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "none", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "none", Type = Clippit.HtmlToWml.CSS.CssTermType.String, } } },
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
@@ -1091,7 +1091,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                         return true;
                     return false;
                 },
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "baseline", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String, } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "baseline", Type = Clippit.HtmlToWml.CSS.CssTermType.String, } } },
                 ComputedValue = (element, assignedValue, settings) => assignedValue,  // todo fix
             },
 
@@ -1382,17 +1382,17 @@ namespace OpenXmlPowerTools.HtmlToWml
 
             if (value == "thin")
             {
-                CssExpression newExpr1 = new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = ".3", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
+                CssExpression newExpr1 = new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = ".3", Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
                 return newExpr1;
             }
             if (value == "medium")
             {
-                CssExpression newExpr2 = new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "1.20", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
+                CssExpression newExpr2 = new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "1.20", Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
                 return newExpr2;
             }
             if (value == "thick")
             {
-                CssExpression newExpr3 = new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "1.80", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
+                CssExpression newExpr3 = new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "1.80", Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
                 return newExpr3;
             }
             if (value == "auto" || value == "normal" || value == "none")
@@ -1403,7 +1403,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                 return assignedValue;
 
             if (unit == CssUnit.Percent && lengthForPercentage == null)
-                return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "auto", Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.String } } };
+                return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "auto", Type = Clippit.HtmlToWml.CSS.CssTermType.String } } };
 
             double decValue;
             if (!double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out decValue))
@@ -1444,7 +1444,7 @@ namespace OpenXmlPowerTools.HtmlToWml
             }
             if (!newPtSize.HasValue)
                 throw new OpenXmlPowerToolsException("Internal error: should not have reached this exception");
-            CssExpression newExpr = new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = newPtSize.Value.ToString(CultureInfo.InvariantCulture), Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
+            CssExpression newExpr = new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = newPtSize.Value.ToString(CultureInfo.InvariantCulture), Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
             return newExpr;
         }
 
@@ -1457,7 +1457,7 @@ namespace OpenXmlPowerTools.HtmlToWml
             if (unit == CssUnit.PT)
                 return assignedValue;
             if (FontSizeMap.ContainsKey(value))
-                return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = FontSizeMap[value].ToString(CultureInfo.InvariantCulture), Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
+                return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = FontSizeMap[value].ToString(CultureInfo.InvariantCulture), Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
 
             // todo what should the calculation be for computing larger / smaller?
             if (value == "larger" || value == "smaller")
@@ -1497,7 +1497,7 @@ namespace OpenXmlPowerTools.HtmlToWml
                     if (ptSize >= 30)
                         newPtSize2 = 24d;
                 }
-                return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = newPtSize2.ToString(CultureInfo.InvariantCulture), Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
+                return new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = newPtSize2.ToString(CultureInfo.InvariantCulture), Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
             }
             double decValue;
             if (!double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out decValue))
@@ -1531,7 +1531,7 @@ namespace OpenXmlPowerTools.HtmlToWml
             }
             if (!newPtSize.HasValue)
                 throw new OpenXmlPowerToolsException("Internal error: should not have reached this exception");
-            CssExpression newExpr = new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = newPtSize.Value.ToString(CultureInfo.InvariantCulture), Type = OpenXmlPowerTools.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
+            CssExpression newExpr = new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = newPtSize.Value.ToString(CultureInfo.InvariantCulture), Type = Clippit.HtmlToWml.CSS.CssTermType.Number, Unit = CssUnit.PT, } } };
             return newExpr;
         }
 
@@ -1672,7 +1672,7 @@ namespace OpenXmlPowerTools.HtmlToWml
             return result;
         }
 
-        private static bool DoesAttributeMatch(OpenXmlPowerTools.HtmlToWml.CSS.CssAttribute attribute, XElement element)
+        private static bool DoesAttributeMatch(Clippit.HtmlToWml.CSS.CssAttribute attribute, XElement element)
         {
             string attName = attribute.Operand.ToLower();
             string attValue = (string)element.Attribute(attName);
@@ -2196,11 +2196,11 @@ namespace OpenXmlPowerTools.HtmlToWml
                             Terms = new List<CssTerm> {
                             new CssTerm {
                                 Value = "0",
-                                Unit = OpenXmlPowerTools.HtmlToWml.CSS.CssUnit.Percent,
+                                Unit = Clippit.HtmlToWml.CSS.CssUnit.Percent,
                                 Type = CssTermType.Number },
                             new CssTerm {
                                 Value = "0",
-                                Unit = OpenXmlPowerTools.HtmlToWml.CSS.CssUnit.Percent,
+                                Unit = Clippit.HtmlToWml.CSS.CssUnit.Percent,
                                 Type = CssTermType.Number },
                         }
                         };
@@ -2771,7 +2771,7 @@ namespace OpenXmlPowerTools.HtmlToWml
             }
         }
 
-        private static void DumpAttribute(StringBuilder sb, int indent, OpenXmlPowerTools.HtmlToWml.CSS.CssAttribute a)
+        private static void DumpAttribute(StringBuilder sb, int indent, Clippit.HtmlToWml.CSS.CssAttribute a)
         {
             Pr(sb, indent, "Attribute: {0}", a);
             if (a != null)

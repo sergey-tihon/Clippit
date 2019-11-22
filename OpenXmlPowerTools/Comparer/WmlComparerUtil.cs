@@ -5,7 +5,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     internal static class WmlComparerUtil
     {

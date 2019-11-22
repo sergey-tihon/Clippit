@@ -4,7 +4,7 @@
 using System;
 using System.Xml.Linq;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public static partial class WmlComparer
     {

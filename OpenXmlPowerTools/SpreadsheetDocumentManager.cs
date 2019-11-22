@@ -6,7 +6,7 @@ using System.Linq;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     /// <summary>
     /// Manages SpreadsheetDocument content

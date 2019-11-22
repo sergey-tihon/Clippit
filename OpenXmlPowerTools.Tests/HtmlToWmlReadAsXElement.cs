@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-using OpenXmlPowerTools;
+using Clippit;
 
 /*******************************************************************************************
  * HtmlToWmlConverter expects the HTML to be passed as an XElement, i.e. as XML.  While the HTML test files that
@@ -34,7 +34,7 @@ using OpenXmlPowerTools;
 using HtmlAgilityPack;
 #endif
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public class HtmlToWmlReadAsXElement
     {

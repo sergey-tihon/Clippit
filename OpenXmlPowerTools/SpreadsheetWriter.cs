@@ -11,9 +11,9 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
+using Clippit;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     // The classes in SpreadsheetWriter are still a work-in-progress.  While they are useful in their current state, I will be enhancing and
     // changing them in the future.  In particular, I will be augmenting the various definition classes (WorkbookDfn, WorksheetDfn,

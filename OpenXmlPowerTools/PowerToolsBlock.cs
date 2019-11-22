@@ -4,7 +4,7 @@
 using System;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     /// <summary>
     /// Provides an elegant way of wrapping a set of invocations of the PowerTools in a using

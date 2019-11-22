@@ -13,10 +13,10 @@ using System.Xml.XPath;
 using System.Xml.Schema;
 using DocumentFormat.OpenXml.Office.CustomUI;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
+using Clippit;
 using System.Collections;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public class DocumentAssembler
     {

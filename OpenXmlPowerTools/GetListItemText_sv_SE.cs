@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
 	public class ListItemTextGetter_sv_SE
 	{

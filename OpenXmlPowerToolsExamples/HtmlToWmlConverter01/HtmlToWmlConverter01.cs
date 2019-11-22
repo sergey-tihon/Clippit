@@ -10,8 +10,8 @@ using System.Xml;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
-using OpenXmlPowerTools;
-using OpenXmlPowerTools.HtmlToWml;
+using Clippit;
+using Clippit.HtmlToWml;
 
 /*******************************************************************************************
  * HtmlToWmlConverter expects the HTML to be passed as an XElement, i.e. as XML.  While the HTML test files that

@@ -4,7 +4,7 @@
 using System;
 using System.Text;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     internal class CorrelatedSequence
     {

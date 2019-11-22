@@ -9,9 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using OpenXmlPowerTools;
+using Clippit;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     class Program
     {

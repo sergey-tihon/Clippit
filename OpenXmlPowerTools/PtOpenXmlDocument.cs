@@ -53,7 +53,7 @@ using System.Xml.Linq;
 using System.IO.Packaging;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public class PowerToolsDocumentException : Exception
     {

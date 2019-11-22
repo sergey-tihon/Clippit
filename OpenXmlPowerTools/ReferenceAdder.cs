@@ -9,7 +9,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public partial class WmlDocument : OpenXmlPowerToolsDocument
     {

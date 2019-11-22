@@ -19,7 +19,7 @@ using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using System.Drawing;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public class ContentTypeRule
     {

@@ -10,7 +10,7 @@ using DocumentFormat.OpenXml.Packaging;
 using System.Xml;
 using ExcelFormula;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     // Classes for "bulk load" of a spreadsheet
     public class MemorySpreadsheet

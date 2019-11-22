@@ -9,7 +9,7 @@ using System.Xml.Linq;
 using System.Text;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace OpenXmlPowerTools
+namespace Clippit
 {
     public class SlideSource
     {
