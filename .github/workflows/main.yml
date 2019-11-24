@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [windows-latest, macOS-latest]
         #os: [ubuntu-latest, windows-latest, macOS-latest]
         dotnet: [3.0.100]
     runs-on: ${{ matrix.os }}
@@ -25,6 +25,9 @@ jobs:
       uses: actions/setup-dotnet@bb95ce727fd49ec1a65933419cc7c91747785302
       with:
         dotnet-version: ${{ matrix.dotnet }}
+    - name: 
+      if: matrix.os == 'macOS-latest'
+      run: brew install mono-libgdiplus
     - name: Install local tools
       run: dotnet tool restore
     - name: Paket Restore
