@@ -106,9 +106,16 @@ namespace Clippit
                 using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument();
                 using var output = streamDoc.GetPresentationDocument();
 
-                ExtractSlide(srcDoc, i+1, output);
+                ExtractSlide(srcDoc, i, output);
                 output.Close();
-                yield return streamDoc.GetModifiedPmlDocument();
+
+                var slideDoc = streamDoc.GetModifiedPmlDocument();
+                if (src.FileName != null)
+                {
+                    slideDoc.FileName = src.FileName.Replace(".pptx", $"_{i + 1:000}.pptx");
+                }
+
+                yield return slideDoc;
             }
         }
 
@@ -519,7 +526,7 @@ namespace Clippit
             }
 
             SlideMasterPart newMaster = newDocument.PresentationPart.AddNewPart<SlideMasterPart>();
-            XDocument sourceMaster = sourceMasterPart.GetXDocument();
+            XDocument sourceMaster = new XDocument(sourceMasterPart.GetXDocument());
 
             // Add to presentation slide master list, need newID for layout IDs also
             uint newID = 2147483648;
@@ -544,7 +551,7 @@ namespace Clippit
             foreach (SlideLayoutPart layoutPart in sourceMasterPart.SlideLayoutParts)
             {
                 SlideLayoutPart newLayout = newMaster.AddNewPart<SlideLayoutPart>();
-                newLayout.PutXDocument(layoutPart.GetXDocument());
+                newLayout.PutXDocument(new XDocument(layoutPart.GetXDocument()));
                 AddRelationships(layoutPart, newLayout, new[] { newLayout.GetXDocument().Root });
                 CopyRelatedPartsForContentParts(newDocument, layoutPart, newLayout, new[] { newLayout.GetXDocument().Root }, images, mediaList);
                 newLayout.AddPart(newMaster);
