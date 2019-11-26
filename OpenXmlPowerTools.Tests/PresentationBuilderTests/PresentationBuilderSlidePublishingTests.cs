@@ -17,7 +17,7 @@ namespace Clippit.Tests.PresentationBuilderTests
             return files.OrderBy(x=>x).Select(path => new[] {path});
         }
 
-        [Theory]
+        [Theory(Skip = "Produce same result as PublishUsingPublishSlides but slower")]
         [MemberData(nameof(GetData))]
         public void PublishUsingBuildPresentation(string path)
         {

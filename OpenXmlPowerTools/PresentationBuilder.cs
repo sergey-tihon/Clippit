@@ -392,7 +392,8 @@ namespace Clippit
             foreach (var legacyDocTextInfo in sourceDocument.PresentationPart.Parts.Where(p => p.OpenXmlPart.RelationshipType == "http://schemas.microsoft.com/office/2006/relationships/legacyDocTextInfo"))
             {
                 LegacyDiagramTextInfoPart newPart = newDocument.PresentationPart.AddNewPart<LegacyDiagramTextInfoPart>();
-                newPart.FeedData(legacyDocTextInfo.OpenXmlPart.GetStream());
+                using var stream = legacyDocTextInfo.OpenXmlPart.GetStream();
+                newPart.FeedData(stream);
             }
 
             var listOfRootChildren = newPresentation.Root.Elements().ToList();
@@ -432,7 +433,8 @@ namespace Clippit
             };
             var newId = NewRelationshipId();
             var newFontPart = newDocument.PresentationPart.AddFontPart(fpt, newId);
-            newFontPart.FeedData(oldFontPart.GetStream());
+            using (var stream = oldFontPart.GetStream())
+                newFontPart.FeedData(stream);
             return new XElement(fontXName, new XAttribute(R.id, newId));
         }
 
@@ -905,12 +907,14 @@ namespace Clippit
                 if (oldPartIdPair9 != null)
                 {
                     CustomXmlPart newPart = newDocument.PresentationPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
-                    newPart.FeedData(oldPartIdPair9.OpenXmlPart.GetStream());
+                    using (var stream = oldPartIdPair9.OpenXmlPart.GetStream())
+                        newPart.FeedData(stream);
                     foreach (var itemProps in oldPartIdPair9.OpenXmlPart.Parts.Where(p => p.OpenXmlPart.ContentType == "application/vnd.openxmlformats-officedocument.customXmlProperties+xml"))
                     {
                         var newId2 = NewRelationshipId();
                         var cxpp = newPart.AddNewPart<CustomXmlPropertiesPart>("application/vnd.openxmlformats-officedocument.customXmlProperties+xml", newId2);
-                        cxpp.FeedData(itemProps.OpenXmlPart.GetStream());
+                        using (var stream = itemProps.OpenXmlPart.GetStream())
+                            cxpp.FeedData(stream);
                     }
                     var newId = NewRelationshipId();
                     newContentPart.CreateRelationshipToPart(newPart, newId);
@@ -1401,7 +1405,8 @@ namespace Clippit
             var newId = NewRelationshipId();
             var newPart = newContentPart.AddNewPart<CustomXmlPart>("application/inkml+xml", newId);
 
-            newPart.FeedData(oldPart.GetStream());
+            using (var stream = oldPart.GetStream())
+                newPart.FeedData(stream);
             contentPartReference.Attribute(attributeName).Set(newId);
         }
 
@@ -1417,7 +1422,8 @@ namespace Clippit
             var newId = NewRelationshipId();
             var newPart = newContentPart.AddNewPart<EmbeddedControlPersistencePart>("application/vnd.ms-office.activeX+xml", newId);
 
-            newPart.FeedData(oldPart.GetStream());
+            using(var stream = oldPart.GetStream())
+                newPart.FeedData(stream);
             activeXPartReference.Attribute(attributeName).Set(newId);
 
             if (newPart.ContentType == "application/vnd.ms-office.activeX+xml")
@@ -1430,7 +1436,8 @@ namespace Clippit
                     var newId2 = NewRelationshipId();
                     var newPersistencePart = newPart.AddNewPart<EmbeddedControlPersistenceBinaryDataPart>("application/vnd.ms-office.activeX", newId2);
 
-                    newPersistencePart.FeedData(oldPersistencePart.GetStream());
+                    using (var stream = oldPersistencePart.GetStream())
+                        newPersistencePart.FeedData(stream);
                     axc.Root.Attribute(R.id).Set(newId2);
                     newPart.PutXDocument();
                 }
@@ -1449,7 +1456,8 @@ namespace Clippit
             var newId = NewRelationshipId();
             var newPart = newContentPart.AddNewPart<LegacyDiagramTextPart>(newId);
 
-            newPart.FeedData(oldPart.GetStream());
+            using (var stream = oldPart.GetStream())
+                newPart.FeedData(stream);
             textdataReference.Attribute(attributeName).Set(newId);
         }
 
