@@ -43,3 +43,4 @@ _ReSharper.Caches/
 
 .fake/
 AssemblyInfo.Generated.cs
+TestFiles/PublishSlides/output/
