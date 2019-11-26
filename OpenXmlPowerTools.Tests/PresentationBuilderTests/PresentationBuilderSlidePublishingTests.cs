@@ -14,7 +14,7 @@ namespace Clippit.Tests.PresentationBuilderTests
         public static IEnumerable<object[]> GetData()
         {
             var files = Directory.GetFiles(SourceDirectory, "*.pptx", SearchOption.TopDirectoryOnly);
-            return files.Select(path => new[] {path});
+            return files.OrderBy(x=>x).Select(path => new[] {path});
         }
 
         [Theory]
