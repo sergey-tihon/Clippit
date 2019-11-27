@@ -544,6 +544,13 @@ namespace Clippit
             ThemePart newThemePart = newMaster.AddNewPart<ThemePart>();
             if (newDocument.PresentationPart.ThemePart == null)
                 newThemePart = newDocument.PresentationPart.AddPart(newThemePart);
+            if (sourceLayoutPart != null)
+            {
+                var newThemeName = $"{themeName}:{sourceLayoutPart.SlideLayout.CommonSlideData.Name.Value}";
+                oldTheme = new XDocument(oldTheme);
+                oldTheme.Root.Attribute(NoNamespace.name).SetValue(newThemeName);
+            }
+
             newThemePart.PutXDocument(oldTheme);
             CopyRelatedPartsForContentParts(newDocument, sourceMasterPart.ThemePart, newThemePart, new[] { newThemePart.GetXDocument().Root }, images, mediaList);
             foreach (var layoutPart in sourceMasterPart.SlideLayoutParts)
@@ -565,7 +572,8 @@ namespace Clippit
                 newID++;
 
                 if (sourceLayoutPart != null)
-                {   // Remove sldLayoutId for layouts that we do not import
+                {
+                    // Remove sldLayoutId for layouts that we do not import
                     sourceMaster.Root.Descendants(P.sldLayoutId)
                         .Where(x=>x != entry).ToList()
                         .ForEach(e=>e.Remove());

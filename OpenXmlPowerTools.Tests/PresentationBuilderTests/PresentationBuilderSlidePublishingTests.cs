@@ -66,5 +66,37 @@ namespace Clippit.Tests.PresentationBuilderTests
             }
         }
 
+        [Theory]
+        [InlineData("BRK3066.pptx", 2)]
+        public void ExtractOneSlide(string fileName, int slideNumber)
+        {
+            var file = Path.Combine(SourceDirectory, fileName);
+            var document = new PmlDocument(file);
+
+            var source = new SlideSource(document, slideNumber - 1, 1, true);
+            var slide = PresentationBuilder.BuildPresentation(new List<SlideSource> { source });
+            slide.FileName = document.FileName.Replace(".pptx", $"_{slideNumber:000}.pptx");
+
+            slide.SaveAs(Path.Combine(TargetDirectory, Path.GetFileName(slide.FileName)));
+        }
+
+        [Theory]
+        [InlineData("BRK3066.pptx")]
+        public void ReassemblePresentation(string fileName)
+        {
+            var file = Path.Combine(SourceDirectory, fileName);
+            var document = new PmlDocument(file);
+
+            var slides = PresentationBuilder.PublishSlides(document);
+
+            var sources = slides.Select(x => new SlideSource(x, true)).ToList();
+            var newDocument = PresentationBuilder.BuildPresentation(sources);
+
+            newDocument.FileName = fileName.Replace(".pptx", "_reassembled.pptx");
+            newDocument.SaveAs(Path.Combine(TargetDirectory, newDocument.FileName));
+
+            var baseSize = slides.Sum(x => x.DocumentByteArray.Length);
+            Assert.InRange(newDocument.DocumentByteArray.Length, 0.9 * baseSize, 1.1* baseSize);
+        }
     }
 }
