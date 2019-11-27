@@ -77,6 +77,7 @@ namespace Clippit.Tests.PresentationBuilderTests
             var slide = PresentationBuilder.BuildPresentation(new List<SlideSource> { source });
             slide.FileName = document.FileName.Replace(".pptx", $"_{slideNumber:000}.pptx");
 
+            Directory.CreateDirectory(TargetDirectory);
             slide.SaveAs(Path.Combine(TargetDirectory, Path.GetFileName(slide.FileName)));
         }
 
@@ -93,10 +94,38 @@ namespace Clippit.Tests.PresentationBuilderTests
             var newDocument = PresentationBuilder.BuildPresentation(sources);
 
             newDocument.FileName = fileName.Replace(".pptx", "_reassembled.pptx");
+            Directory.CreateDirectory(TargetDirectory);
             newDocument.SaveAs(Path.Combine(TargetDirectory, newDocument.FileName));
 
             var baseSize = slides.Sum(x => x.DocumentByteArray.Length);
             Assert.InRange(newDocument.DocumentByteArray.Length, 0.9 * baseSize, 1.1* baseSize);
+        }
+
+        [Theory]
+        [InlineData("BRK3066.pptx")]
+        public void ReassemblePresentationWithMaster(string fileName)
+        {
+            var file = Path.Combine(SourceDirectory, fileName);
+            var document = new PmlDocument(file);
+
+            // generate presentation with full master
+            var onlyMaster = PresentationBuilder.BuildPresentation(
+                new List<SlideSource> {new SlideSource(document, 0, 1, true)});
+
+            // publish slides with one-layout masters
+            var slides = PresentationBuilder.PublishSlides(document);
+
+            // compose them together using only master from the first source
+            var sources = new List<SlideSource> {new SlideSource(onlyMaster, true)};
+            sources.AddRange(slides.Select(x => new SlideSource(x, false)));
+            var newDocument = PresentationBuilder.BuildPresentation(sources);
+
+            newDocument.FileName = fileName.Replace(".pptx", "_reassembledWithMaster.pptx");
+            Directory.CreateDirectory(TargetDirectory);
+            newDocument.SaveAs(Path.Combine(TargetDirectory, newDocument.FileName));
+
+            var baseSize = slides.Sum(x => x.DocumentByteArray.Length);
+            Assert.InRange(newDocument.DocumentByteArray.Length, 0.9 * baseSize, 1.1 * baseSize);
         }
     }
 }
