@@ -131,7 +131,8 @@ namespace Clippit
             try
             {
                 CopyPresentationParts(srcDoc, output, images, mediaList);
-                AppendSlides(srcDoc, output, slideNumber, 1, true, images, null, mediaList);
+                AppendSlides(srcDoc, output, slideNumber, 1,
+                    true, false, null, images, mediaList);
             }
             catch (PresentationBuilderInternalException dbie)
             {
@@ -172,7 +173,8 @@ namespace Clippit
                     {
                         if (sourceNum == 0)
                             CopyPresentationParts(doc, output, images, mediaList);
-                        currentMasterPart = AppendSlides(doc, output, source.Start, source.Count, source.KeepMaster, images, currentMasterPart, mediaList);
+                        currentMasterPart = AppendSlides(doc, output, source.Start, source.Count,
+                            source.KeepMaster, true, currentMasterPart, images, mediaList);
                     }
                     catch (PresentationBuilderInternalException dbie)
                     {
@@ -438,8 +440,11 @@ namespace Clippit
             return new XElement(fontXName, new XAttribute(R.id, newId));
         }
 
-        private static SlideMasterPart AppendSlides(PresentationDocument sourceDocument, PresentationDocument newDocument,
-            int start, int count, bool keepMaster, List<ImageData> images, SlideMasterPart currentMasterPart, List<MediaData> mediaList)
+        private static SlideMasterPart AppendSlides(
+            PresentationDocument sourceDocument, PresentationDocument newDocument,
+            int start, int count,
+            bool keepMaster, bool keepAllLayouts, SlideMasterPart currentMasterPart,
+            List<ImageData> images,  List<MediaData> mediaList)
         {
             XDocument newPresentation = newDocument.PresentationPart.GetXDocument();
             if (newPresentation.Root.Element(P.sldIdLst) is null)
@@ -453,14 +458,18 @@ namespace Clippit
             {
                 var slideMasterPart = sourceDocument.PresentationPart.SlideMasterParts.FirstOrDefault();
                 if (slideMasterPart != null)
-                    currentMasterPart = CopyMasterSlide(sourceDocument, slideMasterPart, newDocument, newPresentation, images, mediaList);
+                    currentMasterPart = CopyMasterSlide(sourceDocument, slideMasterPart, null, newDocument, newPresentation, images, mediaList);
                 return currentMasterPart;
             }
             while (count > 0 && start < slideList.Count)
             {
                 SlidePart slide = (SlidePart)sourceDocument.PresentationPart.GetPartById(slideList.ElementAt(start).Attribute(R.id).Value);
                 if (currentMasterPart == null || keepMaster)
-                    currentMasterPart = CopyMasterSlide(sourceDocument, slide.SlideLayoutPart.SlideMasterPart, newDocument, newPresentation, images, mediaList);
+                {
+                    var layout = keepAllLayouts ? null : slide.SlideLayoutPart;
+                    currentMasterPart = CopyMasterSlide(sourceDocument, slide.SlideLayoutPart.SlideMasterPart, layout, newDocument, newPresentation, images, mediaList);
+                }
+
                 SlidePart newSlide = newDocument.PresentationPart.AddNewPart<SlidePart>();
                 newSlide.PutXDocument(slide.GetXDocument());
                 AddRelationships(slide, newSlide, new[] { newSlide.GetXDocument().Root });
@@ -501,7 +510,7 @@ namespace Clippit
             return currentMasterPart;
         }
 
-        private static SlideMasterPart CopyMasterSlide(PresentationDocument sourceDocument, SlideMasterPart sourceMasterPart,
+        private static SlideMasterPart CopyMasterSlide(PresentationDocument sourceDocument, SlideMasterPart sourceMasterPart, SlideLayoutPart sourceLayoutPart,
             PresentationDocument newDocument, XDocument newPresentation, List<ImageData> images, List<MediaData> mediaList)
         {
             // Search for existing master slide with same theme name
@@ -539,16 +548,28 @@ namespace Clippit
             CopyRelatedPartsForContentParts(newDocument, sourceMasterPart.ThemePart, newThemePart, new[] { newThemePart.GetXDocument().Root }, images, mediaList);
             foreach (var layoutPart in sourceMasterPart.SlideLayoutParts)
             {
+                if (sourceLayoutPart != null && layoutPart.Uri != sourceLayoutPart.Uri)
+                    continue; // Copy only one layout from Master if sourceLayoutPart is provided (otherwise all)
+
                 var newLayout = newMaster.AddNewPart<SlideLayoutPart>();
                 newLayout.PutXDocument(new XDocument(layoutPart.GetXDocument()));
                 AddRelationships(layoutPart, newLayout, new[] { newLayout.GetXDocument().Root });
                 CopyRelatedPartsForContentParts(newDocument, layoutPart, newLayout, new[] { newLayout.GetXDocument().Root }, images, mediaList);
                 newLayout.AddPart(newMaster);
+
                 var resID = sourceMasterPart.GetIdOfPart(layoutPart);
                 var entry = sourceMaster.Root.Descendants(P.sldLayoutId).FirstOrDefault(f => f.Attribute(R.id).Value == resID);
+
                 entry.Attribute(R.id).SetValue(newMaster.GetIdOfPart(newLayout));
                 entry.SetAttributeValue(NoNamespace.id, newID.ToString());
                 newID++;
+
+                if (sourceLayoutPart != null)
+                {   // Remove sldLayoutId for layouts that we do not import
+                    sourceMaster.Root.Descendants(P.sldLayoutId)
+                        .Where(x=>x != entry).ToList()
+                        .ForEach(e=>e.Remove());
+                }
             }
             newMaster.PutXDocument(sourceMaster);
             AddRelationships(sourceMasterPart, newMaster, new[] { newMaster.GetXDocument().Root });
