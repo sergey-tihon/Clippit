@@ -243,6 +243,26 @@ namespace Clippit.PowerPoint
                 else if (part.Annotation<XDocument>() != null)
                     part.PutXDocument();
             }
+
+            // Remove sections list (all slides added to default section)
+            var presentationDocument = document.PresentationPart.GetXDocument();
+            var sectionLists = presentationDocument.Descendants(P14.sectionLst).ToList();
+            if (sectionLists.Count > 0)
+            {
+                foreach (var sectionList in sectionLists)
+                {
+                    sectionList.Parent?.Remove(); // <p:ext> element
+                }
+                document.PresentationPart.PutXDocument();
+            }
+
+            // Remove custom properties (source doc metadata irrelevant for generated document)
+            var customPropsDocument = document.CustomFilePropertiesPart.GetXDocument();
+            if (customPropsDocument.Root?.HasElements == true)
+            {
+                customPropsDocument.Root?.RemoveNodes();
+                document.CustomFilePropertiesPart.PutXDocument();
+            }
         }
 
         private static void CopyStartingParts(PresentationDocument sourceDocument, PresentationDocument newDocument)
@@ -470,7 +490,13 @@ namespace Clippit.PowerPoint
                 }
 
                 SlidePart newSlide = newDocument.PresentationPart.AddNewPart<SlidePart>();
-                newSlide.PutXDocument(slide.GetXDocument());
+                var slideDocument = slide.GetXDocument();
+                if (!keepAllLayouts)
+                {
+                    // If we extract one slide, this slide should be visible
+                    slideDocument.Root?.Attribute(NoNamespace.show)?.Remove();
+                }
+                newSlide.PutXDocument(slideDocument);
                 AddRelationships(slide, newSlide, new[] { newSlide.GetXDocument().Root });
                 CopyRelatedPartsForContentParts(newDocument, slide, newSlide, new[] { newSlide.GetXDocument().Root }, images, mediaList);
                 CopyTableStyles(sourceDocument, newDocument, slide, newSlide);
