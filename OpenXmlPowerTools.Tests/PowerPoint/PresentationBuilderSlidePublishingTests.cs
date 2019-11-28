@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using Xunit;
 
-namespace Clippit.Tests.PresentationBuilderTests
+namespace Clippit.Tests.PowerPoint
 {
     public class PresentationBuilderSlidePublishingTests
     {

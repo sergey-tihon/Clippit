@@ -1198,27 +1198,41 @@ namespace Clippit
                 var temp = ManageImageCopy(oldPart, newContentPart, images);
                 if (temp.ImagePart is null)
                 {
+                    var partType = oldPart?.ContentType switch
+                    {
+                        "image/bmp" => ImagePartType.Bmp,
+                        "image/gif" => ImagePartType.Gif,
+                        "image/png" => ImagePartType.Png,
+                        "image/tiff" => ImagePartType.Tiff,
+                        "image/x-icon" => ImagePartType.Icon,
+                        "image/x-pcx" => ImagePartType.Pcx,
+                        "image/jpeg" => ImagePartType.Jpeg,
+                        "image/x-emf" => ImagePartType.Emf,
+                        "image/x-wmf" => ImagePartType.Wmf,
+                        _ => ImagePartType.Bmp
+                    };
+
                     var newPart = newContentPart switch
                     {
-                        ChartDrawingPart part => part.AddImagePart(oldPart.ContentType),
-                        ChartPart part => part.AddImagePart(oldPart.ContentType),
-                        ChartsheetPart part => part.AddImagePart(oldPart.ContentType),
-                        DiagramDataPart part => part.AddImagePart(oldPart.ContentType),
-                        DiagramLayoutDefinitionPart part => part.AddImagePart(oldPart.ContentType),
-                        DiagramPersistLayoutPart part => part.AddImagePart(oldPart.ContentType),
-                        DrawingsPart part => part.AddImagePart(oldPart.ContentType),
-                        HandoutMasterPart part => part.AddImagePart(oldPart.ContentType),
-                        NotesMasterPart part => part.AddImagePart(oldPart.ContentType),
-                        NotesSlidePart part => part.AddImagePart(oldPart.ContentType),
-                        RibbonAndBackstageCustomizationsPart part => part.AddImagePart(oldPart.ContentType),
-                        RibbonExtensibilityPart part => part.AddImagePart(oldPart.ContentType),
-                        SlideLayoutPart part => part.AddImagePart(oldPart.ContentType),
-                        SlideMasterPart part => part.AddImagePart(oldPart.ContentType),
-                        SlidePart part => part.AddImagePart(oldPart.ContentType),
-                        ThemeOverridePart part => part.AddImagePart(oldPart.ContentType),
-                        ThemePart part => part.AddImagePart(oldPart.ContentType),
-                        VmlDrawingPart part => part.AddImagePart(oldPart.ContentType),
-                        WorksheetPart part => part.AddImagePart(oldPart.ContentType),
+                        ChartDrawingPart part => part.AddImagePart(partType),
+                        ChartPart part => part.AddImagePart(partType),
+                        ChartsheetPart part => part.AddImagePart(partType),
+                        DiagramDataPart part => part.AddImagePart(partType),
+                        DiagramLayoutDefinitionPart part => part.AddImagePart(partType),
+                        DiagramPersistLayoutPart part => part.AddImagePart(partType),
+                        DrawingsPart part => part.AddImagePart(partType),
+                        HandoutMasterPart part => part.AddImagePart(partType),
+                        NotesMasterPart part => part.AddImagePart(partType),
+                        NotesSlidePart part => part.AddImagePart(partType),
+                        RibbonAndBackstageCustomizationsPart part => part.AddImagePart(partType),
+                        RibbonExtensibilityPart part => part.AddImagePart(partType),
+                        SlideLayoutPart part => part.AddImagePart(partType),
+                        SlideMasterPart part => part.AddImagePart(partType),
+                        SlidePart part => part.AddImagePart(partType),
+                        ThemeOverridePart part => part.AddImagePart(partType),
+                        ThemePart part => part.AddImagePart(partType),
+                        VmlDrawingPart part => part.AddImagePart(partType),
+                        WorksheetPart part => part.AddImagePart(partType),
                         _ => null
                     };
 
