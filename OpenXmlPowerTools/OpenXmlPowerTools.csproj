@@ -6,10 +6,6 @@
     <AssemblyName>Clippit</AssemblyName>
     <RootNamespace>Clippit</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <!-- <Nullable>enable</Nullable> -->
   </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="PowerPoint\" />
-  </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

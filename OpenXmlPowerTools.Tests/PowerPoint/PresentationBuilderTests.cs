@@ -13,6 +13,7 @@ using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Clippit;
+using Clippit.PowerPoint;
 using Xunit;
 
 #if !ELIDE_XUNIT_TESTS

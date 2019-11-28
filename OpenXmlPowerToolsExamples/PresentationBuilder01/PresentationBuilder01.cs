@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using Clippit;
+using Clippit.PowerPoint;
 
 namespace ExamplePresentatonBuilder01
 {

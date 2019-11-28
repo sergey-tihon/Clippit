@@ -48,12 +48,12 @@ Here is creating a new WmlDocument:
 
 using System;
 using System.IO;
+using System.IO.Packaging;
 using System.Linq;
 using System.Xml.Linq;
-using System.IO.Packaging;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace Clippit
+namespace Clippit.PowerPoint
 {
     public class PowerToolsDocumentException : Exception
     {

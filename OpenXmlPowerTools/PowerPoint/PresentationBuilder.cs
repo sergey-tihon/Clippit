@@ -6,10 +6,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using System.Text;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace Clippit
+namespace Clippit.PowerPoint
 {
     public class SlideSource
     {
