@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using Clippit;
+using Clippit.PowerPoint;
 
 namespace ExamplePresentatonBuilder01
 {
@@ -38,14 +39,14 @@ namespace ExamplePresentatonBuilder01
                 new SlideSource(sourceDoc, 9, 3, false),  // Content slides
                 new SlideSource(sourceDoc, 13, 1, false),  // Closing summary
             };
-            PresentationBuilder.BuildPresentation(sources, Path.Combine(tempDi.FullName, "Out1.pptx"));
+            PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(tempDi.FullName, "Out1.pptx"));
 
             sources = new List<SlideSource>()
             {
                 new SlideSource(new PmlDocument(source2), 2, 1, true),  // Choose company
                 new SlideSource(new PmlDocument(source3), false),       // Content
             };
-            PresentationBuilder.BuildPresentation(sources, Path.Combine(tempDi.FullName, "Out2.pptx"));
+            PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(tempDi.FullName, "Out2.pptx"));
 
             sources = new List<SlideSource>()
             {
@@ -53,7 +54,7 @@ namespace ExamplePresentatonBuilder01
                 new SlideSource(new PmlDocument(source5), true),
                 new SlideSource(new PmlDocument(source6), true),
             };
-            PresentationBuilder.BuildPresentation(sources, Path.Combine(tempDi.FullName, "Out3.pptx"));
+            PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(tempDi.FullName, "Out3.pptx"));
 
             sources = new List<SlideSource>()
             {
@@ -61,7 +62,7 @@ namespace ExamplePresentatonBuilder01
                 new SlideSource(new PmlDocument(contoso2), true),
                 new SlideSource(new PmlDocument(contoso3), true),
             };
-            PresentationBuilder.BuildPresentation(sources, Path.Combine(tempDi.FullName, "Out4.pptx"));
+            PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(tempDi.FullName, "Out4.pptx"));
         }
     }
 }

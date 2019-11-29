@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using Clippit;
+using Clippit.PowerPoint;
 
 namespace PresentationBuilder02
 {

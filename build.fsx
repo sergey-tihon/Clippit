@@ -61,6 +61,11 @@ Target.create "NuGet" (fun _ ->
             ReleaseNotes = String.toLines release.Notes})
 )
 
+Target.create "BrowseDocs" (fun _ ->
+    CreateProcess.fromRawCommandLine "dotnet" "serve -o -d ./docs"
+    |> (Proc.run >> ignore)
+)
+
 Target.create "All" ignore
 
 // Build order
