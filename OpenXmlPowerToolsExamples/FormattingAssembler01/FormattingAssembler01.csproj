@@ -7,8 +7,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\OpenXmlPowerTools\OpenXmlPowerTools.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>
