@@ -62,8 +62,7 @@ namespace Clippit.Tests.PowerPoint
             var document = new PmlDocument(sourcePath);
             foreach (var slide in slideGenerator(document))
             {
-                slide.FileName = Path.Combine(targetDir, Path.GetFileName(slide.FileName));
-                slide.Save();
+                slide.SaveAs(Path.Combine(targetDir, Path.GetFileName(slide.FileName)));
             }
         }
 

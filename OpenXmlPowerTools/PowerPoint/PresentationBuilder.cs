@@ -68,17 +68,6 @@ namespace Clippit.PowerPoint
 
     public static class PresentationBuilder
     {
-        public static void BuildPresentation(List<SlideSource> sources, string fileName)
-        {
-            using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument();
-            using (var output = streamDoc.GetPresentationDocument())
-            {
-                BuildPresentation(sources, output);
-                output.Close();
-            }
-            streamDoc.GetModifiedDocument().SaveAs(fileName);
-        }
-
         public static PmlDocument BuildPresentation(List<SlideSource> sources)
         {
             using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument();
