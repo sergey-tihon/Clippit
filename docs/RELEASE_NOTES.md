@@ -1,3 +1,6 @@
+#### 1.1.1 - December 1, 2019
+- Extract and merge presentation without slides (only masters) [#5](https://github.com/sergey-tihon/Clippit/pull/5)
+
 #### 1.1.0 - November 29, 2019
 - Added Slide Publishing API [#2](https://github.com/sergey-tihon/Clippit/pull/2)
 

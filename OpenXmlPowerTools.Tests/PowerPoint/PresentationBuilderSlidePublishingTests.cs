@@ -137,16 +137,16 @@ namespace Clippit.Tests.PowerPoint
         public void ReassemblePresentationWithMaster(string fileName)
         {
             var file = Path.Combine(SourceDirectory, fileName);
-            var document = new PmlDocument(file);
+            var presentation = new PmlDocument(file);
 
-            // generate presentation with full master
+            // generate presentation with all masters
             var onlyMaster = PresentationBuilder.BuildPresentation(
-                new List<SlideSource> {new SlideSource(document, 0, 0, true)});
+                new List<SlideSource> {new SlideSource(presentation, 0, 0, true)});
 
             // publish slides with one-layout masters
-            var slides = PresentationBuilder.PublishSlides(document);
+            var slides = PresentationBuilder.PublishSlides(presentation);
 
-            // compose them together using only master from the first source
+            // compose them together using only master as the first source
             var sources = new List<SlideSource> {new SlideSource(onlyMaster, true)};
             sources.AddRange(slides.Select(x => new SlideSource(x, false)));
             var newDocument = PresentationBuilder.BuildPresentation(sources);
@@ -154,8 +154,8 @@ namespace Clippit.Tests.PowerPoint
             newDocument.FileName = fileName.Replace(".pptx", "_reassembledWithMaster.pptx");
             newDocument.SaveAs(Path.Combine(TargetDirectory, newDocument.FileName));
 
-            var baseSize = slides.Sum(x => x.DocumentByteArray.Length);
-            Assert.InRange(newDocument.DocumentByteArray.Length, 0.9 * baseSize, 1.1 * baseSize);
+            var baseSize = slides.Sum(x => x.DocumentByteArray.Length) + onlyMaster.DocumentByteArray.Length;
+            Assert.InRange(newDocument.DocumentByteArray.Length, 0.85 * baseSize, 1.1 * baseSize);
         }
     }
 }

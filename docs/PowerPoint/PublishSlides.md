@@ -45,3 +45,25 @@ PresentationBuilder.BuildPresentation(sources)
 ```
 
 this code will generate presentation with multiple one-layout masters.
+
+If you want to have full master inside your generated presentation the first slide source should carry this master
+
+```csharp {highlight:['4-7', 14]}
+var presentation = new PmlDocument(sourceFile);
+
+// generate presentation with all masters
+var onlyMasters = PresentationBuilder.BuildPresentation(
+    new List<SlideSource> {
+        new SlideSource(presentation, start:0, count:0, keepMaster:true)
+    });
+
+// publish slides with one-layout masters
+var slides = PresentationBuilder.PublishSlides(presentation);
+
+// compose them together using only master as the first SlideSource
+var sources = new List<SlideSource> {
+    new SlideSource(onlyMaster, keepMaster:true)};
+sources.AddRange(slides.Select(x => new SlideSource(x, keepMaster:false)));
+PresentationBuilder.BuildPresentation(sources)
+    .SaveAs(newFileName);
+```
