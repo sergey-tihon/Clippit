@@ -18,6 +18,12 @@ namespace Clippit.Tests.PowerPoint
             return files.OrderBy(x=>x).Select(path => new[] {path});
         }
 
+        public PresentationBuilderSlidePublishingTests()
+        {
+            if (!Directory.Exists(TargetDirectory))
+                Directory.CreateDirectory(TargetDirectory);
+        }
+
         [Theory(Skip = "Produce same result as PublishUsingPublishSlides but slower")]
         [MemberData(nameof(GetData))]
         public void PublishUsingBuildPresentation(string path)
@@ -75,9 +81,8 @@ namespace Clippit.Tests.PowerPoint
 
             var source = new SlideSource(document, slideNumber - 1, 1, true);
             var slide = PresentationBuilder.BuildPresentation(new List<SlideSource> { source });
-            slide.FileName = document.FileName.Replace(".pptx", $"_{slideNumber:000}.pptx");
 
-            Directory.CreateDirectory(TargetDirectory);
+            slide.FileName = document.FileName.Replace(".pptx", $"_{slideNumber:000}.pptx");
             slide.SaveAs(Path.Combine(TargetDirectory, Path.GetFileName(slide.FileName)));
         }
 
@@ -94,11 +99,37 @@ namespace Clippit.Tests.PowerPoint
             var newDocument = PresentationBuilder.BuildPresentation(sources);
 
             newDocument.FileName = fileName.Replace(".pptx", "_reassembled.pptx");
-            Directory.CreateDirectory(TargetDirectory);
             newDocument.SaveAs(Path.Combine(TargetDirectory, newDocument.FileName));
 
             var baseSize = slides.Sum(x => x.DocumentByteArray.Length);
             Assert.InRange(newDocument.DocumentByteArray.Length, 0.9 * baseSize, 1.1* baseSize);
+        }
+
+        [Theory]
+        [InlineData("BRK3066.pptx")]
+        public void ExtractMasters(string fileName)
+        {
+            var source = new PmlDocument(Path.Combine(SourceDirectory, fileName));
+            int numberOfMasters;
+            using (var stream = new OpenXmlMemoryStreamDocument(source))
+            {
+                using var doc1 = stream.GetPresentationDocument();
+                numberOfMasters = doc1.PresentationPart.SlideMasterParts.Count();
+            }
+
+
+            var onlyMaster =
+                PresentationBuilder.BuildPresentation(
+                    new List<SlideSource> {new SlideSource(source, 0, 0, true)});
+
+            onlyMaster.FileName = fileName.Replace(".pptx", "_masterOnly.pptx");
+            onlyMaster.SaveAs(Path.Combine(TargetDirectory, onlyMaster.FileName));
+
+            using var streamDoc = new OpenXmlMemoryStreamDocument(onlyMaster);
+            using var resDoc = streamDoc.GetPresentationDocument();
+
+            Assert.Empty(resDoc.PresentationPart.SlideParts);
+            Assert.Equal(numberOfMasters, resDoc.PresentationPart.SlideMasterParts.Count());
         }
 
         [Theory]
@@ -110,7 +141,7 @@ namespace Clippit.Tests.PowerPoint
 
             // generate presentation with full master
             var onlyMaster = PresentationBuilder.BuildPresentation(
-                new List<SlideSource> {new SlideSource(document, 0, 1, true)});
+                new List<SlideSource> {new SlideSource(document, 0, 0, true)});
 
             // publish slides with one-layout masters
             var slides = PresentationBuilder.PublishSlides(document);
@@ -121,7 +152,6 @@ namespace Clippit.Tests.PowerPoint
             var newDocument = PresentationBuilder.BuildPresentation(sources);
 
             newDocument.FileName = fileName.Replace(".pptx", "_reassembledWithMaster.pptx");
-            Directory.CreateDirectory(TargetDirectory);
             newDocument.SaveAs(Path.Combine(TargetDirectory, newDocument.FileName));
 
             var baseSize = slides.Sum(x => x.DocumentByteArray.Length);

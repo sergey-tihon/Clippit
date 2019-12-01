@@ -462,11 +462,15 @@ namespace Clippit.PowerPoint
             if (ids.Any())
                 newID = ids.Max() + 1;
             var slideList = sourceDocument.PresentationPart.GetXDocument().Root.Descendants(P.sldId).ToList();
-            if (slideList.Count == 0 && (currentMasterPart == null || keepMaster))
+            if ((slideList.Count == 0 || count == 0) && (currentMasterPart == null || keepMaster))
             {
-                var slideMasterPart = sourceDocument.PresentationPart.SlideMasterParts.FirstOrDefault();
-                if (slideMasterPart != null)
-                    currentMasterPart = CopyMasterSlide(sourceDocument, slideMasterPart, null, newDocument, newPresentation, images, mediaList);
+                foreach (var slideMasterPart in sourceDocument.PresentationPart.SlideMasterParts)
+                {
+                    var masterPart = CopyMasterSlide(sourceDocument, slideMasterPart, null, newDocument,
+                        newPresentation, images, mediaList);
+                    if (currentMasterPart is null)
+                        currentMasterPart = masterPart;
+                }
                 return currentMasterPart;
             }
             while (count > 0 && start < slideList.Count)
