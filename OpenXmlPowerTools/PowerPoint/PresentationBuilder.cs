@@ -246,8 +246,8 @@ namespace Clippit.PowerPoint
             }
 
             // Remove custom properties (source doc metadata irrelevant for generated document)
-            var customPropsDocument = document.CustomFilePropertiesPart.GetXDocument();
-            if (customPropsDocument.Root?.HasElements == true)
+            var customPropsDocument = document.CustomFilePropertiesPart?.GetXDocument();
+            if (customPropsDocument?.Root?.HasElements == true)
             {
                 customPropsDocument.Root?.RemoveNodes();
                 document.CustomFilePropertiesPart.PutXDocument();
@@ -258,7 +258,7 @@ namespace Clippit.PowerPoint
         {
             // A Core File Properties part does not have implicit or explicit relationships to other parts.
             CoreFilePropertiesPart corePart = sourceDocument.CoreFilePropertiesPart;
-            if (corePart?.GetXDocument().Root != null)
+            if (corePart?.GetXDocument().Root is {})
             {
                 newDocument.AddCoreFilePropertiesPart();
                 XDocument newXDoc = newDocument.CoreFilePropertiesPart.GetXDocument();
@@ -1207,41 +1207,45 @@ namespace Clippit.PowerPoint
                 var temp = ManageImageCopy(oldPart, newContentPart, images);
                 if (temp.ImagePart is null)
                 {
-                    var partType = oldPart?.ContentType switch
+                    var contentType = oldPart?.ContentType; //contentType
+                    var targetExtension = oldPart?.ContentType switch
                     {
-                        "image/bmp" => ImagePartType.Bmp,
-                        "image/gif" => ImagePartType.Gif,
-                        "image/png" => ImagePartType.Png,
-                        "image/tiff" => ImagePartType.Tiff,
-                        "image/x-icon" => ImagePartType.Icon,
-                        "image/x-pcx" => ImagePartType.Pcx,
-                        "image/jpeg" => ImagePartType.Jpeg,
-                        "image/x-emf" => ImagePartType.Emf,
-                        "image/x-wmf" => ImagePartType.Wmf,
-                        _ => ImagePartType.Bmp
+                        "image/bmp" => ".bmp",
+                        "image/gif" => ".gif",
+                        "image/png" => ".png",
+                        "image/tiff" => ".tiff",
+                        "image/x-icon" => ".ico",
+                        "image/x-pcx" => ".pcx",
+                        "image/jpeg" => ".jpg",
+                        "image/x-emf" => ".emf",
+                        "image/x-wmf" => ".wmf",
+                        "image/svg+xml" => ".svg",
+                        _ => ".image"
                     };
+                    newContentPart.OpenXmlPackage.PartExtensionProvider
+                        .MakeSurePartExtensionExist(contentType, targetExtension);
 
                     var newPart = newContentPart switch
                     {
-                        ChartDrawingPart part => part.AddImagePart(partType),
-                        ChartPart part => part.AddImagePart(partType),
-                        ChartsheetPart part => part.AddImagePart(partType),
-                        DiagramDataPart part => part.AddImagePart(partType),
-                        DiagramLayoutDefinitionPart part => part.AddImagePart(partType),
-                        DiagramPersistLayoutPart part => part.AddImagePart(partType),
-                        DrawingsPart part => part.AddImagePart(partType),
-                        HandoutMasterPart part => part.AddImagePart(partType),
-                        NotesMasterPart part => part.AddImagePart(partType),
-                        NotesSlidePart part => part.AddImagePart(partType),
-                        RibbonAndBackstageCustomizationsPart part => part.AddImagePart(partType),
-                        RibbonExtensibilityPart part => part.AddImagePart(partType),
-                        SlideLayoutPart part => part.AddImagePart(partType),
-                        SlideMasterPart part => part.AddImagePart(partType),
-                        SlidePart part => part.AddImagePart(partType),
-                        ThemeOverridePart part => part.AddImagePart(partType),
-                        ThemePart part => part.AddImagePart(partType),
-                        VmlDrawingPart part => part.AddImagePart(partType),
-                        WorksheetPart part => part.AddImagePart(partType),
+                        ChartDrawingPart part => part.AddImagePart(contentType),
+                        ChartPart part => part.AddImagePart(contentType),
+                        ChartsheetPart part => part.AddImagePart(contentType),
+                        DiagramDataPart part => part.AddImagePart(contentType),
+                        DiagramLayoutDefinitionPart part => part.AddImagePart(contentType),
+                        DiagramPersistLayoutPart part => part.AddImagePart(contentType),
+                        DrawingsPart part => part.AddImagePart(contentType),
+                        HandoutMasterPart part => part.AddImagePart(contentType),
+                        NotesMasterPart part => part.AddImagePart(contentType),
+                        NotesSlidePart part => part.AddImagePart(contentType),
+                        RibbonAndBackstageCustomizationsPart part => part.AddImagePart(contentType),
+                        RibbonExtensibilityPart part => part.AddImagePart(contentType),
+                        SlideLayoutPart part => part.AddImagePart(contentType),
+                        SlideMasterPart part => part.AddImagePart(contentType),
+                        SlidePart part => part.AddImagePart(contentType),
+                        ThemeOverridePart part => part.AddImagePart(contentType),
+                        ThemePart part => part.AddImagePart(contentType),
+                        VmlDrawingPart part => part.AddImagePart(contentType),
+                        WorksheetPart part => part.AddImagePart(contentType),
                         _ => null
                     };
 
