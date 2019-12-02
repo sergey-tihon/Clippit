@@ -246,8 +246,8 @@ namespace Clippit.PowerPoint
             }
 
             // Remove custom properties (source doc metadata irrelevant for generated document)
-            var customPropsDocument = document.CustomFilePropertiesPart.GetXDocument();
-            if (customPropsDocument.Root?.HasElements == true)
+            var customPropsDocument = document.CustomFilePropertiesPart?.GetXDocument();
+            if (customPropsDocument?.Root?.HasElements == true)
             {
                 customPropsDocument.Root?.RemoveNodes();
                 document.CustomFilePropertiesPart.PutXDocument();
