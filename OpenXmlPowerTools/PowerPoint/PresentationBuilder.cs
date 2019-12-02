@@ -258,7 +258,7 @@ namespace Clippit.PowerPoint
         {
             // A Core File Properties part does not have implicit or explicit relationships to other parts.
             CoreFilePropertiesPart corePart = sourceDocument.CoreFilePropertiesPart;
-            if (corePart?.GetXDocument().Root != null)
+            if (corePart?.GetXDocument().Root is {})
             {
                 newDocument.AddCoreFilePropertiesPart();
                 XDocument newXDoc = newDocument.CoreFilePropertiesPart.GetXDocument();

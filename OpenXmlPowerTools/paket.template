@@ -18,7 +18,7 @@ copyright
 tags
     OpenXML PowerTools PowerPoint Word Excel HTML
 description
-    Unofficial fork of OpenXmlPowerTools with new features
+    Fork of OpenXmlPowerTools with new features
 files
     bin/Release/netstandard2.0/Clippit.dll ==> lib/netstandard2.0
 
