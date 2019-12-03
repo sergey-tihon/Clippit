@@ -1,3 +1,6 @@
+#### 1.1.3 - December 3, 2019
+- Don't rename theme when we extract slides from auto-generated 1-layout master
+
 #### 1.1.2 - December 2, 2019
 - Bug fixes
 
