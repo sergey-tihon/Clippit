@@ -560,9 +560,19 @@ namespace Clippit.PowerPoint
                 newThemePart = newDocument.PresentationPart.AddPart(newThemePart);
             if (sourceLayoutPart is {})
             {
-                var newThemeName = $"{themeName}:{sourceLayoutPart.SlideLayout.CommonSlideData.Name.Value}";
-                oldTheme = new XDocument(oldTheme);
-                oldTheme.Root.Attribute(NoNamespace.name).SetValue(newThemeName);
+                var layoutName = sourceLayoutPart.SlideLayout.CommonSlideData.Name.Value;
+                if (sourceMasterPart.SlideLayoutParts.Count() == 1 &&
+                    themeName.EndsWith(":" + layoutName))
+                {
+                    // sourceMasterPart is 1-layout master with auto-generated theme name
+                    // there is no need to add suffix again and produce new theme/master
+                }
+                else
+                {
+                    var newThemeName = $"{themeName}:{layoutName}";
+                    oldTheme = new XDocument(oldTheme);
+                    oldTheme.Root.Attribute(NoNamespace.name).SetValue(newThemeName);
+                }
             }
 
             newThemePart.PutXDocument(oldTheme);
