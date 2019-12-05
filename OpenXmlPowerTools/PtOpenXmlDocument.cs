@@ -601,26 +601,30 @@ namespace Clippit
             return DocPackage;
         }
 
-        public WordprocessingDocument GetWordprocessingDocument()
+        public WordprocessingDocument GetWordprocessingDocument(OpenSettings openSettings = null)
         {
             try
             {
                 if (GetDocumentType() != typeof(WordprocessingDocument))
                     throw new PowerToolsDocumentException("Not a Wordprocessing document.");
-                return WordprocessingDocument.Open(DocPackage);
+                return openSettings is null
+                    ? WordprocessingDocument.Open(DocPackage)
+                    : WordprocessingDocument.Open(DocPackage, openSettings);
             }
             catch (Exception e)
             {
                 throw new PowerToolsDocumentException(e.Message);
             }
         }
-        public SpreadsheetDocument GetSpreadsheetDocument()
+        public SpreadsheetDocument GetSpreadsheetDocument(OpenSettings openSettings = null)
         {
             try
             {
                 if (GetDocumentType() != typeof(SpreadsheetDocument))
                     throw new PowerToolsDocumentException("Not a Spreadsheet document.");
-                return SpreadsheetDocument.Open(DocPackage);
+                return openSettings is null
+                    ? SpreadsheetDocument.Open(DocPackage)
+                    : SpreadsheetDocument.Open(DocPackage, openSettings);
             }
             catch (Exception e)
             {
@@ -628,13 +632,15 @@ namespace Clippit
             }
         }
 
-        public PresentationDocument GetPresentationDocument()
+        public PresentationDocument GetPresentationDocument(OpenSettings openSettings=null)
         {
             try
             {
                 if (GetDocumentType() != typeof(PresentationDocument))
                     throw new PowerToolsDocumentException("Not a Presentation document.");
-                return PresentationDocument.Open(DocPackage);
+                return openSettings is null
+                    ? PresentationDocument.Open(DocPackage)
+                    : PresentationDocument.Open(DocPackage, openSettings);
             }
             catch (Exception e)
             {
