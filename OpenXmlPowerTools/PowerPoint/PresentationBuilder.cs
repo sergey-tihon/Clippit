@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
+using Presentation = DocumentFormat.OpenXml.Presentation;
 
 namespace Clippit.PowerPoint
 {
@@ -121,6 +122,7 @@ namespace Clippit.PowerPoint
                 CopyPresentationParts(srcDoc, output, images, mediaList);
                 AppendSlides(srcDoc, output, slideNumber, 1,
                     true, false, null, images, mediaList);
+                ExtractSlideTitle(output);
             }
             catch (PresentationBuilderInternalException dbie)
             {
@@ -287,6 +289,28 @@ namespace Clippit.PowerPoint
                 newXDoc.Declaration.Encoding = "UTF-8";
                 newXDoc.Add(customPart.GetXDocument().Root);
             }
+        }
+
+        private static void ExtractSlideTitle(PresentationDocument slideDocument)
+        {
+            var slidePart = slideDocument.PresentationPart.SlideParts.First();
+
+            var titleShape =
+                slidePart.Slide.CommonSlideData.ShapeTree
+                    .Descendants<Presentation.Shape>()
+                    .FirstOrDefault(shape =>
+                        shape.NonVisualShapeProperties
+                                ?.ApplicationNonVisualDrawingProperties
+                                ?.PlaceholderShape?.Type?.Value switch
+                            {
+                                Presentation.PlaceholderValues.Title => true,
+                                Presentation.PlaceholderValues.CenteredTitle => true,
+                                _ => false
+                            });
+
+            var title = titleShape?.InnerText;
+            if (!string.IsNullOrWhiteSpace(title))
+                slideDocument.PackageProperties.Title = title;
         }
 
 #if false
