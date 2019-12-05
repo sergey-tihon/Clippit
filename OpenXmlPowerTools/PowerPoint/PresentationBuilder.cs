@@ -117,10 +117,11 @@ namespace Clippit.PowerPoint
 
             List<ImageData> images = new List<ImageData>();
             List<MediaData> mediaList = new List<MediaData>();
-            XDocument mainPart = output.PresentationPart.GetXDocument();
-            mainPart.Declaration.Standalone = "yes";
-            mainPart.Declaration.Encoding = "UTF-8";
-            output.PresentationPart.PutXDocument(new XDocument(mainPart));
+            output.PresentationPart.PutXDocument(
+                new XDocument(output.PresentationPart.GetXDocument())
+                {
+                    Declaration = {Standalone = "yes", Encoding = "UTF-8"}
+                });
 
             CopyStartingParts(srcDoc, output);
 
