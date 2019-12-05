@@ -1,3 +1,8 @@
+#### 1.1.4 - December 6, 2019
+- Slide title extracted and saved to document title [#10](https://github.com/sergey-tihon/Clippit/pull/10)
+- Ensured that Modified date is propagated
+- Compiled and tested on .NET Core 3.1 [#9](https://github.com/sergey-tihon/Clippit/pull/9)
+
 #### 1.1.3 - December 3, 2019
 - Don't rename theme when we extract slides from auto-generated 1-layout master
 
