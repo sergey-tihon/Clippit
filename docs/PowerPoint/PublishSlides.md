@@ -18,6 +18,7 @@ This is fully managed alternative of [Presentation.PublishSlides](https://docs.m
 1. All extracted slides are marked as visible (even if they were hidden in the source presentation)
 1. Generated slides contain only one master with only one used layout (master will be renamed). Behavior is similar to `Presentation.PublishSlides` and allow to dramatically decrease total size of generated slides.
 1. `PublishSlides` is up to `6x` times faster than `BuildPresentation` for the same task (Because we open source presentation only once)
+1. Slide title promoted to generated presentation title (when layout has slide). Last modified date propagated from source document.
 
 ## Publishing sample
 

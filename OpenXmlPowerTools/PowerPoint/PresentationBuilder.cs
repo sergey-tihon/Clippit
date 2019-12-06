@@ -5,8 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
+using Presentation = DocumentFormat.OpenXml.Presentation;
+using Drawing = DocumentFormat.OpenXml.Drawing;
 
 namespace Clippit.PowerPoint
 {
@@ -82,21 +85,26 @@ namespace Clippit.PowerPoint
         public static IEnumerable<PmlDocument> PublishSlides(PmlDocument src)
         {
             using var streamSrcDoc = new OpenXmlMemoryStreamDocument(src);
-            using var srcDoc = streamSrcDoc.GetPresentationDocument();
+            using var srcDoc = streamSrcDoc.GetPresentationDocument(new OpenSettings { AutoSave = false});
 
             var slideList = srcDoc.PresentationPart.GetXDocument().Root.Descendants(P.sldId).ToList();
-            for (var i=0; i<slideList.Count; i++)
+            for (var slideNumber = 0; slideNumber < slideList.Count; slideNumber++)
             {
                 using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument();
                 using var output = streamDoc.GetPresentationDocument();
 
-                ExtractSlide(srcDoc, i, output);
+                ExtractSlide(srcDoc, slideNumber, output);
+
+                var slidePartId = slideList.ElementAt(slideNumber).Attribute(R.id)?.Value;
+                var slidePart = (SlidePart)srcDoc.PresentationPart.GetPartById(slidePartId);
+                output.PackageProperties.Title = GetSlideTitle(slidePart);
+
                 output.Close();
 
                 var slideDoc = streamDoc.GetModifiedPmlDocument();
                 if (src.FileName is {} fileName)
                 {
-                    slideDoc.FileName = fileName.Replace(".pptx", $"_{i + 1:000}.pptx");
+                    slideDoc.FileName = fileName.Replace(".pptx", $"_{slideNumber + 1:000}.pptx");
                 }
 
                 yield return slideDoc;
@@ -109,10 +117,11 @@ namespace Clippit.PowerPoint
 
             List<ImageData> images = new List<ImageData>();
             List<MediaData> mediaList = new List<MediaData>();
-            XDocument mainPart = output.PresentationPart.GetXDocument();
-            mainPart.Declaration.Standalone = "yes";
-            mainPart.Declaration.Encoding = "UTF-8";
-            output.PresentationPart.PutXDocument();
+            output.PresentationPart.PutXDocument(
+                new XDocument(output.PresentationPart.GetXDocument())
+                {
+                    Declaration = {Standalone = "yes", Encoding = "UTF-8"}
+                });
 
             CopyStartingParts(srcDoc, output);
 
@@ -152,24 +161,23 @@ namespace Clippit.PowerPoint
 
             var sourceNum = 0;
             SlideMasterPart currentMasterPart = null;
+            var openSettings = new OpenSettings {AutoSave = false};
             foreach (SlideSource source in sources)
             {
-                using (var streamDoc = new OpenXmlMemoryStreamDocument(source.PmlDocument))
+                using var streamDoc = new OpenXmlMemoryStreamDocument(source.PmlDocument);
+                using var doc = streamDoc.GetPresentationDocument(openSettings);
+                try
                 {
-                    using var doc = streamDoc.GetPresentationDocument();
-                    try
-                    {
-                        if (sourceNum == 0)
-                            CopyPresentationParts(doc, output, images, mediaList);
-                        currentMasterPart = AppendSlides(doc, output, source.Start, source.Count,
-                            source.KeepMaster, true, currentMasterPart, images, mediaList);
-                    }
-                    catch (PresentationBuilderInternalException dbie)
-                    {
-                        if (dbie.Message.Contains("{0}"))
-                            throw new PresentationBuilderException(string.Format(dbie.Message, sourceNum));
-                        throw dbie;
-                    }
+                    if (sourceNum == 0)
+                        CopyPresentationParts(doc, output, images, mediaList);
+                    currentMasterPart = AppendSlides(doc, output, source.Start, source.Count,
+                        source.KeepMaster, true, currentMasterPart, images, mediaList);
+                }
+                catch (PresentationBuilderInternalException dbie)
+                {
+                    if (dbie.Message.Contains("{0}"))
+                        throw new PresentationBuilderException(string.Format(dbie.Message, sourceNum));
+                    throw dbie;
                 }
 
                 sourceNum++;
@@ -266,16 +274,18 @@ namespace Clippit.PowerPoint
                 newXDoc.Declaration.Encoding = "UTF-8";
                 XDocument sourceXDoc = corePart.GetXDocument();
                 newXDoc.Add(sourceXDoc.Root);
+                newDocument.CoreFilePropertiesPart.PutXDocument();
             }
 
             // An application attributes part does not have implicit or explicit relationships to other parts.
             if (sourceDocument.ExtendedFilePropertiesPart is {} extPart)
             {
-                OpenXmlPart newPart = newDocument.AddExtendedFilePropertiesPart();
+                newDocument.AddExtendedFilePropertiesPart();
                 XDocument newXDoc = newDocument.ExtendedFilePropertiesPart.GetXDocument();
                 newXDoc.Declaration.Standalone = "yes";
                 newXDoc.Declaration.Encoding = "UTF-8";
                 newXDoc.Add(extPart.GetXDocument().Root);
+                newDocument.ExtendedFilePropertiesPart.PutXDocument();
             }
 
             // An custom file properties part does not have implicit or explicit relationships to other parts.
@@ -286,7 +296,43 @@ namespace Clippit.PowerPoint
                 newXDoc.Declaration.Standalone = "yes";
                 newXDoc.Declaration.Encoding = "UTF-8";
                 newXDoc.Add(customPart.GetXDocument().Root);
+                newDocument.CustomFilePropertiesPart.PutXDocument();
             }
+
+        }
+
+        private static string GetSlideTitle(SlidePart slidePart)
+        {
+            var titleShapes =
+                slidePart.Slide.CommonSlideData.ShapeTree
+                    .Descendants<Presentation.Shape>()
+                    .Where(shape =>
+                        shape.NonVisualShapeProperties
+                                ?.ApplicationNonVisualDrawingProperties
+                                ?.PlaceholderShape?.Type?.Value switch
+                            {
+                                Presentation.PlaceholderValues.Title => true,
+                                Presentation.PlaceholderValues.CenteredTitle => true,
+                                _ => false
+                            })
+                    .ToList();
+
+            var paragraphText = new StringBuilder();
+            foreach (var shape in titleShapes)
+            {
+                // Get the text in each paragraph in this shape.
+                foreach (var paragraph in shape.TextBody.Descendants<Drawing.Paragraph>())
+                {
+                    foreach (var text in paragraph.Descendants<Drawing.Text>())
+                    {
+                        paragraphText.Append(text.Text);
+                    }
+                    //if (paragraphText.Length > 0)
+                    //    paragraphText.Append(Environment.NewLine);
+                }
+            }
+
+            return paragraphText.ToString().Trim();
         }
 
 #if false

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Clippit.PowerPoint;
+using DocumentFormat.OpenXml.Packaging;
 using Xunit;
 
 namespace Clippit.Tests.PowerPoint
@@ -24,52 +25,40 @@ namespace Clippit.Tests.PowerPoint
                 Directory.CreateDirectory(TargetDirectory);
         }
 
-        [Theory(Skip = "Produce same result as PublishUsingPublishSlides but slower")]
-        [MemberData(nameof(GetData))]
-        public void PublishUsingBuildPresentation(string path)
-        {
-            GenerateSlides("BuildPresentation", path, document =>
-            {
-                int slideCount;
-
-                using (var streamSrcDoc = new OpenXmlMemoryStreamDocument(document)) {
-                    using var srcDoc = streamSrcDoc.GetPresentationDocument();
-                    slideCount = srcDoc.PresentationPart.Presentation.SlideIdList.ChildElements.Count;
-                }
-
-                var slides = new List<PmlDocument>(slideCount);
-                for (var i = 0; i < slideCount; i++)
-                {
-                    var source = new SlideSource(document, i, 1, true);
-                    var slide = PresentationBuilder.BuildPresentation(new List<SlideSource> { source });
-                    slide.FileName = document.FileName.Replace(".pptx", $"_{i + 1:000}.pptx");
-                    slides.Add(slide);
-                }
-
-                return slides;
-            });
-        }
-
         [Theory]
         [MemberData(nameof(GetData))]
-        public void PublishUsingPublishSlides(string path)
+        public void PublishUsingPublishSlides(string sourcePath)
         {
-            GenerateSlides("PublishSlides", path, PresentationBuilder.PublishSlides);
-        }
-
-        private static void GenerateSlides(string subDirName, string sourcePath,
-            Func<PmlDocument, IEnumerable<PmlDocument>> slideGenerator)
-        {
-            var targetDir = Path.Combine(TargetDirectory, Path.GetFileNameWithoutExtension(sourcePath), subDirName);
+            var targetDir = Path.Combine(TargetDirectory, Path.GetFileNameWithoutExtension(sourcePath));
             if (Directory.Exists(targetDir))
                 Directory.Delete(targetDir, true);
             Directory.CreateDirectory(targetDir);
 
             var document = new PmlDocument(sourcePath);
-            foreach (var slide in slideGenerator(document))
+
+            string title;
+            DateTime? modified;
+            using (var streamDoc = new OpenXmlMemoryStreamDocument(document))
+            {
+                using var srcDoc = streamDoc.GetPresentationDocument(new OpenSettings { AutoSave = false });
+                title = srcDoc.PackageProperties.Title;
+                modified = srcDoc.PackageProperties.Modified;
+            }
+
+            var sameTitle = 0;
+            foreach (var slide in PresentationBuilder.PublishSlides(document))
             {
                 slide.SaveAs(Path.Combine(targetDir, Path.GetFileName(slide.FileName)));
+
+                using var streamDoc = new OpenXmlMemoryStreamDocument(slide);
+                using var slideDoc = streamDoc.GetPresentationDocument(new OpenSettings {AutoSave = false});
+
+                Assert.Equal(modified, slideDoc.PackageProperties.Modified);
+
+                if (title.Equals(slideDoc.PackageProperties.Title))
+                    sameTitle++;
             }
+            Assert.InRange(sameTitle, 0,4);
         }
 
         [Theory]
