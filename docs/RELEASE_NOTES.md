@@ -1,3 +1,6 @@
+#### 1.2.0 - March 12, 2020
+- DocumentFormat.OpenXml (2.10.1)
+
 #### 1.1.4 - December 6, 2019
 - Slide title extracted and saved to document title [#10](https://github.com/sergey-tihon/Clippit/pull/10)
 - Ensured that Modified date is propagated
