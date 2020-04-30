@@ -1427,6 +1427,10 @@ namespace Clippit.HtmlToWml
                     throw new OpenXmlPowerToolsException("Internal error");
                 newPtSize = (unit == CssUnit.EM) ? decFontSize * decValue : decFontSize * decValue / 2;
             }
+            else if (unit == CssUnit.REM)
+            {
+                newPtSize = settings.DefaultFontSize * decValue;
+            }
             else
             {
                 if (unit == null && decValue == 0d)
@@ -1515,6 +1519,10 @@ namespace Clippit.HtmlToWml
                     newPtSize = ptSize / 2 * decValue;
                 if (unit == CssUnit.Percent)
                     newPtSize = ptSize * decValue / 100d;
+            }
+            else if (unit == CssUnit.REM)
+            {
+                newPtSize = settings.DefaultFontSize * decValue;
             }
             else
             {
