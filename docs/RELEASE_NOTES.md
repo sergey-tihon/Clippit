@@ -1,4 +1,4 @@
-#### 1.2.1 - May 22, 2020
+#### 1.2.1 - May 2, 2020
 * HTML to WML: Allow font-size with unit rem (#13)[https://github.com/sergey-tihon/Clippit/pull/13]
 
 #### 1.2.0 - March 12, 2020
