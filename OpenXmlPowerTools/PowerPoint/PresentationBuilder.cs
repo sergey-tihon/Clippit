@@ -372,21 +372,17 @@ namespace Clippit.PowerPoint
                 XElement newFontLst = new XElement(P.embeddedFontLst);
                 foreach (var font in oldPresentationDoc.Root.Element(P.embeddedFontLst).Elements(P.embeddedFont))
                 {
-                    XElement newRegular = null, newBold = null, newItalic = null, newBoldItalic = null;
+                    var newEmbeddedFont = new XElement(P.embeddedFont, font.Elements(P.font));
+
                     if (font.Element(P.regular) is {})
-                        newRegular = CreatedEmbeddedFontPart(sourceDocument, newDocument, font, P.regular);
+                        newEmbeddedFont.Add(CreateEmbeddedFontPart(sourceDocument, newDocument, font, P.regular));
                     if (font.Element(P.bold) is {})
-                        newBold = CreatedEmbeddedFontPart(sourceDocument, newDocument, font, P.bold);
+                        newEmbeddedFont.Add(CreateEmbeddedFontPart(sourceDocument, newDocument, font, P.bold));
                     if (font.Element(P.italic) is {})
-                        newItalic = CreatedEmbeddedFontPart(sourceDocument, newDocument, font, P.italic);
+                        newEmbeddedFont.Add(CreateEmbeddedFontPart(sourceDocument, newDocument, font, P.italic));
                     if (font.Element(P.boldItalic) is {})
-                        newBoldItalic = CreatedEmbeddedFontPart(sourceDocument, newDocument, font, P.boldItalic);
-                    XElement newEmbeddedFont = new XElement(P.embeddedFont,
-                        font.Elements(P.font),
-                        newRegular,
-                        newBold,
-                        newItalic,
-                        newBoldItalic);
+                        newEmbeddedFont.Add(CreateEmbeddedFontPart(sourceDocument, newDocument, font, P.boldItalic));
+
                     newFontLst.Add(newEmbeddedFont);
                 }
                 newPresentation.Root.Add(newFontLst);
@@ -478,20 +474,26 @@ namespace Clippit.PowerPoint
         };
 
 
-        private static XElement CreatedEmbeddedFontPart(PresentationDocument sourceDocument, PresentationDocument newDocument, XElement font, XName fontXName)
+        private static XElement CreateEmbeddedFontPart(PresentationDocument sourceDocument, PresentationDocument newDocument, XElement font, XName fontXName)
         {
-            FontPart oldFontPart = (FontPart)sourceDocument.PresentationPart.GetPartById((string)font.Element(fontXName).Attributes(R.id).FirstOrDefault());
-            var fpt = oldFontPart.ContentType switch
+            var oldFontPartId = (string)font.Element(fontXName).Attributes(R.id).FirstOrDefault();
+            if (!sourceDocument.PresentationPart.TryGetPartById(oldFontPartId, out var oldFontPart))
+                return null;
+            if (!(oldFontPart is FontPart))
+                throw new FormatException($"Part {oldFontPartId} is not {nameof(FontPart)}");
+
+            var fontPartType = oldFontPart.ContentType switch
             {
                 "application/x-fontdata" => FontPartType.FontData,
                 "application/x-font-ttf" => FontPartType.FontTtf,
                 _ => FontPartType.FontOdttf
             };
-            var newId = NewRelationshipId();
-            var newFontPart = newDocument.PresentationPart.AddFontPart(fpt, newId);
+
+            var newFontPartId = NewRelationshipId();
+            var newFontPart = newDocument.PresentationPart.AddFontPart(fontPartType, newFontPartId);
             using (var stream = oldFontPart.GetStream())
                 newFontPart.FeedData(stream);
-            return new XElement(fontXName, new XAttribute(R.id, newId));
+            return new XElement(fontXName, new XAttribute(R.id, newFontPartId));
         }
 
         private static SlideMasterPart AppendSlides(
