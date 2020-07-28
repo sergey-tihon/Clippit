@@ -546,7 +546,8 @@ namespace Clippit.PowerPoint
                     NotesSlidePart newPart = newSlide.AddNewPart<NotesSlidePart>();
                     newPart.PutXDocument(notesSlide.GetXDocument());
                     newPart.AddPart(newSlide);
-                    newPart.AddPart(newDocument.PresentationPart.NotesMasterPart);
+                    if (newDocument.PresentationPart.NotesMasterPart is {})
+                        newPart.AddPart(newDocument.PresentationPart.NotesMasterPart);
                     AddRelationships(notesSlide, newPart, new[] { newPart.GetXDocument().Root });
                     CopyRelatedPartsForContentParts(newDocument, slide.NotesSlidePart, newPart, new[] { newPart.GetXDocument().Root }, images, mediaList);
                 }
