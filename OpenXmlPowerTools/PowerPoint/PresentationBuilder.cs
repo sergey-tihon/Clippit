@@ -579,11 +579,11 @@ namespace Clippit.PowerPoint
         {
             // Search for existing master slide with same theme name
             XDocument oldTheme = sourceMasterPart.ThemePart.GetXDocument();
-            var themeName = oldTheme.Root.Attribute(NoNamespace.name).Value;
+            var themeName = oldTheme.Root.Attribute(NoNamespace.name)?.Value ?? "noname";
             foreach (var master in newDocument.PresentationPart.GetPartsOfType<SlideMasterPart>())
             {
                 var themeDoc = master.ThemePart.GetXDocument();
-                if (themeDoc.Root.Attribute(NoNamespace.name).Value == themeName)
+                if (themeDoc.Root.Attribute(NoNamespace.name)?.Value == themeName)
                     return master;
             }
 
@@ -621,7 +621,7 @@ namespace Clippit.PowerPoint
                 {
                     var newThemeName = $"{themeName}:{layoutName}";
                     oldTheme = new XDocument(oldTheme);
-                    oldTheme.Root.Attribute(NoNamespace.name).SetValue(newThemeName);
+                    oldTheme.Root.SetAttributeValue(NoNamespace.name, newThemeName);
                 }
             }
 
