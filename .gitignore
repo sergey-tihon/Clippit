@@ -42,5 +42,6 @@ TestResults/
 _ReSharper.Caches/
 
 .fake/
+.paket/
 AssemblyInfo.Generated.cs
 TestFiles/PublishSlides/output/

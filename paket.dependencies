@@ -1,11 +1,12 @@
 source https://api.nuget.org/v3/index.json
 
 storage: none
-framework: netcore3.1, netstandard2.0
+framework: netcore3.1, netstandard2.0, net461
 
 nuget DocumentFormat.OpenXml
 nuget System.Drawing.Common
 
+nuget Microsoft.NETFramework.ReferenceAssemblies
 nuget Microsoft.NET.Test.Sdk
 nuget xunit
 nuget xunit.runner.console
