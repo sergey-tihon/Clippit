@@ -82,11 +82,11 @@ namespace Clippit.PowerPoint
             return streamDoc.GetModifiedPmlDocument();
         }
 
-        public static IEnumerable<PmlDocument> PublishSlides(PmlDocument src)
+        public static IList<PmlDocument> PublishSlides(PmlDocument src)
         {
             using var streamSrcDoc = new OpenXmlMemoryStreamDocument(src);
             using var srcDoc = streamSrcDoc.GetPresentationDocument(new OpenSettings {AutoSave = false});
-            return PublishSlides(srcDoc, src.FileName);
+            return PublishSlides(srcDoc, src.FileName).ToList();
         }
 
         public static IEnumerable<PmlDocument> PublishSlides(PresentationDocument srcDoc, string fileName)
