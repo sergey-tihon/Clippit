@@ -85,8 +85,12 @@ namespace Clippit.PowerPoint
         public static IEnumerable<PmlDocument> PublishSlides(PmlDocument src)
         {
             using var streamSrcDoc = new OpenXmlMemoryStreamDocument(src);
-            using var srcDoc = streamSrcDoc.GetPresentationDocument(new OpenSettings { AutoSave = false});
+            using var srcDoc = streamSrcDoc.GetPresentationDocument(new OpenSettings {AutoSave = false});
+            return PublishSlides(srcDoc, src.FileName);
+        }
 
+        public static IEnumerable<PmlDocument> PublishSlides(PresentationDocument srcDoc, string fileName)
+        {
             var slideList = srcDoc.PresentationPart.GetXDocument().Root.Descendants(P.sldId).ToList();
             for (var slideNumber = 0; slideNumber < slideList.Count; slideNumber++)
             {
@@ -102,7 +106,7 @@ namespace Clippit.PowerPoint
                 output.Close();
 
                 var slideDoc = streamDoc.GetModifiedPmlDocument();
-                if (src.FileName is {} fileName)
+                if (!string.IsNullOrWhiteSpace(fileName))
                 {
                     slideDoc.FileName = fileName.Replace(".pptx", $"_{slideNumber + 1:000}.pptx");
                 }

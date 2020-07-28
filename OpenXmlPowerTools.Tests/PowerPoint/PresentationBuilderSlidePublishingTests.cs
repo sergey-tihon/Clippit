@@ -34,19 +34,15 @@ namespace Clippit.Tests.PowerPoint
                 Directory.Delete(targetDir, true);
             Directory.CreateDirectory(targetDir);
 
-            var document = new PmlDocument(sourcePath);
+            using var srcStream = File.Open(sourcePath, FileMode.Open);
+            var openSettings = new OpenSettings {AutoSave = false};
+            using var srcDoc = OpenXmlExtensions.OpenPresentation(srcStream, false, openSettings);
 
-            string title;
-            DateTime? modified;
-            using (var streamDoc = new OpenXmlMemoryStreamDocument(document))
-            {
-                using var srcDoc = streamDoc.GetPresentationDocument(new OpenSettings { AutoSave = false });
-                title = srcDoc.PackageProperties.Title;
-                modified = srcDoc.PackageProperties.Modified;
-            }
+            var title = srcDoc.PackageProperties.Title;
+            var modified = srcDoc.PackageProperties.Modified;
 
             var sameTitle = 0;
-            foreach (var slide in PresentationBuilder.PublishSlides(document))
+            foreach (var slide in PresentationBuilder.PublishSlides(srcDoc, sourcePath))
             {
                 slide.SaveAs(Path.Combine(targetDir, Path.GetFileName(slide.FileName)));
 
