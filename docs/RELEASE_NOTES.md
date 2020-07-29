@@ -1,5 +1,6 @@
-#### 1.2.3 - July 22, 2020
+#### 1.3.0 - July 29, 2020
 - DocumentFormat.OpenXml (2.11.3)
+- Bug Fixes for PresentationBuilder [#16](https://github.com/sergey-tihon/Clippit/pull/16)
 
 #### 1.2.1 - May 2, 2020
 - HTML to WML: Allow font-size with unit rem [#13](https://github.com/sergey-tihon/Clippit/pull/13)

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using Presentation = DocumentFormat.OpenXml.Presentation;
@@ -1083,19 +1084,29 @@ namespace Clippit.PowerPoint
                             _ => null
                         };
 
-                        XDocument xd = new XDocument(vmlPart.GetXDocument());
-                        foreach (var item in xd.Descendants(O.ink))
+                        try
                         {
-                            if (item.Attribute("i") is {} attr)
+                            XDocument xd = new XDocument(vmlPart.GetXDocument());
+                            foreach (var item in xd.Descendants(O.ink))
                             {
-                                var i = attr.Value;
-                                i = i.Replace(" ", "\r\n");
-                                attr.Value = i;
+                                if (item.Attribute("i") is {} attr)
+                                {
+                                    var i = attr.Value;
+                                    i = i.Replace(" ", "\r\n");
+                                    attr.Value = i;
+                                }
                             }
+                            newVmlPart.PutXDocument(xd);
+
+                            AddRelationships(vmlPart, newVmlPart, new[] { newVmlPart.GetXDocument().Root });
+                            CopyRelatedPartsForContentParts(newDocument, vmlPart, newVmlPart, new[] { newVmlPart.GetXDocument().Root }, images, mediaList);
                         }
-                        newVmlPart.PutXDocument(xd);
-                        AddRelationships(vmlPart, newVmlPart, new[] { newVmlPart.GetXDocument().Root });
-                        CopyRelatedPartsForContentParts(newDocument, vmlPart, newVmlPart, new[] { newVmlPart.GetXDocument().Root }, images, mediaList);
+                        catch (XmlException)
+                        {
+                            using var srcStream = vmlPart.GetStream();
+                            using var dstStream = newVmlPart.GetStream(FileMode.Create, FileAccess.Write);
+                            srcStream.CopyTo(dstStream);
+                        }
                     }
                 }
             }
