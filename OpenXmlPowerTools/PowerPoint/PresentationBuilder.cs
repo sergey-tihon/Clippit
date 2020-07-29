@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using Presentation = DocumentFormat.OpenXml.Presentation;
@@ -108,7 +109,8 @@ namespace Clippit.PowerPoint
                 var slideDoc = streamDoc.GetModifiedPmlDocument();
                 if (!string.IsNullOrWhiteSpace(fileName))
                 {
-                    slideDoc.FileName = fileName.Replace(".pptx", $"_{slideNumber + 1:000}.pptx");
+                    slideDoc.FileName =
+                        Regex.Replace(fileName, ".pptx", $"_{slideNumber + 1:000}.pptx", RegexOptions.IgnoreCase);
                 }
 
                 yield return slideDoc;
@@ -591,7 +593,7 @@ namespace Clippit.PowerPoint
             }
 
             var newMaster = newDocument.PresentationPart.AddNewPart<SlideMasterPart>();
-            var sourceMaster = new XDocument(sourceMasterPart.GetXDocument());
+            var newMasterDoc = new XDocument(sourceMasterPart.GetXDocument());
 
             // Add to presentation slide master list, need newID for layout IDs also
             uint newID = 2147483648;
@@ -642,21 +644,21 @@ namespace Clippit.PowerPoint
                 newLayout.AddPart(newMaster);
 
                 var resID = sourceMasterPart.GetIdOfPart(layoutPart);
-                var entry = sourceMaster.Root.Descendants(P.sldLayoutId).FirstOrDefault(f => f.Attribute(R.id).Value == resID);
+                var entry = newMasterDoc.Root.Descendants(P.sldLayoutId).FirstOrDefault(f => f.Attribute(R.id).Value == resID);
 
-                entry.Attribute(R.id).SetValue(newMaster.GetIdOfPart(newLayout));
+                entry.SetAttributeValue(R.id, newMaster.GetIdOfPart(newLayout));
                 entry.SetAttributeValue(NoNamespace.id, newID.ToString());
                 newID++;
 
                 if (sourceLayoutPart is {})
                 {
                     // Remove sldLayoutId for layouts that we do not import
-                    sourceMaster.Root.Descendants(P.sldLayoutId)
-                        .Where(x=>x != entry).ToList()
-                        .ForEach(e=>e.Remove());
+                    newMasterDoc.Root.Descendants(P.sldLayoutId)
+                        .Where(x => x != entry).ToList()
+                        .ForEach(e => e.Remove());
                 }
             }
-            newMaster.PutXDocument(sourceMaster);
+            newMaster.PutXDocument(newMasterDoc);
             AddRelationships(sourceMasterPart, newMaster, new[] { newMaster.GetXDocument().Root });
             CopyRelatedPartsForContentParts(newDocument, sourceMasterPart, newMaster, new[] { newMaster.GetXDocument().Root }, images, mediaList);
 
@@ -1081,7 +1083,7 @@ namespace Clippit.PowerPoint
                             _ => null
                         };
 
-                        XDocument xd = vmlPart.GetXDocument();
+                        XDocument xd = new XDocument(vmlPart.GetXDocument());
                         foreach (var item in xd.Descendants(O.ink))
                         {
                             if (item.Attribute("i") is {} attr)
@@ -1270,8 +1272,8 @@ namespace Clippit.PowerPoint
                 var temp = ManageImageCopy(oldPart, newContentPart, images);
                 if (temp.ImagePart is null)
                 {
-                    var contentType = oldPart?.ContentType; //contentType
-                    var targetExtension = oldPart?.ContentType switch
+                    var contentType = oldPart?.ContentType;
+                    var targetExtension = contentType switch
                     {
                         "image/bmp" => ".bmp",
                         "image/gif" => ".gif",
@@ -1317,7 +1319,7 @@ namespace Clippit.PowerPoint
                     temp.AddContentPartRelTypeResourceIdTupple(newContentPart, newPart.RelationshipType, id);
 
                     temp.WriteImage(newPart);
-                    imageReference.Attribute(attributeName).Set(id);
+                    imageReference.SetAttributeValue(attributeName, id);
                 }
                 else
                 {
@@ -1335,14 +1337,14 @@ namespace Clippit.PowerPoint
                         var relationshipId = temp.ContentPartRelTypeIdList
                             .First(cpr => cpr.ContentPart == newContentPart && cpr.RelationshipId == refRel.Id)
                             .RelationshipId;
-                        imageReference.Attribute(attributeName).Set(relationshipId);
+                        imageReference.SetAttributeValue(attributeName, relationshipId);
                         return;
                     }
 
                     var cpr2 = temp.ContentPartRelTypeIdList.FirstOrDefault(c => c.ContentPart == newContentPart);
                     if (cpr2 is {})
                     {
-                        imageReference.Attribute(attributeName).Set(cpr2.RelationshipId);
+                        imageReference.SetAttributeValue(attributeName, cpr2.RelationshipId);
                     }
                     else
                     {
@@ -1350,7 +1352,7 @@ namespace Clippit.PowerPoint
                         var existingImagePart = newContentPart.AddPart<ImagePart>(imagePart);
                         var newId = newContentPart.GetIdOfPart(existingImagePart);
                         temp.AddContentPartRelTypeResourceIdTupple(newContentPart, imagePart.RelationshipType, newId);
-                        imageReference.Attribute(attributeName).Set(newId);
+                        imageReference.SetAttributeValue(attributeName, newId);
                     }
 
                 }
@@ -1361,7 +1363,7 @@ namespace Clippit.PowerPoint
                 if (er is {})
                 {
                     var newEr = newContentPart.AddExternalRelationship(er.RelationshipType, er.Uri);
-                    imageReference.Attribute(R.id).Set(newEr.Id);
+                    imageReference.SetAttributeValue(R.id, newEr.Id);
                 }
                 else
                 {
