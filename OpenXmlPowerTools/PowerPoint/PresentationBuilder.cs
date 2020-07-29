@@ -1367,10 +1367,13 @@ namespace Clippit.PowerPoint
                 }
                 else
                 {
-                    var fromPart = newContentPart.OpenXmlPackage.Package.GetParts().FirstOrDefault(p => p.Uri == newContentPart.Uri);
-                    fromPart?.CreateRelationship(new Uri("NULL", UriKind.RelativeOrAbsolute),
-                        System.IO.Packaging.TargetMode.Internal,
-                        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image", relId);
+                    var newPart = newContentPart.OpenXmlPackage.Package.GetParts().FirstOrDefault(p => p.Uri == newContentPart.Uri);
+                    if (newPart?.RelationshipExists(relId) == false)
+                    {
+                        newPart.CreateRelationship(new Uri("NULL", UriKind.RelativeOrAbsolute),
+                            System.IO.Packaging.TargetMode.Internal,
+                            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image", relId);
+                    }
                 }
             }
         }
