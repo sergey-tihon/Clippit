@@ -20,7 +20,7 @@ namespace Clippit
             return DocumentBuilder.SplitOnSections(this);
         }
     }
-    public interface ISource
+    public interface ISource : ICloneable
     {
         WmlDocument WmlDocument { get; set; }
 
@@ -181,6 +181,13 @@ namespace Clippit
                 .Take(Count)
                 .ToList();
         }
+
+        public object Clone() =>
+            new Source(WmlDocument, Start, Count, KeepSections)
+            {
+                DiscardHeadersAndFootersInKeptSections = DiscardHeadersAndFootersInKeptSections,
+                InsertId = InsertId
+            };
     }
 
     [Serializable]
@@ -226,6 +233,18 @@ namespace Clippit
                 .Skip(1)
                 .ToList();
         }
+
+        public object Clone() =>
+            new TableCellSource
+            {
+                WmlDocument = WmlDocument,
+                KeepSections = KeepSections,
+                DiscardHeadersAndFootersInKeptSections = DiscardHeadersAndFootersInKeptSections,
+                InsertId = InsertId,
+                TableNum = TableNum,
+                RowNum = RowNum,
+                ColumnNum = ColumnNum
+            };
     }
 
     public class DocumentBuilderSettings
@@ -718,21 +737,9 @@ namespace Clippit
             }
             if (modified)
             {
-                var newWmlDocument = new WmlDocument(src.WmlDocument.FileName, ms.ToArray());
-                if (src is Source src1)
-                {
-                    var newSrc = new Source(newWmlDocument, src1.Start, src1.Count, src1.KeepSections)
-                    {
-                        DiscardHeadersAndFootersInKeptSections = src1.DiscardHeadersAndFootersInKeptSections,
-                        InsertId = src1.InsertId
-                    };
-                    return newSrc;
-                }
-                else
-                {
-                    // TODO: add clone
-                    throw new NotImplementedException();
-                }
+                var newSrc = (ISource) src.Clone();
+                newSrc.WmlDocument = new WmlDocument(src.WmlDocument.FileName, ms.ToArray());;
+                return newSrc;
             }
 
             return src;
