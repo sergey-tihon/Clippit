@@ -45,7 +45,7 @@ class Program
         }
 
         string outFileName = Path.Combine(tempDi.FullName, "Out.docx");
-        List<Source> sources = new List<Source>()
+        List<ISource> sources = new List<ISource>()
             {
                 new Source(doc1, true),
                 new Source(new WmlDocument(@"..\..\Insert-01.docx"), "Liz"),

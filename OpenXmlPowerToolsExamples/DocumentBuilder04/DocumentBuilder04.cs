@@ -104,7 +104,7 @@ namespace ExampleDocumentBuilder04
                             else
                                 return new Source(g.Document, false);
                         }
-                    ).ToList();
+                    ).Cast<ISource>().ToList();
 
                 DocumentBuilder.BuildDocument(sources, Path.Combine(tempDi.FullName, "solar-system-new.docx"));
             }
