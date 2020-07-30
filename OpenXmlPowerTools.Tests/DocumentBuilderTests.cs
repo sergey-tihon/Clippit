@@ -29,8 +29,8 @@ namespace OxPt
             DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
             FileInfo sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
-            List<Source> sources = null;
-            sources = new List<Source>()
+            List<ISource> sources = null;
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(sourceDocx.FullName), true),
             };
@@ -45,8 +45,8 @@ namespace OxPt
             FileInfo source1Docx = new FileInfo(Path.Combine(sourceDir.FullName, "DB002-Sections-With-Headers.docx"));
             FileInfo source2Docx = new FileInfo(Path.Combine(sourceDir.FullName, "DB002-Landscape-Section.docx"));
 
-            List<Source> sources = null;
-            sources = new List<Source>()
+            List<ISource> sources = null;
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(source1Docx.FullName)) { KeepSections = true },
                 new Source(new WmlDocument(source2Docx.FullName)) { KeepSections = true, DiscardHeadersAndFootersInKeptSections = true },
@@ -63,8 +63,8 @@ namespace OxPt
             FileInfo source1Docx = new FileInfo(Path.Combine(sourceDir.FullName, "DB003-Only-Default-Header.docx"));
             FileInfo source2Docx = new FileInfo(Path.Combine(sourceDir.FullName, "DB002-Landscape-Section.docx"));
 
-            List<Source> sources = null;
-            sources = new List<Source>()
+            List<ISource> sources = null;
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(source1Docx.FullName)) { KeepSections = true },
                 new Source(new WmlDocument(source2Docx.FullName)) { KeepSections = true, DiscardHeadersAndFootersInKeptSections = true },
@@ -81,8 +81,8 @@ namespace OxPt
             FileInfo source1Docx = new FileInfo(Path.Combine(sourceDir.FullName, "DB004-No-Headers.docx"));
             FileInfo source2Docx = new FileInfo(Path.Combine(sourceDir.FullName, "DB002-Landscape-Section.docx"));
 
-            List<Source> sources = null;
-            sources = new List<Source>()
+            List<ISource> sources = null;
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(source1Docx.FullName)) { KeepSections = true },
                 new Source(new WmlDocument(source2Docx.FullName)) { KeepSections = true, DiscardHeadersAndFootersInKeptSections = true },
@@ -99,8 +99,8 @@ namespace OxPt
             FileInfo source1Docx = new FileInfo(Path.Combine(sourceDir.FullName, "DB005-Headers-With-Images.docx"));
             FileInfo source2Docx = new FileInfo(Path.Combine(sourceDir.FullName, "DB002-Landscape-Section.docx"));
 
-            List<Source> sources = null;
-            sources = new List<Source>()
+            List<ISource> sources = null;
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(source1Docx.FullName)) { KeepSections = true },
                 new Source(new WmlDocument(source2Docx.FullName)) { KeepSections = true, DiscardHeadersAndFootersInKeptSections = true },
@@ -117,10 +117,10 @@ namespace OxPt
             FileInfo source1 = new FileInfo(Path.Combine(sourceDir.FullName, "DB006-Source1.docx"));
             FileInfo source2 = new FileInfo(Path.Combine(sourceDir.FullName, "DB006-Source2.docx"));
             FileInfo source3 = new FileInfo(Path.Combine(sourceDir.FullName, "DB006-Source3.docx"));
-            List<Source> sources = null;
+            List<ISource> sources = null;
 
             // Create new document from 10 paragraphs starting at paragraph 5 of Source1.docx
-            sources = new List<Source>()
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(source1.FullName), 5, 10, true),
             };
@@ -130,7 +130,7 @@ namespace OxPt
 
             // Create new document from paragraph 1, and paragraphs 5 through end of Source3.docx.
             // This effectively 'deletes' paragraphs 2-4
-            sources = new List<Source>()
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(source3.FullName), 0, 1, false),
                 new Source(new WmlDocument(source3.FullName), 4, false),
@@ -141,7 +141,7 @@ namespace OxPt
 
             // Create a new document that consists of the entirety of Source1.docx and Source2.docx.  Use
             // the section information (headings and footers) from source1.
-            sources = new List<Source>()
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(source1.FullName), true),
                 new Source(new WmlDocument(source2.FullName), false),
@@ -152,7 +152,7 @@ namespace OxPt
 
             // Create a new document that consists of the entirety of Source1.docx and Source2.docx.  Use
             // the section information (headings and footers) from source2.
-            sources = new List<Source>()
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(source1.FullName), false),
                 new Source(new WmlDocument(source2.FullName), true),
@@ -164,14 +164,14 @@ namespace OxPt
             // Create a new document that consists of the first 5 paragraphs of Source1.docx and the first
             // five paragraphs of Source2.docx.  This example returns a new WmlDocument, when you then can
             // serialize to a SharePoint document library, or use in some other interesting scenario.
-            sources = new List<Source>()
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(source1.FullName), 0, 5, false),
                 new Source(new WmlDocument(source2.FullName), 0, 5, true),
             };
             WmlDocument wmlOut5 = DocumentBuilder.BuildDocument(sources);
             var out5 = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, "DB006-Out5.docx"));
-            
+
             wmlOut5.SaveAs(out5.FullName);  // save it to the file system, but we could just as easily done something
                                             // else with it.
             Validate(out5);
@@ -186,8 +186,8 @@ namespace OxPt
             FileInfo paperAbstract = new FileInfo(Path.Combine(sourceDir.FullName, "DB007-Abstract.docx"));
             FileInfo authorBio = new FileInfo(Path.Combine(sourceDir.FullName, "DB007-AuthorBiography.docx"));
 
-            List<Source> sources = null;
-            sources = new List<Source>()
+            List<ISource> sources = null;
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(whitePaper.FullName), 0, 1, true),
                 new Source(new WmlDocument(paperAbstract.FullName), false),
@@ -205,7 +205,7 @@ namespace OxPt
             DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
             FileInfo notes = new FileInfo(Path.Combine(sourceDir.FullName, "DB007-Notes.docx"));
 
-            List<Source> sources = null;
+            List<ISource> sources = null;
             // Delete all paragraphs with a specific style.
             using (WordprocessingDocument doc = WordprocessingDocument.Open(notes.FullName, false))
             {
@@ -226,7 +226,7 @@ namespace OxPt
                         .Attributes(W.val)
                         .FirstOrDefault() != "Note")
                     .Where(g => g.Key == true)
-                    .Select(g => new Source(
+                    .Select(g => (ISource) new Source(
                         new WmlDocument(notes.FullName), g.First().Index,
                             g.Last().Index - g.First().Index + 1, true))
                     .ToList();
@@ -317,7 +317,7 @@ namespace OxPt
                 }
             }
 
-            List<Source> sources = new List<Source>()
+            List<ISource> sources = new List<ISource>()
             {
                 new Source(wmlDestDocument),
                 new Source(wmlSourceDocument, insertId),
@@ -518,7 +518,7 @@ namespace OxPt
             {
                 string fileName = String.Format("DB009-Section{0:000}.docx", doc.DocumentNumber);
                 var fiSection = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, fileName));
-                List<Source> documentSource = new List<Source> {
+                List<ISource> documentSource = new List<ISource> {
                     new Source(new WmlDocument(spec.FullName), doc.Start, doc.Count, true)
                 };
                 DocumentBuilder.BuildDocument(documentSource, fiSection.FullName);
@@ -526,9 +526,9 @@ namespace OxPt
             }
 
             // Re-assemble the parts into a single document.
-            List<Source> sources = TestUtil.TempDir
+            List<ISource> sources = TestUtil.TempDir
                 .GetFiles("DB009-Section*.docx")
-                .Select(d => new Source(new WmlDocument(d.FullName), true))
+                .Select(d => (ISource)new Source(new WmlDocument(d.FullName), true))
                 .ToList();
             var fiReassembled = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, "DB009-Reassembled.docx"));
 
@@ -576,7 +576,7 @@ namespace OxPt
                 doc1.DocumentByteArray = mem.ToArray();
             }
 
-            List<Source> sources = new List<Source>()
+            List<ISource> sources = new List<ISource>()
             {
                 new Source(doc1, true),
                 new Source(new WmlDocument(insert01.FullName), "Liz"),
@@ -595,9 +595,9 @@ namespace OxPt
             DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
             FileInfo source1 = new FileInfo(Path.Combine(sourceDir.FullName, "DB011-Header-With-Shape.docx"));
             FileInfo source2 = new FileInfo(Path.Combine(sourceDir.FullName, "DB011-Body-With-Shape.docx"));
-            List<Source> sources = null;
+            List<ISource> sources = null;
 
-            sources = new List<Source>()
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(source1.FullName)),
                 new Source(new WmlDocument(source2.FullName)),
@@ -619,8 +619,8 @@ namespace OxPt
             DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
             FileInfo sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
-            List<Source> sources = null;
-            sources = new List<Source>()
+            List<ISource> sources = null;
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(sourceDocx.FullName)),
             };
@@ -645,9 +645,9 @@ namespace OxPt
                 new FileInfo(Path.Combine(sourceDir.FullName, "DB013a-Red-Heading1-English.docx"));
             FileInfo source2 = new FileInfo(Path.Combine(sourceDir.FullName,
                 "DB013a-Green-Heading1-Danish.docx"));
-            List<Source> sources = null;
+            List<ISource> sources = null;
 
-            sources = new List<Source>()
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(source1.FullName)),
                 new Source(new WmlDocument(source2.FullName)),
@@ -679,9 +679,9 @@ namespace OxPt
                 new FileInfo(Path.Combine(sourceDir.FullName, "DB013b-Orange-List-Danish.docx"));
             FileInfo source2 = new FileInfo(Path.Combine(sourceDir.FullName,
                 "DB013b-Blue-List-English.docx"));
-            List<Source> sources = null;
+            List<ISource> sources = null;
 
-            sources = new List<Source>()
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(source1.FullName)),
                 new Source(new WmlDocument(source2.FullName)),
@@ -708,9 +708,9 @@ namespace OxPt
         {
             DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
             FileInfo source = new FileInfo(Path.Combine(sourceDir.FullName, "DB014-WebExtensions.docx"));
-            List<Source> sources = null;
+            List<ISource> sources = null;
 
-            sources = new List<Source>()
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(source.FullName)),
             };
@@ -731,9 +731,9 @@ namespace OxPt
         {
             DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
             FileInfo source = new FileInfo(Path.Combine(sourceDir.FullName, "DB015-LatentStyles.docx"));
-            List<Source> sources = null;
-            
-            sources = new List<Source>()
+            List<ISource> sources = null;
+
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(source.FullName)),
             };
@@ -756,8 +756,8 @@ namespace OxPt
             DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
             FileInfo sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
-            List<Source> sources = null;
-            sources = new List<Source>()
+            List<ISource> sources = null;
+            sources = new List<ISource>()
             {
                 new Source(new WmlDocument(sourceDocx.FullName), true),
             };
@@ -793,7 +793,7 @@ namespace OxPt
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Load the source documents
-            List<Source> sources = sourcesStr.Select(s =>
+            List<ISource> sources = sourcesStr.Select(s =>
             {
                 var spl = s.Split(',');
                 if (spl.Length == 1)
@@ -819,6 +819,7 @@ namespace OxPt
                     return new Source(sourceFi.FullName, start, count, true);
                 }
             })
+                .Cast<ISource>()
                 .ToList();
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
