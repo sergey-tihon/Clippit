@@ -20,8 +20,19 @@ namespace Clippit
             return DocumentBuilder.SplitOnSections(this);
         }
     }
+    public interface ISource
+    {
+        WmlDocument WmlDocument { get; set; }
 
-    public class Source
+        bool KeepSections { get; set; }
+        public bool DiscardHeadersAndFootersInKeptSections { get; set; }
+        string InsertId { get; set; }
+
+        IEnumerable<XElement> GetElements(WordprocessingDocument document);
+    }
+
+    [Serializable]
+    public class Source : ISource
     {
         public WmlDocument WmlDocument { get; set; }
         public int Start { get; set; }
@@ -155,6 +166,69 @@ namespace Clippit
             KeepSections = false;
             InsertId = insertId;
         }
+
+        public IEnumerable<XElement> GetElements(WordprocessingDocument document)
+            => document.GetElements(Start, Count);
+    }
+
+    public static class SourceExtensions
+    {
+        public static IEnumerable<XElement> GetElements
+            (this WordprocessingDocument document, int start, int count)
+        {
+            var body = document.MainDocumentPart.GetXDocument().Root.Element(W.body);
+
+            if (body is null)
+                throw new DocumentBuilderException(
+                    "Unsupported document - contains no body element in the correct namespace");
+
+            return body
+                .Elements()
+                .Skip(start)
+                .Take(count)
+                .ToList();
+        }
+    }
+
+    [Serializable]
+    public class TableCellSource : ISource
+    {
+        public WmlDocument WmlDocument { get { return _wmlDocument; } set { _wmlDocument = value; } }
+
+        [NonSerialized]
+        private WmlDocument _wmlDocument;
+
+        public bool KeepSections { get; set; }
+        public bool DiscardHeadersAndFootersInKeptSections { get; set; }
+
+        public string InsertId { get; set; }
+
+
+        public int TableNum { get; set; }
+
+        public int RowNum { get; set; }
+
+        public int ColumnNum { get; set; }
+
+
+        public IEnumerable<XElement> GetElements(WordprocessingDocument document)
+        {
+            return document.MainDocumentPart.GetXDocument()
+                .Root
+                .Element(W.body)
+                .Elements(W.tbl)
+                .Skip(this.TableNum)
+                .Take(1)
+                .Elements(W.tr)
+                .Skip(this.RowNum)
+                .Take(1)
+                .Elements(W.tc)
+                .Skip(this.ColumnNum)
+                .Take(1)
+                .Elements()
+                .Skip(1)
+                .ToList();
+        }
     }
 
     public class DocumentBuilderSettings
@@ -165,7 +239,7 @@ namespace Clippit
 
     public static class DocumentBuilder
     {
-        public static void BuildDocument(List<Source> sources, string fileName)
+        public static void BuildDocument(List<ISource> sources, string fileName)
         {
             using (OpenXmlMemoryStreamDocument streamDoc = OpenXmlMemoryStreamDocument.CreateWordprocessingDocument())
             {
@@ -178,7 +252,7 @@ namespace Clippit
             }
         }
 
-        public static void BuildDocument(List<Source> sources, string fileName, DocumentBuilderSettings settings)
+        public static void BuildDocument(List<ISource> sources, string fileName, DocumentBuilderSettings settings)
         {
             using (OpenXmlMemoryStreamDocument streamDoc = OpenXmlMemoryStreamDocument.CreateWordprocessingDocument())
             {
@@ -191,7 +265,7 @@ namespace Clippit
             }
         }
 
-        public static WmlDocument BuildDocument(List<Source> sources)
+        public static WmlDocument BuildDocument(List<ISource> sources)
         {
             using (OpenXmlMemoryStreamDocument streamDoc = OpenXmlMemoryStreamDocument.CreateWordprocessingDocument())
             {
@@ -204,7 +278,7 @@ namespace Clippit
             }
         }
 
-        public static WmlDocument BuildDocument(List<Source> sources, DocumentBuilderSettings settings)
+        public static WmlDocument BuildDocument(List<ISource> sources, DocumentBuilderSettings settings)
         {
             using (OpenXmlMemoryStreamDocument streamDoc = OpenXmlMemoryStreamDocument.CreateWordprocessingDocument())
             {
@@ -292,7 +366,7 @@ namespace Clippit
                     .ToList();
                 foreach (var ts in tempSourceList)
                 {
-                    List<Source> sources = new List<Source>()
+                    List<ISource> sources = new List<ISource>()
                     {
                         new Source(doc, ts.Start, ts.Count, true)
                     };
@@ -333,7 +407,7 @@ namespace Clippit
             }
         }
 
-        private static void BuildDocument(List<Source> sources, WordprocessingDocument output, DocumentBuilderSettings settings)
+        private static void BuildDocument(List<ISource> sources, WordprocessingDocument output, DocumentBuilderSettings settings)
         {
             WmlDocument wmlGlossaryDocument = CoalesceGlossaryDocumentParts(sources, settings);
 
@@ -362,7 +436,7 @@ namespace Clippit
                 }
 
                 int sourceNum2 = 0;
-                foreach (Source source in sources)
+                foreach (ISource source in sources)
                 {
                     if (source.InsertId != null)
                     {
@@ -394,13 +468,7 @@ namespace Clippit
                                         else if (source.KeepSections)
                                             ProcessSectionsForLinkToPreviousHeadersAndFooters(doc);
 
-                                        List<XElement> contents = doc.MainDocumentPart.GetXDocument()
-                                            .Root
-                                            .Element(W.body)
-                                            .Elements()
-                                            .Skip(source.Start)
-                                            .Take(source.Count)
-                                            .ToList();
+                                        List<XElement> contents = source.GetElements(doc).ToList();
 
                                         try
                                         {
@@ -434,19 +502,7 @@ namespace Clippit
                             else if (source.KeepSections)
                                 ProcessSectionsForLinkToPreviousHeadersAndFooters(doc);
 
-                            var body = doc.MainDocumentPart.GetXDocument()
-                                .Root
-                                .Element(W.body);
-
-                            if (body == null)
-                                throw new DocumentBuilderException(
-                                    String.Format("Source {0} is unsupported document - contains no body element in the correct namespace", sourceNum2));
-
-                            List<XElement> contents = body
-                                .Elements()
-                                .Skip(source.Start)
-                                .Take(source.Count)
-                                .ToList();
+                            var contents = source.GetElements(doc).ToList();
                             try
                             {
                                 AppendDocument(doc, output, contents, source.KeepSections, null, images);
@@ -529,7 +585,7 @@ namespace Clippit
 
                 // Now can process PtOpenXml:Insert elements in headers / footers
                 int sourceNum = 0;
-                foreach (Source source in sources)
+                foreach (ISource source in sources)
                 {
                     if (source.InsertId != null)
                     {
@@ -570,13 +626,7 @@ namespace Clippit
                                         var partXDoc = part.GetXDocument();
                                         if (!partXDoc.Descendants(PtOpenXml.Insert).Any(d => (string)d.Attribute(PtOpenXml.Id) == source.InsertId))
                                             continue;
-                                        List<XElement> contents = doc.MainDocumentPart.GetXDocument()
-                                            .Root
-                                            .Element(W.body)
-                                            .Elements()
-                                            .Skip(source.Start)
-                                            .Take(source.Count)
-                                            .ToList();
+                                        List<XElement> contents = source.GetElements(doc).ToList();
 
                                         try
                                         {
@@ -630,11 +680,11 @@ namespace Clippit
         //   - make a complete list of all things that need to be changed, for every correction
         //   - do the corrections all at one
         //   - mark the document as changed, and change it in the sources.
-        private static List<Source> NormalizeStyleNamesAndIds(List<Source> sources)
+        private static List<ISource> NormalizeStyleNamesAndIds(List<ISource> sources)
         {
             Dictionary<string, string> styleNameMap = new Dictionary<string, string>();
             HashSet<string> styleIds = new HashSet<string>();
-            List<Source> newSources = new List<Source>();
+            List<ISource> newSources = new List<ISource>();
 
             foreach (var src in sources)
             {
@@ -644,7 +694,7 @@ namespace Clippit
             return newSources;
         }
 
-        private static Source AddAndRectify(Source src, Dictionary<string, string> styleNameMap, HashSet<string> styleIds)
+        private static ISource AddAndRectify(ISource src, Dictionary<string, string> styleNameMap, HashSet<string> styleIds)
         {
             bool modified = false;
             using (MemoryStream ms = new MemoryStream())
@@ -702,11 +752,19 @@ namespace Clippit
                 }
                 if (modified)
                 {
-                    var newWmlDocument = new WmlDocument(src.WmlDocument.FileName, ms.ToArray());
-                    var newSrc = new Source(newWmlDocument, src.Start, src.Count, src.KeepSections);
-                    newSrc.DiscardHeadersAndFootersInKeptSections = src.DiscardHeadersAndFootersInKeptSections;
-                    newSrc.InsertId = src.InsertId;
-                    return newSrc;
+                    if (src is Source src1)
+                    {
+                        var newWmlDocument = new WmlDocument(src1.WmlDocument.FileName, ms.ToArray());
+                        var newSrc = new Source(newWmlDocument, src1.Start, src1.Count, src1.KeepSections);
+                        newSrc.DiscardHeadersAndFootersInKeptSections = src1.DiscardHeadersAndFootersInKeptSections;
+                        newSrc.InsertId = src1.InsertId;
+                        return newSrc;
+                    }
+                    else
+                    {
+                        // TODO: add clone
+                        throw new NotImplementedException();
+                    }
                 }
             }
             return src;
@@ -1005,12 +1063,12 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             }
         }
 
-        private static WmlDocument CoalesceGlossaryDocumentParts(IEnumerable<Source> sources, DocumentBuilderSettings settings)
+        private static WmlDocument CoalesceGlossaryDocumentParts(IEnumerable<ISource> sources, DocumentBuilderSettings settings)
         {
-            List<Source> allGlossaryDocuments = sources
+            List<ISource> allGlossaryDocuments = sources
                 .Select(s => DocumentBuilder.ExtractGlossaryDocument(s.WmlDocument))
                 .Where(s => s != null)
-                .Select(s => new Source(s))
+                .Select(s => new Source(s) as ISource)
                 .ToList();
 
             if (!allGlossaryDocuments.Any())
@@ -3622,13 +3680,13 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 newXDoc.Declaration.Encoding = Utf8;
                 newXDoc.Add(new XElement(W.styles,
                     new XAttribute(XNamespace.Xmlns + "w", W.w)
-                    
+
                     //,
                     //stylesPart.GetXDocument().Descendants(W.docDefaults)
-                    
+
                     //,
                     //new XElement(W.latentStyles, stylesPart.GetXDocument().Descendants(W.latentStyles).Attributes())
-                    
+
                     ));
                 MergeDocDefaultStyles(stylesPart.GetXDocument(), newXDoc);
                 MergeStyles(sourceDocument, newDocument, stylesPart.GetXDocument(), newXDoc, Enumerable.Empty<XElement>());
