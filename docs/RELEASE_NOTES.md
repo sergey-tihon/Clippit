@@ -1,9 +1,12 @@
+#### 1.4.0-beta1 - July 31, 2020
+- DocumentBuilder: Added ISource & TableCellSource - [#17](https://github.com/sergey-tihon/Clippit/pull/17)
+
 #### 1.3.1 - July 30, 2020
-- Fixed CopyExtendedPart
+- PresentationBuilder: Fixed CopyExtendedPart
 
 #### 1.3.0 - July 29, 2020
 - DocumentFormat.OpenXml (2.11.3)
-- Bug Fixes for PresentationBuilder [#16](https://github.com/sergey-tihon/Clippit/pull/16)
+- PresentationBuilder: Bug Fixes [#16](https://github.com/sergey-tihon/Clippit/pull/16)
 
 #### 1.2.1 - May 2, 2020
 - HTML to WML: Allow font-size with unit rem [#13](https://github.com/sergey-tihon/Clippit/pull/13)
