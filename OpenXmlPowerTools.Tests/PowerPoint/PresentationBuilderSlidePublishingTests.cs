@@ -36,7 +36,7 @@ namespace Clippit.Tests.PowerPoint
 
             using var srcStream = File.Open(sourcePath, FileMode.Open);
             var openSettings = new OpenSettings {AutoSave = false};
-            using var srcDoc = OpenXmlExtensions.OpenPresentation(srcStream, false, openSettings);
+            using var srcDoc = OpenXmlExtensions.OpenPresentation(srcStream, true, openSettings);
 
             var title = srcDoc.PackageProperties.Title ?? string.Empty;
             var modified = srcDoc.PackageProperties.Modified;
