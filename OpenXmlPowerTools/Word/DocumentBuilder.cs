@@ -34,7 +34,15 @@ namespace Clippit
     [Serializable]
     public class Source : ISource
     {
-        public WmlDocument WmlDocument { get; set; }
+        public WmlDocument WmlDocument
+        {
+            get => _wmlDocument;
+            set => _wmlDocument = value;
+        }
+
+        [NonSerialized] private WmlDocument _wmlDocument;
+
+
         public int Start { get; set; }
         public int Count { get; set; }
         public bool KeepSections { get; set; }
@@ -193,10 +201,14 @@ namespace Clippit
     [Serializable]
     public class TableCellSource : ISource
     {
-        public WmlDocument WmlDocument { get { return _wmlDocument; } set { _wmlDocument = value; } }
+        public WmlDocument WmlDocument
+        {
+            get => _wmlDocument;
+            set => _wmlDocument = value;
+        }
 
-        [NonSerialized]
-        private WmlDocument _wmlDocument;
+        [NonSerialized] private WmlDocument _wmlDocument;
+
 
         public bool KeepSections { get; set; }
         public bool DiscardHeadersAndFootersInKeptSections { get; set; }
