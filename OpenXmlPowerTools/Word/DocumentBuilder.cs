@@ -3202,6 +3202,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 {
                     var newEr = newContentPart.AddExternalRelationship(er.RelationshipType, er.Uri);
                     imageReference.SetAttributeValue(R.id, newEr.Id);
+                    return;
                 }
                 throw new DocumentBuilderInternalException("Source {0} is unsupported document - contains reference to NULL image");
             }
