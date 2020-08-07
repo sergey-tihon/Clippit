@@ -3567,7 +3567,12 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 var newXDoc = newDocument.CustomFilePropertiesPart.GetXDocument();
                 newXDoc.Declaration.Standalone = Yes;
                 newXDoc.Declaration.Encoding = Utf8;
-                newXDoc.Add(customPart.GetXDocument().Root);
+
+                // Remove custom properties (source doc metadata irrelevant for generated document)
+                var propsDocument = customPart.GetXDocument().Root;
+                if (propsDocument?.HasElements == true)
+                    propsDocument.RemoveNodes();
+                newXDoc.Add(propsDocument);
             }
 
             var oldSettingsPart = sourceDocument.MainDocumentPart.DocumentSettingsPart;

@@ -1,4 +1,4 @@
-#### 1.4.0-beta2 - July 31, 2020
+#### 1.4.0-beta3 - Aug 7, 2020
 - DocumentBuilder: Added ISource and TableCellSource - [#17](https://github.com/sergey-tihon/Clippit/pull/17)
 
 #### 1.3.1 - July 30, 2020
