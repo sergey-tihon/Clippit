@@ -290,7 +290,9 @@ namespace Clippit
                 InsertId = InsertId,
                 TableElementIndex = TableElementIndex,
                 RowIndex = RowIndex,
-                CellIndex = CellIndex
+                CellIndex = CellIndex,
+                CellContentStart = CellContentStart,
+                CellContentCount = CellContentCount
             };
     }
 
