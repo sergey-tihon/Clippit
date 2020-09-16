@@ -45,3 +45,5 @@ _ReSharper.Caches/
 .paket/
 AssemblyInfo.Generated.cs
 TestFiles/PublishSlides/output/
+
+.ionide
