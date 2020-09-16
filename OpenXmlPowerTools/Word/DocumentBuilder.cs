@@ -216,11 +216,15 @@ namespace Clippit
         public string InsertId { get; set; }
 
 
-        public int TableNum { get; set; }
+        public int TableElementIndex { get; set; }
 
-        public int RowNum { get; set; }
+        public int RowIndex { get; set; }
 
-        public int ColumnNum { get; set; }
+        public int CellIndex { get; set; }
+
+        public int CellContentStart { get; set; }
+
+        public int CellContentCount { get; set; }
 
 
         public IEnumerable<XElement> GetElements(WordprocessingDocument document)
@@ -228,22 +232,53 @@ namespace Clippit
             var body = document.MainDocumentPart.GetXDocument().Root?.Element(W.body);
 
             if (body is null)
+            {
                 throw new DocumentBuilderException(
                     "Unsupported document - contains no body element in the correct namespace");
+            }
 
-            return body
-                .Elements(W.tbl)
-                .Skip(this.TableNum)
-                .Take(1)
-                .Elements(W.tr)
-                .Skip(this.RowNum)
-                .Take(1)
-                .Elements(W.tc)
-                .Skip(this.ColumnNum)
-                .Take(1)
+            var table = body.Elements().Skip(TableElementIndex).FirstOrDefault();
+            if (table is null || table.Name != W.tbl)
+            {
+                throw new DocumentBuilderException(
+                    $"Invalid {nameof(TableCellSource)} - element {TableElementIndex} is '{table?.Name}' but expected {W.tbl}");
+            }
+
+            var row = table.Elements(W.tr).Skip(RowIndex).FirstOrDefault();
+            if (row is null)
+            {
+                throw new DocumentBuilderException(
+                    $"Invalid {nameof(TableCellSource)} - row {RowIndex} does not exist");
+
+            }
+
+            var cell = row.Elements(W.tc).Skip(CellIndex).FirstOrDefault();
+            if (cell is null)
+            {
+                throw new DocumentBuilderException(
+                    $"Invalid {nameof(TableCellSource)} - cell {CellIndex} in the row {RowIndex} does not exist");
+
+            }
+
+            return cell
                 .Elements()
-                .Skip(1)
+                .Skip(CellContentStart)
+                .Take(CellContentCount)
                 .ToList();
+
+            //return body
+            //    .Elements(W.tbl)
+            //    .Skip(this.TableElementIndex)
+            //    .Take(1)
+            //    .Elements(W.tr)
+            //    .Skip(this.RowIndex)
+            //    .Take(1)
+            //    .Elements(W.tc)
+            //    .Skip(this.CellIndex)
+            //    .Take(1)
+            //    .Elements()
+            //    .Skip(1)
+            //    .ToList();
         }
 
         public object Clone() =>
@@ -253,9 +288,9 @@ namespace Clippit
                 KeepSections = KeepSections,
                 DiscardHeadersAndFootersInKeptSections = DiscardHeadersAndFootersInKeptSections,
                 InsertId = InsertId,
-                TableNum = TableNum,
-                RowNum = RowNum,
-                ColumnNum = ColumnNum
+                TableElementIndex = TableElementIndex,
+                RowIndex = RowIndex,
+                CellIndex = CellIndex
             };
     }
 
