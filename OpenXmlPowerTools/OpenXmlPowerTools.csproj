@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <AssemblyName>Clippit</AssemblyName>
     <RootNamespace>Clippit</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
