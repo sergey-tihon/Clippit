@@ -1,3 +1,6 @@
+#### 1.4.0-beta5 - Dec 16, 2020
+- DocumentFormat.OpenXml (2.12)
+
 #### 1.4.0-beta4 - Sep 16, 2020
 - DocumentBuilder: Added ISource and TableCellSource - [#17](https://github.com/sergey-tihon/Clippit/pull/17)
 
