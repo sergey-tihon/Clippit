@@ -25,3 +25,4 @@ files
 dependencies
     framework: netstandard20
         DocumentFormat.OpenXml >= LOCKEDVERSION
+        System.IO.Packaging >= LOCKEDVERSION
