@@ -1,9 +1,8 @@
-#### 1.4.0-beta6 - Dec 30, 2020
-- DocumentFormat.OpenXml (2.12)
-- Added dependency on System.IO.Packaging
-
-#### 1.4.0-beta4 - Sep 16, 2020
+#### 1.4.0 - Feb 9, 2021
 - DocumentBuilder: Added ISource and TableCellSource - [#17](https://github.com/sergey-tihon/Clippit/pull/17)
+- DocumentFormat.OpenXml (2.12.1)
+- Added dependency on System.IO.Packaging
+- Fixed DateTime/DateTimeOffset serialisation format to Excel
 
 #### 1.3.1 - July 30, 2020
 - PresentationBuilder: Fixed CopyExtendedPart
