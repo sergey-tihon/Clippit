@@ -265,20 +265,6 @@ namespace Clippit
                 .Skip(CellContentStart)
                 .Take(CellContentCount)
                 .ToList();
-
-            //return body
-            //    .Elements(W.tbl)
-            //    .Skip(this.TableElementIndex)
-            //    .Take(1)
-            //    .Elements(W.tr)
-            //    .Skip(this.RowIndex)
-            //    .Take(1)
-            //    .Elements(W.tc)
-            //    .Skip(this.CellIndex)
-            //    .Take(1)
-            //    .Elements()
-            //    .Skip(1)
-            //    .ToList();
         }
 
         public object Clone() =>
