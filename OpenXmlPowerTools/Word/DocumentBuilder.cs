@@ -30,6 +30,7 @@ namespace Clippit.Word
 
         bool KeepSections { get; set; }
         public bool DiscardHeadersAndFootersInKeptSections { get; set; }
+
         string InsertId { get; set; }
 
         IEnumerable<XElement> GetElements(WordprocessingDocument document);
@@ -205,6 +206,17 @@ namespace Clippit.Word
     [Serializable]
     public class TableCellSource : ISource
     {
+        public TableCellSource()
+        {
+            KeepSections = false;
+            DiscardHeadersAndFootersInKeptSections = false;
+        }
+        
+        public TableCellSource(WmlDocument source) : this()
+        {
+            WmlDocument = source;
+        }
+
         public WmlDocument WmlDocument
         {
             get => _wmlDocument;
