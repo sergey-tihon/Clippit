@@ -4,7 +4,7 @@ id
 owners
     Sergey Tihon
 authors
-    Microsoft Corporation, Eric White
+    Microsoft Corporation, Eric White, Sergey Tihon
 projectUrl
     https://github.com/sergey-tihon/Clippit
 iconUrl
@@ -14,7 +14,7 @@ licenseUrl
 requireLicenseAcceptance
     false
 copyright
-    Copyright 2012-2020
+    Copyright 2012-2021
 tags
     OpenXML PowerTools PowerPoint Word Excel HTML
 description
