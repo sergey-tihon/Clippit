@@ -318,7 +318,10 @@ namespace OxPt
             var annotatedHtmlFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt")));
 
             if (!sourceCopiedToDestHtmlFi.Exists)
+            {
+                Directory.CreateDirectory(sourceCopiedToDestHtmlFi.DirectoryName);
                 File.Copy(sourceHtmlFi.FullName, sourceCopiedToDestHtmlFi.FullName);
+            }
             XElement html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceCopiedToDestHtmlFi);
 
             string htmlString = html.ToString();
