@@ -1,4 +1,4 @@
-#### 1.4.0 - Feb 9, 2021
+#### 1.4.0 - Feb 10, 2021
 - DocumentBuilder: Added ISource and TableCellSource - [#17](https://github.com/sergey-tihon/Clippit/pull/17)
 - DocumentFormat.OpenXml (2.12.1)
 - Added dependency on System.IO.Packaging
