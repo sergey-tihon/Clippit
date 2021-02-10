@@ -9,6 +9,8 @@ using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using Clippit;
+using Clippit.Word;
+
 
 // Insert content into a document
 // Delete content from a document

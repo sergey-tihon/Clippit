@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using Clippit;
+using Clippit.Word;
+
 
 namespace Clippit
 {

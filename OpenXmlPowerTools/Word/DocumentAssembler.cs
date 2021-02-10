@@ -16,7 +16,7 @@ using DocumentFormat.OpenXml.Packaging;
 using Clippit;
 using System.Collections;
 
-namespace Clippit
+namespace Clippit.Word
 {
     public class DocumentAssembler
     {

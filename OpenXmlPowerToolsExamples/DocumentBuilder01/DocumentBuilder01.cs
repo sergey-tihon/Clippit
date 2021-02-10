@@ -9,6 +9,8 @@ using System.Text;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Clippit;
+using Clippit.Word;
+
 
 namespace DocumentBuilderExample
 {

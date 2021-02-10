@@ -14,6 +14,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Clippit;
+using Clippit.Word;
 using Xunit;
 
 #if !ELIDE_XUNIT_TESTS

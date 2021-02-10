@@ -17,9 +17,13 @@ namespace Clippit
     {
         public IEnumerable<WmlDocument> SplitOnSections()
         {
-            return DocumentBuilder.SplitOnSections(this);
+            return Word.DocumentBuilder.SplitOnSections(this);
         }
     }
+}
+
+namespace Clippit.Word
+{
     public interface ISource : ICloneable
     {
         WmlDocument WmlDocument { get; set; }

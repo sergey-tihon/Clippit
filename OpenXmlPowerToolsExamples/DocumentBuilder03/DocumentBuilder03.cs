@@ -10,6 +10,8 @@ using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Clippit;
+using Clippit.Word;
+
 
 class Program
 {
