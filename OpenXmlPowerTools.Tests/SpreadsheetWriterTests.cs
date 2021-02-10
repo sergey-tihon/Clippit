@@ -300,6 +300,24 @@ namespace OxPt
                                     },
                                 }
                             },
+                            new Sw.RowDfn
+                            {
+                                Cells = new Sw.CellDfn[]
+                                {
+                                    new Sw.CellDfn {
+                                        CellDataType = Sw.CellDataType.Date,
+                                        Value = new DateTimeOffset(new DateTime(2012, 1, 8), TimeSpan.Zero),
+                                        FormatCode = "mm-dd-yy",
+                                    },
+                                    new Sw.CellDfn {
+                                        CellDataType = Sw.CellDataType.Date,
+                                        Value = new DateTimeOffset(new DateTime(2012, 1, 9), TimeSpan.Zero),
+                                        FormatCode = "mm-dd-yy",
+                                        Bold = true,
+                                        HorizontalCellAlignment = Sw.HorizontalCellAlignment.Center,
+                                    },
+                                }
+                            },
                         }
                     }
                 }

@@ -136,7 +136,7 @@ namespace OxPt
 
             var dataTemplateFileNameSuffix = string.Format("-2-Generated-XmlData-{0}.xml", range.Replace(":", ""));
             var dataXmlFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix)));
-            using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, true))
+            using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false))
             {
                 var rangeXml = SmlDataRetriever.RetrieveRange(sDoc, sheetName, range);
                 string displayValue = (string)rangeXml.Descendants("DisplayValue").FirstOrDefault();

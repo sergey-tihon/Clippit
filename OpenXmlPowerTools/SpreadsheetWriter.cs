@@ -403,7 +403,12 @@ namespace Clippit
                     if (cell.Value != null)
                     {
                         xw.WriteStartElement("v", ns);
-                        xw.WriteValue(cell.Value);
+                        if (cell.Value is DateTime dt)
+                            xw.WriteValue(dt.ToString( "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff"));
+                        else if (cell.Value is DateTimeOffset dts)
+                            xw.WriteValue(dts.ToString( "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz"));
+                        else
+                            xw.WriteValue(cell.Value);
                         xw.WriteEndElement();
                     }
                     xw.WriteEndElement();

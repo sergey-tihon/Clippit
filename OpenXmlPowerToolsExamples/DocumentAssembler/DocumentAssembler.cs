@@ -4,6 +4,8 @@
 using System;
 using System.IO;
 using System.Xml.Linq;
+using Clippit.Word;
+
 
 namespace Clippit
 {

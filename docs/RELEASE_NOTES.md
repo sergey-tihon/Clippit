@@ -1,9 +1,15 @@
+#### 1.4.0 - Feb 10, 2021
+- DocumentBuilder: Added ISource and TableCellSource - [#17](https://github.com/sergey-tihon/Clippit/pull/17)
+- DocumentFormat.OpenXml (2.12.1)
+- Added dependency on System.IO.Packaging
+- Fixed DateTime/DateTimeOffset serialisation format to Excel
+
 #### 1.3.1 - July 30, 2020
-- Fixed CopyExtendedPart
+- PresentationBuilder: Fixed CopyExtendedPart
 
 #### 1.3.0 - July 29, 2020
 - DocumentFormat.OpenXml (2.11.3)
-- Bug Fixes for PresentationBuilder [#16](https://github.com/sergey-tihon/Clippit/pull/16)
+- PresentationBuilder: Bug Fixes [#16](https://github.com/sergey-tihon/Clippit/pull/16)
 
 #### 1.2.1 - May 2, 2020
 - HTML to WML: Allow font-size with unit rem [#13](https://github.com/sergey-tihon/Clippit/pull/13)
