@@ -34,17 +34,7 @@ namespace Clippit.PowerPoint
         {
             foreach (var part in _newDocument.GetAllParts())
             {
-                if (part.ContentType == "application/vnd.openxmlformats-officedocument.presentationml.slide+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.presentationml.notesMaster+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.presentationml.handoutMaster+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.theme+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.drawingml.chart+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.drawingml.diagramData+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.drawingml.chartshapes+xml" ||
-                    part.ContentType == "application/vnd.ms-office.drawingml.diagramDrawing+xml")
+                if (part.ContentType.EndsWith("+xml"))
                 {
                     var xd = part.GetXDocument();
                     xd.Descendants().Attributes("smtClean").Remove();
@@ -283,7 +273,7 @@ namespace Clippit.PowerPoint
                 newSlide.PutXDocument(slideDocument);
                 PBT.AddRelationships(slide, newSlide, new[] { newSlide.GetXDocument().Root });
                 CopyRelatedPartsForContentParts(slide, newSlide, new[] { newSlide.GetXDocument().Root });
-                CopyTableStyles(sourceDocument, slide, newSlide);
+                CopyTableStyles(sourceDocument, newSlide);
                 if (slide.NotesSlidePart is {} notesSlide)
                 {
                     if (_newDocument.PresentationPart.NotesMasterPart is null)
@@ -398,9 +388,14 @@ namespace Clippit.PowerPoint
             return newAuthor;
         }
 
-        // TODO: cleanup
-        private  void CopyTableStyles(PresentationDocument oldDocument, OpenXmlPart oldContentPart, OpenXmlPart newContentPart)
+        private void CopyTableStyles(PresentationDocument oldDocument, OpenXmlPart newContentPart)
         {
+            if (oldDocument.PresentationPart.TableStylesPart is null)
+                return;
+
+            var oldTableStylesDocument = oldDocument.PresentationPart.TableStylesPart.GetXDocument();
+            var oldTableStyles = oldTableStylesDocument.Root.Elements(A.tblStyle).ToList();
+            
             foreach (var table in newContentPart.GetXDocument().Descendants(A.tableStyleId))
             {
                 var styleId = table.Value;
@@ -408,15 +403,12 @@ namespace Clippit.PowerPoint
                     continue;
 
                 // Find old style
-                if (oldDocument.PresentationPart.TableStylesPart is null)
-                    continue;
-                var oldTableStyles = oldDocument.PresentationPart.TableStylesPart.GetXDocument();
-                var oldStyle = oldTableStyles.Root.Elements(A.tblStyle).Where(f => f.Attribute(NoNamespace.styleId).Value == styleId).FirstOrDefault();
+                var oldStyle = oldTableStyles.FirstOrDefault(f => f.Attribute(NoNamespace.styleId).Value == styleId);
                 if (oldStyle is null)
                     continue;
 
                 // Create new TableStylesPart, if needed
-                XDocument tableStyles = null;
+                XDocument tableStyles;
                 if (_newDocument.PresentationPart.TableStylesPart is null)
                 {
                     var newStylesPart = _newDocument.PresentationPart.AddNewPart<TableStylesPart>();
@@ -435,7 +427,6 @@ namespace Clippit.PowerPoint
                 // Copy style to new part
                 tableStyles.Root.Add(oldStyle);
             }
-
         }
         
         private void CopyRelatedPartsForContentParts(OpenXmlPart oldContentPart, OpenXmlPart newContentPart, IEnumerable<XElement> newContent)
