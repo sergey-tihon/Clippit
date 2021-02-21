@@ -5,6 +5,7 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
+using Path = System.IO.Path;
 using PBT = Clippit.PowerPoint.PresentationBuilderTools;
 
 namespace Clippit.PowerPoint
@@ -15,15 +16,21 @@ namespace Clippit.PowerPoint
                 
         private readonly List<ImageData> _images = new();
         private readonly List<MediaData> _mediaList = new();
-
+        private readonly List<ThemeData> _themesList = new();
+        private readonly List<SlideMasterData> _slideMasterList = new();
 
         internal FluentPresentationBuilder(PresentationDocument presentationDocument)
         {
             _newDocument = presentationDocument;
+
+            var mainPart = _newDocument.PresentationPart.GetXDocument();
+            mainPart.Declaration.Standalone = "yes";
+            mainPart.Declaration.Encoding = "UTF-8";
+            
             // TODO: enumerate all images, media, master and layouts
         }
         
-        public void CleanupDocument()
+        public void SaveAndCleanup()
         {
             foreach (var part in _newDocument.GetAllParts())
             {
@@ -56,7 +63,6 @@ namespace Clippit.PowerPoint
                 {
                     sectionList.Parent?.Remove(); // <p:ext> element
                 }
-                _newDocument.PresentationPart.PutXDocument();
             }
 
             // Remove custom properties (source doc metadata irrelevant for generated document)
@@ -64,7 +70,6 @@ namespace Clippit.PowerPoint
             if (customPropsDocument?.Root?.HasElements == true)
             {
                 customPropsDocument.Root?.RemoveNodes();
-                _newDocument.CustomFilePropertiesPart.PutXDocument();
             }
         }
         
@@ -80,7 +85,6 @@ namespace Clippit.PowerPoint
                 newXDoc.Declaration.Encoding = "UTF-8";
                 var sourceXDoc = corePart.GetXDocument();
                 newXDoc.Add(sourceXDoc.Root);
-                _newDocument.CoreFilePropertiesPart.PutXDocument();
             }
 
             // An application attributes part does not have implicit or explicit relationships to other parts.
@@ -91,7 +95,6 @@ namespace Clippit.PowerPoint
                 newXDoc.Declaration.Standalone = "yes";
                 newXDoc.Declaration.Encoding = "UTF-8";
                 newXDoc.Add(extPart.GetXDocument().Root);
-                _newDocument.ExtendedFilePropertiesPart.PutXDocument();
             }
 
             // An custom file properties part does not have implicit or explicit relationships to other parts.
@@ -102,7 +105,6 @@ namespace Clippit.PowerPoint
                 newXDoc.Declaration.Standalone = "yes";
                 newXDoc.Declaration.Encoding = "UTF-8";
                 newXDoc.Add(customPart.GetXDocument().Root);
-                _newDocument.CustomFilePropertiesPart.PutXDocument();
             }
         }
         
@@ -174,11 +176,11 @@ namespace Clippit.PowerPoint
 
                 // Copy theme for master
                 var newThemePart = newMaster.AddNewPart<ThemePart>();
-                newThemePart.PutXDocument(oldMaster.ThemePart.GetXDocument());
+                newThemePart.PutXDocument(new XDocument(oldMaster.ThemePart.GetXDocument()));
                 CopyRelatedPartsForContentParts(oldMaster.ThemePart, newThemePart, new[] { newThemePart.GetXDocument().Root });
 
                 // Copy master
-                newMaster.PutXDocument(oldMaster.GetXDocument());
+                newMaster.PutXDocument(new XDocument(oldMaster.GetXDocument()));
                 PBT.AddRelationships(oldMaster, newMaster, new[] { newMaster.GetXDocument().Root });
                 CopyRelatedPartsForContentParts(oldMaster, newMaster, new[] { newMaster.GetXDocument().Root });
 
@@ -244,42 +246,36 @@ namespace Clippit.PowerPoint
             return new XElement(fontXName, new XAttribute(R.id, newFontPartId));
         }
 
-        public SlideMasterPart AppendSlides(
-            PresentationDocument sourceDocument, int start, int count,
-            bool keepMaster, bool keepAllLayouts, SlideMasterPart currentMasterPart)
+        public void AppendSlides(PresentationDocument sourceDocument, int start, int count, bool keepMaster)
         {
             var newPresentation = _newDocument.PresentationPart.GetXDocument();
-            if (newPresentation.Root.Element(P.sldIdLst) is null)
+            if (newPresentation.Root.Element(P.sldIdLst) is null) {
                 newPresentation.Root.Add(new XElement(P.sldIdLst));
+            }
             
             uint newId = 256;
             var ids = newPresentation.Root.Descendants(P.sldId).Select(f => (uint)f.Attribute(NoNamespace.id)).ToList();
             if (ids.Any())
                 newId = ids.Max() + 1;
             
-            var slideList = sourceDocument.PresentationPart.GetXDocument().Root.Descendants(P.sldId).ToList();
-            if ((slideList.Count == 0 || count == 0) && (currentMasterPart is null || keepMaster))
+            if (keepMaster)
             {
                 foreach (var slideMasterPart in sourceDocument.PresentationPart.SlideMasterParts)
                 {
-                    var masterPart = CopyMasterSlide(slideMasterPart, null, newPresentation);
-                    currentMasterPart ??= masterPart;
+                    foreach (var slideLayoutPart in slideMasterPart.SlideLayoutParts)
+                    {
+                        _ = ManageSlideLayoutPart(slideLayoutPart);
+                    }
                 }
-                return currentMasterPart;
             }
             
+            var slideList = sourceDocument.PresentationPart.GetXDocument().Root.Descendants(P.sldId).ToList();
             while (count > 0 && start < slideList.Count)
             {
                 var slide = (SlidePart)sourceDocument.PresentationPart.GetPartById(slideList.ElementAt(start).Attribute(R.id).Value);
-                if (currentMasterPart is null || keepMaster)
-                {
-                    var layout = keepAllLayouts ? null : slide.SlideLayoutPart;
-                    currentMasterPart = CopyMasterSlide(slide.SlideLayoutPart.SlideMasterPart, layout, newPresentation);
-                }
 
                 var newSlide = _newDocument.PresentationPart.AddNewPart<SlidePart>();
                 var slideDocument = slide.GetXDocument();
-                if (!keepAllLayouts)
                 {
                     // If we extract one slide, this slide should be visible
                     slideDocument.Root?.Attribute(NoNamespace.show)?.Remove();
@@ -301,19 +297,13 @@ namespace Clippit.PowerPoint
                     CopyRelatedPartsForContentParts(slide.NotesSlidePart, newPart, new[] { newPart.GetXDocument().Root });
                 }
 
-                var layoutName = slide.SlideLayoutPart.GetXDocument().Root.Element(P.cSld).Attribute(NoNamespace.name).Value;
-                foreach (var layoutPart in currentMasterPart.SlideLayoutParts)
-                    if (layoutPart.GetXDocument().Root.Element(P.cSld).Attribute(NoNamespace.name).Value == layoutName)
-                    {
-                        newSlide.AddPart(layoutPart);
-                        break;
-                    }
-                if (newSlide.SlideLayoutPart is null)
-                    newSlide.AddPart(currentMasterPart.SlideLayoutParts.First());  // Cannot find matching layout part
+                var slideLayoutData = ManageSlideLayoutPart(slide.SlideLayoutPart);
+                newSlide.AddPart(slideLayoutData.Part);
 
                 if (slide.SlideCommentsPart is {})
                     CopyComments(sourceDocument, slide, newSlide);
 
+                newPresentation = _newDocument.PresentationPart.GetXDocument();
                 newPresentation.Root.Element(P.sldIdLst).Add(new XElement(P.sldId,
                     new XAttribute(NoNamespace.id, newId.ToString()),
                     new XAttribute(R.id, _newDocument.PresentationPart.GetIdOfPart(newSlide))));
@@ -323,92 +313,6 @@ namespace Clippit.PowerPoint
                 count--;
             }
             
-            return currentMasterPart;
-        }
-        
-        private SlideMasterPart CopyMasterSlide(SlideMasterPart sourceMasterPart, SlideLayoutPart sourceLayoutPart, XDocument newPresentation)
-        {
-            // Search for existing master slide with same theme name
-            var oldTheme = sourceMasterPart.ThemePart.GetXDocument();
-            var themeName = oldTheme.Root.Attribute(NoNamespace.name)?.Value ?? "noname";
-            foreach (var master in _newDocument.PresentationPart.GetPartsOfType<SlideMasterPart>())
-            {
-                var themeDoc = master.ThemePart.GetXDocument();
-                if (themeDoc.Root.Attribute(NoNamespace.name)?.Value == themeName)
-                    return master;
-            }
-
-            var newMaster = _newDocument.PresentationPart.AddNewPart<SlideMasterPart>();
-            var newMasterDoc = new XDocument(sourceMasterPart.GetXDocument());
-
-            // Add to presentation slide master list, need newID for layout IDs also
-            var newId = 2147483648;
-            var ids = newPresentation.Root.Descendants(P.sldMasterId).Select(f => (uint)f.Attribute(NoNamespace.id)).ToList();
-            if (ids.Any())
-            {
-                newId = ids.Max();
-                var maxMaster = newPresentation.Root.Descendants(P.sldMasterId).FirstOrDefault(f => (uint)f.Attribute(NoNamespace.id) == newId);
-                var maxMasterPart = (SlideMasterPart)_newDocument.PresentationPart.GetPartById(maxMaster.Attribute(R.id).Value);
-                newId += (uint)maxMasterPart.GetXDocument().Root.Descendants(P.sldLayoutId).Count() + 1;
-            }
-            newPresentation.Root.Element(P.sldMasterIdLst).Add(new XElement(P.sldMasterId,
-                new XAttribute(NoNamespace.id, newId.ToString()),
-                new XAttribute(R.id, _newDocument.PresentationPart.GetIdOfPart(newMaster))));
-            newId++;
-
-            var newThemePart = newMaster.AddNewPart<ThemePart>();
-            if (_newDocument.PresentationPart.ThemePart is null)
-                newThemePart = _newDocument.PresentationPart.AddPart(newThemePart);
-            if (sourceLayoutPart is {})
-            {
-                var layoutName = sourceLayoutPart.SlideLayout.CommonSlideData.Name.Value;
-                if (sourceMasterPart.SlideLayoutParts.Count() == 1 &&
-                    themeName.EndsWith(":" + layoutName))
-                {
-                    // sourceMasterPart is 1-layout master with auto-generated theme name
-                    // there is no need to add suffix again and produce new theme/master
-                }
-                else
-                {
-                    var newThemeName = $"{themeName}:{layoutName}";
-                    oldTheme = new XDocument(oldTheme);
-                    oldTheme.Root.SetAttributeValue(NoNamespace.name, newThemeName);
-                }
-            }
-
-            newThemePart.PutXDocument(oldTheme);
-            CopyRelatedPartsForContentParts(sourceMasterPart.ThemePart, newThemePart, new[] { newThemePart.GetXDocument().Root });
-            foreach (var layoutPart in sourceMasterPart.SlideLayoutParts)
-            {
-                if (sourceLayoutPart is {} && layoutPart.Uri != sourceLayoutPart.Uri)
-                    continue; // Copy only one layout from Master if sourceLayoutPart is provided (otherwise all)
-
-                var newLayout = newMaster.AddNewPart<SlideLayoutPart>();
-                newLayout.PutXDocument(new XDocument(layoutPart.GetXDocument()));
-                PBT.AddRelationships(layoutPart, newLayout, new[] { newLayout.GetXDocument().Root });
-                CopyRelatedPartsForContentParts(layoutPart, newLayout, new[] { newLayout.GetXDocument().Root });
-                newLayout.AddPart(newMaster);
-
-                var resId = sourceMasterPart.GetIdOfPart(layoutPart);
-                var entry = newMasterDoc.Root.Descendants(P.sldLayoutId).FirstOrDefault(f => f.Attribute(R.id).Value == resId);
-
-                entry.SetAttributeValue(R.id, newMaster.GetIdOfPart(newLayout));
-                entry.SetAttributeValue(NoNamespace.id, newId.ToString());
-                newId++;
-
-                if (sourceLayoutPart is {})
-                {
-                    // Remove sldLayoutId for layouts that we do not import
-                    newMasterDoc.Root.Descendants(P.sldLayoutId)
-                        .Where(x => x != entry).ToList()
-                        .ForEach(e => e.Remove());
-                }
-            }
-            newMaster.PutXDocument(newMasterDoc);
-            PBT.AddRelationships(sourceMasterPart, newMaster, new[] { newMaster.GetXDocument().Root });
-            CopyRelatedPartsForContentParts(sourceMasterPart, newMaster, new[] { newMaster.GetXDocument().Root });
-
-            return newMaster;
         }
 
         // Copies notes master and notesSz element from presentation
@@ -429,12 +333,12 @@ namespace Clippit.PowerPoint
                 if (oldMaster.ThemePart is {} themePart)
                 {
                     var newThemePart = newMaster.AddNewPart<ThemePart>();
-                    newThemePart.PutXDocument(themePart.GetXDocument());
+                    newThemePart.PutXDocument(new XDocument(themePart.GetXDocument()));
                     CopyRelatedPartsForContentParts(themePart, newThemePart, new[] { newThemePart.GetXDocument().Root });
                 }
 
                 // Copy master
-                newMaster.PutXDocument(oldMaster.GetXDocument());
+                newMaster.PutXDocument(new XDocument(oldMaster.GetXDocument()));
                 PBT.AddRelationships(oldMaster, newMaster, new[] { newMaster.GetXDocument().Root });
                 CopyRelatedPartsForContentParts(oldMaster, newMaster, new[] { newMaster.GetXDocument().Root });
 
@@ -447,7 +351,7 @@ namespace Clippit.PowerPoint
         private void CopyComments(PresentationDocument oldDocument, SlidePart oldSlide, SlidePart newSlide)
         {
             newSlide.AddNewPart<SlideCommentsPart>();
-            newSlide.SlideCommentsPart.PutXDocument(oldSlide.SlideCommentsPart.GetXDocument());
+            newSlide.SlideCommentsPart.PutXDocument(new XDocument(oldSlide.SlideCommentsPart.GetXDocument()));
             var newSlideComments = newSlide.SlideCommentsPart.GetXDocument();
             var oldAuthors = oldDocument.PresentationPart.CommentAuthorsPart.GetXDocument();
             foreach (var comment in newSlideComments.Root.Elements(P.cm))
@@ -1125,6 +1029,125 @@ namespace Clippit.PowerPoint
             _mediaList.Add(oldMediaData);
             return oldMediaData;
         }
+
+        private ThemePart CopyThemePart(SlideMasterPart slideMasterPart, ThemePart oldThemePart)
+        {
+            var newThemePart = slideMasterPart.AddNewPart<ThemePart>();
+            newThemePart.PutXDocument(new XDocument(oldThemePart.GetXDocument()));
+            CopyRelatedPartsForContentParts(oldThemePart, newThemePart, new[] { newThemePart.GetXDocument().Root });
+
+            if (_newDocument.PresentationPart.ThemePart is null)
+                newThemePart = _newDocument.PresentationPart.AddPart(newThemePart);
+            
+            // TODO: fix name collisions
+            return newThemePart;
+        }
         
+        // General function for handling SlideMasterPart that tries to use an existing SlideMasterPart if they are the same
+        private SlideMasterData ManageSlideMasterPart(SlideMasterPart oldSlideMasterPart)
+        {
+            var oldSlideMasterData = new SlideMasterData(oldSlideMasterPart);
+            foreach (var item in _slideMasterList)
+            {
+                if (item.CompareTo(oldSlideMasterData) == 0)
+                    return item;
+            }
+
+            var newSlideMasterPart = CopySlideMasterPart(oldSlideMasterPart);
+            var newSlideMasterData = new SlideMasterData(newSlideMasterPart);
+            _slideMasterList.Add(newSlideMasterData);
+            return newSlideMasterData;
+        }
+
+        private SlideMasterPart CopySlideMasterPart(SlideMasterPart oldMasterPart)
+        {
+            var newMaster = _newDocument.PresentationPart.AddNewPart<SlideMasterPart>();
+            
+            // Add to presentation slide master list, need newID for layout IDs also
+            var presentationPartDoc = _newDocument.PresentationPart.GetXDocument();
+            presentationPartDoc.Root.Element(P.sldMasterIdLst)
+                .Add(new XElement(P.sldMasterId,
+                    new XAttribute(NoNamespace.id, GetNextFreeId().ToString()),
+                    new XAttribute(R.id, _newDocument.PresentationPart.GetIdOfPart(newMaster))));
+            
+            // Ensure that master does not keep ids of old layouts
+            var newMasterDoc = new XDocument(oldMasterPart.GetXDocument());
+            var sldLayoutIdLst = newMasterDoc.Root.Element(P.sldLayoutIdLst);
+            if (sldLayoutIdLst is null)
+            {
+                newMasterDoc.Root.Add(new XElement(P.sldLayoutIdLst));
+            }
+            else
+            {
+                sldLayoutIdLst.Descendants(P.sldLayoutId).ToList()
+                     .ForEach(e => e.Remove());
+            }
+            newMaster.PutXDocument(newMasterDoc);
+
+
+            PBT.AddRelationships(oldMasterPart, newMaster, new[] {newMaster.GetXDocument().Root});
+            CopyRelatedPartsForContentParts(oldMasterPart, newMaster,new[] { newMaster.GetXDocument().Root });
+            
+            _ = CopyThemePart(newMaster, oldMasterPart.ThemePart);
+            
+            return newMaster;
+        }
+
+        // General function for handling SlideMasterPart that tries to use an existing SlideMasterPart if they are the same
+        private SlideLayoutData ManageSlideLayoutPart(SlideLayoutPart oldSlideLayoutPart)
+        {
+            var slideMasterData = ManageSlideMasterPart(oldSlideLayoutPart.SlideMasterPart);
+            
+            var oldSlideLayoutData = new SlideLayoutData(oldSlideLayoutPart);
+            foreach (var item in slideMasterData.SlideLayoutList)
+            {
+                if (item.CompareTo(oldSlideLayoutData) == 0)
+                    return item;
+            }
+
+            var newSlideLayoutPart = CopySlideLayoutPart(slideMasterData.Part, oldSlideLayoutPart);
+            var newSlideLayoutData = new SlideLayoutData(newSlideLayoutPart);
+            slideMasterData.SlideLayoutList.Add(newSlideLayoutData);
+            return newSlideLayoutData;
+        }
+        
+        private SlideLayoutPart CopySlideLayoutPart(SlideMasterPart newSlideMasterPart, SlideLayoutPart oldSlideLayoutPart)
+        {
+            var newLayout = newSlideMasterPart.AddNewPart<SlideLayoutPart>();
+            newLayout.AddPart(newSlideMasterPart);
+            newLayout.PutXDocument(new XDocument(oldSlideLayoutPart.GetXDocument()));
+            
+            PBT.AddRelationships(oldSlideLayoutPart, newLayout, new[] { newLayout.GetXDocument().Root });
+            CopyRelatedPartsForContentParts(oldSlideLayoutPart, newLayout, new[] { newLayout.GetXDocument().Root });
+
+            var newMasterDoc = newSlideMasterPart.GetXDocument();
+            newMasterDoc.Root.Element(P.sldLayoutIdLst)
+                .Add(new XElement(P.sldLayoutId,
+                    new XAttribute(NoNamespace.id, GetNextFreeId().ToString()),
+                    new XAttribute(R.id, newSlideMasterPart.GetIdOfPart(newLayout))));
+
+            // TODO: Guarantee unique names
+            return newLayout;
+        }
+        
+        private uint GetNextFreeId()
+        {
+            uint newId = 0;
+
+            var presentationPartDoc = _newDocument.PresentationPart.GetXDocument();
+            var masterIds = presentationPartDoc.Root.Descendants(P.sldMasterId).Select(f => (uint)f.Attribute(NoNamespace.id)).ToList();
+            if (masterIds.Any())
+                newId = Math.Max(newId, masterIds.Max());
+
+            foreach (var slideMasterData in _slideMasterList)
+            {
+                var masterPartDoc = slideMasterData.Part.GetXDocument();
+                var layoutIds = masterPartDoc.Root.Descendants(P.sldLayoutId).Select(f => (uint)f.Attribute(NoNamespace.id)).ToList();
+                if (layoutIds.Any())
+                    newId = Math.Max(newId, layoutIds.Max());
+            }
+
+            return newId == 0 ? 2147483648 : newId + 1;
+        }
     }
 }

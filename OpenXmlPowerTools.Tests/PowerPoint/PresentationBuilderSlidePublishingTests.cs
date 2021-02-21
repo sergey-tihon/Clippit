@@ -86,8 +86,8 @@ namespace Clippit.Tests.PowerPoint
             newDocument.FileName = fileName.Replace(".pptx", "_reassembled.pptx");
             newDocument.SaveAs(Path.Combine(TargetDirectory, newDocument.FileName));
 
-            var baseSize = slides.Sum(x => x.DocumentByteArray.Length);
-            Assert.InRange(newDocument.DocumentByteArray.Length, 0.9 * baseSize, 1.1* baseSize);
+            var baseSize = document.DocumentByteArray.Length;
+            Assert.InRange(newDocument.DocumentByteArray.Length, 0.5 * baseSize, 1.1* baseSize);
         }
 
         [Theory]
@@ -114,7 +114,7 @@ namespace Clippit.Tests.PowerPoint
             using var resDoc = streamDoc.GetPresentationDocument();
 
             Assert.Empty(resDoc.PresentationPart.SlideParts);
-            Assert.Equal(numberOfMasters, resDoc.PresentationPart.SlideMasterParts.Count());
+            Assert.InRange(resDoc.PresentationPart.SlideMasterParts.Count(), 1, numberOfMasters);
         }
 
         [Theory]
@@ -126,7 +126,7 @@ namespace Clippit.Tests.PowerPoint
 
             // generate presentation with all masters
             var onlyMaster = PresentationBuilder.BuildPresentation(
-                new List<SlideSource> {new SlideSource(presentation, 0, 0, true)});
+                new List<SlideSource> {new(presentation, 0, 0, true)});
 
             // publish slides with one-layout masters
             var slides = PresentationBuilder.PublishSlides(presentation);
@@ -139,8 +139,8 @@ namespace Clippit.Tests.PowerPoint
             newDocument.FileName = fileName.Replace(".pptx", "_reassembledWithMaster.pptx");
             newDocument.SaveAs(Path.Combine(TargetDirectory, newDocument.FileName));
 
-            var baseSize = slides.Sum(x => x.DocumentByteArray.Length) + onlyMaster.DocumentByteArray.Length;
-            Assert.InRange(newDocument.DocumentByteArray.Length, 0.85 * baseSize, 1.1 * baseSize);
+            var baseSize = presentation.DocumentByteArray.Length;
+            Assert.InRange(newDocument.DocumentByteArray.Length, 0.5 * baseSize, 1.1 * baseSize);
         }
     }
 }

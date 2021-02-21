@@ -4,7 +4,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.PowerPoint
@@ -70,10 +69,9 @@ namespace Clippit.PowerPoint
         public static PmlDocument BuildPresentation(List<SlideSource> sources)
         {
             using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument();
-            using (var output = streamDoc.GetPresentationDocument())
+            using (var output = streamDoc.GetPresentationDocument(new OpenSettings { AutoSave = false}))
             {
                 BuildPresentation(sources, output);
-                output.Close();
             }
             return streamDoc.GetModifiedPmlDocument();
         }
@@ -91,15 +89,14 @@ namespace Clippit.PowerPoint
             for (var slideNumber = 0; slideNumber < slideList.Count; slideNumber++)
             {
                 using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument();
-                using var output = streamDoc.GetPresentationDocument();
+                using (var output = streamDoc.GetPresentationDocument(new OpenSettings { AutoSave = false}))
+                {
+                    ExtractSlide(srcDoc, slideNumber, output);
 
-                ExtractSlide(srcDoc, slideNumber, output);
-
-                var slidePartId = slideList.ElementAt(slideNumber).Attribute(R.id)?.Value;
-                var slidePart = (SlidePart)srcDoc.PresentationPart.GetPartById(slidePartId);
-                output.PackageProperties.Title = PresentationBuilderTools.GetSlideTitle(slidePart);
-
-                output.Close();
+                    var slidePartId = slideList.ElementAt(slideNumber).Attribute(R.id)?.Value;
+                    var slidePart = (SlidePart)srcDoc.PresentationPart.GetPartById(slidePartId);
+                    output.PackageProperties.Title = PresentationBuilderTools.GetSlideTitle(slidePart);
+                }
 
                 var slideDoc = streamDoc.GetModifiedPmlDocument();
                 if (!string.IsNullOrWhiteSpace(fileName))
@@ -114,20 +111,12 @@ namespace Clippit.PowerPoint
 
         private static void ExtractSlide(PresentationDocument srcDoc, int slideNumber, PresentationDocument output)
         {
-            output.PresentationPart.PutXDocument(
-                new XDocument(output.PresentationPart.GetXDocument())
-                {
-                    Declaration = {Standalone = "yes", Encoding = "UTF-8"}
-                });
-
             var fluentBuilder = new FluentPresentationBuilder(output);
             fluentBuilder.CopyStartingParts(srcDoc);
-
             try
             {
                 fluentBuilder.CopyPresentationParts(srcDoc);
-                fluentBuilder.AppendSlides(srcDoc, slideNumber, 1,
-                    true, false, null);
+                fluentBuilder.AppendSlides(srcDoc, slideNumber, 1,true);
             }
             catch (PresentationBuilderInternalException dbie)
             {
@@ -136,26 +125,14 @@ namespace Clippit.PowerPoint
                 throw;
             }
 
-            fluentBuilder.CleanupDocument();
+            fluentBuilder.SaveAndCleanup();
         }
 
         private static void BuildPresentation(List<SlideSource> sources, PresentationDocument output)
         {
             var fluentBuilder = new FluentPresentationBuilder(output);
-
-            var mainPart = output.PresentationPart.GetXDocument();
-            mainPart.Declaration.Standalone = "yes";
-            mainPart.Declaration.Encoding = "UTF-8";
-            output.PresentationPart.PutXDocument();
-
-            using (var streamDoc = new OpenXmlMemoryStreamDocument(sources[0].PmlDocument))
-            {
-                using var doc = streamDoc.GetPresentationDocument();
-                fluentBuilder.CopyStartingParts(doc);
-            }
-
+            
             var sourceNum = 0;
-            SlideMasterPart currentMasterPart = null;
             var openSettings = new OpenSettings {AutoSave = false};
             foreach (var source in sources)
             {
@@ -164,9 +141,12 @@ namespace Clippit.PowerPoint
                 try
                 {
                     if (sourceNum == 0)
+                    {
+                        fluentBuilder.CopyStartingParts(doc);
                         fluentBuilder.CopyPresentationParts(doc);
-                    currentMasterPart = fluentBuilder.AppendSlides(doc, source.Start, source.Count,
-                        source.KeepMaster, true, currentMasterPart);
+                    }
+
+                    fluentBuilder.AppendSlides(doc, source.Start, source.Count, source.KeepMaster);
                 }
                 catch (PresentationBuilderInternalException dbie)
                 {
@@ -177,7 +157,7 @@ namespace Clippit.PowerPoint
 
                 sourceNum++;
             }
-            fluentBuilder.CleanupDocument();
+            fluentBuilder.SaveAndCleanup();
         }
     }
 }

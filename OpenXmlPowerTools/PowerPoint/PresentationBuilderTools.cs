@@ -310,7 +310,6 @@ namespace Clippit.PowerPoint
                     using (var stream = oldPersistencePart.GetStream())
                         newPersistencePart.FeedData(stream);
                     attr.Set(newId2);
-                    newPart.PutXDocument();
                 }
             }
         }
@@ -505,7 +504,7 @@ namespace Clippit.PowerPoint
             || part.ExternalRelationships.Any(er => er.Id == relId);
 
         internal static string NewRelationshipId() =>
-            "RC" + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
+            "rcId" + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
     }
     
     public class PresentationBuilderException : Exception
