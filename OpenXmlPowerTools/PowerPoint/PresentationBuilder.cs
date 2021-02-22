@@ -79,7 +79,7 @@ namespace Clippit.PowerPoint
         public static IList<PmlDocument> PublishSlides(PmlDocument src)
         {
             using var streamSrcDoc = new OpenXmlMemoryStreamDocument(src);
-            using var srcDoc = streamSrcDoc.GetPresentationDocument(new OpenSettings {AutoSave = false});
+            using var srcDoc = streamSrcDoc.GetPresentationDocument(new OpenSettings { AutoSave = false });
             return PublishSlides(srcDoc, src.FileName).ToList();
         }
 
@@ -111,12 +111,10 @@ namespace Clippit.PowerPoint
 
         private static void ExtractSlide(PresentationDocument srcDoc, int slideNumber, PresentationDocument output)
         {
-            var fluentBuilder = new FluentPresentationBuilder(output);
-            fluentBuilder.CopyStartingParts(srcDoc);
+            using var fluentBuilder = new FluentPresentationBuilder(output);
             try
             {
-                fluentBuilder.CopyPresentationParts(srcDoc);
-                fluentBuilder.AppendSlides(srcDoc, slideNumber, 1,true);
+                fluentBuilder.AppendSlides(srcDoc, slideNumber, 1, true);
             }
             catch (PresentationBuilderInternalException dbie)
             {
@@ -124,13 +122,11 @@ namespace Clippit.PowerPoint
                     throw new PresentationBuilderException(string.Format(dbie.Message, slideNumber));
                 throw;
             }
-
-            fluentBuilder.SaveAndCleanup();
         }
 
         private static void BuildPresentation(List<SlideSource> sources, PresentationDocument output)
         {
-            var fluentBuilder = new FluentPresentationBuilder(output);
+            using var fluentBuilder = new FluentPresentationBuilder(output);
             
             var sourceNum = 0;
             var openSettings = new OpenSettings {AutoSave = false};
@@ -140,12 +136,6 @@ namespace Clippit.PowerPoint
                 using var doc = streamDoc.GetPresentationDocument(openSettings);
                 try
                 {
-                    if (sourceNum == 0)
-                    {
-                        fluentBuilder.CopyStartingParts(doc);
-                        fluentBuilder.CopyPresentationParts(doc);
-                    }
-
                     fluentBuilder.AppendSlides(doc, source.Start, source.Count, source.KeepMaster);
                 }
                 catch (PresentationBuilderInternalException dbie)
@@ -157,7 +147,6 @@ namespace Clippit.PowerPoint
 
                 sourceNum++;
             }
-            fluentBuilder.SaveAndCleanup();
         }
     }
 }

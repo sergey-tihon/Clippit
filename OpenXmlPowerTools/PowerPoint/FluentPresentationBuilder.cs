@@ -10,27 +10,41 @@ using PBT = Clippit.PowerPoint.PresentationBuilderTools;
 
 namespace Clippit.PowerPoint
 {
-    internal class FluentPresentationBuilder
+    internal class FluentPresentationBuilder : IDisposable
     {
         private readonly PresentationDocument _newDocument;
-                
+
+        private bool _isDocumentInitialized;
         private readonly List<ImageData> _images = new();
         private readonly List<MediaData> _mediaList = new();
-        private readonly List<ThemeData> _themesList = new();
         private readonly List<SlideMasterData> _slideMasterList = new();
 
         internal FluentPresentationBuilder(PresentationDocument presentationDocument)
         {
-            _newDocument = presentationDocument;
+            _newDocument = presentationDocument ?? throw new NullReferenceException(nameof(presentationDocument));
 
             var mainPart = _newDocument.PresentationPart.GetXDocument();
             mainPart.Declaration.Standalone = "yes";
             mainPart.Declaration.Encoding = "UTF-8";
             
             // TODO: enumerate all images, media, master and layouts
+            _isDocumentInitialized = false;
+            if (presentationDocument.PresentationPart is {} presentation)
+            {
+                foreach (var slideMasterPart in presentation.SlideMasterParts)
+                {
+                    foreach (var slideLayoutPart in slideMasterPart.SlideLayoutParts)
+                    {
+                        _ = ManageSlideLayoutPart(presentationDocument, slideLayoutPart);
+                    }
+                }
+            }
         }
+
+        public void Dispose() =>
+            SaveAndCleanup();
         
-        public void SaveAndCleanup()
+        private void SaveAndCleanup()
         {
             foreach (var part in _newDocument.GetAllParts())
             {
@@ -63,7 +77,7 @@ namespace Clippit.PowerPoint
             }
         }
         
-        public void CopyStartingParts(PresentationDocument sourceDocument)
+        private void CopyStartingParts(PresentationDocument sourceDocument)
         {
             // A Core File Properties part does not have implicit or explicit relationships to other parts.
             var corePart = sourceDocument.CoreFilePropertiesPart;
@@ -109,7 +123,7 @@ namespace Clippit.PowerPoint
             { P.modifyVerifier, 150 },
 #endif
         // Copy handout master, notes master, presentation properties and view properties, if they exist
-        public void CopyPresentationParts(PresentationDocument sourceDocument)
+        private void CopyPresentationParts(PresentationDocument sourceDocument)
         {
             var newPresentation = _newDocument.PresentationPart.GetXDocument();
 
@@ -238,6 +252,13 @@ namespace Clippit.PowerPoint
 
         public void AppendSlides(PresentationDocument sourceDocument, int start, int count, bool keepMaster)
         {
+            if (!_isDocumentInitialized)
+            {
+                CopyStartingParts(sourceDocument);
+                CopyPresentationParts(sourceDocument);
+                _isDocumentInitialized = true;
+            }
+            
             var newPresentation = _newDocument.PresentationPart.GetXDocument();
             if (newPresentation.Root.Element(P.sldIdLst) is null) {
                 newPresentation.Root.Add(new XElement(P.sldIdLst));
@@ -254,7 +275,7 @@ namespace Clippit.PowerPoint
                 {
                     foreach (var slideLayoutPart in slideMasterPart.SlideLayoutParts)
                     {
-                        _ = ManageSlideLayoutPart(slideLayoutPart);
+                        _ = ManageSlideLayoutPart(sourceDocument, slideLayoutPart);
                     }
                 }
             }
@@ -287,10 +308,10 @@ namespace Clippit.PowerPoint
                     CopyRelatedPartsForContentParts(slide.NotesSlidePart, newPart, new[] { newPart.GetXDocument().Root });
                 }
 
-                var slideLayoutData = ManageSlideLayoutPart(slide.SlideLayoutPart);
+                var slideLayoutData = ManageSlideLayoutPart(sourceDocument, slide.SlideLayoutPart);
                 newSlide.AddPart(slideLayoutData.Part);
 
-                if (slide.SlideCommentsPart is {})
+                if (slide.SlideCommentsPart is not null)
                     CopyComments(sourceDocument, slide, newSlide);
 
                 newPresentation = _newDocument.PresentationPart.GetXDocument();
@@ -1035,19 +1056,23 @@ namespace Clippit.PowerPoint
         }
         
         // General function for handling SlideMasterPart that tries to use an existing SlideMasterPart if they are the same
-        private SlideMasterData ManageSlideMasterPart(SlideMasterPart oldSlideMasterPart)
+        private SlideMasterData ManageSlideMasterPart(PresentationDocument presentationDocument, SlideMasterPart slideMasterPart)
         {
-            var oldSlideMasterData = new SlideMasterData(oldSlideMasterPart);
+            var slideMasterData = new SlideMasterData(slideMasterPart);
             foreach (var item in _slideMasterList)
             {
-                if (item.CompareTo(oldSlideMasterData) == 0)
+                if (item.CompareTo(slideMasterData) == 0)
                     return item;
             }
 
-            var newSlideMasterPart = CopySlideMasterPart(oldSlideMasterPart);
-            var newSlideMasterData = new SlideMasterData(newSlideMasterPart);
-            _slideMasterList.Add(newSlideMasterData);
-            return newSlideMasterData;
+            if (!ReferenceEquals(presentationDocument, _newDocument))
+            {
+                var newSlideMasterPart = CopySlideMasterPart(slideMasterPart);
+                slideMasterData = new SlideMasterData(newSlideMasterPart);
+            }
+            
+            _slideMasterList.Add(slideMasterData);
+            return slideMasterData;
         }
 
         private SlideMasterPart CopySlideMasterPart(SlideMasterPart oldMasterPart)
@@ -1085,21 +1110,25 @@ namespace Clippit.PowerPoint
         }
 
         // General function for handling SlideMasterPart that tries to use an existing SlideMasterPart if they are the same
-        private SlideLayoutData ManageSlideLayoutPart(SlideLayoutPart oldSlideLayoutPart)
+        private SlideLayoutData ManageSlideLayoutPart(PresentationDocument presentationDocument, SlideLayoutPart slideLayoutPart)
         {
-            var slideMasterData = ManageSlideMasterPart(oldSlideLayoutPart.SlideMasterPart);
+            var slideMasterData = ManageSlideMasterPart(presentationDocument, slideLayoutPart.SlideMasterPart);
             
-            var oldSlideLayoutData = new SlideLayoutData(oldSlideLayoutPart);
+            var slideLayoutData = new SlideLayoutData(slideLayoutPart);
             foreach (var item in slideMasterData.SlideLayoutList)
             {
-                if (item.CompareTo(oldSlideLayoutData) == 0)
+                if (item.CompareTo(slideLayoutData) == 0)
                     return item;
             }
 
-            var newSlideLayoutPart = CopySlideLayoutPart(slideMasterData.Part, oldSlideLayoutPart);
-            var newSlideLayoutData = new SlideLayoutData(newSlideLayoutPart);
-            slideMasterData.SlideLayoutList.Add(newSlideLayoutData);
-            return newSlideLayoutData;
+            if (!ReferenceEquals(presentationDocument, _newDocument))
+            {
+                var newSlideLayoutPart = CopySlideLayoutPart(slideMasterData.Part, slideLayoutPart);
+                slideLayoutData = new SlideLayoutData(newSlideLayoutPart);
+            }
+
+            slideMasterData.SlideLayoutList.Add(slideLayoutData);
+            return slideLayoutData;
         }
         
         private SlideLayoutPart CopySlideLayoutPart(SlideMasterPart newSlideMasterPart, SlideLayoutPart oldSlideLayoutPart)
