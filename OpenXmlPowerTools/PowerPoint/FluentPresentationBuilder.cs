@@ -231,6 +231,13 @@ namespace Clippit.PowerPoint
                 rc.Remove();
             newPresentation.Root.Add(
                 listOfRootChildren.OrderBy(e => PresentationBuilderTools.s_orderPresentation.ContainsKey(e.Name) ? PresentationBuilderTools.s_orderPresentation[e.Name] : 999));
+            
+            // Remove sections
+            var sectionLists = newPresentation.Root.Descendants(P14.sectionLst).ToList();
+            foreach (var sectionList in sectionLists)
+            {
+                sectionList.Parent.Remove();
+            }
         }
         
         private XElement CreateEmbeddedFontPart(PresentationDocument sourceDocument, XElement font, XName fontXName)
