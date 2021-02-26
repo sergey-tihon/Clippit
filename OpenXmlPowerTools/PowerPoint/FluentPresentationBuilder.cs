@@ -51,6 +51,21 @@ namespace Clippit.PowerPoint
         
         private void SaveAndCleanup()
         {
+            // Remove sections list (all slides added to default section)
+            var presentationDocument = _newDocument.PresentationPart.GetXDocument();
+            var sectionLists = presentationDocument.Descendants(P14.sectionLst).ToList();
+            foreach (var sectionList in sectionLists)
+            {
+                sectionList.Parent?.Remove(); // <p:ext> element
+            }
+
+            // Remove custom properties (source doc metadata irrelevant for generated document)
+            var customPropsDocument = _newDocument.CustomFilePropertiesPart?.GetXDocument();
+            if (customPropsDocument?.Root?.HasElements == true)
+            {
+                customPropsDocument.Root?.RemoveNodes();
+            }
+            
             foreach (var part in _newDocument.GetAllParts())
             {
                 if (part.ContentType.EndsWith("+xml"))
@@ -61,24 +76,6 @@ namespace Clippit.PowerPoint
                 }
                 else if (part.Annotation<XDocument>() is {})
                     part.PutXDocument();
-            }
-
-            // Remove sections list (all slides added to default section)
-            var presentationDocument = _newDocument.PresentationPart.GetXDocument();
-            var sectionLists = presentationDocument.Descendants(P14.sectionLst).ToList();
-            if (sectionLists.Count > 0)
-            {
-                foreach (var sectionList in sectionLists)
-                {
-                    sectionList.Parent?.Remove(); // <p:ext> element
-                }
-            }
-
-            // Remove custom properties (source doc metadata irrelevant for generated document)
-            var customPropsDocument = _newDocument.CustomFilePropertiesPart?.GetXDocument();
-            if (customPropsDocument?.Root?.HasElements == true)
-            {
-                customPropsDocument.Root?.RemoveNodes();
             }
         }
         
@@ -231,13 +228,6 @@ namespace Clippit.PowerPoint
                 rc.Remove();
             newPresentation.Root.Add(
                 listOfRootChildren.OrderBy(e => PresentationBuilderTools.s_orderPresentation.ContainsKey(e.Name) ? PresentationBuilderTools.s_orderPresentation[e.Name] : 999));
-            
-            // Remove sections
-            var sectionLists = newPresentation.Root.Descendants(P14.sectionLst).ToList();
-            foreach (var sectionList in sectionLists)
-            {
-                sectionList.Parent.Remove();
-            }
         }
         
         private XElement CreateEmbeddedFontPart(PresentationDocument sourceDocument, XElement font, XName fontXName)
@@ -314,7 +304,7 @@ namespace Clippit.PowerPoint
                 // If we extract one slide, this slide should be visible
                 slideDocument.Root?.Attribute(NoNamespace.show)?.Remove();
 
-                ScaleShapes(slideDocument, scaleFactor);
+                SlideLayoutData.ScaleShapes(slideDocument, scaleFactor);
                 newSlide.PutXDocument(slideDocument);
                 
                 PBT.AddRelationships(slide, newSlide, new[] { newSlide.GetXDocument().Root });
@@ -355,54 +345,9 @@ namespace Clippit.PowerPoint
         private double GetScaleFactor(PresentationDocument sourceDocument)
         {
             var slideSize = sourceDocument.PresentationPart.Presentation.SlideSize;
-            var scaleFactorX = (double)slideSize.Cx / _slideSize.Cx;
-            var scaleFactorY = (double)slideSize.Cy / _slideSize.Cy;
+            var scaleFactorX = (double)_slideSize.Cx / slideSize.Cx;
+            var scaleFactorY = (double)_slideSize.Cy / slideSize.Cy;
             return Math.Min(scaleFactorX, scaleFactorY);
-        }
-        
-        private void ScaleShapes(XDocument openXmlPart, double scale)
-        {
-            if (Math.Abs(scale - 1.0) < 1.0e-5)
-                return;
-
-            var shapeTree = openXmlPart.Element(P.spTree);
-            if (shapeTree is null)
-                throw new NullReferenceException("Scale is null supported on parts without spTree");
-            
-            var transforms = shapeTree.Descendants(A.xfrm);
-            foreach (var transform in transforms)
-            {
-                var offset = transform.Element(A.off);
-                if (offset is not null)
-                {
-                    Scale(offset.Attribute("x"));
-                    Scale(offset.Attribute("y"));
-                }
-
-                var extents = transform.Element(A.ext);
-                if (offset is not null)
-                {
-                    Scale(extents.Attribute("cx"));
-                    Scale(extents.Attribute("cy"));
-                }
-            }
-
-            var runProps = shapeTree.Descendants(A.rPr);
-            foreach (var rPr in runProps)
-            {
-                Scale(rPr.Attribute("sz"));
-            }
-
-            void Scale(XAttribute attr)
-            {
-                if (attr is null)
-                    return;
-                if (!long.TryParse(attr.Value, out var num))
-                    return;
-
-                var newNum = (long) (num * scale);
-                attr.SetValue(newNum);
-            }
         }
 
         // Copies notes master and notesSz element from presentation
@@ -1121,10 +1066,13 @@ namespace Clippit.PowerPoint
             return oldMediaData;
         }
 
-        private ThemePart CopyThemePart(SlideMasterPart slideMasterPart, ThemePart oldThemePart)
+        private ThemePart CopyThemePart(SlideMasterPart slideMasterPart, ThemePart oldThemePart, double scaleFactor)
         {
             var newThemePart = slideMasterPart.AddNewPart<ThemePart>();
-            newThemePart.PutXDocument(new XDocument(oldThemePart.GetXDocument()));
+            var newThemeDoc = new XDocument(oldThemePart.GetXDocument());
+            SlideLayoutData.ScaleShapes(newThemeDoc, scaleFactor);
+            newThemePart.PutXDocument(newThemeDoc);
+            
             CopyRelatedPartsForContentParts(oldThemePart, newThemePart, new[] { newThemePart.GetXDocument().Root });
 
             if (_newDocument.PresentationPart.ThemePart is null)
@@ -1137,7 +1085,7 @@ namespace Clippit.PowerPoint
         // General function for handling SlideMasterPart that tries to use an existing SlideMasterPart if they are the same
         private SlideMasterData ManageSlideMasterPart(PresentationDocument presentationDocument, SlideMasterPart slideMasterPart, double scaleFactor)
         {
-            var slideMasterData = new SlideMasterData(slideMasterPart);
+            var slideMasterData = new SlideMasterData(slideMasterPart, scaleFactor);
             foreach (var item in _slideMasterList)
             {
                 if (item.CompareTo(slideMasterData) == 0)
@@ -1147,7 +1095,7 @@ namespace Clippit.PowerPoint
             if (!ReferenceEquals(presentationDocument, _newDocument))
             {
                 var newSlideMasterPart = CopySlideMasterPart(slideMasterPart, scaleFactor);
-                slideMasterData = new SlideMasterData(newSlideMasterPart);
+                slideMasterData = new SlideMasterData(newSlideMasterPart, 1.0);
             }
             
             _slideMasterList.Add(slideMasterData);
@@ -1178,13 +1126,13 @@ namespace Clippit.PowerPoint
                      .ForEach(e => e.Remove());
             }
             
-            ScaleShapes(newMasterDoc, scaleFactor);
+            SlideLayoutData.ScaleShapes(newMasterDoc, scaleFactor);
             newMaster.PutXDocument(newMasterDoc);
 
             PBT.AddRelationships(oldMasterPart, newMaster, new[] {newMaster.GetXDocument().Root});
             CopyRelatedPartsForContentParts(oldMasterPart, newMaster,new[] { newMaster.GetXDocument().Root });
             
-            _ = CopyThemePart(newMaster, oldMasterPart.ThemePart);
+            _ = CopyThemePart(newMaster, oldMasterPart.ThemePart, scaleFactor);
             
             return newMaster;
         }
@@ -1194,7 +1142,7 @@ namespace Clippit.PowerPoint
         {
             var slideMasterData = ManageSlideMasterPart(presentationDocument, slideLayoutPart.SlideMasterPart, scaleFactor);
             
-            var slideLayoutData = new SlideLayoutData(slideLayoutPart);
+            var slideLayoutData = new SlideLayoutData(slideLayoutPart, scaleFactor);
             foreach (var item in slideMasterData.SlideLayoutList)
             {
                 if (item.CompareTo(slideLayoutData) == 0)
@@ -1204,7 +1152,7 @@ namespace Clippit.PowerPoint
             if (!ReferenceEquals(presentationDocument, _newDocument))
             {
                 var newSlideLayoutPart = CopySlideLayoutPart(slideMasterData.Part, slideLayoutPart, scaleFactor);
-                slideLayoutData = new SlideLayoutData(newSlideLayoutPart);
+                slideLayoutData = new SlideLayoutData(newSlideLayoutPart, 1.0);
             }
 
             slideMasterData.SlideLayoutList.Add(slideLayoutData);
@@ -1217,7 +1165,7 @@ namespace Clippit.PowerPoint
             newLayout.AddPart(newSlideMasterPart);
             
             var newLayoutDoc = new XDocument(oldSlideLayoutPart.GetXDocument());
-            ScaleShapes(newLayoutDoc, scaleFactor);
+            SlideLayoutData.ScaleShapes(newLayoutDoc, scaleFactor);
             newLayout.PutXDocument(newLayoutDoc);
             
             PBT.AddRelationships(oldSlideLayoutPart, newLayout, new[] { newLayout.GetXDocument().Root });
