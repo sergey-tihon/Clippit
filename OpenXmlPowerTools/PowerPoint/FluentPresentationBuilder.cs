@@ -250,14 +250,29 @@ namespace Clippit.PowerPoint
             return new XElement(fontXName, new XAttribute(R.id, newFontPartId));
         }
 
-        public void AppendSlides(PresentationDocument sourceDocument, int start, int count, bool keepMaster)
+        public void AppendMaster(PresentationDocument sourceDocument, SlideMasterPart slideMasterPart)
         {
-            if (!_isDocumentInitialized)
+            EnsureDocumentInitialized(sourceDocument);
+
+            foreach (var slideLayoutPart in slideMasterPart.SlideLayoutParts)
             {
-                CopyStartingParts(sourceDocument);
-                CopyPresentationParts(sourceDocument);
-                _isDocumentInitialized = true;
+                _ = ManageSlideLayoutPart(sourceDocument, slideLayoutPart);
             }
+        }
+
+        private void EnsureDocumentInitialized(PresentationDocument sourceDocument)
+        {
+            if (_isDocumentInitialized)
+                return;
+            
+            CopyStartingParts(sourceDocument);
+            CopyPresentationParts(sourceDocument);
+            _isDocumentInitialized = true;
+        }
+        
+        public void AppendSlides(PresentationDocument sourceDocument, int start, int count)
+        {
+            EnsureDocumentInitialized(sourceDocument);
             
             var newPresentation = _newDocument.PresentationPart.GetXDocument();
             if (newPresentation.Root.Element(P.sldIdLst) is null) {
@@ -268,17 +283,6 @@ namespace Clippit.PowerPoint
             var ids = newPresentation.Root.Descendants(P.sldId).Select(f => (uint)f.Attribute(NoNamespace.id)).ToList();
             if (ids.Any())
                 newId = ids.Max() + 1;
-            
-            if (keepMaster)
-            {
-                foreach (var slideMasterPart in sourceDocument.PresentationPart.SlideMasterParts)
-                {
-                    foreach (var slideLayoutPart in slideMasterPart.SlideLayoutParts)
-                    {
-                        _ = ManageSlideLayoutPart(sourceDocument, slideLayoutPart);
-                    }
-                }
-            }
             
             var slideList = sourceDocument.PresentationPart.GetXDocument().Root.Descendants(P.sldId).ToList();
             while (count > 0 && start < slideList.Count)

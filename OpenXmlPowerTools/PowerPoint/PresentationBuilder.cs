@@ -114,7 +114,7 @@ namespace Clippit.PowerPoint
             using var fluentBuilder = new FluentPresentationBuilder(output);
             try
             {
-                fluentBuilder.AppendSlides(srcDoc, slideNumber, 1, true);
+                fluentBuilder.AppendSlides(srcDoc, slideNumber, 1);
             }
             catch (PresentationBuilderInternalException dbie)
             {
@@ -136,13 +136,20 @@ namespace Clippit.PowerPoint
                 using var doc = streamDoc.GetPresentationDocument(openSettings);
                 try
                 {
-                    fluentBuilder.AppendSlides(doc, source.Start, source.Count, source.KeepMaster);
+                    if (source.KeepMaster)
+                    {
+                        foreach (var slideMasterPart in doc.PresentationPart.SlideMasterParts)
+                        {
+                            fluentBuilder.AppendMaster(doc, slideMasterPart);
+                        }
+                    }
+                    fluentBuilder.AppendSlides(doc, source.Start, source.Count);
                 }
                 catch (PresentationBuilderInternalException dbie)
                 {
                     if (dbie.Message.Contains("{0}"))
                         throw new PresentationBuilderException(string.Format(dbie.Message, sourceNum));
-                    throw dbie;
+                    throw;
                 }
 
                 sourceNum++;
