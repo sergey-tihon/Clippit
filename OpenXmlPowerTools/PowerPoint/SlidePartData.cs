@@ -56,45 +56,42 @@ namespace Clippit.PowerPoint
             }
         }
 
+
+        private static Dictionary<XName, string[]> s_resizableAttributes = 
+            new() {
+                {A.off, new[] {"x", "y"}},      // <a:off x="2054132" y="1665577"/>
+                {A.ext, new[] {"cx", "cy"}},    // <a:ext cx="2289267" cy="3074329"/>
+                {A.chOff, new[] {"x", "y"}},    // <a:chOff x="698501" y="1640632"/>
+                {A.chExt, new[] {"cx", "cy"}},  // <a:chExt cx="906462" cy="270006"/>
+                {A.rPr, new []{"sz"}},          // <a:rPr lang="en-US" sz="700" b="1">
+                {A.defRPr, new[] {"sz"}},       // <a:defRPr sz="1350" kern="1200">
+                {A.pPr, new[] {"defTabSz"}},    // <a:pPr defTabSz="457119">
+                {A.endParaRPr, new[] {"sz"}},   // <a:endParaRPr lang="en-US" sz="2400" kern="0">
+                {A.gridCol, new[] {"w"}},       // <a:gridCol w="347223">
+                {A.tr, new[] {"h"}},            // <a:tr h="229849">
+            };
+        
         public static void ScaleShapes(XDocument openXmlPart, double scale)
         {
             if (Math.Abs(scale - 1.0) < 1.0e-5)
                 return;
 
-            var shapeTree = openXmlPart.Descendants(P.spTree).FirstOrDefault();
-            if (shapeTree is not null)
+            foreach (var element in openXmlPart.Descendants())
             {
-                foreach (var transform in shapeTree.Descendants(A.xfrm))
+                if (!s_resizableAttributes.TryGetValue(element.Name, out var attrNames))
+                    continue;
+                
+                foreach (var attrName in attrNames)
                 {
-                    if (transform.Element(A.off) is {} offset)
-                    {
-                        Scale(offset, "x");
-                        Scale(offset, "y");
-                    }
+                    var attr = element.Attribute(attrName);
+                    if (attr is null)
+                        continue;
+                    if (!long.TryParse(attr.Value, out var num))
+                        continue;
 
-                    if (transform.Element(A.ext) is {} extents)
-                    {
-                        Scale(extents, "cx");
-                        Scale(extents, "cy");
-                    }
+                    var newNum = (long) (num * scale);
+                    attr.SetValue(newNum);
                 }
-
-                foreach (var rPr in shapeTree.Descendants(A.rPr))
-                {
-                    Scale(rPr, "sz");
-                }
-            }
-
-            void Scale(XElement element, string attrName)
-            {
-                var attr = element.Attribute(attrName);
-                if (attr is null)
-                    return;
-                if (!long.TryParse(attr.Value, out var num))
-                    return;
-
-                var newNum = (long) (num * scale);
-                attr.SetValue(newNum);
             }
         }
     }
