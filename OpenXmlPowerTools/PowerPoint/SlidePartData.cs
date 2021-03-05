@@ -101,8 +101,15 @@ namespace Clippit.PowerPoint
     {
         public SlideLayoutData(SlideLayoutPart slideLayout, double scaleFactor):base(slideLayout, scaleFactor) {}
 
-        protected override string GetShapeDescriptor(SlideLayoutPart slideLayout) =>
-            NormalizeXml(slideLayout.SlideLayout.CommonSlideData.ShapeTree.OuterXml);
+        protected override string GetShapeDescriptor(SlideLayoutPart slideLayout) 
+        {
+            var sb = new StringBuilder();
+            var cSld = slideLayout.SlideLayout.CommonSlideData;
+            sb.Append(NormalizeXml(cSld.ShapeTree.OuterXml));
+            if (cSld.Background is not null) 
+                sb.Append(NormalizeXml(cSld.Background.OuterXml));
+            return sb.ToString();
+        }
 
     }
     
@@ -130,7 +137,11 @@ namespace Clippit.PowerPoint
         protected override string GetShapeDescriptor(SlideMasterPart slideMaster)
         {
             var sb = new StringBuilder();
-            sb.Append(NormalizeXml(slideMaster.SlideMaster.CommonSlideData.ShapeTree.OuterXml));
+            var cSld = slideMaster.SlideMaster.CommonSlideData;
+            sb.Append(NormalizeXml(cSld.ShapeTree.OuterXml));
+            if (cSld.Background is not null) 
+                sb.Append(NormalizeXml(cSld.Background.OuterXml));
+
             sb.Append(NormalizeXml(slideMaster.SlideMaster.ColorMap.OuterXml));
             return sb.ToString();
         }

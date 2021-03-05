@@ -1,4 +1,4 @@
-#### 1.5.0-beta2 - Mar 1, 2021
+#### 1.5.0-beta3 - Mar 5, 2021
 - Structural comparison for Theme, Master, Layout [#20](https://github.com/sergey-tihon/Clippit/pull/20)
 - Auto-scaling for slides from presentations with different slide size
 
