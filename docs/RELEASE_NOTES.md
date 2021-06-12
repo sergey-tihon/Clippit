@@ -1,3 +1,7 @@
+#### 1.5.0-beta4 - Jun 12, 2021
+- DocumentFormat.OpenXml (2.13)
+- System.Drawing.Common (5.0.2)
+
 #### 1.5.0-beta3 - Mar 5, 2021
 - Structural comparison for Theme, Master, Layout [#20](https://github.com/sergey-tihon/Clippit/pull/20)
 - Auto-scaling for slides from presentations with different slide size
