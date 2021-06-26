@@ -1,3 +1,9 @@
+#### 1.5.0 - Jun 26, 2021
+- Structural comparison for Theme, Master, Layout [#20](https://github.com/sergey-tihon/Clippit/pull/20)
+- Auto-scaling for slides from presentations with different slide size
+- DocumentFormat.OpenXml (2.13)
+- System.Drawing.Common (5.0.2)
+
 #### 1.4.0 - Feb 10, 2021
 - DocumentBuilder: Added ISource and TableCellSource - [#17](https://github.com/sergey-tihon/Clippit/pull/17)
 - DocumentFormat.OpenXml (2.12.1)

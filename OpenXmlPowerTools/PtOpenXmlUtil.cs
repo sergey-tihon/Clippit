@@ -24,10 +24,10 @@ namespace Clippit
     {
         public static XDocument GetXDocument(this OpenXmlPart part)
         {
-            if (part == null) throw new ArgumentNullException("part");
+            if (part is null) throw new ArgumentNullException(nameof(part));
 
             XDocument partXDocument = part.Annotation<XDocument>();
-            if (partXDocument != null) return partXDocument;
+            if (partXDocument is not null) return partXDocument;
 
             using (Stream partStream = part.GetStream())
             {
@@ -49,13 +49,13 @@ namespace Clippit
 
         public static XDocument GetXDocument(this OpenXmlPart part, out XmlNamespaceManager namespaceManager)
         {
-            if (part == null) throw new ArgumentNullException("part");
+            if (part is null) throw new ArgumentNullException(nameof(part));
 
             namespaceManager = part.Annotation<XmlNamespaceManager>();
             XDocument partXDocument = part.Annotation<XDocument>();
-            if (partXDocument != null)
+            if (partXDocument is not null)
             {
-                if (namespaceManager != null) return partXDocument;
+                if (namespaceManager is not null) return partXDocument;
 
                 namespaceManager = GetManagerFromXDocument(partXDocument);
                 part.AddAnnotation(namespaceManager);
@@ -92,7 +92,7 @@ namespace Clippit
 
         public static void PutXDocument(this OpenXmlPart part)
         {
-            if (part == null) throw new ArgumentNullException("part");
+            if (part is null) throw new ArgumentNullException(nameof(part));
 
             XDocument partXDocument = part.GetXDocument();
             if (partXDocument != null)
@@ -111,7 +111,7 @@ namespace Clippit
 
         public static void PutXDocumentWithFormatting(this OpenXmlPart part)
         {
-            if (part == null) throw new ArgumentNullException("part");
+            if (part is null) throw new ArgumentNullException("part");
 
             XDocument partXDocument = part.GetXDocument();
             if (partXDocument != null)
@@ -130,8 +130,8 @@ namespace Clippit
 
         public static void PutXDocument(this OpenXmlPart part, XDocument document)
         {
-            if (part == null) throw new ArgumentNullException("part");
-            if (document == null) throw new ArgumentNullException("document");
+            if (part is null) throw new ArgumentNullException(nameof(part));
+            if (document is null) throw new ArgumentNullException(nameof(document));
 
             using (Stream partStream = part.GetStream(FileMode.Create, FileAccess.Write))
             using (XmlWriter partXmlWriter = XmlWriter.Create(partStream))
