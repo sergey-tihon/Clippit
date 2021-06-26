@@ -1077,8 +1077,7 @@ namespace Clippit.PowerPoint
 
             if (_newDocument.PresentationPart.ThemePart is null)
                 newThemePart = _newDocument.PresentationPart.AddPart(newThemePart);
-            
-            // TODO: fix name collisions
+
             return newThemePart;
         }
         
@@ -1177,7 +1176,6 @@ namespace Clippit.PowerPoint
                     new XAttribute(NoNamespace.id, GetNextFreeId().ToString()),
                     new XAttribute(R.id, newSlideMasterPart.GetIdOfPart(newLayout))));
 
-            // TODO: Guarantee unique names
             return newLayout;
         }
         
