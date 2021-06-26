@@ -19,6 +19,8 @@ http://www.ericwhite.com/blog/presentationbuilder-developer-center/
 
 - __Removed Custom Properties__. Clippit does not copy document properties from the first `SlideSource` into result document.
 - __Removed Section List__. Clippit copy all slides into Default section and does not copy list of sections from first `SlideSource`.
+- __Structural comparison for Theme, Master, Layout__. Clippit structurally compare Themes, Masters and Layout and maintain minimal amount of these parts in target presentation to guarantee no visual artifacts on slides in the target presentation.
+- __Shape auto-scale__. Clippit automatically scale all shapes on the slides when you merge slides of different size.
 
 #### Fixes
 
