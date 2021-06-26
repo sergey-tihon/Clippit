@@ -3,17 +3,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+using Clippit.Excel;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Sw = Clippit;
 using Xunit;
+using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
@@ -21,300 +18,337 @@ namespace OxPt
 {
     public class SwTests
     {
-        [Fact]
-        public void SW001_Simple()
+        private readonly ITestOutputHelper _log;
+
+        public SwTests(ITestOutputHelper log)
         {
-            Sw.WorkbookDfn wb = new Sw.WorkbookDfn
+            this._log = log;
+        }
+        
+        private static WorkbookDfn GetSimpleWorkbookDfn() => new()
+        {
+            Worksheets = new WorksheetDfn[]
             {
-                Worksheets = new Sw.WorksheetDfn[]
+                new()
                 {
-                    new Sw.WorksheetDfn
-                    {
-                        Name = "MyFirstSheet",
-                        TableName = "NamesAndRates",
-                        ColumnHeadings = new Sw.CellDfn[]
+                    Name = "MyFirstSheet",
+                    TableName = "NamesAndRates",
+                    ColumnHeadings =
+                        new CellDfn[]
                         {
-                            new Sw.CellDfn
-                            {
-                                Value = "Name",
-                                Bold = true,
-                            },
-                            new Sw.CellDfn
+                            new() { Value = "Name", Bold = true, },
+                            new()
                             {
                                 Value = "Age",
                                 Bold = true,
-                                HorizontalCellAlignment = Sw.HorizontalCellAlignment.Left,
+                                HorizontalCellAlignment = HorizontalCellAlignment.Left,
                             },
-                            new Sw.CellDfn
+                            new()
                             {
                                 Value = "Rate",
                                 Bold = true,
-                                HorizontalCellAlignment = Sw.HorizontalCellAlignment.Left,
+                                HorizontalCellAlignment = HorizontalCellAlignment.Left,
                             }
                         },
-                        Rows = new Sw.RowDfn[]
+                    Rows = new RowDfn[]
+                    {
+                        new()
                         {
-                            new Sw.RowDfn
+                            Cells = new CellDfn[]
                             {
-                                Cells = new Sw.CellDfn[]
+                                new() { CellDataType = CellDataType.String, Value = "Eric", },
+                                new() { CellDataType = CellDataType.Number, Value = 50, },
+                                new()
                                 {
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.String,
-                                        Value = "Eric",
-                                    },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Number,
-                                        Value = 50,
-                                    },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Number,
-                                        Value = (decimal)45.00,
-                                        FormatCode = "0.00",
-                                    },
-                                }
-                            },
-                            new Sw.RowDfn
+                                    CellDataType = CellDataType.Number,
+                                    Value = (decimal)45.00,
+                                    FormatCode = "0.00",
+                                },
+                            }
+                        },
+                        new()
+                        {
+                            Cells = new CellDfn[]
                             {
-                                Cells = new Sw.CellDfn[]
+                                new() { CellDataType = CellDataType.String, Value = "Bob", },
+                                new() { CellDataType = CellDataType.Number, Value = 42, },
+                                new()
                                 {
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.String,
-                                        Value = "Bob",
-                                    },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Number,
-                                        Value = 42,
-                                    },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Number,
-                                        Value = (decimal)78.00,
-                                        FormatCode = "0.00",
-                                    },
-                                }
-                            },
-                        }
+                                    CellDataType = CellDataType.Number,
+                                    Value = (decimal)78.00,
+                                    FormatCode = "0.00",
+                                },
+                            }
+                        },
                     }
                 }
-            };
+            }
+        };
+        
+        [Fact]
+        public void SW001_Simple()
+        {
+            var wb = GetSimpleWorkbookDfn();
             var outXlsx = new FileInfo(Path.Combine(Sw.TestUtil.TempDir.FullName, "SW001-Simple.xlsx"));
-            Sw.SpreadsheetWriter.Write(outXlsx.FullName, wb);
-            Validate(outXlsx);
+            SpreadsheetWriter.Write(outXlsx.FullName, wb);
+            
+            using var sDoc = SpreadsheetDocument.Open(outXlsx.FullName, false);
+            Validate(sDoc);
+        }
+        
+        [Fact]
+        public void SW001_SimpleToStream()
+        {
+            var wb = GetSimpleWorkbookDfn();
+
+            using var stream = new MemoryStream();
+            wb.WriteTo(stream);
+            stream.Position = 0;
+
+            using var sDoc = SpreadsheetDocument.Open(stream, false);
+            Validate(sDoc);
         }
 
         [Fact]
         public void SW002_AllDataTypes()
         {
-            Sw.WorkbookDfn wb = new Sw.WorkbookDfn
+            var wb = new WorkbookDfn
             {
-                Worksheets = new Sw.WorksheetDfn[]
+                Worksheets = new WorksheetDfn[]
                 {
-                    new Sw.WorksheetDfn
+                    new()
                     {
                         Name = "MyFirstSheet",
-                        ColumnHeadings = new Sw.CellDfn[]
+                        ColumnHeadings = new CellDfn[]
                         {
-                            new Sw.CellDfn
+                            new()
                             {
                                 Value = "DataType",
                                 Bold = true,
                             },
-                            new Sw.CellDfn
+                            new()
                             {
                                 Value = "Value",
                                 Bold = true,
-                                HorizontalCellAlignment = Sw.HorizontalCellAlignment.Right,
+                                HorizontalCellAlignment = HorizontalCellAlignment.Right,
                             },
                         },
-                        Rows = new Sw.RowDfn[]
+                        Rows = new RowDfn[]
                         {
-                            new Sw.RowDfn
+                            new()
                             {
-                                Cells = new Sw.CellDfn[]
+                                Cells = new CellDfn[]
                                 {
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.String,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.String,
                                         Value = "Boolean",
                                     },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Boolean,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.Boolean,
                                         Value = true,
                                     },
                                 }
                             },
-                            new Sw.RowDfn
+                            new()
                             {
-                                Cells = new Sw.CellDfn[]
+                                Cells = new CellDfn[]
                                 {
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.String,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.String,
                                         Value = "Boolean",
                                     },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Boolean,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.Boolean,
                                         Value = false,
                                     },
                                 }
                             },
-                            new Sw.RowDfn
+                            new()
                             {
-                                Cells = new Sw.CellDfn[]
+                                Cells = new CellDfn[]
                                 {
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.String,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.String,
                                         Value = "String",
                                     },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.String,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.String,
                                         Value = "A String",
-                                        HorizontalCellAlignment = Sw.HorizontalCellAlignment.Right,
+                                        HorizontalCellAlignment = HorizontalCellAlignment.Right,
                                     },
                                 }
                             },
-                            new Sw.RowDfn
+                            new()
                             {
-                                Cells = new Sw.CellDfn[]
+                                Cells = new CellDfn[]
                                 {
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.String,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.String,
                                         Value = "int",
                                     },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Number,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.Number,
                                         Value = (int)100,
                                     },
                                 }
                             },
-                            new Sw.RowDfn
+                            new()
                             {
-                                Cells = new Sw.CellDfn[]
+                                Cells = new CellDfn[]
                                 {
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.String,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.String,
                                         Value = "int?",
                                     },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Number,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.Number,
                                         Value = (int?)100,
                                     },
                                 }
                             },
-                            new Sw.RowDfn
+                            new()
                             {
-                                Cells = new Sw.CellDfn[]
+                                Cells = new CellDfn[]
                                 {
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.String,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.String,
                                         Value = "int? (is null)",
                                     },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Number,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.Number,
                                         Value = null,
                                     },
                                 }
                             },
-                            new Sw.RowDfn
+                            new()
                             {
-                                Cells = new Sw.CellDfn[]
+                                Cells = new CellDfn[]
                                 {
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.String,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.String,
                                         Value = "uint",
                                     },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Number,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.Number,
                                         Value = (uint)101,
                                     },
                                 }
                             },
-                            new Sw.RowDfn
+                            new()
                             {
-                                Cells = new Sw.CellDfn[]
+                                Cells = new CellDfn[]
                                 {
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.String,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.String,
                                         Value = "long",
                                     },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Number,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.Number,
                                         Value = Int64.MaxValue,
                                     },
                                 }
                             },
-                            new Sw.RowDfn
+                            new()
                             {
-                                Cells = new Sw.CellDfn[]
+                                Cells = new CellDfn[]
                                 {
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.String,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.String,
                                         Value = "float",
                                     },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Number,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.Number,
                                         Value = (float)123.45,
                                     },
                                 }
                             },
-                            new Sw.RowDfn
+                            new()
                             {
-                                Cells = new Sw.CellDfn[]
+                                Cells = new CellDfn[]
                                 {
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.String,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.String,
                                         Value = "double",
                                     },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Number,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.Number,
                                         Value = (double)123.45,
                                     },
                                 }
                             },
-                            new Sw.RowDfn
+                            new()
                             {
-                                Cells = new Sw.CellDfn[]
+                                Cells = new CellDfn[]
                                 {
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.String,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.String,
                                         Value = "decimal",
                                     },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Number,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.Number,
                                         Value = (decimal)123.45,
                                     },
                                 }
                             },
-                            new Sw.RowDfn
+                            new()
                             {
-                                Cells = new Sw.CellDfn[]
+                                Cells = new CellDfn[]
                                 {
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Date,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.Date,
                                         Value = new DateTime(2012, 1, 8),
                                         FormatCode = "mm-dd-yy",
                                     },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Date,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.Date,
                                         Value = new DateTime(2012, 1, 9),
                                         FormatCode = "mm-dd-yy",
                                         Bold = true,
-                                        HorizontalCellAlignment = Sw.HorizontalCellAlignment.Center,
+                                        HorizontalCellAlignment = HorizontalCellAlignment.Center,
                                     },
                                 }
                             },
-                            new Sw.RowDfn
+                            new()
                             {
-                                Cells = new Sw.CellDfn[]
+                                Cells = new CellDfn[]
                                 {
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Date,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.Date,
                                         Value = new DateTimeOffset(new DateTime(2012, 1, 8), TimeSpan.Zero),
                                         FormatCode = "mm-dd-yy",
                                     },
-                                    new Sw.CellDfn {
-                                        CellDataType = Sw.CellDataType.Date,
+                                    new()
+                                    {
+                                        CellDataType = CellDataType.Date,
                                         Value = new DateTimeOffset(new DateTime(2012, 1, 9), TimeSpan.Zero),
                                         FormatCode = "mm-dd-yy",
                                         Bold = true,
-                                        HorizontalCellAlignment = Sw.HorizontalCellAlignment.Center,
+                                        HorizontalCellAlignment = HorizontalCellAlignment.Center,
                                     },
                                 }
                             },
@@ -323,38 +357,30 @@ namespace OxPt
                 }
             };
             var outXlsx = new FileInfo(Path.Combine(Sw.TestUtil.TempDir.FullName, "SW002-DataTypes.xlsx"));
-            Sw.SpreadsheetWriter.Write(outXlsx.FullName, wb);
-            Validate(outXlsx);
+            SpreadsheetWriter.Write(outXlsx.FullName, wb);
+            
+            using var sDoc = SpreadsheetDocument.Open(outXlsx.FullName, false);
+            Validate(sDoc);
         }
 
-        private void Validate(FileInfo fi)
+        private void Validate(SpreadsheetDocument sDoc)
         {
-            using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(fi.FullName, true))
+            var v = new OpenXmlValidator();
+            var errors = v.Validate(sDoc)
+                .Where(ve => !s_expectedErrors.Contains(ve.Description))
+                .ToList();
+
+            // if a test fails validation post-processing, then can use this code to determine the SDK
+            // validation error(s).
+            foreach (var item in errors)
             {
-                OpenXmlValidator v = new OpenXmlValidator();
-                var errors = v.Validate(sDoc).Where(ve => !s_ExpectedErrors.Contains(ve.Description));
-
-#if false
-                // if a test fails validation post-processing, then can use this code to determine the SDK
-                // validation error(s).
-
-                if (errors.Count() != 0)
-                {
-                    StringBuilder sb = new StringBuilder();
-                    foreach (var item in errors)
-                    {
-                        sb.Append(item.Description).Append(Environment.NewLine);
-                    }
-                    var s = sb.ToString();
-                    Console.WriteLine(s);
-                }
-#endif
-
-                Assert.Empty(errors);
+                _log.WriteLine(item.Description);
             }
+            
+            Assert.Empty(errors);
         }
 
-        private static List<string> s_ExpectedErrors = new List<string>()
+        private static readonly List<string> s_expectedErrors = new()
         {
             "The attribute 't' has invalid value 'd'. The Enumeration constraint failed.",
         };
