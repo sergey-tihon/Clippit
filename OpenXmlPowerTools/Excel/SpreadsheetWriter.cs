@@ -143,6 +143,7 @@ namespace Clippit.Excel
             // open the workbook, and create the TableProperties sheet, populate it
             using var sDoc = SpreadsheetDocument.Open(stream, true);
             SaveWorkbookToSpreadSheet(sDoc, workbook);
+            stream.Position = 0;
         }
 
         private static byte[] CreateBlankWorkbook()
