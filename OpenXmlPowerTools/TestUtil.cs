@@ -27,21 +27,19 @@ namespace Clippit
             }
         }
 
-        private static DirectoryInfo s_TempDir = null;
+        private static DirectoryInfo s_tempDir = null;
         public static DirectoryInfo TempDir
         {
             get
             {
-                if (s_TempDir != null)
-                    return s_TempDir;
-                else
-                {
-                    var now = DateTime.Now;
-                    var tempDirName = String.Format("Test-{0:00}-{1:00}-{2:00}-{3:00}{4:00}{5:00}", now.Year - 2000, now.Month, now.Day, now.Hour, now.Minute, now.Second);
-                    s_TempDir = new DirectoryInfo(Path.Combine(".", tempDirName));
-                    s_TempDir.Create();
-                    return s_TempDir;
-                }
+                if (s_tempDir != null)
+                    return s_tempDir;
+                
+                var now = DateTime.Now;
+                var tempDirName = $"Test-{now.Year - 2000:00}-{now.Month:00}-{now.Day:00}-{now.Hour:00}{now.Minute:00}{now.Second:00}";
+                s_tempDir = new DirectoryInfo(Path.Combine(".", tempDirName));
+                s_tempDir.Create();
+                return s_tempDir;
             }
         }
 

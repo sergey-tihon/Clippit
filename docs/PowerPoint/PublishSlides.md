@@ -20,7 +20,7 @@ This is fully managed alternative of [Presentation.PublishSlides](https://docs.m
 1. `PublishSlides` is up to `6x` times faster than `BuildPresentation` for the same task (Because we open source presentation only once)
 1. Slide title promoted to generated presentation title (when layout has slide). Last modified date propagated from source document.
 
-## Publishing sample
+### Publishing sample
 
 ```csharp {highlight:[2]}
 var presentation = new PmlDocument(sourcePath);
@@ -32,7 +32,7 @@ foreach (var slide in slides)
 }
 ```
 
-## Composing slides to one presentation
+### Composing slides to one presentation
 
 You can combine generate slide back to one presentation without breaking them
 

@@ -29,7 +29,7 @@ http://www.ericwhite.com/blog/presentationbuilder-developer-center/
 - Optimized Stream lifetime and GC pressure
 
 
-## BuildPresentation Sample
+### BuildPresentation Sample
 
 ```csharp {highlight:[6]}
 var sources = new List<SlideSource>()

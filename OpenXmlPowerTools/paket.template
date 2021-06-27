@@ -21,6 +21,7 @@ description
     Fork of OpenXmlPowerTools with new features
 files
     bin/Release/netstandard2.0/Clippit.dll ==> lib/netstandard2.0
+    bin/Release/netstandard2.0/Clippit.pdb ==> lib/netstandard2.0
 
 dependencies
     framework: netstandard20
