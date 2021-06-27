@@ -102,6 +102,7 @@ namespace Clippit.Excel
 
     public static class SpreadsheetWriter
     {
+        [Obsolete("Use WorkbookDfn.WriteTo(Stream) extension method")]
         public static void Write(string fileName, WorkbookDfn workbook)
         {
             try
