@@ -1,3 +1,6 @@
+#### 1.6.0-beta1 - Jun 27, 2021
+- Add WorkbookDfn.WriteTo(Stream) method [#29](https://github.com/sergey-tihon/Clippit/pull/29)
+
 #### 1.5.0 - Jun 26, 2021
 - Structural comparison for Theme, Master, Layout [#20](https://github.com/sergey-tihon/Clippit/pull/20)
 - Auto-scaling for slides from presentations with different slide size
