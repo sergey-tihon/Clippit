@@ -296,8 +296,17 @@ namespace Clippit.Excel
                         partXmlWriter.WriteValue(rId2);
                         var tdp = worksheetPart.AddNewPart<TableDefinitionPart>(rId2);
                         var tXDoc = tdp.GetXDocument();
+
+                        // TODO: Optimize
+                        var tableCount = sDoc.Parts
+                            .SelectMany(x => x.OpenXmlPart.Parts)
+                            .SelectMany(x => x.OpenXmlPart.Parts)
+                            .Where(x => x.OpenXmlPart is TableDefinitionPart)
+                            .Select(x => x.OpenXmlPart.Uri)
+                            .Distinct().Count();
+                        
                         var table = new XElement(S.table,
-                            new XAttribute(SSNoNamespace.id, 1),
+                            new XAttribute(SSNoNamespace.id, tableCount + 1),
                             new XAttribute(SSNoNamespace.name, worksheetData.TableName),
                             new XAttribute(SSNoNamespace.displayName, worksheetData.TableName),
                             new XAttribute(SSNoNamespace._ref, "A1:" + SpreadsheetMLUtil.IntToColumnId(totalColumns - 1) + totalRows),
