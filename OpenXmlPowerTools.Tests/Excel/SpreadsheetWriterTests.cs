@@ -27,72 +27,64 @@ namespace OxPt
         
         private static WorkbookDfn GetSimpleWorkbookDfn() => new()
         {
-            Worksheets = new WorksheetDfn[]
+            Worksheets = new[] { GetSimpleWorksheetDfn("MyFirstSheet","NamesAndRates") }
+        };
+
+        private static WorksheetDfn GetSimpleWorksheetDfn(string name, string table) => new()
+        {
+            Name = name,
+            TableName = table,
+            ColumnHeadings =
+                new CellDfn[]
+                {
+                    new() { Value = "Name", Bold = true, },
+                    new() { Value = "Age", Bold = true, HorizontalCellAlignment = HorizontalCellAlignment.Left, },
+                    new() { Value = "Rate", Bold = true, HorizontalCellAlignment = HorizontalCellAlignment.Left, }
+                },
+            Rows = new RowDfn[]
             {
                 new()
                 {
-                    Name = "MyFirstSheet",
-                    TableName = "NamesAndRates",
-                    ColumnHeadings =
-                        new CellDfn[]
-                        {
-                            new() { Value = "Name", Bold = true, },
-                            new()
-                            {
-                                Value = "Age",
-                                Bold = true,
-                                HorizontalCellAlignment = HorizontalCellAlignment.Left,
-                            },
-                            new()
-                            {
-                                Value = "Rate",
-                                Bold = true,
-                                HorizontalCellAlignment = HorizontalCellAlignment.Left,
-                            }
-                        },
-                    Rows = new RowDfn[]
+                    Cells = new CellDfn[]
                     {
+                        new() { CellDataType = CellDataType.String, Value = "Eric", },
+                        new() { CellDataType = CellDataType.Number, Value = 50, },
                         new()
                         {
-                            Cells = new CellDfn[]
-                            {
-                                new() { CellDataType = CellDataType.String, Value = "Eric", },
-                                new() { CellDataType = CellDataType.Number, Value = 50, },
-                                new()
-                                {
-                                    CellDataType = CellDataType.Number,
-                                    Value = (decimal)45.00,
-                                    FormatCode = "0.00",
-                                },
-                            }
-                        },
-                        new()
-                        {
-                            Cells = new CellDfn[]
-                            {
-                                new() { CellDataType = CellDataType.String, Value = "Bob", },
-                                new() { CellDataType = CellDataType.Number, Value = 42, },
-                                new()
-                                {
-                                    CellDataType = CellDataType.Number,
-                                    Value = (decimal)78.00,
-                                    FormatCode = "0.00",
-                                },
-                            }
+                            CellDataType = CellDataType.Number,
+                            Value = (decimal)45.00,
+                            FormatCode = "0.00",
                         },
                     }
-                }
+                },
+                new()
+                {
+                    Cells = new CellDfn[]
+                    {
+                        new() { CellDataType = CellDataType.String, Value = "Bob", },
+                        new() { CellDataType = CellDataType.Number, Value = 42, },
+                        new()
+                        {
+                            CellDataType = CellDataType.Number,
+                            Value = (decimal)78.00,
+                            FormatCode = "0.00",
+                        },
+                    }
+                },
             }
         };
+            
         
         [Fact]
         public void SW001_Simple()
         {
             var wb = GetSimpleWorkbookDfn();
-            var outXlsx = new FileInfo(Path.Combine(Sw.TestUtil.TempDir.FullName, "SW001-Simple.xlsx"));
-            SpreadsheetWriter.Write(outXlsx.FullName, wb);
             
-            using var sDoc = SpreadsheetDocument.Open(outXlsx.FullName, false);
+            var fileName = Path.Combine(Sw.TestUtil.TempDir.FullName, "SW001-Simple.xlsx");
+            using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+                wb.WriteTo(stream);
+            
+            using var sDoc = SpreadsheetDocument.Open(fileName, false);
             Validate(sDoc);
         }
         
@@ -106,6 +98,26 @@ namespace OxPt
             stream.Position = 0;
 
             using var sDoc = SpreadsheetDocument.Open(stream, false);
+            Validate(sDoc);
+        }
+        
+        [Fact]
+        public void SW001_TwoSheets()
+        {
+            var wb = new WorkbookDfn
+            {
+                Worksheets = new[]
+                {
+                    GetSimpleWorksheetDfn("MyFirstSheet","NamesAndRates1"),
+                    GetSimpleWorksheetDfn("MySecondSheet","NamesAndRates2")
+                }
+            };
+
+            var fileName = Path.Combine(Sw.TestUtil.TempDir.FullName, "SW001_TwoSheets.xlsx");
+            using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+                wb.WriteTo(stream);
+
+            using var sDoc = SpreadsheetDocument.Open(fileName, false);
             Validate(sDoc);
         }
 
@@ -356,10 +368,12 @@ namespace OxPt
                     }
                 }
             };
-            var outXlsx = new FileInfo(Path.Combine(Sw.TestUtil.TempDir.FullName, "SW002-DataTypes.xlsx"));
-            SpreadsheetWriter.Write(outXlsx.FullName, wb);
+
+            var fileName = Path.Combine(Sw.TestUtil.TempDir.FullName, "SW002-DataTypes.xlsx");
+            using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+                wb.WriteTo(stream);
             
-            using var sDoc = SpreadsheetDocument.Open(outXlsx.FullName, false);
+            using var sDoc = SpreadsheetDocument.Open(fileName, false);
             Validate(sDoc);
         }
 

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using Clippit.PowerPoint;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Excel
@@ -22,20 +23,20 @@ namespace Clippit.Excel
 
     public class WorkbookDfn
     {
-        public IEnumerable<WorksheetDfn> Worksheets;
+        public IEnumerable<WorksheetDfn> Worksheets { get; set; }
     }
 
     public class WorksheetDfn
     {
-        public string Name;
-        public string TableName;
-        public IEnumerable<CellDfn> ColumnHeadings;
-        public IEnumerable<RowDfn> Rows;
+        public string Name { get; set; }
+        public string TableName { get; set; }
+        public IEnumerable<CellDfn> ColumnHeadings { get; set; }
+        public IEnumerable<RowDfn> Rows { get; set; }
     }
 
     public class RowDfn
     {
-        public IEnumerable<CellDfn> Cells;
+        public IEnumerable<CellDfn> Cells { get; set; }
     }
 
     // Value can be:
@@ -47,7 +48,7 @@ namespace Clippit.Excel
     // Standard formats
     public class CellDfn
     {
-        public static Dictionary<string, int> StandardFormats = new Dictionary<string, int>
+        public static readonly Dictionary<string, int> StandardFormats = new()
         {
             { "0",                        1   },
             { "0.00",                     2   },
@@ -77,12 +78,12 @@ namespace Clippit.Excel
             { "##0.0E+0",                 48  },
             { "@",                        49  },
         };
-        public object Value;
-        public CellDataType? CellDataType;
-        public HorizontalCellAlignment? HorizontalCellAlignment;
-        public bool? Bold;
-        public bool? Italic;
-        public string FormatCode;
+        public object Value { get; set; }
+        public CellDataType? CellDataType { get; set; }
+        public HorizontalCellAlignment? HorizontalCellAlignment { get; set; }
+        public bool? Bold { get; set; }
+        public bool? Italic { get; set; }
+        public string FormatCode { get; set; }
     }
 
     public enum HorizontalCellAlignment
@@ -156,8 +157,7 @@ namespace Clippit.Excel
         {
             var workbookPart = sDoc.WorkbookPart;
             var wXDoc = workbookPart.GetXDocument();
-            var sheetElement = wXDoc
-                .Root
+            var sheetElement = wXDoc.Root
                 .Elements(S.sheets)
                 .Elements(S.sheet)
                 .FirstOrDefault(s => (string)s.Attribute(SSNoNamespace.name) == "Sheet1");
@@ -174,8 +174,7 @@ namespace Clippit.Excel
             var appXDoc = sDoc
                 .ExtendedFilePropertiesPart
                 .GetXDocument();
-            var vector = appXDoc
-                .Root
+            var vector = appXDoc.Root
                 .Elements(EP.TitlesOfParts)
                 .Elements(VT.vector)
                 .FirstOrDefault();
@@ -198,9 +197,11 @@ namespace Clippit.Excel
                 variant.Value = "1";
             sDoc.ExtendedFilePropertiesPart.PutXDocument();
 
-            if (workbook.Worksheets != null)
+            if (workbook.Worksheets is not null)
+            {
                 foreach (var worksheet in workbook.Worksheets)
                     AddWorksheet(sDoc, worksheet);
+            }
 
             workbookPart.WorkbookStylesPart.PutXDocument();
         }
@@ -214,8 +215,7 @@ namespace Clippit.Excel
             // throw WorksheetAlreadyExistsException if a sheet with the same name (case-insensitive) already exists in the workbook
             var UCName = worksheetData.Name.ToUpper();
             var wXDoc = sDoc.WorkbookPart.GetXDocument();
-            if (wXDoc
-                .Root
+            if (wXDoc.Root
                 .Elements(S.sheets)
                 .Elements(S.sheet)
                 .Attributes(SSNoNamespace.name)
@@ -227,42 +227,36 @@ namespace Clippit.Excel
             var appXDoc = sDoc
                 .ExtendedFilePropertiesPart
                 .GetXDocument();
-            var vector = appXDoc
-                .Root
+            var vector = appXDoc.Root
                 .Elements(EP.TitlesOfParts)
                 .Elements(VT.vector)
                 .FirstOrDefault();
             if (vector != null)
             {
-                var size = (int?)vector.Attribute(SSNoNamespace.size);
-                if (size == null)
-                    size = 1;
-                else
-                    size = size + 1;
+                var size = (int?)vector.Attribute(SSNoNamespace.size) ?? 0;
+                size += 1;
                 vector.SetAttributeValue(SSNoNamespace.size, size);
-                vector.Add(
-                    new XElement(VT.lpstr, worksheetData.Name));
-                var i4 = appXDoc
-                    .Root
+                vector.Add(new XElement(VT.lpstr, worksheetData.Name));
+                var i4 = appXDoc.Root
                     .Elements(EP.HeadingPairs)
                     .Elements(VT.vector)
                     .Elements(VT.variant)
                     .Elements(VT.i4)
                     .FirstOrDefault();
-                if (i4 != null)
+                if (i4 is not null)
                     i4.Value = ((int)i4 + 1).ToString();
                 sDoc.ExtendedFilePropertiesPart.PutXDocument();
             }
 
             var workbook = sDoc.WorkbookPart;
-            var rId = "R" + Guid.NewGuid().ToString().Replace("-", "");
+            var rId = PresentationBuilderTools.NewRelationshipId();
             var worksheetPart = workbook.AddNewPart<WorksheetPart>(rId);
 
             var wbXDoc = workbook.GetXDocument();
             var sheets = wbXDoc.Descendants(S.sheets).FirstOrDefault();
             sheets.Add(
                 new XElement(S.sheet,
-                    new XAttribute(SSNoNamespace.name, worksheetData.Name.ToString()),
+                    new XAttribute(SSNoNamespace.name, worksheetData.Name),
                     new XAttribute(SSNoNamespace.sheetId, sheets.Elements(S.sheet).Count() + 1),
                     new XAttribute(R.id, rId)));
             workbook.PutXDocument();
@@ -292,7 +286,7 @@ namespace Clippit.Excel
                     if (worksheetData.ColumnHeadings != null && worksheetData.TableName != null)
                     {
                         partXmlWriter.WriteEndElement();
-                        var rId2 = "R" + Guid.NewGuid().ToString().Replace("-", "");
+                        var rId2 = PresentationBuilderTools.NewRelationshipId();
                         partXmlWriter.WriteStartElement("tableParts", ws);
                         partXmlWriter.WriteStartAttribute("count");
                         partXmlWriter.WriteValue(1);
@@ -306,10 +300,10 @@ namespace Clippit.Excel
                             new XAttribute(SSNoNamespace.id, 1),
                             new XAttribute(SSNoNamespace.name, worksheetData.TableName),
                             new XAttribute(SSNoNamespace.displayName, worksheetData.TableName),
-                            new XAttribute(SSNoNamespace._ref, "A1:" + SpreadsheetMLUtil.IntToColumnId(totalColumns - 1) + totalRows.ToString()),
+                            new XAttribute(SSNoNamespace._ref, "A1:" + SpreadsheetMLUtil.IntToColumnId(totalColumns - 1) + totalRows),
                             new XAttribute(SSNoNamespace.totalsRowShown, 0),
                             new XElement(S.autoFilter,
-                                new XAttribute(SSNoNamespace._ref, "A1:" + SpreadsheetMLUtil.IntToColumnId(totalColumns - 1) + totalRows.ToString())),
+                                new XAttribute(SSNoNamespace._ref, "A1:" + SpreadsheetMLUtil.IntToColumnId(totalColumns - 1) + totalRows)),
                             new XElement(S.tableColumns,
                                 new XAttribute(SSNoNamespace.count, totalColumns),
                                 worksheetData.ColumnHeadings.Select((ch, i) =>
