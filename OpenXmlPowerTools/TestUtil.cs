@@ -13,35 +13,16 @@ namespace Clippit
 {
     public class TestUtil
     {
-        private static bool? s_DeleteTempFiles = null;
-
-        public static bool DeleteTempFiles
+        private static readonly Lazy<DirectoryInfo> s_tempDir = new(() =>
         {
-            get
-            {
-                if (s_DeleteTempFiles != null)
-                    return (bool)s_DeleteTempFiles;
-                FileInfo donotdelete = new FileInfo("donotdelete.txt");
-                s_DeleteTempFiles = !donotdelete.Exists;
-                return (bool)s_DeleteTempFiles;
-            }
-        }
+            var dir = new DirectoryInfo("./../../../../temp");
+            if (dir.Exists)
+                dir.Delete(true);
+            dir.Create();
+            return dir;
+        });
 
-        private static DirectoryInfo s_tempDir = null;
-        public static DirectoryInfo TempDir
-        {
-            get
-            {
-                if (s_tempDir != null)
-                    return s_tempDir;
-                
-                var now = DateTime.Now;
-                var tempDirName = $"Test-{now.Year - 2000:00}-{now.Month:00}-{now.Day:00}-{now.Hour:00}{now.Minute:00}{now.Second:00}";
-                s_tempDir = new DirectoryInfo(Path.Combine(".", tempDirName));
-                s_tempDir.Create();
-                return s_tempDir;
-            }
-        }
+        public static DirectoryInfo TempDir => s_tempDir.Value;
 
         public static void NotePad(string str)
         {
