@@ -14,8 +14,8 @@ namespace Clippit.Tests.Word
         {
         }
 
-        private const string TemplateDocumentFilePath = "Word/Data/TemplateDocument.docx";
-        private const string TemplateDataFilePath = "Word/Data/Data.xml";
+        private const string TemplateDocumentFilePath = "Word/DocumentAssemblerData/TemplateDocument.docx";
+        private const string TemplateDataFilePath = "Word/DocumentAssemblerData/Data.xml";
         
         [Fact]
         public void Sample1()
@@ -26,7 +26,7 @@ namespace Clippit.Tests.Word
             var wmlAssembledDoc = DocumentAssembler.AssembleDocument(wmlDoc, data, out var templateError);
             Assert.False(templateError, "Errors in template");
 
-            var assembledDoc = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, "AssembledDoc.docx"));
+            var assembledDoc = new FileInfo(Path.Combine(TempDir, "AssembledDoc.docx"));
             if (assembledDoc.Exists)
                 assembledDoc.Delete();
             wmlAssembledDoc.SaveAs(assembledDoc.FullName);
@@ -35,7 +35,7 @@ namespace Clippit.Tests.Word
         [Fact]
         public void Sample2()
         {
-            var dataFile = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, "Data.xml"));
+            var dataFile = new FileInfo(Path.Combine(TempDir, "Data.xml"));
             // The following method generates a large data file with random data.
             // In a real world scenario, this is where you would query your data source and produce XML that will drive your document generation process.
             var data = GenerateDataFromDataSource(dataFile);
@@ -44,7 +44,7 @@ namespace Clippit.Tests.Word
             var count = 1;
             foreach (var customer in data.Elements("Customer"))
             {
-                var assembledDoc = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, $"Letter-{count++:0000}.docx"));
+                var assembledDoc = new FileInfo(Path.Combine(TempDir, $"Letter-{count++:0000}.docx"));
                 Log.WriteLine(assembledDoc.Name);
                 var wmlAssembledDoc = DocumentAssembler.AssembleDocument(wmlDoc, customer, out var templateError);
                 if (templateError)

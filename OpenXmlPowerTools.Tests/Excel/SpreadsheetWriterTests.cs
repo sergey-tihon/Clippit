@@ -73,7 +73,7 @@ namespace Clippit.Tests.Excel
         {
             var wb = GetSimpleWorkbookDfn();
             
-            var fileName = Path.Combine(TestUtil.TempDir.FullName, "SW001-Simple.xlsx");
+            var fileName = Path.Combine(TempDir, "SW001-Simple.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
             
@@ -106,7 +106,7 @@ namespace Clippit.Tests.Excel
                 }
             };
 
-            var fileName = Path.Combine(TestUtil.TempDir.FullName, "SW001_TwoSheets.xlsx");
+            var fileName = Path.Combine(TempDir, "SW001_TwoSheets.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
 
@@ -152,7 +152,7 @@ namespace Clippit.Tests.Excel
                 }
             };
 
-            var fileName = Path.Combine(TestUtil.TempDir.FullName, "SW001_TableWithDates.xlsx");
+            var fileName = Path.Combine(TempDir, "SW001_TableWithDates.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
 
@@ -408,7 +408,7 @@ namespace Clippit.Tests.Excel
                 }
             };
 
-            var fileName = Path.Combine(TestUtil.TempDir.FullName, "SW002-DataTypes.xlsx");
+            var fileName = Path.Combine(TempDir, "SW002-DataTypes.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
             
@@ -422,7 +422,7 @@ namespace Clippit.Tests.Excel
         {
             var wb = GetSimpleWorkbookDfn();
             
-            var fileName = Path.Combine(TestUtil.TempDir.FullName, "AddWorksheetToWorkbook.xlsx");
+            var fileName = Path.Combine(TempDir, "AddWorksheetToWorkbook.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
 

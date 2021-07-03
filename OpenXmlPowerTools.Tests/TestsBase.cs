@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,19 +27,30 @@ namespace Clippit.Tests
             var part = wordDocument.AddMainDocumentPart();
             part.Document = new Document(new Body());
         }
-        
-        protected readonly ITestOutputHelper Log;
-        protected readonly OpenXmlValidator Validator;
-        public TestsBase(ITestOutputHelper log)
+
+        protected TestsBase(ITestOutputHelper log)
         {
             this.Log = log;
-            this.Validator = new OpenXmlValidator();
+            this._validator = new OpenXmlValidator();
         }
+
+        protected readonly ITestOutputHelper Log;
+        private readonly OpenXmlValidator _validator;
+
+        private static readonly Lazy<string> s_tempDir = new(() =>
+        {
+            var dir = new DirectoryInfo("./../../../../temp");
+            if (dir.Exists)
+                dir.Delete(true);
+            dir.Create();
+            return dir.FullName;
+        });
+
+        public static string TempDir => s_tempDir.Value;
                 
         protected void Validate(SpreadsheetDocument sDoc)
         {
-            var v = new OpenXmlValidator();
-            var errors = v.Validate(sDoc)
+            var errors = _validator.Validate(sDoc)
                 .Where(ve => !s_spreadsheetExpectedErrors.Contains(ve.Description))
                 .ToList();
 

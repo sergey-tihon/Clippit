@@ -2,11 +2,16 @@
 using System.IO;
 using Clippit.Excel;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Clippit.Tests.Excel
 {
-    public class SpreadsheetWriterExamples
+    public class SpreadsheetWriterExamples : TestsBase
     {
+        protected SpreadsheetWriterExamples(ITestOutputHelper log) : base(log)
+        {
+        }
+        
         [Fact]
         public void Example01()
         {
@@ -83,7 +88,7 @@ namespace Clippit.Tests.Excel
                 }
             };
             
-            var fileName = Path.Combine(TestUtil.TempDir.FullName, "Sw_Example1.xlsx");
+            var fileName = Path.Combine(TempDir, "Sw_Example1.xlsx");
             using var stream = File.Open(fileName, FileMode.OpenOrCreate);
             wb.WriteTo(stream);
         }
@@ -292,7 +297,7 @@ namespace Clippit.Tests.Excel
                 }
             };
             
-            var fileName = Path.Combine(TestUtil.TempDir.FullName, "Sw_Example2.xlsx");
+            var fileName = Path.Combine(TempDir, "Sw_Example2.xlsx");
             using var stream = File.Open(fileName, FileMode.OpenOrCreate);
             wb.WriteTo(stream);
         }
