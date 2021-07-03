@@ -1,35 +1,104 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using DocumentFormat.OpenXml.Packaging;
-using Clippit;
 using Clippit.Excel;
+using Xunit;
 
-namespace SpreadsheetWriterExample
+namespace Clippit.Tests.Excel
 {
-    class Program
+    public class SpreadsheetWriterExamples
     {
-        static void Main(string[] args)
+        [Fact]
+        public void Sample01()
         {
-            var n = DateTime.Now;
-            var tempDi = new DirectoryInfo(string.Format("ExampleOutput-{0:00}-{1:00}-{2:00}-{3:00}{4:00}{5:00}", n.Year - 2000, n.Month, n.Day, n.Hour, n.Minute, n.Second));
-            tempDi.Create();
-
-            WorkbookDfn wb = new WorkbookDfn
+            var wb = new WorkbookDfn
             {
-                Worksheets = new WorksheetDfn[]
+                Worksheets = new[]
                 {
                     new WorksheetDfn
                     {
                         Name = "MyFirstSheet",
-                        ColumnHeadings = new CellDfn[]
+                        TableName = "NamesAndRates",
+                        ColumnHeadings = new[]
+                        {
+                            new CellDfn
+                            {
+                                Value = "Name",
+                                Bold = true,
+                            },
+                            new CellDfn
+                            {
+                                Value = "Age",
+                                Bold = true,
+                                HorizontalCellAlignment = HorizontalCellAlignment.Left,
+                            },
+                            new CellDfn
+                            {
+                                Value = "Rate",
+                                Bold = true,
+                                HorizontalCellAlignment = HorizontalCellAlignment.Left,
+                            }
+                        },
+                        Rows = new[]
+                        {
+                            new RowDfn
+                            {
+                                Cells = new[]
+                                {
+                                    new CellDfn {
+                                        CellDataType = CellDataType.String,
+                                        Value = "Eric",
+                                    },
+                                    new CellDfn {
+                                        CellDataType = CellDataType.Number,
+                                        Value = 50,
+                                    },
+                                    new CellDfn {
+                                        CellDataType = CellDataType.Number,
+                                        Value = (decimal)45.00,
+                                        FormatCode = "0.00",
+                                    },
+                                }
+                            },
+                            new RowDfn
+                            {
+                                Cells = new[]
+                                {
+                                    new CellDfn {
+                                        CellDataType = CellDataType.String,
+                                        Value = "Bob",
+                                    },
+                                    new CellDfn {
+                                        CellDataType = CellDataType.Number,
+                                        Value = 42,
+                                    },
+                                    new CellDfn {
+                                        CellDataType = CellDataType.Number,
+                                        Value = (decimal)78.00,
+                                        FormatCode = "0.00",
+                                    },
+                                }
+                            },
+                        }
+                    }
+                }
+            };
+            
+            var fileName = Path.Combine(TestUtil.TempDir.FullName, "Sw_Example1.xlsx");
+            using var stream = File.Open(fileName, FileMode.OpenOrCreate);
+            wb.WriteTo(stream);
+        }
+        
+        [Fact]
+        public void Sample02()
+        {
+            var wb = new WorkbookDfn
+            {
+                Worksheets = new[]
+                {
+                    new WorksheetDfn
+                    {
+                        Name = "MyFirstSheet",
+                        ColumnHeadings = new[]
                         {
                             new CellDfn
                             {
@@ -43,11 +112,11 @@ namespace SpreadsheetWriterExample
                                 HorizontalCellAlignment = HorizontalCellAlignment.Right,
                             },
                         },
-                        Rows = new RowDfn[]
+                        Rows = new[]
                         {
                             new RowDfn
                             {
-                                Cells = new CellDfn[]
+                                Cells = new[]
                                 {
                                     new CellDfn {
                                         CellDataType = CellDataType.String,
@@ -61,7 +130,7 @@ namespace SpreadsheetWriterExample
                             },
                             new RowDfn
                             {
-                                Cells = new CellDfn[]
+                                Cells = new[]
                                 {
                                     new CellDfn {
                                         CellDataType = CellDataType.String,
@@ -75,7 +144,7 @@ namespace SpreadsheetWriterExample
                             },
                             new RowDfn
                             {
-                                Cells = new CellDfn[]
+                                Cells = new[]
                                 {
                                     new CellDfn {
                                         CellDataType = CellDataType.String,
@@ -90,7 +159,7 @@ namespace SpreadsheetWriterExample
                             },
                             new RowDfn
                             {
-                                Cells = new CellDfn[]
+                                Cells = new[]
                                 {
                                     new CellDfn {
                                         CellDataType = CellDataType.String,
@@ -104,7 +173,7 @@ namespace SpreadsheetWriterExample
                             },
                             new RowDfn
                             {
-                                Cells = new CellDfn[]
+                                Cells = new[]
                                 {
                                     new CellDfn {
                                         CellDataType = CellDataType.String,
@@ -118,7 +187,7 @@ namespace SpreadsheetWriterExample
                             },
                             new RowDfn
                             {
-                                Cells = new CellDfn[]
+                                Cells = new[]
                                 {
                                     new CellDfn {
                                         CellDataType = CellDataType.String,
@@ -132,7 +201,7 @@ namespace SpreadsheetWriterExample
                             },
                             new RowDfn
                             {
-                                Cells = new CellDfn[]
+                                Cells = new[]
                                 {
                                     new CellDfn {
                                         CellDataType = CellDataType.String,
@@ -146,7 +215,7 @@ namespace SpreadsheetWriterExample
                             },
                             new RowDfn
                             {
-                                Cells = new CellDfn[]
+                                Cells = new[]
                                 {
                                     new CellDfn {
                                         CellDataType = CellDataType.String,
@@ -160,7 +229,7 @@ namespace SpreadsheetWriterExample
                             },
                             new RowDfn
                             {
-                                Cells = new CellDfn[]
+                                Cells = new[]
                                 {
                                     new CellDfn {
                                         CellDataType = CellDataType.String,
@@ -174,7 +243,7 @@ namespace SpreadsheetWriterExample
                             },
                             new RowDfn
                             {
-                                Cells = new CellDfn[]
+                                Cells = new[]
                                 {
                                     new CellDfn {
                                         CellDataType = CellDataType.String,
@@ -188,7 +257,7 @@ namespace SpreadsheetWriterExample
                             },
                             new RowDfn
                             {
-                                Cells = new CellDfn[]
+                                Cells = new[]
                                 {
                                     new CellDfn {
                                         CellDataType = CellDataType.String,
@@ -202,7 +271,7 @@ namespace SpreadsheetWriterExample
                             },
                             new RowDfn
                             {
-                                Cells = new CellDfn[]
+                                Cells = new[]
                                 {
                                     new CellDfn {
                                         CellDataType = CellDataType.Date,
@@ -222,7 +291,10 @@ namespace SpreadsheetWriterExample
                     }
                 }
             };
-            SpreadsheetWriter.Write(Path.Combine(tempDi.FullName, "Test2.xlsx"), wb);
+            
+            var fileName = Path.Combine(TestUtil.TempDir.FullName, "Sw_Example2.xlsx");
+            using var stream = File.Open(fileName, FileMode.OpenOrCreate);
+            wb.WriteTo(stream);
         }
     }
 }

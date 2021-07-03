@@ -120,6 +120,52 @@ namespace OxPt
             using var sDoc = SpreadsheetDocument.Open(fileName, false);
             Validate(sDoc);
         }
+        
+        [Fact]
+        public void SW001_TableWithDates()
+        {
+            WorksheetDfn GetSheet(string name, string tableName) =>
+                new()
+                {
+                    Name = name,
+                    TableName = tableName,
+                    ColumnHeadings = new []
+                    {
+                        new CellDfn { CellDataType = CellDataType.String, Bold = true, Value= "Date"}
+                    },
+                    Rows = new []
+                    {
+                        new RowDfn
+                        {
+                            Cells = new CellDfn[] { null }
+                        },
+                        new RowDfn
+                        {
+                            Cells = new[] {new CellDfn {CellDataType = CellDataType.Date, Value = null, FormatCode = "mm-dd-yy"}}
+                        },
+                        new RowDfn
+                        {
+                            Cells = new[] {new CellDfn {CellDataType = CellDataType.Date, Value = DateTime.Now, FormatCode = "mm-dd-yy"}}
+                        }
+                    }
+                };
+
+            var wb = new WorkbookDfn
+            {
+                Worksheets = new []
+                {
+                    GetSheet("Sheet1","Table1"),
+                    GetSheet("Sheet2","Table2")
+                }
+            };
+
+            var fileName = Path.Combine(Sw.TestUtil.TempDir.FullName, "SW001_TableWithDates.xlsx");
+            using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+                wb.WriteTo(stream);
+
+            using var sDoc = SpreadsheetDocument.Open(fileName, false);
+            Validate(sDoc);
+        }
 
         [Fact]
         public void SW002_AllDataTypes()
