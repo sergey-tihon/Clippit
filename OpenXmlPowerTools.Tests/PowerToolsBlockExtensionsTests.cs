@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Xunit;
+using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
@@ -15,6 +16,10 @@ namespace Clippit.Tests
 {
     public class PowerToolsBlockExtensionsTests : TestsBase
     {
+        public PowerToolsBlockExtensionsTests(ITestOutputHelper log) : base(log)
+        {
+        }
+        
         [Fact]
         public void MustBeginPowerToolsBlockToUsePowerTools()
         {
@@ -130,6 +135,7 @@ namespace Clippit.Tests
                 }
             }
         }
+
     }
 }
 

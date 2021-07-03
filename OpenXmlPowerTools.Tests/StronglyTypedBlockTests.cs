@@ -9,6 +9,7 @@ using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Xunit;
+using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
@@ -16,6 +17,10 @@ namespace Clippit.Tests
 {
     public class StronglyTypedBlockTests : TestsBase
     {
+        public StronglyTypedBlockTests(ITestOutputHelper log) : base(log)
+        {
+        }
+        
         [Fact]
         public void CanUseStronglyTypedBlockToDemarcateApis()
         {
@@ -62,6 +67,7 @@ namespace Clippit.Tests
         {
             Assert.Throws<ArgumentNullException>(() => new StronglyTypedBlock(null));
         }
+        
     }
 }
 

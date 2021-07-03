@@ -2,12 +2,9 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Clippit.Excel;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Validation;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -15,13 +12,10 @@ using Xunit.Abstractions;
 
 namespace Clippit.Tests.Excel
 {
-    public class SpreadsheetWriterTests
+    public class SpreadsheetWriterTests : TestsBase
     {
-        private readonly ITestOutputHelper _log;
-
-        public SpreadsheetWriterTests(ITestOutputHelper log)
+        public SpreadsheetWriterTests(ITestOutputHelper log) : base(log)
         {
-            this._log = log;
         }
         
         private static WorkbookDfn GetSimpleWorkbookDfn() => new()
@@ -438,28 +432,6 @@ namespace Clippit.Tests.Excel
             using var sDoc2 = SpreadsheetDocument.Open(fileName, false);
             Validate(sDoc2);
         }
-        
-        private void Validate(SpreadsheetDocument sDoc)
-        {
-            var v = new OpenXmlValidator();
-            var errors = v.Validate(sDoc)
-                .Where(ve => !s_expectedErrors.Contains(ve.Description))
-                .ToList();
-
-            // if a test fails validation post-processing, then can use this code to determine the SDK
-            // validation error(s).
-            foreach (var item in errors)
-            {
-                _log.WriteLine(item.Description);
-            }
-            
-            Assert.Empty(errors);
-        }
-
-        private static readonly List<string> s_expectedErrors = new()
-        {
-            "The attribute 't' has invalid value 'd'. The Enumeration constraint failed.",
-        };
     }
 }
 
