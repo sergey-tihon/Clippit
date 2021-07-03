@@ -1,6 +1,7 @@
-#### 1.6.0-beta2 - Jun 28, 2021
+#### 1.6.0 - Jul 3, 2021
 - Add WorkbookDfn.WriteTo(Stream) method [#29](https://github.com/sergey-tihon/Clippit/pull/29)
 - Fixed generation of multiple Excel tables
+- Fixed formatting of cells with DateTime
 
 #### 1.5.0 - Jun 26, 2021
 - Structural comparison for Theme, Master, Layout [#20](https://github.com/sergey-tihon/Clippit/pull/20)
