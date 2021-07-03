@@ -8,7 +8,7 @@ namespace Clippit.Tests.Excel
     public class SpreadsheetWriterExamples
     {
         [Fact]
-        public void Sample01()
+        public void Example01()
         {
             var wb = new WorkbookDfn
             {
@@ -89,7 +89,7 @@ namespace Clippit.Tests.Excel
         }
         
         [Fact]
-        public void Sample02()
+        public void Example02()
         {
             var wb = new WorkbookDfn
             {

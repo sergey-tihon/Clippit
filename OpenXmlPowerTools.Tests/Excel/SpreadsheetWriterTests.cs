@@ -8,19 +8,18 @@ using System.Linq;
 using Clippit.Excel;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
-using Sw = Clippit;
 using Xunit;
 using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
-namespace OxPt
+namespace Clippit.Tests.Excel
 {
-    public class SwTests
+    public class SpreadsheetWriterTests
     {
         private readonly ITestOutputHelper _log;
 
-        public SwTests(ITestOutputHelper log)
+        public SpreadsheetWriterTests(ITestOutputHelper log)
         {
             this._log = log;
         }
@@ -76,20 +75,20 @@ namespace OxPt
             
         
         [Fact]
-        public void SW001_Simple()
+        public void SaveWorkbookToFile()
         {
             var wb = GetSimpleWorkbookDfn();
             
-            var fileName = Path.Combine(Sw.TestUtil.TempDir.FullName, "SW001-Simple.xlsx");
+            var fileName = Path.Combine(TestUtil.TempDir.FullName, "SW001-Simple.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
             
             using var sDoc = SpreadsheetDocument.Open(fileName, false);
             Validate(sDoc);
         }
-        
+
         [Fact]
-        public void SW001_SimpleToStream()
+        public void SaveWorkbookToStream()
         {
             var wb = GetSimpleWorkbookDfn();
 
@@ -102,7 +101,7 @@ namespace OxPt
         }
         
         [Fact]
-        public void SW001_TwoSheets()
+        public void SaveWorkbookWithTwoSheets()
         {
             var wb = new WorkbookDfn
             {
@@ -113,7 +112,7 @@ namespace OxPt
                 }
             };
 
-            var fileName = Path.Combine(Sw.TestUtil.TempDir.FullName, "SW001_TwoSheets.xlsx");
+            var fileName = Path.Combine(TestUtil.TempDir.FullName, "SW001_TwoSheets.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
 
@@ -122,7 +121,7 @@ namespace OxPt
         }
         
         [Fact]
-        public void SW001_TableWithDates()
+        public void SaveTablesWithDates()
         {
             WorksheetDfn GetSheet(string name, string tableName) =>
                 new()
@@ -159,7 +158,7 @@ namespace OxPt
                 }
             };
 
-            var fileName = Path.Combine(Sw.TestUtil.TempDir.FullName, "SW001_TableWithDates.xlsx");
+            var fileName = Path.Combine(TestUtil.TempDir.FullName, "SW001_TableWithDates.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
 
@@ -168,7 +167,7 @@ namespace OxPt
         }
 
         [Fact]
-        public void SW002_AllDataTypes()
+        public void SaveAllDataTypes()
         {
             var wb = new WorkbookDfn
             {
@@ -415,7 +414,7 @@ namespace OxPt
                 }
             };
 
-            var fileName = Path.Combine(Sw.TestUtil.TempDir.FullName, "SW002-DataTypes.xlsx");
+            var fileName = Path.Combine(TestUtil.TempDir.FullName, "SW002-DataTypes.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
             
@@ -423,6 +422,23 @@ namespace OxPt
             Validate(sDoc);
         }
 
+                
+        [Fact]
+        public void AddWorksheetToWorkbook()
+        {
+            var wb = GetSimpleWorkbookDfn();
+            
+            var fileName = Path.Combine(TestUtil.TempDir.FullName, "AddWorksheetToWorkbook.xlsx");
+            using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+                wb.WriteTo(stream);
+
+            using (var sDoc = SpreadsheetDocument.Open(fileName, true))
+                SpreadsheetWriter.AddWorksheet(sDoc, GetSimpleWorksheetDfn("MySecondSheet", "MySecondTable"));
+
+            using var sDoc2 = SpreadsheetDocument.Open(fileName, false);
+            Validate(sDoc2);
+        }
+        
         private void Validate(SpreadsheetDocument sDoc)
         {
             var v = new OpenXmlValidator();
