@@ -5,13 +5,18 @@ using System;
 using System.IO;
 using System.Linq;
 using Xunit;
+using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
 namespace Clippit.Tests.Word
 {
-    public class RevisionProcessorTests
+    public class RevisionProcessorTests : TestsBase
     {
+        public RevisionProcessorTests(ITestOutputHelper log) : base(log)
+        {
+        }
+        
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // perf settings
         public static bool m_CopySourceFilesToTempDir = true;
@@ -82,10 +87,10 @@ namespace Clippit.Tests.Word
             WmlDocument afterRejectingWml = RevisionProcessor.RejectRevisions(sourceWml);
             WmlDocument afterAcceptingWml = RevisionProcessor.AcceptRevisions(sourceWml);
 
-            var processedAcceptedFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, sourceFi.Name.Replace(".docx", "-Accepted.docx")));
+            var processedAcceptedFi = new FileInfo(Path.Combine(TempDir, sourceFi.Name.Replace(".docx", "-Accepted.docx")));
             afterAcceptingWml.SaveAs(processedAcceptedFi.FullName);
 
-            var processedRejectedFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, sourceFi.Name.Replace(".docx", "-Rejected.docx")));
+            var processedRejectedFi = new FileInfo(Path.Combine(TempDir, sourceFi.Name.Replace(".docx", "-Rejected.docx")));
             afterRejectingWml.SaveAs(processedRejectedFi.FullName);
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +102,7 @@ namespace Clippit.Tests.Word
                     try
                     {
                         ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                        var sourceDocxCopiedToDestFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, sourceFi.Name));
+                        var sourceDocxCopiedToDestFi = new FileInfo(Path.Combine(TempDir, sourceFi.Name));
                         if (!sourceDocxCopiedToDestFi.Exists)
                             sourceWml.SaveAs(sourceDocxCopiedToDestFi.FullName);
                         //////////////////////////////////////////////////
@@ -118,7 +123,7 @@ namespace Clippit.Tests.Word
                 {
                     ////////// CODE TO REPEAT UNTIL SUCCESS //////////
                     var batchFileName = "Copy-Gen-Files-To-TestFiles.bat";
-                    var batchFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, batchFileName));
+                    var batchFi = new FileInfo(Path.Combine(TempDir, batchFileName));
                     var batch = "";
                     batch += "copy " + processedAcceptedFi.FullName + " " + baselineAcceptedFi.FullName + Environment.NewLine;
                     batch += "copy " + processedRejectedFi.FullName + " " + baselineRejectedFi.FullName + Environment.NewLine;
@@ -144,11 +149,11 @@ namespace Clippit.Tests.Word
                     try
                     {
                         ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                        var semaphorFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, "z_ExplorerOpenedSemaphore.txt"));
+                        var semaphorFi = new FileInfo(Path.Combine(TempDir, "z_ExplorerOpenedSemaphore.txt"));
                         if (!semaphorFi.Exists)
                         {
                             File.WriteAllText(semaphorFi.FullName, "");
-                            TestUtil.Explorer(TestUtil.TempDir);
+                            TestUtil.Explorer(new DirectoryInfo(TempDir));
                         }
                         //////////////////////////////////////////////////
                         break;
@@ -196,6 +201,7 @@ namespace Clippit.Tests.Word
                 Assert.True(false, "No Rejected baseline document");
             }
         }
+        
     }
 }
 

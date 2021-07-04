@@ -8,13 +8,18 @@ using System.Text;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Xunit;
+using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
 namespace Clippit.Tests.Word
 {
-    public class WmlComparerTests2
+    public class WmlComparerTests2 : TestsBase
     {
+        public WmlComparerTests2(ITestOutputHelper log) : base(log)
+        {
+        }
+        
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public static bool m_OpenWord = false;
         public static bool m_OpenTempDirInExplorer = false;
@@ -34,8 +39,7 @@ namespace Clippit.Tests.Word
             FileInfo source1Docx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
             FileInfo source2Docx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
-            var rootTempDir = TestUtil.TempDir;
-            var thisTestTempDir = new DirectoryInfo(Path.Combine(rootTempDir.FullName, testId));
+            var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
                 Assert.True(false, "Duplicate test id???");
             else
@@ -122,7 +126,7 @@ namespace Clippit.Tests.Word
                     try
                     {
                         ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                        var semaphorFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, "z_ExplorerOpenedSemaphore.txt"));
+                        var semaphorFi = new FileInfo(Path.Combine(TempDir, "z_ExplorerOpenedSemaphore.txt"));
                         if (!semaphorFi.Exists)
                         {
                             File.WriteAllText(semaphorFi.FullName, "");
@@ -949,7 +953,6 @@ namespace Clippit.Tests.Word
             "The attribute 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:val' has invalid value '0'. The MinInclusive constraint failed. The value must be greater than or equal to 1.",
             "The attribute 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:val' has invalid value '0'. The MinInclusive constraint failed. The value must be greater than or equal to 2.",
         };
-
     }
 #if false
     public class WordRunner

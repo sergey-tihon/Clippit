@@ -28,14 +28,14 @@ namespace Clippit.Tests.Common
         [Fact]
         public void CanStringifyRunAndTextElements()
         {
-            const string textValue = "Hello World!";
-            var textElement = new XElement(W.t, textValue);
+            const string TextValue = "Hello World!";
+            var textElement = new XElement(W.t, TextValue);
             var runElement = new XElement(W.r, textElement);
             var formattedRunElement = new XElement(W.r, new XElement(W.rPr, new XElement(W.b)), textElement);
 
-            Assert.Equal(textValue, UnicodeMapper.RunToString(textElement));
-            Assert.Equal(textValue, UnicodeMapper.RunToString(runElement));
-            Assert.Equal(textValue, UnicodeMapper.RunToString(formattedRunElement));
+            Assert.Equal(TextValue, UnicodeMapper.RunToString(textElement));
+            Assert.Equal(TextValue, UnicodeMapper.RunToString(runElement));
+            Assert.Equal(TextValue, UnicodeMapper.RunToString(formattedRunElement));
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace Clippit.Tests.Common
             Assert.Equal(W.softHyphen, UnicodeMapper.CharToRunChild(UnicodeMapper.SoftHyphen).Name);
             Assert.Equal(W.tab, UnicodeMapper.CharToRunChild(UnicodeMapper.HorizontalTabulation).Name);
 
-            XElement element = UnicodeMapper.CharToRunChild(UnicodeMapper.FormFeed);
+            var element = UnicodeMapper.CharToRunChild(UnicodeMapper.FormFeed);
             Assert.Equal(W.br, element.Name);
             Assert.Equal("page", element.Attribute(W.type).Value);
 
@@ -73,11 +73,11 @@ namespace Clippit.Tests.Common
         [Fact]
         public void CanCreateCoalescedRuns()
         {
-            const string textString = "This is only text.";
-            const string mixedString = "First\tSecond\tThird";
+            const string TextString = "This is only text.";
+            const string MixedString = "First\tSecond\tThird";
 
-            List<XElement> textRuns = UnicodeMapper.StringToCoalescedRunList(textString, null);
-            List<XElement> mixedRuns = UnicodeMapper.StringToCoalescedRunList(mixedString, null);
+            var textRuns = UnicodeMapper.StringToCoalescedRunList(TextString, null);
+            var mixedRuns = UnicodeMapper.StringToCoalescedRunList(MixedString, null);
 
             Assert.Single(textRuns);
             Assert.Equal(5, mixedRuns.Count);
@@ -93,26 +93,26 @@ namespace Clippit.Tests.Common
             var sym1 = new XElement(W.sym,
                 new XAttribute(W.font, "Wingdings"),
                 new XAttribute(W._char, "F028"));
-            char charFromSym1 = UnicodeMapper.SymToChar(sym1);
-            XElement symFromChar1 = UnicodeMapper.CharToRunChild(charFromSym1);
+            var charFromSym1 = UnicodeMapper.SymToChar(sym1);
+            var symFromChar1 = UnicodeMapper.CharToRunChild(charFromSym1);
 
             var sym2 = new XElement(W.sym,
                 new XAttribute(W._char, "F028"),
                 new XAttribute(W.font, "Wingdings"));
-            char charFromSym2 = UnicodeMapper.SymToChar(sym2);
+            var charFromSym2 = UnicodeMapper.SymToChar(sym2);
 
             var sym3 = new XElement(W.sym,
                 new XAttribute(XNamespace.Xmlns + "w", W.w),
                 new XAttribute(W.font, "Wingdings"),
                 new XAttribute(W._char, "F028"));
-            char charFromSym3 = UnicodeMapper.SymToChar(sym3);
+            var charFromSym3 = UnicodeMapper.SymToChar(sym3);
 
             var sym4 = new XElement(W.sym,
                 new XAttribute(XNamespace.Xmlns + "w", W.w),
                 new XAttribute(W.font, "Webdings"),
                 new XAttribute(W._char, "F028"));
-            char charFromSym4 = UnicodeMapper.SymToChar(sym4);
-            XElement symFromChar4 = UnicodeMapper.CharToRunChild(charFromSym4);
+            var charFromSym4 = UnicodeMapper.SymToChar(sym4);
+            var symFromChar4 = UnicodeMapper.CharToRunChild(charFromSym4);
 
             Assert.Equal(charFromSym1, charFromSym2);
             Assert.Equal(charFromSym1, charFromSym3);
@@ -128,13 +128,13 @@ namespace Clippit.Tests.Common
         [Fact]
         public void CanStringifySymbols()
         {
-            char charFromSym1 = UnicodeMapper.SymToChar("Wingdings", '\uF028');
-            char charFromSym2 = UnicodeMapper.SymToChar("Wingdings", 0xF028);
-            char charFromSym3 = UnicodeMapper.SymToChar("Wingdings", "F028");
+            var charFromSym1 = UnicodeMapper.SymToChar("Wingdings", '\uF028');
+            var charFromSym2 = UnicodeMapper.SymToChar("Wingdings", 0xF028);
+            var charFromSym3 = UnicodeMapper.SymToChar("Wingdings", "F028");
 
-            XElement symFromChar1 = UnicodeMapper.CharToRunChild(charFromSym1);
-            XElement symFromChar2 = UnicodeMapper.CharToRunChild(charFromSym2);
-            XElement symFromChar3 = UnicodeMapper.CharToRunChild(charFromSym3);
+            var symFromChar1 = UnicodeMapper.CharToRunChild(charFromSym1);
+            var symFromChar2 = UnicodeMapper.CharToRunChild(charFromSym2);
+            var symFromChar3 = UnicodeMapper.CharToRunChild(charFromSym3);
 
             Assert.Equal(charFromSym1, charFromSym2);
             Assert.Equal(charFromSym1, charFromSym3);

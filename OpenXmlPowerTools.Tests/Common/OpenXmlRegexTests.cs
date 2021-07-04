@@ -9,13 +9,18 @@ using System.Xml.Linq;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
+using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
 namespace Clippit.Tests.Common
 {
-    public class OpenXmlRegexTests
+    public class OpenXmlRegexTests : TestsBase
     {
+        public OpenXmlRegexTests(ITestOutputHelper log) : base(log)
+        {
+        }
+        
         private const WordprocessingDocumentType DocumentType = WordprocessingDocumentType.Document;
 
         private const string LeftDoubleQuotationMarks = @"[\u0022“„«»”]";

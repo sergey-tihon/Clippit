@@ -19,11 +19,9 @@ namespace Clippit.Tests
     /// </summary>
     public class TestsBase
     {
-        private const WordprocessingDocumentType DocumentType = WordprocessingDocumentType.Document;
-
         protected static void CreateEmptyWordprocessingDocument(Stream stream)
         {
-            using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+            using var wordDocument = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document);
             var part = wordDocument.AddMainDocumentPart();
             part.Document = new Document(new Body());
         }

@@ -128,7 +128,7 @@ namespace Clippit.Tests.Word
             var xmldata = XElement.Load(dataFile.FullName);
 
             var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmldata, out var returnedTemplateError);
-            var assembledDocx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
+            var assembledDocx = new FileInfo(Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
             afterAssembling.SaveAs(assembledDocx.FullName);
 
             Validate(assembledDocx);
@@ -140,7 +140,7 @@ namespace Clippit.Tests.Word
         public void DA259(string name, string data, bool err)
         {
             DA101(name, data, err);
-            var assembledDocx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
+            var assembledDocx = new FileInfo(Path.Combine(TempDir, name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
             var afterAssembling = new WmlDocument(assembledDocx.FullName);
             var brCount = afterAssembling.MainDocumentPart
                             .Element(W.body)
@@ -180,7 +180,7 @@ namespace Clippit.Tests.Word
             xmldata.Load(dataFile.FullName);
 
             var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmldata, out var returnedTemplateError);
-            var assembledDocx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
+            var assembledDocx = new FileInfo(Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
             afterAssembling.SaveAs(assembledDocx.FullName);
 
             Validate(assembledDocx);

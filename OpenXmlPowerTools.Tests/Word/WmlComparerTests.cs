@@ -12,6 +12,7 @@ using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Xunit;
+using Xunit.Abstractions;
 
 /****************************************************************************************************************/
 // Large tests have been commented out below.  If and when there is an effort to improve performance for WmlComparer,
@@ -22,7 +23,7 @@ using Xunit;
 
 namespace Clippit.Tests.Word
 {
-    public class WmlComparerTests
+    public class WmlComparerTests : TestsBase
     {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public static bool s_OpenWord = false;
@@ -126,8 +127,7 @@ namespace Clippit.Tests.Word
             DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
             FileInfo originalDocx = new FileInfo(Path.Combine(sourceDir.FullName, originalName));
 
-            var rootTempDir = TestUtil.TempDir;
-            var thisTestTempDir = new DirectoryInfo(Path.Combine(rootTempDir.FullName, testId));
+            var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
                 Assert.True(false, "Duplicate test id: " + testId);
             else
@@ -235,7 +235,7 @@ namespace Clippit.Tests.Word
                     try
                     {
                         ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                        var semaphorFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, "z_ExplorerOpenedSemaphore.txt"));
+                        var semaphorFi = new FileInfo(Path.Combine(TempDir, "z_ExplorerOpenedSemaphore.txt"));
                         if (!semaphorFi.Exists)
                         {
                             File.WriteAllText(semaphorFi.FullName, "");
@@ -346,8 +346,7 @@ namespace Clippit.Tests.Word
             FileInfo source1Docx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
             FileInfo source2Docx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
-            var rootTempDir = TestUtil.TempDir;
-            var thisTestTempDir = new DirectoryInfo(Path.Combine(rootTempDir.FullName, testId));
+            var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
                 Assert.True(false, "Duplicate test id: " + testId);
             else
@@ -463,7 +462,7 @@ namespace Clippit.Tests.Word
                     try
                     {
                         ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                        var semaphorFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, "z_ExplorerOpenedSemaphore.txt"));
+                        var semaphorFi = new FileInfo(Path.Combine(TempDir, "z_ExplorerOpenedSemaphore.txt"));
                         if (!semaphorFi.Exists)
                         {
                             File.WriteAllText(semaphorFi.FullName, "");
@@ -604,8 +603,7 @@ namespace Clippit.Tests.Word
             FileInfo source1Docx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
             FileInfo source2Docx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
-            var rootTempDir = TestUtil.TempDir;
-            var thisTestTempDir = new DirectoryInfo(Path.Combine(rootTempDir.FullName, testId));
+            var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
                 Assert.True(false, "Duplicate test id???");
             else
@@ -726,7 +724,7 @@ namespace Clippit.Tests.Word
                     try
                     {
                         ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                        var semaphorFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, "z_ExplorerOpenedSemaphore.txt"));
+                        var semaphorFi = new FileInfo(Path.Combine(TempDir, "z_ExplorerOpenedSemaphore.txt"));
                         if (!semaphorFi.Exists)
                         {
                             File.WriteAllText(semaphorFi.FullName, "");
@@ -890,8 +888,7 @@ namespace Clippit.Tests.Word
             DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
             FileInfo sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
-            var rootTempDir = TestUtil.TempDir;
-            var thisTestTempDir = new DirectoryInfo(Path.Combine(rootTempDir.FullName, testId));
+            var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
                 Assert.True(false, "Duplicate test id???");
             else
@@ -927,8 +924,7 @@ namespace Clippit.Tests.Word
             FileInfo source1Docx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
             FileInfo source2Docx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
-            var rootTempDir = TestUtil.TempDir;
-            var thisTestTempDir = new DirectoryInfo(Path.Combine(rootTempDir.FullName, testId));
+            var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
                 Assert.True(false, "Duplicate test id???");
             else
@@ -1081,6 +1077,9 @@ namespace Clippit.Tests.Word
             "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:fill' attribute is invalid - The value '0' is not valid according to any of the memberTypes of the union.",
         };
 
+        public WmlComparerTests(ITestOutputHelper log) : base(log)
+        {
+        }
     }
 
     public class WordRunner

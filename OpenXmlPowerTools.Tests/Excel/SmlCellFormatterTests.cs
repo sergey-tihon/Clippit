@@ -5,13 +5,18 @@ using System.IO;
 using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
+using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
 namespace Clippit.Tests.Excel
 {
-    public class SmlCellFormatterTests
+    public class SmlCellFormatterTests : TestsBase
     {
+        public SmlCellFormatterTests(ITestOutputHelper log) : base(log)
+        {
+        }
+        
         [Theory]
         [InlineData("General", "0", "0", null)]
         [InlineData("0", "1.1000000000000001", "1", null)]
@@ -77,8 +82,7 @@ namespace Clippit.Tests.Excel
 
         public void CF001(string formatCode, string value, string expected, string expectedColor)
         {
-            string color;
-            string r = SmlCellFormatter.FormatCell(formatCode, value, out color);
+            var r = SmlCellFormatter.FormatCell(formatCode, value, out var color);
             Assert.Equal(expected, r);
             Assert.Equal(expectedColor, color);
         }
@@ -119,26 +123,23 @@ namespace Clippit.Tests.Excel
 
         public void CF002(string name, string sheetName, string range, string expected, string expectedColor)
         {
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
-            var sourceCopiedToDestXlsx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx")));
+            var sourceCopiedToDestXlsx = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx")));
             if (!sourceCopiedToDestXlsx.Exists)
                 File.Copy(sourceXlsx.FullName, sourceCopiedToDestXlsx.FullName);
 
-            var dataTemplateFileNameSuffix = string.Format("-2-Generated-XmlData-{0}.xml", range.Replace(":", ""));
-            var dataXmlFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix)));
-            using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false))
-            {
-                var rangeXml = SmlDataRetriever.RetrieveRange(sDoc, sheetName, range);
-                string displayValue = (string)rangeXml.Descendants("DisplayValue").FirstOrDefault();
-                string displayColor = (string)rangeXml.Descendants("DisplayColor").FirstOrDefault();
-                Assert.Equal(expected, displayValue);
-                Assert.Equal(expectedColor, displayColor);
-            }
+            var dataTemplateFileNameSuffix = $"-2-Generated-XmlData-{range.Replace(":", "")}.xml";
+            var dataXmlFi = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix)));
+            
+            using var sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false);
+            var rangeXml = SmlDataRetriever.RetrieveRange(sDoc, sheetName, range);
+            var displayValue = (string)rangeXml.Descendants("DisplayValue").FirstOrDefault();
+            var displayColor = (string)rangeXml.Descendants("DisplayColor").FirstOrDefault();
+            Assert.Equal(expected, displayValue);
+            Assert.Equal(expectedColor, displayColor);
         }
-
-
     }
 }
 

@@ -7,13 +7,18 @@ using System.Linq;
 using Clippit.PowerPoint;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
+using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
 namespace Clippit.Tests.PowerPoint
 {
-    public class PresentationBuilderTests
+    public class PresentationBuilderTests : TestsBase
     {
+        public PresentationBuilderTests(ITestOutputHelper log) : base(log)
+        {
+        }
+        
         [Fact]
         public void PB001_Formatting()
         {
@@ -29,7 +34,7 @@ namespace Clippit.Tests.PowerPoint
                 new SlideSource(new PmlDocument(source1Pptx.FullName), 1, true),
                 new SlideSource(new PmlDocument(source2Pptx.FullName), 0, true),
             };
-            var processedDestPptx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, "PB001-Formatting.pptx"));
+            var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB001-Formatting.pptx"));
             PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
         }
 
@@ -45,7 +50,7 @@ namespace Clippit.Tests.PowerPoint
             {
                 new SlideSource(new PmlDocument(source2Pptx.FullName), 0, true),
             };
-            var processedDestPptx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, "PB002-Formatting.pptx"));
+            var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB002-Formatting.pptx"));
             PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
         }
 
@@ -64,7 +69,7 @@ namespace Clippit.Tests.PowerPoint
                 new SlideSource(new PmlDocument(source1Pptx.FullName), 1, true),
                 new SlideSource(new PmlDocument(source2Pptx.FullName), 0, true),
             };
-            var processedDestPptx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, "PB003-Formatting.pptx"));
+            var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB003-Formatting.pptx"));
             PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
         }
 
@@ -83,7 +88,7 @@ namespace Clippit.Tests.PowerPoint
                 new SlideSource(new PmlDocument(source2Pptx.FullName), 0, true),
                 new SlideSource(new PmlDocument(source1Pptx.FullName), 1, true),
             };
-            var processedDestPptx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, "PB004-Formatting.pptx"));
+            var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB004-Formatting.pptx"));
             PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
         }
 
@@ -103,7 +108,7 @@ namespace Clippit.Tests.PowerPoint
                 new SlideSource(new PmlDocument(source1Pptx.FullName), 1, true),
                 new SlideSource(new PmlDocument(source2Pptx.FullName), 0, true),
             };
-            var processedDestPptx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, "PB005-Formatting.pptx"));
+            var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB005-Formatting.pptx"));
             PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
         }
 
@@ -121,7 +126,7 @@ namespace Clippit.Tests.PowerPoint
             {
                 new SlideSource(new PmlDocument(sourcePptx.FullName), true),
             };
-            var processedDestPptx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, "PB006-Videos.pptx"));
+            var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB006-Videos.pptx"));
             PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
 
             var newMediaDataContentTypes = GetMediaDataContentTypes(processedDestPptx);

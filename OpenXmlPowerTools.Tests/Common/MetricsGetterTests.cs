@@ -4,13 +4,18 @@
 using System.IO;
 using System.Xml.Linq;
 using Xunit;
+using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
 namespace Clippit.Tests.Common
 {
-    public class MetricsGetterTests
+    public class MetricsGetterTests : TestsBase
     {
+        public MetricsGetterTests(ITestOutputHelper log) : base(log)
+        {
+        }
+        
         [Theory]
         [InlineData("Presentation.pptx")]
         [InlineData("Spreadsheet.xlsx")]
@@ -22,10 +27,10 @@ namespace Clippit.Tests.Common
         [InlineData("DA006-SelectTestValue-NoData.docx")]
         public void MG001(string name)
         {
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo fi = new FileInfo(Path.Combine(sourceDir.FullName, name));
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var fi = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
-            MetricsGetterSettings settings = new MetricsGetterSettings()
+            var settings = new MetricsGetterSettings()
             {
                 IncludeTextInContentControls = false,
                 IncludeXlsxTableCellData = false,
@@ -37,22 +42,23 @@ namespace Clippit.Tests.Common
             XElement metrics = null;
             if (Util.IsWordprocessingML(extension))
             {
-                WmlDocument wmlDocument = new WmlDocument(fi.FullName);
+                var wmlDocument = new WmlDocument(fi.FullName);
                 metrics = MetricsGetter.GetDocxMetrics(wmlDocument, settings);
             }
             else if (Util.IsSpreadsheetML(extension))
             {
-                SmlDocument smlDocument = new SmlDocument(fi.FullName);
+                var smlDocument = new SmlDocument(fi.FullName);
                 metrics = MetricsGetter.GetXlsxMetrics(smlDocument, settings);
             }
             else if (Util.IsPresentationML(extension))
             {
-                PmlDocument pmlDocument = new PmlDocument(fi.FullName);
+                var pmlDocument = new PmlDocument(fi.FullName);
                 metrics = MetricsGetter.GetPptxMetrics(pmlDocument, settings);
             }
 
             Assert.NotNull(metrics);
         }
+        
     }
 }
 

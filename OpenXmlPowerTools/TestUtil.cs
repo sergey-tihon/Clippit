@@ -22,7 +22,7 @@ namespace Clippit
             return dir;
         });
 
-        public static DirectoryInfo TempDir => s_tempDir.Value;
+        private static DirectoryInfo TempDir => s_tempDir.Value;
 
         public static void NotePad(string str)
         {

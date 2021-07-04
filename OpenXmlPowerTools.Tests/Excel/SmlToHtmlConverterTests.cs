@@ -4,13 +4,18 @@
 using System.IO;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
+using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
 namespace Clippit.Tests.Excel
 {
-    public class SmlToHtmlConverterTests
+    public class SmlToHtmlConverterTests : TestsBase
     {
+        public SmlToHtmlConverterTests(ITestOutputHelper log) : base(log)
+        {
+        }
+        
         // PowerShell oneliner that generates InlineData for all files in a directory
         // dir | % { '[InlineData("' + $_.Name + '")]' } | clip
 
@@ -51,12 +56,12 @@ namespace Clippit.Tests.Excel
             DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
             FileInfo sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
-            var sourceCopiedToDestXlsx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx")));
+            var sourceCopiedToDestXlsx = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx")));
             if (!sourceCopiedToDestXlsx.Exists)
                 File.Copy(sourceXlsx.FullName, sourceCopiedToDestXlsx.FullName);
 
             var dataTemplateFileNameSuffix = "-2-Generated-XmlData-Entire-Sheet.xml";
-            var dataXmlFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix)));
+            var dataXmlFi = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix)));
             using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false))
             {
                 var settings = new SmlToHtmlConverterSettings();
@@ -110,12 +115,12 @@ namespace Clippit.Tests.Excel
             DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
             FileInfo sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
-            var sourceCopiedToDestXlsx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx")));
+            var sourceCopiedToDestXlsx = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx")));
             if (!sourceCopiedToDestXlsx.Exists)
                 File.Copy(sourceXlsx.FullName, sourceCopiedToDestXlsx.FullName);
 
             var dataTemplateFileNameSuffix = string.Format("-2-Generated-XmlData-{0}.xml", range.Replace(":", ""));
-            var dataXmlFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix)));
+            var dataXmlFi = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix)));
             using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false))
             {
                 var settings = new SmlToHtmlConverterSettings();
@@ -141,11 +146,11 @@ namespace Clippit.Tests.Excel
             var sourceDir = new DirectoryInfo("../../../../TestFiles/");
             var sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
-            var sourceCopiedToDestXlsx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx")));
+            var sourceCopiedToDestXlsx = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx")));
             if (!sourceCopiedToDestXlsx.Exists)
                 File.Copy(sourceXlsx.FullName, sourceCopiedToDestXlsx.FullName);
 
-            var dataXmlFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, sourceXlsx.Name.Replace(".xlsx", "-2-Generated-XmlData.xml")));
+            var dataXmlFi = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-2-Generated-XmlData.xml")));
             using var sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false);
             //var settings = new SmlToHtmlConverterSettings();
             var rangeXml = SmlDataRetriever.RetrieveTable(sDoc, tableName);
@@ -178,6 +183,7 @@ namespace Clippit.Tests.Excel
                 Assert.Equal(numberOfTables, table.Length);
             }
         }
+        
     }
 }
 
