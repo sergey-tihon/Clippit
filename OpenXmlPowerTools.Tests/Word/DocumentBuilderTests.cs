@@ -60,7 +60,7 @@ namespace Clippit.Tests.Word
             var source2Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx"));
 
             List<ISource> sources = null;
-            sources = new List<ISource>()
+            sources = new List<ISource>
             {
                 new Source(new WmlDocument(source1Docx.FullName)) { KeepSections = true },
                 new Source(new WmlDocument(source2Docx.FullName)) { KeepSections = true, DiscardHeadersAndFootersInKeptSections = true },
@@ -121,7 +121,7 @@ namespace Clippit.Tests.Word
 
             // Create new document from paragraph 1, and paragraphs 5 through end of Source3.docx.
             // This effectively 'deletes' paragraphs 2-4
-            sources = new List<ISource>()
+            sources = new List<ISource>
             {
                 new Source(new WmlDocument(source3.FullName), 0, 1, false),
                 new Source(new WmlDocument(source3.FullName), 4, false),
@@ -132,7 +132,7 @@ namespace Clippit.Tests.Word
 
             // Create a new document that consists of the entirety of Source1.docx and Source2.docx.  Use
             // the section information (headings and footers) from source1.
-            sources = new List<ISource>()
+            sources = new List<ISource>
             {
                 new Source(new WmlDocument(source1.FullName), true),
                 new Source(new WmlDocument(source2.FullName), false),
@@ -143,7 +143,7 @@ namespace Clippit.Tests.Word
 
             // Create a new document that consists of the entirety of Source1.docx and Source2.docx.  Use
             // the section information (headings and footers) from source2.
-            sources = new List<ISource>()
+            sources = new List<ISource>
             {
                 new Source(new WmlDocument(source1.FullName), false),
                 new Source(new WmlDocument(source2.FullName), true),
@@ -155,7 +155,7 @@ namespace Clippit.Tests.Word
             // Create a new document that consists of the first 5 paragraphs of Source1.docx and the first
             // five paragraphs of Source2.docx.  This example returns a new WmlDocument, when you then can
             // serialize to a SharePoint document library, or use in some other interesting scenario.
-            sources = new List<ISource>()
+            sources = new List<ISource>
             {
                 new Source(new WmlDocument(source1.FullName), 0, 5, false),
                 new Source(new WmlDocument(source2.FullName), 0, 5, true),
@@ -304,7 +304,7 @@ namespace Clippit.Tests.Word
                 }
             }
 
-            var sources = new List<ISource>()
+            var sources = new List<ISource>
             {
                 new Source(wmlDestDocument),
                 new Source(wmlSourceDocument, insertId),
@@ -561,7 +561,7 @@ namespace Clippit.Tests.Word
                 doc1.DocumentByteArray = mem.ToArray();
             }
 
-            var sources = new List<ISource>()
+            var sources = new List<ISource>
             {
                 new Source(doc1, true),
                 new Source(new WmlDocument(insert01.FullName), "Liz"),
@@ -581,7 +581,7 @@ namespace Clippit.Tests.Word
             var source2 = new FileInfo(Path.Combine(_sourceDir.FullName, "DB011-Body-With-Shape.docx"));
             List<ISource> sources = null;
 
-            sources = new List<ISource>()
+            sources = new List<ISource>
             {
                 new Source(new WmlDocument(source1.FullName)),
                 new Source(new WmlDocument(source2.FullName)),

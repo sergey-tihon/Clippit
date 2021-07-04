@@ -22,17 +22,16 @@ namespace Clippit.Tests.PowerPoint
         [Fact]
         public void PB001_Formatting()
         {
-            string name1 = "PB001-Input1.pptx";
-            string name2 = "PB001-Input2.pptx";
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo source1Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
-            FileInfo source2Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
+            var name1 = "PB001-Input1.pptx";
+            var name2 = "PB001-Input2.pptx";
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var source1Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
+            var source2Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
-            List<SlideSource> sources = null;
-            sources = new List<SlideSource>()
+            var sources = new List<SlideSource>
             {
-                new SlideSource(new PmlDocument(source1Pptx.FullName), 1, true),
-                new SlideSource(new PmlDocument(source2Pptx.FullName), 0, true),
+                new(new PmlDocument(source1Pptx.FullName), 1, true),
+                new(new PmlDocument(source2Pptx.FullName), 0, true),
             };
             var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB001-Formatting.pptx"));
             PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
@@ -41,14 +40,13 @@ namespace Clippit.Tests.PowerPoint
         [Fact]
         public void PB002_Formatting()
         {
-            string name2 = "PB001-Input2.pptx";
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo source2Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
+            var name2 = "PB001-Input2.pptx";
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var source2Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
-            List<SlideSource> sources = null;
-            sources = new List<SlideSource>()
+            var sources = new List<SlideSource>
             {
-                new SlideSource(new PmlDocument(source2Pptx.FullName), 0, true),
+                new(new PmlDocument(source2Pptx.FullName), 0, true),
             };
             var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB002-Formatting.pptx"));
             PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
@@ -57,17 +55,16 @@ namespace Clippit.Tests.PowerPoint
         [Fact]
         public void PB003_Formatting()
         {
-            string name1 = "PB001-Input1.pptx";
-            string name2 = "PB001-Input3.pptx";
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo source1Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
-            FileInfo source2Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
+            var name1 = "PB001-Input1.pptx";
+            var name2 = "PB001-Input3.pptx";
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var source1Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
+            var source2Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
-            List<SlideSource> sources = null;
-            sources = new List<SlideSource>()
+            var sources = new List<SlideSource>
             {
-                new SlideSource(new PmlDocument(source1Pptx.FullName), 1, true),
-                new SlideSource(new PmlDocument(source2Pptx.FullName), 0, true),
+                new(new PmlDocument(source1Pptx.FullName), 1, true),
+                new(new PmlDocument(source2Pptx.FullName), 0, true),
             };
             var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB003-Formatting.pptx"));
             PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
@@ -76,17 +73,16 @@ namespace Clippit.Tests.PowerPoint
         [Fact]
         public void PB004_Formatting()
         {
-            string name1 = "PB001-Input1.pptx";
-            string name2 = "PB001-Input3.pptx";
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo source1Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
-            FileInfo source2Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
+            var name1 = "PB001-Input1.pptx";
+            var name2 = "PB001-Input3.pptx";
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var source1Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
+            var source2Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
-            List<SlideSource> sources = null;
-            sources = new List<SlideSource>()
+            var sources = new List<SlideSource>
             {
-                new SlideSource(new PmlDocument(source2Pptx.FullName), 0, true),
-                new SlideSource(new PmlDocument(source1Pptx.FullName), 1, true),
+                new(new PmlDocument(source2Pptx.FullName), 0, true),
+                new(new PmlDocument(source1Pptx.FullName), 1, true),
             };
             var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB004-Formatting.pptx"));
             PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
@@ -95,36 +91,34 @@ namespace Clippit.Tests.PowerPoint
         [Fact]
         public void PB005_Formatting()
         {
-            string name1 = "PB001-Input1.pptx";
-            string name2 = "PB001-Input3.pptx";
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo source1Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
-            FileInfo source2Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
+            var name1 = "PB001-Input1.pptx";
+            var name2 = "PB001-Input3.pptx";
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var source1Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
+            var source2Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
-            List<SlideSource> sources = null;
-            sources = new List<SlideSource>()
+            var sources = new List<SlideSource>
             {
-                new SlideSource(new PmlDocument(source2Pptx.FullName), 0, 0, true),
-                new SlideSource(new PmlDocument(source1Pptx.FullName), 1, true),
-                new SlideSource(new PmlDocument(source2Pptx.FullName), 0, true),
+                new(new PmlDocument(source2Pptx.FullName), 0, 0, true),
+                new(new PmlDocument(source1Pptx.FullName), 1, true),
+                new(new PmlDocument(source2Pptx.FullName), 0, true),
             };
             var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB005-Formatting.pptx"));
             PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
         }
 
-        [Fact(Skip="Bug in netcore 2.0 : https://github.com/OfficeDev/Open-Xml-PowerTools/pull/238#issuecomment-412375570")]
+        [Fact()]
         public void PB006_VideoFormats()
         {
             // This presentation contains videos with content types video/mp4, video/quicktime, video/unknown, video/x-ms-asf, and video/x-msvideo.
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo sourcePptx = new FileInfo(Path.Combine(sourceDir.FullName, "PP006-Videos.pptx"));
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var sourcePptx = new FileInfo(Path.Combine(sourceDir.FullName, "PP006-Videos.pptx"));
 
             var oldMediaDataContentTypes = GetMediaDataContentTypes(sourcePptx);
 
-            List<SlideSource> sources = null;
-            sources = new List<SlideSource>()
+            var sources = new List<SlideSource>
             {
-                new SlideSource(new PmlDocument(sourcePptx.FullName), true),
+                new(new PmlDocument(sourcePptx.FullName), true),
             };
             var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB006-Videos.pptx"));
             PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
@@ -136,14 +130,12 @@ namespace Clippit.Tests.PowerPoint
 
         private static string[] GetMediaDataContentTypes(FileInfo fi)
         {
-            using (PresentationDocument ptDoc = PresentationDocument.Open(fi.FullName, false))
-            {
-                return ptDoc.PresentationPart.SlideParts.SelectMany(
-                        p => p.DataPartReferenceRelationships.Select(d => d.DataPart.ContentType))
-                    .Distinct()
-                    .OrderBy(m => m)
-                    .ToArray();
-            }
+            using var ptDoc = PresentationDocument.Open(fi.FullName, false);
+            return ptDoc.PresentationPart.SlideParts.SelectMany(
+                    p => p.DataPartReferenceRelationships.Select(d => d.DataPart.ContentType))
+                .Distinct()
+                .OrderBy(m => m)
+                .ToArray();
         }
     }
 }
