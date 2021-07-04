@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Clippit.Tests.Common
 {
-    public class MgTests
+    public class MetricsGetterTests
     {
         [Theory]
         [InlineData("Presentation.pptx")]

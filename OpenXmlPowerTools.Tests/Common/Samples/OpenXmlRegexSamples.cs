@@ -23,7 +23,7 @@ namespace Clippit.Tests.Common.Samples
         {
             var sourceDoc = new FileInfo(GetFilePath("TestDocument.docx"));
             var newDoc = new FileInfo(Path.Combine(TempDir, "Modified.docx"));
-            File.Copy(sourceDoc.FullName, newDoc.FullName);
+            File.Copy(sourceDoc.FullName, newDoc.FullName, true);
 
             using var wDoc = WordprocessingDocument.Open(newDoc.FullName, true);
             var xDoc = wDoc.MainDocumentPart.GetXDocument();
