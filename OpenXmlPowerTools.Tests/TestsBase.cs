@@ -28,7 +28,7 @@ namespace Clippit.Tests
             part.Document = new Document(new Body());
         }
 
-        protected TestsBase(ITestOutputHelper log)
+        public TestsBase(ITestOutputHelper log)
         {
             this.Log = log;
             this._validator = new OpenXmlValidator();
