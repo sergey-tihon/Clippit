@@ -12,7 +12,7 @@ using Xunit;
 
 namespace Clippit.Tests.PowerPoint
 {
-    public class PbTests
+    public class PresentationBuilderTests
     {
         [Fact]
         public void PB001_Formatting()

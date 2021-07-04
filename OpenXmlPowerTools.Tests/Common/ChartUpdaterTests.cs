@@ -10,7 +10,7 @@ using Xunit;
 
 namespace Clippit.Tests.Common
 {
-    public class CuTests
+    public class ChartUpdaterTests
     {
         [Theory]
         [InlineData("CU001-Chart-Cached-Data-01.docx")]

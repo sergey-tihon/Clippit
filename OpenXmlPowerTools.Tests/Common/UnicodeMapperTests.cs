@@ -21,7 +21,7 @@ using Xunit;
 
 #if !ELIDE_XUNIT_TESTS
 
-namespace Clippit.Tests
+namespace Clippit.Tests.Common
 {
     public class UnicodeMapperTests
     {

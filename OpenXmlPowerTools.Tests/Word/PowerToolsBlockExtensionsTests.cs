@@ -12,7 +12,7 @@ using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
-namespace Clippit.Tests
+namespace Clippit.Tests.Word
 {
     public class PowerToolsBlockExtensionsTests : TestsBase
     {
