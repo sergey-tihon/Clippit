@@ -5,15 +5,9 @@ VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenXmlPowerTools", "OpenXmlPowerTools\OpenXmlPowerTools.csproj", "{6F957FF3-AFCC-4D69-8FBC-71AE21BC45C9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HtmlConverter01", "OpenXmlPowerToolsExamples\HtmlConverter01\HtmlConverter01.csproj", "{BC9E7408-508D-482D-8602-96E76ACBB5EA}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ListItemRetriever01", "OpenXmlPowerToolsExamples\ListItemRetriever01\ListItemRetriever01.csproj", "{04935FA6-E48B-496F-8D6A-41A59232303D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenXmlPowerTools.Tests", "OpenXmlPowerTools.Tests\OpenXmlPowerTools.Tests.csproj", "{B1328B70-33B8-40E0-A729-38C34D659B5C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HtmlToWmlConverter01", "OpenXmlPowerToolsExamples\HtmlToWmlConverter01\HtmlToWmlConverter01.csproj", "{9E194D13-F5A0-4430-8F87-D74326457385}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HtmlToWmlConverter02", "OpenXmlPowerToolsExamples\HtmlToWmlConverter02\HtmlToWmlConverter02.csproj", "{1E75CB7D-2A4A-4B03-80A9-7B7D59B18BB4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{A83D6B58-6D38-46AF-8C20-5CFC170A1063}"
 EndProject
@@ -36,10 +30,6 @@ Global
 		{6F957FF3-AFCC-4D69-8FBC-71AE21BC45C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F957FF3-AFCC-4D69-8FBC-71AE21BC45C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F957FF3-AFCC-4D69-8FBC-71AE21BC45C9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BC9E7408-508D-482D-8602-96E76ACBB5EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BC9E7408-508D-482D-8602-96E76ACBB5EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BC9E7408-508D-482D-8602-96E76ACBB5EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BC9E7408-508D-482D-8602-96E76ACBB5EA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{04935FA6-E48B-496F-8D6A-41A59232303D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{04935FA6-E48B-496F-8D6A-41A59232303D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04935FA6-E48B-496F-8D6A-41A59232303D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -48,23 +38,12 @@ Global
 		{B1328B70-33B8-40E0-A729-38C34D659B5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1328B70-33B8-40E0-A729-38C34D659B5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1328B70-33B8-40E0-A729-38C34D659B5C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9E194D13-F5A0-4430-8F87-D74326457385}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9E194D13-F5A0-4430-8F87-D74326457385}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9E194D13-F5A0-4430-8F87-D74326457385}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9E194D13-F5A0-4430-8F87-D74326457385}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1E75CB7D-2A4A-4B03-80A9-7B7D59B18BB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1E75CB7D-2A4A-4B03-80A9-7B7D59B18BB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1E75CB7D-2A4A-4B03-80A9-7B7D59B18BB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1E75CB7D-2A4A-4B03-80A9-7B7D59B18BB4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{BC9E7408-508D-482D-8602-96E76ACBB5EA} = {A83D6B58-6D38-46AF-8C20-5CFC170A1063}
 		{04935FA6-E48B-496F-8D6A-41A59232303D} = {A83D6B58-6D38-46AF-8C20-5CFC170A1063}
-		{9E194D13-F5A0-4430-8F87-D74326457385} = {A83D6B58-6D38-46AF-8C20-5CFC170A1063}
-		{1E75CB7D-2A4A-4B03-80A9-7B7D59B18BB4} = {A83D6B58-6D38-46AF-8C20-5CFC170A1063}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E623EFF5-2CA4-4FA0-B3AB-53F921DA212E}
