@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Clippit.PowerPoint;
-using DocumentFormat.OpenXml.Packaging;
 using Xunit;
 using Xunit.Abstractions;
 

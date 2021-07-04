@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Clippit.Excel;
 using DocumentFormat.OpenXml.Packaging;
@@ -78,7 +79,7 @@ namespace Clippit.Tests.Excel
                 wb.WriteTo(stream);
             
             using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            Validate(sDoc);
+            Validate(sDoc, s_spreadsheetExpectedErrors);
         }
 
         [Fact]
@@ -91,7 +92,7 @@ namespace Clippit.Tests.Excel
             stream.Position = 0;
 
             using var sDoc = SpreadsheetDocument.Open(stream, false);
-            Validate(sDoc);
+            Validate(sDoc, s_spreadsheetExpectedErrors);
         }
         
         [Fact]
@@ -110,8 +111,7 @@ namespace Clippit.Tests.Excel
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
 
-            using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            Validate(sDoc);
+            Validate(fileName);
         }
         
         [Fact]
@@ -157,7 +157,7 @@ namespace Clippit.Tests.Excel
                 wb.WriteTo(stream);
 
             using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            Validate(sDoc);
+            Validate(fileName);
         }
 
         [Fact]
@@ -412,8 +412,7 @@ namespace Clippit.Tests.Excel
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
             
-            using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            Validate(sDoc);
+            Validate(fileName);
         }
 
                 
@@ -429,9 +428,19 @@ namespace Clippit.Tests.Excel
             using (var sDoc = SpreadsheetDocument.Open(fileName, true))
                 SpreadsheetWriter.AddWorksheet(sDoc, GetSimpleWorksheetDfn("MySecondSheet", "MySecondTable"));
 
-            using var sDoc2 = SpreadsheetDocument.Open(fileName, false);
-            Validate(sDoc2);
+            Validate(fileName);
         }
+        
+        private void Validate(string fileName)
+        {
+            using var sDoc = SpreadsheetDocument.Open(fileName, false);
+            Validate(sDoc, s_spreadsheetExpectedErrors);
+        }
+
+        private static readonly List<string> s_spreadsheetExpectedErrors = new()
+        {
+            "The attribute 't' has invalid value 'd'. The Enumeration constraint failed.",
+        };
     }
 }
 

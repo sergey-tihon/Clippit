@@ -8,15 +8,22 @@ using System.Xml;
 using System.Xml.Linq;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Validation;
 using Xunit;
+using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
 namespace Clippit.Tests.Word
 {
-    public class DaTests
+    public class DocumentAssemblerTests : TestsBase
     {
+        public DocumentAssemblerTests(ITestOutputHelper log) : base(log)
+        {
+            _sourceDir = new DirectoryInfo("../../../../TestFiles/");
+        }
+
+        private readonly DirectoryInfo _sourceDir;
+        
         [Theory]
         [InlineData("DA001-TemplateDocument.docx", "DA-Data.xml", false)]
         [InlineData("DA002-TemplateDocument.docx", "DA-DataNotHighValueCust.xml", false)]
@@ -114,40 +121,17 @@ namespace Clippit.Tests.Word
         
         public void DA101(string name, string data, bool err)
         {
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo templateDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
-            FileInfo dataFile = new FileInfo(Path.Combine(sourceDir.FullName, data));
+            var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
+            var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
 
-            WmlDocument wmlTemplate = new WmlDocument(templateDocx.FullName);
-            XElement xmldata = XElement.Load(dataFile.FullName);
+            var wmlTemplate = new WmlDocument(templateDocx.FullName);
+            var xmldata = XElement.Load(dataFile.FullName);
 
-            bool returnedTemplateError;
-            WmlDocument afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmldata, out returnedTemplateError);
+            var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmldata, out var returnedTemplateError);
             var assembledDocx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
             afterAssembling.SaveAs(assembledDocx.FullName);
 
-            using (MemoryStream ms = new MemoryStream())
-            {
-                ms.Write(afterAssembling.DocumentByteArray, 0, afterAssembling.DocumentByteArray.Length);
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true))
-                {
-                    OpenXmlValidator v = new OpenXmlValidator();
-                    var valErrors = v.Validate(wDoc).Where(ve => !s_ExpectedErrors.Contains(ve.Description));
-
-#if false
-                    StringBuilder sb = new StringBuilder();
-                    foreach (var item in valErrors.Select(r => r.Description).OrderBy(t => t).Distinct())
-	                {
-		                sb.Append(item).Append(Environment.NewLine);
-	                }
-                    string z = sb.ToString();
-                    Console.WriteLine(z);
-#endif
-
-                    Assert.Empty(valErrors);
-                }
-            }
-
+            Validate(assembledDocx);
             Assert.Equal(err, returnedTemplateError);
         }
 
@@ -157,8 +141,8 @@ namespace Clippit.Tests.Word
         {
             DA101(name, data, err);
             var assembledDocx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
-            WmlDocument afterAssembling = new WmlDocument(assembledDocx.FullName);
-            int brCount = afterAssembling.MainDocumentPart
+            var afterAssembling = new WmlDocument(assembledDocx.FullName);
+            var brCount = afterAssembling.MainDocumentPart
                             .Element(W.body)
                             .Elements(W.p).ElementAt(1)
                             .Elements(W.r)
@@ -170,12 +154,11 @@ namespace Clippit.Tests.Word
         [InlineData("DA024-TrackedRevisions.docx", "DA-Data.xml")]
         public void DA102_Throws(string name, string data)
         {
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo templateDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
-            FileInfo dataFile = new FileInfo(Path.Combine(sourceDir.FullName, data));
+            var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
+            var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
 
-            WmlDocument wmlTemplate = new WmlDocument(templateDocx.FullName);
-            XElement xmldata = XElement.Load(dataFile.FullName);
+            var wmlTemplate = new WmlDocument(templateDocx.FullName);
+            var xmldata = XElement.Load(dataFile.FullName);
 
             bool returnedTemplateError;
             WmlDocument afterAssembling;
@@ -189,34 +172,28 @@ namespace Clippit.Tests.Word
         [InlineData("DA025-TemplateDocument.docx", "DA-Data.xml", false)]
         public void DA103_UseXmlDocument(string name, string data, bool err)
         {
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo templateDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
-            FileInfo dataFile = new FileInfo(Path.Combine(sourceDir.FullName, data));
+            var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
+            var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
 
-            WmlDocument wmlTemplate = new WmlDocument(templateDocx.FullName);
-            XmlDocument xmldata = new XmlDocument();
+            var wmlTemplate = new WmlDocument(templateDocx.FullName);
+            var xmldata = new XmlDocument();
             xmldata.Load(dataFile.FullName);
 
-            bool returnedTemplateError;
-            WmlDocument afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmldata, out returnedTemplateError);
+            var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmldata, out var returnedTemplateError);
             var assembledDocx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
             afterAssembling.SaveAs(assembledDocx.FullName);
 
-            using (MemoryStream ms = new MemoryStream())
-            {
-                ms.Write(afterAssembling.DocumentByteArray, 0, afterAssembling.DocumentByteArray.Length);
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true))
-                {
-                    OpenXmlValidator v = new OpenXmlValidator();
-                    var valErrors = v.Validate(wDoc).Where(ve => !s_ExpectedErrors.Contains(ve.Description));
-                    Assert.Empty(valErrors);
-                }
-            }
-
+            Validate(assembledDocx);
             Assert.Equal(err, returnedTemplateError);
         }
+        
+        private void Validate(FileInfo fi)
+        {
+            using var wDoc = WordprocessingDocument.Open(fi.FullName, false);
+            Validate(wDoc, s_expectedErrors);
+        }
 
-        private static List<string> s_ExpectedErrors = new List<string>()
+        private static readonly List<string> s_expectedErrors = new()
         {
             "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenHBand' attribute is not declared.",
             "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenVBand' attribute is not declared.",
