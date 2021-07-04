@@ -4,16 +4,16 @@ using Clippit.Excel;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Clippit.Tests.Excel
+namespace Clippit.Tests.Excel.Samples
 {
-    public class SpreadsheetWriterExamples : TestsBase
+    public class SpreadsheetWriterSamples : TestsBase
     {
-        protected SpreadsheetWriterExamples(ITestOutputHelper log) : base(log)
+        public SpreadsheetWriterSamples(ITestOutputHelper log) : base(log)
         {
         }
         
         [Fact]
-        public void Example01()
+        public void Sample1()
         {
             var wb = new WorkbookDfn
             {
@@ -94,7 +94,7 @@ namespace Clippit.Tests.Excel
         }
         
         [Fact]
-        public void Example02()
+        public void Sample2()
         {
             var wb = new WorkbookDfn
             {

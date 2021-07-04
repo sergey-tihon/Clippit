@@ -2,11 +2,10 @@
 using System.IO;
 using System.Xml.Linq;
 using Clippit.Word;
-using DocumentFormat.OpenXml.Packaging;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Clippit.Tests.Word
+namespace Clippit.Tests.Word.Samples
 {
     public class DocumentAssemblerSamples : TestsBase
     {
@@ -14,8 +13,9 @@ namespace Clippit.Tests.Word
         {
         }
 
-        private const string TemplateDocumentFilePath = "Word/DocumentAssemblerData/TemplateDocument.docx";
-        private const string TemplateDataFilePath = "Word/DocumentAssemblerData/Data.xml";
+        private const string FolderPath = "../../../Word/Samples/DocumentAssembler/";
+        private const string TemplateDocumentFilePath = FolderPath + "TemplateDocument.docx";
+        private const string TemplateDataFilePath = FolderPath + "Data.xml";
         
         [Fact]
         public void Sample1()

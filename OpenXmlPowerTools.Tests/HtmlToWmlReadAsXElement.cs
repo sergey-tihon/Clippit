@@ -70,7 +70,7 @@ namespace Clippit
 #else
             catch (XmlException e)
             {
-                throw e;
+                throw;
             }
 #endif
             html = (XElement)ConvertToNoNamespace(html);

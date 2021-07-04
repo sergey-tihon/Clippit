@@ -8,7 +8,7 @@ using DocumentFormat.OpenXml.Packaging;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Clippit.Tests.Word
+namespace Clippit.Tests.Word.Samples
 {
     public class DocumentBuilderSamples : TestsBase
     {
@@ -17,7 +17,7 @@ namespace Clippit.Tests.Word
         }
 
         private static string GetFilePath(string path) =>
-            Path.Combine("Word/DocumentBuilderData/", path);
+            Path.Combine("../../../Word/Samples/DocumentBuilder/", path);
 
         [Fact]
         public void Sample1()
