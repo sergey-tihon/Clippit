@@ -4,23 +4,15 @@
 #define COPY_FILES_FOR_DEBUGGING
 
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using Clippit;
 using Xunit;
 
 #if !ELIDE_XUNIT_TESTS
 
-namespace OxPt
+namespace Clippit.Tests.Word
 {
-    public class CaTests
+    public class WmlContentAtomListTests
     {
         /*
          * This test was removed because it depends on the Coalesce method, which is only ever used

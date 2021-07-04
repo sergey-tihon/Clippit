@@ -1,24 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using Clippit;
 using Xunit;
 
 #if !ELIDE_XUNIT_TESTS
 
-namespace OxPt
+namespace Clippit.Tests.Excel
 {
-    public class ShTests
+    public class SmlToHtmlConverterTests
     {
         // PowerShell oneliner that generates InlineData for all files in a directory
         // dir | % { '[InlineData("' + $_.Name + '")]' } | clip
@@ -147,20 +138,18 @@ namespace OxPt
         
         public void SH003_ConvertTable(string name, string tableName)
         {
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
             var sourceCopiedToDestXlsx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx")));
             if (!sourceCopiedToDestXlsx.Exists)
                 File.Copy(sourceXlsx.FullName, sourceCopiedToDestXlsx.FullName);
 
             var dataXmlFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, sourceXlsx.Name.Replace(".xlsx", "-2-Generated-XmlData.xml")));
-            using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false))
-            {
-                var settings = new SmlToHtmlConverterSettings();
-                var rangeXml = SmlDataRetriever.RetrieveTable(sDoc, tableName);
-                rangeXml.Save(dataXmlFi.FullName);
-            }
+            using var sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false);
+            //var settings = new SmlToHtmlConverterSettings();
+            var rangeXml = SmlDataRetriever.RetrieveTable(sDoc, tableName);
+            rangeXml.Save(dataXmlFi.FullName);
         }
 
         [Theory]

@@ -15,12 +15,13 @@ using DocumentFormat.OpenXml.Validation;
 using Clippit;
 using Xunit;
 using System.Diagnostics;
+using Clippit.Tests.Word;
 
 #if !ELIDE_XUNIT_TESTS
 
-namespace OxPt
+namespace WmlComparerTests
 {
-    public class WcTests2
+    public class WmlComparerTests2
     {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public static bool m_OpenWord = false;

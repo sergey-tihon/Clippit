@@ -15,7 +15,6 @@ namespace Clippit.Tests.Word.Samples
         [Theory]
         [InlineData("Test01.docx")]
         [InlineData("Test02.docx")]
-        [InlineData("Test02.docx")]
         public void Sample(string fileName)
         {
             var file = new FileInfo(Path.Combine("../../../Word/Samples/FormattingAssembler/", fileName));

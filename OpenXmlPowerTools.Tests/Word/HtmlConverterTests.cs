@@ -5,17 +5,12 @@
 
 // DO_CONVERSION_VIA_WORD is defined in the project Clippit.Tests.OA.csproj, but not in the Clippit.Tests.csproj
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using Clippit;
 using Xunit;
 
 #if DO_CONVERSION_VIA_WORD
@@ -24,9 +19,9 @@ using Word = Microsoft.Office.Interop.Word;
 
 #if !ELIDE_XUNIT_TESTS
 
-namespace OxPt
+namespace Clippit.Tests.Word
 {
-    public class HcTests
+    public class HtmlConverterTests
     {
         public static bool s_CopySourceFiles = true;
         public static bool s_CopyFormattingAssembledDocx = true;
