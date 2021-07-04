@@ -128,7 +128,7 @@ namespace Clippit.Tests.PowerPoint.Samples
             }
 
             // we now have a PmlDocument (which is essentially a byte array) that can be saved as necessary.
-            modifiedCombinedPresentation.SaveAs(Path.Combine(TempDir, "Modified.pptx"));
+            modifiedCombinedPresentation.SaveAs(Path.Combine(TempDir, "ModifiedCombinedPresentation.pptx"));
         }
     }
 }

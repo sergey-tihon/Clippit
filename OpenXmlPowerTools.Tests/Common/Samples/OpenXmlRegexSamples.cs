@@ -257,7 +257,7 @@ namespace Clippit.Tests.Common.Samples
         public void PowerPointSample()
         {
             var sourcePres = new FileInfo(GetFilePath("TestPresentation.pptx"));
-            var newPres = new FileInfo(Path.Combine(TempDir, "Modified.pptx"));
+            var newPres = new FileInfo(Path.Combine(TempDir, "Modified-TestPresentation.pptx"));
             File.Copy(sourcePres.FullName, newPres.FullName);
 
             using var pDoc = PresentationDocument.Open(newPres.FullName, true);
