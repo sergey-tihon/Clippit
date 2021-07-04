@@ -9,18 +9,16 @@ using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit
 {
-    public class RevisionAccepter
+    public static class RevisionAccepter
     {
         public static WmlDocument AcceptRevisions(WmlDocument document)
         {
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(document))
+            using var streamDoc = new OpenXmlMemoryStreamDocument(document);
+            using (var doc = streamDoc.GetWordprocessingDocument())
             {
-                using (WordprocessingDocument doc = streamDoc.GetWordprocessingDocument())
-                {
-                    AcceptRevisions(doc);
-                }
-                return streamDoc.GetModifiedWmlDocument();
+                AcceptRevisions(doc);
             }
+            return streamDoc.GetModifiedWmlDocument();
         }
 
         public static void AcceptRevisions(WordprocessingDocument doc)

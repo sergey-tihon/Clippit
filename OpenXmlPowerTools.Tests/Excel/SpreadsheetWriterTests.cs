@@ -4,25 +4,19 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Clippit.Excel;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Validation;
-using Sw = Clippit;
 using Xunit;
 using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
-namespace OxPt
+namespace Clippit.Tests.Excel
 {
-    public class SwTests
+    public class SpreadsheetWriterTests : TestsBase
     {
-        private readonly ITestOutputHelper _log;
-
-        public SwTests(ITestOutputHelper log)
+        public SpreadsheetWriterTests(ITestOutputHelper log) : base(log)
         {
-            this._log = log;
         }
         
         private static WorkbookDfn GetSimpleWorkbookDfn() => new()
@@ -76,20 +70,20 @@ namespace OxPt
             
         
         [Fact]
-        public void SW001_Simple()
+        public void SaveWorkbookToFile()
         {
             var wb = GetSimpleWorkbookDfn();
             
-            var fileName = Path.Combine(Sw.TestUtil.TempDir.FullName, "SW001-Simple.xlsx");
+            var fileName = Path.Combine(TempDir, "SW001-Simple.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
             
             using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            Validate(sDoc);
+            Validate(sDoc, s_spreadsheetExpectedErrors);
         }
-        
+
         [Fact]
-        public void SW001_SimpleToStream()
+        public void SaveWorkbookToStream()
         {
             var wb = GetSimpleWorkbookDfn();
 
@@ -98,11 +92,11 @@ namespace OxPt
             stream.Position = 0;
 
             using var sDoc = SpreadsheetDocument.Open(stream, false);
-            Validate(sDoc);
+            Validate(sDoc, s_spreadsheetExpectedErrors);
         }
         
         [Fact]
-        public void SW001_TwoSheets()
+        public void SaveWorkbookWithTwoSheets()
         {
             var wb = new WorkbookDfn
             {
@@ -113,16 +107,61 @@ namespace OxPt
                 }
             };
 
-            var fileName = Path.Combine(Sw.TestUtil.TempDir.FullName, "SW001_TwoSheets.xlsx");
+            var fileName = Path.Combine(TempDir, "SW001_TwoSheets.xlsx");
+            using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+                wb.WriteTo(stream);
+
+            Validate(fileName);
+        }
+        
+        [Fact]
+        public void SaveTablesWithDates()
+        {
+            WorksheetDfn GetSheet(string name, string tableName) =>
+                new()
+                {
+                    Name = name,
+                    TableName = tableName,
+                    ColumnHeadings = new []
+                    {
+                        new CellDfn { CellDataType = CellDataType.String, Bold = true, Value= "Date"}
+                    },
+                    Rows = new []
+                    {
+                        new RowDfn
+                        {
+                            Cells = new CellDfn[] { null }
+                        },
+                        new RowDfn
+                        {
+                            Cells = new[] {new CellDfn {CellDataType = CellDataType.Date, Value = null, FormatCode = "mm-dd-yy"}}
+                        },
+                        new RowDfn
+                        {
+                            Cells = new[] {new CellDfn {CellDataType = CellDataType.Date, Value = DateTime.Now, FormatCode = "mm-dd-yy"}}
+                        }
+                    }
+                };
+
+            var wb = new WorkbookDfn
+            {
+                Worksheets = new []
+                {
+                    GetSheet("Sheet1","Table1"),
+                    GetSheet("Sheet2","Table2")
+                }
+            };
+
+            var fileName = Path.Combine(TempDir, "SW001_TableWithDates.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
 
             using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            Validate(sDoc);
+            Validate(fileName);
         }
 
         [Fact]
-        public void SW002_AllDataTypes()
+        public void SaveAllDataTypes()
         {
             var wb = new WorkbookDfn
             {
@@ -369,32 +408,36 @@ namespace OxPt
                 }
             };
 
-            var fileName = Path.Combine(Sw.TestUtil.TempDir.FullName, "SW002-DataTypes.xlsx");
+            var fileName = Path.Combine(TempDir, "SW002-DataTypes.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
             
-            using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            Validate(sDoc);
+            Validate(fileName);
         }
 
-        private void Validate(SpreadsheetDocument sDoc)
+                
+        [Fact]
+        public void AddWorksheetToWorkbook()
         {
-            var v = new OpenXmlValidator();
-            var errors = v.Validate(sDoc)
-                .Where(ve => !s_expectedErrors.Contains(ve.Description))
-                .ToList();
-
-            // if a test fails validation post-processing, then can use this code to determine the SDK
-            // validation error(s).
-            foreach (var item in errors)
-            {
-                _log.WriteLine(item.Description);
-            }
+            var wb = GetSimpleWorkbookDfn();
             
-            Assert.Empty(errors);
+            var fileName = Path.Combine(TempDir, "AddWorksheetToWorkbook.xlsx");
+            using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+                wb.WriteTo(stream);
+
+            using (var sDoc = SpreadsheetDocument.Open(fileName, true))
+                SpreadsheetWriter.AddWorksheet(sDoc, GetSimpleWorksheetDfn("MySecondSheet", "MySecondTable"));
+
+            Validate(fileName);
+        }
+        
+        private void Validate(string fileName)
+        {
+            using var sDoc = SpreadsheetDocument.Open(fileName, false);
+            Validate(sDoc, s_spreadsheetExpectedErrors);
         }
 
-        private static readonly List<string> s_expectedErrors = new()
+        private static readonly List<string> s_spreadsheetExpectedErrors = new()
         {
             "The attribute 't' has invalid value 'd'. The Enumeration constraint failed.",
         };
