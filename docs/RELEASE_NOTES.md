@@ -1,3 +1,6 @@
+#### 1.7.0-beta1 - Jul 5, 2021
+- DocumentAssembler: Support for images [#31](https://github.com/sergey-tihon/Clippit/pull/31)
+
 #### 1.6.0 - Jul 3, 2021
 - Add WorkbookDfn.WriteTo(Stream) method [#29](https://github.com/sergey-tihon/Clippit/pull/29)
 - Fixed generation of multiple Excel tables
