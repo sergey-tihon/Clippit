@@ -63,7 +63,7 @@ namespace Clippit.Tests.Html
                 html = XElement.Parse(sb.ToString());
             }
 #else
-            catch (XmlException e)
+            catch (XmlException)
             {
                 throw;
             }
