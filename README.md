@@ -2,19 +2,23 @@
 
 [![Build Status](https://github.com/sergey-tihon/Clippit/workflows/Build%20and%20Test/badge.svg?branch=master)](https://github.com/sergey-tihon/Clippit/actions?query=branch%3Amaster)
 
+## Build Instructions
 
-Build Instructions
-==================
-
-**Prerequisites:**
+### Prerequisites
 
 - .NET CLI toolchain
 - libgdiplus
   - macOS: `brew install mono-libgdiplus`
   - Ubuntu: `sudo apt-get update -y && sudo apt-get install -y libgdiplus`
 
-**Build**
+### Build
 
 Call `.\build.cmd` on Windows or `./build.sh` on other systems.
 
-Run `./build.sh -t BrowseDocs` to start local copy of site/docs.
+### Update docs
+
+- Install DocFx
+  - Windows : `choco install docfx -y`
+  - MacOS: `brew install docfx`
+
+- Run `docfx docs/docfx.json --serve` to start local copy of site/docs.

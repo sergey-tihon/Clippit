@@ -1,3 +1,6 @@
+---
+uid: Tutorial.Word.DocumentBuilder.ISource
+---
 # Custom ISource implementation
 
 Namespace: `Clippit.Word`

@@ -1,0 +1,6 @@
+###############
+#  temp file  #
+###############
+*.yml
+.manifest
+RELEASE_NOTES.md

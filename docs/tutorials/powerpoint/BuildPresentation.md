@@ -1,3 +1,6 @@
+---
+uid: Tutorial.Word.PresentationBuilder
+---
 # Build Presentation
 
 Namespace: `Clippit.PowerPoint`

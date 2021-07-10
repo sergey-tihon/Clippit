@@ -1,0 +1,74 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [
+            "OpenXmlPowerTools/**.csproj"
+          ],
+          "src": "../"
+        }
+      ],
+      "dest": "api",
+      "disableGitFeatures": false,
+      "disableDefaultFilter": false
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "api/**.yml",
+          "api/RELEASE_NOTES.md"
+        ]
+      },
+      {
+        "files": [
+          "tutorials/**.md",
+          "tutorials/**/toc.yml",
+          "toc.yml",
+          "*.md"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "images/**"
+        ]
+      }
+    ],
+    "overwrite": [
+      {
+        "files": [
+          "apidoc/**.md"
+        ],
+        "exclude": [
+          "obj/**",
+          "_site/**"
+        ]
+      }
+    ],
+    "dest": "_site",
+    "globalMetadata": {
+      "_appTitle": "Clippit",
+      "_enableSearch": true,
+      "_appLogoPath": "images/logo-site.png",
+      "_gitContribute": {
+        "repo": "https://github.com/sergey-tihon/Clippit",
+        "branch": "master"
+      }
+    },
+    "globalMetadataFiles": [],
+    "fileMetadataFiles": [],
+    "template": [
+      "default"
+    ],
+    "postProcessors": [],
+    "markdownEngineName": "markdig",
+    "noLangKeyword": false,
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false
+  }
+}
