@@ -2,7 +2,7 @@
 
 [![NuGet Badge](https://buildstats.info/nuget/Clippit)](https://www.nuget.org/packages/Clippit) [![Build Status](https://github.com/sergey-tihon/Clippit/workflows/Build%20and%20Test/badge.svg?branch=master)](https://github.com/sergey-tihon/Clippit/actions?query=branch%3Amaster)
 
-<img style="float: right;" src="/images/logo.jpeg">
+<img style="float: right;" src="images/logo.jpeg">
 
 ## Why Clippit?
 
