@@ -1,0 +1,3003 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class PegCharParser
+   | Clippit </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class PegCharParser
+   | Clippit ">
+    <meta name="generator" content="docfx 2.58.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/logo-site.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Peg.Base.PegCharParser">
+  
+  
+  <h1 id="Peg_Base_PegCharParser" data-uid="Peg.Base.PegCharParser" class="text-break">Class PegCharParser
+  </h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Peg.Base.PegBaseParser.html">PegBaseParser</a></div>
+    <div class="level2"><span class="xref">PegCharParser</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_srcLen_">PegBaseParser.srcLen_</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_pos_">PegBaseParser.pos_</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_bMute_">PegBaseParser.bMute_</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_errOut_">PegBaseParser.errOut_</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_nodeCreator_">PegBaseParser.nodeCreator_</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_maxpos_">PegBaseParser.maxpos_</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_GetRuleNameFromId_System_Int32_">PegBaseParser.GetRuleNameFromId(Int32)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_GetProperties_Peg_Base_EncodingClass__Peg_Base_UnicodeDetection__">PegBaseParser.GetProperties(EncodingClass, UnicodeDetection)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_GetMaximumPosition">PegBaseParser.GetMaximumPosition()</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_DefaultNodeCreator_Peg_Base_ECreatorPhase_Peg_Base_PegNode_System_Int32_">PegBaseParser.DefaultNodeCreator(ECreatorPhase, PegNode, Int32)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_Construct_System_IO_TextWriter_">PegBaseParser.Construct(TextWriter)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_Rewind">PegBaseParser.Rewind()</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_SetErrorDestination_System_IO_TextWriter_">PegBaseParser.SetErrorDestination(TextWriter)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_GetRoot">PegBaseParser.GetRoot()</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_ResetTree">PegBaseParser.ResetTree()</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_TreeChars_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.TreeChars(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_TreeChars_Peg_Base_PegBaseParser_Creator_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.TreeChars(PegBaseParser.Creator, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_TreeCharsWithId_System_Int32_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.TreeCharsWithId(Int32, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_TreeCharsWithId_Peg_Base_PegBaseParser_Creator_System_Int32_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.TreeCharsWithId(PegBaseParser.Creator, Int32, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_TreeNT_System_Int32_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.TreeNT(Int32, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_TreeNT_Peg_Base_PegBaseParser_Creator_System_Int32_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.TreeNT(PegBaseParser.Creator, Int32, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_TreeAST_System_Int32_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.TreeAST(Int32, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_TreeAST_Peg_Base_PegBaseParser_Creator_System_Int32_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.TreeAST(PegBaseParser.Creator, Int32, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_TreeNT_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.TreeNT(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_TreeNT_Peg_Base_PegBaseParser_Creator_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.TreeNT(PegBaseParser.Creator, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_TreeAST_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.TreeAST(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_TreeAST_Peg_Base_PegBaseParser_Creator_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.TreeAST(PegBaseParser.Creator, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_SetNodeCreator_Peg_Base_PegBaseParser_Creator_">PegBaseParser.SetNodeCreator(PegBaseParser.Creator)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_And_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.And(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_Peek_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.Peek(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_Not_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.Not(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_PlusRepeat_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.PlusRepeat(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_OptRepeat_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.OptRepeat(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_Option_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.Option(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_ForRepeat_System_Int32_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.ForRepeat(Int32, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_ForRepeat_System_Int32_System_Int32_Peg_Base_PegBaseParser_Matcher_">PegBaseParser.ForRepeat(Int32, Int32, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_Any">PegBaseParser.Any()</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Peg.Base.html">Peg.Base</a></h6>
+  <h6><strong>Assembly</strong>: Clippit.dll</h6>
+  <h5 id="Peg_Base_PegCharParser_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class PegCharParser : PegBaseParser</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser__ctor.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.%23ctor%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1588">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser__ctor_" data-uid="Peg.Base.PegCharParser.#ctor*"></a>
+  <h4 id="Peg_Base_PegCharParser__ctor" data-uid="Peg.Base.PegCharParser.#ctor">PegCharParser()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PegCharParser()</code></pre>
+  </div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser__ctor_System_String_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.%23ctor(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1593">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser__ctor_" data-uid="Peg.Base.PegCharParser.#ctor*"></a>
+  <h4 id="Peg_Base_PegCharParser__ctor_System_String_" data-uid="Peg.Base.PegCharParser.#ctor(System.String)">PegCharParser(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PegCharParser(string src)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">src</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser__ctor_System_String_System_IO_TextWriter_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.%23ctor(System.String%2CSystem.IO.TextWriter)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1597">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser__ctor_" data-uid="Peg.Base.PegCharParser.#ctor*"></a>
+  <h4 id="Peg_Base_PegCharParser__ctor_System_String_System_IO_TextWriter_" data-uid="Peg.Base.PegCharParser.#ctor(System.String,System.IO.TextWriter)">PegCharParser(String, TextWriter)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PegCharParser(string src, TextWriter errOut)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">src</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.IO.TextWriter</span></td>
+        <td><span class="parametername">errOut</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="fields">Fields
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_src_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.src_%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1472">View Source</a>
+  </span>
+  <h4 id="Peg_Base_PegCharParser_src_" data-uid="Peg.Base.PegCharParser.src_">src_</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected string src_</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.Char(System.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1705">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_Char_" data-uid="Peg.Base.PegCharParser.Char*"></a>
+  <h4 id="Peg_Base_PegCharParser_Char_System_Char_" data-uid="Peg.Base.PegCharParser.Char(System.Char)">Char(Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(char c1)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.Char(System.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1711">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_Char_" data-uid="Peg.Base.PegCharParser.Char*"></a>
+  <h4 id="Peg_Base_PegCharParser_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.Char(System.Char,System.Char)">Char(Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(char c1, char c2)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.Char(System.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1719">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_Char_" data-uid="Peg.Base.PegCharParser.Char*"></a>
+  <h4 id="Peg_Base_PegCharParser_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.Char(System.Char,System.Char,System.Char)">Char(Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(char c1, char c2, char c3)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_Char_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.Char(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1728">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_Char_" data-uid="Peg.Base.PegCharParser.Char*"></a>
+  <h4 id="Peg_Base_PegCharParser_Char_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.Char(System.Char,System.Char,System.Char,System.Char)">Char(Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(char c1, char c2, char c3, char c4)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c4</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_Char_System_Char_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.Char(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1738">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_Char_" data-uid="Peg.Base.PegCharParser.Char*"></a>
+  <h4 id="Peg_Base_PegCharParser_Char_System_Char_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.Char(System.Char,System.Char,System.Char,System.Char,System.Char)">Char(Char, Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(char c1, char c2, char c3, char c4, char c5)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c4</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c5</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.Char(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1749">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_Char_" data-uid="Peg.Base.PegCharParser.Char*"></a>
+  <h4 id="Peg_Base_PegCharParser_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.Char(System.Char,System.Char,System.Char,System.Char,System.Char,System.Char)">Char(Char, Char, Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(char c1, char c2, char c3, char c4, char c5, char c6)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c4</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c5</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c6</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.Char(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1761">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_Char_" data-uid="Peg.Base.PegCharParser.Char*"></a>
+  <h4 id="Peg_Base_PegCharParser_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.Char(System.Char,System.Char,System.Char,System.Char,System.Char,System.Char,System.Char)">Char(Char, Char, Char, Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(char c1, char c2, char c3, char c4, char c5, char c6, char c7)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c4</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c5</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c6</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c7</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.Char(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1774">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_Char_" data-uid="Peg.Base.PegCharParser.Char*"></a>
+  <h4 id="Peg_Base_PegCharParser_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.Char(System.Char,System.Char,System.Char,System.Char,System.Char,System.Char,System.Char,System.Char)">Char(Char, Char, Char, Char, Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(char c1, char c2, char c3, char c4, char c5, char c6, char c7, char c8)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c4</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c5</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c6</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c7</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c8</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_Char_System_String_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.Char(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1788">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_Char_" data-uid="Peg.Base.PegCharParser.Char*"></a>
+  <h4 id="Peg_Base_PegCharParser_Char_System_String_" data-uid="Peg.Base.PegCharParser.Char(System.String)">Char(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(string s)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">s</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_Construct_System_String_System_IO_TextWriter_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.Construct(System.String%2CSystem.IO.TextWriter)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1617">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_Construct_" data-uid="Peg.Base.PegCharParser.Construct*"></a>
+  <h4 id="Peg_Base_PegCharParser_Construct_System_String_System_IO_TextWriter_" data-uid="Peg.Base.PegCharParser.Construct(System.String,System.IO.TextWriter)">Construct(String, TextWriter)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Construct(string src, TextWriter Fout)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">src</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.IO.TextWriter</span></td>
+        <td><span class="parametername">Fout</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_Fatal_System_String_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.Fatal(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1678">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_Fatal_" data-uid="Peg.Base.PegCharParser.Fatal*"></a>
+  <h4 id="Peg_Base_PegCharParser_Fatal_System_String_" data-uid="Peg.Base.PegCharParser.Fatal(System.String)">Fatal(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool Fatal(string sMsg)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">sMsg</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_GetSource.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.GetSource%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1629">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_GetSource_" data-uid="Peg.Base.PegCharParser.GetSource*"></a>
+  <h4 id="Peg_Base_PegCharParser_GetSource" data-uid="Peg.Base.PegCharParser.GetSource">GetSource()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string GetSource()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_IChar_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.IChar(System.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1799">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_IChar_" data-uid="Peg.Base.PegCharParser.IChar*"></a>
+  <h4 id="Peg_Base_PegCharParser_IChar_System_Char_" data-uid="Peg.Base.PegCharParser.IChar(System.Char)">IChar(Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IChar(char c1)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_IChar_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.IChar(System.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1805">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_IChar_" data-uid="Peg.Base.PegCharParser.IChar*"></a>
+  <h4 id="Peg_Base_PegCharParser_IChar_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.IChar(System.Char,System.Char)">IChar(Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IChar(char c1, char c2)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_IChar_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.IChar(System.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1813">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_IChar_" data-uid="Peg.Base.PegCharParser.IChar*"></a>
+  <h4 id="Peg_Base_PegCharParser_IChar_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.IChar(System.Char,System.Char,System.Char)">IChar(Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IChar(char c1, char c2, char c3)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_IChar_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.IChar(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1822">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_IChar_" data-uid="Peg.Base.PegCharParser.IChar*"></a>
+  <h4 id="Peg_Base_PegCharParser_IChar_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.IChar(System.Char,System.Char,System.Char,System.Char)">IChar(Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IChar(char c1, char c2, char c3, char c4)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c4</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_IChar_System_Char_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.IChar(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1832">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_IChar_" data-uid="Peg.Base.PegCharParser.IChar*"></a>
+  <h4 id="Peg_Base_PegCharParser_IChar_System_Char_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.IChar(System.Char,System.Char,System.Char,System.Char,System.Char)">IChar(Char, Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IChar(char c1, char c2, char c3, char c4, char c5)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c4</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c5</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_IChar_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.IChar(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1843">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_IChar_" data-uid="Peg.Base.PegCharParser.IChar*"></a>
+  <h4 id="Peg_Base_PegCharParser_IChar_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.IChar(System.Char,System.Char,System.Char,System.Char,System.Char,System.Char)">IChar(Char, Char, Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IChar(char c1, char c2, char c3, char c4, char c5, char c6)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c4</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c5</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c6</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_IChar_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.IChar(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1855">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_IChar_" data-uid="Peg.Base.PegCharParser.IChar*"></a>
+  <h4 id="Peg_Base_PegCharParser_IChar_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.IChar(System.Char,System.Char,System.Char,System.Char,System.Char,System.Char,System.Char)">IChar(Char, Char, Char, Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IChar(char c1, char c2, char c3, char c4, char c5, char c6, char c7)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c4</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c5</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c6</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c7</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_IChar_System_String_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.IChar(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1868">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_IChar_" data-uid="Peg.Base.PegCharParser.IChar*"></a>
+  <h4 id="Peg_Base_PegCharParser_IChar_System_String_" data-uid="Peg.Base.PegCharParser.IChar(System.String)">IChar(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IChar(string s)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">s</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_In_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.In(System.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1880">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_In_" data-uid="Peg.Base.PegCharParser.In*"></a>
+  <h4 id="Peg_Base_PegCharParser_In_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.In(System.Char,System.Char)">In(Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool In(char c0, char c1)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c0</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_In_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.In(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1890">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_In_" data-uid="Peg.Base.PegCharParser.In*"></a>
+  <h4 id="Peg_Base_PegCharParser_In_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.In(System.Char,System.Char,System.Char,System.Char)">In(Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool In(char c0, char c1, char c2, char c3)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c0</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_In_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.In(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1904">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_In_" data-uid="Peg.Base.PegCharParser.In*"></a>
+  <h4 id="Peg_Base_PegCharParser_In_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.In(System.Char,System.Char,System.Char,System.Char,System.Char,System.Char)">In(Char, Char, Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool In(char c0, char c1, char c2, char c3, char c4, char c5)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c0</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c4</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c5</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_In_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.In(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1919">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_In_" data-uid="Peg.Base.PegCharParser.In*"></a>
+  <h4 id="Peg_Base_PegCharParser_In_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.In(System.Char,System.Char,System.Char,System.Char,System.Char,System.Char,System.Char,System.Char)">In(Char, Char, Char, Char, Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool In(char c0, char c1, char c2, char c3, char c4, char c5, char c6, char c7)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c0</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c4</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c5</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c6</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c7</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_In_System_String_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.In(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1935">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_In_" data-uid="Peg.Base.PegCharParser.In*"></a>
+  <h4 id="Peg_Base_PegCharParser_In_System_String_" data-uid="Peg.Base.PegCharParser.In(System.String)">In(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool In(string s)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">s</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_Into_Peg_Base_PegBaseParser_Matcher_Peg_Base_PegBegEnd__.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.Into(Peg.Base.PegBaseParser.Matcher%2CPeg.Base.PegBegEnd%40)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1646">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_Into_" data-uid="Peg.Base.PegCharParser.Into*"></a>
+  <h4 id="Peg_Base_PegCharParser_Into_Peg_Base_PegBaseParser_Matcher_Peg_Base_PegBegEnd__" data-uid="Peg.Base.PegCharParser.Into(Peg.Base.PegBaseParser.Matcher,Peg.Base.PegBegEnd@)">Into(PegBaseParser.Matcher, out PegBegEnd)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Into(PegBaseParser.Matcher toMatch, out PegBegEnd begEnd)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Peg.Base.PegBaseParser.Matcher.html">PegBaseParser.Matcher</a></td>
+        <td><span class="parametername">toMatch</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Peg.Base.PegBegEnd.html">PegBegEnd</a></td>
+        <td><span class="parametername">begEnd</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_Into_Peg_Base_PegBaseParser_Matcher_System_Double__.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.Into(Peg.Base.PegBaseParser.Matcher%2CSystem.Double%40)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1661">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_Into_" data-uid="Peg.Base.PegCharParser.Into*"></a>
+  <h4 id="Peg_Base_PegCharParser_Into_Peg_Base_PegBaseParser_Matcher_System_Double__" data-uid="Peg.Base.PegCharParser.Into(Peg.Base.PegBaseParser.Matcher,System.Double@)">Into(PegBaseParser.Matcher, out Double)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Into(PegBaseParser.Matcher toMatch, out double into)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Peg.Base.PegBaseParser.Matcher.html">PegBaseParser.Matcher</a></td>
+        <td><span class="parametername">toMatch</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">into</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_Into_Peg_Base_PegBaseParser_Matcher_System_Int32__.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.Into(Peg.Base.PegBaseParser.Matcher%2CSystem.Int32%40)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1653">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_Into_" data-uid="Peg.Base.PegCharParser.Into*"></a>
+  <h4 id="Peg_Base_PegCharParser_Into_Peg_Base_PegBaseParser_Matcher_System_Int32__" data-uid="Peg.Base.PegCharParser.Into(Peg.Base.PegBaseParser.Matcher,System.Int32@)">Into(PegBaseParser.Matcher, out Int32)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Into(PegBaseParser.Matcher toMatch, out int into)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Peg.Base.PegBaseParser.Matcher.html">PegBaseParser.Matcher</a></td>
+        <td><span class="parametername">toMatch</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">into</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_Into_Peg_Base_PegBaseParser_Matcher_System_String__.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.Into(Peg.Base.PegBaseParser.Matcher%2CSystem.String%40)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1632">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_Into_" data-uid="Peg.Base.PegCharParser.Into*"></a>
+  <h4 id="Peg_Base_PegCharParser_Into_Peg_Base_PegBaseParser_Matcher_System_String__" data-uid="Peg.Base.PegCharParser.Into(Peg.Base.PegBaseParser.Matcher,System.String@)">Into(PegBaseParser.Matcher, out String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Into(PegBaseParser.Matcher toMatch, out string into)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Peg.Base.PegBaseParser.Matcher.html">PegBaseParser.Matcher</a></td>
+        <td><span class="parametername">toMatch</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">into</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_NotIn_System_String_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.NotIn(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1949">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_NotIn_" data-uid="Peg.Base.PegCharParser.NotIn*"></a>
+  <h4 id="Peg_Base_PegCharParser_NotIn_System_String_" data-uid="Peg.Base.PegCharParser.NotIn(System.String)">NotIn(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool NotIn(string s)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">s</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_NotOneOf_System_String_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.NotOneOf(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L2063">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_NotOneOf_" data-uid="Peg.Base.PegCharParser.NotOneOf*"></a>
+  <h4 id="Peg_Base_PegCharParser_NotOneOf_System_String_" data-uid="Peg.Base.PegCharParser.NotOneOf(System.String)">NotOneOf(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool NotOneOf(string s)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">s</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_OneOf_Peg_Base_PegCharParser_OptimizedCharset_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.OneOf(Peg.Base.PegCharParser.OptimizedCharset)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L2075">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_OneOf_" data-uid="Peg.Base.PegCharParser.OneOf*"></a>
+  <h4 id="Peg_Base_PegCharParser_OneOf_Peg_Base_PegCharParser_OptimizedCharset_" data-uid="Peg.Base.PegCharParser.OneOf(Peg.Base.PegCharParser.OptimizedCharset)">OneOf(PegCharParser.OptimizedCharset)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(PegCharParser.OptimizedCharset cset)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Peg.Base.PegCharParser.OptimizedCharset.html">PegCharParser.OptimizedCharset</a></td>
+        <td><span class="parametername">cset</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_OneOf_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.OneOf(System.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1963">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_OneOf_" data-uid="Peg.Base.PegCharParser.OneOf*"></a>
+  <h4 id="Peg_Base_PegCharParser_OneOf_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.OneOf(System.Char,System.Char)">OneOf(Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(char c0, char c1)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c0</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_OneOf_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.OneOf(System.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1973">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_OneOf_" data-uid="Peg.Base.PegCharParser.OneOf*"></a>
+  <h4 id="Peg_Base_PegCharParser_OneOf_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.OneOf(System.Char,System.Char,System.Char)">OneOf(Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(char c0, char c1, char c2)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c0</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_OneOf_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.OneOf(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1986">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_OneOf_" data-uid="Peg.Base.PegCharParser.OneOf*"></a>
+  <h4 id="Peg_Base_PegCharParser_OneOf_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.OneOf(System.Char,System.Char,System.Char,System.Char)">OneOf(Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(char c0, char c1, char c2, char c3)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c0</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_OneOf_System_Char_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.OneOf(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1999">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_OneOf_" data-uid="Peg.Base.PegCharParser.OneOf*"></a>
+  <h4 id="Peg_Base_PegCharParser_OneOf_System_Char_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.OneOf(System.Char,System.Char,System.Char,System.Char,System.Char)">OneOf(Char, Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(char c0, char c1, char c2, char c3, char c4)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c0</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c4</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_OneOf_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.OneOf(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L2012">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_OneOf_" data-uid="Peg.Base.PegCharParser.OneOf*"></a>
+  <h4 id="Peg_Base_PegCharParser_OneOf_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.OneOf(System.Char,System.Char,System.Char,System.Char,System.Char,System.Char)">OneOf(Char, Char, Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(char c0, char c1, char c2, char c3, char c4, char c5)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c0</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c4</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c5</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_OneOf_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.OneOf(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L2025">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_OneOf_" data-uid="Peg.Base.PegCharParser.OneOf*"></a>
+  <h4 id="Peg_Base_PegCharParser_OneOf_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.OneOf(System.Char,System.Char,System.Char,System.Char,System.Char,System.Char,System.Char)">OneOf(Char, Char, Char, Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(char c0, char c1, char c2, char c3, char c4, char c5, char c6)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c0</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c4</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c5</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c6</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_OneOf_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.OneOf(System.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char%2CSystem.Char)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L2038">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_OneOf_" data-uid="Peg.Base.PegCharParser.OneOf*"></a>
+  <h4 id="Peg_Base_PegCharParser_OneOf_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_System_Char_" data-uid="Peg.Base.PegCharParser.OneOf(System.Char,System.Char,System.Char,System.Char,System.Char,System.Char,System.Char,System.Char)">OneOf(Char, Char, Char, Char, Char, Char, Char, Char)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(char c0, char c1, char c2, char c3, char c4, char c5, char c6, char c7)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c0</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c1</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c2</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c3</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c4</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c5</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c6</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Char</span></td>
+        <td><span class="parametername">c7</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_OneOf_System_String_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.OneOf(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L2051">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_OneOf_" data-uid="Peg.Base.PegCharParser.OneOf*"></a>
+  <h4 id="Peg_Base_PegCharParser_OneOf_System_String_" data-uid="Peg.Base.PegCharParser.OneOf(System.String)">OneOf(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(string s)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">s</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_OneOfLiterals_Peg_Base_PegCharParser_OptimizedLiterals_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.OneOfLiterals(Peg.Base.PegCharParser.OptimizedLiterals)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L2083">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_OneOfLiterals_" data-uid="Peg.Base.PegCharParser.OneOfLiterals*"></a>
+  <h4 id="Peg_Base_PegCharParser_OneOfLiterals_Peg_Base_PegCharParser_OptimizedLiterals_" data-uid="Peg.Base.PegCharParser.OneOfLiterals(Peg.Base.PegCharParser.OptimizedLiterals)">OneOfLiterals(PegCharParser.OptimizedLiterals)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOfLiterals(PegCharParser.OptimizedLiterals litAlt)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Peg.Base.PegCharParser.OptimizedLiterals.html">PegCharParser.OptimizedLiterals</a></td>
+        <td><span class="parametername">litAlt</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_OptRepeat_Peg_Base_PegCharParser_OptimizedCharset_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.OptRepeat(Peg.Base.PegCharParser.OptimizedCharset)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1692">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_OptRepeat_" data-uid="Peg.Base.PegCharParser.OptRepeat*"></a>
+  <h4 id="Peg_Base_PegCharParser_OptRepeat_Peg_Base_PegCharParser_OptimizedCharset_" data-uid="Peg.Base.PegCharParser.OptRepeat(Peg.Base.PegCharParser.OptimizedCharset)">OptRepeat(PegCharParser.OptimizedCharset)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OptRepeat(PegCharParser.OptimizedCharset charset)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Peg.Base.PegCharParser.OptimizedCharset.html">PegCharParser.OptimizedCharset</a></td>
+        <td><span class="parametername">charset</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_PlusRepeat_Peg_Base_PegCharParser_OptimizedCharset_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.PlusRepeat(Peg.Base.PegCharParser.OptimizedCharset)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1697">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_PlusRepeat_" data-uid="Peg.Base.PegCharParser.PlusRepeat*"></a>
+  <h4 id="Peg_Base_PegCharParser_PlusRepeat_Peg_Base_PegCharParser_OptimizedCharset_" data-uid="Peg.Base.PegCharParser.PlusRepeat(Peg.Base.PegCharParser.OptimizedCharset)">PlusRepeat(PegCharParser.OptimizedCharset)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool PlusRepeat(PegCharParser.OptimizedCharset charset)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Peg.Base.PegCharParser.OptimizedCharset.html">PegCharParser.OptimizedCharset</a></td>
+        <td><span class="parametername">charset</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_SetSource_System_String_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.SetSource(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1622">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_SetSource_" data-uid="Peg.Base.PegCharParser.SetSource*"></a>
+  <h4 id="Peg_Base_PegCharParser_SetSource_System_String_" data-uid="Peg.Base.PegCharParser.SetSource(System.String)">SetSource(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetSource(string src)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">src</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_TreeNodeToString_Peg_Base_PegNode_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.TreeNodeToString(Peg.Base.PegNode)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1604">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_TreeNodeToString_" data-uid="Peg.Base.PegCharParser.TreeNodeToString*"></a>
+  <h4 id="Peg_Base_PegCharParser_TreeNodeToString_Peg_Base_PegNode_" data-uid="Peg.Base.PegCharParser.TreeNodeToString(Peg.Base.PegNode)">TreeNodeToString(PegNode)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string TreeNodeToString(PegNode node)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Peg.Base.PegNode.html">PegNode</a></td>
+        <td><span class="parametername">node</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Peg.Base.PegBaseParser.html#Peg_Base_PegBaseParser_TreeNodeToString_Peg_Base_PegNode_">PegBaseParser.TreeNodeToString(PegNode)</a></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser_Warning_System_String_.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser.Warning(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1685">View Source</a>
+  </span>
+  <a id="Peg_Base_PegCharParser_Warning_" data-uid="Peg.Base.PegCharParser.Warning*"></a>
+  <h4 id="Peg_Base_PegCharParser_Warning_System_String_" data-uid="Peg.Base.PegCharParser.Warning(System.String)">Warning(String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Warning(string sMsg)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">sMsg</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Peg_Base_PegCharParser.md&amp;value=---%0Auid%3A%20Peg.Base.PegCharParser%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/sergey-tihon/Clippit/blob/master/OpenXmlPowerTools/PegBase.cs/#L1469" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
