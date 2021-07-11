@@ -1,3 +1,6 @@
+---
+uid: Tutorial.Word.PresentationBuilder.PublishSlides
+---
 # Slide Publishing
 
 Namespace: `Clippit.PowerPoint`

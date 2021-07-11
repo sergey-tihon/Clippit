@@ -13,12 +13,6 @@
       "commands": [
         "fake"
       ]
-    },
-    "dotnet-serve": {
-      "version": "1.8.34",
-      "commands": [
-        "dotnet-serve"
-      ]
     }
   }
 }

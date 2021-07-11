@@ -26,8 +26,8 @@ open Fake.IO
 open Fake.IO.Globbing.Operators
 
 let gitName = "Clippit"
-let description = "Unofficial fork of OpenXmlPowerTools with new features"
-let release = ReleaseNotes.load "docs/RELEASE_NOTES.md"
+let description = "Fresh PowerTools for OpenXml"
+let release = ReleaseNotes.load "RELEASE_NOTES.md"
 
 // Targets
 Target.create "Clean" (fun _ ->
@@ -46,6 +46,8 @@ Target.create "AssemblyInfo" (fun _ ->
 )
 
 Target.create "Build" (fun _ ->
+    "RELEASE_NOTES.md" |> Shell.copyFile "docs/api"
+
     let result = DotNet.exec id "build" "Clippit.sln -c Release"
     if not result.OK
     then failwithf "Build failed: %A" result.Errors
@@ -62,11 +64,6 @@ Target.create "NuGet" (fun _ ->
             OutputPath = "bin"
             Version = release.NugetVersion
             ReleaseNotes = String.toLines release.Notes})
-)
-
-Target.create "BrowseDocs" (fun _ ->
-    CreateProcess.fromRawCommandLine "dotnet" "serve -o -d ./docs"
-    |> (Proc.run >> ignore)
 )
 
 Target.create "All" ignore

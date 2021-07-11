@@ -1,3 +1,6 @@
+---
+uid: Tutorial.Excel.SpreadsheetWriter
+---
 # Write Spreadsheet
 
 Namespace: `Clippit.Excel`

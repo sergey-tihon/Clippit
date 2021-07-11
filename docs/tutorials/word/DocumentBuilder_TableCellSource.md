@@ -1,3 +1,6 @@
+---
+uid: Tutorial.Word.DocumentBuilder.TableCellSource
+---
 # Table Cell Source
 
 Namespace: `Clippit.Word`
