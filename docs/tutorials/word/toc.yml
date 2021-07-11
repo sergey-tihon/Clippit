@@ -4,3 +4,7 @@
     href: DocumentBuilder_CustomISource.md
   - name: TableCellSource
     href: DocumentBuilder_TableCellSource.md
+- name: DocumentAssembler
+  items:
+  - name: Images Support
+    href: DocumentAssembler_ImagesSupport.md
