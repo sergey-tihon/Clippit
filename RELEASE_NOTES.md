@@ -1,4 +1,4 @@
-#### 1.7.0-beta1 - Jul 5, 2021
+#### 1.7.0 - Aug 15, 2021
 - DocumentAssembler: Support for images [#31](https://github.com/sergey-tihon/Clippit/pull/31)
 
 #### 1.6.1 - Jul 11, 2021
