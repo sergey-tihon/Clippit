@@ -242,7 +242,7 @@ namespace Clippit.HtmlToWml
                             .FirstOrDefault();
                         if (tdToAddAfter == null)
                         {
-                            tdToAddAfter = rowsToAddTo.Elements(XhtmlNoNamespace.td)
+                            tdToAddAfter = rowToAddTo.Elements(XhtmlNoNamespace.td)
                                 .LastOrDefault();
                         }
                         var td = new XElement(XhtmlNoNamespace.td,
