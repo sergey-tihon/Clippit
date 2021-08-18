@@ -1,3 +1,6 @@
+#### 1.7.1 - Aug 18, 2021
+- Resolving bug with nested rowspans [335](https://github.com/sergey-tihon/Clippit/pull/35)
+
 #### 1.7.0 - Aug 15, 2021
 - DocumentAssembler: Support for images [#31](https://github.com/sergey-tihon/Clippit/pull/31)
 
