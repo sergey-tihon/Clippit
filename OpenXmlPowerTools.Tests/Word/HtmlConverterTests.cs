@@ -130,29 +130,6 @@ namespace Clippit.Tests.Word
             ConvertToHtmlNoCssClasses(sourceDocx, oxPtConvertedDestHtml);
         }
 
-        [Fact]
-        public void MyTest()
-        {
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            var htmlString = File.ReadAllText(Path.Combine(sourceDir.FullName, "T1880.html"));
-            var processedDestDocx = new FileInfo(Path.Combine(TempDir, "T1880.html-processed-by-DocumentBuilder.docx"));
-
-            XElement html = HtmlToWmlReadAsXElement.ReadAsXElement(htmlString);
-
-            string usedAuthorCss = HtmlToWmlConverter.CleanUpCss((string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style"));
-
-            HtmlToWmlConverterSettings settings = HtmlToWmlConverter.GetDefaultSettings();
-
-            WmlDocument doc = HtmlToWmlConverter.ConvertHtmlToWml(string.Empty, usedAuthorCss, string.Empty, html, settings);
-
-            var sources = new List<ISource>
-            {
-                new Source(doc, true),
-            };
-
-            DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
-        }
-
         private static void CopyFormattingAssembledDocx(FileInfo source, FileInfo dest)
         {
             var ba = File.ReadAllBytes(source.FullName);
@@ -410,46 +387,6 @@ namespace Clippit.Tests.Word
 #endif
     }
 
-    public static class HtmlToWmlReadAsXElement
-    {
-        public static XElement ReadAsXElement(string htmlString)
-        {
-            XElement html = null;
-            try
-            {
-                html = XElement.Parse(htmlString);
-            }
-            catch (XmlException)
-            {
-                htmlString.Replace("&amp;", "&");
-                htmlString.Replace("&nbsp;", "\xA0");
-                htmlString.Replace("&quot;", "\"");
-                htmlString.Replace("&lt;", "~lt;");
-                htmlString.Replace("&gt;", "~gt;");
-                htmlString.Replace("&#", "~#");
-                htmlString.Replace("&", "&amp;");
-                htmlString.Replace("~lt;", "&lt;");
-                htmlString.Replace("~gt;", "&gt;");
-                htmlString.Replace("~#", "&#");
-                html = XElement.Parse(htmlString);
-            }
-            // HtmlToWmlConverter expects the HTML elements to be in no namespace, so convert all elements to no namespace.
-            html = (XElement)ConvertToNoNamespace(html);
-            return html;
-        }
-
-        private static object ConvertToNoNamespace(XNode node)
-        {
-            XElement element = node as XElement;
-            if (element != null)
-            {
-                return new XElement(element.Name.LocalName,
-                    element.Attributes().Where(a => !a.IsNamespaceDeclaration),
-                    element.Nodes().Select(n => ConvertToNoNamespace(n)));
-            }
-            return node;
-        }
-    }
 }
 
 #endif
