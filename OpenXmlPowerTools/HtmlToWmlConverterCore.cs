@@ -240,6 +240,11 @@ namespace Clippit.HtmlToWml
                             .Elements(XhtmlNoNamespace.td)
                             .Skip(colNumber - 1)
                             .FirstOrDefault();
+                        if (tdToAddAfter == null)
+                        {
+                            tdToAddAfter = rowToAddTo.Elements(XhtmlNoNamespace.td)
+                                .LastOrDefault();
+                        }
                         var td = new XElement(XhtmlNoNamespace.td,
                             rowSpanCell.Attributes(),
                             new XAttribute("HtmlToWmlVMergeNoRestart", "true"));

@@ -9,7 +9,11 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using System.Xml.Linq;
+using Clippit.Tests.Html;
+using Clippit.Word;
+using System.Collections.Generic;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
 using Xunit.Abstractions;
@@ -382,6 +386,7 @@ namespace Clippit.Tests.Word
         }
 #endif
     }
+
 }
 
 #endif

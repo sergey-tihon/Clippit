@@ -416,6 +416,36 @@ namespace Clippit.Tests.Html
             Assert.Throws<OpenXmlPowerToolsException>(() => HtmlToWmlConverter.ConvertHtmlToWml(defaultCss, usedAuthorCss, userCss, html, settings, null, s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null));
         }
 
+        [Theory]
+        [InlineData("T1880.html")]
+        public void TestingNestedRowspan(string name)
+        {
+            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var sourceHtmlFi = new FileInfo(Path.Combine(sourceDir.FullName, name));
+            var sourceImageDi = new DirectoryInfo(Path.Combine(sourceDir.FullName, sourceHtmlFi.Name.Replace(".html", "_files")));
+
+            var destImageDi = new DirectoryInfo(Path.Combine(TempDir, sourceImageDi.Name));
+            var sourceCopiedToDestHtmlFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-1-Source.html")));
+            var destCssFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-2.css")));
+            var destDocxFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx")));
+            var annotatedHtmlFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt")));
+
+            File.Copy(sourceHtmlFi.FullName, sourceCopiedToDestHtmlFi.FullName);
+            XElement html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceCopiedToDestHtmlFi);
+
+            string usedAuthorCss = HtmlToWmlConverter.CleanUpCss((string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style"));
+            File.WriteAllText(destCssFi.FullName, usedAuthorCss);
+
+            HtmlToWmlConverterSettings settings = HtmlToWmlConverter.GetDefaultSettings();
+            settings.BaseUriForImages = Path.Combine(TempDir);
+
+            WmlDocument doc = HtmlToWmlConverter.ConvertHtmlToWml(defaultCss, usedAuthorCss, userCss, html, settings, null, s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null);
+
+            Assert.NotNull(doc);
+            if (doc != null)
+                SaveValidateAndFormatMainDocPart(destDocxFi, doc);
+        }
+
         private static void SaveValidateAndFormatMainDocPart(FileInfo destDocxFi, WmlDocument doc)
         {
             WmlDocument formattedDoc;
