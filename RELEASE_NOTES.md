@@ -1,3 +1,6 @@
+#### 1.7.2 - Aug 23, 2021
+- DocumentFormat.OpenXml v2.13.1
+
 #### 1.7.1 - Aug 18, 2021
 - Resolving bug with nested rowspans [335](https://github.com/sergey-tihon/Clippit/pull/35)
 
