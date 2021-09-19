@@ -4,6 +4,8 @@
 
 ## Build Instructions
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/sergey-tihon/Clippit)
+
 ### Prerequisites
 
 - .NET CLI toolchain
