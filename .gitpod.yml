@@ -9,4 +9,4 @@ vscode:
     - eamodio.gitlens
 
 tasks:
-  - init: ./build.sh
+  - init: sudo apt-get update -y && sudo apt-get install -y libgdiplus && ./build.sh
