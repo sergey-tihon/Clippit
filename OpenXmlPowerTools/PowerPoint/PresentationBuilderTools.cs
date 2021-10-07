@@ -149,13 +149,40 @@ namespace Clippit.PowerPoint
                 else
                 {
                     //ExternalRelationship oldRelationship = oldChart.GetExternalRelationship(relId);
-                    var newRid = NewRelationshipId();
                     var oldRel = oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldRel is null)
                         throw new PresentationBuilderInternalException("Internal Error 0007");
+                    
+                    var newRid = NewRelationshipId();
                     newChart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     dataReference.Attribute(R.id).Set(newRid);
                 }
+            }
+
+            foreach (var idPartPair in oldChart.Parts)
+            {
+                switch (idPartPair.OpenXmlPart)
+                {
+                    case ThemeOverridePart oldThemeOverridePart:
+                        CopyPart(oldThemeOverridePart);
+                        break;
+                    case ChartColorStylePart oldChartColorStylePart:
+                        CopyPart(oldChartColorStylePart);
+                        break;
+                    case ChartStylePart oldChartColorStylePart:
+                        CopyPart(oldChartColorStylePart);
+                        break;
+                }
+            }
+
+            void CopyPart<T>(T oldPart) where T : OpenXmlPart
+            {
+                var newRid = NewRelationshipId();
+                var newPart = newChart.AddNewPart<T>(oldPart.ContentType, newRid);
+                
+                using var oldStream = oldPart.GetStream(FileMode.Open, FileAccess.Read);
+                using var newStream = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);
+                oldStream.CopyTo(newStream);
             }
         }
 

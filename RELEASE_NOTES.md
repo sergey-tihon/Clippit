@@ -1,3 +1,6 @@
+#### 1.7.3 - Oct 7, 2021
+- Fixed copy Chart Style Parts in FluentPresentationBuilder
+
 #### 1.7.2 - Aug 23, 2021
 - DocumentFormat.OpenXml v2.13.1
 
