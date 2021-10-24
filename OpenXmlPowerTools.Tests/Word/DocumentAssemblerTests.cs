@@ -19,7 +19,7 @@ namespace Clippit.Tests.Word
     {
         public DocumentAssemblerTests(ITestOutputHelper log) : base(log)
         {
-            _sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            _sourceDir = new DirectoryInfo("../../../../TestFiles/DA/");
         }
 
         private readonly DirectoryInfo _sourceDir;
@@ -155,7 +155,8 @@ namespace Clippit.Tests.Word
         [InlineData("DA284A-ImageSelectWithHeaderAndFooter.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA285-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
         [InlineData("DA285A-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
-        [InlineData("DA/DA-I0038-TemplateWithMultipleXPathResults.docx", "DA/DA-I0038-Data.xml", false)]
+        
+        [InlineData("DA-I0038-TemplateWithMultipleXPathResults.docx", "DA-I0038-Data.xml", false)]
         public void DA101(string name, string data, bool err)
         {
             var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));

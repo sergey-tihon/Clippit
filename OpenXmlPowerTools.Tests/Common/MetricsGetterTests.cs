@@ -19,12 +19,12 @@ namespace Clippit.Tests.Common
         [Theory]
         [InlineData("Presentation.pptx")]
         [InlineData("Spreadsheet.xlsx")]
-        [InlineData("DA001-TemplateDocument.docx")]
-        [InlineData("DA002-TemplateDocument.docx")]
-        [InlineData("DA003-Select-XPathFindsNoData.docx")]
-        [InlineData("DA004-Select-XPathFindsNoDataOptional.docx")]
-        [InlineData("DA005-SelectRowData-NoData.docx")]
-        [InlineData("DA006-SelectTestValue-NoData.docx")]
+        [InlineData("DA/DA001-TemplateDocument.docx")]
+        [InlineData("DA/DA002-TemplateDocument.docx")]
+        [InlineData("DA/DA003-Select-XPathFindsNoData.docx")]
+        [InlineData("DA/DA004-Select-XPathFindsNoDataOptional.docx")]
+        [InlineData("DA/DA005-SelectRowData-NoData.docx")]
+        [InlineData("DA/DA006-SelectTestValue-NoData.docx")]
         public void MG001(string name)
         {
             var sourceDir = new DirectoryInfo("../../../../TestFiles/");
