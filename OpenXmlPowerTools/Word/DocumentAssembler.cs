@@ -1379,7 +1379,7 @@ namespace Clippit.Word
                                         var newValues = Array.Empty<string>();
                                         try
                                         {
-                                            newValues = EvaluateXPath(d, xPath);
+                                            newValues = EvaluateXPath(d, xPath, false);
                                         }
                                         catch (XPathException e)
                                         {
@@ -1471,7 +1471,7 @@ namespace Clippit.Word
             return errorPara;
         }
 
-        private static string[] EvaluateXPath(XElement element, string xPath)
+        private static string[] EvaluateXPath(XElement element, string xPath, bool optional)
         {
             //support some cells in the table may not have an xpath expression.
             if (string.IsNullOrWhiteSpace(xPath))
@@ -1489,12 +1489,16 @@ namespace Clippit.Word
 
             if (xPathSelectResult is IEnumerable enumerable and not string)
             {
-                return enumerable.Cast<XObject>().Select(x => x switch
+                var result = enumerable.Cast<XObject>().Select(x => x switch
                 {
                     XElement xElement => xElement.Value,
                     XAttribute attribute => attribute.Value,
                     _ => throw new ArgumentException($"Unknown element type: {x.GetType().Name}")
                 }).ToArray();
+
+                if (result.Length == 0 && !optional)
+                    throw new XPathException($"XPath expression ({xPath}) returned no results");
+                return result;
             }
 
             return new[] { xPathSelectResult.ToString() };
@@ -1502,7 +1506,7 @@ namespace Clippit.Word
         
         private static string EvaluateXPathToString(XElement element, string xPath, bool optional)
         {
-            var selectedData = EvaluateXPath(element, xPath);
+            var selectedData = EvaluateXPath(element, xPath, true);
 
             return selectedData.Length switch
             {
