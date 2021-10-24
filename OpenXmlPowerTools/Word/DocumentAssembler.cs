@@ -1136,8 +1136,6 @@ namespace Clippit.Word
         /// <returns>Processed element</returns>
         private static object ProcessAParagraph(XElement element, XElement data, TemplateError templateError)
         {
-            var para = element.Descendants(A.r).FirstOrDefault();
-
             var xPath = (string)element.Attribute(PA.Select);
             var optionalString = (string)element.Attribute(PA.Optional);
             var optional = (optionalString != null && optionalString.ToLower() == "true");
@@ -1152,19 +1150,18 @@ namespace Clippit.Word
                 return CreateContextErrorMessage(element, "XPathException: " + e.Message, templateError);
             }
 
-            if (para != null)
-            {
-                var p = new XElement(A.r, para.Elements(A.rPr));
-                foreach (var line in newValue.Split('\n'))
-                {
-                    p.Add(new XElement(A.t,
-                        para.Elements(A.t).Elements(A.rPr).FirstOrDefault(),
-                        line));
-                }
-                return p;
-            }
+            var para = element.Descendants(A.r).FirstOrDefault();
+            if (para is null)
+                return null;
 
-            return null;
+            var p = new XElement(A.r, para.Elements(A.rPr));
+            foreach (var line in newValue.Split('\n'))
+            {
+                p.Add(new XElement(A.t,
+                    para.Elements(A.t).Elements(A.rPr).FirstOrDefault(),
+                    line));
+            }
+            return p;
         }
 
         static object ContentReplacementTransform(XNode node, XElement data, TemplateError templateError, OpenXmlPart part)
@@ -1379,10 +1376,10 @@ namespace Clippit.Word
 
                                         var cellRun = paragraph.Elements(W.r).FirstOrDefault();
                                         var xPath = paragraph.Value;
-                                        string newValue;
+                                        var newValues = Array.Empty<string>();
                                         try
                                         {
-                                            newValue = EvaluateXPathToString(d, xPath, false);
+                                            newValues = EvaluateXPath(d, xPath);
                                         }
                                         catch (XPathException e)
                                         {
@@ -1394,13 +1391,14 @@ namespace Clippit.Word
                                             return errorCell;
                                         }
 
-                                        var newCell = new XElement(W.tc,
-                                                   tc.Elements().Where(z => z.Name != W.p),
-                                                   new XElement(W.p,
-                                                       paragraph.Element(W.pPr),
-                                                       new XElement(W.r,
-                                                           cellRun != null ? cellRun.Element(W.rPr) : new XElement(W.rPr),  //if the cell was empty there is no cellrun
-                                                           new XElement(W.t, newValue))));
+                                        var pPr = paragraph.Element(W.pPr);
+                                        var rPr = cellRun != null ? cellRun.Element(W.rPr) : new XElement(W.rPr); //if the cell was empty there is no cellrun
+                                        var newCell = new XElement(W.tc, 
+                                            tc.Elements().Where(z => z.Name != W.p),
+                                            newValues.Select(text => 
+                                                new XElement(W.p, pPr,
+                                                    new XElement(W.r, rPr,
+                                                        new XElement(W.t, text)))));
                                         return newCell;
                                     }))),
                                     footerRows
@@ -1473,14 +1471,15 @@ namespace Clippit.Word
             return errorPara;
         }
 
-        private static string EvaluateXPathToString(XElement element, string xPath, bool optional )
+        private static string[] EvaluateXPath(XElement element, string xPath)
         {
+            //support some cells in the table may not have an xpath expression.
+            if (string.IsNullOrWhiteSpace(xPath))
+                return Array.Empty<string>();
+
             object xPathSelectResult;
             try
             {
-                //support some cells in the table may not have an xpath expression.
-                if (string.IsNullOrWhiteSpace(xPath)) return string.Empty;
-                
                 xPathSelectResult = element.XPathEvaluate(xPath);
             }
             catch (XPathException e)
@@ -1490,27 +1489,28 @@ namespace Clippit.Word
 
             if (xPathSelectResult is IEnumerable enumerable and not string)
             {
-                var selectedData = enumerable.Cast<XObject>();
-                if (!selectedData.Any())
+                return enumerable.Cast<XObject>().Select(x => x switch
                 {
-                    if (optional) return string.Empty;
-                    throw new XPathException($"XPath expression ({xPath}) returned no results");
-                }
-                if (selectedData.Count() > 1)
-                {
-                    throw new XPathException($"XPath expression ({xPath}) returned more than one node");
-                }
-
-                switch (selectedData.First())
-                {
-                    case XElement xElement:
-                        return xElement.Value;
-                    case XAttribute attribute:
-                        return attribute.Value;
-                }
+                    XElement xElement => xElement.Value,
+                    XAttribute attribute => attribute.Value,
+                    _ => throw new ArgumentException($"Unknown element type: {x.GetType().Name}")
+                }).ToArray();
             }
 
-            return xPathSelectResult.ToString();
+            return new[] { xPathSelectResult.ToString() };
+        }
+        
+        private static string EvaluateXPathToString(XElement element, string xPath, bool optional)
+        {
+            var selectedData = EvaluateXPath(element, xPath);
+
+            return selectedData.Length switch
+            {
+                0 when optional => string.Empty,
+                0 => throw new XPathException($"XPath expression ({xPath}) returned no results"),
+                > 1 => throw new XPathException($"XPath expression ({xPath}) returned more than one node"),
+                _ => selectedData.First()
+            };
         }
     }
 }

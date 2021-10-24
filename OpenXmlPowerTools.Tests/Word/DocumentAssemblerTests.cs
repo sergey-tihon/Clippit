@@ -207,16 +207,17 @@ namespace Clippit.Tests.Word
 
         [Theory]
         [InlineData("DA025-TemplateDocument.docx", "DA-Data.xml", false)]
+        [InlineData("DA/DA-I0038-TemplateWithMultipleXPathResults.docx", "DA/DA-I0038-Data.xml", false)]
         public void DA103_UseXmlDocument(string name, string data, bool err)
         {
             var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
             var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
 
             var wmlTemplate = new WmlDocument(templateDocx.FullName);
-            var xmldata = new XmlDocument();
-            xmldata.Load(dataFile.FullName);
+            var xmlData = new XmlDocument();
+            xmlData.Load(dataFile.FullName);
 
-            var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmldata, out var returnedTemplateError);
+            var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var returnedTemplateError);
             var assembledDocx = new FileInfo(Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
             afterAssembling.SaveAs(assembledDocx.FullName);
 
