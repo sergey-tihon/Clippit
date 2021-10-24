@@ -19,7 +19,7 @@ namespace Clippit.Tests.Word
     {
         public DocumentAssemblerTests(ITestOutputHelper log) : base(log)
         {
-            _sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            _sourceDir = new DirectoryInfo("../../../../TestFiles/DA/");
         }
 
         private readonly DirectoryInfo _sourceDir;
@@ -52,7 +52,7 @@ namespace Clippit.Tests.Word
         [InlineData("DA027-XPathErrorInPara.docx", "DA-Data.xml", true)]
         [InlineData("DA028-NoPrototypeRow.docx", "DA-Data.xml", true)]
         [InlineData("DA029-NoDataForCell.docx", "DA-Data.xml", true)]
-        [InlineData("DA030-TooMuchDataForCell.docx", "DA-TooMuchDataForCell.xml", true)]
+        [InlineData("DA030-TooMuchDataForCell.docx", "DA-TooMuchDataForCell.xml", false)] // Clippit support multi-value XPath in table cells
         [InlineData("DA031-CellDataInAttributes.docx", "DA-CellDataInAttributes.xml", true)]
         [InlineData("DA032-TooMuchDataForConditional.docx", "DA-TooMuchDataForConditional.xml", true)]
         [InlineData("DA033-ConditionalOnAttribute.docx", "DA-ConditionalOnAttribute.xml", false)]
@@ -90,7 +90,7 @@ namespace Clippit.Tests.Word
         [InlineData("DA227-XPathErrorInPara.docx", "DA-Data.xml", true)]
         [InlineData("DA228-NoPrototypeRow.docx", "DA-Data.xml", true)]
         [InlineData("DA229-NoDataForCell.docx", "DA-Data.xml", true)]
-        [InlineData("DA230-TooMuchDataForCell.docx", "DA-TooMuchDataForCell.xml", true)]
+        [InlineData("DA230-TooMuchDataForCell.docx", "DA-TooMuchDataForCell.xml", false)] // Clippit support multi-value XPath in table cells
         [InlineData("DA231-CellDataInAttributes.docx", "DA-CellDataInAttributes.xml", true)]
         [InlineData("DA232-TooMuchDataForConditional.docx", "DA-TooMuchDataForConditional.xml", true)]
         [InlineData("DA233-ConditionalOnAttribute.docx", "DA-ConditionalOnAttribute.xml", false)]
@@ -155,16 +155,17 @@ namespace Clippit.Tests.Word
         [InlineData("DA284A-ImageSelectWithHeaderAndFooter.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA285-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
         [InlineData("DA285A-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
-
+        
+        [InlineData("DA-I0038-TemplateWithMultipleXPathResults.docx", "DA-I0038-Data.xml", false)]
         public void DA101(string name, string data, bool err)
         {
             var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
             var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
 
             var wmlTemplate = new WmlDocument(templateDocx.FullName);
-            var xmldata = XElement.Load(dataFile.FullName);
+            var xmlData = XElement.Load(dataFile.FullName);
 
-            var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmldata, out var returnedTemplateError);
+            var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var returnedTemplateError);
             var assembledDocx = new FileInfo(Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
             afterAssembling.SaveAs(assembledDocx.FullName);
 
@@ -213,10 +214,10 @@ namespace Clippit.Tests.Word
             var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
 
             var wmlTemplate = new WmlDocument(templateDocx.FullName);
-            var xmldata = new XmlDocument();
-            xmldata.Load(dataFile.FullName);
+            var xmlData = new XmlDocument();
+            xmlData.Load(dataFile.FullName);
 
-            var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmldata, out var returnedTemplateError);
+            var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var returnedTemplateError);
             var assembledDocx = new FileInfo(Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
             afterAssembling.SaveAs(assembledDocx.FullName);
 

@@ -1,3 +1,6 @@
+#### 1.8.0-beta1 - Oct 24, 2021
+- DocumentAssembler: Support for multi-value XPath results [#39](https://github.com/sergey-tihon/Clippit/pull/39)
+
 #### 1.7.3 - Oct 7, 2021
 - Fixed copy Chart Style Parts in FluentPresentationBuilder
 

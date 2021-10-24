@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Customer>
+  <Orders>
+    <Order Number="1">
+      <Names>
+        <Name>John Smith</Name>
+        <Name>Johnny Smith</Name>
+        <Name>Jon Smith</Name>
+      </Names>
+      <ProductDescription>Unicycle</ProductDescription>
+      <Quantity>3</Quantity>
+    </Order>
+    <Order Number="2">
+      <Names>
+        <Name>Jane Smith</Name>
+        <Name>Jenny Smith</Name>
+        <Name>Jannifer Smith</Name>
+      </Names>
+      <ProductDescription>Tricycle</ProductDescription>
+      <Quantity>8</Quantity>
+    </Order>
+  </Orders>
+</Customer>
