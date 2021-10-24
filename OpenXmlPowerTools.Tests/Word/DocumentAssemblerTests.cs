@@ -52,7 +52,7 @@ namespace Clippit.Tests.Word
         [InlineData("DA027-XPathErrorInPara.docx", "DA-Data.xml", true)]
         [InlineData("DA028-NoPrototypeRow.docx", "DA-Data.xml", true)]
         [InlineData("DA029-NoDataForCell.docx", "DA-Data.xml", true)]
-        [InlineData("DA030-TooMuchDataForCell.docx", "DA-TooMuchDataForCell.xml", true)]
+        [InlineData("DA030-TooMuchDataForCell.docx", "DA-TooMuchDataForCell.xml", false)] // Clippit support multi-value XPath in table cells
         [InlineData("DA031-CellDataInAttributes.docx", "DA-CellDataInAttributes.xml", true)]
         [InlineData("DA032-TooMuchDataForConditional.docx", "DA-TooMuchDataForConditional.xml", true)]
         [InlineData("DA033-ConditionalOnAttribute.docx", "DA-ConditionalOnAttribute.xml", false)]
@@ -90,7 +90,7 @@ namespace Clippit.Tests.Word
         [InlineData("DA227-XPathErrorInPara.docx", "DA-Data.xml", true)]
         [InlineData("DA228-NoPrototypeRow.docx", "DA-Data.xml", true)]
         [InlineData("DA229-NoDataForCell.docx", "DA-Data.xml", true)]
-        [InlineData("DA230-TooMuchDataForCell.docx", "DA-TooMuchDataForCell.xml", true)]
+        [InlineData("DA230-TooMuchDataForCell.docx", "DA-TooMuchDataForCell.xml", false)] // Clippit support multi-value XPath in table cells
         [InlineData("DA231-CellDataInAttributes.docx", "DA-CellDataInAttributes.xml", true)]
         [InlineData("DA232-TooMuchDataForConditional.docx", "DA-TooMuchDataForConditional.xml", true)]
         [InlineData("DA233-ConditionalOnAttribute.docx", "DA-ConditionalOnAttribute.xml", false)]

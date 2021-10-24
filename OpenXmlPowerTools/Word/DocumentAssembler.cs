@@ -1140,10 +1140,10 @@ namespace Clippit.Word
             var optionalString = (string)element.Attribute(PA.Optional);
             var optional = (optionalString != null && optionalString.ToLower() == "true");
 
-            string newValue;
+            var newValues = Array.Empty<string>();
             try
             {
-                newValue = EvaluateXPathToString(data, xPath, optional);
+                newValues = EvaluateXPath(data, xPath, optional);
             }
             catch (XPathException e)
             {
@@ -1155,11 +1155,12 @@ namespace Clippit.Word
                 return null;
 
             var p = new XElement(A.r, para.Elements(A.rPr));
-            foreach (var line in newValue.Split('\n'))
+            var rPr = para.Elements(A.t).Elements(A.rPr).FirstOrDefault();
+            
+            var lines = newValues.SelectMany(x => x.Split('\n'));
+            foreach (var line in lines)
             {
-                p.Add(new XElement(A.t,
-                    para.Elements(A.t).Elements(A.rPr).FirstOrDefault(),
-                    line));
+                p.Add(new XElement(A.t, rPr, line));
             }
             return p;
         }
@@ -1228,24 +1229,24 @@ namespace Clippit.Word
                     var optionalString = (string) element.Attribute(PA.Optional);
                     var optional = (optionalString != null && optionalString.ToLower() == "true");
 
-                    string newValue;
+                    var newValues = Array.Empty<string>();
                     try
                     {
-                        newValue = EvaluateXPathToString(data, xPath, optional);
+                        newValues = EvaluateXPath(data, xPath, optional);
                     }
                     catch (XPathException e)
                     {
                         return CreateContextErrorMessage(element, "XPathException: " + e.Message, templateError);
                     }
 
+                    var lines = newValues.SelectMany(x => x.Split('\n'));
                     if (para != null)
                     {
-
                         var p = new XElement(W.p, para.Elements(W.pPr));
-                        foreach(string line in newValue.Split('\n'))
+                        var rPr = para.Elements(W.r).Elements(W.rPr).FirstOrDefault();
+                        foreach(var line in lines)
                         {
-                            p.Add(new XElement(W.r,
-                                    para.Elements(W.r).Elements(W.rPr).FirstOrDefault(),
+                            p.Add(new XElement(W.r, rPr,
                                 (p.Elements().Count() > 1) ? new XElement(W.br) : null,
                                 new XElement(W.t, line)));
                         }
@@ -1254,10 +1255,10 @@ namespace Clippit.Word
                     else
                     {
                         var list = new List<XElement>();
-                        foreach(var line in newValue.Split('\n'))
+                        var rPr = run.Elements().Where(e => e.Name != W.t);
+                        foreach(var line in lines)
                         {
-                            list.Add(new XElement(W.r,
-                                run.Elements().Where(e => e.Name != W.t),
+                            list.Add(new XElement(W.r, rPr,
                                 (list.Count > 0) ? new XElement(W.br) : null,
                                 new XElement(W.t, line)));
                         }
