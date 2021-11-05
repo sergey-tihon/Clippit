@@ -1,3 +1,6 @@
+#### 1.8.1 - Nov 5, 2021
+- DocumentFormat.OpenXml (2.14.0)
+
 #### 1.8.0 - Oct 25, 2021
 - DocumentAssembler: Support for multi-value XPath results [#39](https://github.com/sergey-tihon/Clippit/pull/39)
 
