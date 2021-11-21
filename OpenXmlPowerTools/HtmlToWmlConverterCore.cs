@@ -98,13 +98,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using Clippit.HtmlToWml.CSS;
+using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -1146,7 +1146,7 @@ namespace Clippit.HtmlToWml
         {
             var fontName = (string)r.Attribute(PtOpenXml.FontName) ??
                (string)r.Ancestors(W.p).First().Attribute(PtOpenXml.FontName);
-            if (fontName == null)
+            if (fontName is null)
                 throw new OpenXmlPowerToolsException("Internal Error, should have FontName attribute");
             if (UnknownFonts.Contains(fontName))
                 return 0;
@@ -1168,12 +1168,12 @@ namespace Clippit.HtmlToWml
             FontFamily ff;
             try
             {
-                ff = new FontFamily(fontName);
+                //ff = new FontFamily(fontName);
+                ff = SystemFonts.Find(fontName);
             }
             catch (ArgumentException)
             {
                 UnknownFonts.Add(fontName);
-
                 return 0;
             }
 
@@ -1201,21 +1201,19 @@ namespace Clippit.HtmlToWml
             if (runText.Length == 0 && tabLength == 0)
                 return 0;
 
-            int multiplier = 1;
-            if (runText.Length <= 2)
-                multiplier = 100;
-            else if (runText.Length <= 4)
-                multiplier = 50;
-            else if (runText.Length <= 8)
-                multiplier = 25;
-            else if (runText.Length <= 16)
-                multiplier = 12;
-            else if (runText.Length <= 32)
-                multiplier = 6;
+            var multiplier = runText.Length switch
+            {
+                <= 2 => 100,
+                <= 4 => 50,
+                <= 8 => 25,
+                <= 16 => 12,
+                <= 32 => 6,
+                _ => 1
+            };
             if (multiplier != 1)
             {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < multiplier; i++)
+                var sb = new StringBuilder();
+                for (var i = 0; i < multiplier; i++)
                     sb.Append(runText);
                 runText = sb.ToString();
             }
@@ -1881,21 +1879,20 @@ namespace Clippit.HtmlToWml
             return FontType.HAnsi;
         }
 
-        private static readonly HashSet<string> UnknownFonts = new HashSet<string>();
-        private static HashSet<string> _knownFamilies;
+        private static readonly HashSet<string> UnknownFonts = new();
+        private static HashSet<string> s_knownFamilies;
 
         private static HashSet<string> KnownFamilies
         {
             get
             {
-                if (_knownFamilies == null)
+                if (s_knownFamilies is null)
                 {
-                    _knownFamilies = new HashSet<string>();
-                    var families = FontFamily.Families;
-                    foreach (var fam in families)
-                        _knownFamilies.Add(fam.Name);
+                    s_knownFamilies = new HashSet<string>();
+                    foreach (var fam in SystemFonts.Families)
+                        s_knownFamilies.Add(fam.Name);
                 }
-                return _knownFamilies;
+                return s_knownFamilies;
             }
         }
 

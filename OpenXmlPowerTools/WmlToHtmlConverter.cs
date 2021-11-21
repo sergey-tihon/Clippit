@@ -4,12 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
+using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Image = SixLabors.ImageSharp.Image;
@@ -2237,20 +2237,19 @@ namespace Clippit
         }
 
         private static readonly HashSet<string> UnknownFonts = new HashSet<string>();
-        private static HashSet<string> _knownFamilies;
+        private static HashSet<string> s_knownFamilies;
 
         private static HashSet<string> KnownFamilies
         {
             get
             {
-                if (_knownFamilies is null)
+                if (s_knownFamilies is null)
                 {
-                    _knownFamilies = new HashSet<string>();
-                    var families = FontFamily.Families;
-                    foreach (var fam in families)
-                        _knownFamilies.Add(fam.Name);
+                    s_knownFamilies = new HashSet<string>();
+                    foreach (var fam in SystemFonts.Families)
+                        s_knownFamilies.Add(fam.Name);
                 }
-                return _knownFamilies;
+                return s_knownFamilies;
             }
         }
 
@@ -2277,7 +2276,8 @@ namespace Clippit
             FontFamily ff;
             try
             {
-                ff = new FontFamily(fontName);
+                //ff = new FontFamily(fontName);
+                ff = SystemFonts.Find(fontName);
             }
             catch (ArgumentException)
             {
@@ -2310,17 +2310,15 @@ namespace Clippit
             if (runText.Length == 0 && tabLength == 0)
                 return 0;
 
-            int multiplier = 1;
-            if (runText.Length <= 2)
-                multiplier = 100;
-            else if (runText.Length <= 4)
-                multiplier = 50;
-            else if (runText.Length <= 8)
-                multiplier = 25;
-            else if (runText.Length <= 16)
-                multiplier = 12;
-            else if (runText.Length <= 32)
-                multiplier = 6;
+            int multiplier = runText.Length switch
+            {
+                <= 2 => 100,
+                <= 4 => 50,
+                <= 8 => 25,
+                <= 16 => 12,
+                <= 32 => 6,
+                _ => 1
+            };
             if (multiplier != 1)
             {
                 StringBuilder sb = new StringBuilder();

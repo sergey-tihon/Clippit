@@ -12,25 +12,20 @@ using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using System.Globalization;
+using SixLabors.Fonts;
 
 namespace Clippit
 {
     public class MetricsGetterSettings
     {
-        public bool IncludeTextInContentControls;
-        public bool IncludeXlsxTableCellData;
-        public bool RetrieveNamespaceList;
-        public bool RetrieveContentTypeList;
+        public bool IncludeTextInContentControls { get; set; }
+        public bool IncludeXlsxTableCellData { get; set; }
+        public bool RetrieveNamespaceList { get; set; }
+        public bool RetrieveContentTypeList { get; set; }
     }
 
     public class MetricsGetter
     {
-        private static Lazy<Graphics> Graphics { get; } = new Lazy<Graphics>(() =>
-        {
-            Image image = new Bitmap(1, 1);
-            return System.Drawing.Graphics.FromImage(image);
-        });
-
         public static XElement GetMetrics(string fileName, MetricsGetterSettings settings)
         {
             FileInfo fi = new FileInfo(fileName);
@@ -112,12 +107,12 @@ namespace Clippit
         {
             try
             {
-                using (var f = new Font(ff, (float)sz / 2f, fs))
-                {
-                    var proposedSize = new Size(int.MaxValue, int.MaxValue);
-                    var sf = Graphics.Value.MeasureString(text, f, proposedSize);
-                    return (int) sf.Width;
-                }
+                var f = ff.CreateFont((float)sz / 2f, fs);
+                var box = TextMeasurer.MeasureBounds(text, new RendererOptions(f));
+                return (int)box.Width;
+                // var proposedSize = new Size(int.MaxValue, int.MaxValue);
+                // var sf = Graphics.Value.MeasureString(text, f, proposedSize);
+                // return (int) sf.Width;
             }
             catch
             {
@@ -135,21 +130,21 @@ namespace Clippit
             {
                 try
                 {
-                    const FontStyle fs2 = FontStyle.Regular;
-                    return _getTextWidth(ff, fs2, sz, text);
+                    return _getTextWidth(ff, FontStyle.Regular, sz, text);
                 }
                 catch (ArgumentException)
                 {
-                    const FontStyle fs2 = FontStyle.Bold;
                     try
                     {
-                        return _getTextWidth(ff, fs2, sz, text);
+                        return _getTextWidth(ff, FontStyle.Bold, sz, text);
                     }
                     catch (ArgumentException)
                     {
                         // if both regular and bold fail, then get metrics for Times New Roman
                         // use the original FontStyle (in fs)
-                        var ff2 = new FontFamily("Times New Roman");
+                        
+                        //var ff2 = new FontFamily("Times New Roman");
+                        var ff2 = SystemFonts.Find("Times New Roman"); // TODO: test this
                         return _getTextWidth(ff2, fs, sz, text);
                     }
                 }
@@ -169,10 +164,7 @@ namespace Clippit
         private static XElement GetWmlMetrics(string fileName, bool invalidHyperlink, WordprocessingDocument wDoc, MetricsGetterSettings settings)
         {
             var parts = new XElement(H.Parts,
-                wDoc.GetAllParts().Select(part =>
-                {
-                    return GetMetricsForWmlPart(part, settings);
-                }));
+                wDoc.GetAllParts().Select(part => GetMetricsForWmlPart(part, settings)));
             if (!parts.HasElements)
                 parts = null;
             var metrics = new XElement(H.Metrics,

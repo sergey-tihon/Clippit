@@ -4,13 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using System.IO;
+using SixLabors.Fonts;
 
 namespace Clippit
 {
@@ -226,21 +225,20 @@ namespace Clippit
             return null;
         }
 
-        private static readonly HashSet<string> UnknownFonts = new HashSet<string>();
-        private static HashSet<string> _knownFamilies;
+        private static readonly HashSet<string> UnknownFonts = new();
+        private static HashSet<string> s_knownFamilies;
 
         private static HashSet<string> KnownFamilies
         {
             get
             {
-                if (_knownFamilies == null)
+                if (s_knownFamilies is null)
                 {
-                    _knownFamilies = new HashSet<string>();
-                    var families = FontFamily.Families;
-                    foreach (var fam in families)
-                        _knownFamilies.Add(fam.Name);
+                    s_knownFamilies = new HashSet<string>();
+                    foreach (var fam in SystemFonts.Families)
+                        s_knownFamilies.Add(fam.Name);
                 }
-                return _knownFamilies;
+                return s_knownFamilies;
             }
         }
 
