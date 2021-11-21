@@ -2299,7 +2299,11 @@ namespace Clippit.HtmlToWml
                 {
                     bmp = Image<Rgba32>.Load(settings.BaseUriForImages + "/" + srcAttribute);
                 }
-                catch (ArgumentException)
+                catch (DirectoryNotFoundException)
+                {
+                    return null;
+                }
+                catch (FileNotFoundException)
                 {
                     return null;
                 }
