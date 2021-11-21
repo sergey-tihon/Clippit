@@ -28,3 +28,4 @@ dependencies
         DocumentFormat.OpenXml >= LOCKEDVERSION
         System.IO.Packaging >= LOCKEDVERSION
         System.Drawing.Common >= LOCKEDVERSION
+        SixLabors.ImageSharp.Drawing >= LOCKEDVERSION
