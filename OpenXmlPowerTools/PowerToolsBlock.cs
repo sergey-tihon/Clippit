@@ -45,15 +45,13 @@ namespace Clippit
 
         public PowerToolsBlock(OpenXmlPackage package)
         {
-            if (package == null) throw new ArgumentNullException("package");
-
-            _package = package;
+            _package = package ?? throw new ArgumentNullException(nameof(package));
             _package.BeginPowerToolsBlock();
         }
 
         public void Dispose()
         {
-            if (_package == null) return;
+            if (_package is null) return;
 
             _package.EndPowerToolsBlock();
             _package = null;

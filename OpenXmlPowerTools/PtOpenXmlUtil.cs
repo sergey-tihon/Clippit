@@ -109,7 +109,7 @@ namespace Clippit
 
         public static void PutXDocumentWithFormatting(this OpenXmlPart part)
         {
-            if (part is null) throw new ArgumentNullException("part");
+            if (part is null) throw new ArgumentNullException(nameof(part));
 
             XDocument partXDocument = part.GetXDocument();
             if (partXDocument != null)

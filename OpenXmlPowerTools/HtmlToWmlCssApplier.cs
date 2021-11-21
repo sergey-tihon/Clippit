@@ -7,8 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using Clippit;
-using Clippit.HtmlToWml;
 using Clippit.HtmlToWml.CSS;
 using System.Globalization;
 

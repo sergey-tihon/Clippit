@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using DocumentFormat.OpenXml.Packaging;
 using Xunit;
 using Xunit.Abstractions;
 

@@ -3,15 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using System.IO;
-using Clippit;
 
 namespace Clippit
 {
@@ -46,7 +41,7 @@ namespace Clippit
                 .Elements(S.sheet)
                 .FirstOrDefault(s => (string)s.Attribute("name") == sheetName);
             if (sheet == null)
-                throw new ArgumentException("Invalid sheet name passed to RetrieveSheet", "sheetName");
+                throw new ArgumentException("Invalid sheet name passed to RetrieveSheet", nameof(sheetName));
             var range = "A1:XFD1048576";
             int leftColumn, topRow, rightColumn, bottomRow;
             XlsxTables.ParseRange(range, out leftColumn, out topRow, out rightColumn, out bottomRow);
@@ -109,7 +104,7 @@ namespace Clippit
                 .Elements(S.sheet)
                 .FirstOrDefault(s => (string)s.Attribute("name") == sheetName);
             if (sheet == null)
-                throw new ArgumentException("Invalid sheet name passed to RetrieveRange", "sheetName");
+                throw new ArgumentException("Invalid sheet name passed to RetrieveRange", nameof(sheetName));
             var rId = (string)sheet.Attribute(R.id);
             if (rId == null)
                 throw new FileFormatException("Invalid spreadsheet");
@@ -388,7 +383,7 @@ namespace Clippit
         {
             var table = sDoc.Table(tableName);
             if (table == null)
-                throw new ArgumentException("Table not found", "tableName");
+                throw new ArgumentException("Table not found", nameof(tableName));
 
             var styleXDoc = sDoc.WorkbookPart.WorkbookStylesPart.GetXDocument();
             var r = table.Ref;

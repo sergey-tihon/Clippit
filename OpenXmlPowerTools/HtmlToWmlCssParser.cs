@@ -27,61 +27,33 @@ namespace Clippit.HtmlToWml.CSS
 {
     public class CssAttribute
     {
-        private string m_operand;
         private CssAttributeOperator? m_op = null;
-        private string m_val;
 
-        public string Operand
-        {
-            get {
-                return m_operand;
-            }
-            set {
-                m_operand = value;
-            }
-        }
+        public string Operand { get; set; }
 
         public CssAttributeOperator? Operator
         {
-            get {
-                return m_op;
-            }
-            set {
-                m_op = value;
-            }
+            get => m_op;
+            set => m_op = value;
         }
 
         public string CssOperatorString
         {
-            get {
-                if (this.m_op.HasValue)
-                {
-                    return this.m_op.Value.ToString();
-                }
-                else
-                {
-                    return null;
-                }
+            get
+            {
+                return this.m_op?.ToString();
             }
             set {
                 this.m_op = (CssAttributeOperator)Enum.Parse(typeof(CssAttributeOperator), value);
             }
         }
 
-        public string Value
-        {
-            get {
-                return m_val;
-            }
-            set {
-                m_val = value;
-            }
-        }
+        public string Value { get; set; }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("[{0}", m_operand);
+            sb.AppendFormat("[{0}", Operand);
             if (m_op.HasValue)
             {
                 switch (m_op.Value)
@@ -105,7 +77,7 @@ namespace Clippit.HtmlToWml.CSS
                         sb.Append("*=");
                         break;
                 }
-                sb.Append(m_val);
+                sb.Append(Value);
             }
             sb.Append("]");
             return sb.ToString();

@@ -30,7 +30,7 @@ namespace Clippit
         /// </param>
         public static void BeginPowerToolsBlock(this OpenXmlPackage package)
         {
-            if (package == null) throw new ArgumentNullException("package");
+            if (package == null) throw new ArgumentNullException(nameof(package));
 
             package.RemovePowerToolsAnnotations();
             package.Save();
@@ -47,7 +47,7 @@ namespace Clippit
         /// </param>
         public static void EndPowerToolsBlock(this OpenXmlPackage package)
         {
-            if (package == null) throw new ArgumentNullException("package");
+            if (package == null) throw new ArgumentNullException(nameof(package));
 
             foreach (OpenXmlPart part in package.GetAllParts())
             {
@@ -58,7 +58,7 @@ namespace Clippit
 
         private static void RemovePowerToolsAnnotations(this OpenXmlPackage package)
         {
-            if (package == null) throw new ArgumentNullException("package");
+            if (package == null) throw new ArgumentNullException(nameof(package));
 
             foreach (OpenXmlPart part in package.GetAllParts())
             {

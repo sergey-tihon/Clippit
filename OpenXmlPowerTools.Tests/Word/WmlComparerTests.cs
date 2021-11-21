@@ -1101,7 +1101,7 @@ namespace Clippit.Tests.Word
             }
             else
             {
-                throw new ArgumentException("Invalid executable path.", "executablePath");
+                throw new ArgumentException("Invalid executable path.", nameof(executablePath));
             }
         }
     }

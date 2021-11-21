@@ -114,8 +114,8 @@ namespace Clippit
             Func<XElement, Match, bool> callback, bool trackRevisions, string revisionTrackingAuthor,
             bool coalesceContent)
         {
-            if (content == null) throw new ArgumentNullException("content");
-            if (regex == null) throw new ArgumentNullException("regex");
+            if (content == null) throw new ArgumentNullException(nameof(content));
+            if (regex == null) throw new ArgumentNullException(nameof(regex));
 
             IEnumerable<XElement> contentList = content as IList<XElement> ?? content.ToList();
 
