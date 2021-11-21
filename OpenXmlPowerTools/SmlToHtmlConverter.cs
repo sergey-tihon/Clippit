@@ -242,7 +242,7 @@ namespace Clippit
             }
         }
 
-        private static readonly Dictionary<string, string> FontFallback = new Dictionary<string, string>()
+        private static readonly Dictionary<string, string> FontFallback = new()
         {
             { "Arial", @"'{0}', 'sans-serif'" },
             { "Arial Narrow", @"'{0}', 'sans-serif'" },

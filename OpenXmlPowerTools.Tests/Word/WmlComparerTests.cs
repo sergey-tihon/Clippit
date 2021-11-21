@@ -402,7 +402,7 @@ namespace Clippit.Tests.Word
 
             List<WmlRevisedDocumentInfo> revisedDocInfo = new List<WmlRevisedDocumentInfo>()
             {
-                new WmlRevisedDocumentInfo()
+                new()
                 {
                     RevisedDocument = source2Wml,
                     Color = Color.LightBlue,

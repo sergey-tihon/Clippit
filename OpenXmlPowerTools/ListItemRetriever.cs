@@ -12,7 +12,7 @@ namespace Clippit
     public class ListItemRetrieverSettings
     {
         public static Dictionary<string, Func<string, int, string, string>> DefaultListItemTextImplementations =
-            new Dictionary<string, Func<string, int, string, string>>()
+            new()
             {
                 {"fr-FR", ListItemTextGetter_fr_FR.GetListItemText},
                 {"tr-TR", ListItemTextGetter_tr_TR.GetListItemText},
@@ -366,8 +366,8 @@ namespace Clippit
             throw new OpenXmlPowerToolsException("Attempting to retrieve ListItemInfo before initialization");
         }
 
-        private static ListItemInfo NotAListItem = new ListItemInfo(false, true);
-        private static ListItemInfo ZeroNumId = new ListItemInfo(false, false);
+        private static ListItemInfo NotAListItem = new(false, true);
+        private static ListItemInfo ZeroNumId = new(false, false);
 
         public static void InitListItemInfo(XDocument numXDoc, XDocument stylesXDoc, XElement paragraph)
         {

@@ -104,7 +104,7 @@ namespace Clippit.Tests.PowerPoint
 
             var onlyMaster =
                 PresentationBuilder.BuildPresentation(
-                    new List<SlideSource> {new SlideSource(source, 0, 0, true)});
+                    new List<SlideSource> {new(source, 0, 0, true)});
 
             onlyMaster.FileName = fileName.Replace(".pptx", "_masterOnly.pptx");
             onlyMaster.SaveAs(Path.Combine(TargetDirectory, onlyMaster.FileName));
@@ -131,7 +131,7 @@ namespace Clippit.Tests.PowerPoint
             var slides = PresentationBuilder.PublishSlides(presentation);
 
             // compose them together using only master as the first source
-            var sources = new List<SlideSource> {new SlideSource(onlyMaster, true)};
+            var sources = new List<SlideSource> {new(onlyMaster, true)};
             sources.AddRange(slides.Select(x => new SlideSource(x, false)));
             var newDocument = PresentationBuilder.BuildPresentation(sources);
 

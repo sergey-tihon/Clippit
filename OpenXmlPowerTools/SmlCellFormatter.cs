@@ -24,7 +24,7 @@ namespace Clippit
             public string FormatCode;
         }
 
-        private static Dictionary<string, FormatConfig> ExcelFormatCodeToNetFormatCodeExceptionMap = new Dictionary<string, FormatConfig>()
+        private static Dictionary<string, FormatConfig> ExcelFormatCodeToNetFormatCodeExceptionMap = new()
         {
             {
                 "# ?/?",
@@ -120,7 +120,7 @@ namespace Clippit
             return value;
         }
 
-        static Regex UnderRegex = new Regex("_.");
+        static Regex UnderRegex = new("_.");
 
         // The following Regex transforms currency specifies into a character / string
         // that string.Format can use to properly produce the correct text.

@@ -114,7 +114,7 @@ namespace Clippit
         public string DefaultLang;
         public string DocumentType;
         public Action<XDocument, XDocument, WmlToXmlSettings, OpenXmlPart> ApplyContentTypesCustom;
-        public Dictionary<string, WmlToXmlContentTypeMetrics> ContentTypeCount = new Dictionary<string, WmlToXmlContentTypeMetrics>();
+        public Dictionary<string, WmlToXmlContentTypeMetrics> ContentTypeCount = new();
         public object UserData;
 
         public WmlToXmlSettings(

@@ -1305,7 +1305,7 @@ namespace Clippit
             }
         }
 
-        private static Dictionary<string, int> BorderTypePriority = new Dictionary<string, int>()
+        private static Dictionary<string, int> BorderTypePriority = new()
         {
             { "single", 1 },
             { "thick", 2 },
@@ -1313,7 +1313,7 @@ namespace Clippit
             { "dotted", 4 },
         };
 
-        private static Dictionary<string, int> BorderNumber = new Dictionary<string, int>()
+        private static Dictionary<string, int> BorderNumber = new()
         {
             {"single", 1 },
             {"thick", 2 },
@@ -1508,7 +1508,7 @@ namespace Clippit
             "swCell",
         };
 
-        private static Dictionary<string, XName> TableStyleOverrideXNameMap = new Dictionary<string, XName>
+        private static Dictionary<string, XName> TableStyleOverrideXNameMap = new()
         {
             {"band1Vert", W.oddVBand},
             {"band2Vert", W.evenVBand},
@@ -1524,7 +1524,7 @@ namespace Clippit
             {"swCell", W.lastRowFirstColumn},
         };
 
-        private static Dictionary<XName, string> TableStyleOverrideXNameRevMap = new Dictionary<XName, string>
+        private static Dictionary<XName, string> TableStyleOverrideXNameRevMap = new()
         {
             {W.oddVBand, "band1Vert"},
             {W.evenVBand, "band2Vert"},
@@ -2611,7 +2611,7 @@ namespace Clippit
 
         }
 
-        private static HashSet<char> WeakAndNeutralDirectionalCharacters = new HashSet<char>() {
+        private static HashSet<char> WeakAndNeutralDirectionalCharacters = new() {
             '0',
             '1',
             '2',

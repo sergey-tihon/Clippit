@@ -4059,22 +4059,22 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 
         private static XAttribute[] NamespaceAttributes =
         {
-            new XAttribute(XNamespace.Xmlns + "wpc", WPC.wpc),
-            new XAttribute(XNamespace.Xmlns + "mc", MC.mc),
-            new XAttribute(XNamespace.Xmlns + "o", O.o),
-            new XAttribute(XNamespace.Xmlns + "r", R.r),
-            new XAttribute(XNamespace.Xmlns + "m", M.m),
-            new XAttribute(XNamespace.Xmlns + "v", VML.vml),
-            new XAttribute(XNamespace.Xmlns + "wp14", WP14.wp14),
-            new XAttribute(XNamespace.Xmlns + "wp", WP.wp),
-            new XAttribute(XNamespace.Xmlns + "w10", W10.w10),
-            new XAttribute(XNamespace.Xmlns + "w", W.w),
-            new XAttribute(XNamespace.Xmlns + "w14", W14.w14),
-            new XAttribute(XNamespace.Xmlns + "wpg", WPG.wpg),
-            new XAttribute(XNamespace.Xmlns + "wpi", WPI.wpi),
-            new XAttribute(XNamespace.Xmlns + "wne", WNE.wne),
-            new XAttribute(XNamespace.Xmlns + "wps", WPS.wps),
-            new XAttribute(MC.Ignorable, "w14 wp14"),
+            new(XNamespace.Xmlns + "wpc", WPC.wpc),
+            new(XNamespace.Xmlns + "mc", MC.mc),
+            new(XNamespace.Xmlns + "o", O.o),
+            new(XNamespace.Xmlns + "r", R.r),
+            new(XNamespace.Xmlns + "m", M.m),
+            new(XNamespace.Xmlns + "v", VML.vml),
+            new(XNamespace.Xmlns + "wp14", WP14.wp14),
+            new(XNamespace.Xmlns + "wp", WP.wp),
+            new(XNamespace.Xmlns + "w10", W10.w10),
+            new(XNamespace.Xmlns + "w", W.w),
+            new(XNamespace.Xmlns + "w14", W14.w14),
+            new(XNamespace.Xmlns + "wpg", WPG.wpg),
+            new(XNamespace.Xmlns + "wpi", WPI.wpi),
+            new(XNamespace.Xmlns + "wne", WNE.wne),
+            new(XNamespace.Xmlns + "wps", WPS.wps),
+            new(MC.Ignorable, "w14 wp14"),
         };
     }
 

@@ -18,22 +18,22 @@ namespace Clippit
 
         private static readonly XAttribute[] NamespaceAttributes =
         {
-            new XAttribute(XNamespace.Xmlns + "wpc", WPC.wpc),
-            new XAttribute(XNamespace.Xmlns + "mc", MC.mc),
-            new XAttribute(XNamespace.Xmlns + "o", O.o),
-            new XAttribute(XNamespace.Xmlns + "r", R.r),
-            new XAttribute(XNamespace.Xmlns + "m", M.m),
-            new XAttribute(XNamespace.Xmlns + "v", VML.vml),
-            new XAttribute(XNamespace.Xmlns + "wp14", WP14.wp14),
-            new XAttribute(XNamespace.Xmlns + "wp", WP.wp),
-            new XAttribute(XNamespace.Xmlns + "w10", W10.w10),
-            new XAttribute(XNamespace.Xmlns + "w", W.w),
-            new XAttribute(XNamespace.Xmlns + "w14", W14.w14),
-            new XAttribute(XNamespace.Xmlns + "wpg", WPG.wpg),
-            new XAttribute(XNamespace.Xmlns + "wpi", WPI.wpi),
-            new XAttribute(XNamespace.Xmlns + "wne", WNE.wne),
-            new XAttribute(XNamespace.Xmlns + "wps", WPS.wps),
-            new XAttribute(MC.Ignorable, "w14 wp14")
+            new(XNamespace.Xmlns + "wpc", WPC.wpc),
+            new(XNamespace.Xmlns + "mc", MC.mc),
+            new(XNamespace.Xmlns + "o", O.o),
+            new(XNamespace.Xmlns + "r", R.r),
+            new(XNamespace.Xmlns + "m", M.m),
+            new(XNamespace.Xmlns + "v", VML.vml),
+            new(XNamespace.Xmlns + "wp14", WP14.wp14),
+            new(XNamespace.Xmlns + "wp", WP.wp),
+            new(XNamespace.Xmlns + "w10", W10.w10),
+            new(XNamespace.Xmlns + "w", W.w),
+            new(XNamespace.Xmlns + "w14", W14.w14),
+            new(XNamespace.Xmlns + "wpg", WPG.wpg),
+            new(XNamespace.Xmlns + "wpi", WPI.wpi),
+            new(XNamespace.Xmlns + "wne", WNE.wne),
+            new(XNamespace.Xmlns + "wps", WPS.wps),
+            new(MC.Ignorable, "w14 wp14")
         };
 
         private static readonly XName[] RevElementsWithNoText =
@@ -162,102 +162,102 @@ namespace Clippit
 
         private static readonly RecursionInfo[] RecursionElements =
         {
-            new RecursionInfo
+            new()
             {
                 ElementName = W.del,
                 ChildElementPropertyNames = null
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = W.ins,
                 ChildElementPropertyNames = null
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = W.tbl,
                 ChildElementPropertyNames = new[] { W.tblPr, W.tblGrid, W.tblPrEx }
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = W.tr,
                 ChildElementPropertyNames = new[] { W.trPr, W.tblPrEx }
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = W.tc,
                 ChildElementPropertyNames = new[] { W.tcPr, W.tblPrEx }
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = W.pict,
                 ChildElementPropertyNames = new[] { VML.shapetype }
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = VML.group,
                 ChildElementPropertyNames = null
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = VML.shape,
                 ChildElementPropertyNames = null
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = VML.rect,
                 ChildElementPropertyNames = null
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = VML.textbox,
                 ChildElementPropertyNames = null
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = O._lock,
                 ChildElementPropertyNames = null
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = W.txbxContent,
                 ChildElementPropertyNames = null
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = W10.wrap,
                 ChildElementPropertyNames = null
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = W.sdt,
                 ChildElementPropertyNames = new[] { W.sdtPr, W.sdtEndPr }
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = W.sdtContent,
                 ChildElementPropertyNames = null
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = W.hyperlink,
                 ChildElementPropertyNames = null
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = W.fldSimple,
                 ChildElementPropertyNames = null
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = VML.shapetype,
                 ChildElementPropertyNames = null
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = W.smartTag,
                 ChildElementPropertyNames = new[] { W.smartTagPr }
             },
-            new RecursionInfo
+            new()
             {
                 ElementName = W.ruby,
                 ChildElementPropertyNames = new[] { W.rubyPr }

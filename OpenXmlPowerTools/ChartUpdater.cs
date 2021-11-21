@@ -94,7 +94,7 @@ namespace Clippit
             UpdateSeries(chartPart, chartData);
         }
 
-        private static Dictionary<int, string> FormatCodes = new Dictionary<int, string>()
+        private static Dictionary<int, string> FormatCodes = new()
         {
             { 0, "general" },
             { 1, "0" },

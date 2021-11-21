@@ -103,44 +103,24 @@ namespace Clippit.HtmlToWml.CSS
 
     public class CssDocument : ItfRuleSetContainer
     {
-        private List<CssDirective> m_dirs = new List<CssDirective>();
-        private List<CssRuleSet> m_rulesets = new List<CssRuleSet>();
+        public List<CssDirective> Directives { get; set; } = new();
 
-        public List<CssDirective> Directives
-        {
-            get {
-                return m_dirs;
-            }
-            set {
-                m_dirs = value;
-            }
-        }
-
-        public List<CssRuleSet> RuleSets
-        {
-            get {
-                return m_rulesets;
-            }
-            set {
-                m_rulesets = value;
-            }
-        }
+        public List<CssRuleSet> RuleSets { get; set; } = new();
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            foreach (CssDirective cssDir in m_dirs)
+            var sb = new StringBuilder();
+            foreach (var cssDir in Directives)
             {
-                sb.AppendFormat("{0}" + Environment.NewLine, cssDir.ToString());
+                sb.AppendFormat("{0}" + Environment.NewLine, cssDir);
             }
             if (sb.Length > 0)
             {
                 sb.Append(Environment.NewLine);
             }
-            foreach (CssRuleSet rules in m_rulesets)
+            foreach (var rules in RuleSets)
             {
-                sb.AppendFormat("{0}" + Environment.NewLine,
-                    rules.ToString());
+                sb.AppendFormat("{0}" + Environment.NewLine, rules);
             }
             return sb.ToString();
         }
@@ -148,141 +128,42 @@ namespace Clippit.HtmlToWml.CSS
 
     public class CssDeclaration
     {
-        private string m_name;
-        private CssExpression m_expression;
-        private bool m_important;
+        public string Name { get; set; }
 
-        public string Name
-        {
-            get {
-                return m_name;
-            }
-            set {
-                m_name = value;
-            }
-        }
+        public bool Important { get; set; }
 
-        public bool Important
-        {
-            get {
-                return m_important;
-            }
-            set {
-                m_important = value;
-            }
-        }
-
-        public CssExpression Expression
-        {
-            get {
-                return m_expression;
-            }
-            set {
-                m_expression = value;
-            }
-        }
+        public CssExpression Expression { get; set; }
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("{0}: {1}{2}",
-                m_name,
-                m_expression.ToString(),
-                m_important ? " !important" : "");
-            return sb.ToString();
+            var important = Important ? " !important" : "";
+            return $"{Name}: {Expression}{important}";
         }
     }
 
     public class CssDirective : ItfDeclarationContainer, ItfRuleSetContainer
     {
-        private CssDirectiveType m_type;
-        private string m_name;
-        private CssExpression m_expression;
-        private List<CssMedium> m_mediums = new List<CssMedium>();
-        private List<CssDirective> m_directives = new List<CssDirective>();
-        private List<CssRuleSet> m_rulesets = new List<CssRuleSet>();
-        private List<CssDeclaration> m_declarations = new List<CssDeclaration>();
+        public CssDirectiveType Type { get; set; }
 
-        public CssDirectiveType Type
-        {
-            get {
-                return this.m_type;
-            }
-            set {
-                this.m_type = value;
-            }
-        }
+        public string Name { get; set; }
 
-        public string Name
-        {
-            get {
-                return this.m_name;
-            }
-            set {
-                this.m_name = value;
-            }
-        }
+        public CssExpression Expression { get; set; }
 
-        public CssExpression Expression
-        {
-            get {
-                return this.m_expression;
-            }
-            set {
-                this.m_expression = value;
-            }
-        }
+        public List<CssMedium> Mediums { get; set; } = new();
 
-        public List<CssMedium> Mediums
-        {
-            get {
-                return this.m_mediums;
-            }
-            set {
-                this.m_mediums = value;
-            }
-        }
+        public List<CssDirective> Directives { get; set; } = new();
 
-        public List<CssDirective> Directives
-        {
-            get {
-                return this.m_directives;
-            }
-            set {
-                this.m_directives = value;
-            }
-        }
+        public List<CssRuleSet> RuleSets { get; set; } = new();
 
-        public List<CssRuleSet> RuleSets
-        {
-            get {
-                return this.m_rulesets;
-            }
-            set {
-                this.m_rulesets = value;
-            }
-        }
+        public List<CssDeclaration> Declarations { get; set; } = new();
 
-        public List<CssDeclaration> Declarations
-        {
-            get {
-                return this.m_declarations;
-            }
-            set {
-                this.m_declarations = value;
-            }
-        }
-
-        public override string ToString()
-        {
-            return ToString(0);
-        }
+        public override string ToString() => ToString(0);
 
         public string ToString(int indentLevel)
         {
-            string start = "".PadRight(indentLevel, '\t');
+            var start = "".PadRight(indentLevel, '\t');
 
-            switch (m_type)
+            switch (Type)
             {
                 case CssDirectiveType.Charset:
                     return ToCharSetString(start);
@@ -296,17 +177,16 @@ namespace Clippit.HtmlToWml.CSS
                     return ToFontFaceString(start);
             }
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
+            sb.AppendFormat("{0} ", Name);
 
-            sb.AppendFormat("{0} ", m_name);
-
-            if (m_expression != null)
+            if (Expression != null)
             {
-                sb.AppendFormat("{0} ", m_expression);
+                sb.AppendFormat("{0} ", Expression);
             }
 
             bool first = true;
-            foreach (CssMedium med in m_mediums)
+            foreach (CssMedium med in Mediums)
             {
                 if (first)
                 {
@@ -320,7 +200,7 @@ namespace Clippit.HtmlToWml.CSS
                 sb.Append(med.ToString());
             }
 
-            bool HasBlock = (this.m_declarations.Count > 0 || this.m_directives.Count > 0 || this.m_rulesets.Count > 0);
+            bool HasBlock = (this.Declarations.Count > 0 || this.Directives.Count > 0 || this.RuleSets.Count > 0);
 
             if (!HasBlock)
             {
@@ -330,18 +210,18 @@ namespace Clippit.HtmlToWml.CSS
 
             sb.Append(" {" + Environment.NewLine + start);
 
-            foreach (CssDirective dir in m_directives)
+            foreach (CssDirective dir in Directives)
             {
                 sb.AppendFormat("{0}" + Environment.NewLine, dir.ToCharSetString(start + "\t"));
             }
 
-            foreach (CssRuleSet rules in m_rulesets)
+            foreach (CssRuleSet rules in RuleSets)
             {
                 sb.AppendFormat("{0}" + Environment.NewLine, rules.ToString(indentLevel + 1));
             }
 
             first = true;
-            foreach (CssDeclaration decl in m_declarations)
+            foreach (CssDeclaration decl in Declarations)
             {
                 if (first)
                 {
@@ -365,7 +245,7 @@ namespace Clippit.HtmlToWml.CSS
             sb.Append("@font-face {");
 
             bool first = true;
-            foreach (CssDeclaration decl in m_declarations)
+            foreach (CssDeclaration decl in Declarations)
             {
                 if (first)
                 {
@@ -387,12 +267,12 @@ namespace Clippit.HtmlToWml.CSS
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("@import ");
-            if (m_expression != null)
+            if (Expression != null)
             {
-                sb.AppendFormat("{0} ", m_expression);
+                sb.AppendFormat("{0} ", Expression);
             }
             bool first = true;
-            foreach (CssMedium med in m_mediums)
+            foreach (CssMedium med in Mediums)
             {
                 if (first)
                 {
@@ -415,7 +295,7 @@ namespace Clippit.HtmlToWml.CSS
             sb.Append("@media");
 
             bool first = true;
-            foreach (CssMedium medium in m_mediums)
+            foreach (CssMedium medium in Mediums)
             {
                 if (first)
                 {
@@ -430,7 +310,7 @@ namespace Clippit.HtmlToWml.CSS
             }
             sb.Append(" {" + Environment.NewLine);
 
-            foreach (CssRuleSet ruleset in m_rulesets)
+            foreach (CssRuleSet ruleset in RuleSets)
             {
                 sb.AppendFormat("{0}" + Environment.NewLine, ruleset.ToString(indentLevel + 1));
             }
@@ -443,14 +323,14 @@ namespace Clippit.HtmlToWml.CSS
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("@page ");
-            if (m_expression != null)
+            if (Expression != null)
             {
-                sb.AppendFormat("{0} ", m_expression);
+                sb.AppendFormat("{0} ", Expression);
             }
             sb.Append("{" + Environment.NewLine);
 
             bool first = true;
-            foreach (CssDeclaration decl in m_declarations)
+            foreach (CssDeclaration decl in Declarations)
             {
                 if (first)
                 {
@@ -468,13 +348,8 @@ namespace Clippit.HtmlToWml.CSS
             return sb.ToString();
         }
 
-        private string ToCharSetString(string start)
-        {
-            return string.Format("{2}{0} {1}",
-                m_name,
-                m_expression.ToString(),
-                start);
-        }
+        private string ToCharSetString(string start) => 
+            $"{start}{Name} {Expression}";
     }
 
     public enum CssDirectiveType
@@ -490,17 +365,7 @@ namespace Clippit.HtmlToWml.CSS
 
     public class CssExpression
     {
-        private List<CssTerm> m_terms = new List<CssTerm>();
-
-        public List<CssTerm> Terms
-        {
-            get {
-                return m_terms;
-            }
-            set {
-                m_terms = value;
-            }
-        }
+        public List<CssTerm> Terms { get; set; } = new();
 
         public bool IsNotAuto
         {
@@ -538,7 +403,7 @@ namespace Clippit.HtmlToWml.CSS
         {
             StringBuilder sb = new StringBuilder();
             bool first = true;
-            foreach (CssTerm term in m_terms)
+            foreach (CssTerm term in Terms)
             {
                 if (first)
                 {
@@ -598,37 +463,18 @@ namespace Clippit.HtmlToWml.CSS
 
     public class CssFunction
     {
-        private string m_name;
-        private CssExpression m_expression;
+        public string Name { get; set; }
 
-        public string Name
-        {
-            get {
-                return m_name;
-            }
-            set {
-                m_name = value;
-            }
-        }
-
-        public CssExpression Expression
-        {
-            get {
-                return m_expression;
-            }
-            set {
-                m_expression = value;
-            }
-        }
+        public CssExpression Expression { get; set; }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("{0}(", m_name);
-            if (m_expression != null)
+            sb.AppendFormat("{0}(", Name);
+            if (Expression != null)
             {
                 bool first = true;
-                foreach (CssTerm t in m_expression.Terms)
+                foreach (CssTerm t in Expression.Terms)
                 {
                     if (first)
                     {
@@ -691,49 +537,21 @@ namespace Clippit.HtmlToWml.CSS
 
     public class CssPropertyValue
     {
-        private CssValueType m_type;
-        private CssUnit m_unit;
-        private string m_value;
+        public CssValueType Type { get; set; }
 
-        public CssValueType Type
-        {
-            get {
-                return this.m_type;
-            }
-            set {
-                this.m_type = value;
-            }
-        }
+        public CssUnit Unit { get; set; }
 
-        public CssUnit Unit
-        {
-            get {
-                return this.m_unit;
-            }
-            set {
-                this.m_unit = value;
-            }
-        }
-
-        public string Value
-        {
-            get {
-                return this.m_value;
-            }
-            set {
-                this.m_value = value;
-            }
-        }
+        public string Value { get; set; }
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder(m_value);
-            if (m_type == CssValueType.Unit)
+            StringBuilder sb = new StringBuilder(Value);
+            if (Type == CssValueType.Unit)
             {
-                sb.Append(m_unit.ToString().ToLower());
+                sb.Append(Unit.ToString().ToLower());
             }
             sb.Append(" [");
-            sb.Append(m_type.ToString());
+            sb.Append(Type.ToString());
             sb.Append("]");
             return sb.ToString();
         }
@@ -742,12 +560,12 @@ namespace Clippit.HtmlToWml.CSS
         {
             get
             {
-                if (((m_type == CssValueType.Hex)
-                    || (m_type == CssValueType.String && m_value.StartsWith("#")))
-                    && (m_value.Length == 6 || (m_value.Length == 7 && m_value.StartsWith("#"))))
+                if (((Type == CssValueType.Hex)
+                    || (Type == CssValueType.String && Value.StartsWith("#")))
+                    && (Value.Length == 6 || (Value.Length == 7 && Value.StartsWith("#"))))
                 {
                     bool hex = true;
-                    foreach (char c in m_value)
+                    foreach (char c in Value)
                     {
                         if (!char.IsDigit(c)
                             && c != '#'
@@ -770,10 +588,10 @@ namespace Clippit.HtmlToWml.CSS
                     }
                     return hex;
                 }
-                else if (m_type == CssValueType.String)
+                else if (Type == CssValueType.String)
                 {
                     bool number = true;
-                    foreach (char c in m_value)
+                    foreach (char c in Value)
                     {
                         if (!char.IsDigit(c))
                         {
@@ -783,7 +601,7 @@ namespace Clippit.HtmlToWml.CSS
                     }
                     if (number) { return false; }
 
-                    if (ColorParser.IsValidName(m_value))
+                    if (ColorParser.IsValidName(Value))
                     {
                         return true;
                     }
@@ -795,20 +613,20 @@ namespace Clippit.HtmlToWml.CSS
         public Color ToColor()
         {
             string hex = "000000";
-            if (m_type == CssValueType.Hex)
+            if (Type == CssValueType.Hex)
             {
-                if (m_value.Length == 7 && m_value.StartsWith("#"))
+                if (Value.Length == 7 && Value.StartsWith("#"))
                 {
-                    hex = m_value.Substring(1);
+                    hex = Value.Substring(1);
                 }
-                else if (m_value.Length == 6)
+                else if (Value.Length == 6)
                 {
-                    hex = m_value;
+                    hex = Value;
                 }
             }
             else
             {
-                if (ColorParser.TryFromName(m_value, out var c))
+                if (ColorParser.TryFromName(Value, out var c))
                 {
                     return c;
                 }
@@ -865,28 +683,9 @@ namespace Clippit.HtmlToWml.CSS
 
     public class CssRuleSet : ItfDeclarationContainer
     {
-        private List<CssSelector> m_selectors = new List<CssSelector>();
-        private List<CssDeclaration> m_declarations = new List<CssDeclaration>();
+        public List<CssSelector> Selectors { get; set; } = new();
 
-        public List<CssSelector> Selectors
-        {
-            get {
-                return m_selectors;
-            }
-            set {
-                m_selectors = value;
-            }
-        }
-
-        public List<CssDeclaration> Declarations
-        {
-            get {
-                return m_declarations;
-            }
-            set {
-                m_declarations = value;
-            }
-        }
+        public List<CssDeclaration> Declarations { get; set; } = new();
 
         public override string ToString()
         {
@@ -903,7 +702,7 @@ namespace Clippit.HtmlToWml.CSS
 
             StringBuilder sb = new StringBuilder();
             bool first = true;
-            foreach (CssSelector sel in m_selectors)
+            foreach (CssSelector sel in Selectors)
             {
                 if (first)
                 {
@@ -919,7 +718,7 @@ namespace Clippit.HtmlToWml.CSS
             sb.Append(" {" + Environment.NewLine);
             sb.Append(start);
 
-            foreach (CssDeclaration dec in m_declarations)
+            foreach (CssDeclaration dec in Declarations)
             {
                 sb.AppendFormat("\t{0};" + Environment.NewLine + "{1}", dec.ToString(), start);
             }
@@ -931,23 +730,13 @@ namespace Clippit.HtmlToWml.CSS
 
     public class CssSelector
     {
-        private List<CssSimpleSelector> m_simpleSelectors = new List<CssSimpleSelector>();
-
-        public List<CssSimpleSelector> SimpleSelectors
-        {
-            get {
-                return m_simpleSelectors;
-            }
-            set {
-                m_simpleSelectors = value;
-            }
-        }
+        public List<CssSimpleSelector> SimpleSelectors { get; set; } = new();
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             bool first = true;
-            foreach (CssSimpleSelector ss in m_simpleSelectors)
+            foreach (CssSimpleSelector ss in SimpleSelectors)
             {
                 if (first)
                 {
@@ -966,13 +755,6 @@ namespace Clippit.HtmlToWml.CSS
     public class CssSimpleSelector
     {
         private CssCombinator? m_combinator = null;
-        private string m_elementname;
-        private string m_id;
-        private string m_cls;
-        private CssAttribute m_attribute;
-        private string m_pseudo;
-        private CssFunction m_function;
-        private CssSimpleSelector m_child;
 
         public CssCombinator? Combinator
         {
@@ -1000,75 +782,19 @@ namespace Clippit.HtmlToWml.CSS
             }
         }
 
-        public string ElementName
-        {
-            get {
-                return m_elementname;
-            }
-            set {
-                m_elementname = value;
-            }
-        }
+        public string ElementName { get; set; }
 
-        public string ID
-        {
-            get {
-                return m_id;
-            }
-            set {
-                m_id = value;
-            }
-        }
+        public string ID { get; set; }
 
-        public string Class
-        {
-            get {
-                return m_cls;
-            }
-            set {
-                m_cls = value;
-            }
-        }
+        public string Class { get; set; }
 
-        public string Pseudo
-        {
-            get {
-                return m_pseudo;
-            }
-            set {
-                m_pseudo = value;
-            }
-        }
+        public string Pseudo { get; set; }
 
-        public CssAttribute Attribute
-        {
-            get {
-                return m_attribute;
-            }
-            set {
-                m_attribute = value;
-            }
-        }
+        public CssAttribute Attribute { get; set; }
 
-        public CssFunction Function
-        {
-            get {
-                return m_function;
-            }
-            set {
-                m_function = value;
-            }
-        }
+        public CssFunction Function { get; set; }
 
-        public CssSimpleSelector Child
-        {
-            get {
-                return m_child;
-            }
-            set {
-                m_child = value;
-            }
-        }
+        public CssSimpleSelector Child { get; set; }
 
         public override string ToString()
         {
@@ -1088,37 +814,37 @@ namespace Clippit.HtmlToWml.CSS
                         break;
                 }
             }
-            if (m_elementname != null)
+            if (ElementName != null)
             {
-                sb.Append(m_elementname);
+                sb.Append(ElementName);
             }
-            if (m_id != null)
+            if (ID != null)
             {
-                sb.AppendFormat("#{0}", m_id);
+                sb.AppendFormat("#{0}", ID);
             }
-            if (m_cls != null)
+            if (Class != null)
             {
-                sb.AppendFormat(".{0}", m_cls);
+                sb.AppendFormat(".{0}", Class);
             }
-            if (m_pseudo != null)
+            if (Pseudo != null)
             {
-                sb.AppendFormat(":{0}", m_pseudo);
+                sb.AppendFormat(":{0}", Pseudo);
             }
-            if (m_attribute != null)
+            if (Attribute != null)
             {
-                sb.Append(m_attribute.ToString());
+                sb.Append(Attribute.ToString());
             }
-            if (m_function != null)
+            if (Function != null)
             {
-                sb.Append(m_function.ToString());
+                sb.Append(Function.ToString());
             }
-            if (m_child != null)
+            if (Child != null)
             {
-                if (m_child.ElementName != null)
+                if (Child.ElementName != null)
                 {
                     sb.Append(" ");
                 }
-                sb.Append(m_child.ToString());
+                sb.Append(Child.ToString());
             }
             return sb.ToString();
         }
@@ -1126,131 +852,58 @@ namespace Clippit.HtmlToWml.CSS
 
     public class CssTag
     {
-        private CssTagType m_tagtype;
-        private string m_name;
-        private string m_cls;
-        private string m_pseudo;
-        private string m_id;
-        private char m_parentrel = '\0';
-        private CssTag m_subtag;
-        private List<string> m_attribs = new List<string>();
-
-        public CssTagType TagType
-        {
-            get {
-                return m_tagtype;
-            }
-            set {
-                m_tagtype = value;
-            }
-        }
+        public CssTagType TagType { get; set; }
 
         public bool IsIDSelector
         {
             get {
-                return m_id != null;
+                return Id != null;
             }
         }
 
         public bool HasName
         {
             get {
-                return m_name != null;
+                return Name != null;
             }
         }
 
         public bool HasClass
         {
             get {
-                return m_cls != null;
+                return Class != null;
             }
         }
 
         public bool HasPseudoClass
         {
             get {
-                return m_pseudo != null;
+                return Pseudo != null;
             }
         }
 
-        public string Name
-        {
-            get {
-                return m_name;
-            }
-            set {
-                m_name = value;
-            }
-        }
+        public string Name { get; set; }
 
-        public string Class
-        {
-            get {
-                return m_cls;
-            }
-            set {
-                m_cls = value;
-            }
-        }
+        public string Class { get; set; }
 
-        public string Pseudo
-        {
-            get {
-                return m_pseudo;
-            }
-            set {
-                m_pseudo = value;
-            }
-        }
+        public string Pseudo { get; set; }
 
-        public string Id
-        {
-            get {
-                return m_id;
-            }
-            set {
-                m_id = value;
-            }
-        }
+        public string Id { get; set; }
 
-        public char ParentRelationship
-        {
-            get {
-                return m_parentrel;
-            }
-            set {
-                m_parentrel = value;
-            }
-        }
+        public char ParentRelationship { get; set; } = '\0';
 
-        public CssTag SubTag
-        {
-            get {
-                return m_subtag;
-            }
-            set {
-                m_subtag = value;
-            }
-        }
+        public CssTag SubTag { get; set; }
 
-        public List<string> Attributes
-        {
-            get {
-                return m_attribs;
-            }
-            set {
-                m_attribs = value;
-            }
-        }
+        public List<string> Attributes { get; set; } = new();
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder(ToShortString());
 
-            if (m_subtag != null)
+            if (SubTag != null)
             {
                 sb.Append(" ");
-                sb.Append(m_subtag.ToString());
+                sb.Append(SubTag.ToString());
             }
             return sb.ToString();
         }
@@ -1258,32 +911,32 @@ namespace Clippit.HtmlToWml.CSS
         public string ToShortString()
         {
             StringBuilder sb = new StringBuilder();
-            if (m_parentrel != '\0')
+            if (ParentRelationship != '\0')
             {
-                sb.AppendFormat("{0} ", m_parentrel.ToString());
+                sb.AppendFormat("{0} ", ParentRelationship.ToString());
             }
             if (HasName)
             {
-                sb.Append(m_name);
+                sb.Append(Name);
             }
-            foreach (string atr in m_attribs)
+            foreach (string atr in Attributes)
             {
                 sb.AppendFormat("[{0}]", atr);
             }
             if (HasClass)
             {
                 sb.Append(".");
-                sb.Append(m_cls);
+                sb.Append(Class);
             }
             if (IsIDSelector)
             {
                 sb.Append("#");
-                sb.Append(m_id);
+                sb.Append(Id);
             }
             if (HasPseudoClass)
             {
                 sb.Append(":");
-                sb.Append(m_pseudo);
+                sb.Append(Pseudo);
             }
             return sb.ToString();
         }
@@ -1303,10 +956,7 @@ namespace Clippit.HtmlToWml.CSS
     {
         private char? m_separator;
         private char? m_sign;
-        private CssTermType m_type;
-        private string m_val;
         private CssUnit? m_unit;
-        private CssFunction m_function;
 
         public char? Separator
         {
@@ -1346,25 +996,9 @@ namespace Clippit.HtmlToWml.CSS
             }
         }
 
-        public CssTermType Type
-        {
-            get {
-                return m_type;
-            }
-            set {
-                m_type = value;
-            }
-        }
+        public CssTermType Type { get; set; }
 
-        public string Value
-        {
-            get {
-                return m_val;
-            }
-            set {
-                m_val = value;
-            }
-        }
+        public string Value { get; set; }
 
         public CssUnit? Unit
         {
@@ -1392,35 +1026,27 @@ namespace Clippit.HtmlToWml.CSS
             }
         }
 
-        public CssFunction Function
-        {
-            get {
-                return m_function;
-            }
-            set {
-                m_function = value;
-            }
-        }
+        public CssFunction Function { get; set; }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
 
-            if (m_type == CssTermType.Function)
+            if (Type == CssTermType.Function)
             {
-                sb.Append(m_function.ToString());
+                sb.Append(Function.ToString());
             }
-            else if (m_type == CssTermType.Url)
+            else if (Type == CssTermType.Url)
             {
-                sb.AppendFormat("url('{0}')", m_val);
+                sb.AppendFormat("url('{0}')", Value);
             }
-            else if (m_type == CssTermType.Unicode)
+            else if (Type == CssTermType.Unicode)
             {
-                sb.AppendFormat("U\\{0}", m_val.ToUpper());
+                sb.AppendFormat("U\\{0}", Value.ToUpper());
             }
-            else if (m_type == CssTermType.Hex)
+            else if (Type == CssTermType.Hex)
             {
-                sb.Append(m_val.ToUpper());
+                sb.Append(Value.ToUpper());
             }
             else
             {
@@ -1428,7 +1054,7 @@ namespace Clippit.HtmlToWml.CSS
                 {
                     sb.Append(m_sign.Value);
                 }
-                sb.Append(m_val);
+                sb.Append(Value);
                 if (m_unit.HasValue)
                 {
                     if (m_unit.Value == Clippit.HtmlToWml.CSS.CssUnit.Percent)
@@ -1449,13 +1075,13 @@ namespace Clippit.HtmlToWml.CSS
         {
             get
             {
-                if (((m_type == CssTermType.Hex)
-                    || (m_type == CssTermType.String && m_val.StartsWith("#")))
-                    && (m_val.Length == 6 || m_val.Length == 3 || ((m_val.Length == 7 || m_val.Length == 4)
-                    && m_val.StartsWith("#"))))
+                if (((Type == CssTermType.Hex)
+                    || (Type == CssTermType.String && Value.StartsWith("#")))
+                    && (Value.Length == 6 || Value.Length == 3 || ((Value.Length == 7 || Value.Length == 4)
+                    && Value.StartsWith("#"))))
                 {
                     bool hex = true;
-                    foreach (char c in m_val)
+                    foreach (char c in Value)
                     {
                         if (!char.IsDigit(c)
                             && c != '#'
@@ -1478,10 +1104,10 @@ namespace Clippit.HtmlToWml.CSS
                     }
                     return hex;
                 }
-                else if (m_type == CssTermType.String)
+                else if (Type == CssTermType.String)
                 {
                     bool number = true;
-                    foreach (char c in m_val)
+                    foreach (char c in Value)
                     {
                         if (!char.IsDigit(c))
                         {
@@ -1493,33 +1119,33 @@ namespace Clippit.HtmlToWml.CSS
                         return false;
                     }
 
-                    if (ColorParser.IsValidName(m_val))
+                    if (ColorParser.IsValidName(Value))
                     {
                         return true;
                     }
                 }
-                else if (m_type == CssTermType.Function)
+                else if (Type == CssTermType.Function)
                 {
-                    if ((m_function.Name.ToLower().Equals("rgb") && m_function.Expression.Terms.Count == 3)
-                        || (m_function.Name.ToLower().Equals("rgba") && m_function.Expression.Terms.Count == 4)
+                    if ((Function.Name.ToLower().Equals("rgb") && Function.Expression.Terms.Count == 3)
+                        || (Function.Name.ToLower().Equals("rgba") && Function.Expression.Terms.Count == 4)
                         )
                     {
-                        for (int i = 0; i < m_function.Expression.Terms.Count; i++)
+                        for (int i = 0; i < Function.Expression.Terms.Count; i++)
                         {
-                            if (m_function.Expression.Terms[i].Type != CssTermType.Number)
+                            if (Function.Expression.Terms[i].Type != CssTermType.Number)
                             {
                                 return false;
                             }
                         }
                         return true;
                     }
-                    else if ((m_function.Name.ToLower().Equals("hsl") && m_function.Expression.Terms.Count == 3)
-                      || (m_function.Name.ToLower().Equals("hsla") && m_function.Expression.Terms.Count == 4)
+                    else if ((Function.Name.ToLower().Equals("hsl") && Function.Expression.Terms.Count == 3)
+                      || (Function.Name.ToLower().Equals("hsla") && Function.Expression.Terms.Count == 4)
                       )
                     {
-                        for (int i = 0; i < m_function.Expression.Terms.Count; i++)
+                        for (int i = 0; i < Function.Expression.Terms.Count; i++)
                         {
-                            if (m_function.Expression.Terms[i].Type != CssTermType.Number)
+                            if (Function.Expression.Terms[i].Type != CssTermType.Number)
                             {
                                 return false;
                             }
@@ -1558,57 +1184,57 @@ namespace Clippit.HtmlToWml.CSS
         public Color ToColor()
         {
             string hex = "000000";
-            if (m_type == CssTermType.Hex)
+            if (Type == CssTermType.Hex)
             {
-                if ((m_val.Length == 7 || m_val.Length == 4) && m_val.StartsWith("#"))
+                if ((Value.Length == 7 || Value.Length == 4) && Value.StartsWith("#"))
                 {
-                    hex = m_val.Substring(1);
+                    hex = Value.Substring(1);
                 }
-                else if (m_val.Length == 6 || m_val.Length == 3)
+                else if (Value.Length == 6 || Value.Length == 3)
                 {
-                    hex = m_val;
+                    hex = Value;
                 }
             }
-            else if (m_type == CssTermType.Function)
+            else if (Type == CssTermType.Function)
             {
-                if ((m_function.Name.ToLower().Equals("rgb") && m_function.Expression.Terms.Count == 3)
-                    || (m_function.Name.ToLower().Equals("rgba") && m_function.Expression.Terms.Count == 4)
+                if ((Function.Name.ToLower().Equals("rgb") && Function.Expression.Terms.Count == 3)
+                    || (Function.Name.ToLower().Equals("rgba") && Function.Expression.Terms.Count == 4)
                     )
                 {
                     int fr = 0, fg = 0, fb = 0;
-                    for (int i = 0; i < m_function.Expression.Terms.Count; i++)
+                    for (int i = 0; i < Function.Expression.Terms.Count; i++)
                     {
-                        if (m_function.Expression.Terms[i].Type != CssTermType.Number)
+                        if (Function.Expression.Terms[i].Type != CssTermType.Number)
                         {
                             return Color.Black;
                         }
                         switch (i)
                         {
-                            case 0: fr = GetRGBValue(m_function.Expression.Terms[i]);
+                            case 0: fr = GetRGBValue(Function.Expression.Terms[i]);
                                 break;
-                            case 1: fg = GetRGBValue(m_function.Expression.Terms[i]);
+                            case 1: fg = GetRGBValue(Function.Expression.Terms[i]);
                                 break;
-                            case 2: fb = GetRGBValue(m_function.Expression.Terms[i]);
+                            case 2: fb = GetRGBValue(Function.Expression.Terms[i]);
                                 break;
                         }
                     }
                     return Color.FromArgb(fr, fg, fb);
                 }
-                else if ((m_function.Name.ToLower().Equals("hsl") && m_function.Expression.Terms.Count == 3)
-                  || (m_function.Name.Equals("hsla") && m_function.Expression.Terms.Count == 4)
+                else if ((Function.Name.ToLower().Equals("hsl") && Function.Expression.Terms.Count == 3)
+                  || (Function.Name.Equals("hsla") && Function.Expression.Terms.Count == 4)
                   )
                 {
                     int h = 0, s = 0, v = 0;
-                    for (int i = 0; i < m_function.Expression.Terms.Count; i++)
+                    for (int i = 0; i < Function.Expression.Terms.Count; i++)
                     {
-                        if (m_function.Expression.Terms[i].Type != CssTermType.Number) { return Color.Black; }
+                        if (Function.Expression.Terms[i].Type != CssTermType.Number) { return Color.Black; }
                         switch (i)
                         {
-                            case 0: h = GetHueValue(m_function.Expression.Terms[i]);
+                            case 0: h = GetHueValue(Function.Expression.Terms[i]);
                                 break;
-                            case 1: s = GetRGBValue(m_function.Expression.Terms[i]);
+                            case 1: s = GetRGBValue(Function.Expression.Terms[i]);
                                 break;
-                            case 2: v = GetRGBValue(m_function.Expression.Terms[i]);
+                            case 2: v = GetRGBValue(Function.Expression.Terms[i]);
                                 break;
                         }
                     }
@@ -1618,7 +1244,7 @@ namespace Clippit.HtmlToWml.CSS
             }
             else
             {
-                if (ColorParser.TryFromName(m_val, out var c))
+                if (ColorParser.TryFromName(Value, out var c))
                 {
                     return c;
                 }
@@ -1751,9 +1377,6 @@ namespace Clippit.HtmlToWml.CSS
 
     public class CssParser
     {
-        private List<string> m_errors = new List<string>();
-        private CssDocument m_doc;
-
         public CssDocument ParseText(string content)
         {
             MemoryStream mem = new MemoryStream();
@@ -1776,67 +1399,37 @@ namespace Clippit.HtmlToWml.CSS
             Scanner scanner = new Scanner(stream);
             Parser parser = new Parser(scanner);
             parser.Parse();
-            m_doc = parser.CssDoc;
-            return m_doc;
+            CSSDocument = parser.CssDoc;
+            return CSSDocument;
         }
 
-        public CssDocument CSSDocument
-        {
-            get { return m_doc; }
-        }
+        public CssDocument CSSDocument { get; private set; }
 
-        public List<string> Errors
-        {
-            get { return m_errors; }
-        }
+        public List<string> Errors { get; } = new();
     }
 
     // Hue Sat and Val values from 0 - 255.
     internal struct HueSatVal
     {
-        private int m_hue;
-        private int m_sat;
-        private int m_val;
         public HueSatVal(int h, int s, int v)
         {
-            m_hue = h;
-            m_sat = s;
-            m_val = v;
+            Hue = h;
+            Saturation = s;
+            Value = v;
         }
         public HueSatVal(Color color)
         {
-            m_hue = 0;
-            m_sat = 0;
-            m_val = 0;
+            Hue = 0;
+            Saturation = 0;
+            Value = 0;
             ConvertFromRGB(color);
         }
-        public int Hue
-        {
-            get {
-                return m_hue;
-            }
-            set {
-                m_hue = value;
-            }
-        }
-        public int Saturation
-        {
-            get {
-                return m_sat;
-            }
-            set {
-                m_sat = value;
-            }
-        }
-        public int Value
-        {
-            get {
-                return m_val;
-            }
-            set {
-                m_val = value;
-            }
-        }
+        public int Hue { get; set; }
+
+        public int Saturation { get; set; }
+
+        public int Value { get; set; }
+
         public Color Color
         {
             get {

@@ -13,7 +13,7 @@ namespace Clippit
     {
         private const string DontConsolidate = "DontConsolidate";
 
-        private static readonly HashSet<XName> RevTrackMarkupWithId = new HashSet<XName>
+        private static readonly HashSet<XName> RevTrackMarkupWithId = new()
         {
             W.cellDel,
             W.cellIns,

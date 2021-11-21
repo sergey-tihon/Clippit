@@ -1691,7 +1691,7 @@ namespace Clippit
             }
         }
 
-        private static readonly Dictionary<string, int> BorderTypePriority = new Dictionary<string, int>()
+        private static readonly Dictionary<string, int> BorderTypePriority = new()
         {
             { "single", 1 },
             { "thick", 2 },
@@ -1699,7 +1699,7 @@ namespace Clippit
             { "dotted", 4 },
         };
 
-        private static readonly Dictionary<string, int> BorderNumber = new Dictionary<string, int>()
+        private static readonly Dictionary<string, int> BorderNumber = new()
         {
             {"single", 1 },
             {"thick", 2 },
@@ -2236,7 +2236,7 @@ namespace Clippit
             return tabs;
         }
 
-        private static readonly HashSet<string> UnknownFonts = new HashSet<string>();
+        private static readonly HashSet<string> UnknownFonts = new();
         private static HashSet<string> s_knownFamilies;
 
         private static HashSet<string> KnownFamilies
@@ -2603,7 +2603,7 @@ namespace Clippit
             public decimal CssSize;
         }
 
-        private static readonly Dictionary<string, BorderMappingInfo> BorderStyleMap = new Dictionary<string, BorderMappingInfo>()
+        private static readonly Dictionary<string, BorderMappingInfo> BorderStyleMap = new()
         {
             { "single", new BorderMappingInfo() { CssName = "solid", CssSize = 1.0m }},
             { "dotted", new BorderMappingInfo() { CssName = "dotted", CssSize = 1.0m }},
@@ -2736,7 +2736,7 @@ namespace Clippit
             }
         }
 
-        private static readonly Dictionary<string, Func<string, string, string>> ShadeMapper = new Dictionary<string,Func<string, string, string>>()
+        private static readonly Dictionary<string, Func<string, string, string>> ShadeMapper = new()
         {
             { "auto", (c, f) => c },
             { "clear", (c, f) => f },
@@ -2777,7 +2777,7 @@ namespace Clippit
             { "thinVertStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
         };
 
-        private static readonly Dictionary<string, string> ShadeCache = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> ShadeCache = new();
 
         // fill is the background, color is the foreground
         private static string ConvertColorFillPct(string color, string fill, double pct)
@@ -2822,7 +2822,7 @@ namespace Clippit
             }
         }
 
-        private static readonly Dictionary<string, string> NamedColors = new Dictionary<string, string>()
+        private static readonly Dictionary<string, string> NamedColors = new()
         {
             {"black", "black"},
             {"blue", "blue" },
@@ -2881,7 +2881,7 @@ namespace Clippit
             return "#" + color;
         }
 
-        private static readonly Dictionary<string, string> FontFallback = new Dictionary<string, string>()
+        private static readonly Dictionary<string, string> FontFallback = new()
         {
             { "Arial", @"'{0}', 'sans-serif'" },
             { "Arial Narrow", @"'{0}', 'sans-serif'" },
@@ -2989,7 +2989,7 @@ namespace Clippit
         // Don't process wmf files (with contentType == "image/x-wmf") because GDI consumes huge amounts
         // of memory when dealing with wmf perhaps because it loads a DLL to do the rendering?
         // It actually works, but is not recommended.
-        private static readonly List<string> ImageContentTypes = new List<string>
+        private static readonly List<string> ImageContentTypes = new()
         {
             "image/png", "image/gif", "image/tiff", "image/jpeg"
         };

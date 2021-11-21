@@ -1455,7 +1455,7 @@ namespace Clippit
             return node;
         }
 
-        private static Dictionary<XName, int> Order_tcPr = new Dictionary<XName, int>
+        private static Dictionary<XName, int> Order_tcPr = new()
         {
             { W.cnfStyle, 10 },
             { W.tcW, 20 },
@@ -2042,7 +2042,7 @@ namespace Clippit
             return newDocument;
         }
 
-        private static Dictionary<XName, int> Order_sdt = new Dictionary<XName, int>
+        private static Dictionary<XName, int> Order_sdt = new()
         {
             { W.sdtPr, 10 },
             { W.sdtEndPr, 20 },

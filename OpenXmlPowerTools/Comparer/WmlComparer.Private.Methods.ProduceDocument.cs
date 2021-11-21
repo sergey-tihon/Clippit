@@ -1112,7 +1112,7 @@ namespace Clippit
 
                     var insertedCorrSequ = new List<CorrelatedSequence>
                     {
-                        new CorrelatedSequence
+                        new()
                         {
                             ComparisonUnitArray1 = null,
                             ComparisonUnitArray2 = fncus2,
@@ -1212,7 +1212,7 @@ namespace Clippit
 
                     var deletedCorrSequ = new List<CorrelatedSequence>
                     {
-                        new CorrelatedSequence
+                        new()
                         {
                             ComparisonUnitArray1 = fncus2,
                             ComparisonUnitArray2 = null,

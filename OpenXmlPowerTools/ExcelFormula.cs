@@ -789,10 +789,10 @@ namespace ExcelFormula
         {
             {
                OptimizedCharset.Range[] ranges = new OptimizedCharset.Range[]
-                  {new OptimizedCharset.Range('A','Z'),
-                   new OptimizedCharset.Range('a','z'),
-                   new OptimizedCharset.Range('0','9'),
-                   new OptimizedCharset.Range(',','.'),
+                  {new('A','Z'),
+                   new('a','z'),
+                   new('0','9'),
+                   new(',','.'),
                    };
                char[] oneOfChars = new char[]    {'!','"','#','$','%'
                                                   ,'&','(',')','+',';'
@@ -804,10 +804,10 @@ namespace ExcelFormula
             
             {
                OptimizedCharset.Range[] ranges = new OptimizedCharset.Range[]
-                  {new OptimizedCharset.Range('A','Z'),
-                   new OptimizedCharset.Range('a','z'),
-                   new OptimizedCharset.Range('0','9'),
-                   new OptimizedCharset.Range(',','.'),
+                  {new('A','Z'),
+                   new('a','z'),
+                   new('0','9'),
+                   new(',','.'),
                    };
                char[] oneOfChars = new char[]    {'!','"','#','$','%'
                                                   ,'&','(',')','*','+'

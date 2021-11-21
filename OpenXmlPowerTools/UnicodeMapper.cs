@@ -38,11 +38,9 @@ namespace Clippit
         public static readonly char EndOfPrivateUseArea = '\uF8FF';
 
         // Dictionaries for w:sym stringification.
-        private static readonly Dictionary<string, char> SymStringToUnicodeCharDictionary =
-            new Dictionary<string, char>();
+        private static readonly Dictionary<string, char> SymStringToUnicodeCharDictionary = new();
 
-        private static readonly Dictionary<char, XElement> UnicodeCharToSymDictionary =
-            new Dictionary<char, XElement>();
+        private static readonly Dictionary<char, XElement> UnicodeCharToSymDictionary = new();
 
         // Represents the Unicode value that was last used to map an actual character
         // onto a special value in the private use area, which starts at U+E000.
