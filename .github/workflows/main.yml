@@ -25,12 +25,6 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ matrix.dotnet }}
-    - name: Install libgdiplus on macOS
-      if: matrix.os == 'macOS-latest'
-      run: brew install mono-libgdiplus
-    - name: Install libgdiplus on Ubuntu
-      if: matrix.os == 'ubuntu-latest'
-      run: sudo apt-get update -y && sudo apt-get install -y libgdiplus
     - name: Install local tools
       run: dotnet tool restore
     - name: Paket Restore
@@ -48,7 +42,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.400
+        dotnet-version: 6.0.100
     - name: Install local tools
       run: dotnet tool restore
     - name: Paket Restore

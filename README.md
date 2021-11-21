@@ -6,13 +6,6 @@
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/sergey-tihon/Clippit)
 
-### Prerequisites
-
-- .NET CLI toolchain
-- libgdiplus
-  - macOS: `brew install mono-libgdiplus`
-  - Ubuntu: `sudo apt-get update -y && sudo apt-get install -y libgdiplus`
-
 ### Build
 
 Call `.\build.cmd` on Windows or `./build.sh` on other systems.
