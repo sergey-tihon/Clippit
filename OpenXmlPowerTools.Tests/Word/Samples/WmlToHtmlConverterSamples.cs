@@ -4,8 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
+using SixLabors.ImageSharp.Formats.Bmp;
+using SixLabors.ImageSharp.Formats.Gif;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Formats.Png;
 using Xunit;
 using Xunit.Abstractions;
+using Encoder = System.Text.Encoder;
 
 namespace Clippit.Tests.Word.Samples
 {
@@ -67,56 +72,8 @@ namespace Clippit.Tests.Word.Samples
                 RestrictToSupportedNumberingFormats = false,
                 ImageHandler = imageInfo =>
                 {
-                    var localDirInfo = new DirectoryInfo(imageDirectoryName);
-                    if (!localDirInfo.Exists)
-                        localDirInfo.Create();
                     ++imageCounter;
-                    var extension = imageInfo.ContentType.Split('/')[1].ToLower();
-                    ImageFormat imageFormat = null;
-                    if (extension == "png")
-                        imageFormat = ImageFormat.Png;
-                    else if (extension == "gif")
-                        imageFormat = ImageFormat.Gif;
-                    else if (extension == "bmp")
-                        imageFormat = ImageFormat.Bmp;
-                    else if (extension == "jpeg")
-                        imageFormat = ImageFormat.Jpeg;
-                    else if (extension == "tiff")
-                    {
-                        // Convert tiff to gif.
-                        extension = "gif";
-                        imageFormat = ImageFormat.Gif;
-                    }
-                    else if (extension == "x-wmf")
-                    {
-                        extension = "wmf";
-                        imageFormat = ImageFormat.Wmf;
-                    }
-
-                    // If the image format isn't one that we expect, ignore it,
-                    // and don't return markup for the link.
-                    if (imageFormat == null)
-                        return null;
-
-                    var imageFileName = imageDirectoryName + "/image" +
-                                        imageCounter.ToString() + "." + extension;
-                    try
-                    {
-                        imageInfo.Bitmap.Save(imageFileName, imageFormat);
-                    }
-                    catch (System.Runtime.InteropServices.ExternalException)
-                    {
-                        return null;
-                    }
-                    var imageSource = localDirInfo.Name + "/image" +
-                                      imageCounter + "." + extension;
-
-                    var img = new XElement(Xhtml.img,
-                        new XAttribute(NoNamespace.src, imageSource),
-                        imageInfo.ImgStyleAttribute,
-                        imageInfo.AltText != null ?
-                            new XAttribute(NoNamespace.alt, imageInfo.AltText) : null);
-                    return img;
+                    return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
                 }
             };
             var htmlElement = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
@@ -193,37 +150,18 @@ namespace Clippit.Tests.Word.Samples
                 {
                     ++imageCounter;
                     var extension = imageInfo.ContentType.Split('/')[1].ToLower();
-                    ImageFormat imageFormat = null;
-                    if (extension == "png")
-                        imageFormat = ImageFormat.Png;
-                    else if (extension == "gif")
-                        imageFormat = ImageFormat.Gif;
-                    else if (extension == "bmp")
-                        imageFormat = ImageFormat.Bmp;
-                    else if (extension == "jpeg")
-                        imageFormat = ImageFormat.Jpeg;
-                    else if (extension == "tiff")
-                    {
-                        // Convert tiff to gif.
-                        extension = "gif";
-                        imageFormat = ImageFormat.Gif;
-                    }
-                    else if (extension == "x-wmf")
-                    {
-                        extension = "wmf";
-                        imageFormat = ImageFormat.Wmf;
-                    }
-
+                    var imageEncoder = ImageHelper.GetEncoder(extension, out extension);
+                    
                     // If the image format isn't one that we expect, ignore it,
                     // and don't return markup for the link.
-                    if (imageFormat == null)
+                    if (imageEncoder is null)
                         return null;
 
                     string base64 = null;
                     try
                     {
                         using var ms = new MemoryStream();
-                        imageInfo.Bitmap.Save(ms, imageFormat);
+                        imageInfo.Image.Save(ms, imageEncoder);
                         var ba = ms.ToArray();
                         base64 = System.Convert.ToBase64String(ba);
                     }
@@ -232,10 +170,7 @@ namespace Clippit.Tests.Word.Samples
                         return null;
                     }
 
-                    var format = imageInfo.Bitmap.RawFormat;
-                    var codec = ImageCodecInfo.GetImageDecoders().First(c => c.FormatID == format.Guid);
-                    var mimeType = codec.MimeType;
-
+                    var mimeType = "image/" + extension;
                     var imageSource = $"data:{mimeType};base64,{base64}";
 
                     var img = new XElement(Xhtml.img,

@@ -78,56 +78,8 @@ namespace Clippit.Tests.Html.Samples
                 RestrictToSupportedNumberingFormats = false,
                 ImageHandler = imageInfo =>
                 {
-                    DirectoryInfo localDirInfo = new DirectoryInfo(imageDirectoryName);
-                    if (!localDirInfo.Exists)
-                        localDirInfo.Create();
                     ++imageCounter;
-                    string extension = imageInfo.ContentType.Split('/')[1].ToLower();
-                    ImageFormat imageFormat = null;
-                    if (extension == "png")
-                        imageFormat = ImageFormat.Png;
-                    else if (extension == "gif")
-                        imageFormat = ImageFormat.Gif;
-                    else if (extension == "bmp")
-                        imageFormat = ImageFormat.Bmp;
-                    else if (extension == "jpeg")
-                        imageFormat = ImageFormat.Jpeg;
-                    else if (extension == "tiff")
-                    {
-                        // Convert tiff to gif.
-                        extension = "gif";
-                        imageFormat = ImageFormat.Gif;
-                    }
-                    else if (extension == "x-wmf")
-                    {
-                        extension = "wmf";
-                        imageFormat = ImageFormat.Wmf;
-                    }
-
-                    // If the image format isn't one that we expect, ignore it,
-                    // and don't return markup for the link.
-                    if (imageFormat == null)
-                        return null;
-
-                    var imageFileName = imageDirectoryName + "/image" +
-                                        imageCounter + "." + extension;
-                    try
-                    {
-                        imageInfo.Bitmap.Save(imageFileName, imageFormat);
-                    }
-                    catch (System.Runtime.InteropServices.ExternalException)
-                    {
-                        return null;
-                    }
-
-                    var imageSource = localDirInfo.Name + "/image" +
-                                      imageCounter + "." + extension;
-
-                    var img = new XElement(Xhtml.img,
-                        new XAttribute(NoNamespace.src, imageSource),
-                        imageInfo.ImgStyleAttribute,
-                        imageInfo.AltText != null ? new XAttribute(NoNamespace.alt, imageInfo.AltText) : null);
-                    return img;
+                    return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
                 }
             };
             var htmlElement = HtmlConverter.ConvertToHtml(wDoc, settings);

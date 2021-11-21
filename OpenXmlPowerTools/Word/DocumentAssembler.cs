@@ -12,6 +12,8 @@ using System.Xml.XPath;
 using System.Xml.Schema;
 using DocumentFormat.OpenXml.Packaging;
 using System.Collections;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using Path = System.IO.Path;
 
 namespace Clippit.Word
@@ -987,7 +989,7 @@ namespace Clippit.Word
 
                 // access the saved image and get the dimensions
                 using var savedStream = ip.GetStream(FileMode.Open);
-                using var image = System.Drawing.Image.FromStream(savedStream);
+                using var image = Image<Rgba32>.Load(savedStream);
                 // one inch is 914400 EMUs
                 // 96dpi where dot is pixel
                 var pixelInEMU = 914400 / 96;

@@ -99,16 +99,17 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using Clippit;
-using Clippit.HtmlToWml;
 using Clippit.HtmlToWml.CSS;
-using System.Text.RegularExpressions;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Bmp;
+using SixLabors.ImageSharp.PixelFormats;
+using Image = SixLabors.ImageSharp.Image;
+using Size = SixLabors.ImageSharp.Size;
 
 namespace Clippit.HtmlToWml
 {
@@ -2284,7 +2285,7 @@ namespace Clippit.HtmlToWml
         {
             string srcAttribute = (string)element.Attribute(XhtmlNoNamespace.src);
             byte[] ba = null;
-            Bitmap bmp = null;
+            Image bmp = null;
 
             if (srcAttribute.StartsWith("data:"))
             {
@@ -2292,16 +2293,14 @@ namespace Clippit.HtmlToWml
                 var commaIndex = srcAttribute.IndexOf(',', semiIndex);
                 var base64 = srcAttribute.Substring(commaIndex + 1);
                 ba = Convert.FromBase64String(base64);
-                using (MemoryStream ms = new MemoryStream(ba))
-                {
-                    bmp = new Bitmap(ms);
-                }
+                using var ms = new MemoryStream(ba);
+                bmp = Image<Rgba32>.Load(ms);
             }
             else
             {
                 try
                 {
-                    bmp = new Bitmap(settings.BaseUriForImages + "/" + srcAttribute);
+                    bmp = Image<Rgba32>.Load(settings.BaseUriForImages + "/" + srcAttribute);
                 }
                 catch (ArgumentException)
                 {
@@ -2311,8 +2310,8 @@ namespace Clippit.HtmlToWml
                 {
                     return null;
                 }
-                MemoryStream ms = new MemoryStream();
-                bmp.Save(ms, bmp.RawFormat);
+                var ms = new MemoryStream();
+                bmp.Save(ms, new BmpEncoder());
                 ba = ms.ToArray();
             }
 
@@ -2357,7 +2356,7 @@ namespace Clippit.HtmlToWml
             return null;
         }
 
-        private static XElement GetImageAsInline(XElement element, HtmlToWmlConverterSettings settings, WordprocessingDocument wDoc, Bitmap bmp,
+        private static XElement GetImageAsInline(XElement element, HtmlToWmlConverterSettings settings, WordprocessingDocument wDoc, Image bmp,
             string rId, int pictureId, string pictureDescription)
         {
             XElement inline = new XElement(WP.inline, // 20.4.2.8
@@ -2374,7 +2373,7 @@ namespace Clippit.HtmlToWml
             return inline;
         }
 
-        private static XElement GetImageAsAnchor(XElement element, HtmlToWmlConverterSettings settings, WordprocessingDocument wDoc, Bitmap bmp,
+        private static XElement GetImageAsAnchor(XElement element, HtmlToWmlConverterSettings settings, WordprocessingDocument wDoc, Image bmp,
             string rId, string floatValue, int pictureId, string pictureDescription)
         {
             Emu minDistFromEdge = (long)(0.125 * Emu.s_EmusPerInch);
@@ -2555,11 +2554,11 @@ namespace Clippit.HtmlToWml
                 new XElement(W.noProof));
         }
 
-        private static SizeEmu GetImageSizeInEmus(XElement img, Bitmap bmp)
+        private static SizeEmu GetImageSizeInEmus(XElement img, Image bmp)
         {
-            double hres = bmp.HorizontalResolution;
-            double vres = bmp.VerticalResolution;
-            Size s = bmp.Size;
+            var hres = bmp.Metadata.HorizontalResolution;
+            var vres = bmp.Metadata.VerticalResolution;
+            Size s = bmp.Size();
             Emu cx = (long)((double)(s.Width / hres) * (double)Emu.s_EmusPerInch);
             Emu cy = (long)((double)(s.Height / vres) * (double)Emu.s_EmusPerInch);
 
@@ -2588,7 +2587,7 @@ namespace Clippit.HtmlToWml
             return new SizeEmu(cx, cy);
         }
 
-        private static XElement GetImageExtent(XElement img, Bitmap bmp)
+        private static XElement GetImageExtent(XElement img, Image bmp)
         {
             SizeEmu szEmu = GetImageSizeInEmus(img, bmp);
             return new XElement(WP.extent,
@@ -2621,7 +2620,7 @@ namespace Clippit.HtmlToWml
                     new XAttribute(NoNamespace.noChangeAspect, 1)));
         }
 
-        private static XElement GetGraphicForImage(XElement element, string rId, Bitmap bmp, int pictureId, string pictureDescription)
+        private static XElement GetGraphicForImage(XElement element, string rId, Image bmp, int pictureId, string pictureDescription)
         {
             SizeEmu szEmu = GetImageSizeInEmus(element, bmp);
             XElement graphic = new XElement(A.graphic,

@@ -10,6 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using Image = SixLabors.ImageSharp.Image;
 
 // 200e lrm - LTR
 // 200f rlm - RTL
@@ -120,7 +123,7 @@ namespace Clippit
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ImageInfo
     {
-        public Bitmap Bitmap;
+        public Image Image;
         public XAttribute ImgStyleAttribute;
         public string ContentType;
         public XElement DrawingElement;
@@ -134,13 +137,9 @@ namespace Clippit
     {
         public static XElement ConvertToHtml(WmlDocument doc, WmlToHtmlConverterSettings htmlConverterSettings)
         {
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(doc))
-            {
-                using (WordprocessingDocument document = streamDoc.GetWordprocessingDocument())
-                {
-                    return ConvertToHtml(document, htmlConverterSettings);
-                }
-            }
+            using var streamDoc = new OpenXmlMemoryStreamDocument(doc);
+            using var document = streamDoc.GetWordprocessingDocument();
+            return ConvertToHtml(document, htmlConverterSettings);
         }
 
         public static XElement ConvertToHtml(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings htmlConverterSettings)
@@ -2244,7 +2243,7 @@ namespace Clippit
         {
             get
             {
-                if (_knownFamilies == null)
+                if (_knownFamilies is null)
                 {
                     _knownFamilies = new HashSet<string>();
                     var families = FontFamily.Families;
@@ -3077,14 +3076,14 @@ namespace Clippit
             if (!ImageContentTypes.Contains(contentType))
                 return null;
 
-            using (var partStream = imagePart.GetStream())
-            using (var bitmap = new Bitmap(partStream))
+            using var partStream = imagePart.GetStream();
+            using (var image = Image<Rgba32>.Load(partStream))
             {
                 if (extentCx != null && extentCy != null)
                 {
                     var imageInfo = new ImageInfo()
                     {
-                        Bitmap = bitmap,
+                        Image = image,
                         ImgStyleAttribute = new XAttribute("style",
                             string.Format(NumberFormatInfo.InvariantInfo,
                                 "width: {0}in; height: {1}in",
@@ -3106,7 +3105,7 @@ namespace Clippit
 
                 var imageInfo2 = new ImageInfo()
                 {
-                    Bitmap = bitmap,
+                    Image = image,
                     ContentType = contentType,
                     DrawingElement = element,
                     AltText = altText,
@@ -3140,43 +3139,39 @@ namespace Clippit
                 if (!ImageContentTypes.Contains(contentType))
                     return null;
 
-                using (var partStream = imagePart.GetStream())
+                using var partStream = imagePart.GetStream();
+                try
                 {
-                    try
+                    using var bitmap = Image<Rgba32>.Load(partStream);
+                    var imageInfo = new ImageInfo
                     {
-                        using (var bitmap = new Bitmap(partStream))
-                        {
-                            var imageInfo = new ImageInfo()
-                            {
-                                Bitmap = bitmap,
-                                ContentType = contentType,
-                                DrawingElement = element
-                            };
+                        Image = bitmap,
+                        ContentType = contentType,
+                        DrawingElement = element
+                    };
 
-                            var style = (string)element.Elements(VML.shape).Attributes("style").FirstOrDefault();
-                            if (style == null) return imageHandler(imageInfo);
+                    var style = (string)element.Elements(VML.shape).Attributes("style").FirstOrDefault();
+                    if (style == null) return imageHandler(imageInfo);
 
-                            var tokens = style.Split(';');
-                            var widthInPoints = WidthInPoints(tokens);
-                            var heightInPoints = HeightInPoints(tokens);
-                            if (widthInPoints != null && heightInPoints != null)
-                            {
-                                imageInfo.ImgStyleAttribute = new XAttribute("style",
-                                    string.Format(NumberFormatInfo.InvariantInfo,
-                                        "width: {0}pt; height: {1}pt", widthInPoints, heightInPoints));
-                            }
-                            return imageHandler(imageInfo);
-                        }
-                    }
-                    catch (OutOfMemoryException)
+                    var tokens = style.Split(';');
+                    var widthInPoints = WidthInPoints(tokens);
+                    var heightInPoints = HeightInPoints(tokens);
+                    if (widthInPoints != null && heightInPoints != null)
                     {
-                        // the Bitmap class can throw OutOfMemoryException, which means the bitmap is messed up, so punt.
-                        return null;
+                        imageInfo.ImgStyleAttribute = new XAttribute("style",
+                            string.Format(NumberFormatInfo.InvariantInfo,
+                                "width: {0}pt; height: {1}pt", widthInPoints, heightInPoints));
                     }
-                    catch (ArgumentException)
-                    {
-                        return null;
-                    }
+                    return imageHandler(imageInfo);
+                }
+                catch (OutOfMemoryException)
+                {
+                    // the Bitmap class can throw OutOfMemoryException, which means the bitmap is messed up, so punt.
+                    return null;
+                }
+                catch (ArgumentException)
+                {
+                    return null;
                 }
             }
             catch (ArgumentOutOfRangeException)
