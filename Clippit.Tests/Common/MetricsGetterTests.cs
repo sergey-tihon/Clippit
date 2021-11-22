@@ -3,6 +3,8 @@
 
 using System.IO;
 using System.Xml.Linq;
+using Clippit.Excel;
+using Clippit.Word;
 using Xunit;
 using Xunit.Abstractions;
 

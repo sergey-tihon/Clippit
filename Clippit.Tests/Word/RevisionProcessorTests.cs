@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Clippit.Word;
 using Xunit;
 using Xunit.Abstractions;
 

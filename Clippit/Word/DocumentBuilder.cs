@@ -12,7 +12,7 @@ using System.Xml.Linq;
 using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace Clippit
+namespace Clippit.Word
 {
     public partial class WmlDocument : OpenXmlPowerToolsDocument
     {
@@ -21,10 +21,7 @@ namespace Clippit
             return Word.DocumentBuilder.SplitOnSections(this);
         }
     }
-}
 
-namespace Clippit.Word
-{
     public interface ISource : ICloneable
     {
         WmlDocument WmlDocument { get; set; }

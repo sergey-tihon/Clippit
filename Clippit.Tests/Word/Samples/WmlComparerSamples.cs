@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using Clippit.Word;
 using Xunit;
 using Xunit.Abstractions;
 

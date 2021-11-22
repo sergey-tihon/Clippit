@@ -9,7 +9,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace Clippit
+namespace Clippit.Word
 {
     public partial class WmlDocument : OpenXmlPowerToolsDocument
     {
@@ -31,14 +31,12 @@ namespace Clippit
     {
         public static WmlDocument AddToc(WmlDocument document, string xPath, string switches, string title, int? rightTabPos)
         {
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(document))
+            using var streamDoc = new OpenXmlMemoryStreamDocument(document);
+            using (var doc = streamDoc.GetWordprocessingDocument())
             {
-                using (WordprocessingDocument doc = streamDoc.GetWordprocessingDocument())
-                {
-                    AddToc(doc, xPath, switches, title, rightTabPos);
-                }
-                return streamDoc.GetModifiedWmlDocument();
+                AddToc(doc, xPath, switches, title, rightTabPos);
             }
+            return streamDoc.GetModifiedWmlDocument();
         }
 
         public static void AddToc(WordprocessingDocument doc, string xPath, string switches, string title, int? rightTabPos)
@@ -47,10 +45,8 @@ namespace Clippit
             UpdateStylesPartForToc(doc);
             UpdateStylesWithEffectsPartForToc(doc);
 
-            if (title == null)
-                title = "Contents";
-            if (rightTabPos == null)
-                rightTabPos = 9350;
+            title ??= "Contents";
+            rightTabPos ??= 9350;
 
             // {0} tocTitle (default = "Contents")
             // {1} rightTabPosition (default = 9350)
@@ -143,14 +139,12 @@ namespace Clippit
 
         public static WmlDocument AddTof(WmlDocument document, string xPath, string switches, int? rightTabPos)
         {
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(document))
+            using var streamDoc = new OpenXmlMemoryStreamDocument(document);
+            using (var doc = streamDoc.GetWordprocessingDocument())
             {
-                using (WordprocessingDocument doc = streamDoc.GetWordprocessingDocument())
-                {
-                    AddTof(doc, xPath, switches, rightTabPos);
-                }
-                return streamDoc.GetModifiedWmlDocument();
+                AddTof(doc, xPath, switches, rightTabPos);
             }
+            return streamDoc.GetModifiedWmlDocument();
         }
 
         public static void AddTof(WordprocessingDocument doc, string xPath, string switches, int? rightTabPos)
@@ -218,14 +212,12 @@ namespace Clippit
 
         public static WmlDocument AddToa(WmlDocument document, string xPath, string switches, int? rightTabPos)
         {
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(document))
+            using var streamDoc = new OpenXmlMemoryStreamDocument(document);
+            using (var doc = streamDoc.GetWordprocessingDocument())
             {
-                using (WordprocessingDocument doc = streamDoc.GetWordprocessingDocument())
-                {
-                    AddToa(doc, xPath, switches, rightTabPos);
-                }
-                return streamDoc.GetModifiedWmlDocument();
+                AddToa(doc, xPath, switches, rightTabPos);
             }
+            return streamDoc.GetModifiedWmlDocument();
         }
 
         public static void AddToa(WordprocessingDocument doc, string xPath, string switches, int? rightTabPos)
@@ -234,8 +226,7 @@ namespace Clippit
             UpdateStylesPartForToa(doc);
             UpdateStylesWithEffectsPartForToa(doc);
 
-            if (rightTabPos == null)
-                rightTabPos = 9350;
+            rightTabPos ??= 9350;
 
             // {0} rightTabPosition (default = 9350)
             // {1} switches
@@ -322,8 +313,7 @@ namespace Clippit
                 fontTableXDoc
                     .Root
                     .Elements(W.font)
-                    .Where(e => (string)e.Attribute(W.name) == "Tahoma")
-                    .FirstOrDefault(),
+                    .FirstOrDefault(e => (string)e.Attribute(W.name) == "Tahoma"),
                 @"<w:font w:name='Tahoma' xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
                      <w:panose1 w:val='020B0604030504040204'/>
                      <w:charset w:val='00'/>
@@ -341,9 +331,9 @@ namespace Clippit
 
             AddElementIfMissing(
                 xDoc,
-                xDoc.Root.Elements(W.style)
-                    .Where(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "TOCHeading")
-                    .FirstOrDefault(),
+                xDoc.Root
+                    .Elements(W.style)
+                    .FirstOrDefault(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "TOCHeading"),
                 @"<w:style w:type='paragraph' w:styleId='TOCHeading' xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
                     <w:name w:val='TOC Heading'/>
                     <w:basedOn w:val='Heading1'/>
@@ -362,9 +352,9 @@ namespace Clippit
 
             AddElementIfMissing(
                 xDoc,
-                xDoc.Root.Elements(W.style)
-                    .Where(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "TOC1")
-                    .FirstOrDefault(),
+                xDoc.Root
+                    .Elements(W.style)
+                    .FirstOrDefault(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "TOC1"),
                 @"<w:style w:type='paragraph' w:styleId='TOC1' xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
                     <w:name w:val='toc 1'/>
                     <w:basedOn w:val='Normal'/>
@@ -379,9 +369,9 @@ namespace Clippit
 
             AddElementIfMissing(
                 xDoc,
-                xDoc.Root.Elements(W.style)
-                    .Where(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "TOC2")
-                    .FirstOrDefault(),
+                xDoc.Root
+                    .Elements(W.style)
+                    .FirstOrDefault(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "TOC2"),
                 @"<w:style w:type='paragraph' w:styleId='TOC2' xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
                     <w:name w:val='toc 2'/>
                     <w:basedOn w:val='Normal'/>
@@ -397,9 +387,9 @@ namespace Clippit
 
             AddElementIfMissing(
                 xDoc,
-                xDoc.Root.Elements(W.style)
-                    .Where(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "TOC3")
-                    .FirstOrDefault(),
+                xDoc.Root
+                    .Elements(W.style)
+                    .FirstOrDefault(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "TOC3"),
                 @"<w:style w:type='paragraph' w:styleId='TOC3' xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
                     <w:name w:val='toc 3'/>
                     <w:basedOn w:val='Normal'/>
@@ -415,9 +405,9 @@ namespace Clippit
 
             AddElementIfMissing(
                 xDoc,
-                xDoc.Root.Elements(W.style)
-                    .Where(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "TOC4")
-                    .FirstOrDefault(),
+                xDoc.Root
+                    .Elements(W.style)
+                    .FirstOrDefault(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "TOC4"),
                 @"<w:style w:type='paragraph' w:styleId='TOC4' xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
                     <w:name w:val='toc 4'/>
                     <w:basedOn w:val='Normal'/>
@@ -433,9 +423,9 @@ namespace Clippit
 
             AddElementIfMissing(
                 xDoc,
-                xDoc.Root.Elements(W.style)
-                    .Where(e => (string)e.Attribute(W.type) == "character" && (string)e.Attribute(W.styleId) == "Hyperlink")
-                    .FirstOrDefault(),
+                xDoc.Root
+                    .Elements(W.style)
+                    .FirstOrDefault(e => (string)e.Attribute(W.type) == "character" && (string)e.Attribute(W.styleId) == "Hyperlink"),
                 @"<w:style w:type='character' w:styleId='Hyperlink' xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
                      <w:name w:val='Hyperlink'/>
                      <w:basedOn w:val='DefaultParagraphFont'/>
@@ -449,9 +439,9 @@ namespace Clippit
 
             AddElementIfMissing(
                 xDoc,
-                xDoc.Root.Elements(W.style)
-                    .Where(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "BalloonText")
-                    .FirstOrDefault(),
+                xDoc.Root
+                    .Elements(W.style)
+                    .FirstOrDefault(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "BalloonText"),
                 @"<w:style w:type='paragraph' w:styleId='BalloonText' xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
                     <w:name w:val='Balloon Text'/>
                     <w:basedOn w:val='Normal'/>
@@ -471,10 +461,10 @@ namespace Clippit
 
             AddElementIfMissing(
                 xDoc,
-                xDoc.Root.Elements(W.style)
-                    .Where(e => (string)e.Attribute(W.type) == "character" &&
-                        (bool?)e.Attribute(W.customStyle) == true && (string)e.Attribute(W.styleId) == "BalloonTextChar")
-                    .FirstOrDefault(),
+                xDoc.Root
+                    .Elements(W.style)
+                    .FirstOrDefault(e => (string)e.Attribute(W.type) == "character" &&
+                                         (bool?)e.Attribute(W.customStyle) == true && (string)e.Attribute(W.styleId) == "BalloonTextChar"),
                 @"<w:style w:type='character' w:customStyle='1' w:styleId='BalloonTextChar' xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
                     <w:name w:val='Balloon Text Char'/>
                     <w:basedOn w:val='DefaultParagraphFont'/>
@@ -513,9 +503,9 @@ namespace Clippit
 
             AddElementIfMissing(
                 xDoc,
-                xDoc.Root.Elements(W.style)
-                    .Where(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "TableofFigures")
-                    .FirstOrDefault(),
+                xDoc.Root
+                    .Elements(W.style)
+                    .FirstOrDefault(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "TableofFigures"),
                 @"<w:style w:type='paragraph' w:styleId='TableofFigures' xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
                     <w:name w:val='table of figures'/>
                     <w:basedOn w:val='Normal'/>
@@ -529,9 +519,9 @@ namespace Clippit
 
             AddElementIfMissing(
                 xDoc,
-                xDoc.Root.Elements(W.style)
-                    .Where(e => (string)e.Attribute(W.type) == "character" && (string)e.Attribute(W.styleId) == "Hyperlink")
-                    .FirstOrDefault(),
+                xDoc.Root
+                    .Elements(W.style)
+                    .FirstOrDefault(e => (string)e.Attribute(W.type) == "character" && (string)e.Attribute(W.styleId) == "Hyperlink"),
                 @"<w:style w:type='character' w:styleId='Hyperlink' xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
                      <w:name w:val='Hyperlink'/>
                      <w:basedOn w:val='DefaultParagraphFont'/>
@@ -567,9 +557,9 @@ namespace Clippit
 
             AddElementIfMissing(
                 xDoc,
-                xDoc.Root.Elements(W.style)
-                    .Where(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "TableofAuthorities")
-                    .FirstOrDefault(),
+                xDoc.Root
+                    .Elements(W.style)
+                    .FirstOrDefault(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "TableofAuthorities"),
                 @"<w:style w:type='paragraph'
                            w:styleId='TableofAuthorities'
                            xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
@@ -589,9 +579,9 @@ namespace Clippit
 
             AddElementIfMissing(
                 xDoc,
-                xDoc.Root.Elements(W.style)
-                    .Where(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "TOAHeading")
-                    .FirstOrDefault(),
+                xDoc.Root
+                    .Elements(W.style)
+                    .FirstOrDefault(e => (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "TOAHeading"),
                 @"<w:style w:type='paragraph'
                            w:styleId='TOAHeading'
                            xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
@@ -630,7 +620,7 @@ namespace Clippit
 
         private static void UpdateStylesWithEffectsPartForToa(WordprocessingDocument doc)
         {
-            StylesWithEffectsPart stylesWithEffectsPart = doc.MainDocumentPart.StylesWithEffectsPart;
+            var stylesWithEffectsPart = doc.MainDocumentPart.StylesWithEffectsPart;
             if (stylesWithEffectsPart == null)
                 return;
             UpdatePartForToa(stylesWithEffectsPart);

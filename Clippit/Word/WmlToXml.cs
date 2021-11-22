@@ -16,9 +16,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Xml.Linq;
+using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace Clippit
+namespace Clippit.Word
 {
     public class ContentTypeRule
     {
@@ -175,15 +176,13 @@ namespace Clippit
     {
         public static WmlDocument ApplyContentTypes(WmlDocument document, WmlToXmlSettings settings)
         {
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(document))
+            using var streamDoc = new OpenXmlMemoryStreamDocument(document);
+            using (var wDoc = streamDoc.GetWordprocessingDocument())
             {
-                using (WordprocessingDocument wDoc = streamDoc.GetWordprocessingDocument())
-                {
-                    WmlToXmlUtil.AssignUnidToBlc(wDoc);
-                    ApplyContentTypes(wDoc, settings);
-                }
-                return streamDoc.GetModifiedWmlDocument();
+                WmlToXmlUtil.AssignUnidToBlc(wDoc);
+                ApplyContentTypes(wDoc, settings);
             }
+            return streamDoc.GetModifiedWmlDocument();
         }
 
         public static void ApplyContentTypes(WordprocessingDocument wDoc, WmlToXmlSettings settings)
@@ -198,7 +197,7 @@ namespace Clippit
   </Extension>
 </Extensions>
 #endif
-            if (settings.DocumentType == null || settings.DocumentType == "")
+            if (string.IsNullOrEmpty(settings.DocumentType))
                 throw new OpenXmlPowerToolsException("DocumentType must be set");
 
             if (settings.ContentTypeRegexExtension != null)

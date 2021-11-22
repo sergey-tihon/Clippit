@@ -53,6 +53,7 @@ using System.IO.Packaging;
 using System.Linq;
 using System.Xml.Linq;
 using Clippit.Excel;
+using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit
@@ -335,141 +336,6 @@ namespace Clippit
             var partStream = part.GetStream(FileMode.Open, FileAccess.Read);
             partStream.CopyTo(fileStream);
         }
-    }
-
-    public partial class WmlDocument : OpenXmlPowerToolsDocument
-    {
-        public WmlDocument(OpenXmlPowerToolsDocument original)
-            : base(original)
-        {
-            if (GetDocumentType() != typeof(WordprocessingDocument))
-                throw new PowerToolsDocumentException("Not a Wordprocessing document.");
-        }
-
-        public WmlDocument(OpenXmlPowerToolsDocument original, bool convertToTransitional)
-            : base(original, convertToTransitional)
-        {
-            if (GetDocumentType() != typeof(WordprocessingDocument))
-                throw new PowerToolsDocumentException("Not a Wordprocessing document.");
-        }
-
-        public WmlDocument(string fileName)
-            : base(fileName)
-        {
-            if (GetDocumentType() != typeof(WordprocessingDocument))
-                throw new PowerToolsDocumentException("Not a Wordprocessing document.");
-        }
-
-        public WmlDocument(string fileName, bool convertToTransitional)
-            : base(fileName, convertToTransitional)
-        {
-            if (GetDocumentType() != typeof(WordprocessingDocument))
-                throw new PowerToolsDocumentException("Not a Wordprocessing document.");
-        }
-
-        public WmlDocument(string fileName, byte[] byteArray)
-            : base(byteArray)
-        {
-            FileName = fileName;
-            if (GetDocumentType() != typeof(WordprocessingDocument))
-                throw new PowerToolsDocumentException("Not a Wordprocessing document.");
-        }
-
-        public WmlDocument(string fileName, byte[] byteArray, bool convertToTransitional)
-            : base(byteArray, convertToTransitional)
-        {
-            FileName = fileName;
-            if (GetDocumentType() != typeof(WordprocessingDocument))
-                throw new PowerToolsDocumentException("Not a Wordprocessing document.");
-        }
-
-        public WmlDocument(string fileName, MemoryStream memStream)
-            : base(fileName, memStream)
-        {
-        }
-
-        public WmlDocument(string fileName, MemoryStream memStream, bool convertToTransitional)
-            : base(fileName, memStream, convertToTransitional)
-        {
-        }
-        
-        [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public XElement ConvertToHtml(WmlToHtmlConverterSettings htmlConverterSettings)
-        {
-            return WmlToHtmlConverter.ConvertToHtml(this, htmlConverterSettings);
-        }
-
-        [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public XElement ConvertToHtml(HtmlConverterSettings htmlConverterSettings)
-        {
-            return WmlToHtmlConverter.ConvertToHtml(this, new WmlToHtmlConverterSettings(htmlConverterSettings));
-        }
-    }
-
-    public partial class SmlDocument : OpenXmlPowerToolsDocument
-    {
-        public SmlDocument(OpenXmlPowerToolsDocument original)
-            : base(original)
-        {
-            if (GetDocumentType() != typeof(SpreadsheetDocument))
-                throw new PowerToolsDocumentException("Not a Spreadsheet document.");
-        }
-
-        public SmlDocument(OpenXmlPowerToolsDocument original, bool convertToTransitional)
-            : base(original, convertToTransitional)
-        {
-            if (GetDocumentType() != typeof(SpreadsheetDocument))
-                throw new PowerToolsDocumentException("Not a Spreadsheet document.");
-        }
-
-        public SmlDocument(string fileName)
-            : base(fileName)
-        {
-            if (GetDocumentType() != typeof(SpreadsheetDocument))
-                throw new PowerToolsDocumentException("Not a Spreadsheet document.");
-        }
-
-        public SmlDocument(string fileName, bool convertToTransitional)
-            : base(fileName, convertToTransitional)
-        {
-            if (GetDocumentType() != typeof(SpreadsheetDocument))
-                throw new PowerToolsDocumentException("Not a Spreadsheet document.");
-        }
-
-        public SmlDocument(string fileName, byte[] byteArray)
-            : base(byteArray)
-        {
-            FileName = fileName;
-            if (GetDocumentType() != typeof(SpreadsheetDocument))
-                throw new PowerToolsDocumentException("Not a Spreadsheet document.");
-        }
-
-        public SmlDocument(string fileName, byte[] byteArray, bool convertToTransitional)
-            : base(byteArray, convertToTransitional)
-        {
-            FileName = fileName;
-            if (GetDocumentType() != typeof(SpreadsheetDocument))
-                throw new PowerToolsDocumentException("Not a Spreadsheet document.");
-        }
-
-        public SmlDocument(string fileName, MemoryStream memStream)
-            : base(fileName, memStream)
-        {
-        }
-
-        public SmlDocument(string fileName, MemoryStream memStream, bool convertToTransitional)
-            : base(fileName, memStream, convertToTransitional)
-        {
-        }
-        
-        
-        [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public XElement ConvertToHtml(SmlToHtmlConverterSettings htmlConverterSettings, string tableName) => 
-            SmlToHtmlConverter.ConvertTableToHtml(this, htmlConverterSettings, tableName);
-
-        [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public XElement ConvertTableToHtml(string tableName) => 
-            SmlToHtmlConverter.ConvertTableToHtml(this, new SmlToHtmlConverterSettings(), tableName);
     }
 
     public partial class PmlDocument : OpenXmlPowerToolsDocument

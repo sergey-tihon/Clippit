@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
@@ -21,8 +22,24 @@ using Image = SixLabors.ImageSharp.Image;
 // Content-Language: en-US
 // Content-Language: fr-FR
 
-namespace Clippit
+namespace Clippit.Word
 {
+    public partial class WmlDocument
+    {
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
+        public XElement ConvertToHtml(WmlToHtmlConverterSettings htmlConverterSettings)
+        {
+            return WmlToHtmlConverter.ConvertToHtml(this, htmlConverterSettings);
+        }
+
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
+        public XElement ConvertToHtml(HtmlConverterSettings htmlConverterSettings)
+        {
+            WmlToHtmlConverterSettings settings = new WmlToHtmlConverterSettings(htmlConverterSettings);
+            return WmlToHtmlConverter.ConvertToHtml(this, settings);
+        }
+    }
+
     [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
     public class WmlToHtmlConverterSettings
     {

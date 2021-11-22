@@ -11,6 +11,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Validation;
 using System.Text;
+using Clippit.Word;
 using DocumentFormat.OpenXml;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Bmp;
@@ -528,39 +529,33 @@ AAsACwDBAgAAbCwAAAAA";
 #endif
             }
 
-            FileInfo fi = new FileInfo(fileName);
+            var fi = new FileInfo(fileName);
             if (Util.IsWordprocessingML(fi.Extension))
             {
-                WmlDocument wml = new WmlDocument(fileName);
-                using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(wml))
-                using (WordprocessingDocument wDoc = streamDoc.GetWordprocessingDocument())
-                {
-                    OpenXmlValidator validator = new OpenXmlValidator(fileFormatVersion);
-                    var errors = validator.Validate(wDoc);
-                    return errors.ToList();
-                }
+                var wml = new WmlDocument(fileName);
+                using var streamDoc = new OpenXmlMemoryStreamDocument(wml);
+                using var wDoc = streamDoc.GetWordprocessingDocument();
+                var validator = new OpenXmlValidator(fileFormatVersion);
+                var errors = validator.Validate(wDoc);
+                return errors.ToList();
             }
             else if (Util.IsSpreadsheetML(fi.Extension))
             {
-                var Sml = new SmlDocument(fileName);
-                using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(Sml))
-                using (SpreadsheetDocument wDoc = streamDoc.GetSpreadsheetDocument())
-                {
-                    OpenXmlValidator validator = new OpenXmlValidator(fileFormatVersion);
-                    var errors = validator.Validate(wDoc);
-                    return errors.ToList();
-                }
+                var sml = new Excel.SmlDocument(fileName);
+                using var streamDoc = new OpenXmlMemoryStreamDocument(sml);
+                using var wDoc = streamDoc.GetSpreadsheetDocument();
+                var validator = new OpenXmlValidator(fileFormatVersion);
+                var errors = validator.Validate(wDoc);
+                return errors.ToList();
             }
             else if (Util.IsPresentationML(fi.Extension))
             {
-                PmlDocument Pml = new PmlDocument(fileName);
-                using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(Pml))
-                using (PresentationDocument wDoc = streamDoc.GetPresentationDocument())
-                {
-                    OpenXmlValidator validator = new OpenXmlValidator(fileFormatVersion);
-                    var errors = validator.Validate(wDoc);
-                    return errors.ToList();
-                }
+                var pml = new PmlDocument(fileName);
+                using var streamDoc = new OpenXmlMemoryStreamDocument(pml);
+                using var wDoc = streamDoc.GetPresentationDocument();
+                var validator = new OpenXmlValidator(fileFormatVersion);
+                var errors = validator.Validate(wDoc);
+                return errors.ToList();
             }
             return Enumerable.Empty<ValidationErrorInfo>();
         }

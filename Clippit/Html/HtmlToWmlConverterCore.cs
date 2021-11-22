@@ -101,16 +101,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using DocumentFormat.OpenXml.Packaging;
-using Clippit.HtmlToWml.CSS;
 using Clippit.Internal;
+using Clippit.Word;
+using DocumentFormat.OpenXml.Packaging;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.PixelFormats;
 using Image = SixLabors.ImageSharp.Image;
 using Size = SixLabors.ImageSharp.Size;
 
-namespace Clippit.HtmlToWml
+namespace Clippit.Html
 {
     public class ElementToStyleMap
     {

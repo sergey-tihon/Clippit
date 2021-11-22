@@ -5,6 +5,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Clippit.Html;
+using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Xunit;

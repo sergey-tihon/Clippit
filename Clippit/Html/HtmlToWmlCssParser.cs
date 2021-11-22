@@ -23,7 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Clippit.HtmlToWml.CSS
+namespace Clippit.Html
 {
     public class CssAttribute
     {
@@ -1026,7 +1026,7 @@ namespace Clippit.HtmlToWml.CSS
                 sb.Append(Value);
                 if (m_unit.HasValue)
                 {
-                    if (m_unit.Value == Clippit.HtmlToWml.CSS.CssUnit.Percent)
+                    if (m_unit.Value == CssUnit.Percent)
                     {
                         sb.Append("%");
                     }
@@ -2366,7 +2366,7 @@ namespace Clippit.HtmlToWml.CSS
             ss = new CssSimpleSelector();
             ss.ElementName = "";
             string psd = null;
-            Clippit.HtmlToWml.CSS.CssAttribute atb = null;
+            CssAttribute atb = null;
             CssSimpleSelector parent = ss;
             string ident = null;
 
@@ -2478,9 +2478,9 @@ namespace Clippit.HtmlToWml.CSS
             }
         }
 
-        void Attrib(out Clippit.HtmlToWml.CSS.CssAttribute atb)
+        void Attrib(out CssAttribute atb)
         {
-            atb = new Clippit.HtmlToWml.CSS.CssAttribute();
+            atb = new CssAttribute();
             atb.Value = "";
             string quote = null;
             string ident = null;

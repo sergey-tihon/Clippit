@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using SixLabors.Fonts;
 
@@ -207,23 +208,6 @@ namespace Clippit.Excel
         {
             // Ignore element.
             return null;
-        }
-
-        private static readonly HashSet<string> UnknownFonts = new();
-        private static HashSet<string> s_knownFamilies;
-
-        private static HashSet<string> KnownFamilies
-        {
-            get
-            {
-                if (s_knownFamilies is null)
-                {
-                    s_knownFamilies = new HashSet<string>();
-                    foreach (var fam in SystemFonts.Families)
-                        s_knownFamilies.Add(fam.Name);
-                }
-                return s_knownFamilies;
-            }
         }
 
         private static readonly Dictionary<string, string> FontFallback = new()

@@ -12,6 +12,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using System.Globalization;
 using Clippit.Excel;
+using Clippit.Word;
 using SixLabors.Fonts;
 
 namespace Clippit

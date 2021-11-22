@@ -4,12 +4,12 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Xml.Linq;
-using DocumentFormat.OpenXml.Packaging;
-using Clippit.HtmlToWml;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
+using Clippit.Word;
+using DocumentFormat.OpenXml.Packaging;
 
-namespace Clippit
+namespace Clippit.Html
 {
     public class HtmlToWmlConverterSettings
     {

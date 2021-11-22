@@ -5,17 +5,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit
 {
-    public partial class WmlDocument : OpenXmlPowerToolsDocument
-    {
-        public WmlDocument SearchAndReplace(string search, string replace, bool matchCase)
-        {
-            return TextReplacer.SearchAndReplace(this, search, replace, matchCase);
-        }
-    }
 
     public partial class PmlDocument : OpenXmlPowerToolsDocument
     {
@@ -25,11 +19,11 @@ namespace Clippit
         }
     }
 
-    public class TextReplacer
+    internal class TextReplacer
     {
         private class MatchSemaphore
         {
-            public int MatchId;
+            public int MatchId { get; }
             public MatchSemaphore(int matchId)
             {
                 MatchId = matchId;
@@ -38,12 +32,11 @@ namespace Clippit
 
         private static XObject CloneWithAnnotation(XNode node)
         {
-            XElement element = node as XElement;
-            if (element != null)
+            if (node is XElement element)
             {
                 XElement newElement = new XElement(element.Name,
                     element.Attributes(),
-                    element.Nodes().Select(n => CloneWithAnnotation(n)));
+                    element.Nodes().Select(CloneWithAnnotation));
                 if (element.Annotation<MatchSemaphore>() != null)
                     newElement.AddAnnotation(element.Annotation<MatchSemaphore>());
             }
@@ -53,8 +46,7 @@ namespace Clippit
         private static object WmlSearchAndReplaceTransform(XNode node,
             string search, string replace, bool matchCase)
         {
-            XElement element = node as XElement;
-            if (element != null)
+            if (node is XElement element)
             {
                 if (element.Name == W.p)
                 {
@@ -205,14 +197,12 @@ namespace Clippit
 
         public static WmlDocument SearchAndReplace(WmlDocument doc, string search, string replace, bool matchCase)
         {
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(doc))
+            using var streamDoc = new OpenXmlMemoryStreamDocument(doc);
+            using (var document = streamDoc.GetWordprocessingDocument())
             {
-                using (WordprocessingDocument document = streamDoc.GetWordprocessingDocument())
-                {
-                    SearchAndReplace(document, search, replace, matchCase);
-                }
-                return streamDoc.GetModifiedWmlDocument();
+                SearchAndReplace(document, search, replace, matchCase);
             }
+            return streamDoc.GetModifiedWmlDocument();
         }
 
         public static void SearchAndReplace(WordprocessingDocument wordDoc, string search,
@@ -399,20 +389,18 @@ namespace Clippit
 
         public static PmlDocument SearchAndReplace(PmlDocument doc, string search, string replace, bool matchCase)
         {
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(doc))
+            using var streamDoc = new OpenXmlMemoryStreamDocument(doc);
+            using (var document = streamDoc.GetPresentationDocument())
             {
-                using (PresentationDocument document = streamDoc.GetPresentationDocument())
-                {
-                    SearchAndReplace(document, search, replace, matchCase);
-                }
-                return streamDoc.GetModifiedPmlDocument();
+                SearchAndReplace(document, search, replace, matchCase);
             }
+            return streamDoc.GetModifiedPmlDocument();
         }
 
         public static void SearchAndReplace(PresentationDocument pDoc, string search,
             string replace, bool matchCase)
         {
-            PresentationPart presentationPart = pDoc.PresentationPart;
+            var presentationPart = pDoc.PresentationPart;
             foreach (var slidePart in presentationPart.SlideParts)
             {
                 XDocument slideXDoc = slidePart.GetXDocument();

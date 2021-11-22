@@ -3,7 +3,7 @@
 
 using DocumentFormat.OpenXml.Packaging;
 
-namespace Clippit
+namespace Clippit.Word
 {
     public static class RevisionAccepter
     {

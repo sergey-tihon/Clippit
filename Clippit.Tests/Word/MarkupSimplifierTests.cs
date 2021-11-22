@@ -4,6 +4,7 @@
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Clippit.Word;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
