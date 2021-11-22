@@ -36,7 +36,7 @@ Target.create "Clean" (fun _ ->
 )
 
 Target.create "AssemblyInfo" (fun _ ->
-    let fileName = "OpenXmlPowerTools/Properties/AssemblyInfo.Generated.cs"
+    let fileName = "Clippit/Properties/AssemblyInfo.Generated.cs"
     AssemblyInfoFile.createCSharp fileName
       [ AssemblyInfo.Title gitName
         AssemblyInfo.Product gitName
@@ -54,7 +54,7 @@ Target.create "Build" (fun _ ->
 )
 
 Target.create "RunTests" (fun _ ->
-    DotNet.test id "OpenXmlPowerTools.Tests/"
+    DotNet.test id "Clippit.Tests/"
 )
 
 Target.create "NuGet" (fun _ ->
