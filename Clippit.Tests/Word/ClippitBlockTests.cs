@@ -14,9 +14,9 @@ using Xunit.Abstractions;
 
 namespace Clippit.Tests.Word
 {
-    public class StronglyTypedBlockTests : TestsBase
+    public class ClippitBlockTests : TestsBase
     {
-        public StronglyTypedBlockTests(ITestOutputHelper log) : base(log)
+        public ClippitBlockTests(ITestOutputHelper log) : base(log)
         {
         }
         
@@ -37,7 +37,7 @@ namespace Clippit.Tests.Word
 
             // This demonstrates the use of the StronglyTypedBlock in a using statement to
             // demarcate the intermittent use of the strongly typed classes.
-            using (new StronglyTypedBlock(wordDocument))
+            using (new ClippitBlock(wordDocument))
             {
                 // Assert that we can see the paragraph added through the PowerTools.
                 var body = part.Document.Body;
@@ -60,7 +60,7 @@ namespace Clippit.Tests.Word
         [Fact]
         public void ConstructorThrowsWhenPassingNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new StronglyTypedBlock(null));
+            Assert.Throws<ArgumentNullException>(() => new ClippitBlock(null));
         }
         
     }
