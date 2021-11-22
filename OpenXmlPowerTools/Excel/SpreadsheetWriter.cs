@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using Clippit.Internal;
 using Clippit.PowerPoint;
 using DocumentFormat.OpenXml.Packaging;
 
@@ -249,7 +250,7 @@ namespace Clippit.Excel
             }
 
             var workbook = sDoc.WorkbookPart;
-            var rId = PresentationBuilderTools.NewRelationshipId();
+            var rId = Relationships.GetNewRelationshipId();
             var worksheetPart = workbook.AddNewPart<WorksheetPart>(rId);
 
             var wbXDoc = workbook.GetXDocument();
@@ -286,7 +287,7 @@ namespace Clippit.Excel
                     if (worksheetData.ColumnHeadings != null && worksheetData.TableName != null)
                     {
                         partXmlWriter.WriteEndElement();
-                        var rId2 = PresentationBuilderTools.NewRelationshipId();
+                        var rId2 = Relationships.GetNewRelationshipId();
                         partXmlWriter.WriteStartElement("tableParts", ws);
                         partXmlWriter.WriteStartAttribute("count");
                         partXmlWriter.WriteValue(1);

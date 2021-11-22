@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Presentation;
 using Path = System.IO.Path;
@@ -244,7 +245,7 @@ namespace Clippit.PowerPoint
                 _ => FontPartType.FontOdttf
             };
 
-            var newFontPartId = PBT.NewRelationshipId();
+            var newFontPartId = Relationships.GetNewRelationshipId();
             var newFontPart = _newDocument.PresentationPart.AddFontPart(fontPartType, newFontPartId);
             using (var stream = oldFontPart.GetStream())
                 newFontPart.FeedData(stream);
@@ -702,12 +703,12 @@ namespace Clippit.PowerPoint
                         newPart.FeedData(stream);
                     foreach (var itemProps in oldPartIdPair9.OpenXmlPart.Parts.Where(p => p.OpenXmlPart.ContentType == "application/vnd.openxmlformats-officedocument.customXmlProperties+xml"))
                     {
-                        var newId2 = PBT.NewRelationshipId();
+                        var newId2 = Relationships.GetNewRelationshipId();
                         var cxpp = newPart.AddNewPart<CustomXmlPropertiesPart>("application/vnd.openxmlformats-officedocument.customXmlProperties+xml", newId2);
                         using (var stream = itemProps.OpenXmlPart.GetStream())
                             cxpp.FeedData(stream);
                     }
-                    var newId = PBT.NewRelationshipId();
+                    var newId = Relationships.GetNewRelationshipId();
                     newContentPart.CreateRelationshipToPart(newPart, newId);
                     custData.Attribute(R.id).Value = newId;
                 }

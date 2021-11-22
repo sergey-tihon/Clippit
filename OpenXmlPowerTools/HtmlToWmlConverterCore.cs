@@ -103,6 +103,7 @@ using System.Linq;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using Clippit.HtmlToWml.CSS;
+using Clippit.Internal;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -777,7 +778,7 @@ namespace Clippit.HtmlToWml
             {
                 if (element.Name == XhtmlNoNamespace.a)
                 {
-                    string rId = "R" + Guid.NewGuid().ToString().Replace("-", "");
+                    string rId = Relationships.GetNewRelationshipId();
                     string href = (string)element.Attribute(NoNamespace.href);
                     if (href != null)
                     {
@@ -2219,7 +2220,7 @@ namespace Clippit.HtmlToWml
             }
 
             MainDocumentPart mdp = wDoc.MainDocumentPart;
-            string rId = "R" + Guid.NewGuid().ToString().Replace("-", "");
+            string rId = Relationships.GetNewRelationshipId();
             ImagePartType ipt = ImagePartType.Png;
             ImagePart newPart = mdp.AddImagePart(ipt, rId);
             using (Stream s = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))

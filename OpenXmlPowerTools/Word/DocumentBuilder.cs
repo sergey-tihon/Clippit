@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit
@@ -2595,8 +2596,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     var tempHyperlink = newPart.HyperlinkRelationships.FirstOrDefault(h => h.Id == relId);
                     if (tempHyperlink != null)
                         continue;
-                    var g = Guid.NewGuid();
-                    var newRid = $"R{g:N}";
+                    var newRid = Relationships.GetNewRelationshipId();
                     var oldHyperlink = oldPart.HyperlinkRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldHyperlink == null)
                         continue;
@@ -2612,8 +2612,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     var tempExternalRelationship = newPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
                     if (tempExternalRelationship != null)
                         continue;
-                    var g = Guid.NewGuid();
-                    var newRid = $"R{g:N}";
+                    var newRid = Relationships.GetNewRelationshipId();
                     var oldRel = oldPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldRel == null)
                         throw new DocumentBuilderInternalException("Source {0} is invalid document - hyperlink contains invalid references");
@@ -2628,8 +2627,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     var tempHyperlink = newPart.HyperlinkRelationships.FirstOrDefault(h => h.Id == relId);
                     if (tempHyperlink != null)
                         continue;
-                    var g = Guid.NewGuid();
-                    var newRid = $"R{g:N}";
+                    var newRid = Relationships.GetNewRelationshipId();
                     var oldHyperlink = oldPart.HyperlinkRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldHyperlink == null)
                         continue;
@@ -2644,8 +2642,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     var tempExternalRelationship = newPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
                     if (tempExternalRelationship != null)
                         continue;
-                    var g = Guid.NewGuid();
-                    var newRid = $"R{g:N}";
+                    var newRid = Relationships.GetNewRelationshipId();
                     var oldRel = oldPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldRel == null)
                         throw new DocumentBuilderInternalException("Internal Error 0006");
@@ -2663,8 +2660,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     var tempExternalRelationship = newPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
                     if (tempExternalRelationship != null)
                         continue;
-                    var g = Guid.NewGuid();
-                    var newRid = $"R{g:N}";
+                    var newRid = Relationships.GetNewRelationshipId();
                     var oldRel = oldPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldRel == null)
                         continue;
@@ -3228,8 +3224,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                         }).RelationshipId);
                         return;
                     }
-                    var g = new Guid();
-                    var newId = $"R{g:N}".Substring(0, 16);
+                    var newId = Relationships.GetNewRelationshipId();
                     newContentPart.CreateRelationshipToPart(temp.ImagePart, newId);
                     imageReference.SetAttributeValue(R.id, newId);
                 }
@@ -3544,8 +3539,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                         var oldPart = (EmbeddedObjectPart)ipp1.OpenXmlPart;
                         var relType = oldRelatedPart.RelationshipType;
                         var conType = oldRelatedPart.ContentType;
-                        var g = new Guid();
-                        var id = $"R{g:N}".Substring(0, 8);
+                        var id = Relationships.GetNewRelationshipId();
                         var newPart = newChart.AddExtendedPart(relType, conType, ".bin", id);
                         using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                         using (var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
@@ -3561,11 +3555,10 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 else
                 {
                     var oldRelationship = oldChart.GetExternalRelationship(relId);
-                    var g = Guid.NewGuid();
-                    var newRid = $"R{g:N}";
-                    var oldRel = oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
-                    if (oldRel == null)
-                        throw new DocumentBuilderInternalException("Internal Error 0007");
+                    var newRid = Relationships.GetNewRelationshipId();
+                    var oldRel =
+                        oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId)
+                        ?? throw new DocumentBuilderInternalException("Internal Error 0007");
                     newChart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     dataReference.SetAttributeValue(R.id, newRid);
                 }

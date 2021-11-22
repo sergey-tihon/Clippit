@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;
 using Presentation = DocumentFormat.OpenXml.Presentation;
 using Drawing = DocumentFormat.OpenXml.Drawing;
@@ -153,7 +154,7 @@ namespace Clippit.PowerPoint
                     if (oldRel is null)
                         throw new PresentationBuilderInternalException("Internal Error 0007");
                     
-                    var newRid = NewRelationshipId();
+                    var newRid = Relationships.GetNewRelationshipId();
                     newChart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     dataReference.Attribute(R.id).Set(newRid);
                 }
@@ -177,7 +178,7 @@ namespace Clippit.PowerPoint
 
             void CopyPart<T>(T oldPart) where T : OpenXmlPart
             {
-                var newRid = NewRelationshipId();
+                var newRid = Relationships.GetNewRelationshipId();
                 var newPart = newChart.AddNewPart<T>(oldPart.ContentType, newRid);
                 
                 using var oldStream = oldPart.GetStream(FileMode.Open, FileAccess.Read);
@@ -234,7 +235,7 @@ namespace Clippit.PowerPoint
                     var tempHyperlink = newPart.HyperlinkRelationships.FirstOrDefault(h => h.Id == relId);
                     if (tempHyperlink is {})
                         continue;
-                    var newRid = NewRelationshipId();
+                    var newRid = Relationships.GetNewRelationshipId();
                     var oldHyperlink = oldPart.HyperlinkRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldHyperlink is null) {
                         //TODO Issue with reference to another part: var temp = oldPart.GetPartById(relId);
@@ -251,7 +252,7 @@ namespace Clippit.PowerPoint
                         continue;
                     if (newPart.ExternalRelationships.Any(h => h.Id == relId))
                         continue;
-                    var newRid = NewRelationshipId();
+                    var newRid = Relationships.GetNewRelationshipId();
                     var oldRel = oldPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldRel is null)
                         throw new PresentationBuilderInternalException("Internal Error 0006");
@@ -265,7 +266,7 @@ namespace Clippit.PowerPoint
                         continue;
                     if (newPart.ExternalRelationships.Any(h => h.Id == relId))
                         continue;
-                    var newRid = NewRelationshipId();
+                    var newRid = Relationships.GetNewRelationshipId();
                     var oldRel = oldPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldRel is null)
                         continue;
@@ -286,7 +287,7 @@ namespace Clippit.PowerPoint
             if (oldRel is null)
                 return;
 
-            var newId = NewRelationshipId();
+            var newId = Relationships.GetNewRelationshipId();
             newContentPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newId);
 
             imageReference.Attribute(attributeName).Set(newId);
@@ -300,7 +301,7 @@ namespace Clippit.PowerPoint
 
             var oldPart = oldContentPart.GetPartById(relId);
 
-            var newId = NewRelationshipId();
+            var newId = Relationships.GetNewRelationshipId();
             var newPart = newContentPart.AddNewPart<CustomXmlPart>("application/inkml+xml", newId);
 
             using (var stream = oldPart.GetStream())
@@ -317,7 +318,7 @@ namespace Clippit.PowerPoint
 
             var oldPart = oldContentPart.GetPartById(relId);
 
-            var newId = NewRelationshipId();
+            var newId = Relationships.GetNewRelationshipId();
             var newPart = newContentPart.AddNewPart<EmbeddedControlPersistencePart>("application/vnd.ms-office.activeX+xml", newId);
 
             using(var stream = oldPart.GetStream())
@@ -331,7 +332,7 @@ namespace Clippit.PowerPoint
                 {
                     var oldPersistencePart = oldPart.GetPartById(attr.Value);
 
-                    var newId2 = NewRelationshipId();
+                    var newId2 = Relationships.GetNewRelationshipId();
                     var newPersistencePart = newPart.AddNewPart<EmbeddedControlPersistenceBinaryDataPart>("application/vnd.ms-office.activeX", newId2);
 
                     using (var stream = oldPersistencePart.GetStream())
@@ -350,7 +351,7 @@ namespace Clippit.PowerPoint
 
             var oldPart = oldContentPart.GetPartById(relId);
 
-            var newId = NewRelationshipId();
+            var newId = Relationships.GetNewRelationshipId();
             var newPart = newContentPart.AddNewPart<LegacyDiagramTextPart>(newId);
 
             using (var stream = oldPart.GetStream())
@@ -529,9 +530,6 @@ namespace Clippit.PowerPoint
             string.IsNullOrEmpty(relId)
             || part.Parts.Any(p => p.RelationshipId == relId)
             || part.ExternalRelationships.Any(er => er.Id == relId);
-
-        internal static string NewRelationshipId() =>
-            "rcId" + Guid.NewGuid().ToString().Replace("-", "").Substring(0, 16);
     }
     
     public class PresentationBuilderException : Exception

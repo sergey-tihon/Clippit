@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Packaging;
 using System.Linq;
 using System.Xml.Linq;
+using Clippit.Internal;
 
 namespace Clippit
 {
@@ -68,7 +69,7 @@ namespace Clippit
                         FileUtils.CopyStream(oldPartStream, newPartStream);
                     }
 
-                    string newRid = "R" + Guid.NewGuid().ToString().Replace("-", "");
+                    string newRid = Relationships.GetNewRelationshipId();
                     partInNewDocument.CreateRelationship(newPart.Uri, TargetMode.Internal,
                         relationshipForDeletedPart.RelationshipType, newRid);
                     att.Value = newRid;
