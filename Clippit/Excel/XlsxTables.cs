@@ -3,12 +3,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using System.IO;
 
-namespace Clippit
+namespace Clippit.Excel
 {
     public class Table
     {

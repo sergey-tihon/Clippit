@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Clippit.Excel;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -48,7 +49,7 @@ namespace Clippit.Tests.Excel.Samples
 
             var row = 1;
             using (var streamDoc = new OpenXmlMemoryStreamDocument(
-                SmlDocument.FromFileName(qs.FullName)))
+               SmlDocument.FromFileName(qs.FullName)))
             {
                 using (var doc = streamDoc.GetSpreadsheetDocument())
                 {

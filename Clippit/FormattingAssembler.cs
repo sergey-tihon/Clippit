@@ -35,14 +35,12 @@ namespace Clippit
     {
         public static WmlDocument AssembleFormatting(WmlDocument document, FormattingAssemblerSettings settings)
         {
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(document))
+            using var streamDoc = new OpenXmlMemoryStreamDocument(document);
+            using (var doc = streamDoc.GetWordprocessingDocument())
             {
-                using (WordprocessingDocument doc = streamDoc.GetWordprocessingDocument())
-                {
-                    AssembleFormatting(doc, settings);
-                }
-                return streamDoc.GetModifiedWmlDocument();
+                AssembleFormatting(doc, settings);
             }
+            return streamDoc.GetModifiedWmlDocument();
         }
 
         public static void AssembleFormatting(WordprocessingDocument wDoc, FormattingAssemblerSettings settings)
@@ -136,8 +134,7 @@ namespace Clippit
 
         private static object CleanupTransform(XNode node)
         {
-            XElement element = node as XElement;
-            if (element != null)
+            if (node is XElement element)
             {
                 if (element.Name == W.tabs && element.Element(W.tab) == null)
                     return null;
@@ -155,7 +152,7 @@ namespace Clippit
 
                 return new XElement(element.Name,
                     element.Attributes(),
-                    element.Nodes().Select(n => CleanupTransform(n)));
+                    element.Nodes().Select(CleanupTransform));
             }
             return node;
         }
@@ -215,8 +212,7 @@ namespace Clippit
 
         private static object NormalizeListItemsTransform(FormattingAssemblerInfo fai, WordprocessingDocument wDoc, XNode node, FormattingAssemblerSettings settings)
         {
-            var element = node as XElement;
-            if (element != null)
+            if (node is XElement element)
             {
                 if (element.Name == W.p)
                 {

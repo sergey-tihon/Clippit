@@ -7,7 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Clippit
+namespace Clippit.Excel
 {
     public class SmlCellFormatter
     {

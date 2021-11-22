@@ -3,11 +3,10 @@
 
 /* created on 9/8/2012 9:28:14 AM from peg generator V1.0 using 'ExcelFormula.txt' as input*/
 
-using Peg.Base;
 using System;
 using System.IO;
 
-namespace ExcelFormula
+namespace Clippit.Excel
 {
       
       enum EExcelFormula{Formula= 1, Expression= 2, InfixTerms= 3, PreAndPostTerm= 4, 
@@ -104,14 +103,14 @@ namespace ExcelFormula
                             && ws()
                             && PreAndPostTerm() ) ) );
 		}
+        
         public bool PreAndPostTerm()    /*PreAndPostTerm: (PrefixOperator ws)* Term (PostfixOperator ws)*;*/
         {
-
-           return And(()=>  
-                     OptRepeat(()=> And(()=>    PrefixOperator() && ws() ) )
-                  && Term()
-                  && OptRepeat(()=> And(()=>    PostfixOperator() && ws() ) ) );
-		}
+            return And(() =>
+                OptRepeat(() => And(() => PrefixOperator() && ws()))
+                && Term()
+                && OptRepeat(() => And(() => PostfixOperator() && ws())));
+        }
         public bool Term()    /*Term: (RefInfixTerms / '(' Expression ')' / Constant) ws;*/
         {
 
@@ -166,16 +165,16 @@ namespace ExcelFormula
         public bool ErrorConstant()    /*ErrorConstant: RefConstant / '#DIV/0!' / '#N/A' / '#NAME?' / '#NULL!' / '#NUM!' / '#VALUE!' / '#GETTING_DATA';*/
         {
 
-           return   
-                     RefConstant()
-                  || Char('#','D','I','V','/','0','!')
-                  || Char('#','N','/','A')
-                  || Char('#','N','A','M','E','?')
-                  || Char('#','N','U','L','L','!')
-                  || Char('#','N','U','M','!')
-                  || Char('#','V','A','L','U','E','!')
-                  || Char("#GETTING_DATA");
-		}
+            return
+                RefConstant()
+                || Char('#', 'D', 'I', 'V', '/', '0', '!')
+                || Char('#', 'N', '/', 'A')
+                || Char('#', 'N', 'A', 'M', 'E', '?')
+                || Char('#', 'N', 'U', 'L', 'L', '!')
+                || Char('#', 'N', 'U', 'M', '!')
+                || Char('#', 'V', 'A', 'L', 'U', 'E', '!')
+                || Char("#GETTING_DATA");
+        }
         public bool LogicalConstant()    /*LogicalConstant: 'FALSE' / 'TRUE';*/
         {
 

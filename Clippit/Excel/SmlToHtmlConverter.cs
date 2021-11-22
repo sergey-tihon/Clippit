@@ -4,31 +4,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using System.IO;
 using SixLabors.Fonts;
 
-namespace Clippit
+namespace Clippit.Excel
 {
-    public partial class SmlDocument
-    {
-        [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public XElement ConvertToHtml(SmlToHtmlConverterSettings htmlConverterSettings, string tableName)
-        {
-            return SmlToHtmlConverter.ConvertTableToHtml(this, htmlConverterSettings, tableName);
-        }
-
-        [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public XElement ConvertTableToHtml(string tableName)
-        {
-            SmlToHtmlConverterSettings settings = new SmlToHtmlConverterSettings();
-            return SmlToHtmlConverter.ConvertTableToHtml(this, settings, tableName);
-        }
-    }
-
     [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
     public class SmlToHtmlConverterSettings
     {

@@ -23,22 +23,6 @@ using Image = SixLabors.ImageSharp.Image;
 
 namespace Clippit
 {
-    public partial class WmlDocument
-    {
-        [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public XElement ConvertToHtml(WmlToHtmlConverterSettings htmlConverterSettings)
-        {
-            return WmlToHtmlConverter.ConvertToHtml(this, htmlConverterSettings);
-        }
-
-        [SuppressMessage("ReSharper", "UnusedMember.Global")]
-        public XElement ConvertToHtml(HtmlConverterSettings htmlConverterSettings)
-        {
-            WmlToHtmlConverterSettings settings = new WmlToHtmlConverterSettings(htmlConverterSettings);
-            return WmlToHtmlConverter.ConvertToHtml(this, settings);
-        }
-    }
-
     [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
     public class WmlToHtmlConverterSettings
     {

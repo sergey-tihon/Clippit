@@ -542,7 +542,7 @@ AAsACwDBAgAAbCwAAAAA";
             }
             else if (Util.IsSpreadsheetML(fi.Extension))
             {
-                SmlDocument Sml = new SmlDocument(fileName);
+                var Sml = new SmlDocument(fileName);
                 using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(Sml))
                 using (SpreadsheetDocument wDoc = streamDoc.GetSpreadsheetDocument())
                 {

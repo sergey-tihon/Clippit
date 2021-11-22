@@ -423,12 +423,18 @@ namespace Clippit.Excel
                     if (cell.Value != null)
                     {
                         xw.WriteStartElement("v", ns);
-                        if (cell.Value is DateTime dt)
-                            xw.WriteValue(dt.ToString( "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff"));
-                        else if (cell.Value is DateTimeOffset dts)
-                            xw.WriteValue(dts.ToString( "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz"));
-                        else
-                            xw.WriteValue(cell.Value);
+                        switch (cell.Value)
+                        {
+                            case DateTime dt:
+                                xw.WriteValue(dt.ToString( "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff"));
+                                break;
+                            case DateTimeOffset dts:
+                                xw.WriteValue(dts.ToString( "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz"));
+                                break;
+                            default:
+                                xw.WriteValue(cell.Value);
+                                break;
+                        }
                         xw.WriteEndElement();
                     }
                     xw.WriteEndElement();

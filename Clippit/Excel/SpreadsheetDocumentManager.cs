@@ -6,7 +6,7 @@ using System.Linq;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace Clippit
+namespace Clippit.Excel
 {
     /// <summary>
     /// Manages SpreadsheetDocument content

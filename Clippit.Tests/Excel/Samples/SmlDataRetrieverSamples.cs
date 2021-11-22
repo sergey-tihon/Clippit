@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Clippit.Excel;
 using Xunit;
 using Xunit.Abstractions;
 

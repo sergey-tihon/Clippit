@@ -3,6 +3,7 @@
 
 using System.IO;
 using System.Linq;
+using Clippit.Excel;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
 using Xunit.Abstractions;

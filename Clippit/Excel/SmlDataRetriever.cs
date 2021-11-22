@@ -3,33 +3,27 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using System.IO;
 
-namespace Clippit
+namespace Clippit.Excel
 {
     public class SmlDataRetriever
     {
         public static XElement RetrieveSheet(SmlDocument smlDoc, string sheetName)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
-                using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(ms, false))
-                {
-                    return RetrieveSheet(sDoc, sheetName);
-                }
-            }
+            using var ms = new MemoryStream();
+            ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
+            using var sDoc = SpreadsheetDocument.Open(ms, false);
+            return RetrieveSheet(sDoc, sheetName);
         }
 
         public static XElement RetrieveSheet(string fileName, string sheetName)
         {
-            using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(fileName, false))
-            {
-                return RetrieveSheet(sDoc, sheetName);
-            }
+            using var sDoc = SpreadsheetDocument.Open(fileName, false);
+            return RetrieveSheet(sDoc, sheetName);
         }
 
         public static XElement RetrieveSheet(SpreadsheetDocument sDoc, string sheetName)
@@ -50,49 +44,36 @@ namespace Clippit
 
         public static XElement RetrieveRange(SmlDocument smlDoc, string sheetName, string range)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
-                using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(ms, false))
-                {
-                    return RetrieveRange(sDoc, sheetName, range);
-                }
-            }
+            using var ms = new MemoryStream();
+            ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
+            using var sDoc = SpreadsheetDocument.Open(ms, false);
+            return RetrieveRange(sDoc, sheetName, range);
         }
 
         public static XElement RetrieveRange(string fileName, string sheetName, string range)
         {
-            using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(fileName, false))
-            {
-                return RetrieveRange(sDoc, sheetName, range);
-            }
+            using var sDoc = SpreadsheetDocument.Open(fileName, false);
+            return RetrieveRange(sDoc, sheetName, range);
         }
 
         public static XElement RetrieveRange(SpreadsheetDocument sDoc, string sheetName, string range)
         {
-            int leftColumn, topRow, rightColumn, bottomRow;
-            XlsxTables.ParseRange(range, out leftColumn, out topRow, out rightColumn, out bottomRow);
+            XlsxTables.ParseRange(range, out var leftColumn, out var topRow, out var rightColumn, out var bottomRow);
             return RetrieveRange(sDoc, sheetName, leftColumn, topRow, rightColumn, bottomRow);
         }
 
         public static XElement RetrieveRange(SmlDocument smlDoc, string sheetName, int leftColumn, int topRow, int rightColumn, int bottomRow)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
-                using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(ms, false))
-                {
-                    return RetrieveRange(sDoc, sheetName, leftColumn, topRow, rightColumn, bottomRow);
-                }
-            }
+            using var ms = new MemoryStream();
+            ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
+            using var sDoc = SpreadsheetDocument.Open(ms, false);
+            return RetrieveRange(sDoc, sheetName, leftColumn, topRow, rightColumn, bottomRow);
         }
 
         public static XElement RetrieveRange(string fileName, string sheetName, int leftColumn, int topRow, int rightColumn, int bottomRow)
         {
-            using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(fileName, false))
-            {
-                return RetrieveRange(sDoc, sheetName, leftColumn, topRow, rightColumn, bottomRow);
-            }
+            using var sDoc = SpreadsheetDocument.Open(fileName, false);
+            return RetrieveRange(sDoc, sheetName, leftColumn, topRow, rightColumn, bottomRow);
         }
 
         public static XElement RetrieveRange(SpreadsheetDocument sDoc, string sheetName, int leftColumn, int topRow, int rightColumn, int bottomRow)

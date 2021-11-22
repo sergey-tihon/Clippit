@@ -254,7 +254,7 @@ namespace Clippit
 
             if (settings.ProgressFunction != null)
             {
-                WmlToXmlProgressInfo pi = new WmlToXmlProgressInfo()
+                var pi = new WmlToXmlProgressInfo()
                 {
                     ContentCount = 0,
                     ContentTotal = 0,
@@ -263,10 +263,12 @@ namespace Clippit
                 settings.ProgressFunction(pi);
             }
 
-            FormattingAssemblerSettings formattingAssemblerSettings = new FormattingAssemblerSettings();
-            formattingAssemblerSettings.RemoveStyleNamesFromParagraphAndRunProperties = false;
-            formattingAssemblerSettings.RestrictToSupportedLanguages = false;
-            formattingAssemblerSettings.RestrictToSupportedNumberingFormats = false;
+            var formattingAssemblerSettings = new FormattingAssemblerSettings
+            {
+                RemoveStyleNamesFromParagraphAndRunProperties = false,
+                RestrictToSupportedLanguages = false,
+                RestrictToSupportedNumberingFormats = false
+            };
             FormattingAssembler.AssembleFormatting(wDoc, formattingAssemblerSettings);
 
             ContentTypeApplierInfo ctai = new ContentTypeApplierInfo();
@@ -312,18 +314,14 @@ namespace Clippit
 
         public static XElement ProduceContentTypeXml(WmlDocument document, WmlToXmlSettings settings)
         {
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(document))
-            {
-                using (WordprocessingDocument doc = streamDoc.GetWordprocessingDocument())
-                {
-                    return ProduceContentTypeXml(doc, settings);
-                }
-            }
+            using var streamDoc = new OpenXmlMemoryStreamDocument(document);
+            using var doc = streamDoc.GetWordprocessingDocument();
+            return ProduceContentTypeXml(doc, settings);
         }
 
         public static XElement ProduceContentTypeXml(WordprocessingDocument wDoc, WmlToXmlSettings settings)
         {
-            if (settings.DocumentType == null || settings.DocumentType == "")
+            if (string.IsNullOrEmpty(settings.DocumentType))
                 throw new OpenXmlPowerToolsException("DocumentType must be set");
 
             var mainPart = wDoc.MainDocumentPart;
@@ -429,7 +427,7 @@ namespace Clippit
             foreach (var item in contentTypeXml.Elements())
             {
                 if (!hierarchyElements.Contains(item.Name))
-                    throw new OpenXmlPowerToolsException(string.Format("Invalid Content Type Hierarchy Definition - missing def for {0}", item.Name));
+                    throw new OpenXmlPowerToolsException($"Invalid Content Type Hierarchy Definition - missing def for {item.Name}");
 
                 bool found = false;
                 var possibleChildItem = currentlyLookingAt.Element(item.Name);

@@ -4,7 +4,7 @@
 using System;
 using System.Text;
 
-namespace ExcelFormula
+namespace Clippit.Excel
 {
     public class ParseFormula
     {
@@ -18,7 +18,7 @@ namespace ExcelFormula
             {
                 parserResult = parser.Formula();
             }
-            catch (Peg.Base.PegException)
+            catch (PegException)
             {
             }
             if (!parserResult)
@@ -42,7 +42,7 @@ namespace ExcelFormula
         }
 
         // Recursive function that will replace values from last to first
-        private void ReplaceNode(Peg.Base.PegNode node, int id, string oldName, string newName, StringBuilder text)
+        private void ReplaceNode(PegNode node, int id, string oldName, string newName, StringBuilder text)
         {
             if (node.next_ != null)
                 ReplaceNode(node.next_, id, oldName, newName, text);
@@ -56,7 +56,7 @@ namespace ExcelFormula
         }
 
         // Recursive function that will adjust relative cells from last to first
-        private void ReplaceRelativeCell(Peg.Base.PegNode node, int rowOffset, int colOffset, StringBuilder text)
+        private void ReplaceRelativeCell(PegNode node, int rowOffset, int colOffset, StringBuilder text)
         {
             if (node.next_ != null)
                 ReplaceRelativeCell(node.next_, rowOffset, colOffset, text);

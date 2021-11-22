@@ -47,10 +47,12 @@ Here is creating a new WmlDocument:
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
 using System.Xml.Linq;
+using Clippit.Excel;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit
@@ -171,7 +173,7 @@ namespace Clippit
                 {
                     try
                     {
-                        var z = part.OpenXmlPart.RootElement;
+                        var _ = part.OpenXmlPart.RootElement;
                     }
                     catch (Exception)
                     {
@@ -390,6 +392,18 @@ namespace Clippit
             : base(fileName, memStream, convertToTransitional)
         {
         }
+        
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
+        public XElement ConvertToHtml(WmlToHtmlConverterSettings htmlConverterSettings)
+        {
+            return WmlToHtmlConverter.ConvertToHtml(this, htmlConverterSettings);
+        }
+
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
+        public XElement ConvertToHtml(HtmlConverterSettings htmlConverterSettings)
+        {
+            return WmlToHtmlConverter.ConvertToHtml(this, new WmlToHtmlConverterSettings(htmlConverterSettings));
+        }
     }
 
     public partial class SmlDocument : OpenXmlPowerToolsDocument
@@ -447,6 +461,15 @@ namespace Clippit
             : base(fileName, memStream, convertToTransitional)
         {
         }
+        
+        
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
+        public XElement ConvertToHtml(SmlToHtmlConverterSettings htmlConverterSettings, string tableName) => 
+            SmlToHtmlConverter.ConvertTableToHtml(this, htmlConverterSettings, tableName);
+
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
+        public XElement ConvertTableToHtml(string tableName) => 
+            SmlToHtmlConverter.ConvertTableToHtml(this, new SmlToHtmlConverterSettings(), tableName);
     }
 
     public partial class PmlDocument : OpenXmlPowerToolsDocument

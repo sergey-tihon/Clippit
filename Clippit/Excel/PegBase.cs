@@ -7,13 +7,15 @@
  *  20080929;UTF16BE;Added UTF16BE read support to <<FileLoader.LoadFile(out string src)>>
  * <</History>>
 */
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using System.Diagnostics;
-using System.Text;
+
 using System;
-namespace Peg.Base
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+namespace Clippit.Excel
 {
     #region Input File Support
     public enum EncodingClass { unicode, utf8, binary, ascii };
@@ -101,40 +103,32 @@ namespace Peg.Base
         }
         static FileEncoding DetermineUnicodeWhenFirstCharIsAscii(string path)
         {
-            using (BinaryReader br = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read)))
-            {
-                byte[] startBytes = br.ReadBytes(4);
-                if (startBytes.Length == 0) return FileEncoding.none;
-                if (startBytes.Length == 1 || startBytes.Length == 3) return FileEncoding.utf8;
-                if (startBytes.Length == 2 && startBytes[0] != 0) return FileEncoding.utf16le;
-                if (startBytes.Length == 2 && startBytes[0] == 0) return FileEncoding.utf16be;
-                if (startBytes[0] == 0 && startBytes[1] == 0) return FileEncoding.utf32be;
-                if (startBytes[0] == 0 && startBytes[1] != 0) return FileEncoding.utf16be;
-                if (startBytes[0] != 0 && startBytes[1] == 0) return FileEncoding.utf16le;
-                return FileEncoding.utf8;
-            }
+            using var br = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read));
+            var startBytes = br.ReadBytes(4);
+            if (startBytes.Length == 0) return FileEncoding.none;
+            if (startBytes.Length is 1 or 3) return FileEncoding.utf8;
+            if (startBytes.Length == 2 && startBytes[0] != 0) return FileEncoding.utf16le;
+            if (startBytes.Length == 2 && startBytes[0] == 0) return FileEncoding.utf16be;
+            if (startBytes[0] == 0 && startBytes[1] == 0) return FileEncoding.utf32be;
+            if (startBytes[0] == 0 && startBytes[1] != 0) return FileEncoding.utf16be;
+            if (startBytes[0] != 0 && startBytes[1] == 0) return FileEncoding.utf16le;
+            return FileEncoding.utf8;
         }
         FileEncoding GetEncoding(EncodingClass encodingClass, UnicodeDetection detection, string path)
         {
-            switch (encodingClass)
+            return encodingClass switch
             {
-                case EncodingClass.ascii: return FileEncoding.ascii;
-                case EncodingClass.unicode:
-                    {
-                        if (detection == UnicodeDetection.FirstCharIsAscii)
-                        {
-                            return DetermineUnicodeWhenFirstCharIsAscii(path);
-                        }
-                        else if (detection == UnicodeDetection.BOM)
-                        {
-                            return FileEncoding.uniCodeBOM;
-                        }
-                        else return FileEncoding.unicode;
-                    }
-                case EncodingClass.utf8: return FileEncoding.utf8;
-                case EncodingClass.binary: return FileEncoding.binary;
-            }
-            return FileEncoding.none;
+                EncodingClass.ascii => FileEncoding.ascii,
+                EncodingClass.unicode => detection switch
+                {
+                    UnicodeDetection.FirstCharIsAscii => DetermineUnicodeWhenFirstCharIsAscii(path),
+                    UnicodeDetection.BOM => FileEncoding.uniCodeBOM,
+                    _ => FileEncoding.unicode
+                },
+                EncodingClass.utf8 => FileEncoding.utf8,
+                EncodingClass.binary => FileEncoding.binary,
+                _ => FileEncoding.none
+            };
         }
         string path_;
         public readonly FileEncoding encoding_;
@@ -450,16 +444,10 @@ namespace Peg.Base
         {
             return 1;
         }
-        int LenIdAsName(PegNode p)
-        {
-            string name = GetNodeName_(p);
-            return name.Length;
-        }
-        void PrintIdAsName(PegNode p)
-        {
-            string name = GetNodeName_(p);
-            treeOut_.Write(name);
-        }
+        int LenIdAsName(PegNode p) => GetNodeName_(p).Length;
+
+        void PrintIdAsName(PegNode p) => treeOut_.Write(GetNodeName_(p));
+
         #endregion Methods
     }
     #endregion Syntax/Parse-Tree related classes

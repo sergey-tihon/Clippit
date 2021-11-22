@@ -7,10 +7,8 @@ namespace Clippit
 {
     public static class ColorParser
     {
-        public static Color FromName(string name)
-        {
-            return Color.FromName(name);
-        }
+        public static Color FromName(string name) => 
+            Color.FromName(name);
 
         public static bool TryFromName(string name, out Color color)
         {
@@ -22,15 +20,13 @@ namespace Clippit
             }
             catch
             {
-                color = default(Color);
+                color = default;
 
                 return false;
             }
         }
 
-        public static bool IsValidName(string name)
-        {
-            return TryFromName(name, out _);
-        }
+        public static bool IsValidName(string name) => 
+            TryFromName(name, out _);
     }
 }

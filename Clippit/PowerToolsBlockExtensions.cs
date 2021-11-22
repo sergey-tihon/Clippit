@@ -30,7 +30,7 @@ namespace Clippit
         /// </param>
         public static void BeginPowerToolsBlock(this OpenXmlPackage package)
         {
-            if (package == null) throw new ArgumentNullException(nameof(package));
+            if (package is null) throw new ArgumentNullException(nameof(package));
 
             package.RemovePowerToolsAnnotations();
             package.Save();
@@ -47,9 +47,9 @@ namespace Clippit
         /// </param>
         public static void EndPowerToolsBlock(this OpenXmlPackage package)
         {
-            if (package == null) throw new ArgumentNullException(nameof(package));
+            if (package is null) throw new ArgumentNullException(nameof(package));
 
-            foreach (OpenXmlPart part in package.GetAllParts())
+            foreach (var part in package.GetAllParts())
             {
                 if (part.Annotations<XDocument>().Any() && part.RootElement != null)
                     part.RootElement.Reload();
@@ -58,9 +58,9 @@ namespace Clippit
 
         private static void RemovePowerToolsAnnotations(this OpenXmlPackage package)
         {
-            if (package == null) throw new ArgumentNullException(nameof(package));
+            if (package is null) throw new ArgumentNullException(nameof(package));
 
-            foreach (OpenXmlPart part in package.GetAllParts())
+            foreach (var part in package.GetAllParts())
             {
                 part.RemoveAnnotations<XDocument>();
                 part.RemoveAnnotations<XmlNamespaceManager>();

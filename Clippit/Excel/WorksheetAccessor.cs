@@ -6,9 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using ExcelFormula;
 
-namespace Clippit
+namespace Clippit.Excel
 {
     // Classes for "bulk load" of a spreadsheet
     public class MemorySpreadsheet

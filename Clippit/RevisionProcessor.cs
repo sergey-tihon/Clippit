@@ -18,14 +18,12 @@ namespace Clippit
     {
         public static WmlDocument RejectRevisions(WmlDocument document)
         {
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(document))
+            using var streamDoc = new OpenXmlMemoryStreamDocument(document);
+            using (var doc = streamDoc.GetWordprocessingDocument())
             {
-                using (WordprocessingDocument doc = streamDoc.GetWordprocessingDocument())
-                {
-                    RejectRevisions(doc);
-                }
-                return streamDoc.GetModifiedWmlDocument();
+                RejectRevisions(doc);
             }
+            return streamDoc.GetModifiedWmlDocument();
         }
 
         public static void RejectRevisions(WordprocessingDocument doc)
@@ -67,8 +65,7 @@ namespace Clippit
 
         private static object RejectRevisionsForPartTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
+            if (node is XElement element)
             {
                 ////////////////////////////////////////////////////////////////////////////////////////
                 // Inserted Numbering Properties
@@ -128,9 +125,7 @@ namespace Clippit
                 if (element.Name == W.pPr &&
                     element.Element(W.pPrChange) != null)
                 {
-                    var pPr = element.Element(W.pPrChange).Element(W.pPr);
-                    if (pPr == null)
-                        pPr = new XElement(W.pPr);
+                    var pPr = element.Element(W.pPrChange).Element(W.pPr) ?? new XElement(W.pPr);
                     var new_pPr = new XElement(pPr); // clone it
                     new_pPr.Add(RejectRevisionsForPartTransform(element.Element(W.rPr)));
                     return RejectRevisionsForPartTransform(new_pPr);

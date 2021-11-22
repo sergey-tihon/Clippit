@@ -19,18 +19,16 @@ namespace Clippit
         {
             get
             {
-                using (MemoryStream ms = new MemoryStream(ParentWmlDocument.DocumentByteArray))
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, false))
-                {
-                    WordprocessingCommentsPart commentsPart = wDoc.MainDocumentPart.WordprocessingCommentsPart;
-                    if (commentsPart == null)
-                        return null;
-                    XElement partElement = commentsPart.GetXDocument().Root;
-                    var childNodes = partElement.Nodes().ToList();
-                    foreach (var item in childNodes)
-                        item.Remove();
-                    return new PtWordprocessingCommentsPart(this.ParentWmlDocument, commentsPart.Uri, partElement.Name, partElement.Attributes(), childNodes);
-                }
+                using var ms = new MemoryStream(ParentWmlDocument.DocumentByteArray);
+                using var wDoc = WordprocessingDocument.Open(ms, false);
+                var commentsPart = wDoc.MainDocumentPart.WordprocessingCommentsPart;
+                if (commentsPart == null)
+                    return null;
+                var partElement = commentsPart.GetXDocument().Root;
+                var childNodes = partElement.Nodes().ToList();
+                foreach (var item in childNodes)
+                    item.Remove();
+                return new PtWordprocessingCommentsPart(this.ParentWmlDocument, commentsPart.Uri, partElement.Name, partElement.Attributes(), childNodes);
             }
         }
 
@@ -66,39 +64,35 @@ namespace Clippit
         {
             get
             {
-                using (MemoryStream ms = new MemoryStream(this.DocumentByteArray))
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, false))
-                {
-                    XElement partElement = wDoc.MainDocumentPart.GetXDocument().Root;
-                    var childNodes = partElement.Nodes().ToList();
-                    foreach (var item in childNodes)
-                        item.Remove();
-                    return new PtMainDocumentPart(this, wDoc.MainDocumentPart.Uri, partElement.Name, partElement.Attributes(), childNodes);
-                }
+                using var ms = new MemoryStream(this.DocumentByteArray);
+                using var wDoc = WordprocessingDocument.Open(ms, false);
+                var partElement = wDoc.MainDocumentPart.GetXDocument().Root;
+                var childNodes = partElement.Nodes().ToList();
+                foreach (var item in childNodes)
+                    item.Remove();
+                return new PtMainDocumentPart(this, wDoc.MainDocumentPart.Uri, partElement.Name, partElement.Attributes(), childNodes);
             }
         }
 
         public WmlDocument(WmlDocument other, params XElement[] replacementParts)
             : base(other)
         {
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(this))
+            using var streamDoc = new OpenXmlMemoryStreamDocument(this);
+            using (var package = streamDoc.GetPackage())
             {
-                using (Package package = streamDoc.GetPackage())
+                foreach (var replacementPart in replacementParts)
                 {
-                    foreach (var replacementPart in replacementParts)
-                    {
-                        XAttribute uriAttribute = replacementPart.Attribute(PtOpenXml.Uri);
-                        if (uriAttribute == null)
-                            throw new OpenXmlPowerToolsException("Replacement part does not contain a Uri as an attribute");
-                        String uri = uriAttribute.Value;
-                        var part = package.GetParts().FirstOrDefault(p => p.Uri.ToString() == uri);
-                        using (Stream partStream = part.GetStream(FileMode.Create, FileAccess.Write))
-                        using (XmlWriter partXmlWriter = XmlWriter.Create(partStream))
-                            replacementPart.Save(partXmlWriter);
-                    }
+                    var uriAttribute = replacementPart.Attribute(PtOpenXml.Uri);
+                    if (uriAttribute == null)
+                        throw new OpenXmlPowerToolsException("Replacement part does not contain a Uri as an attribute");
+                    var uri = uriAttribute.Value;
+                    var part = package.GetParts().FirstOrDefault(p => p.Uri.ToString() == uri);
+                    using var partStream = part.GetStream(FileMode.Create, FileAccess.Write);
+                    using var partXmlWriter = XmlWriter.Create(partStream);
+                    replacementPart.Save(partXmlWriter);
                 }
-                this.DocumentByteArray = streamDoc.GetModifiedDocument().DocumentByteArray;
             }
+            this.DocumentByteArray = streamDoc.GetModifiedDocument().DocumentByteArray;
         }
     }
 }

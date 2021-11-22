@@ -53,8 +53,7 @@ namespace Clippit
                 AbstractNum = numXDoc
                     .Root
                     .Elements(W.abstractNum)
-                    .Where(e => (int)e.Attribute(W.abstractNumId) == AbstractNumId)
-                    .FirstOrDefault();
+                    .FirstOrDefault(e => (int)e.Attribute(W.abstractNumId) == AbstractNumId);
             }
 
             public int? StartOverride(int ilvl)
@@ -75,9 +74,7 @@ namespace Clippit
                 var lvlOverride = Num
                     .Elements(W.lvlOverride)
                     .FirstOrDefault(nlo => (int)nlo.Attribute(W.ilvl) == ilvl);
-                if (lvlOverride != null)
-                    return lvlOverride.Element(W.lvl);
-                return null;
+                return lvlOverride?.Element(W.lvl);
             }
 
             public XElement AbstractLvl(int ilvl)

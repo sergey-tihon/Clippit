@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using System.Globalization;
+using Clippit.Excel;
 using SixLabors.Fonts;
 
 namespace Clippit
@@ -651,19 +652,14 @@ namespace Clippit
 
         private static string GetFontFromFontType(FormattingAssembler.CharStyleAttributes csa, FormattingAssembler.FontType ft)
         {
-            switch (ft)
+            return ft switch
             {
-                case FormattingAssembler.FontType.Ascii:
-                    return csa.AsciiFont;
-                case FormattingAssembler.FontType.CS:
-                    return csa.CsFont;
-                case FormattingAssembler.FontType.EastAsia:
-                    return csa.EastAsiaFont;
-                case FormattingAssembler.FontType.HAnsi:
-                    return csa.HAnsiFont;
-                default: // dummy
-                    return csa.AsciiFont;
-            }
+                FormattingAssembler.FontType.Ascii => csa.AsciiFont,
+                FormattingAssembler.FontType.CS => csa.CsFont,
+                FormattingAssembler.FontType.EastAsia => csa.EastAsiaFont,
+                FormattingAssembler.FontType.HAnsi => csa.HAnsiFont,
+                _ => csa.AsciiFont
+            };
         }
 
         public static XElement GetXlsxMetrics(SmlDocument smlDoc, MetricsGetterSettings settings)
