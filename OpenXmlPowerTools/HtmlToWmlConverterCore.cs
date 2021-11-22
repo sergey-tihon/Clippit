@@ -100,11 +100,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using Clippit.HtmlToWml.CSS;
-using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -700,14 +698,14 @@ namespace Clippit.HtmlToWml
                     }
                 }
 
-                int pixWidth = CalcWidthOfRunInPixels(run) ?? 0;
+                int pixWidth = (int?)WordprocessingMLUtil.CalcWidthOfRunInPixels(run) ?? 0;
 
                 // calc width of non breaking spaces
                 var npSpRun = new XElement(W.r,
                     run.Attributes(),
                     run.Elements(W.rPr),
                     new XElement(W.t, "\u00a0"));
-                int nbSpWidth = CalcWidthOfRunInPixels(npSpRun) ?? 0;
+                int nbSpWidth = (int?)WordprocessingMLUtil.CalcWidthOfRunInPixels(npSpRun) ?? 0;
                 if (nbSpWidth == 0)
                     continue;
 
@@ -1140,85 +1138,6 @@ namespace Clippit.HtmlToWml
             );
 
             return rFonts;
-        }
-
-        private static int? CalcWidthOfRunInPixels(XElement r)
-        {
-            var fontName = (string)r.Attribute(PtOpenXml.FontName) ??
-               (string)r.Ancestors(W.p).First().Attribute(PtOpenXml.FontName);
-            if (fontName is null)
-                throw new OpenXmlPowerToolsException("Internal Error, should have FontName attribute");
-            if (UnknownFonts.Contains(fontName))
-                return 0;
-
-            if (UnknownFonts.Contains(fontName))
-                return null;
-
-            var rPr = r.Element(W.rPr);
-            if (rPr == null)
-                return null;
-
-            var sz = GetFontSize(r) ?? 22m;
-
-            // unknown font families will throw ArgumentException, in which case just return 0
-            if (!KnownFamilies.Contains(fontName))
-                return 0;
-
-            // in theory, all unknown fonts are found by the above test, but if not...
-            FontFamily ff;
-            try
-            {
-                //ff = new FontFamily(fontName);
-                ff = SystemFonts.Find(fontName);
-            }
-            catch (ArgumentException)
-            {
-                UnknownFonts.Add(fontName);
-                return 0;
-            }
-
-            var fs = FontStyle.Regular;
-            if (Util.GetBoolProp(rPr, W.b) == true || Util.GetBoolProp(rPr, W.bCs) == true)
-                fs |= FontStyle.Bold;
-            if (Util.GetBoolProp(rPr, W.i) == true || Util.GetBoolProp(rPr, W.iCs) == true)
-                fs |= FontStyle.Italic;
-
-            // Appended blank as a quick fix to accommodate &nbsp; that will get
-            // appended to some layout-critical runs such as list item numbers.
-            // In some cases, this might not be required or even wrong, so this
-            // must be revisited.
-            // TODO: Revisit.
-            var runText = r.DescendantsTrimmed(W.txbxContent)
-                .Where(e => e.Name == W.t)
-                .Select(t => (string)t)
-                .StringConcatenate() + " ";
-
-            var tabLength = r.DescendantsTrimmed(W.txbxContent)
-                .Where(e => e.Name == W.tab)
-                .Select(t => (decimal)t.Attribute(PtOpenXml.TabWidth))
-                .Sum();
-
-            if (runText.Length == 0 && tabLength == 0)
-                return 0;
-
-            var multiplier = runText.Length switch
-            {
-                <= 2 => 100,
-                <= 4 => 50,
-                <= 8 => 25,
-                <= 16 => 12,
-                <= 32 => 6,
-                _ => 1
-            };
-            if (multiplier != 1)
-            {
-                var sb = new StringBuilder();
-                for (var i = 0; i < multiplier; i++)
-                    sb.Append(runText);
-                runText = sb.ToString();
-            }
-
-            return MetricsGetter.GetTextWidth(ff, fs, sz, runText) / multiplier;
         }
 
         // The algorithm for this method comes from the implementer notes in [MS-OI29500].pdf
@@ -1877,23 +1796,6 @@ namespace Clippit.HtmlToWml
                 return FontType.EastAsia;
             }
             return FontType.HAnsi;
-        }
-
-        private static readonly HashSet<string> UnknownFonts = new();
-        private static HashSet<string> s_knownFamilies;
-
-        private static HashSet<string> KnownFamilies
-        {
-            get
-            {
-                if (s_knownFamilies is null)
-                {
-                    s_knownFamilies = new HashSet<string>();
-                    foreach (var fam in SystemFonts.Families)
-                        s_knownFamilies.Add(fam.Name);
-                }
-                return s_knownFamilies;
-            }
         }
 
         private static HashSet<char> WeakAndNeutralDirectionalCharacters = new HashSet<char>() {

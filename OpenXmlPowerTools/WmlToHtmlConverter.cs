@@ -580,7 +580,7 @@ namespace Clippit
                     runContainingTabToReplace.Elements(W.rPr),
                     new XElement(W.t, leaderChar));
 
-                var widthOfLeaderChar = CalcWidthOfRunInTwips(dummyRun);
+                var widthOfLeaderChar = WordprocessingMLUtil.CalcWidthOfRunInTwips(dummyRun);
 
                 bool forceArial = false;
                 if (widthOfLeaderChar == 0)
@@ -589,7 +589,7 @@ namespace Clippit
                         new XAttribute(PtOpenXml.FontName, "Arial"),
                         runContainingTabToReplace.Elements(W.rPr),
                         new XElement(W.t, leaderChar));
-                    widthOfLeaderChar = CalcWidthOfRunInTwips(dummyRun);
+                    widthOfLeaderChar = WordprocessingMLUtil.CalcWidthOfRunInTwips(dummyRun);
                     forceArial = true;
                 }
 
@@ -1308,7 +1308,7 @@ namespace Clippit
             var sz = paragraph
                 .DescendantsTrimmed(W.txbxContent)
                 .Where(e => e.Name == W.r)
-                .Select(r => GetFontSize(r))
+                .Select(WordprocessingMLUtil.GetFontSize)
                 .Max();
             if (sz != null)
                 style.AddIfMissing("font-size", string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", sz / 2.0m));
@@ -1453,7 +1453,7 @@ namespace Clippit
 
             // W.sz
             var languageType = (string)run.Attribute(PtOpenXml.LanguageType);
-            var sz = GetFontSize(languageType, rPr);
+            var sz = WordprocessingMLUtil.GetFontSize(languageType, rPr);
             if (sz != null)
                 style.AddIfMissing("font-size", string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", sz/2.0m));
 
@@ -1501,29 +1501,7 @@ namespace Clippit
 
             return style;
         }
-
-        private static decimal? GetFontSize(XElement e)
-        {
-            var languageType = (string)e.Attribute(PtOpenXml.LanguageType);
-            if (e.Name == W.p)
-            {
-                return GetFontSize(languageType, e.Elements(W.pPr).Elements(W.rPr).FirstOrDefault());
-            }
-            if (e.Name == W.r)
-            {
-                return GetFontSize(languageType, e.Element(W.rPr));
-            }
-            return null;
-        }
-
-        private static decimal? GetFontSize(string languageType, XElement rPr)
-        {
-            if (rPr == null) return null;
-            return languageType == "bidi"
-                ? (decimal?) rPr.Elements(W.szCs).Attributes(W.val).FirstOrDefault()
-                : (decimal?) rPr.Elements(W.sz).Attributes(W.val).FirstOrDefault();
-        }
-
+        
         private static void DetermineRunMarks(XElement run, XElement rPr, Dictionary<string, string> style, out XEntity runStartMark, out XEntity runEndMark)
         {
             runStartMark = null;
@@ -1993,7 +1971,7 @@ namespace Clippit
                             runContainingTabToReplace.Elements(W.rPr),
                             new XElement(W.t, textAfterTab));
 
-                        var widthOfTextAfterTab = CalcWidthOfRunInTwips(dummyRun2);
+                        var widthOfTextAfterTab = WordprocessingMLUtil.CalcWidthOfRunInTwips(dummyRun2);
                         var delta2 = (int)tabAfterText.Attribute(W.pos) - widthOfTextAfterTab - twipCounter;
                         if (delta2 < 0)
                             delta2 = 0;
@@ -2040,7 +2018,7 @@ namespace Clippit
                                 runContainingTabToReplace.Elements(W.rPr),
                                 new XElement(W.t, mantissa));
 
-                            var widthOfMantissa = CalcWidthOfRunInTwips(dummyRun4);
+                            var widthOfMantissa = WordprocessingMLUtil.CalcWidthOfRunInTwips(dummyRun4);
                             var delta2 = (int)tabAfterText.Attribute(W.pos) - widthOfMantissa - twipCounter;
                             if (delta2 < 0)
                                 delta2 = 0;
@@ -2055,7 +2033,7 @@ namespace Clippit
                                 runContainingTabToReplace.Elements(W.rPr),
                                 new XElement(W.t, decims));
 
-                            var widthOfDecims = CalcWidthOfRunInTwips(dummyRun4);
+                            var widthOfDecims = WordprocessingMLUtil.CalcWidthOfRunInTwips(dummyRun4);
                             twipCounter = Math.Max((int)tabAfterText.Attribute(W.pos) + widthOfDecims, twipCounter + widthOfMantissa + widthOfDecims);
 
                             var lastElement = textElementsToMeasure.LastOrDefault();
@@ -2075,7 +2053,7 @@ namespace Clippit
                                 runContainingTabToReplace.Elements(W.rPr),
                                 new XElement(W.t, textAfterTab));
 
-                            var widthOfTextAfterTab = CalcWidthOfRunInTwips(dummyRun2);
+                            var widthOfTextAfterTab = WordprocessingMLUtil.CalcWidthOfRunInTwips(dummyRun2);
                             var delta2 = (int)tabAfterText.Attribute(W.pos) - widthOfTextAfterTab - twipCounter;
                             if (delta2 < 0)
                                 delta2 = 0;
@@ -2119,7 +2097,7 @@ namespace Clippit
                             runContainingTabToReplace.Elements(W.rPr),
                             new XElement(W.t, textAfterTab));
 
-                        var widthOfText = CalcWidthOfRunInTwips(dummyRun4);
+                        var widthOfText = WordprocessingMLUtil.CalcWidthOfRunInTwips(dummyRun4);
                         var delta2 = (int)tabAfterText.Attribute(W.pos) - (widthOfText / 2) - twipCounter;
                         if (delta2 < 0)
                             delta2 = 0;
@@ -2234,102 +2212,6 @@ namespace Clippit
                         new XAttribute(W.pos, r * defaultTabStop))));
             }
             return tabs;
-        }
-
-        private static readonly HashSet<string> UnknownFonts = new();
-        private static HashSet<string> s_knownFamilies;
-
-        private static HashSet<string> KnownFamilies
-        {
-            get
-            {
-                if (s_knownFamilies is null)
-                {
-                    s_knownFamilies = new HashSet<string>();
-                    foreach (var fam in SystemFonts.Families)
-                        s_knownFamilies.Add(fam.Name);
-                }
-                return s_knownFamilies;
-            }
-        }
-
-        private static int CalcWidthOfRunInTwips(XElement r)
-        {
-            var fontName = (string)r.Attribute(PtOpenXml.pt + "FontName") ??
-                           (string)r.Ancestors(W.p).First().Attribute(PtOpenXml.pt + "FontName");
-            if (fontName == null)
-                throw new OpenXmlPowerToolsException("Internal Error, should have FontName attribute");
-            if (UnknownFonts.Contains(fontName))
-                return 0;
-
-            var rPr = r.Element(W.rPr);
-            if (rPr == null)
-                throw new OpenXmlPowerToolsException("Internal Error, should have run properties");
-
-            var sz = GetFontSize(r) ?? 22m;
-
-            // unknown font families will throw ArgumentException, in which case just return 0
-            if (!KnownFamilies.Contains(fontName))
-                return 0;
-
-            // in theory, all unknown fonts are found by the above test, but if not...
-            FontFamily ff;
-            try
-            {
-                //ff = new FontFamily(fontName);
-                ff = SystemFonts.Find(fontName);
-            }
-            catch (ArgumentException)
-            {
-                UnknownFonts.Add(fontName);
-
-                return 0;
-            }
-
-            var fs = FontStyle.Regular;
-            if (GetBoolProp(rPr, W.b) || GetBoolProp(rPr, W.bCs))
-                fs |= FontStyle.Bold;
-            if (GetBoolProp(rPr, W.i) || GetBoolProp(rPr, W.iCs))
-                fs |= FontStyle.Italic;
-
-            // Appended blank as a quick fix to accommodate &nbsp; that will get
-            // appended to some layout-critical runs such as list item numbers.
-            // In some cases, this might not be required or even wrong, so this
-            // must be revisited.
-            // TODO: Revisit.
-            var runText = r.DescendantsTrimmed(W.txbxContent)
-                .Where(e => e.Name == W.t)
-                .Select(t => (string) t)
-                .StringConcatenate() + " ";
-
-            var tabLength = r.DescendantsTrimmed(W.txbxContent)
-                .Where(e => e.Name == W.tab)
-                .Select(t => (decimal)t.Attribute(PtOpenXml.TabWidth))
-                .Sum();
-
-            if (runText.Length == 0 && tabLength == 0)
-                return 0;
-
-            int multiplier = runText.Length switch
-            {
-                <= 2 => 100,
-                <= 4 => 50,
-                <= 8 => 25,
-                <= 16 => 12,
-                <= 32 => 6,
-                _ => 1
-            };
-            if (multiplier != 1)
-            {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < multiplier; i++)
-                    sb.Append(runText);
-                runText = sb.ToString();
-            }
-
-            var w = MetricsGetter.GetTextWidth(ff, fs, sz, runText);
-
-            return (int)(w / 96m * 1440m / multiplier + tabLength * 1440m);
         }
 
         private static void InsertAppropriateNonbreakingSpaces(WordprocessingDocument wordDoc)

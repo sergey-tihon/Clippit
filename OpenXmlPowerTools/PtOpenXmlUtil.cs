@@ -630,7 +630,7 @@ namespace Clippit
         private static HashSet<string> UnknownFonts = new HashSet<string>();
         private static HashSet<string> KnownFamilies = null;
 
-        public static int CalcWidthOfRunInTwips(XElement r)
+        private static (double width, decimal tabLength) CalcWidthOfRun(XElement r)
         {
             if (KnownFamilies == null)
             {
@@ -638,46 +638,42 @@ namespace Clippit
                 foreach (var fam in SystemFonts.Families)
                     KnownFamilies.Add(fam.Name);
             }
+            
+            var tabLength = r.DescendantsTrimmed(W.txbxContent)
+                .Where(e => e.Name == W.tab)
+                .Select(t => (decimal)t.Attribute(PtOpenXml.TabWidth))
+                .Sum();
 
-            var fontName = (string)r.Attribute(PtOpenXml.pt + "FontName");
-            if (fontName == null)
-                fontName = (string)r.Ancestors(W.p).First().Attribute(PtOpenXml.pt + "FontName");
-            if (fontName == null)
-                throw new OpenXmlPowerToolsException("Internal Error, should have FontName attribute");
+            var fontName = 
+                (string)r.Attribute(PtOpenXml.pt + "FontName")
+                ?? (string)r.Ancestors(W.p).First().Attribute(PtOpenXml.pt + "FontName")
+                ?? throw new OpenXmlPowerToolsException("Internal Error, should have FontName attribute");
+            
             if (UnknownFonts.Contains(fontName))
-                return 0;
+                return (0, tabLength);
 
-            var rPr = r.Element(W.rPr);
-            if (rPr == null)
-                throw new OpenXmlPowerToolsException("Internal Error, should have run properties");
-            var languageType = (string)r.Attribute(PtOpenXml.LanguageType);
-            decimal? szn = null;
-            if (languageType == "bidi")
-                szn = (decimal?)rPr.Elements(W.szCs).Attributes(W.val).FirstOrDefault();
-            else
-                szn = (decimal?)rPr.Elements(W.sz).Attributes(W.val).FirstOrDefault();
-            if (szn == null)
-                szn = 22m;
-
-            var sz = szn.GetValueOrDefault();
+            var rPr = r.Element(W.rPr) 
+                      ?? throw new OpenXmlPowerToolsException("Internal Error, should have run properties");
+            
+            var sz = GetFontSize(r) ?? 22m;
 
             // unknown font families will throw ArgumentException, in which case just return 0
             if (!KnownFamilies.Contains(fontName))
-                return 0;
+                return (0, tabLength);
+            
             // in theory, all unknown fonts are found by the above test, but if not...
             FontFamily ff;
             try
             {
-                //ff = new FontFamily(fontName);
                 ff = SystemFonts.Find(fontName);
             }
             catch (ArgumentException)
             {
                 UnknownFonts.Add(fontName);
-
-                return 0;
+                return (0, tabLength);
             }
-            FontStyle fs = FontStyle.Regular;
+            
+            var fs = FontStyle.Regular;
             var bold = GetBoolProp(rPr, W.b) || GetBoolProp(rPr, W.bCs);
             var italic = GetBoolProp(rPr, W.i) || GetBoolProp(rPr, W.iCs);
             if (bold && !italic)
@@ -687,18 +683,19 @@ namespace Clippit
             if (bold && italic)
                 fs = FontStyle.Bold | FontStyle.Italic;
 
+            // Appended blank as a quick fix to accommodate &nbsp; that will get
+            // appended to some layout-critical runs such as list item numbers.
+            // In some cases, this might not be required or even wrong, so this
+            // must be revisited.
+            // TODO: Revisit.
             var runText = r.DescendantsTrimmed(W.txbxContent)
                 .Where(e => e.Name == W.t)
                 .Select(t => (string)t)
-                .StringConcatenate();
-
-            var tabLength = r.DescendantsTrimmed(W.txbxContent)
-                .Where(e => e.Name == W.tab)
-                .Select(t => (decimal)t.Attribute(PtOpenXml.TabWidth))
-                .Sum();
+                .StringConcatenate()+ " ";
+            
 
             if (runText.Length == 0 && tabLength == 0)
-                return 0;
+                return (0, tabLength);
 
             int multiplier = runText.Length switch
             {
@@ -717,9 +714,42 @@ namespace Clippit
                 runText = sb.ToString();
             }
 
-            var w = MetricsGetter.GetTextWidth(ff, fs, sz, runText);
+            var width = (double)MetricsGetter.GetTextWidth(ff, fs, sz, runText) / (double)multiplier;
+            return (width, tabLength);
+        }
 
-            return (int) (w / 96m * 1440m / multiplier + tabLength * 1440m);
+        public static int CalcWidthOfRunInTwips(XElement r)
+        {
+            var (width, tabLength) = CalcWidthOfRun(r);
+            return (int)((decimal)width / 96m * 1440m + tabLength * 1440m);
+        }
+
+        public static int CalcWidthOfRunInPixels(XElement r)
+        {
+            var (width, tabLength) = CalcWidthOfRun(r);
+            return (int)width;
+        }
+
+        public static decimal? GetFontSize(XElement e)
+        {
+            var languageType = (string)e.Attribute(PtOpenXml.LanguageType);
+            if (e.Name == W.p)
+            {
+                return GetFontSize(languageType, e.Elements(W.pPr).Elements(W.rPr).FirstOrDefault());
+            }
+            if (e.Name == W.r)
+            {
+                return GetFontSize(languageType, e.Element(W.rPr));
+            }
+            return null;
+        }
+
+        public static decimal? GetFontSize(string languageType, XElement rPr)
+        {
+            if (rPr == null) return null;
+            return languageType == "bidi"
+                ? (decimal?) rPr.Elements(W.szCs).Attributes(W.val).FirstOrDefault()
+                : (decimal?) rPr.Elements(W.sz).Attributes(W.val).FirstOrDefault();
         }
 
         public static bool GetBoolProp(XElement runProps, XName xName)

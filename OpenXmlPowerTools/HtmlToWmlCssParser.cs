@@ -379,23 +379,20 @@ namespace Clippit.HtmlToWml.CSS
         {
             get
             {
-                return (this != null && this.ToString() == "auto");
+                return (this.ToString() == "auto");
             }
         }
 
         public bool IsNotNormal
         {
-            get
-            {
-                return (this != null && this.ToString() != "normal");
-            }
+            get => (this.ToString() != "normal");
         }
 
         public bool IsNormal
         {
             get
             {
-                return (this != null && this.ToString() == "normal");
+                return (this.ToString() == "normal");
             }
         }
 
@@ -419,31 +416,23 @@ namespace Clippit.HtmlToWml.CSS
             return sb.ToString();
         }
 
-        public static implicit operator string(CssExpression e)
-        {
-            return e.ToString();
-        }
+        public static implicit operator string(CssExpression e) => 
+            e.ToString();
 
-        public static explicit operator double(CssExpression e)
-        {
-            return double.Parse(e.Terms.First().Value, CultureInfo.InvariantCulture);
-        }
+        public static explicit operator double(CssExpression e) => 
+            double.Parse(e.Terms.First().Value, CultureInfo.InvariantCulture);
 
-        public static explicit operator Emu(CssExpression e)
-        {
-            return Emu.PointsToEmus(double.Parse(e.Terms.First().Value, CultureInfo.InvariantCulture));
-        }
+        public static explicit operator Emu(CssExpression e) => 
+            Emu.PointsToEmus(double.Parse(e.Terms.First().Value, CultureInfo.InvariantCulture));
 
         // will only be called on expression that is in terms of points
-        public static explicit operator TPoint(CssExpression e)
-        {
-            return new TPoint(double.Parse(e.Terms.First().Value, CultureInfo.InvariantCulture));
-        }
+        public static explicit operator TPoint(CssExpression e) => 
+            new TPoint(double.Parse(e.Terms.First().Value, CultureInfo.InvariantCulture));
 
         // will only be called on expression that is in terms of points
         public static explicit operator Twip(CssExpression length)
         {
-            if (length.Terms.Count() == 1)
+            if (length.Terms.Count == 1)
             {
                 CssTerm term = length.Terms.First();
                 if (term.Unit == CssUnit.PT)
@@ -803,13 +792,13 @@ namespace Clippit.HtmlToWml.CSS
             {
                 switch (m_combinator.Value)
                 {
-                    case Clippit.HtmlToWml.CSS.CssCombinator.PrecededImmediatelyBy:
+                    case CssCombinator.PrecededImmediatelyBy:
                         sb.Append(" + ");
                         break;
-                    case Clippit.HtmlToWml.CSS.CssCombinator.ChildOf:
+                    case CssCombinator.ChildOf:
                         sb.Append(" > ");
                         break;
-                    case Clippit.HtmlToWml.CSS.CssCombinator.PrecededBy:
+                    case CssCombinator.PrecededBy:
                         sb.Append(" ~ ");
                         break;
                 }
@@ -854,33 +843,13 @@ namespace Clippit.HtmlToWml.CSS
     {
         public CssTagType TagType { get; set; }
 
-        public bool IsIDSelector
-        {
-            get {
-                return Id != null;
-            }
-        }
+        public bool IsIDSelector => Id != null;
 
-        public bool HasName
-        {
-            get {
-                return Name != null;
-            }
-        }
+        public bool HasName => Name != null;
 
-        public bool HasClass
-        {
-            get {
-                return Class != null;
-            }
-        }
+        public bool HasClass => Class != null;
 
-        public bool HasPseudoClass
-        {
-            get {
-                return Pseudo != null;
-            }
-        }
+        public bool HasPseudoClass => Pseudo != null;
 
         public string Name { get; set; }
 
@@ -898,12 +867,12 @@ namespace Clippit.HtmlToWml.CSS
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder(ToShortString());
+            var sb = new StringBuilder(ToShortString());
 
             if (SubTag != null)
             {
                 sb.Append(" ");
-                sb.Append(SubTag.ToString());
+                sb.Append(SubTag);
             }
             return sb.ToString();
         }
@@ -1161,7 +1130,7 @@ namespace Clippit.HtmlToWml.CSS
         {
             try
             {
-                if (t.Unit.HasValue && t.Unit.Value == Clippit.HtmlToWml.CSS.CssUnit.Percent)
+                if (t.Unit is CssUnit.Percent)
                 {
                     return (int)(255f * float.Parse(t.Value) / 100f);
                 }
