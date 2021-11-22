@@ -5,20 +5,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Clippit.PowerPoint;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace Clippit
+namespace Clippit.Internal
 {
-
-    public partial class PmlDocument : OpenXmlPowerToolsDocument
-    {
-        public PmlDocument SearchAndReplace(string search, string replace, bool matchCase)
-        {
-            return TextReplacer.SearchAndReplace(this, search, replace, matchCase);
-        }
-    }
-
     internal class TextReplacer
     {
         private class MatchSemaphore

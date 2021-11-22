@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
 using Xunit.Abstractions;

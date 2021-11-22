@@ -12,6 +12,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using System.Globalization;
 using Clippit.Excel;
+using Clippit.PowerPoint;
 using Clippit.Word;
 using SixLabors.Fonts;
 
@@ -77,7 +78,7 @@ namespace Clippit
                     {
                         ms.Write(wmlDoc.DocumentByteArray, 0, wmlDoc.DocumentByteArray.Length);
 #if !NET35
-                        UriFixer.FixInvalidUri(ms, brokenUri => FixUri(brokenUri));
+                        UriFixer.FixInvalidUri(ms, FixUri);
 #endif
                         wmlDoc = new WmlDocument("dummy.docx", ms.ToArray());
                     }

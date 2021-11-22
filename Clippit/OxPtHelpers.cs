@@ -11,6 +11,8 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Validation;
 using System.Text;
+using Clippit.Excel;
+using Clippit.PowerPoint;
 using Clippit.Word;
 using DocumentFormat.OpenXml;
 using SixLabors.ImageSharp.Formats;
@@ -541,7 +543,7 @@ AAsACwDBAgAAbCwAAAAA";
             }
             else if (Util.IsSpreadsheetML(fi.Extension))
             {
-                var sml = new Excel.SmlDocument(fileName);
+                var sml = new SmlDocument(fileName);
                 using var streamDoc = new OpenXmlMemoryStreamDocument(sml);
                 using var wDoc = streamDoc.GetSpreadsheetDocument();
                 var validator = new OpenXmlValidator(fileFormatVersion);
