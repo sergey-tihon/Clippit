@@ -375,7 +375,7 @@ namespace Clippit
 
         public static OpenXmlMemoryStreamDocument CreateWordprocessingDocument()
         {
-            MemoryStream stream = new MemoryStream();
+            var stream = new MemoryStream();
             using var doc = WordprocessingDocument.Create(stream, DocumentFormat.OpenXml.WordprocessingDocumentType.Document);
             doc.AddMainDocumentPart();
             doc.MainDocumentPart.PutXDocument(new XDocument(

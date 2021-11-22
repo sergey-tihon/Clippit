@@ -2788,13 +2788,9 @@ namespace Clippit.Word
 
         public static bool HasTrackedRevisions(WmlDocument document)
         {
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(document))
-            {
-                using (WordprocessingDocument wdoc = streamDoc.GetWordprocessingDocument())
-                {
-                    return RevisionAccepter.HasTrackedRevisions(wdoc);
-                }
-            }
+            using var streamDoc = new OpenXmlMemoryStreamDocument(document);
+            using var wdoc = streamDoc.GetWordprocessingDocument();
+            return RevisionAccepter.HasTrackedRevisions(wdoc);
         }
 
         public static bool HasTrackedRevisions(WordprocessingDocument doc)

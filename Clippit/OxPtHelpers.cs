@@ -12,6 +12,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Validation;
 using System.Text;
 using Clippit.Excel;
+using Clippit.Internal;
 using Clippit.PowerPoint;
 using Clippit.Word;
 using DocumentFormat.OpenXml;

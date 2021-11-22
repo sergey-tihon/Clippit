@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Clippit
+namespace Clippit.Word
 {
 	public class ListItemTextGetter_sv_SE
 	{

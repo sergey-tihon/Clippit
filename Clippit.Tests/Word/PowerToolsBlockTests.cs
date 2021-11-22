@@ -38,7 +38,7 @@ namespace Clippit.Tests.Word
 
                     // This demonstrates the use of the PowerToolsBlock in a using statement to
                     // demarcate the intermittent use of the PowerTools.
-                    using (new PowerToolsBlock(wordDocument))
+                    using (new ClippitBlock(wordDocument))
                     {
                         // Assert that we can see the paragraph added through the strongly typed classes.
                         XDocument content = part.GetXDocument();
@@ -66,7 +66,7 @@ namespace Clippit.Tests.Word
         [Fact]
         public void ConstructorThrowsWhenPassingNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new PowerToolsBlock(null));
+            Assert.Throws<ArgumentNullException>(() => new ClippitBlock(null));
         }
     }
 }
