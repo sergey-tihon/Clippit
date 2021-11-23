@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Clippit.Core;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Xunit;
@@ -38,7 +39,7 @@ namespace Clippit.Tests.Word
 
                     // This demonstrates the use of the PowerToolsBlock in a using statement to
                     // demarcate the intermittent use of the PowerTools.
-                    using (new ClippitBlock(wordDocument))
+                    using (new PowerToolsBlock(wordDocument))
                     {
                         // Assert that we can see the paragraph added through the strongly typed classes.
                         XDocument content = part.GetXDocument();
@@ -66,7 +67,7 @@ namespace Clippit.Tests.Word
         [Fact]
         public void ConstructorThrowsWhenPassingNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new ClippitBlock(null));
+            Assert.Throws<ArgumentNullException>(() => new PowerToolsBlock(null));
         }
     }
 }

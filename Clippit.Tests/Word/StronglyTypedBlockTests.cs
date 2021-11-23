@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Clippit.Core;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Xunit;

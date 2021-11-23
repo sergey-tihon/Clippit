@@ -4,7 +4,7 @@
 using System;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace Clippit
+namespace Clippit.Core
 {
     /// <summary>
     /// Provides an elegant way of wrapping a set of invocations of the strongly typed 
@@ -29,15 +29,15 @@ namespace Clippit
     /// </code>
     /// <para>
     /// Upon creation, instances of this class will invoke the
-    /// <see cref="ClippitBlockExtensions.EndPowerToolsBlock"/> method on the package
+    /// <see cref="PowerToolsBlockExtensions.EndPowerToolsBlock"/> method on the package
     /// to begin the block. Upon disposal, instances of this class will call the
-    /// <see cref="ClippitBlockExtensions.BeginPowerToolsBlock"/> method on the package
+    /// <see cref="PowerToolsBlockExtensions.BeginPowerToolsBlock"/> method on the package
     /// to end the block.
     /// </para>
     /// </remarks>
-    /// <seealso cref="ClippitBlock"/>
-    /// <seealso cref="ClippitBlockExtensions.BeginPowerToolsBlock"/>
-    /// <seealso cref="ClippitBlockExtensions.EndPowerToolsBlock"/>
+    /// <seealso cref="PowerToolsBlock"/>
+    /// <seealso cref="PowerToolsBlockExtensions.BeginPowerToolsBlock"/>
+    /// <seealso cref="PowerToolsBlockExtensions.EndPowerToolsBlock"/>
     public class StronglyTypedBlock : IDisposable
     {
         private OpenXmlPackage _package;
