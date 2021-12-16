@@ -3,7 +3,7 @@ source https://api.nuget.org/v3/index.json
 storage: none
 framework: net5.0, netstandard2.0
 
-nuget DocumentFormat.OpenXml
+nuget DocumentFormat.OpenXml 2.13.1 // https://github.com/OfficeDev/Open-XML-SDK/issues/1069
 nuget System.Drawing.Common
 
 nuget Microsoft.NETFramework.ReferenceAssemblies
