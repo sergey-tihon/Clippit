@@ -1,3 +1,6 @@
+#### 1.9.0 - Jan 28, 2022
+- DocumentFormat.OpenXml (2.15.0)
+
 #### 1.8.2 - Dec 16, 2021
 - Improved memory consumption for PresentationBuilder.PublishSlides [#44 by @f1nzer](https://github.com/sergey-tihon/Clippit/pull/44)
 - Revert DocumentFormat.OpenXml back to 2.13.1 (because of [this issue](https://github.com/OfficeDev/Open-XML-SDK/issues/1069))
