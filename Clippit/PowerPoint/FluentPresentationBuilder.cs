@@ -301,6 +301,9 @@ namespace Clippit.PowerPoint
                 var newSlide = _newDocument.PresentationPart.AddNewPart<SlidePart>();
                 var slideDocument = slide.GetXDocument();
                 
+                // cached annotation should be removed because it will be used in a new slide
+                slide.RemoveAnnotations<XDocument>();
+
                 // If we extract one slide, this slide should be visible
                 slideDocument.Root?.Attribute(NoNamespace.show)?.Remove();
 
