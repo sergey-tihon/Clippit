@@ -239,8 +239,7 @@ namespace Clippit
         public OpenXmlPowerToolsDocument(string fileName, MemoryStream memStream)
         {
             FileName = fileName;
-            DocumentByteArray = new byte[memStream.Length];
-            Array.Copy(memStream.GetBuffer(), DocumentByteArray, memStream.Length);
+            DocumentByteArray = memStream.ToArray();
         }
 
         public OpenXmlPowerToolsDocument(string fileName, MemoryStream memStream, bool convertToTransitional)
@@ -252,8 +251,7 @@ namespace Clippit
             else
             {
                 FileName = fileName;
-                DocumentByteArray = new byte[memStream.Length];
-                Array.Copy(memStream.GetBuffer(), DocumentByteArray, memStream.Length);
+                DocumentByteArray = memStream.ToArray();
             }
         }
 

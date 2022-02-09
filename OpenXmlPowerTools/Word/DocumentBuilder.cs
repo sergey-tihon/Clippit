@@ -3396,10 +3396,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                     using (var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
                     {
-                        int byteCount;
-                        var buffer = new byte[65536];
-                        while ((byteCount = oldObject.Read(buffer, 0, 65536)) != 0)
-                            newObject.Write(buffer, 0, byteCount);
+                        oldObject.CopyTo(newObject);
                     }
                     oleReference.Attribute(R.id).Value = newContentPart.GetIdOfPart(newPart);
                 }
@@ -3506,10 +3503,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 using (var oldFont = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                 using (var newFont = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
                 {
-                    int byteCount;
-                    var buffer = new byte[65536];
-                    while ((byteCount = oldFont.Read(buffer, 0, 65536)) != 0)
-                        newFont.Write(buffer, 0, byteCount);
+                    oldFont.CopyTo(newFont);
                 }
                 fontReference.SetAttributeValue(R.id, resourceId);
             }
@@ -3532,10 +3526,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                         using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                         using (var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
                         {
-                            int byteCount;
-                            var buffer = new byte[65536];
-                            while ((byteCount = oldObject.Read(buffer, 0, 65536)) != 0)
-                                newObject.Write(buffer, 0, byteCount);
+                            oldObject.CopyTo(newObject);
                         }
                         dataReference.SetAttributeValue(R.id, newChart.GetIdOfPart(newPart));
                     }
@@ -3550,10 +3541,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                         using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                         using (var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
                         {
-                            int byteCount;
-                            var buffer = new byte[65536];
-                            while ((byteCount = oldObject.Read(buffer, 0, 65536)) != 0)
-                                newObject.Write(buffer, 0, byteCount);
+                            oldObject.CopyTo(newObject);
                         }
                         dataReference.SetAttributeValue(R.id, newChart.GetIdOfPart(newPart));
                     }

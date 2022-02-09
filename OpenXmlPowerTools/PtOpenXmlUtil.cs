@@ -20,6 +20,16 @@ using FontFamily = System.Drawing.FontFamily;
 
 namespace Clippit
 {
+    public static class StreamHelpers
+    {
+        public static byte[] ReadToArray(this Stream stream)
+        {
+            using var ms = new MemoryStream();
+            stream.CopyTo(ms);
+            return ms.ToArray();
+        }
+    }
+
     public static class PtOpenXmlExtensions
     {
         public static XDocument GetXDocument(this OpenXmlPart part)
@@ -1818,10 +1828,7 @@ listSeparator
         {
             ContentType = part.ContentType;
             using (Stream s = part.GetStream(FileMode.Open, FileAccess.Read))
-            {
-                Image = new byte[s.Length];
-                s.Read(Image, 0, (int)s.Length);
-            }
+                Image = s.ReadToArray();
         }
 
         public void AddContentPartRelTypeResourceIdTupple(OpenXmlPart contentPart, string relationshipType, string relationshipId)
@@ -1870,10 +1877,7 @@ listSeparator
         {
             ContentType = part.ContentType;
             using (Stream s = part.GetStream(FileMode.Open, FileAccess.Read))
-            {
-                Media = new byte[s.Length];
-                s.Read(Media, 0, (int)s.Length);
-            }
+                Media = s.ReadToArray();
         }
 
         public void AddContentPartRelTypeResourceIdTupple(OpenXmlPart contentPart, string relationshipType, string relationshipId)

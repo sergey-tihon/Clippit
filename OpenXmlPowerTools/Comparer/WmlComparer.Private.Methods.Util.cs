@@ -65,7 +65,7 @@ namespace Clippit
                     using (Stream oldPartStream = relatedPackagePart.GetStream())
                     using (Stream newPartStream = newPart.GetStream())
                     {
-                        FileUtils.CopyStream(oldPartStream, newPartStream);
+                        oldPartStream.CopyTo(newPartStream);
                     }
 
                     string newRid = "R" + Guid.NewGuid().ToString().Replace("-", "");

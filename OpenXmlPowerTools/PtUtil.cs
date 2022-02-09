@@ -471,15 +471,6 @@ namespace Clippit
             foreach (DirectoryInfo subdir in dir.GetDirectories())
                 GetFilesRecursiveInternal(subdir, fileList);
         }
-
-        public static void CopyStream(Stream source, Stream target)
-        {
-            const int bufSize = 0x4096;
-            var buf = new byte[bufSize];
-            int bytesRead;
-            while ((bytesRead = source.Read(buf, 0, bufSize)) > 0)
-                target.Write(buf, 0, bytesRead);
-        }
     }
 
     public static class PtExtensions
