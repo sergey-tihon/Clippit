@@ -1,3 +1,6 @@
+#### 1.9.1 - Feb 9, 2022
+- Fixed incorrect usage of Stream API
+
 #### 1.9.0 - Jan 28, 2022
 - DocumentFormat.OpenXml (2.15.0)
 

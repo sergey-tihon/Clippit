@@ -4681,7 +4681,7 @@ namespace Clippit.Previous
                     var newPart = partInNewDocument.Package.CreatePart(uri, relatedPackagePart.ContentType);
                     using (var oldPartStream = relatedPackagePart.GetStream())
                     using (var newPartStream = newPart.GetStream())
-                        FileUtils.CopyStream(oldPartStream, newPartStream);
+                        oldPartStream.CopyTo(newPartStream);
 
                     var newRid = "R" + Guid.NewGuid().ToString().Replace("-", "");
                     partInNewDocument.CreateRelationship(newPart.Uri, TargetMode.Internal, relationshipForDeletedPart.RelationshipType, newRid);
