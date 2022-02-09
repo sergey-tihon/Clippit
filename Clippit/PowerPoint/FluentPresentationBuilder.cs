@@ -868,16 +868,12 @@ namespace Clippit.PowerPoint
                 }
                 else
                 {
-                    var refRel = newContentPart.DataPartReferenceRelationships.FirstOrDefault(rr =>
-                        {
-                            var rel = temp.ContentPartRelTypeIdList.FirstOrDefault(cpr =>
-                            {
-                                var found = cpr.ContentPart == newContentPart && cpr.RelationshipId == rr.Id;
-                                return found;
-                            });
-                            return rel is {};
-                        });
-                    if (refRel is {})
+                    var refRel = newContentPart.DataPartReferenceRelationships.FirstOrDefault(rr => 
+                        temp.ContentPartRelTypeIdList.Exists(cpr =>
+                            cpr.ContentPart == newContentPart && cpr.RelationshipId == rr.Id
+                        )
+                    );
+                    if (refRel is not null)
                     {
                         var relationshipId = temp.ContentPartRelTypeIdList
                             .First(cpr => cpr.ContentPart == newContentPart && cpr.RelationshipId == refRel.Id)
@@ -887,14 +883,14 @@ namespace Clippit.PowerPoint
                     }
 
                     var cpr2 = temp.ContentPartRelTypeIdList.FirstOrDefault(c => c.ContentPart == newContentPart);
-                    if (cpr2 is {})
+                    if (cpr2 is not null)
                     {
                         imageReference.SetAttributeValue(attributeName, cpr2.RelationshipId);
                     }
                     else
                     {
                         var imagePart = (ImagePart)temp.ImagePart;
-                        var existingImagePart = newContentPart.AddPart<ImagePart>(imagePart);
+                        var existingImagePart = newContentPart.AddPart(imagePart);
                         var newId = newContentPart.GetIdOfPart(existingImagePart);
                         temp.AddContentPartRelTypeResourceIdTupple(newContentPart, imagePart.RelationshipType, newId);
                         imageReference.SetAttributeValue(attributeName, newId);
@@ -905,7 +901,7 @@ namespace Clippit.PowerPoint
             else
             {
                 var er = oldContentPart.ExternalRelationships.FirstOrDefault(r => r.Id == relId);
-                if (er is {})
+                if (er is not null)
                 {
                     var newEr = newContentPart.AddExternalRelationship(er.RelationshipType, er.Uri);
                     imageReference.SetAttributeValue(R.id, newEr.Id);

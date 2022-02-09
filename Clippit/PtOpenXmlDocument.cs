@@ -276,7 +276,7 @@ namespace Clippit
 
         public void Save()
         {
-            if (FileName == null)
+            if (FileName is null)
                 throw new InvalidOperationException("Attempting to Save a document that has no file name.  Use SaveAs instead.");
             File.WriteAllBytes(FileName, DocumentByteArray);
         }
@@ -341,18 +341,18 @@ namespace Clippit
     
     public class OpenXmlMemoryStreamDocument : IDisposable
     {
-        private OpenXmlPowerToolsDocument Document;
-        private MemoryStream DocMemoryStream;
-        private Package DocPackage;
+        private readonly OpenXmlPowerToolsDocument _document;
+        private MemoryStream _docMemoryStream;
+        private Package _docPackage;
 
         public OpenXmlMemoryStreamDocument(OpenXmlPowerToolsDocument doc)
         {
-            Document = doc;
-            DocMemoryStream = new MemoryStream();
-            DocMemoryStream.Write(doc.DocumentByteArray, 0, doc.DocumentByteArray.Length);
+            _document = doc;
+            _docMemoryStream = new MemoryStream();
+            _docMemoryStream.Write(doc.DocumentByteArray, 0, doc.DocumentByteArray.Length);
             try
             {
-                DocPackage = Package.Open(DocMemoryStream, FileMode.Open);
+                _docPackage = Package.Open(_docMemoryStream, FileMode.Open);
             }
             catch (Exception e)
             {
@@ -362,10 +362,10 @@ namespace Clippit
 
         internal OpenXmlMemoryStreamDocument(MemoryStream stream)
         {
-            DocMemoryStream = stream;
+            _docMemoryStream = stream;
             try
             {
-                DocPackage = Package.Open(DocMemoryStream, FileMode.Open);
+                _docPackage = Package.Open(_docMemoryStream, FileMode.Open);
             }
             catch (Exception e)
             {
@@ -423,15 +423,15 @@ namespace Clippit
 
         public static OpenXmlMemoryStreamDocument CreatePackage()
         {
-            MemoryStream stream = new MemoryStream();
-            Package package = Package.Open(stream, FileMode.Create);
+            var stream = new MemoryStream();
+            var package = Package.Open(stream, FileMode.Create);
             package.Close();
             return new OpenXmlMemoryStreamDocument(stream);
         }
 
         public Package GetPackage()
         {
-            return DocPackage;
+            return _docPackage;
         }
 
         public WordprocessingDocument GetWordprocessingDocument(OpenSettings openSettings = null)
@@ -441,8 +441,8 @@ namespace Clippit
                 if (GetDocumentType() != typeof(WordprocessingDocument))
                     throw new PowerToolsDocumentException("Not a Wordprocessing document.");
                 return openSettings is null
-                    ? WordprocessingDocument.Open(DocPackage)
-                    : WordprocessingDocument.Open(DocPackage, openSettings);
+                    ? WordprocessingDocument.Open(_docPackage)
+                    : WordprocessingDocument.Open(_docPackage, openSettings);
             }
             catch (Exception e)
             {
@@ -456,8 +456,8 @@ namespace Clippit
                 if (GetDocumentType() != typeof(SpreadsheetDocument))
                     throw new PowerToolsDocumentException("Not a Spreadsheet document.");
                 return openSettings is null
-                    ? SpreadsheetDocument.Open(DocPackage)
-                    : SpreadsheetDocument.Open(DocPackage, openSettings);
+                    ? SpreadsheetDocument.Open(_docPackage)
+                    : SpreadsheetDocument.Open(_docPackage, openSettings);
             }
             catch (Exception e)
             {
@@ -472,8 +472,8 @@ namespace Clippit
                 if (GetDocumentType() != typeof(PresentationDocument))
                     throw new PowerToolsDocumentException("Not a Presentation document.");
                 return openSettings is null
-                    ? PresentationDocument.Open(DocPackage)
-                    : PresentationDocument.Open(DocPackage, openSettings);
+                    ? PresentationDocument.Open(_docPackage)
+                    : PresentationDocument.Open(_docPackage, openSettings);
             }
             catch (Exception e)
             {
@@ -483,11 +483,11 @@ namespace Clippit
 
         public Type GetDocumentType()
         {
-            var relationship = DocPackage.GetRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument").FirstOrDefault() ??
-                               DocPackage.GetRelationshipsByType("http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument").FirstOrDefault();
+            var relationship = _docPackage.GetRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument").FirstOrDefault() ??
+                               _docPackage.GetRelationshipsByType("http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument").FirstOrDefault();
             if (relationship == null)
                 throw new PowerToolsDocumentException("Not an Open XML Document.");
-            var part = DocPackage.GetPart(PackUriHelper.ResolvePartUri(relationship.SourceUri, relationship.TargetUri));
+            var part = _docPackage.GetPart(PackUriHelper.ResolvePartUri(relationship.SourceUri, relationship.TargetUri));
             switch (part.ContentType)
             {
                 case "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml":
@@ -513,30 +513,30 @@ namespace Clippit
 
         public OpenXmlPowerToolsDocument GetModifiedDocument()
         {
-            DocPackage.Close();
-            DocPackage = null;
-            return new OpenXmlPowerToolsDocument(Document?.FileName, DocMemoryStream);
+            _docPackage.Close();
+            _docPackage = null;
+            return new OpenXmlPowerToolsDocument(_document?.FileName, _docMemoryStream);
         }
 
         public WmlDocument GetModifiedWmlDocument()
         {
-            DocPackage.Close();
-            DocPackage = null;
-            return new WmlDocument(Document?.FileName, DocMemoryStream);
+            _docPackage.Close();
+            _docPackage = null;
+            return new WmlDocument(_document?.FileName, _docMemoryStream);
         }
 
         public SmlDocument GetModifiedSmlDocument()
         {
-            DocPackage.Close();
-            DocPackage = null;
-            return new SmlDocument(Document?.FileName, DocMemoryStream);
+            _docPackage.Close();
+            _docPackage = null;
+            return new SmlDocument(_document?.FileName, _docMemoryStream);
         }
 
         public PmlDocument GetModifiedPmlDocument()
         {
-            DocPackage.Close();
-            DocPackage = null;
-            return new PmlDocument(Document?.FileName, DocMemoryStream);
+            _docPackage.Close();
+            _docPackage = null;
+            return new PmlDocument(_document?.FileName, _docMemoryStream);
         }
 
         public void Close()
@@ -558,13 +558,13 @@ namespace Clippit
         {
             if (disposing)
             {
-                DocPackage?.Close();
-                DocMemoryStream?.Dispose();
+                _docPackage?.Close();
+                _docMemoryStream?.Dispose();
             }
-            if (DocPackage is null && DocMemoryStream is null)
+            if (_docPackage is null && _docMemoryStream is null)
                 return;
-            DocPackage = null;
-            DocMemoryStream = null;
+            _docPackage = null;
+            _docMemoryStream = null;
             GC.SuppressFinalize(this);
         }
     }

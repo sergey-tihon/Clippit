@@ -1,6 +1,6 @@
-#### 2.0.0-beta1 - Nov 21, 2021
+#### 2.0.0-beta1 - Feb 10, 2022
 * Migration to .NET 6.0
-* `System.Drawing.Common` repalced by `SixLabors.ImageSharp.Drawing`
+* `System.Drawing.Common` replaced by `SixLabors.ImageSharp.Drawing`
 * Removed `libgdiplus` dependency
 * Drop old `WmlComparer`
 
