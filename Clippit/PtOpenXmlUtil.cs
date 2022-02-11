@@ -673,12 +673,7 @@ namespace Clippit
                 return (0, tabLength);
             
             // in theory, all unknown fonts are found by the above test, but if not...
-            FontFamily ff;
-            try
-            {
-                ff = SystemFonts.Find(fontName);
-            }
-            catch (ArgumentException)
+            if (!SystemFonts.Collection.TryGet(fontName, out var ff))
             {
                 UnknownFonts.Add(fontName);
                 return (0, tabLength);

@@ -110,7 +110,7 @@ namespace Clippit
             try
             {
                 var f = ff.CreateFont((float)sz / 2f, fs);
-                var box = TextMeasurer.MeasureBounds(text, new RendererOptions(f));
+                var box = TextMeasurer.MeasureBounds(text, new TextOptions(f));
                 return (int)box.Width;
                 // var proposedSize = new Size(int.MaxValue, int.MaxValue);
                 // var sf = Graphics.Value.MeasureString(text, f, proposedSize);
@@ -146,7 +146,7 @@ namespace Clippit
                         // use the original FontStyle (in fs)
                         
                         //var ff2 = new FontFamily("Times New Roman");
-                        var ff2 = SystemFonts.Find("Times New Roman"); // TODO: test this
+                        SystemFonts.Collection.TryGet("Times New Roman", out var ff2); // TODO: test this
                         return _getTextWidth(ff2, fs, sz, text);
                     }
                 }
