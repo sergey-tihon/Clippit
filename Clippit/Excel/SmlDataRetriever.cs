@@ -37,8 +37,7 @@ namespace Clippit.Excel
             if (sheet == null)
                 throw new ArgumentException("Invalid sheet name passed to RetrieveSheet", nameof(sheetName));
             var range = "A1:XFD1048576";
-            int leftColumn, topRow, rightColumn, bottomRow;
-            XlsxTables.ParseRange(range, out leftColumn, out topRow, out rightColumn, out bottomRow);
+            XlsxTables.ParseRange(range, out var leftColumn, out var topRow, out var rightColumn, out var bottomRow);
             return RetrieveRange(sDoc, sheetName, leftColumn, topRow, rightColumn, bottomRow);
         }
 
@@ -116,8 +115,7 @@ namespace Clippit.Excel
                     string ra = (string)row.Attribute("r");
                     if (ra == null)
                         return null;
-                    int rowNbr;
-                    if (!int.TryParse(ra, out rowNbr))
+                    if (!int.TryParse(ra, out var rowNbr))
                         return null;
                     if (rowNbr < topRow)
                         return null;
@@ -143,13 +141,12 @@ namespace Clippit.Excel
                             string sharedString = null;
                             if (cellType == "s")
                             {
-                                int sharedStringIndex;
                                 string sharedStringBeforeParsing = (string)cell.Element(S.v);
                                 if (sharedStringBeforeParsing == null)
                                     sharedStringBeforeParsing = (string)cell.Elements(S._is).Elements(S.t).FirstOrDefault();
                                 if (sharedStringBeforeParsing == null)
                                     throw new FileFormatException("Invalid document");
-                                if (!int.TryParse(sharedStringBeforeParsing, out sharedStringIndex))
+                                if (!int.TryParse(sharedStringBeforeParsing, out var sharedStringIndex))
                                     throw new FileFormatException("Invalid document");
                                 XElement sharedStringElement = null;
                                 if (sharedStringTable == null)
@@ -362,8 +359,7 @@ namespace Clippit.Excel
 
             var styleXDoc = sDoc.WorkbookPart.WorkbookStylesPart.GetXDocument();
             var r = table.Ref;
-            int leftColumn, topRow, rightColumn, bottomRow;
-            XlsxTables.ParseRange(r, out leftColumn, out topRow, out rightColumn, out bottomRow);
+            XlsxTables.ParseRange(r, out var leftColumn, out var topRow, out var rightColumn, out var bottomRow);
             var shXDoc = table.Parent.GetXDocument();
 
             FixUpCellsThatHaveNoRAtt(shXDoc);
@@ -387,8 +383,7 @@ namespace Clippit.Excel
                 dataProps,
                 table.TableRows().Select(tr =>
                 {
-                    int rowRef;
-                    if (!int.TryParse(tr.Row.RowId, out rowRef))
+                    if (!int.TryParse(tr.Row.RowId, out var rowRef))
                         throw new FileFormatException("Invalid spreadsheet");
 
                     // filter

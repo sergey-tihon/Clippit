@@ -1391,9 +1391,7 @@ namespace Clippit.Word
 
             var langAttribute = GetLangAttribute(run);
 
-            XEntity runStartMark;
-            XEntity runEndMark;
-            DetermineRunMarks(run, rPr, style, out runStartMark, out runEndMark);
+            DetermineRunMarks(run, rPr, style, out var runStartMark, out var runEndMark);
 
             if (style.Any() || langAttribute != null || runStartMark != null)
             {
@@ -3085,8 +3083,7 @@ namespace Clippit.Word
                 sizeString.Length > 2 &&
                 sizeString.Substring(sizeString.Length - 2) == "pt")
             {
-                float size;
-                if (float.TryParse(sizeString.Substring(0, sizeString.Length - 2), out size))
+                if (float.TryParse(sizeString.Substring(0, sizeString.Length - 2), out var size))
                     return size;
             }
             return null;

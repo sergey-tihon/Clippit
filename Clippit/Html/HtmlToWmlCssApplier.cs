@@ -562,8 +562,7 @@ namespace Clippit.Html
                             else if (settings.DefaultBlockContentMargin.ToLower().EndsWith("pt"))
                             {
                                 string s1 = settings.DefaultBlockContentMargin.Substring(0, settings.DefaultBlockContentMargin.Length - 2);
-                                double d1;
-                                if (double.TryParse(s1, NumberStyles.Float, CultureInfo.InvariantCulture, out d1))
+                                if (double.TryParse(s1, NumberStyles.Float, CultureInfo.InvariantCulture, out var d1))
                                 {
                                     return new CssExpression { Terms = new List<CssTerm> { new() { Value = d1.ToString(CultureInfo.InvariantCulture), Type = CssTermType.Number, Unit = CssUnit.PT } } };
                                 }
@@ -1401,8 +1400,7 @@ namespace Clippit.Html
             if (unit == CssUnit.Percent && lengthForPercentage == null)
                 return new CssExpression { Terms = new List<CssTerm> { new() { Value = "auto", Type = CssTermType.String } } };
 
-            double decValue;
-            if (!double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out decValue))
+            if (!double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var decValue))
                 throw new OpenXmlPowerToolsException("value did not parse");
             if (negative)
                 decValue = -decValue;
@@ -1410,16 +1408,14 @@ namespace Clippit.Html
             double? newPtSize = null;
             if (unit == CssUnit.Percent)
             {
-                double ptSize;
-                if (!double.TryParse(lengthForPercentage.Terms.First().Value, NumberStyles.Float, CultureInfo.InvariantCulture, out ptSize))
+                if (!double.TryParse(lengthForPercentage.Terms.First().Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var ptSize))
                     throw new OpenXmlPowerToolsException("did not return a double?");
                 newPtSize = ptSize * decValue / 100d;
             }
             else if (unit == CssUnit.EM || unit == CssUnit.EX)
             {
                 CssExpression fontSize = GetComputedPropertyValue(null, element, "font-size", settings);
-                double decFontSize;
-                if (!double.TryParse(fontSize.Terms.First().Value, NumberStyles.Float, CultureInfo.InvariantCulture, out decFontSize))
+                if (!double.TryParse(fontSize.Terms.First().Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var decFontSize))
                     throw new OpenXmlPowerToolsException("Internal error");
                 newPtSize = (unit == CssUnit.EM) ? decFontSize * decValue : decFontSize * decValue / 2;
             }
@@ -1463,8 +1459,7 @@ namespace Clippit.Html
             if (value == "larger" || value == "smaller")
             {
                 CssExpression parentFontSize = GetComputedPropertyValue(null, element.Parent, "font-size", settings);
-                double ptSize;
-                if (!double.TryParse(parentFontSize.Terms.First().Value, NumberStyles.Float, CultureInfo.InvariantCulture, out ptSize))
+                if (!double.TryParse(parentFontSize.Terms.First().Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var ptSize))
                     throw new OpenXmlPowerToolsException("did not return a double?");
                 double newPtSize2 = 0;
                 if (value == "larger")
@@ -1499,15 +1494,14 @@ namespace Clippit.Html
                 }
                 return new CssExpression { Terms = new List<CssTerm> { new() { Value = newPtSize2.ToString(CultureInfo.InvariantCulture), Type = CssTermType.Number, Unit = CssUnit.PT, } } };
             }
-            double decValue;
-            if (!double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out decValue))
+
+            if (!double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var decValue))
                 throw new OpenXmlPowerToolsException("em value did not parse");
             double? newPtSize = null;
             if (unit == CssUnit.EM || unit == CssUnit.EX || unit == CssUnit.Percent)
             {
                 CssExpression parentFontSize = GetComputedPropertyValue(null, element.Parent, "font-size", settings);
-                double ptSize;
-                if (!double.TryParse(parentFontSize.Terms.First().Value, NumberStyles.Float, CultureInfo.InvariantCulture, out ptSize))
+                if (!double.TryParse(parentFontSize.Terms.First().Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var ptSize))
                     throw new OpenXmlPowerToolsException("did not return a double?");
                 if (unit == CssUnit.EM)
                     newPtSize = ptSize * decValue;

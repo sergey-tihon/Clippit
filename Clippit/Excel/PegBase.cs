@@ -943,9 +943,8 @@ namespace Clippit.Excel
         }
         public bool Into(Matcher toMatch,out int into)
         {
-            byte[] s;
             into = 0;
-            if (!Into(toMatch,out s)) return false;
+            if (!Into(toMatch,out byte[] s)) return false;
             into = 0;
             for (int i = 0; i < s.Length; ++i)
             {
@@ -956,9 +955,8 @@ namespace Clippit.Excel
         }
         public bool Into(Matcher toMatch,out double into)
         {
-            byte[] s;
             into = 0.0;
-            if (!Into(toMatch,out s)) return false;
+            if (!Into(toMatch,out byte[] s)) return false;
             System.Text.Encoding encoding = System.Text.Encoding.UTF8;
             string sAsString = encoding.GetString(s);
             if (!System.Double.TryParse(sAsString, out into)) return false;
@@ -1632,17 +1630,15 @@ namespace Clippit.Excel
         }
         public bool Into(Matcher toMatch,out int into)
         {
-            string s;
             into = 0;
-            if (!Into(toMatch,out s)) return false;
+            if (!Into(toMatch,out string s)) return false;
             if (!System.Int32.TryParse(s, out into)) return false;
             return true;
         }
         public bool Into(Matcher toMatch,out double into)
         {
-            string s;
             into = 0.0;
-            if (!Into(toMatch,out s)) return false;
+            if (!Into(toMatch,out string s)) return false;
             if (!System.Double.TryParse(s, out into)) return false;
             return true;
         }
@@ -1650,8 +1646,7 @@ namespace Clippit.Excel
         #region Error handling
         void LogOutMsg(string sErrKind, string sMsg)
         {
-            int lineNo, colNo;
-            errors.GetLineAndCol(src_, pos_, out lineNo, out colNo);
+            errors.GetLineAndCol(src_, pos_, out var lineNo, out var colNo);
             errOut_.WriteLine("<{0},{1},{2}>{3}:{4}", lineNo, colNo, maxpos_, sErrKind, sMsg);
             errOut_.Flush();
         }

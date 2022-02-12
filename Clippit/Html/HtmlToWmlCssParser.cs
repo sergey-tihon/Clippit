@@ -438,8 +438,7 @@ namespace Clippit.Html
                 CssTerm term = length.Terms.First();
                 if (term.Unit == CssUnit.PT)
                 {
-                    double ptValue;
-                    if (double.TryParse(term.Value.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out ptValue))
+                    if (double.TryParse(term.Value.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var ptValue))
                     {
                         if (term.Sign == '-')
                             ptValue = -ptValue;
@@ -1840,7 +1839,6 @@ namespace Clippit.Html
             CssExpression exp = null;
             CssDirective dr = null;
             string ident = null;
-            CssMedium m;
 
             Expect(23);
             dir.Name = "@";
@@ -1884,7 +1882,7 @@ namespace Clippit.Html
             {
                 if (StartOf(5))
                 {
-                    Medium(out m);
+                    Medium(out var m);
                     dir.Mediums.Add(m);
                     while (m_lookaheadToken.m_tokenKind == 4)
                     {

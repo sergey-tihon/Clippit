@@ -317,9 +317,7 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
             using MemoryStream ms = new MemoryStream();
             ms.Write(wmlDocument.DocumentByteArray, 0, wmlDocument.DocumentByteArray.Length);
             using WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, false);
-            string majorLatinFont, minorLatinFont;
-            double defaultFontSize;
-            GetDefaultFontInfo(wDoc, out majorLatinFont, out minorLatinFont, out defaultFontSize);
+            GetDefaultFontInfo(wDoc, out var majorLatinFont, out var minorLatinFont, out var defaultFontSize);
             settings.MajorLatinFont = majorLatinFont;
             settings.MinorLatinFont = minorLatinFont;
             settings.DefaultFontSize = defaultFontSize;
@@ -364,8 +362,7 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
                         .Elements(W.rPrDefault).Elements(W.rPr).Elements(W.sz).Attributes(W.val).FirstOrDefault();
                     if (defaultFontSizeString != null)
                     {
-                        double dfs;
-                        if (double.TryParse(defaultFontSizeString, out dfs))
+                        if (double.TryParse(defaultFontSizeString, out var dfs))
                         {
                             defaultFontSize = dfs / 2d;
                             return;

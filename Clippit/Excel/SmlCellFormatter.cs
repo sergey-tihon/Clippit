@@ -59,8 +59,7 @@ namespace Clippit.Excel
             var splitFormatCode = formatCode.Split(';');
             if (splitFormatCode.Length == 1)
             {
-                double dv;
-                if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out dv))
+                if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var dv))
                 {
                     return FormatDouble(formatCode, dv, out color);
                 }
@@ -68,8 +67,7 @@ namespace Clippit.Excel
             }
             if (splitFormatCode.Length == 2)
             {
-                double dv;
-                if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out dv))
+                if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var dv))
                 {
                     if (dv > 0)
                     {
@@ -87,8 +85,7 @@ namespace Clippit.Excel
             // _("$"* #,##0.00_);_("$"* \(#,##0.00\);_("$"* "-"??_);_(@_)
             if (splitFormatCode.Length == 4)
             {
-                double dv;
-                if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out dv))
+                if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var dv))
                 {
                     if (dv > 0)
                     {
@@ -173,8 +170,7 @@ namespace Clippit.Excel
                     if (color.StartsWith("Color"))
                     {
                         var idxStr = color.Substring(5);
-                        int colorIdx;
-                        if (int.TryParse(idxStr, out colorIdx))
+                        if (int.TryParse(idxStr, out var colorIdx))
                         {
                             if (colorIdx < SmlDataRetriever.IndexedColors.Length)
                                 color = SmlDataRetriever.IndexedColors[colorIdx];

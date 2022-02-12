@@ -198,11 +198,10 @@ namespace Clippit.Tests.Word
             var wmlTemplate = new WmlDocument(templateDocx.FullName);
             var xmldata = XElement.Load(dataFile.FullName);
 
-            bool returnedTemplateError;
             WmlDocument afterAssembling;
             Assert.Throws<OpenXmlPowerToolsException>(() =>
                 {
-                    afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmldata, out returnedTemplateError);
+                    afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmldata, out var returnedTemplateError);
                 });
         }
 

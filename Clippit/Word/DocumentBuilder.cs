@@ -1622,8 +1622,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 {
 #if MergeStylesWithSameNames
                     var linkElement = style.Element(W.link);
-                    string linkedId;
-                    if (linkElement != null && newIds.TryGetValue(linkElement.Attribute(W.val).Value, out linkedId))
+                    if (linkElement != null && newIds.TryGetValue(linkElement.Attribute(W.val).Value, out var linkedId))
                     {
                         var linkedStyle = toStyles.Root.Elements(W.style)
                             .First(o => o.Attribute(W.styleId).Value == linkedId);
@@ -2059,8 +2058,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     .Descendants()
                     .Elements(W.comment)
                     .Where(p => {
-                        int thisId;
-                        if (! int.TryParse((string)p.Attribute(W.id), out thisId))
+                        if (! int.TryParse((string)p.Attribute(W.id), out var thisId))
                             throw new DocumentBuilderException("Invalid document - invalid comment id");
                         return thisId == id;
                     })

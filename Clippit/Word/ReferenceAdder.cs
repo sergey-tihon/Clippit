@@ -114,8 +114,7 @@ namespace Clippit.Word
             XmlReader sdtReader = XmlReader.Create(new StringReader(String.Format(xmlString, title, rightTabPos, switches)));
             XElement sdt = XElement.Load(sdtReader);
 
-            XmlNamespaceManager namespaceManager;
-            XDocument mainXDoc = doc.MainDocumentPart.GetXDocument(out namespaceManager);
+            XDocument mainXDoc = doc.MainDocumentPart.GetXDocument(out var namespaceManager);
             namespaceManager.AddNamespace("w", "http://schemas.openxmlformats.org/wordprocessingml/2006/main");
             XElement addBefore = mainXDoc.XPathSelectElement(xPath, namespaceManager);
             if (addBefore == null)

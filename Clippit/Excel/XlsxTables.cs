@@ -332,8 +332,7 @@ namespace Clippit.Excel
                         TableType = (string)tableDefDoc.Root.Attribute("tableType"),
                         TableDefinitionPart = table
                     };
-                    int leftColumn, topRow, rightColumn, bottomRow;
-                    ParseRange(t.Ref, out leftColumn, out topRow, out rightColumn, out bottomRow);
+                    ParseRange(t.Ref, out var leftColumn, out var topRow, out var rightColumn, out var bottomRow);
                     t.LeftColumn = leftColumn;
                     t.TopRow = topRow;
                     t.RightColumn = rightColumn;

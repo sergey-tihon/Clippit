@@ -1999,8 +1999,7 @@ namespace Clippit.Word
             List<WmlToXmlValidationError> sortedErrorList = errorList
                 .OrderBy(e =>
                 {
-                    int b;
-                    if (int.TryParse(e.BlockLevelContentIdentifier, out b))
+                    if (int.TryParse(e.BlockLevelContentIdentifier, out var b))
                         return b;
                     return 0;
                 })

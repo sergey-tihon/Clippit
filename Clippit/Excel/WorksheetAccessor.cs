@@ -282,10 +282,8 @@ namespace Clippit.Excel
         // Sets the specified cell
         private static void SetCell(XDocument worksheetXDocument, XElement newCell)
         {
-            int row;
-            int column;
             string cellReference = newCell.Attribute(NoNamespace.r).Value;
-            GetRowColumn(cellReference, out row, out column);
+            GetRowColumn(cellReference, out var row, out var column);
 
             // Find the row containing the cell to add the value to
             XElement rowElement = worksheetXDocument.Root
@@ -529,8 +527,7 @@ namespace Clippit.Excel
         // The new pivot table will not be configured with any fields in the rows, columns, filters or values
         public static PivotTablePart CreatePivotTable(SpreadsheetDocument document, string rangeName, WorksheetPart sheet)
         {
-            int startRow, startColumn, endRow, endColumn;
-            WorksheetPart sourceSheet = GetRange(document, rangeName, out startRow, out startColumn, out endRow, out endColumn);
+            WorksheetPart sourceSheet = GetRange(document, rangeName, out var startRow, out var startColumn, out var endRow, out var endColumn);
 
             // Fill out pivotFields element (for PivotTablePart) and cacheFields element (for PivotTableCacheDefinitionPart)
             // with an element for each column in the source range
@@ -2034,9 +2031,8 @@ namespace Clippit.Excel
         {
             //Set the cell reference
             string cellReference = GetColumnId(column) + row.ToString();
-            double numericValue;
             //Determining if value for cell is text or numeric
-            bool valueIsNumeric = double.TryParse(value, out numericValue);
+            bool valueIsNumeric = double.TryParse(value, out var numericValue);
 
             //Creating the new cell element (markup)
             XElement newCellXElement = valueIsNumeric ?

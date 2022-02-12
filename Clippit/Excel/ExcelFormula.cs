@@ -61,8 +61,7 @@ namespace Clippit.Excel
             {
                    EExcelFormula ruleEnum = (EExcelFormula)id;
                     string s= ruleEnum.ToString();
-                    int val;
-                    if( int.TryParse(s,out val) ){
+                    if( int.TryParse(s,out var val) ){
                         return base.GetRuleNameFromId(id);
                     }else{
                         return s;

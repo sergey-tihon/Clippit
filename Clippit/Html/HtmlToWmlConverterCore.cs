@@ -166,16 +166,15 @@ namespace Clippit.Html
 
             html = (XElement)TransformWhiteSpaceInPreCodeTtKbdSamp(html, false, false);
 
-            CssDocument defaultCssDoc, userCssDoc, authorCssDoc;
             CssApplier.ApplyAllCss(
                 defaultCss,
                 authorCss,
                 userCss,
                 html,
                 settings,
-                out defaultCssDoc,
-                out authorCssDoc,
-                out userCssDoc,
+                out var defaultCssDoc,
+                out var authorCssDoc,
+                out var userCssDoc,
                 annotatedHtmlDumpFileName);
 
             WmlDocument newWmlDocument;
@@ -273,8 +272,7 @@ namespace Clippit.Html
 
         private static void AnnotateOlUl(WordprocessingDocument wDoc, XElement html)
         {
-            int numId;
-            NumberingUpdater.GetNextNumId(wDoc, out numId);
+            NumberingUpdater.GetNextNumId(wDoc, out var numId);
             foreach (var item in html.DescendantsAndSelf().Where(d => d.Name == XhtmlNoNamespace.ol || d.Name == XhtmlNoNamespace.ul))
             {
                 XElement parentOlUl = item.Ancestors().Where(a => a.Name == XhtmlNoNamespace.ol || a.Name == XhtmlNoNamespace.ul).LastOrDefault();
@@ -713,8 +711,7 @@ namespace Clippit.Html
                 if (!cssWidth.EndsWith("pt")) continue;
 
                 cssWidth = cssWidth.Substring(0, cssWidth.Length - 2);
-                decimal cssWidthInDecimal;
-                if (!decimal.TryParse(cssWidth, out cssWidthInDecimal)) continue;
+                if (!decimal.TryParse(cssWidth, out var cssWidthInDecimal)) continue;
 
                 // calculate the number of non-breaking spaces to add
                 decimal cssWidthInPixels = cssWidthInDecimal/72*96;
@@ -3304,8 +3301,7 @@ namespace Clippit.Html
                 CssTerm term = columnWidth.Terms.First();
                 if (term.Unit == CssUnit.PT)
                 {
-                    Double ptValue;
-                    if (Double.TryParse(term.Value, out ptValue))
+                    if (Double.TryParse(term.Value, out var ptValue))
                     {
                         Twip twips = (long)(ptValue * 20);
                         return twips;
