@@ -217,7 +217,7 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
             var destFileName = new FileInfo(fi.Name.Replace(".docx", ".html"));
             destFileName = new FileInfo(Path.Combine(TempDir, destFileName.Name));
 
-            var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
+            var imageDirectoryName = destFileName.FullName[..^5] + "_files";
             var imageCounter = 0;
 
             var pageTitle = fi.FullName;

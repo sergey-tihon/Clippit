@@ -694,7 +694,7 @@ namespace Clippit
             string colorString = colorRgb.ToString("X");
             if (colorString.Length == 8)
             {
-                colorString = colorString.Substring(2);
+                colorString = colorString[2..];
             }
 
             if (consolidateSettings.ConsolidateWithTable)

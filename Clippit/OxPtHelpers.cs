@@ -63,7 +63,7 @@ namespace Clippit
                         throw new OpenXmlPowerToolsException(String.Format("Add-DocxText: The specified color {0} is unsupported, Please specify the valid color. Ex, Red, Green", foreColor));
 
                     string ColorHex = string.Format("{0:x6}", colorValue);
-                    runProperties.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Color() { Val = ColorHex.Substring(2) });
+                    runProperties.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Color() { Val = ColorHex[2..] });
                 }
 
                 if (isUnderline)
@@ -76,7 +76,7 @@ namespace Clippit
                         throw new OpenXmlPowerToolsException(String.Format("Add-DocxText: The specified color {0} is unsupported, Please specify the valid color. Ex, Red, Green", foreColor));
 
                     string ColorShadeHex = string.Format("{0:x6}", colorShade);
-                    runProperties.AppendChild(new Shading() { Fill = ColorShadeHex.Substring(2), Val = ShadingPatternValues.Clear });
+                    runProperties.AppendChild(new Shading() { Fill = ColorShadeHex[2..], Val = ShadingPatternValues.Clear });
                 }
 
                 if (!string.IsNullOrEmpty(styleName))
@@ -416,7 +416,7 @@ AAsACwDBAgAAbCwAAAAA";
                 }
                 destFileName = new FileInfo(Path.Combine(di.FullName, destFileName.Name));
             }
-            var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
+            var imageDirectoryName = destFileName.FullName[..^5] + "_files";
             var imageCounter = 0;
             var pageTitle =
                 (string)wDoc.CoreFilePropertiesPart.GetXDocument().Descendants(DC.title).FirstOrDefault()

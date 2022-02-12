@@ -747,9 +747,9 @@ namespace Clippit.Word
                             .TakeWhile(ch => ch is '.' or ' ')
                             .ToList();
 
-                        sepCharsString = nextRunText.Substring(0, sepChars.Count());
+                        sepCharsString = nextRunText[..sepChars.Count()];
 
-                        nextRunText = nextRunText.Substring(sepChars.Count());
+                        nextRunText = nextRunText[sepChars.Count()..];
                         nextRunTextElement.Value = nextRunText;
 
                         lastFldCharRunText.Value = lastFldCharRunText.Value + sepCharsString;
@@ -924,12 +924,12 @@ namespace Clippit.Word
                             runAfter.Attributes(),
                             new XAttribute(PtOpenXml.ListItemRun, listItemNum),
                             runAfter.Elements(W.rPr),
-                            new XElement(W.t, runAfterText.Substring(0, runAfterTextTrimmedLength)));
+                            new XElement(W.t, runAfterText[..runAfterTextTrimmedLength]));
                     }
                     XElement runAfterRemainderElement = new XElement(W.r,
                         runAfter.Attributes(),
                         runAfter.Elements(W.rPr),
-                        new XElement(W.t, runAfterText.Substring(runAfterTextTrimmedLength)));
+                        new XElement(W.t, runAfterText[runAfterTextTrimmedLength..]));
                     var newPara = new XElement(W.p,
                         element.Attributes(),
                         runsBefore,

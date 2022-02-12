@@ -413,11 +413,11 @@ namespace Clippit.Excel
                 .Where(t => t.Attribute(NoNamespace.name).Value == rangeName).FirstOrDefault();
             if (element == null)
                 throw new ArgumentException("Range name not found: " + rangeName);
-            string sheetName = element.Value.Substring(0, element.Value.IndexOf('!'));
-            string range = element.Value.Substring(element.Value.IndexOf('!') + 1).Replace("$","");
+            string sheetName = element.Value[..element.Value.IndexOf('!')];
+            string range = element.Value[(element.Value.IndexOf('!') + 1)..].Replace("$","");
             int colonIndex = range.IndexOf(':');
-            GetRowColumn(range.Substring(0, colonIndex), out startRow, out startColumn);
-            GetRowColumn(range.Substring(colonIndex + 1), out endRow, out endColumn);
+            GetRowColumn(range[..colonIndex], out startRow, out startColumn);
+            GetRowColumn(range[(colonIndex + 1)..], out endRow, out endColumn);
             return GetWorksheet(doc, sheetName);
         }
 
@@ -448,7 +448,7 @@ namespace Clippit.Excel
             if (element != null)
             {
                 string original = element.Value;
-                element.SetValue(original.Substring(0, original.Length - 1) + lastRow.ToString());
+                element.SetValue(original[..^1] + lastRow.ToString());
             }
             doc.WorkbookPart.PutXDocument();
         }

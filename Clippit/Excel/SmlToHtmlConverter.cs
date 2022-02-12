@@ -131,14 +131,14 @@ namespace Clippit.Excel
                         {
                             classNameToUse = htmlConverterSettings.CssClassPrefix +
                                 styles["PtStyleName"] + "-" +
-                                classCounter.ToString().Substring(1);
+                                classCounter.ToString()[1..];
                             classCounter++;
                         }
                     }
                     else
                     {
                         classNameToUse = htmlConverterSettings.CssClassPrefix +
-                            classCounter.ToString().Substring(1);
+                            classCounter.ToString()[1..];
                         classCounter++;
                     }
                     usedCssClassNames.Add(classNameToUse);

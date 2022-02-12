@@ -606,7 +606,7 @@ namespace Clippit.Html
             {
                 if (Value.Length == 7 && Value.StartsWith("#"))
                 {
-                    hex = Value.Substring(1);
+                    hex = Value[1..];
                 }
                 else if (Value.Length == 6)
                 {
@@ -620,9 +620,9 @@ namespace Clippit.Html
                     return c;
                 }
             }
-            int r = ConvertFromHex(hex.Substring(0, 2));
+            int r = ConvertFromHex(hex[..2]);
             int g = ConvertFromHex(hex.Substring(2, 2));
-            int b = ConvertFromHex(hex.Substring(4));
+            int b = ConvertFromHex(hex[4..]);
             return Color.FromArgb(r, g, b);
         }
 
@@ -1157,7 +1157,7 @@ namespace Clippit.Html
             {
                 if (Value.Length is 7 or 4 && Value.StartsWith("#"))
                 {
-                    hex = Value.Substring(1);
+                    hex = Value[1..];
                 }
                 else if (Value.Length is 6 or 3)
                 {
@@ -1227,9 +1227,9 @@ namespace Clippit.Html
                 }
                 hex = temp;
             }
-            int r = ConvertFromHex(hex.Substring(0, 2));
+            int r = ConvertFromHex(hex[..2]);
             int g = ConvertFromHex(hex.Substring(2, 2));
-            int b = ConvertFromHex(hex.Substring(4));
+            int b = ConvertFromHex(hex[4..]);
             return Color.FromArgb(r, g, b);
         }
         private int ConvertFromHex(string input)

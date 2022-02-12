@@ -46,7 +46,7 @@ namespace Clippit.Tests.Word.Samples
                 }
                 destFileName = new FileInfo(Path.Combine(di.FullName, destFileName.Name));
             }
-            var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
+            var imageDirectoryName = destFileName.FullName[..^5] + "_files";
             var imageCounter = 0;
 
             var pageTitle = fi.FullName;

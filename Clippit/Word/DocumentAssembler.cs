@@ -411,7 +411,7 @@ namespace Clippit.Word
                     .Select(t => (string)t)
                     .StringConcatenate()
                     .Trim();
-                var occurrences = paraContents.Select((_, i) => paraContents.Substring(i)).Count(sub => sub.StartsWith("<#"));
+                var occurrences = paraContents.Select((_, i) => paraContents[i..]).Count(sub => sub.StartsWith("<#"));
                 if (paraContents.StartsWith("<#") && paraContents.EndsWith("#>") && occurrences == 1)
                 {
                     var xmlText = paraContents.Substring(2, paraContents.Length - 4).Trim();
@@ -497,7 +497,7 @@ namespace Clippit.Word
                     .Select(t => (string)t)
                     .StringConcatenate()
                     .Trim();
-                var occurrences = paraContents.Select((_, i) => paraContents.Substring(i)).Count(sub => sub.StartsWith("<#"));
+                var occurrences = paraContents.Select((_, i) => paraContents[i..]).Count(sub => sub.StartsWith("<#"));
                 if (paraContents.StartsWith("<#") && paraContents.EndsWith("#>") && occurrences == 1)
                 {
                     var xmlText = paraContents.Substring(2, paraContents.Length - 4).Trim();

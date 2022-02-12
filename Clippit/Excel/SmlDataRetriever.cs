@@ -1033,7 +1033,7 @@ namespace Clippit.Excel
             {
                 if (applyNumberFormatStr == "1")
                     returnValue = true;
-                if (applyNumberFormatStr.Substring(0, 1).ToUpper() == "T")
+                if (applyNumberFormatStr[..1].ToUpper() == "T")
                     returnValue = true;
             }
             return returnValue;

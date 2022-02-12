@@ -298,14 +298,14 @@ namespace Clippit.Word
                         {
                             classNameToUse = htmlConverterSettings.CssClassPrefix +
                                 styles["PtStyleName"] + "-" +
-                                classCounter.ToString().Substring(1);
+                                classCounter.ToString()[1..];
                             classCounter++;
                         }
                     }
                     else
                     {
                         classNameToUse = htmlConverterSettings.CssClassPrefix +
-                            classCounter.ToString().Substring(1);
+                            classCounter.ToString()[1..];
                         classCounter++;
                     }
                     usedCssClassNames.Add(classNameToUse);
@@ -2026,7 +2026,7 @@ namespace Clippit.Word
                                     string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", (decimal)delta2 / 1440m)),
                                 GetLeader(tabAfterText));
 
-                            var decims = textAfterTab.Substring(textAfterTab.IndexOf('.'));
+                            var decims = textAfterTab[textAfterTab.IndexOf('.')..];
                             dummyRun4 = new XElement(W.r,
                                 fontNameAtt,
                                 runContainingTabToReplace.Elements(W.rPr),
@@ -2670,10 +2670,10 @@ namespace Clippit.Word
             var key = color + fill + pct.ToString(CultureInfo.InvariantCulture);
             if (ShadeCache.ContainsKey(key))
                 return ShadeCache[key];
-            var fillRed = Convert.ToInt32(fill.Substring(0, 2), 16);
+            var fillRed = Convert.ToInt32(fill[..2], 16);
             var fillGreen = Convert.ToInt32(fill.Substring(2, 2), 16);
             var fillBlue = Convert.ToInt32(fill.Substring(4, 2), 16);
-            var colorRed = Convert.ToInt32(color.Substring(0, 2), 16);
+            var colorRed = Convert.ToInt32(color[..2], 16);
             var colorGreen = Convert.ToInt32(color.Substring(2, 2), 16);
             var colorBlue = Convert.ToInt32(color.Substring(4, 2), 16);
             var finalRed = (int)(fillRed - (fillRed - colorRed) * pct);
@@ -3081,9 +3081,9 @@ namespace Clippit.Word
 
             if (sizeString != null &&
                 sizeString.Length > 2 &&
-                sizeString.Substring(sizeString.Length - 2) == "pt")
+                sizeString[^2..] == "pt")
             {
-                if (float.TryParse(sizeString.Substring(0, sizeString.Length - 2), out var size))
+                if (float.TryParse(sizeString[..^2], out var size))
                     return size;
             }
             return null;

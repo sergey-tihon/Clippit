@@ -125,8 +125,8 @@ namespace Clippit.Word
                         if (t1 >= 1)
                             result += OneThroughNineteen[t1 - 1] + " thousand";
                         if (t1 >= 1 && t2 == 0)
-                            return result.Substring(0, 1).ToUpper() +
-                                   result.Substring(1);
+                            return result[..1].ToUpper() +
+                                   result[1..];
                         if (t1 >= 1)
                             result += " ";
                         int h1 = (levelNumber % 1000) / 100;
@@ -134,8 +134,8 @@ namespace Clippit.Word
                         if (h1 >= 1)
                             result += OneThroughNineteen[h1 - 1] + " hundred";
                         if (h1 >= 1 && h2 == 0)
-                            return result.Substring(0, 1).ToUpper() +
-                                   result.Substring(1);
+                            return result[..1].ToUpper() +
+                                   result[1..];
                         if (h1 >= 1)
                             result += " ";
                         int z = levelNumber % 100;
@@ -149,8 +149,8 @@ namespace Clippit.Word
                             if (r >= 1)
                                 result += "-" + OneThroughNineteen[r - 1];
                         }
-                        return result.Substring(0, 1).ToUpper() +
-                               result.Substring(1);
+                        return result[..1].ToUpper() +
+                               result[1..];
                     }
                 case "ordinalText":
                     {
@@ -162,8 +162,8 @@ namespace Clippit.Word
                         if (t1 >= 1 && t2 == 0)
                         {
                             result += OneThroughNineteen[t1 - 1] + " thousandth";
-                            return result.Substring(0, 1).ToUpper() +
-                                   result.Substring(1);
+                            return result[..1].ToUpper() +
+                                   result[1..];
                         }
                         if (t1 >= 1)
                             result += " ";
@@ -174,8 +174,8 @@ namespace Clippit.Word
                         if (h1 >= 1 && h2 == 0)
                         {
                             result += OneThroughNineteen[h1 - 1] + " hundredth";
-                            return result.Substring(0, 1).ToUpper() +
-                                   result.Substring(1);
+                            return result[..1].ToUpper() +
+                                   result[1..];
                         }
                         if (h1 >= 1)
                             result += " ";
@@ -193,8 +193,8 @@ namespace Clippit.Word
                             if (r >= 1)
                                 result += "-" + OrdinalOneThroughNineteen[r - 1];
                         }
-                        return result.Substring(0, 1).ToUpper() +
-                               result.Substring(1);
+                        return result[..1].ToUpper() +
+                               result[1..];
                     }
                 case "01, 02, 03, ...":
                     return $"{levelNumber:00}";
