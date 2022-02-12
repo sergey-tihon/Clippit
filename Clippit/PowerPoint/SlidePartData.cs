@@ -56,7 +56,7 @@ namespace Clippit.PowerPoint
         }
 
 
-        private static Dictionary<XName, string[]> s_resizableAttributes = 
+        private static readonly Dictionary<XName, string[]> s_resizableAttributes = 
             new() {
                 {A.off, new[] {"x", "y"}},      // <a:off x="2054132" y="1665577"/>
                 {A.ext, new[] {"cx", "cy"}},    // <a:ext cx="2289267" cy="3074329"/>

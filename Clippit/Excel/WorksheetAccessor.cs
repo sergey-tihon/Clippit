@@ -12,7 +12,7 @@ namespace Clippit.Excel
     // Classes for "bulk load" of a spreadsheet
     public class MemorySpreadsheet
     {
-        private SortedList<int, MemoryRow> rowList;
+        private readonly SortedList<int, MemoryRow> rowList;
 
         public MemorySpreadsheet()
         {
@@ -56,8 +56,8 @@ namespace Clippit.Excel
 
     public class MemoryRow
     {
-        private int row;
-        private SortedList<int, MemoryCell> cellList;
+        private readonly int row;
+        private readonly SortedList<int, MemoryCell> cellList;
 
         public MemoryRow(int Row)
         {
@@ -90,9 +90,9 @@ namespace Clippit.Excel
 
     public class MemoryCell
     {
-        private int column;
-        private object cellValue;
-        private int styleIndex;
+        private readonly int column;
+        private readonly object cellValue;
+        private readonly int styleIndex;
 
         public MemoryCell(int col, object value)
         {
@@ -146,8 +146,8 @@ namespace Clippit.Excel
     // Static methods to modify worksheets in SpreadsheetML
     public class WorksheetAccessor
     {
-        private static XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
-        private static XNamespace relationshipsns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+        private static readonly XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+        private static readonly XNamespace relationshipsns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 
         // Finds the WorksheetPart by sheet name
         public static WorksheetPart GetWorksheet(SpreadsheetDocument document, string worksheetName)
@@ -855,11 +855,11 @@ namespace Clippit.Excel
         {
             public enum ColorType { Theme, Indexed };
 
-            private bool Auto;
-            private string RGB;
-            private int Indexed;
-            private int Theme;
-            private double Tint;
+            private readonly bool Auto;
+            private readonly string RGB;
+            private readonly int Indexed;
+            private readonly int Theme;
+            private readonly double Tint;
 
             public ColorInfo()
             {
@@ -980,9 +980,9 @@ namespace Clippit.Excel
                 Gray0625, Gray125, LightDown, LightGray, LightGrid, LightHorizontal, LightTrellis, LightUp, LightVertical, MediumGray
             };
 
-            private PatternType Pattern;
-            private ColorInfo BgColor;
-            private ColorInfo FgColor;
+            private readonly PatternType Pattern;
+            private readonly ColorInfo BgColor;
+            private readonly ColorInfo FgColor;
 
             public PatternFill(PatternType pattern, ColorInfo bgColor, ColorInfo fgColor)
             {
@@ -1064,8 +1064,8 @@ namespace Clippit.Excel
 
         public class GradientStop
         {
-            private double Position;
-            private ColorInfo Color;
+            private readonly double Position;
+            private readonly ColorInfo Color;
 
             public GradientStop(double position, ColorInfo color)
             {
@@ -1081,13 +1081,13 @@ namespace Clippit.Excel
 
         public class GradientFill
         {
-            private bool PathGradient;
-            private int LinearDegree;
-            private double PathTop;
-            private double PathLeft;
-            private double PathBottom;
-            private double PathRight;
-            private List<GradientStop> Stops;
+            private readonly bool PathGradient;
+            private readonly int LinearDegree;
+            private readonly double PathTop;
+            private readonly double PathLeft;
+            private readonly double PathBottom;
+            private readonly double PathRight;
+            private readonly List<GradientStop> Stops;
 
             public GradientFill(int degree)
             {
@@ -1161,8 +1161,8 @@ namespace Clippit.Excel
                 None, DashDot, DashDotDot, Dashed, Dotted, Double, Hair,
                 Medium, MediumDashDot, MediumDashDotDot, MediumDashed, SlantDashDot, Thick, Thin
             };
-            private LineStyle Style;
-            private ColorInfo Color;
+            private readonly LineStyle Style;
+            private readonly ColorInfo Color;
 
             public BorderLine(LineStyle style, ColorInfo color)
             {

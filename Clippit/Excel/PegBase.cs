@@ -126,7 +126,7 @@ namespace Clippit.Excel
             };
         }
 
-        private string path_;
+        private readonly string path_;
         public readonly FileEncoding encoding_;
     }
     #endregion Input File Support
@@ -286,11 +286,11 @@ namespace Clippit.Excel
         #region Data Members
         public delegate string GetNodeName(PegNode node);
 
-        private string src_;
-        private TextWriter treeOut_;
-        private int nMaxLineLen_;
-        private bool bVerbose_;
-        private GetNodeName GetNodeName_;
+        private readonly string src_;
+        private readonly TextWriter treeOut_;
+        private readonly int nMaxLineLen_;
+        private readonly bool bVerbose_;
+        private readonly GetNodeName GetNodeName_;
         #endregion Data Members
         #region Methods
         public TreePrint(TextWriter treeOut, string src, int nMaxLineLen, GetNodeName GetNodeName, bool bVerbose)
@@ -807,8 +807,8 @@ namespace Clippit.Excel
                 public byte high;
             }
 
-            private System.Collections.BitArray charSet_;
-            private bool bNegated_;
+            private readonly System.Collections.BitArray charSet_;
+            private readonly bool bNegated_;
             public BytesetData(System.Collections.BitArray b)
                 : this(b, false)
             {
@@ -1472,8 +1472,8 @@ namespace Clippit.Excel
                 public char high;
             }
 
-            private System.Collections.BitArray charSet_;
-            private bool bNegated_;
+            private readonly System.Collections.BitArray charSet_;
+            private readonly bool bNegated_;
             public OptimizedCharset(System.Collections.BitArray b)
                 : this(b, false)
             {

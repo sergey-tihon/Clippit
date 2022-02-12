@@ -5,46 +5,46 @@ namespace Clippit.Word
 {
     internal class ListItemTextGetter_Default
     {
-        private static string[] RomanOnes =
+        private static readonly string[] RomanOnes =
         {
             "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"
         };
 
-        private static string[] RomanTens =
+        private static readonly string[] RomanTens =
         {
             "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"
         };
 
-        private static string[] RomanHundreds =
+        private static readonly string[] RomanHundreds =
         {
             "", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM", "M"
         };
 
-        private static string[] RomanThousands =
+        private static readonly string[] RomanThousands =
         {
             "", "M", "MM", "MMM", "MMMM", "MMMMM", "MMMMMM", "MMMMMMM", "MMMMMMMM",
             "MMMMMMMMM", "MMMMMMMMMM"
         };
 
-        private static string[] OneThroughNineteen = {
+        private static readonly string[] OneThroughNineteen = {
             "one", "two", "three", "four", "five", "six", "seven", "eight",
             "nine", "ten", "eleven", "twelve", "thirteen", "fourteen",
             "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"
         };
 
-        private static string[] Tens = {
+        private static readonly string[] Tens = {
             "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy",
             "eighty", "ninety"
         };
 
-        private static string[] OrdinalOneThroughNineteen = {
+        private static readonly string[] OrdinalOneThroughNineteen = {
             "first", "second", "third", "fourth", "fifth", "sixth",
             "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth",
             "thirteenth", "fourteenth", "fifteenth", "sixteenth",
             "seventeenth", "eighteenth", "nineteenth"
         };
 
-        private static string[] OrdinalTenths = {
+        private static readonly string[] OrdinalTenths = {
             "tenth", "twentieth", "thirtieth", "fortieth", "fiftieth",
             "sixtieth", "seventieth", "eightieth", "ninetieth"
         };

@@ -109,7 +109,7 @@ public partial class WmlDocument : OpenXmlPowerToolsDocument
 
 public class PtMainDocumentPart : XElement
 {
-    private WmlDocument ParentWmlDocument;
+    private readonly WmlDocument ParentWmlDocument;
 
     public PtWordprocessingCommentsPart WordprocessingCommentsPart
     {

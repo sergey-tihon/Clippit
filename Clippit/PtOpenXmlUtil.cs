@@ -618,7 +618,7 @@ namespace Clippit
 
     public static class WordprocessingMLUtil
     {
-        private static HashSet<string> UnknownFonts = new HashSet<string>();
+        private static readonly HashSet<string> UnknownFonts = new HashSet<string>();
         private static HashSet<string> KnownFamilies = null;
 
         private static (double width, decimal tabLength) CalcWidthOfRun(XElement r)
@@ -960,7 +960,7 @@ namespace Clippit
             return runContainerWithConsolidatedRuns;
         }
 
-        private static Dictionary<XName, int> Order_settings = new Dictionary<XName, int>
+        private static readonly Dictionary<XName, int> Order_settings = new Dictionary<XName, int>
         {
             { W.writeProtection, 10},
             { W.view, 20},
@@ -1161,7 +1161,7 @@ decimalSymbol
 listSeparator
 #endif
 
-        private static Dictionary<XName, int> Order_pPr = new Dictionary<XName, int>
+        private static readonly Dictionary<XName, int> Order_pPr = new Dictionary<XName, int>
         {
             { W.pStyle, 10 },
             { W.keepNext, 20 },
@@ -1201,7 +1201,7 @@ listSeparator
             { W.pPrChange, 370 },
         };
 
-        private static Dictionary<XName, int> Order_rPr = new Dictionary<XName, int>
+        private static readonly Dictionary<XName, int> Order_rPr = new Dictionary<XName, int>
         {
             { W.ins, 10 },
             { W.del, 20 },
@@ -1251,7 +1251,7 @@ listSeparator
             { W.oMath, 460 },
         };
 
-        private static Dictionary<XName, int> Order_tblPr = new Dictionary<XName, int>
+        private static readonly Dictionary<XName, int> Order_tblPr = new Dictionary<XName, int>
         {
             { W.tblStyle, 10 },
             { W.tblpPr, 20 },
@@ -1272,7 +1272,7 @@ listSeparator
             { W.tblDescription, 170 },
         };
 
-        private static Dictionary<XName, int> Order_tblBorders = new Dictionary<XName, int>
+        private static readonly Dictionary<XName, int> Order_tblBorders = new Dictionary<XName, int>
         {
             { W.top, 10 },
             { W.left, 20 },
@@ -1284,7 +1284,7 @@ listSeparator
             { W.insideV, 80 },
         };
 
-        private static Dictionary<XName, int> Order_tcPr = new Dictionary<XName, int>
+        private static readonly Dictionary<XName, int> Order_tcPr = new Dictionary<XName, int>
         {
             { W.cnfStyle, 10 },
             { W.tcW, 20 },
@@ -1302,7 +1302,7 @@ listSeparator
             { W.headers, 140 },
         };
 
-        private static Dictionary<XName, int> Order_tcBorders = new Dictionary<XName, int>
+        private static readonly Dictionary<XName, int> Order_tcBorders = new Dictionary<XName, int>
         {
             { W.top, 10 },
             { W.start, 20 },
@@ -1316,7 +1316,7 @@ listSeparator
             { W.tr2bl, 100 },
         };
 
-        private static Dictionary<XName, int> Order_pBdr = new Dictionary<XName, int>
+        private static readonly Dictionary<XName, int> Order_pBdr = new Dictionary<XName, int>
         {
             { W.top, 10 },
             { W.left, 20 },

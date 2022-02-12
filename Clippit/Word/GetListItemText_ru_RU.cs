@@ -5,25 +5,25 @@ namespace Clippit.Word
 {
     public class ListItemTextGetter_ru_RU
     {
-        private static string[] OneThroughNineteen = {
+        private static readonly string[] OneThroughNineteen = {
             "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь",
             "девять", "десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать",
             "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"
         };
 
-        private static string[] Tens = {
+        private static readonly string[] Tens = {
             "десять", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят",
             "восемьдесят", "девяносто"
         };
 
-        private static string[] OrdinalOneThroughNineteen = {
+        private static readonly string[] OrdinalOneThroughNineteen = {
             "первый", "второй", "третий", "четвертый", "пятый", "шестой",
             "седьмой", "восьмой", "девятый", "десятый", "одиннадцатый", "двенадцатый",
             "тринадцатый", "четырнадцатый", "пятнадцатый", "шестнадцатый",
             "семнадцатый", "восемнадцатый", "девятнадцатый"
         };
 
-        private static string[] OrdinalTenths = {
+        private static readonly string[] OrdinalTenths = {
             "десятый", "двадцатый", "тридцатый", "сороковой", "пятидесятый",
             "шестидесятый", "семидесятый", "восьмидесятый", "девяностый"
         };

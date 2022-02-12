@@ -8,7 +8,7 @@ namespace Clippit.Excel
 {
     public class ParseFormula
     {
-        private ExcelFormula parser;
+        private readonly ExcelFormula parser;
 
         public ParseFormula(string formula)
         {

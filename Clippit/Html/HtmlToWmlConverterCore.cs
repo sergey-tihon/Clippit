@@ -370,7 +370,7 @@ namespace Clippit.Html
             return node;
         }
 
-        private static Dictionary<XName, int> Order_pPr = new Dictionary<XName, int>
+        private static readonly Dictionary<XName, int> Order_pPr = new Dictionary<XName, int>
         {
             { W.pStyle, 10 },
             { W.keepNext, 20 },
@@ -410,7 +410,7 @@ namespace Clippit.Html
             { W.pPrChange, 370 },
         };
 
-        private static Dictionary<XName, int> Order_rPr = new Dictionary<XName, int>
+        private static readonly Dictionary<XName, int> Order_rPr = new Dictionary<XName, int>
         {
             { W.ins, 10 },
             { W.del, 20 },
@@ -460,7 +460,7 @@ namespace Clippit.Html
             { W.oMath, 460 },
         };
 
-        private static Dictionary<XName, int> Order_tblPr = new Dictionary<XName, int>
+        private static readonly Dictionary<XName, int> Order_tblPr = new Dictionary<XName, int>
         {
             { W.tblStyle, 10 },
             { W.tblpPr, 20 },
@@ -481,7 +481,7 @@ namespace Clippit.Html
             { W.tblDescription, 170 },
         };
 
-        private static Dictionary<XName, int> Order_tblBorders = new Dictionary<XName, int>
+        private static readonly Dictionary<XName, int> Order_tblBorders = new Dictionary<XName, int>
         {
             { W.top, 10 },
             { W.left, 20 },
@@ -493,7 +493,7 @@ namespace Clippit.Html
             { W.insideV, 80 },
         };
 
-        private static Dictionary<XName, int> Order_tcPr = new Dictionary<XName, int>
+        private static readonly Dictionary<XName, int> Order_tcPr = new Dictionary<XName, int>
         {
             { W.cnfStyle, 10 },
             { W.tcW, 20 },
@@ -511,7 +511,7 @@ namespace Clippit.Html
             { W.headers, 140 },
         };
 
-        private static Dictionary<XName, int> Order_tcBorders = new Dictionary<XName, int>
+        private static readonly Dictionary<XName, int> Order_tcBorders = new Dictionary<XName, int>
         {
             { W.top, 10 },
             { W.start, 20 },
@@ -525,7 +525,7 @@ namespace Clippit.Html
             { W.tr2bl, 100 },
         };
 
-        private static Dictionary<XName, int> Order_pBdr = new Dictionary<XName, int>
+        private static readonly Dictionary<XName, int> Order_pBdr = new Dictionary<XName, int>
         {
             { W.top, 10 },
             { W.left, 20 },
@@ -1223,7 +1223,7 @@ namespace Clippit.Html
                 return rPr.Element(propertyName);
             }
 
-            private static XName[] TogglePropertyNames = new[] {
+            private static readonly XName[] TogglePropertyNames = new[] {
                 W.b,
                 W.bCs,
                 W.caps,
@@ -1238,7 +1238,7 @@ namespace Clippit.Html
                 W.vanish
             };
 
-            private static XName[] PropertyNames = new[] {
+            private static readonly XName[] PropertyNames = new[] {
                 W.cs,
                 W.rtl,
                 W.u,
@@ -1789,7 +1789,7 @@ namespace Clippit.Html
             return FontType.HAnsi;
         }
 
-        private static HashSet<char> WeakAndNeutralDirectionalCharacters = new HashSet<char>() {
+        private static readonly HashSet<char> WeakAndNeutralDirectionalCharacters = new HashSet<char>() {
             '0',
             '1',
             '2',
@@ -3020,7 +3020,7 @@ namespace Clippit.Html
             public string StyleName;
         };
 
-        private static HeadingInfo[] HeadingTagMap = new[]
+        private static readonly HeadingInfo[] HeadingTagMap = new[]
             {
                 new HeadingInfo { Name = XhtmlNoNamespace.h1, StyleName = "Heading1" },
                 new HeadingInfo { Name = XhtmlNoNamespace.h2, StyleName = "Heading2" },
@@ -3123,7 +3123,7 @@ namespace Clippit.Html
             return borders;
         }
 
-        private static Dictionary<string, string> BorderStyleMap = new Dictionary<string, string>()
+        private static readonly Dictionary<string, string> BorderStyleMap = new Dictionary<string, string>()
         {
             { "none", "none" },
             { "hidden", "none" },
@@ -3611,7 +3611,7 @@ namespace Clippit.Html
         }
 
 
-        private static Dictionary<string, string> InstalledFonts = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> InstalledFonts = new Dictionary<string, string>
             {
                 {"serif", "Times New Roman"},
                 {"sans-serif", "Arial"},
@@ -4124,7 +4124,7 @@ namespace Clippit.Html
         }
 
         // decimal, lowerLetter
-        private static string OrderedListAbstractXml =
+        private static readonly string OrderedListAbstractXml =
 @"<w:abstractNum w:abstractNumId='{0}' xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
     <w:multiLevelType w:val='multilevel'/>
     <w:tmpl w:val='7D26959A'/>
@@ -4264,7 +4264,7 @@ namespace Clippit.Html
     </w:lvl>
   </w:abstractNum>";
 
-        private static string BulletAbstractXml =
+        private static readonly string BulletAbstractXml =
 @"<w:abstractNum w:abstractNumId='{0}' xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
   <w:multiLevelType w:val='multilevel' />
   <w:tmpl w:val='02BEA0DA' />

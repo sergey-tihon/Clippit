@@ -4033,7 +4033,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             return oldImageData;
         }
 
-        private static XAttribute[] NamespaceAttributes =
+        private static readonly XAttribute[] NamespaceAttributes =
         {
             new(XNamespace.Xmlns + "wpc", WPC.wpc),
             new(XNamespace.Xmlns + "mc", MC.mc),

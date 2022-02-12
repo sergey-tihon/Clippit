@@ -3095,7 +3095,7 @@ namespace Clippit.Html
         private int m_inputStreamLength;
         private int m_currentPositionInBuffer;
         private Stream m_inputStream;
-        private bool m_isUserStream;
+        private readonly bool m_isUserStream;
 
         public CssBuffer(Stream s, bool isUserStream)
         {

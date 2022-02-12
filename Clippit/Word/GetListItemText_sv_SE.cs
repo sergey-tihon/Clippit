@@ -7,18 +7,18 @@ namespace Clippit.Word
 {
 	public class ListItemTextGetter_sv_SE
 	{
-		private static string[] OneThroughNineteen = {
+		private static readonly string[] OneThroughNineteen = {
             "", "ett", "två", "tre", "fyra", "fem", "sex", "sju", "åtta",
             "nio", "tio", "elva", "tolv", "tretton", "fjorton",
             "femton", "sexton", "sjutton", "arton", "nitton"
         };
 
-		private static string[] Tens = {
+		private static readonly string[] Tens = {
             "","tio", "tjugo", "trettio", "fyrtio", "femtio", "sextio", "sjuttio", "åttio",
             "nittio", "etthundra"
         };
 
-		private static string[] OrdinalOneThroughNineteen = {
+		private static readonly string[] OrdinalOneThroughNineteen = {
             "", "första", "andra", "tredje", "fjärde", "femte", "sjätte", "sjunde",
             "åttonde", "nionde", "tionde", "elfte", "tolfte", "trettonde",
             "fjortonde", "femtonde", "sextonde", "sjuttonde",

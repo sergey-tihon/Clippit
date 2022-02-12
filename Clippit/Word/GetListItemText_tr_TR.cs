@@ -5,52 +5,52 @@ namespace Clippit.Word
 {
     public class ListItemTextGetter_tr_TR
     {
-        private static string[] RomanOnes =
+        private static readonly string[] RomanOnes =
         {
             "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"
         };
 
-        private static string[] RomanTens =
+        private static readonly string[] RomanTens =
         {
             "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"
         };
 
-        private static string[] RomanHundreds =
+        private static readonly string[] RomanHundreds =
         {
             "", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM", "M"
         };
 
-        private static string[] RomanThousands =
+        private static readonly string[] RomanThousands =
         {
             "", "M", "MM", "MMM", "MMMM", "MMMMM", "MMMMMM", "MMMMMMM", "MMMMMMMM",
             "MMMMMMMMM", "MMMMMMMMMM"
         };
 
-        private static string[] OneThroughNineteen = {
+        private static readonly string[] OneThroughNineteen = {
             "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz",
             "dokuz", "on", "onbir", "oniki", "onüç", "ondört",
             "onbeş", "onaltı", "onyedi", "onsekiz", "ondokuz"
         };
 
-        private static string[] Tens = {
+        private static readonly string[] Tens = {
             "on", "yirmi", "otuz", "kırk", "elli", "altmış", "yetmiş",
             "seksen", "doksan"
         };
 
-        private static string[] OrdinalOneThroughNineteen = {
+        private static readonly string[] OrdinalOneThroughNineteen = {
             "birinci", "ikinci", "üçüncü", "dördüncü", "beşinci", "altıncı",
             "yedinci", "sekizinci", "dokuzuncu", "onuncu", "onbirinci", "onikinci",
             "onüçüncü", "ondördüncü", "onbeşinci", "onaltıncı",
             "onyedinci", "onsekizinci", "ondokuzuncu"
         };
 
-        private static string[] TwoThroughNineteen = {
+        private static readonly string[] TwoThroughNineteen = {
             "", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz",
             "dokuz", "on", "onbir", "oniki", "onüç", "ondört",
             "onbeş", "onaltı", "onyedi", "onsekiz", "ondokuz"
         };
 
-        private static string[] OrdinalTenths = {
+        private static readonly string[] OrdinalTenths = {
             "onuncu", "yirminci", "otuzuncu", "kırkıncı", "ellinci",
             "altmışıncı", "yetmişinci", "sekseninci", "doksanıncı"
         };

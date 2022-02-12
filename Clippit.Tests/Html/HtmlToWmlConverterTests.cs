@@ -45,7 +45,7 @@ namespace Clippit.Tests.Html
         {
         }
 
-        private static bool s_ProduceAnnotatedHtml = true;
+        private static readonly bool s_ProduceAnnotatedHtml = true;
 
         // PowerShell oneliner that generates InlineData for all files in a directory
         // dir | % { '[InlineData("' + $_.Name + '")]' } | clip
@@ -474,7 +474,7 @@ namespace Clippit.Tests.Html
             formattedDoc.SaveAs(destDocxFi.FullName);
         }
 
-        private static string defaultCss =
+        private static readonly string defaultCss =
             @"html, address,
 blockquote,
 body, dd, div,
@@ -548,7 +548,7 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
 
 ";
 
-        private static string userCss = @"";
+        private static readonly string userCss = @"";
         
     }
 }

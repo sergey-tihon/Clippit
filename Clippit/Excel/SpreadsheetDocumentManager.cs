@@ -13,8 +13,8 @@ namespace Clippit.Excel
     /// </summary>
     public class SpreadsheetDocumentManager
     {
-        private static XNamespace ns;
-        private static XNamespace relationshipsns;
+        private static readonly XNamespace ns;
+        private static readonly XNamespace relationshipsns;
         private static int headerRow = 1;
 
         static SpreadsheetDocumentManager()

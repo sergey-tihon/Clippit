@@ -1301,7 +1301,7 @@ namespace Clippit.Word
             }
         }
 
-        private static Dictionary<string, int> BorderTypePriority = new()
+        private static readonly Dictionary<string, int> BorderTypePriority = new()
         {
             { "single", 1 },
             { "thick", 2 },
@@ -1309,7 +1309,7 @@ namespace Clippit.Word
             { "dotted", 4 },
         };
 
-        private static Dictionary<string, int> BorderNumber = new()
+        private static readonly Dictionary<string, int> BorderNumber = new()
         {
             {"single", 1 },
             {"thick", 2 },
@@ -1456,7 +1456,7 @@ namespace Clippit.Word
             return rolledStyle;
         }
 
-        private static XName[] SpecialCaseChildProperties =
+        private static readonly XName[] SpecialCaseChildProperties =
         {
             W.tblPr,
             W.trPr,
@@ -1475,7 +1475,7 @@ namespace Clippit.Word
             W.numPr,
         };
 
-        private static XName[] MergeChildProperties =
+        private static readonly XName[] MergeChildProperties =
         {
             W.tblPr,
             W.trPr,
@@ -1488,7 +1488,7 @@ namespace Clippit.Word
             W.numPr,
         };
 
-        private static string[] TableStyleOverrideTypes =
+        private static readonly string[] TableStyleOverrideTypes =
         {
             "band1Vert",
             "band2Vert",
@@ -1504,7 +1504,7 @@ namespace Clippit.Word
             "swCell",
         };
 
-        private static Dictionary<string, XName> TableStyleOverrideXNameMap = new()
+        private static readonly Dictionary<string, XName> TableStyleOverrideXNameMap = new()
         {
             {"band1Vert", W.oddVBand},
             {"band2Vert", W.evenVBand},
@@ -1520,7 +1520,7 @@ namespace Clippit.Word
             {"swCell", W.lastRowFirstColumn},
         };
 
-        private static Dictionary<XName, string> TableStyleOverrideXNameRevMap = new()
+        private static readonly Dictionary<XName, string> TableStyleOverrideXNameRevMap = new()
         {
             {W.oddVBand, "band1Vert"},
             {W.evenVBand, "band2Vert"},
@@ -1959,7 +1959,7 @@ namespace Clippit.Word
             }
         }
 
-        private static string[] AcceptableNumFormats = new[] {
+        private static readonly string[] AcceptableNumFormats = new[] {
             "decimal",
             "decimalZero",
             "upperRoman",
@@ -2462,7 +2462,7 @@ namespace Clippit.Word
             return newMergedElement;
         }
 
-        private static XName[] TogglePropertyNames = new[] {
+        private static readonly XName[] TogglePropertyNames = new[] {
             W.b,
             W.bCs,
             W.caps,
@@ -2579,7 +2579,7 @@ namespace Clippit.Word
                 return rPr.Element(propertyName);
             }
 
-            private static XName[] TogglePropertyNames = new[] {
+            private static readonly XName[] TogglePropertyNames = new[] {
                 W.b,
                 W.bCs,
                 W.caps,
@@ -2594,7 +2594,7 @@ namespace Clippit.Word
                 W.vanish
             };
 
-            private static XName[] PropertyNames = new[] {
+            private static readonly XName[] PropertyNames = new[] {
                 W.cs,
                 W.rtl,
                 W.u,
@@ -2605,7 +2605,7 @@ namespace Clippit.Word
 
         }
 
-        private static HashSet<char> WeakAndNeutralDirectionalCharacters = new() {
+        private static readonly HashSet<char> WeakAndNeutralDirectionalCharacters = new() {
             '0',
             '1',
             '2',
@@ -3470,7 +3470,7 @@ namespace Clippit.Word
             public string DefaultParagraphStyleName;
             public string DefaultCharacterStyleName;
             public string DefaultTableStyleName;
-            public Dictionary<string, XElement> RolledCharacterStyles;
+            public readonly Dictionary<string, XElement> RolledCharacterStyles;
             public FormattingAssemblerInfo()
             {
                 RolledCharacterStyles = new Dictionary<string, XElement>();

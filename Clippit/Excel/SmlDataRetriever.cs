@@ -889,7 +889,7 @@ namespace Clippit.Excel
             "System Background",
         };
 
-        private static string[] FontFamilyList = new string[] {
+        private static readonly string[] FontFamilyList = new string[] {
             "Not applicable",
             "Roman",
             "Swiss",
@@ -1039,6 +1039,6 @@ namespace Clippit.Excel
             return returnValue;
         }
 
-        private static XNamespace x14ac = "http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac";
+        private static readonly XNamespace x14ac = "http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac";
     }
 }

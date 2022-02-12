@@ -1448,7 +1448,7 @@ namespace Clippit.Word
             return node;
         }
 
-        private static Dictionary<XName, int> Order_tcPr = new()
+        private static readonly Dictionary<XName, int> Order_tcPr = new()
         {
             { W.cnfStyle, 10 },
             { W.tcW, 20 },
@@ -2035,7 +2035,7 @@ namespace Clippit.Word
             return newDocument;
         }
 
-        private static Dictionary<XName, int> Order_sdt = new()
+        private static readonly Dictionary<XName, int> Order_sdt = new()
         {
             { W.sdtPr, 10 },
             { W.sdtEndPr, 20 },
@@ -2391,8 +2391,8 @@ namespace Clippit.Word
 
         private class PotentialInRangeElements
         {
-            public List<XElement> PotentialStartElementTagsInRange;
-            public List<XElement> PotentialEndElementTagsInRange;
+            public readonly List<XElement> PotentialStartElementTagsInRange;
+            public readonly List<XElement> PotentialEndElementTagsInRange;
 
             public PotentialInRangeElements()
             {
@@ -2712,7 +2712,7 @@ namespace Clippit.Word
         </w:tc>
       </w:tr>
 #endif
-        private static XName[] BlockLevelElements = new[] {
+        private static readonly XName[] BlockLevelElements = new[] {
             W.p,
             W.tbl,
             W.sdt,

@@ -94,7 +94,7 @@ namespace Clippit.Word
             UpdateSeries(chartPart, chartData);
         }
 
-        private static Dictionary<int, string> FormatCodes = new()
+        private static readonly Dictionary<int, string> FormatCodes = new()
         {
             { 0, "general" },
             { 1, "0" },

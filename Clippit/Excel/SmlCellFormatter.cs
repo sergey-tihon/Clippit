@@ -24,7 +24,7 @@ namespace Clippit.Excel
             public string FormatCode;
         }
 
-        private static Dictionary<string, FormatConfig> ExcelFormatCodeToNetFormatCodeExceptionMap = new()
+        private static readonly Dictionary<string, FormatConfig> ExcelFormatCodeToNetFormatCodeExceptionMap = new()
         {
             {
                 "# ?/?",
@@ -117,7 +117,7 @@ namespace Clippit.Excel
             return value;
         }
 
-        private static Regex UnderRegex = new("_.");
+        private static readonly Regex UnderRegex = new("_.");
 
         // The following Regex transforms currency specifies into a character / string
         // that string.Format can use to properly produce the correct text.
@@ -125,7 +125,7 @@ namespace Clippit.Excel
         // "[$€-2]"      => "€"
         // "[$¥-804]"    => "¥
         // "[$CHF-100C]" => "CHF"
-        private static string s_CurrRegex = @"\[\$(?<curr>.*-).*\]";
+        private static readonly string s_CurrRegex = @"\[\$(?<curr>.*-).*\]";
 
         private static string ConvertFormatCode(string formatCode)
         {
@@ -144,7 +144,7 @@ namespace Clippit.Excel
             return withTransformedCurrency;
         }
 
-        private static string[] ValidColors = new[] {
+        private static readonly string[] ValidColors = new[] {
             "Black",
             "Blue",
             "Cyan",

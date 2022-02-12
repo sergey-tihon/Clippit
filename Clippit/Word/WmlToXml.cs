@@ -1494,7 +1494,7 @@ namespace Clippit.Word
             }
         }
 
-        private static XAttribute[] NamespaceAttributes =
+        private static readonly XAttribute[] NamespaceAttributes =
         {
             new XAttribute(XNamespace.Xmlns + "wpc", WPC.wpc),
             new XAttribute(XNamespace.Xmlns + "mc", MC.mc),

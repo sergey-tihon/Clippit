@@ -363,7 +363,7 @@ namespace Clippit.Word
             throw new OpenXmlPowerToolsException("Attempting to retrieve ListItemInfo before initialization");
         }
 
-        private static ListItemInfo NotAListItem = new(false, true);
+        private static readonly ListItemInfo NotAListItem = new(false, true);
         private static ListItemInfo ZeroNumId = new(false, false);
 
         public static void InitListItemInfo(XDocument numXDoc, XDocument stylesXDoc, XElement paragraph)

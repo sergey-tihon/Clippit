@@ -115,7 +115,7 @@ namespace Clippit.Html
 {
     internal class CssApplier
     {
-        private static List<PropertyInfo> PropertyInfoList = new()
+        private static readonly List<PropertyInfo> PropertyInfoList = new()
         {
             // color
             // Value:          <color> | inherit
@@ -1532,7 +1532,7 @@ namespace Clippit.Html
             return newExpr;
         }
 
-        private static Dictionary<string, double> FontSizeMap = new()
+        private static readonly Dictionary<string, double> FontSizeMap = new()
         {
             { "xx-small", 7.5d },
             { "x-small", 10d },
@@ -1886,7 +1886,7 @@ namespace Clippit.Html
             public string Pattern;
         }
 
-        private static ShorthandPropertiesInfo[] ShorthandProperties = new[]
+        private static readonly ShorthandPropertiesInfo[] ShorthandProperties = new[]
         {
             new ShorthandPropertiesInfo
             {
@@ -2545,7 +2545,7 @@ namespace Clippit.Html
             }
         }
 
-        private static string[] BackgroundRepeatValues = new[]
+        private static readonly string[] BackgroundRepeatValues = new[]
         {
             "repeat",
             "repeat-x",
@@ -2553,13 +2553,13 @@ namespace Clippit.Html
             "no-repeat",
         };
 
-        private static string[] BackgroundAttachmentValues = new[]
+        private static readonly string[] BackgroundAttachmentValues = new[]
         {
             "scroll",
             "fixed",
         };
 
-        private static string[] BackgroundPositionValues = new[]
+        private static readonly string[] BackgroundPositionValues = new[]
         {
             "left",
             "right",
@@ -2585,13 +2585,13 @@ namespace Clippit.Html
             return CssDataType.BackgroundPosition;
         }
 
-        private static string[] ListStylePositionValues = new[]
+        private static readonly string[] ListStylePositionValues = new[]
         {
             "inside",
             "outside",
         };
 
-        private static string[] BorderStyleValues = new[]
+        private static readonly string[] BorderStyleValues = new[]
         {
             "none",
             "hidden",
@@ -2616,7 +2616,7 @@ namespace Clippit.Html
             return CssDataType.BorderWidth;
         }
 
-        private static string[] ListStyleTypeValues = new[]
+        private static readonly string[] ListStyleTypeValues = new[]
         {
             "disc",
             "circle",
@@ -2643,18 +2643,18 @@ namespace Clippit.Html
             return CssDataType.ListStyleImage;
         }
 
-        private static string[] FontStyleValues = new[]
+        private static readonly string[] FontStyleValues = new[]
         {
             "italic",
             "oblique",
         };
 
-        private static string[] FontVarientValues = new[]
+        private static readonly string[] FontVarientValues = new[]
         {
             "small-caps",
         };
 
-        private static string[] FontWeightValues = new[]
+        private static readonly string[] FontWeightValues = new[]
         {
             "bold",
             "bolder",
@@ -2934,7 +2934,7 @@ namespace Clippit.Html
             }
         }
 
-        private static Dictionary<string, string> ColorMap = new()
+        private static readonly Dictionary<string, string> ColorMap = new()
         {
             { "maroon", "800000" },
             { "red", "FF0000" },
