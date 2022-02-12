@@ -4,7 +4,7 @@ id
 owners
     Sergey Tihon
 authors
-    Microsoft Corporation, Eric White, Sergey Tihon
+    Sergey Tihon, Microsoft Corporation, Eric White, and others
 projectUrl
     https://github.com/sergey-tihon/Clippit
 iconUrl
@@ -14,16 +14,21 @@ licenseUrl
 requireLicenseAcceptance
     false
 copyright
-    Copyright 2012-2021
+    Copyright 2012-2022
 tags
     OpenXML PowerTools PowerPoint Word Excel HTML
 description
-    Fork of OpenXmlPowerTools with new features
+    Fresh PowerTools for OpenXml
 files
     bin/Release/netstandard2.0/Clippit.dll ==> lib/netstandard2.0
     bin/Release/netstandard2.0/Clippit.pdb ==> lib/netstandard2.0
+    bin/Release/net6.0/Clippit.dll ==> lib/net6.0
+    bin/Release/net6.0/Clippit.pdb ==> lib/net6.0
 
 dependencies
     framework: netstandard20
+        DocumentFormat.OpenXml >= LOCKEDVERSION
+        SixLabors.ImageSharp.Drawing >= LOCKEDVERSION
+    framework: net6.0
         DocumentFormat.OpenXml >= LOCKEDVERSION
         SixLabors.ImageSharp.Drawing >= LOCKEDVERSION

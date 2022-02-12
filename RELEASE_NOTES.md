@@ -1,8 +1,8 @@
-#### 2.0.0-beta1 - Feb 10, 2022
-* Migration to .NET 6.0
-* `System.Drawing.Common` replaced by `SixLabors.ImageSharp.Drawing`
-* Removed `libgdiplus` dependency
-* Drop old `WmlComparer`
+#### 2.0.0-beta1 - Feb 12, 2022
+- Migration to .NET 6.0
+- `System.Drawing.Common` replaced by `SixLabors.ImageSharp.Drawing`
+- Removed `libgdiplus` dependency
+- Drop old `WmlComparer`
 
 #### 1.9.1 - Feb 9, 2022
 - Fixed incorrect usage of Stream API
