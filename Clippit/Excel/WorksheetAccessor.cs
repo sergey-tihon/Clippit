@@ -384,7 +384,7 @@ namespace Clippit.Excel
             var columnNumber = 0;
             foreach (var c in cellReference)
             {
-                if (Char.IsLetter(c))
+                if (char.IsLetter(c))
                     columnNumber = columnNumber * 26 + System.Convert.ToInt32(c) - System.Convert.ToInt32('A') + 1;
             }
             return columnNumber;
@@ -398,7 +398,7 @@ namespace Clippit.Excel
             column = 0;
             foreach (var c in cellReference)
             {
-                if (Char.IsLetter(c))
+                if (char.IsLetter(c))
                     column = column * 26 + System.Convert.ToInt32(c) - System.Convert.ToInt32('A') + 1;
                 else
                     row = row * 10 + System.Convert.ToInt32(c) - System.Convert.ToInt32('0');
@@ -436,7 +436,7 @@ namespace Clippit.Excel
                 element = new XElement(S.definedName, new XAttribute(NoNamespace.name, rangeName));
                 book.Root.Element(S.definedNames).Add(element);
             }
-            element.SetValue(String.Format("{0}!${1}${2}:${3}${4}", sheetName, GetColumnId(startColumn), startRow, GetColumnId(endColumn), endRow));
+            element.SetValue(string.Format("{0}!${1}${2}:${3}${4}", sheetName, GetColumnId(startColumn), startRow, GetColumnId(endColumn), endRow));
             doc.WorkbookPart.PutXDocument();
         }
 
@@ -541,7 +541,7 @@ namespace Clippit.Excel
                 var sharedItems = new XElement(S.sharedItems);
                 // Determine numeric sharedItems values, if any
                 var value = GetCellValue(document, sourceSheet, column, startRow + 1);
-                if (value is double or Int32)
+                if (value is double or int)
                 {
                     var hasDouble = false;
                     var minValue = Convert.ToDouble(value);
@@ -580,7 +580,7 @@ namespace Clippit.Excel
                 for (var column = startColumn; column <= endColumn; column++)
                 {
                     var value = GetCellValue(document, sourceSheet, column, row);
-                    if (value is String)
+                    if (value is string)
                         r.Add(new XElement(S._s, new XAttribute(NoNamespace.v, value.ToString())));
                     else
                         r.Add(new XElement(S.n, new XAttribute(NoNamespace.v, value.ToString())));

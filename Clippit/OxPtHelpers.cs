@@ -60,7 +60,7 @@ namespace Clippit
                 {
                     var colorValue = ColorParser.FromName(foreColor).ToArgb();
                     if (colorValue == 0)
-                        throw new OpenXmlPowerToolsException(String.Format("Add-DocxText: The specified color {0} is unsupported, Please specify the valid color. Ex, Red, Green", foreColor));
+                        throw new OpenXmlPowerToolsException(string.Format("Add-DocxText: The specified color {0} is unsupported, Please specify the valid color. Ex, Red, Green", foreColor));
 
                     var ColorHex = string.Format("{0:x6}", colorValue);
                     runProperties.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Color() { Val = ColorHex[2..] });
@@ -73,7 +73,7 @@ namespace Clippit
                 {
                     var colorShade = ColorParser.FromName(backColor).ToArgb();
                     if (colorShade == 0)
-                        throw new OpenXmlPowerToolsException(String.Format("Add-DocxText: The specified color {0} is unsupported, Please specify the valid color. Ex, Red, Green", foreColor));
+                        throw new OpenXmlPowerToolsException(string.Format("Add-DocxText: The specified color {0} is unsupported, Please specify the valid color. Ex, Red, Green", foreColor));
 
                     var ColorShadeHex = string.Format("{0:x6}", colorShade);
                     runProperties.AppendChild(new Shading() { Fill = ColorShadeHex[2..], Val = ShadingPatternValues.Clear });
@@ -314,7 +314,7 @@ AAsACwDBAgAAbCwAAAAA";
 
                         //Check if the style is proper style. Ex, Heading1, Heading2
                         if (templateStyle == null)
-                            throw new OpenXmlPowerToolsException(String.Format("Add-DocxText: The specified style name {0} is unsupported, Please specify the valid style. Ex, Heading1, Heading2, Title", styleName));
+                            throw new OpenXmlPowerToolsException(string.Format("Add-DocxText: The specified style name {0} is unsupported, Please specify the valid style. Ex, Heading1, Heading2, Title", styleName));
                         else
                             part.Styles.Append((templateStyle.CloneNode(true)));
                     }

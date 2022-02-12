@@ -51,9 +51,9 @@ namespace Clippit.Excel
         public IEnumerable<TableRow> TableRows()
         {
             var refStart = Ref.Split(':').First();
-            var rowStart = Int32.Parse(XlsxTables.SplitAddress(refStart)[1]);
+            var rowStart = int.Parse(XlsxTables.SplitAddress(refStart)[1]);
             var refEnd = Ref.Split(':').ElementAt(1);
-            var rowEnd = Int32.Parse(XlsxTables.SplitAddress(refEnd)[1]);
+            var rowEnd = int.Parse(XlsxTables.SplitAddress(refEnd)[1]);
             var headerRowsCount = HeaderRowCount == null ? 0 : (int)HeaderRowCount;
             var totalRowsCount = TotalsRowCount == null ? 0 : (int)TotalsRowCount;
             return Parent
@@ -62,7 +62,7 @@ namespace Clippit.Excel
                 .SkipLast(totalRowsCount)
                 .Where(r =>
                 {
-                    var rowId = Int32.Parse(r.RowId);
+                    var rowId = int.Parse(r.RowId);
                     return rowId >= rowStart && rowId <= rowEnd;
                 }
                 )
@@ -166,82 +166,82 @@ namespace Clippit.Excel
         public static explicit operator int(TableCell cell)
         {
             if (cell == null) throw new ArgumentNullException("TableCell");
-            return Int32.Parse(cell.Value);
+            return int.Parse(cell.Value);
         }
         public static explicit operator int?(TableCell cell)
         {
             if (cell == null) return null;
-            return Int32.Parse(cell.Value);
+            return int.Parse(cell.Value);
         }
         public static explicit operator uint(TableCell cell)
         {
             if (cell == null) throw new ArgumentNullException("TableCell");
-            return UInt32.Parse(cell.Value);
+            return uint.Parse(cell.Value);
         }
         public static explicit operator uint?(TableCell cell)
         {
             if (cell == null) return null;
-            return UInt32.Parse(cell.Value);
+            return uint.Parse(cell.Value);
         }
         public static explicit operator long(TableCell cell)
         {
             if (cell == null) throw new ArgumentNullException("TableCell");
-            return Int64.Parse(cell.Value);
+            return long.Parse(cell.Value);
         }
         public static explicit operator long?(TableCell cell)
         {
             if (cell == null) return null;
-            return Int64.Parse(cell.Value);
+            return long.Parse(cell.Value);
         }
         public static explicit operator ulong(TableCell cell)
         {
             if (cell == null) throw new ArgumentNullException("TableCell");
-            return UInt64.Parse(cell.Value);
+            return ulong.Parse(cell.Value);
         }
         public static explicit operator ulong?(TableCell cell)
         {
             if (cell == null) return null;
-            return UInt64.Parse(cell.Value);
+            return ulong.Parse(cell.Value);
         }
         public static explicit operator float(TableCell cell)
         {
             if (cell == null) throw new ArgumentNullException("TableCell");
-            return Single.Parse(cell.Value);
+            return float.Parse(cell.Value);
         }
         public static explicit operator float?(TableCell cell)
         {
             if (cell == null) return null;
-            return Single.Parse(cell.Value);
+            return float.Parse(cell.Value);
         }
         public static explicit operator double(TableCell cell)
         {
             if (cell == null) throw new ArgumentNullException("TableCell");
-            return Double.Parse(cell.Value);
+            return double.Parse(cell.Value);
         }
         public static explicit operator double?(TableCell cell)
         {
             if (cell == null) return null;
-            return Double.Parse(cell.Value);
+            return double.Parse(cell.Value);
         }
         public static explicit operator decimal(TableCell cell)
         {
             if (cell == null) throw new ArgumentNullException("TableCell");
-            return Decimal.Parse(cell.Value);
+            return decimal.Parse(cell.Value);
         }
         public static explicit operator decimal?(TableCell cell)
         {
             if (cell == null) return null;
-            return Decimal.Parse(cell.Value);
+            return decimal.Parse(cell.Value);
         }
         public static implicit operator DateTime(TableCell cell)
         {
             if (cell == null) throw new ArgumentNullException("TableCell");
-            return new DateTime(1900, 1, 1).AddDays(Int32.Parse(cell.Value) - 2);
+            return new DateTime(1900, 1, 1).AddDays(int.Parse(cell.Value) - 2);
         }
         public static implicit operator DateTime?(TableCell cell)
         {
             if (cell == null) return null;
-            return new DateTime(1900, 1, 1).AddDays(Int32.Parse(cell.Value) - 2);
+            return new DateTime(1900, 1, 1).AddDays(int.Parse(cell.Value) - 2);
         }
     }
 
@@ -348,18 +348,18 @@ namespace Clippit.Excel
             var refStart = spl.First();
             var refStartSplit = XlsxTables.SplitAddress(refStart);
             leftColumn = XlsxTables.ColumnAddressToIndex(refStartSplit[0]);
-            topRow = Int32.Parse(refStartSplit[1]);
+            topRow = int.Parse(refStartSplit[1]);
 
             var refEnd = spl.ElementAt(1);
             var refEndSplit = XlsxTables.SplitAddress(refEnd);
             rightColumn = XlsxTables.ColumnAddressToIndex(refEndSplit[0]);
-            bottomRow = Int32.Parse(refEndSplit[1]);
+            bottomRow = int.Parse(refEndSplit[1]);
         }
 
         public static Table Table(this SpreadsheetDocument spreadsheet,
             string tableName)
         {
-            return spreadsheet.Tables().Where(t => t.TableName.ToLower() == tableName.ToLower()).FirstOrDefault();
+            return spreadsheet.Tables().FirstOrDefault(t => t.TableName.ToLower() == tableName.ToLower());
         }
 
         public static IEnumerable<Row> Rows(this WorksheetPart worksheetPart)

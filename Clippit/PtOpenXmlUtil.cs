@@ -1516,7 +1516,7 @@ listSeparator
     {
         public static string GetCellType(string value)
         {
-            if (value.Any(c => !Char.IsDigit(c) && c != '.'))
+            if (value.Any(c => !char.IsDigit(c) && c != '.'))
                 return "str";
             return null;
         }
@@ -1676,7 +1676,7 @@ listSeparator
             var tokens = new List<string>();
             for (var c = 0; c < field.Length; c++)
             {
-                if (Char.IsWhiteSpace(field[c]))
+                if (char.IsWhiteSpace(field[c]))
                 {
                     if (state == State.InToken)
                     {

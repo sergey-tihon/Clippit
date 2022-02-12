@@ -3294,7 +3294,7 @@ namespace Clippit.Html
                 var term = columnWidth.Terms.First();
                 if (term.Unit == CssUnit.PT)
                 {
-                    if (Double.TryParse(term.Value, out var ptValue))
+                    if (double.TryParse(term.Value, out var ptValue))
                     {
                         Twip twips = (long)(ptValue * 20);
                         return twips;
@@ -4435,7 +4435,7 @@ namespace Clippit.Html
                     numToAbstractNum.Add(nia.numId, currentAbstractId);
                     if (list.Name == XhtmlNoNamespace.ul)
                     {
-                        var bulletAbstract = XElement.Parse(String.Format(BulletAbstractXml, currentAbstractId++));
+                        var bulletAbstract = XElement.Parse(string.Format(BulletAbstractXml, currentAbstractId++));
                         numberingXDoc.Root.Add(bulletAbstract);
                     }
                     if (list.Name == XhtmlNoNamespace.ol)
@@ -4486,7 +4486,7 @@ namespace Clippit.Html
                             }
                         }
 
-                        var simpleNumAbstract = XElement.Parse(String.Format(OrderedListAbstractXml, currentAbstractId++,
+                        var simpleNumAbstract = XElement.Parse(string.Format(OrderedListAbstractXml, currentAbstractId++,
                             numFmt[0], just[0], numFmt[1], just[1], numFmt[2], just[2], numFmt[3], just[3], numFmt[4], just[4], numFmt[5], just[5], numFmt[6], just[6], numFmt[7], just[7], numFmt[8], just[8]));
                         numberingXDoc.Root.Add(simpleNumAbstract);
                     }

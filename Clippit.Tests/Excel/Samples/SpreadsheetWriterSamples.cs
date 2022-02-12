@@ -228,7 +228,7 @@ namespace Clippit.Tests.Excel.Samples
                                     },
                                     new CellDfn {
                                         CellDataType = CellDataType.Number,
-                                        Value = Int64.MaxValue,
+                                        Value = long.MaxValue,
                                     },
                                 }
                             },

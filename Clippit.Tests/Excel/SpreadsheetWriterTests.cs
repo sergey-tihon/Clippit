@@ -311,7 +311,7 @@ namespace Clippit.Tests.Excel
                                     new()
                                     {
                                         CellDataType = CellDataType.Number,
-                                        Value = Int64.MaxValue,
+                                        Value = long.MaxValue,
                                     },
                                 }
                             },

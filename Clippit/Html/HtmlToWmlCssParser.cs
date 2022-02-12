@@ -3095,7 +3095,7 @@ namespace Clippit.Html
             {
                 m_inputStreamLength = (int)m_inputStream.Length;
                 m_bufferLength = Math.Min(m_inputStreamLength, MAX_BUFFER_LENGTH);
-                m_bufferStart = Int32.MaxValue;
+                m_bufferStart = int.MaxValue;
             }
             else
             {
@@ -3172,7 +3172,7 @@ namespace Clippit.Html
             while (Pos < end)
                 buf[len++] = (char)Read();
             Pos = oldPos;
-            return new String(buf, 0, len);
+            return new string(buf, 0, len);
         }
 
         public int Pos
@@ -3389,7 +3389,7 @@ namespace Clippit.Html
                 var ch2 = m_currentInputCharacter;
                 if (ch1 != 0xBB || ch2 != 0xBF)
                 {
-                    throw new FatalError(String.Format("illegal byte order mark: EF {0,2:X} {1,2:X}", ch1, ch2));
+                    throw new FatalError(string.Format("illegal byte order mark: EF {0,2:X} {1,2:X}", ch1, ch2));
                 }
                 m_scannerBuffer = new UTF8Buffer(m_scannerBuffer);
                 m_columnNumberOfCurrentCharacter = 0;
@@ -3576,7 +3576,7 @@ namespace Clippit.Html
                     }
                     else
                     {
-                        m_currentToken.m_tokenKind = 1; m_currentToken.m_tokenValue = new String(m_textOfCurrentToken, 0, m_lengthOfCurrentToken);
+                        m_currentToken.m_tokenKind = 1; m_currentToken.m_tokenValue = new string(m_textOfCurrentToken, 0, m_lengthOfCurrentToken);
                         CheckLiteral();
                         return m_currentToken;
                     }
@@ -3856,13 +3856,13 @@ namespace Clippit.Html
                     else
                     {
                         m_currentToken.m_tokenKind = 1;
-                        m_currentToken.m_tokenValue = new String(m_textOfCurrentToken, 0, m_lengthOfCurrentToken);
+                        m_currentToken.m_tokenValue = new string(m_textOfCurrentToken, 0, m_lengthOfCurrentToken);
                         CheckLiteral();
                         return m_currentToken;
                     }
 
             }
-            m_currentToken.m_tokenValue = new String(m_textOfCurrentToken, 0, m_lengthOfCurrentToken);
+            m_currentToken.m_tokenValue = new string(m_textOfCurrentToken, 0, m_lengthOfCurrentToken);
             return m_currentToken;
         }
 

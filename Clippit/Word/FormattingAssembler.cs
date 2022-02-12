@@ -1415,8 +1415,8 @@ namespace Clippit.Word
                 color2str = "000000";
             if (color1str != null && color2str != null && color1str != color2str)
             {
-                Int32 color1;
-                Int32 color2;
+                int color1;
+                int color2;
                 try
                 {
                     color1 = Convert.ToInt32(color1str, 16);

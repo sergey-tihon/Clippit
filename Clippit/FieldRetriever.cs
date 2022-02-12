@@ -265,7 +265,7 @@ namespace Clippit
             var tokens = new List<string>();
             for (var c = 0; c < field.Length; c++)
             {
-                if (Char.IsWhiteSpace(field[c]))
+                if (char.IsWhiteSpace(field[c]))
                 {
                     if (state == State.InToken)
                     {

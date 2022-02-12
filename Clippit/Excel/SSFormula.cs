@@ -82,7 +82,7 @@ namespace Clippit.Excel
             var columnNumber = 0;
             foreach (var c in cellReference)
             {
-                if (Char.IsLetter(c))
+                if (char.IsLetter(c))
                     columnNumber = columnNumber * 26 + System.Convert.ToInt32(c) - System.Convert.ToInt32('A') + 1;
             }
             return columnNumber;

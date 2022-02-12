@@ -970,7 +970,7 @@ namespace Clippit.Excel
             if (!Into(toMatch,out byte[] s)) return false;
             var encoding = System.Text.Encoding.UTF8;
             var sAsString = encoding.GetString(s);
-            if (!System.Double.TryParse(sAsString, out into)) return false;
+            if (!double.TryParse(sAsString, out into)) return false;
             return true;
         }
         public bool BitsInto(int lowBitNo, int highBitNo,out int into)
@@ -1645,14 +1645,14 @@ namespace Clippit.Excel
         {
             into = 0;
             if (!Into(toMatch,out string s)) return false;
-            if (!System.Int32.TryParse(s, out into)) return false;
+            if (!int.TryParse(s, out into)) return false;
             return true;
         }
         public bool Into(Matcher toMatch,out double into)
         {
             into = 0.0;
             if (!Into(toMatch,out string s)) return false;
-            if (!System.Double.TryParse(s, out into)) return false;
+            if (!double.TryParse(s, out into)) return false;
             return true;
         }
         #endregion Setting host variables
@@ -1787,70 +1787,70 @@ namespace Clippit.Excel
         }
         public bool IChar(char c1)
         {
-            if (pos_ < srcLen_ && System.Char.ToUpper(src_[pos_]) == c1)
+            if (pos_ < srcLen_ && char.ToUpper(src_[pos_]) == c1)
             { ++pos_; return true; }
             return false;
         }
         public bool IChar(char c1, char c2)
         {
             if (pos_ + 1 < srcLen_
-                && System.Char.ToUpper(src_[pos_]) == System.Char.ToUpper(c1)
-                && System.Char.ToUpper(src_[pos_ + 1]) == System.Char.ToUpper(c2))
+                && char.ToUpper(src_[pos_]) == char.ToUpper(c1)
+                && char.ToUpper(src_[pos_ + 1]) == char.ToUpper(c2))
             { pos_ += 2; return true; }
             return false;
         }
         public bool IChar(char c1, char c2, char c3)
         {
             if (pos_ + 2 < srcLen_
-                && System.Char.ToUpper(src_[pos_]) == System.Char.ToUpper(c1)
-                && System.Char.ToUpper(src_[pos_ + 1]) == System.Char.ToUpper(c2)
-                && System.Char.ToUpper(src_[pos_ + 2]) == System.Char.ToUpper(c3))
+                && char.ToUpper(src_[pos_]) == char.ToUpper(c1)
+                && char.ToUpper(src_[pos_ + 1]) == char.ToUpper(c2)
+                && char.ToUpper(src_[pos_ + 2]) == char.ToUpper(c3))
             { pos_ += 3; return true; }
             return false;
         }
         public bool IChar(char c1, char c2, char c3, char c4)
         {
             if (pos_ + 3 < srcLen_
-                && System.Char.ToUpper(src_[pos_]) == System.Char.ToUpper(c1)
-                && System.Char.ToUpper(src_[pos_ + 1]) == System.Char.ToUpper(c2)
-                && System.Char.ToUpper(src_[pos_ + 2]) == System.Char.ToUpper(c3)
-                && System.Char.ToUpper(src_[pos_ + 3]) == System.Char.ToUpper(c4))
+                && char.ToUpper(src_[pos_]) == char.ToUpper(c1)
+                && char.ToUpper(src_[pos_ + 1]) == char.ToUpper(c2)
+                && char.ToUpper(src_[pos_ + 2]) == char.ToUpper(c3)
+                && char.ToUpper(src_[pos_ + 3]) == char.ToUpper(c4))
             { pos_ += 4; return true; }
             return false;
         }
         public bool IChar(char c1, char c2, char c3, char c4, char c5)
         {
             if (pos_ + 4 < srcLen_
-                && System.Char.ToUpper(src_[pos_]) == System.Char.ToUpper(c1)
-                && System.Char.ToUpper(src_[pos_ + 1]) == System.Char.ToUpper(c2)
-                && System.Char.ToUpper(src_[pos_ + 2]) == System.Char.ToUpper(c3)
-                && System.Char.ToUpper(src_[pos_ + 3]) == System.Char.ToUpper(c4)
-                && System.Char.ToUpper(src_[pos_ + 4]) == System.Char.ToUpper(c5))
+                && char.ToUpper(src_[pos_]) == char.ToUpper(c1)
+                && char.ToUpper(src_[pos_ + 1]) == char.ToUpper(c2)
+                && char.ToUpper(src_[pos_ + 2]) == char.ToUpper(c3)
+                && char.ToUpper(src_[pos_ + 3]) == char.ToUpper(c4)
+                && char.ToUpper(src_[pos_ + 4]) == char.ToUpper(c5))
             { pos_ += 5; return true; }
             return false;
         }
         public bool IChar(char c1, char c2, char c3, char c4, char c5, char c6)
         {
             if (pos_ + 5 < srcLen_
-                && System.Char.ToUpper(src_[pos_]) == System.Char.ToUpper(c1)
-                && System.Char.ToUpper(src_[pos_ + 1]) == System.Char.ToUpper(c2)
-                && System.Char.ToUpper(src_[pos_ + 2]) == System.Char.ToUpper(c3)
-                && System.Char.ToUpper(src_[pos_ + 3]) == System.Char.ToUpper(c4)
-                && System.Char.ToUpper(src_[pos_ + 4]) == System.Char.ToUpper(c5)
-                && System.Char.ToUpper(src_[pos_ + 5]) == System.Char.ToUpper(c6))
+                && char.ToUpper(src_[pos_]) == char.ToUpper(c1)
+                && char.ToUpper(src_[pos_ + 1]) == char.ToUpper(c2)
+                && char.ToUpper(src_[pos_ + 2]) == char.ToUpper(c3)
+                && char.ToUpper(src_[pos_ + 3]) == char.ToUpper(c4)
+                && char.ToUpper(src_[pos_ + 4]) == char.ToUpper(c5)
+                && char.ToUpper(src_[pos_ + 5]) == char.ToUpper(c6))
             { pos_ += 6; return true; }
             return false;
         }
         public bool IChar(char c1, char c2, char c3, char c4, char c5, char c6, char c7)
         {
             if (pos_ + 6 < srcLen_
-                && System.Char.ToUpper(src_[pos_]) == System.Char.ToUpper(c1)
-                && System.Char.ToUpper(src_[pos_ + 1]) == System.Char.ToUpper(c2)
-                && System.Char.ToUpper(src_[pos_ + 2]) == System.Char.ToUpper(c3)
-                && System.Char.ToUpper(src_[pos_ + 3]) == System.Char.ToUpper(c4)
-                && System.Char.ToUpper(src_[pos_ + 4]) == System.Char.ToUpper(c5)
-                && System.Char.ToUpper(src_[pos_ + 5]) == System.Char.ToUpper(c6)
-                && System.Char.ToUpper(src_[pos_ + 6]) == System.Char.ToUpper(c7))
+                && char.ToUpper(src_[pos_]) == char.ToUpper(c1)
+                && char.ToUpper(src_[pos_ + 1]) == char.ToUpper(c2)
+                && char.ToUpper(src_[pos_ + 2]) == char.ToUpper(c3)
+                && char.ToUpper(src_[pos_ + 3]) == char.ToUpper(c4)
+                && char.ToUpper(src_[pos_ + 4]) == char.ToUpper(c5)
+                && char.ToUpper(src_[pos_ + 5]) == char.ToUpper(c6)
+                && char.ToUpper(src_[pos_ + 6]) == char.ToUpper(c7))
             { pos_ += 7; return true; }
             return false;
         }
@@ -1860,7 +1860,7 @@ namespace Clippit.Excel
             if (pos_ + sLength > srcLen_) return false;
             for (var i = 0; i < sLength; ++i)
             {
-                if (s[i] != System.Char.ToUpper(src_[pos_ + i])) return false;
+                if (s[i] != char.ToUpper(src_[pos_ + i])) return false;
             }
             pos_ += sLength;
             return true;

@@ -2448,7 +2448,7 @@ namespace Clippit.Html
                                 {
                                     var ep = new Property()
                                     {
-                                        Name = String.Format(shPr.Pattern, direction),
+                                        Name = string.Format(shPr.Pattern, direction),
                                         Expression = new CssExpression { Terms = new List<CssTerm> { p.Expression.Terms.First() } },
                                         HighOrderSort = p.HighOrderSort,
                                         IdAttributesInSelector = p.IdAttributesInSelector,
@@ -2464,7 +2464,7 @@ namespace Clippit.Html
                                 {
                                     var ep = new Property()
                                     {
-                                        Name = String.Format(shPr.Pattern, direction),
+                                        Name = string.Format(shPr.Pattern, direction),
                                         Expression = new CssExpression { Terms = new List<CssTerm> { p.Expression.Terms.First() } },
                                         HighOrderSort = p.HighOrderSort,
                                         IdAttributesInSelector = p.IdAttributesInSelector,
@@ -2478,7 +2478,7 @@ namespace Clippit.Html
                                 {
                                     var ep = new Property()
                                     {
-                                        Name = String.Format(shPr.Pattern, direction),
+                                        Name = string.Format(shPr.Pattern, direction),
                                         Expression = new CssExpression { Terms = new List<CssTerm> { p.Expression.Terms.Skip(1).First() } },
                                         HighOrderSort = p.HighOrderSort,
                                         IdAttributesInSelector = p.IdAttributesInSelector,
@@ -2492,7 +2492,7 @@ namespace Clippit.Html
                             case 3:
                                 var ep3 = new Property()
                                 {
-                                    Name = String.Format(shPr.Pattern, "top"),
+                                    Name = string.Format(shPr.Pattern, "top"),
                                     Expression = new CssExpression { Terms = new List<CssTerm> { p.Expression.Terms.First() } },
                                     HighOrderSort = p.HighOrderSort,
                                     IdAttributesInSelector = p.IdAttributesInSelector,
@@ -2505,7 +2505,7 @@ namespace Clippit.Html
                                 {
                                     var ep2 = new Property()
                                     {
-                                        Name = String.Format(shPr.Pattern, direction),
+                                        Name = string.Format(shPr.Pattern, direction),
                                         Expression = new CssExpression { Terms = new List<CssTerm> { p.Expression.Terms.Skip(1).First() } },
                                         HighOrderSort = p.HighOrderSort,
                                         IdAttributesInSelector = p.IdAttributesInSelector,
@@ -2517,7 +2517,7 @@ namespace Clippit.Html
                                 }
                                 var ep4 = new Property()
                                 {
-                                    Name = String.Format(shPr.Pattern, "bottom"),
+                                    Name = string.Format(shPr.Pattern, "bottom"),
                                     Expression = new CssExpression { Terms = new List<CssTerm> { p.Expression.Terms.Skip(2).First() } },
                                     HighOrderSort = p.HighOrderSort,
                                     IdAttributesInSelector = p.IdAttributesInSelector,
@@ -2533,7 +2533,7 @@ namespace Clippit.Html
                                 {
                                     var ep = new Property()
                                     {
-                                        Name = String.Format(shPr.Pattern, direction),
+                                        Name = string.Format(shPr.Pattern, direction),
                                         Expression = new CssExpression { Terms = new List<CssTerm> { p.Expression.Terms.Skip(skip++).First() } },
                                         HighOrderSort = p.HighOrderSort,
                                         IdAttributesInSelector = p.IdAttributesInSelector,
@@ -2703,7 +2703,7 @@ namespace Clippit.Html
         {
             var depth = element.Ancestors().Count() * 2;
             var dummyElement = new XElement(element.Name, element.Attributes());
-            sb.Append(String.Format("{0}{1}", "".PadRight(depth), dummyElement) + Environment.NewLine);
+            sb.Append(string.Format("{0}{1}", "".PadRight(depth), dummyElement) + Environment.NewLine);
             var propList = element.Annotation<Dictionary<string, Property>>();
             if (propList != null)
             {
@@ -2712,10 +2712,10 @@ namespace Clippit.Html
                 foreach (var kvp in propList.OrderBy(p => p.Key).ThenBy(p => p.Value))
                 {
                     var prop = kvp.Value;
-                    var propString = String.Format("{0} High:{1} Id:{2} Att:{3} Ell:{4} Seq:{5}",
+                    var propString = string.Format("{0} High:{1} Id:{2} Att:{3} Ell:{4} Seq:{5}",
                         (prop.Name + ":" + prop.Expression + " ").PadRight(50 - depth + 2, '.'), (int)prop.HighOrderSort, prop.IdAttributesInSelector, prop.AttributesInSelector,
                         prop.ElementNamesInSelector, prop.SequenceNumber);
-                    sb.Append(String.Format("{0}{1}", "".PadRight(depth + 2), propString) + Environment.NewLine);
+                    sb.Append(string.Format("{0}{1}", "".PadRight(depth + 2), propString) + Environment.NewLine);
                 }
                 sb.Append(Environment.NewLine);
             }
@@ -2727,7 +2727,7 @@ namespace Clippit.Html
                 foreach (var prop in computedProperties.OrderBy(cp => cp.Key))
                 {
                     var propString = prop.Key + ":" + prop.Value;
-                    sb.Append(String.Format("{0}{1}", "".PadRight(depth + 2), propString) + Environment.NewLine);
+                    sb.Append(string.Format("{0}{1}", "".PadRight(depth + 2), propString) + Environment.NewLine);
                 }
                 sb.Append(Environment.NewLine);
             }
@@ -2867,7 +2867,7 @@ namespace Clippit.Html
         {
             if (o == null)
                 return;
-            var text = String.Format(format, o);
+            var text = string.Format(format, o);
             var sb2 = new StringBuilder("".PadRight(indent * 2) + text);
             //sb2.Replace("&", "&amp;");
             //sb2.Replace("<", "&lt;");
@@ -2978,7 +2978,7 @@ namespace Clippit.Html
                         var v1 = lt.First().Value;
                         var v2 = lt.ElementAt(1).Value;
                         var v3 = lt.ElementAt(2).Value;
-                        var colorInHex = String.Format("{0:x2}{1:x2}{2:x2}", (int)((float.Parse(v1) / 100.0) * 255),
+                        var colorInHex = string.Format("{0:x2}{1:x2}{2:x2}", (int)((float.Parse(v1) / 100.0) * 255),
                             (int)((float.Parse(v2) / 100.0) * 255), (int)((float.Parse(v3) / 100.0) * 255));
                         return colorInHex;
                     }
@@ -2987,7 +2987,7 @@ namespace Clippit.Html
                         var v1 = lt.First().Value;
                         var v2 = lt.ElementAt(1).Value;
                         var v3 = lt.ElementAt(2).Value;
-                        var colorInHex = String.Format("{0:x2}{1:x2}{2:x2}", int.Parse(v1), int.Parse(v2), int.Parse(v3));
+                        var colorInHex = string.Format("{0:x2}{1:x2}{2:x2}", int.Parse(v1), int.Parse(v2), int.Parse(v3));
                         return colorInHex;
                     }
                 }

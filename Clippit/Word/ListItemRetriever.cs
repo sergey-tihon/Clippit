@@ -1100,7 +1100,7 @@ namespace Clippit.Word
             {
                 if (t[..1] != "%")
                     return t;
-                if (!Int32.TryParse(t[1..], out var indentationLevel))
+                if (!int.TryParse(t[1..], out var indentationLevel))
                     return t;
                 indentationLevel -= 1;
                 if (indentationLevel >= levelNumbers.Length)

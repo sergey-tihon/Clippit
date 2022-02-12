@@ -111,7 +111,7 @@ namespace Clippit.Word
   </w:sdtContent>
 </w:sdt>";
 
-            var sdtReader = XmlReader.Create(new StringReader(String.Format(xmlString, title, rightTabPos, switches)));
+            var sdtReader = XmlReader.Create(new StringReader(string.Format(xmlString, title, rightTabPos, switches)));
             var sdt = XElement.Load(sdtReader);
 
             var mainXDoc = doc.MainDocumentPart.GetXDocument(out var namespaceManager);
@@ -184,7 +184,7 @@ namespace Clippit.Word
 </w:p>";
             var mainXDoc = doc.MainDocumentPart.GetXDocument();
 
-            var paragraphReader = XmlReader.Create(new StringReader(String.Format(xmlString, rightTabPos, switches)));
+            var paragraphReader = XmlReader.Create(new StringReader(string.Format(xmlString, rightTabPos, switches)));
             var paragraph = XElement.Load(paragraphReader);
             var nameTable = paragraphReader.NameTable;
             var namespaceManager = new XmlNamespaceManager(nameTable);
@@ -267,7 +267,7 @@ namespace Clippit.Word
 
             var mainXDoc = doc.MainDocumentPart.GetXDocument();
 
-            var paragraphReader = XmlReader.Create(new StringReader(String.Format(xmlString, rightTabPos, switches)));
+            var paragraphReader = XmlReader.Create(new StringReader(string.Format(xmlString, rightTabPos, switches)));
             var paragraph = XElement.Load(paragraphReader);
             var nameTable = paragraphReader.NameTable;
             var namespaceManager = new XmlNamespaceManager(nameTable);
