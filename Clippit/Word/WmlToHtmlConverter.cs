@@ -1292,7 +1292,7 @@ namespace Clippit.Word
             if (textAlignment == null) return;
 
             var verticalTextAlignment = (string)textAlignment.Attributes(W.val).FirstOrDefault();
-            if (verticalTextAlignment == null || verticalTextAlignment == "auto") return;
+            if (verticalTextAlignment is null or "auto") return;
 
             if (verticalTextAlignment == "top")
                 style.AddIfMissing("vertical-align", "top");
@@ -1947,7 +1947,7 @@ namespace Clippit.Word
                     }
 
                     var tabVal = (string)tabAfterText.Attribute(W.val);
-                    if (tabVal == "right" || tabVal == "end")
+                    if (tabVal is "right" or "end")
                     {
                         var textAfterElements = contentToMeasure
                             .Skip(currentElementIdx + 1);
@@ -2116,7 +2116,7 @@ namespace Clippit.Word
 
                         continue;
                     }
-                    if (tabVal == "left" || tabVal == "start" || tabVal == "num")
+                    if (tabVal is "left" or "start" or "num")
                     {
                         var delta = (int)tabAfterText.Attribute(W.pos) - twipCounter;
                         currentElement.Add(
@@ -2527,7 +2527,7 @@ namespace Clippit.Word
             {
                 style.Add("border-" + whichSide, "none");
                 if (borderType == BorderType.Cell &&
-                    (whichSide == "left" || whichSide == "right"))
+                    whichSide is "left" or "right")
                     style.Add("padding-" + whichSide, "5.4pt");
                 return;
             }
@@ -2537,18 +2537,18 @@ namespace Clippit.Word
             {
                 style.Add("border-" + whichSide, "none");
                 if (borderType == BorderType.Cell &&
-                    (whichSide == "left" || whichSide == "right"))
+                    whichSide is "left" or "right")
                     style.Add("padding-" + whichSide, "5.4pt");
                 return;
             }
             var type = (string)side.Attribute(W.val);
-            if (type == "nil" || type == "none")
+            if (type is "nil" or "none")
             {
                 style.Add("border-" + whichSide + "-style", "none");
 
                 var space = (decimal?)side.Attribute(W.space) ?? 0;
                 if (borderType == BorderType.Cell &&
-                    (whichSide == "left" || whichSide == "right"))
+                    whichSide is "left" or "right")
                     if (space < 5.4m)
                         space = 5.4m;
                 style.Add("padding-" + whichSide,
@@ -2560,7 +2560,7 @@ namespace Clippit.Word
                 var sz = (int)side.Attribute(W.sz);
                 var space = (decimal?)side.Attribute(W.space) ?? 0;
                 var color = (string)side.Attribute(W.color);
-                if (color == null || color == "auto")
+                if (color is null or "auto")
                     color = "windowtext";
                 else
                     color = ConvertColor(color);
@@ -2602,13 +2602,13 @@ namespace Clippit.Word
                     else if (type != "single")
                         borderWidthInPoints = borderInfo.CssSize;
                 }
-                if (type == "outset" || type == "inset")
+                if (type is "outset" or "inset")
                     color = "";
                 var borderWidth = string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}pt", borderWidthInPoints);
 
                 style.Add("border-" + whichSide, borderStyle + " " + color + " " + borderWidth);
                 if (borderType == BorderType.Cell &&
-                    (whichSide == "left" || whichSide == "right"))
+                    whichSide is "left" or "right")
                     if (space < 5.4m)
                         space = 5.4m;
 
@@ -2816,9 +2816,9 @@ namespace Clippit.Word
             if (v == null)
                 return true;
             var s = v.Value.ToLower();
-            if (s == "0" || s == "false")
+            if (s is "0" or "false")
                 return false;
-            if (s == "1" || s == "true")
+            if (s is "1" or "true")
                 return true;
             return false;
         }

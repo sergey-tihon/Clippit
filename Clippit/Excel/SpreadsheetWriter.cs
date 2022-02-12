@@ -589,8 +589,8 @@ namespace Clippit.Excel
         {
             if (((int?)xf.Attribute(SSNoNamespace.applyFont) == 0 ||
                 xf.Attribute(SSNoNamespace.applyFont) == null) &&
-                (cell.Bold == null || cell.Bold == false) &&
-                (cell.Italic == null || cell.Italic == false))
+                cell.Bold is null or false &&
+                cell.Italic is null or false)
                 return true;
             if (((int?)xf.Attribute(SSNoNamespace.applyFont) == 0 ||
                 xf.Attribute(SSNoNamespace.applyFont) == null) &&

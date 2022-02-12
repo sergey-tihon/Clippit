@@ -125,7 +125,7 @@ namespace Clippit.Excel
             string cellReference = WorksheetAccessor.GetColumnId(column) + row.ToString();
             XElement newCell = null;
 
-            if (cellValue is int || cellValue is double)
+            if (cellValue is int or double)
                 newCell = new XElement(S.c, new XAttribute(NoNamespace.r, cellReference), new XElement(S.v, cellValue.ToString()));
             else if (cellValue is bool)
                 newCell = new XElement(S.c, new XAttribute(NoNamespace.r, cellReference), new XAttribute(NoNamespace.t, "b"), new XElement(S.v, (bool)cellValue ? "1" : "0"));
@@ -264,7 +264,7 @@ namespace Clippit.Excel
             string cellReference = GetColumnId(column) + row.ToString();
             XElement newCell = null;
 
-            if (value is int || value is double)
+            if (value is int or double)
                 newCell = new XElement(S.c, new XAttribute(NoNamespace.r, cellReference), new XElement(S.v, value.ToString()));
             else if (value is bool)
                 newCell = new XElement(S.c, new XAttribute(NoNamespace.r, cellReference), new XAttribute(NoNamespace.t, "b"), new XElement(S.v, (bool)value ? "1" : "0"));
@@ -539,7 +539,7 @@ namespace Clippit.Excel
                 XElement sharedItems = new XElement(S.sharedItems);
                 // Determine numeric sharedItems values, if any
                 object value = GetCellValue(document, sourceSheet, column, startRow + 1);
-                if (value is double || value is Int32)
+                if (value is double or Int32)
                 {
                     bool hasDouble = false;
                     double minValue = Convert.ToDouble(value);

@@ -481,7 +481,7 @@ namespace Clippit.Excel
         }
         protected PegNode DefaultNodeCreator(ECreatorPhase phase, PegNode parentOrCreated, int id)
         {
-            if (phase == ECreatorPhase.eCreate || phase == ECreatorPhase.eCreateAndComplete)
+            if (phase is ECreatorPhase.eCreate or ECreatorPhase.eCreateAndComplete)
                 return new PegNode(parentOrCreated, id);
             else
             {

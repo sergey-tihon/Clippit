@@ -386,13 +386,7 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
                 .Where(l =>
                 {
                     string lTrim = l.Trim();
-                    if (lTrim == "//")
-                        return false;
-                    if (lTrim == "////")
-                        return false;
-                    if (lTrim == "<!--" || lTrim == "&lt;!--")
-                        return false;
-                    if (lTrim == "-->" || lTrim == "--&gt;")
+                    if (lTrim is "//" or "////" or "<!--" or "&lt;!--" or "-->" or "--&gt;")
                         return false;
                     return true;
                 })

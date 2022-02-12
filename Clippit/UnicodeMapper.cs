@@ -75,7 +75,7 @@ namespace Clippit
             {
                 XAttribute typeAttribute = element.Attribute(W.type);
                 string type = typeAttribute != null ? typeAttribute.Value : null;
-                if (type == null || type == "textWrapping")
+                if (type is null or "textWrapping")
                     return CarriageReturn.ToString();
                 if (type == "page")
                     return FormFeed.ToString();

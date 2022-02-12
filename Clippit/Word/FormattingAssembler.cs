@@ -2559,9 +2559,7 @@ namespace Clippit.Word
                 if (rPr.Element(propertyName) == null)
                     return null;
                 var s = (string)rPr.Element(propertyName).Attribute(W.val);
-                if (s == null)
-                    return true;
-                if (s == "1")
+                if (s is null or "1")
                     return true;
                 if (s == "0")
                     return false;
@@ -2972,8 +2970,7 @@ namespace Clippit.Word
                     {
                         return FontType.EastAsia;
                     }
-                    if (csa.EastAsiaLang == "zh-hant" ||
-                        csa.EastAsiaLang == "zh-hans")
+                    if (csa.EastAsiaLang is "zh-hant" or "zh-hans")
                     {
                         if (ch == 0xE0 ||
                             ch == 0xE1 ||
@@ -2995,8 +2992,7 @@ namespace Clippit.Word
             {
                 if (csa.Hint == "eastAsia")
                 {
-                    if (csa.EastAsiaLang == "zh-hant" ||
-                        csa.EastAsiaLang == "zh-hans"
+                    if (csa.EastAsiaLang is "zh-hant" or "zh-hans"
                         /* || the character set of the east Asia (or east Asia theme) font is Chinese5 || GB2312 todo */)
                     {
                         return FontType.EastAsia;
@@ -3010,8 +3006,7 @@ namespace Clippit.Word
             {
                 if (csa.Hint == "eastAsia")
                 {
-                    if (csa.EastAsiaLang == "zh-hant" ||
-                        csa.EastAsiaLang == "zh-hans"
+                    if (csa.EastAsiaLang is "zh-hant" or "zh-hans"
                         /* || the character set of the east Asia (or east Asia theme) font is Chinese5 || GB2312 todo */)
                     {
                         return FontType.EastAsia;
@@ -3025,8 +3020,7 @@ namespace Clippit.Word
             {
                 if (csa.Hint == "eastAsia")
                 {
-                    if (csa.EastAsiaLang == "zh-hant" ||
-                        csa.EastAsiaLang == "zh-hans"
+                    if (csa.EastAsiaLang is "zh-hant" or "zh-hans"
                         /* || the character set of the east Asia (or east Asia theme) font is Chinese5 || GB2312 todo */)
                     {
                         return FontType.EastAsia;
@@ -3115,8 +3109,7 @@ namespace Clippit.Word
             if (ch >= 0x1E00 && ch <= 0x1EFF)
             {
                 if (csa.Hint == "eastAsia" &&
-                    (csa.EastAsiaLang == "zh-hant" ||
-                    csa.EastAsiaLang == "zh-hans"))
+                    csa.EastAsiaLang is "zh-hant" or "zh-hans")
                 {
                     return FontType.EastAsia;
                 }

@@ -604,7 +604,7 @@ namespace Clippit
                 })
                 .Select(l =>
                 {
-                    if (l == "" || l == null)
+                    if (l is "" or null)
                         return /* "Dflt:" + */ CultureInfo.CurrentCulture.Name;
                     return l;
                 })
@@ -810,11 +810,7 @@ namespace Clippit
         private static XElement GetMetricsForWmlPart(OpenXmlPart part, MetricsGetterSettings settings)
         {
             XElement contentControls = null;
-            if (part is MainDocumentPart ||
-                part is HeaderPart ||
-                part is FooterPart ||
-                part is FootnotesPart ||
-                part is EndnotesPart)
+            if (part is MainDocumentPart or HeaderPart or FooterPart or FootnotesPart or EndnotesPart)
             {
                 var xd = part.GetXDocument();
                 contentControls = (XElement)GetContentControlsTransform(xd.Root, settings);

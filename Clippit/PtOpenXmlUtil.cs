@@ -747,9 +747,9 @@ namespace Clippit
             if (v == null)
                 return true;
             var s = v.Value.ToLower();
-            if (s == "0" || s == "false")
+            if (s is "0" or "false")
                 return false;
-            if (s == "1" || s == "true")
+            if (s is "1" or "true")
                 return true;
             return false;
         }
@@ -1460,17 +1460,7 @@ listSeparator
         {
             foreach (var part in pDoc.GetAllParts())
             {
-                if (part.ContentType == "application/vnd.openxmlformats-officedocument.presentationml.slide+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.presentationml.notesMaster+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.presentationml.handoutMaster+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.theme+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.drawingml.chart+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.drawingml.diagramData+xml" ||
-                    part.ContentType == "application/vnd.openxmlformats-officedocument.drawingml.chartshapes+xml" ||
-                    part.ContentType == "application/vnd.ms-office.drawingml.diagramDrawing+xml")
+                if (part.ContentType is "application/vnd.openxmlformats-officedocument.presentationml.slide+xml" or "application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml" or "application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml" or "application/vnd.openxmlformats-officedocument.presentationml.notesMaster+xml" or "application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml" or "application/vnd.openxmlformats-officedocument.presentationml.handoutMaster+xml" or "application/vnd.openxmlformats-officedocument.theme+xml" or "application/vnd.openxmlformats-officedocument.drawingml.chart+xml" or "application/vnd.openxmlformats-officedocument.drawingml.diagramData+xml" or "application/vnd.openxmlformats-officedocument.drawingml.chartshapes+xml" or "application/vnd.ms-office.drawingml.diagramDrawing+xml")
                 {
                     XDocument xd = part.GetXDocument();
                     xd.Descendants().Attributes("smtClean").Remove();

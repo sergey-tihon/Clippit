@@ -352,7 +352,7 @@ namespace Clippit.Html
             if (xt != null && inPre)
             {
                 var val = xt.Value.TrimStart('\r', '\n').TrimEnd('\r', '\n');
-                var groupedCharacters = val.GroupAdjacent(c => c == '\r' || c == '\n');
+                var groupedCharacters = val.GroupAdjacent(c => c is '\r' or '\n');
                 var newNodes = groupedCharacters.Select(g =>
                 {
                     if (g.Key == true)
@@ -1294,8 +1294,7 @@ namespace Clippit.Html
                     {
                         return FontType.EastAsia;
                     }
-                    if (csa.EastAsiaLang == "zh-hant" ||
-                        csa.EastAsiaLang == "zh-hans")
+                    if (csa.EastAsiaLang is "zh-hant" or "zh-hans")
                     {
                         if (ch == 0xE0 ||
                             ch == 0xE1 ||
@@ -1317,8 +1316,7 @@ namespace Clippit.Html
             {
                 if (csa.Hint == "eastAsia")
                 {
-                    if (csa.EastAsiaLang == "zh-hant" ||
-                        csa.EastAsiaLang == "zh-hans"
+                    if (csa.EastAsiaLang is "zh-hant" or "zh-hans"
                         /* || the character set of the east Asia (or east Asia theme) font is Chinese5 || GB2312 todo */)
                     {
                         return FontType.EastAsia;
@@ -1332,8 +1330,7 @@ namespace Clippit.Html
             {
                 if (csa.Hint == "eastAsia")
                 {
-                    if (csa.EastAsiaLang == "zh-hant" ||
-                        csa.EastAsiaLang == "zh-hans"
+                    if (csa.EastAsiaLang is "zh-hant" or "zh-hans"
                         /* || the character set of the east Asia (or east Asia theme) font is Chinese5 || GB2312 todo */)
                     {
                         return FontType.EastAsia;
@@ -1347,8 +1344,7 @@ namespace Clippit.Html
             {
                 if (csa.Hint == "eastAsia")
                 {
-                    if (csa.EastAsiaLang == "zh-hant" ||
-                        csa.EastAsiaLang == "zh-hans"
+                    if (csa.EastAsiaLang is "zh-hant" or "zh-hans"
                         /* || the character set of the east Asia (or east Asia theme) font is Chinese5 || GB2312 todo */)
                     {
                         return FontType.EastAsia;
@@ -1437,8 +1433,7 @@ namespace Clippit.Html
             if (ch >= 0x1E00 && ch <= 0x1EFF)
             {
                 if (csa.Hint == "eastAsia" &&
-                    (csa.EastAsiaLang == "zh-hant" ||
-                    csa.EastAsiaLang == "zh-hans"))
+                    csa.EastAsiaLang is "zh-hant" or "zh-hans")
                 {
                     return FontType.EastAsia;
                 }
@@ -2244,7 +2239,7 @@ namespace Clippit.Html
                         GetImageAsInline(element, settings, wDoc, bmp, rId, pictureId, pictureDescription)));
                 return run;
             }
-            if (floatValue == "left" || floatValue == "right")
+            if (floatValue is "left" or "right")
             {
                 XElement run = new XElement(W.r,
                     GetRunPropertiesForImage(),
@@ -2869,7 +2864,7 @@ namespace Clippit.Html
 
             XElement bold = null;
             XElement boldCs = null;
-            if (bAncestor || strongAncestor || fontWeightString == "bold" || fontWeightString == "bolder" || fontWeightString == "600" || fontWeightString == "700" || fontWeightString == "800" || fontWeightString == "900")
+            if (bAncestor || strongAncestor || fontWeightString is "bold" or "bolder" or "600" or "700" or "800" or "900")
             {
                 bold = new XElement(W.b);
                 boldCs = new XElement(W.bCs);
@@ -2936,9 +2931,9 @@ namespace Clippit.Html
 
             IEnumerable<IGrouping<bool, char>> groupedCharacters = null;
             if (preserveWhiteSpace)
-                groupedCharacters = node.Value.GroupAdjacent(c => c == '\r' || c == '\n');
+                groupedCharacters = node.Value.GroupAdjacent(c => c is '\r' or '\n');
             else
-                groupedCharacters = node.Value.GroupAdjacent(c => c == ' ' || c == '\r' || c == '\n');
+                groupedCharacters = node.Value.GroupAdjacent(c => c is ' ' or '\r' or '\n');
 
             string newString = groupedCharacters.Select(g =>
             {
@@ -4465,12 +4460,12 @@ namespace Clippit.Html
                             {
                                 HtmlToWmlConverterCore.NumberedItemAnnotation thisLevelNia = itemAtLevel.Annotation<HtmlToWmlConverterCore.NumberedItemAnnotation>();
                                 string thisLevelNumFmt = thisLevelNia.listStyleType;
-                                if (thisLevelNumFmt == "lower-alpha" || thisLevelNumFmt == "lower-latin")
+                                if (thisLevelNumFmt is "lower-alpha" or "lower-latin")
                                 {
                                     numFmt[i] = "lowerLetter";
                                     //just[i] = "left";
                                 }
-                                if (thisLevelNumFmt == "upper-alpha" || thisLevelNumFmt == "upper-latin")
+                                if (thisLevelNumFmt is "upper-alpha" or "upper-latin")
                                 {
                                     numFmt[i] = "upperLetter";
                                     //just[i] = "left";
@@ -4550,8 +4545,7 @@ namespace Clippit.Html
                         {
                             bool found = sel.SimpleSelectors.Count() == 1 &&
                                 sel.SimpleSelectors.First().Class == item &&
-                                (sel.SimpleSelectors.First().ElementName == "" ||
-                                sel.SimpleSelectors.First().ElementName == null);
+                                sel.SimpleSelectors.First().ElementName is "" or null;
                             return found;
                         }).FirstOrDefault();
                     var color = ruleSet.Declarations.FirstOrDefault(d => d.Name == "color");

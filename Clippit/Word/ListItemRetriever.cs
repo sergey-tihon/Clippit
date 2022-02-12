@@ -390,7 +390,7 @@ namespace Clippit.Word
 
                 // if numPr of paragraph does not contain numId, then it is not a list item.
                 // if numId of paragraph == 0, then this is not a list item, regardless of the markup in the style.
-                if (paragraphNumId == null || paragraphNumId == 0)
+                if (paragraphNumId is null or 0)
                 {
                     paragraph.AddAnnotation(NotAListItem);
                     return;
@@ -782,7 +782,7 @@ namespace Clippit.Word
 
             string languageIdentifier = null;
 
-            if (languageType == null || languageType == "western")
+            if (languageType is null or "western")
             {
                 languageIdentifier = (string)paragraph
                     .Elements(W.r)

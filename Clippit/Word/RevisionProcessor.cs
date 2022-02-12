@@ -1374,7 +1374,7 @@ namespace Clippit.Word
                     var newParaContents = grouped
                         .Select((g, i) =>
                         {
-                            if (g.Key == 1 || g.Key == 2 || g.Key == 3)
+                            if (g.Key is 1 or 2 or 3)
                                 return (object)g.Select(gc => FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele));
                             if (g.Key == 4)
                             {

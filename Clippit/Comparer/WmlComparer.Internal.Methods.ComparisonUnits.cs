@@ -225,7 +225,7 @@ namespace Clippit
                     {
                         string chr = sr.ContentElement.Value;
                         char ch = chr[0];
-                        if (ch == '.' || ch == ',')
+                        if (ch is '.' or ',')
                         {
                             var beforeIsDigit = false;
                             if (i > 0)

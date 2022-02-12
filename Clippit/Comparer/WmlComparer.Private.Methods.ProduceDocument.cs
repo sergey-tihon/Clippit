@@ -354,7 +354,7 @@ namespace Clippit
         private static void MarkRowsAsDeletedOrInserted(WmlComparerSettings settings, List<CorrelatedSequence> correlatedSequence)
         {
             foreach (CorrelatedSequence dcs in correlatedSequence.Where(cs =>
-                cs.CorrelationStatus == CorrelationStatus.Deleted || cs.CorrelationStatus == CorrelationStatus.Inserted))
+                cs.CorrelationStatus is CorrelationStatus.Deleted or CorrelationStatus.Inserted))
             {
                 // iterate through all deleted/inserted items in dcs.ComparisonUnitArray1/ComparisonUnitArray2
                 ComparisonUnit[] toIterateThrough = dcs.ComparisonUnitArray1;
@@ -3009,12 +3009,8 @@ namespace Clippit
             if (unknown.ComparisonUnitArray1.FirstOrDefault() is ComparisonUnitGroup firstInCu1 &&
                 unknown.ComparisonUnitArray2.FirstOrDefault() is ComparisonUnitGroup firstInCu2)
             {
-                if ((firstInCu1.ComparisonUnitGroupType == ComparisonUnitGroupType.Paragraph ||
-                     firstInCu1.ComparisonUnitGroupType == ComparisonUnitGroupType.Table ||
-                     firstInCu1.ComparisonUnitGroupType == ComparisonUnitGroupType.Row) &&
-                    (firstInCu2.ComparisonUnitGroupType == ComparisonUnitGroupType.Paragraph ||
-                     firstInCu2.ComparisonUnitGroupType == ComparisonUnitGroupType.Table ||
-                     firstInCu2.ComparisonUnitGroupType == ComparisonUnitGroupType.Row))
+                if (firstInCu1.ComparisonUnitGroupType is ComparisonUnitGroupType.Paragraph or ComparisonUnitGroupType.Table or ComparisonUnitGroupType.Row &&
+                    firstInCu2.ComparisonUnitGroupType is ComparisonUnitGroupType.Paragraph or ComparisonUnitGroupType.Table or ComparisonUnitGroupType.Row)
                 {
                     ComparisonUnitGroupType groupType = firstInCu1.ComparisonUnitGroupType;
 

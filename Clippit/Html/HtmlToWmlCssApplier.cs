@@ -626,8 +626,7 @@ namespace Clippit.Html
                 {
                     var display = GetComputedPropertyValue(null, e, "display", settings);
                     string dv = display.ToString();
-                    if (dv == "table-row-group" || dv == "table-header-group" || dv == "table-footer-group" || dv == "table-row" ||
-                        dv == "table-column-group" || dv == "table-column")
+                    if (dv is "table-row-group" or "table-header-group" or "table-footer-group" or "table-row" or "table-column-group" or "table-column")
                         return false;
                     return true;
                 },
@@ -863,7 +862,7 @@ namespace Clippit.Html
                         return true;
                     var display = GetComputedPropertyValue(null, e, "display", settings);
                     var dv = display.ToString();
-                    if (dv == "inline" || dv == "table-row" || dv == "table-row-group")
+                    if (dv is "inline" or "table-row" or "table-row-group")
                         return false;
                     return true;
                 },
@@ -934,7 +933,7 @@ namespace Clippit.Html
                 {
                     var display = GetComputedPropertyValue(null, e, "display", settings);
                     var dv = display.ToString();
-                    if (dv == "inline" || dv == "table-row" || dv == "table-row-group")
+                    if (dv is "inline" or "table-row" or "table-row-group")
                         return false;
                     return true;
                 },
@@ -963,7 +962,7 @@ namespace Clippit.Html
                 {
                     var display = GetComputedPropertyValue(null, e, "display", settings);
                     var dv = display.ToString();
-                    if (dv == "inline" || dv == "table-row" || dv == "table-row-group")
+                    if (dv is "inline" or "table-row" or "table-row-group")
                         return false;
                     return true;
                 },
@@ -994,7 +993,7 @@ namespace Clippit.Html
                         return true;
                     var display = GetComputedPropertyValue(null, e, "display", settings);
                     var dv = display.ToString();
-                    if (dv == "inline" || dv == "table-row" || dv == "table-row-group")
+                    if (dv is "inline" or "table-row" or "table-row-group")
                         return false;
                     return true;
                 },
@@ -1023,7 +1022,7 @@ namespace Clippit.Html
                 {
                     var display = GetComputedPropertyValue(null, e, "display", settings);
                     var dv = display.ToString();
-                    if (dv == "inline" || dv == "table-column" || dv == "table-column-group")
+                    if (dv is "inline" or "table-column" or "table-column-group")
                         return false;
                     return true;
                 },
@@ -1052,7 +1051,7 @@ namespace Clippit.Html
                 {
                     var display = GetComputedPropertyValue(null, e, "display", settings);
                     var dv = display.ToString();
-                    if (dv == "inline" || dv == "table-column" || dv == "table-column-group")
+                    if (dv is "inline" or "table-column" or "table-column-group")
                         return false;
                     return true;
                 },
@@ -1082,7 +1081,7 @@ namespace Clippit.Html
                 {
                     var display = GetComputedPropertyValue(null, e, "display", settings);
                     var dv = display.ToString();
-                    if (dv == "inline" || dv == "table-cell")
+                    if (dv is "inline" or "table-cell")
                         return true;
                     return false;
                 },
@@ -1305,7 +1304,7 @@ namespace Clippit.Html
             }
             Property prop = propList[pName];
             string propStr = prop.Expression.ToString();
-            if (propStr == "inherited" || propStr == "auto")
+            if (propStr is "inherited" or "auto")
             {
                 CssExpression computedValue = GetInheritedOrInitializedValue(computedValues, propertyInfo, element, propertyName, true, settings);
                 return computedValue;
@@ -1390,11 +1389,11 @@ namespace Clippit.Html
                 CssExpression newExpr3 = new CssExpression { Terms = new List<CssTerm> { new() { Value = "1.80", Type = CssTermType.Number, Unit = CssUnit.PT, } } };
                 return newExpr3;
             }
-            if (value == "auto" || value == "normal" || value == "none")
+            if (value is "auto" or "normal" or "none")
                 return assignedValue;
 
             CssUnit? unit = assignedValue.Terms.First().Unit;
-            if (unit == CssUnit.PT || unit == null)
+            if (unit is CssUnit.PT or null)
                 return assignedValue;
 
             if (unit == CssUnit.Percent && lengthForPercentage == null)
@@ -1412,7 +1411,7 @@ namespace Clippit.Html
                     throw new OpenXmlPowerToolsException("did not return a double?");
                 newPtSize = ptSize * decValue / 100d;
             }
-            else if (unit == CssUnit.EM || unit == CssUnit.EX)
+            else if (unit is CssUnit.EM or CssUnit.EX)
             {
                 CssExpression fontSize = GetComputedPropertyValue(null, element, "font-size", settings);
                 if (!double.TryParse(fontSize.Terms.First().Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var decFontSize))
@@ -1456,7 +1455,7 @@ namespace Clippit.Html
                 return new CssExpression { Terms = new List<CssTerm> { new() { Value = FontSizeMap[value].ToString(CultureInfo.InvariantCulture), Type = CssTermType.Number, Unit = CssUnit.PT, } } };
 
             // todo what should the calculation be for computing larger / smaller?
-            if (value == "larger" || value == "smaller")
+            if (value is "larger" or "smaller")
             {
                 CssExpression parentFontSize = GetComputedPropertyValue(null, element.Parent, "font-size", settings);
                 if (!double.TryParse(parentFontSize.Terms.First().Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var ptSize))
@@ -1466,7 +1465,7 @@ namespace Clippit.Html
                 {
                     if (ptSize < 10)
                         newPtSize2 = 10d;
-                    if (ptSize == 10 || ptSize == 11)
+                    if (ptSize is 10 or 11)
                         newPtSize2 = 12d;
                     if (ptSize == 12)
                         newPtSize2 = 13.5d;
@@ -1498,7 +1497,7 @@ namespace Clippit.Html
             if (!double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var decValue))
                 throw new OpenXmlPowerToolsException("em value did not parse");
             double? newPtSize = null;
-            if (unit == CssUnit.EM || unit == CssUnit.EX || unit == CssUnit.Percent)
+            if (unit is CssUnit.EM or CssUnit.EX or CssUnit.Percent)
             {
                 CssExpression parentFontSize = GetComputedPropertyValue(null, element.Parent, "font-size", settings);
                 if (!double.TryParse(parentFontSize.Terms.First().Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var ptSize))
@@ -2018,7 +2017,7 @@ namespace Clippit.Html
                     }
                     continue;
                 }
-                if (p.Name == "border-top" || p.Name == "border-right" || p.Name == "border-bottom" || p.Name == "border-left")
+                if (p.Name is "border-top" or "border-right" or "border-bottom" or "border-left")
                 {
                     CssExpression borderColor;
                     CssExpression borderWidth;
@@ -2579,13 +2578,7 @@ namespace Clippit.Html
                 return CssDataType.BackgroundAttachment;
             if (term.Function != null)
                 return CssDataType.BackgroundImage;
-            if (term.Unit == CssUnit.CM ||
-                term.Unit == CssUnit.EM ||
-                term.Unit == CssUnit.IN ||
-                term.Unit == CssUnit.MM ||
-                term.Unit == CssUnit.PT ||
-                term.Unit == CssUnit.PX ||
-                term.Unit == CssUnit.Percent)
+            if (term.Unit is CssUnit.CM or CssUnit.EM or CssUnit.IN or CssUnit.MM or CssUnit.PT or CssUnit.PX or CssUnit.Percent)
                 return CssDataType.BackgroundPosition;
             if (BackgroundPositionValues.Contains(term.Value.ToLower()))
                 return CssDataType.BackgroundPosition;
@@ -2687,13 +2680,7 @@ namespace Clippit.Html
                 return CssDataType.FontWeight;
             if (FontSizeMap.ContainsKey(term.Value.ToLower()))
                 return CssDataType.FontSize;
-            if (term.Unit == CssUnit.CM ||
-                term.Unit == CssUnit.EM ||
-                term.Unit == CssUnit.IN ||
-                term.Unit == CssUnit.MM ||
-                term.Unit == CssUnit.PT ||
-                term.Unit == CssUnit.PX ||
-                term.Unit == CssUnit.Percent)
+            if (term.Unit is CssUnit.CM or CssUnit.EM or CssUnit.IN or CssUnit.MM or CssUnit.PT or CssUnit.PX or CssUnit.Percent)
                 return CssDataType.Length;
             return CssDataType.FontFamily;
         }

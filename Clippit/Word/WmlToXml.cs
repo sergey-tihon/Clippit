@@ -744,7 +744,7 @@ namespace Clippit.Word
 
                         var nextRunText = nextRunTextElement.Value;
                         var sepChars = nextRunText
-                            .TakeWhile(ch => ch == '.' || ch == ' ')
+                            .TakeWhile(ch => ch is '.' or ' ')
                             .ToList();
 
                         sepCharsString = nextRunText.Substring(0, sepChars.Count());

@@ -1046,8 +1046,8 @@ namespace Clippit.Html
             {
                 if (((Type == CssTermType.Hex)
                     || (Type == CssTermType.String && Value.StartsWith("#")))
-                    && (Value.Length == 6 || Value.Length == 3 || ((Value.Length == 7 || Value.Length == 4)
-                    && Value.StartsWith("#"))))
+                    && (Value.Length is 6 or 3 || (Value.Length is 7 or 4
+                                                   && Value.StartsWith("#"))))
                 {
                     bool hex = true;
                     foreach (char c in Value)
@@ -1155,11 +1155,11 @@ namespace Clippit.Html
             string hex = "000000";
             if (Type == CssTermType.Hex)
             {
-                if ((Value.Length == 7 || Value.Length == 4) && Value.StartsWith("#"))
+                if (Value.Length is 7 or 4 && Value.StartsWith("#"))
                 {
                     hex = Value.Substring(1);
                 }
-                else if (Value.Length == 6 || Value.Length == 3)
+                else if (Value.Length is 6 or 3)
                 {
                     hex = Value;
                 }
@@ -1322,7 +1322,7 @@ namespace Clippit.Html
             {
                 return "%";
             }
-            else if (u == CssUnit.Hz || u == CssUnit.kHz)
+            else if (u is CssUnit.Hz or CssUnit.kHz)
             {
                 return u.ToString();
             }
@@ -1715,7 +1715,7 @@ namespace Clippit.Html
             {
                 Get();
             }
-            while (m_lookaheadToken.m_tokenKind == 5 || m_lookaheadToken.m_tokenKind == 6)
+            while (m_lookaheadToken.m_tokenKind is 5 or 6)
             {
                 if (m_lookaheadToken.m_tokenKind == 5)
                 {
@@ -1738,7 +1738,7 @@ namespace Clippit.Html
                     Directive(out dir);
                     CssDoc.Directives.Add(dir);
                 }
-                while (m_lookaheadToken.m_tokenKind == 5 || m_lookaheadToken.m_tokenKind == 6)
+                while (m_lookaheadToken.m_tokenKind is 5 or 6)
                 {
                     if (m_lookaheadToken.m_tokenKind == 5)
                     {
@@ -1924,7 +1924,7 @@ namespace Clippit.Html
                 {
                     while (StartOf(1))
                     {
-                        if (dir.Type == CssDirectiveType.Page || dir.Type == CssDirectiveType.FontFace)
+                        if (dir.Type is CssDirectiveType.Page or CssDirectiveType.FontFace)
                         {
                             Declaration(out dec);
                             dir.Declarations.Add(dec);
@@ -2048,7 +2048,7 @@ namespace Clippit.Html
             {
                 Get();
             }
-            if (m_lookaheadToken.m_tokenKind == 7 || m_lookaheadToken.m_tokenKind == 8)
+            if (m_lookaheadToken.m_tokenKind is 7 or 8)
             {
                 QuotedString(out url);
             }
@@ -2233,7 +2233,7 @@ namespace Clippit.Html
             }
             while (StartOf(11))
             {
-                if (m_lookaheadToken.m_tokenKind == 25 || m_lookaheadToken.m_tokenKind == 46)
+                if (m_lookaheadToken.m_tokenKind is 25 or 46)
                 {
                     if (m_lookaheadToken.m_tokenKind == 46)
                     {
@@ -2323,7 +2323,7 @@ namespace Clippit.Html
             }
             while (StartOf(12))
             {
-                if (m_lookaheadToken.m_tokenKind == 29 || m_lookaheadToken.m_tokenKind == 30 || m_lookaheadToken.m_tokenKind == 31)
+                if (m_lookaheadToken.m_tokenKind is 29 or 30 or 31)
                 {
                     if (m_lookaheadToken.m_tokenKind == 29)
                     {
@@ -2550,7 +2550,7 @@ namespace Clippit.Html
                     Identity(out ident);
                     atb.Value += ident;
                 }
-                else if (m_lookaheadToken.m_tokenKind == 7 || m_lookaheadToken.m_tokenKind == 8)
+                else if (m_lookaheadToken.m_tokenKind is 7 or 8)
                 {
                     QuotedString(out quote);
                     atb.Value = quote;
@@ -2612,7 +2612,7 @@ namespace Clippit.Html
             CssExpression exp = null;
             string ident = null;
 
-            if (m_lookaheadToken.m_tokenKind == 7 || m_lookaheadToken.m_tokenKind == 8)
+            if (m_lookaheadToken.m_tokenKind is 7 or 8)
             {
                 QuotedString(out val);
                 trm.Value = val; trm.Type = CssTermType.String;
@@ -2655,7 +2655,7 @@ namespace Clippit.Html
                     }
                     if (StartOf(17))
                     {
-                        while (m_lookaheadToken.m_tokenKind == 34 || m_lookaheadToken.m_tokenKind == 36 || m_lookaheadToken.m_tokenKind == 43)
+                        while (m_lookaheadToken.m_tokenKind is 34 or 36 or 43)
                         {
                             if (m_lookaheadToken.m_tokenKind == 43)
                             {
@@ -2790,7 +2790,7 @@ namespace Clippit.Html
                         {
                             Expect(22);
                             val += m_lastRecognizedToken.m_tokenValue;
-                            if (m_lookaheadToken.m_tokenKind == 24 || m_lookaheadToken.m_tokenKind == 29)
+                            if (m_lookaheadToken.m_tokenKind is 24 or 29)
                             {
                                 if (m_lookaheadToken.m_tokenKind == 29)
                                 {
@@ -3249,7 +3249,7 @@ namespace Clippit.Html
             {
                 ch = base.Read();
             } while ((ch >= 128) && ((ch & 0xC0) != 0xC0) && (ch != EOF));
-            if (ch < 128 || ch == EOF)
+            if (ch is < 128 or EOF)
             {
                 // nothing to do
             }
@@ -3540,7 +3540,7 @@ namespace Clippit.Html
 
         CssToken NextToken()
         {
-            while (m_currentInputCharacter == ' ' || m_currentInputCharacter == 10 || m_currentInputCharacter == 13)
+            while (m_currentInputCharacter is ' ' or 10 or 13)
                 NextCh();
             if (m_currentInputCharacter == '/' && Comment0())
                 return NextToken();
