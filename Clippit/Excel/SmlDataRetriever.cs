@@ -342,22 +342,16 @@ namespace Clippit.Excel
 
         public static XElement RetrieveTable(SmlDocument smlDoc, string sheetName, string tableName)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
-                using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(ms, false))
-                {
-                    return RetrieveTable(sDoc, tableName);
-                }
-            }
+            using var ms = new MemoryStream();
+            ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
+            using var sDoc = SpreadsheetDocument.Open(ms, false);
+            return RetrieveTable(sDoc, tableName);
         }
 
         public static XElement RetrieveTable(string fileName, string tableName)
         {
-            using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(fileName, false))
-            {
-                return RetrieveTable(sDoc, tableName);
-            }
+            using SpreadsheetDocument sDoc = SpreadsheetDocument.Open(fileName, false);
+            return RetrieveTable(sDoc, tableName);
         }
 
         public static XElement RetrieveTable(SpreadsheetDocument sDoc, string tableName)
@@ -492,22 +486,16 @@ namespace Clippit.Excel
 
         public static string[] SheetNames(SmlDocument smlDoc)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
-                using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(ms, false))
-                {
-                    return SheetNames(sDoc);
-                }
-            }
+            using MemoryStream ms = new MemoryStream();
+            ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
+            using SpreadsheetDocument sDoc = SpreadsheetDocument.Open(ms, false);
+            return SheetNames(sDoc);
         }
 
         public static string[] SheetNames(string fileName)
         {
-            using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(fileName, false))
-            {
-                return SheetNames(sDoc);
-            }
+            using SpreadsheetDocument sDoc = SpreadsheetDocument.Open(fileName, false);
+            return SheetNames(sDoc);
         }
 
         public static string[] SheetNames(SpreadsheetDocument sDoc)
@@ -519,22 +507,16 @@ namespace Clippit.Excel
 
         public static string[] TableNames(SmlDocument smlDoc)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
-                using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(ms, false))
-                {
-                    return TableNames(sDoc);
-                }
-            }
+            using MemoryStream ms = new MemoryStream();
+            ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
+            using SpreadsheetDocument sDoc = SpreadsheetDocument.Open(ms, false);
+            return TableNames(sDoc);
         }
 
         public static string[] TableNames(string fileName)
         {
-            using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(fileName, false))
-            {
-                return TableNames(sDoc);
-            }
+            using SpreadsheetDocument sDoc = SpreadsheetDocument.Open(fileName, false);
+            return TableNames(sDoc);
         }
 
         public static string[] TableNames(SpreadsheetDocument sDoc)

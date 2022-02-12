@@ -100,12 +100,10 @@ namespace Clippit.Tests.Word
             if (!annotatedDocx.Exists)
                 File.Copy(sourceDocx.FullName, annotatedDocx.FullName);
 
-            using (WordprocessingDocument wDoc = WordprocessingDocument.Open(annotatedDocx.FullName, true))
-            {
-                var contentParent = wDoc.MainDocumentPart.GetXDocument().Root.Element(W.body);
-                var settings = new WmlComparerSettings();
-                WmlComparer.CreateComparisonUnitAtomList(wDoc.MainDocumentPart, contentParent, settings);
-            }
+            using WordprocessingDocument wDoc = WordprocessingDocument.Open(annotatedDocx.FullName, true);
+            var contentParent = wDoc.MainDocumentPart.GetXDocument().Root.Element(W.body);
+            var settings = new WmlComparerSettings();
+            WmlComparer.CreateComparisonUnitAtomList(wDoc.MainDocumentPart, contentParent, settings);
 #endif
         }
 

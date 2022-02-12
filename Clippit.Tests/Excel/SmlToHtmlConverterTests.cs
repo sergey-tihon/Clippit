@@ -63,12 +63,10 @@ namespace Clippit.Tests.Excel
 
             var dataTemplateFileNameSuffix = "-2-Generated-XmlData-Entire-Sheet.xml";
             var dataXmlFi = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix)));
-            using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false))
-            {
-                var settings = new SmlToHtmlConverterSettings();
-                var rangeXml = SmlDataRetriever.RetrieveSheet(sDoc, sheetName);
-                rangeXml.Save(dataXmlFi.FullName);
-            }
+            using SpreadsheetDocument sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false);
+            var settings = new SmlToHtmlConverterSettings();
+            var rangeXml = SmlDataRetriever.RetrieveSheet(sDoc, sheetName);
+            rangeXml.Save(dataXmlFi.FullName);
         }
 
         [Theory]
@@ -122,12 +120,10 @@ namespace Clippit.Tests.Excel
 
             var dataTemplateFileNameSuffix = string.Format("-2-Generated-XmlData-{0}.xml", range.Replace(":", ""));
             var dataXmlFi = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix)));
-            using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false))
-            {
-                var settings = new SmlToHtmlConverterSettings();
-                var rangeXml = SmlDataRetriever.RetrieveRange(sDoc, sheetName, range);
-                rangeXml.Save(dataXmlFi.FullName);
-            }
+            using SpreadsheetDocument sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false);
+            var settings = new SmlToHtmlConverterSettings();
+            var rangeXml = SmlDataRetriever.RetrieveRange(sDoc, sheetName, range);
+            rangeXml.Save(dataXmlFi.FullName);
         }
         
 
@@ -164,11 +160,9 @@ namespace Clippit.Tests.Excel
         {
             DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
             FileInfo sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
-            using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false))
-            {
-                var sheetNames = SmlDataRetriever.SheetNames(sDoc);
-                Assert.Equal(numberOfSheets, sheetNames.Length);
-            }
+            using SpreadsheetDocument sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false);
+            var sheetNames = SmlDataRetriever.SheetNames(sDoc);
+            Assert.Equal(numberOfSheets, sheetNames.Length);
         }
 
         [Theory]
@@ -178,11 +172,9 @@ namespace Clippit.Tests.Excel
         {
             DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
             FileInfo sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
-            using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false))
-            {
-                var table = SmlDataRetriever.TableNames(sDoc);
-                Assert.Equal(numberOfTables, table.Length);
-            }
+            using SpreadsheetDocument sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false);
+            var table = SmlDataRetriever.TableNames(sDoc);
+            Assert.Equal(numberOfTables, table.Length);
         }
         
     }

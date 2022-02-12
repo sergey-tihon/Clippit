@@ -903,29 +903,25 @@ namespace Clippit.Tests.Word
 
         private static void ValidateDocument(WmlDocument wmlToValidate)
         {
-            using (MemoryStream ms = new MemoryStream())
+            using MemoryStream ms = new MemoryStream();
+            ms.Write(wmlToValidate.DocumentByteArray, 0, wmlToValidate.DocumentByteArray.Length);
+            using WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true);
+            OpenXmlValidator validator = new OpenXmlValidator();
+            var errors = validator.Validate(wDoc).Where(e => !ExpectedErrors.Contains(e.Description));
+            if (errors.Count() != 0)
             {
-                ms.Write(wmlToValidate.DocumentByteArray, 0, wmlToValidate.DocumentByteArray.Length);
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true))
+                var ind = "  ";
+                var sb = new StringBuilder();
+                foreach (var err in errors)
                 {
-                    OpenXmlValidator validator = new OpenXmlValidator();
-                    var errors = validator.Validate(wDoc).Where(e => !ExpectedErrors.Contains(e.Description));
-                    if (errors.Count() != 0)
-                    {
-                        var ind = "  ";
-                        var sb = new StringBuilder();
-                        foreach (var err in errors)
-                        {
-                            sb.Append("Error" + Environment.NewLine);
-                            sb.Append(ind + "ErrorType: " + err.ErrorType.ToString() + Environment.NewLine);
-                            sb.Append(ind + "Description: " + err.Description + Environment.NewLine);
-                            sb.Append(ind + "Part: " + err.Part.Uri.ToString() + Environment.NewLine);
-                            sb.Append(ind + "XPath: " + err.Path.XPath + Environment.NewLine);
-                        }
-                        var sbs = sb.ToString();
-                        Assert.Equal("", sbs);
-                    }
+                    sb.Append("Error" + Environment.NewLine);
+                    sb.Append(ind + "ErrorType: " + err.ErrorType.ToString() + Environment.NewLine);
+                    sb.Append(ind + "Description: " + err.Description + Environment.NewLine);
+                    sb.Append(ind + "Part: " + err.Part.Uri.ToString() + Environment.NewLine);
+                    sb.Append(ind + "XPath: " + err.Path.XPath + Environment.NewLine);
                 }
+                var sbs = sb.ToString();
+                Assert.Equal("", sbs);
             }
         }
 

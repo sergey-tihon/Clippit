@@ -36,11 +36,9 @@ namespace Clippit.Excel
         {
             src = null;
             if (!IsBinaryFile()) return false;
-            using (BinaryReader brdr = new BinaryReader(File.Open(path_, FileMode.Open,FileAccess.Read)))
-            {
-                src = brdr.ReadBytes((int)brdr.BaseStream.Length);
-                return true;
-            }
+            using BinaryReader brdr = new BinaryReader(File.Open(path_, FileMode.Open,FileAccess.Read));
+            src = brdr.ReadBytes((int)brdr.BaseStream.Length);
+            return true;
         }
         public bool LoadFile(out string src)
         {
@@ -49,36 +47,30 @@ namespace Clippit.Excel
             if (textEncoding == null)
             {
                 if (encoding_ == FileEncoding.binary) return false;
-                using (StreamReader rd = new StreamReader(path_, true))
-                {
-                    src = rd.ReadToEnd();
-                    return true;
-                }
+                using StreamReader rd = new StreamReader(path_, true);
+                src = rd.ReadToEnd();
+                return true;
             }
             else
             {
                 if (encoding_ == FileEncoding.utf16be)//UTF16BE
                 {
-                    using (BinaryReader brdr = new BinaryReader(File.Open(path_, FileMode.Open, FileAccess.Read)))
+                    using BinaryReader brdr = new BinaryReader(File.Open(path_, FileMode.Open, FileAccess.Read));
+                    byte[] bytes = brdr.ReadBytes((int)brdr.BaseStream.Length);
+                    StringBuilder s = new StringBuilder();
+                    for (int i = 0; i < bytes.Length; i += 2)
                     {
-                        byte[] bytes = brdr.ReadBytes((int)brdr.BaseStream.Length);
-                        StringBuilder s = new StringBuilder();
-                        for (int i = 0; i < bytes.Length; i += 2)
-                        {
-                            char c = (char)(bytes[i] << 8 | bytes[i + 1]);
-                            s.Append(c);
-                        }
-                        src = s.ToString();
-                        return true;
+                        char c = (char)(bytes[i] << 8 | bytes[i + 1]);
+                        s.Append(c);
                     }
+                    src = s.ToString();
+                    return true;
                 }
                 else
                 {
-                    using (StreamReader rd = new StreamReader(path_, textEncoding))
-                    {
-                        src = rd.ReadToEnd();
-                        return true;
-                    }
+                    using StreamReader rd = new StreamReader(path_, textEncoding);
+                    src = rd.ReadToEnd();
+                    return true;
                 }
             }
 

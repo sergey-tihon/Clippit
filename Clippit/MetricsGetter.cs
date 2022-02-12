@@ -55,20 +55,16 @@ namespace Clippit
         {
             try
             {
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    ms.Write(wmlDoc.DocumentByteArray, 0, wmlDoc.DocumentByteArray.Length);
-                    using (WordprocessingDocument document = WordprocessingDocument.Open(ms, true))
-                    {
-                        bool hasTrackedRevisions = RevisionAccepter.HasTrackedRevisions(document);
-                        if (hasTrackedRevisions)
-                            RevisionAccepter.AcceptRevisions(document);
-                        XElement metrics1 = GetWmlMetrics(wmlDoc.FileName, false, document, settings);
-                        if (hasTrackedRevisions)
-                            metrics1.Add(new XElement(H.RevisionTracking, new XAttribute(H.Val, true)));
-                        return metrics1;
-                    }
-                }
+                using MemoryStream ms = new MemoryStream();
+                ms.Write(wmlDoc.DocumentByteArray, 0, wmlDoc.DocumentByteArray.Length);
+                using WordprocessingDocument document = WordprocessingDocument.Open(ms, true);
+                bool hasTrackedRevisions = RevisionAccepter.HasTrackedRevisions(document);
+                if (hasTrackedRevisions)
+                    RevisionAccepter.AcceptRevisions(document);
+                XElement metrics1 = GetWmlMetrics(wmlDoc.FileName, false, document, settings);
+                if (hasTrackedRevisions)
+                    metrics1.Add(new XElement(H.RevisionTracking, new XAttribute(H.Val, true)));
+                return metrics1;
             }
             catch (OpenXmlPowerToolsException e)
             {
@@ -206,28 +202,26 @@ namespace Clippit
             var uniqueNamespaces = new HashSet<string>();
             foreach (var xp in xmlParts)
             {
-                using (Stream st = xp.GetStream())
+                using Stream st = xp.GetStream();
+                try
                 {
-                    try
-                    {
-                        XDocument xdoc = XDocument.Load(st);
-                        var namespaces = xdoc
-                            .Descendants()
-                            .Attributes()
-                            .Where(a => a.IsNamespaceDeclaration)
-                            .Select(a => string.Format("{0}|{1}", a.Name.LocalName, a.Value))
-                            .OrderBy(t => t)
-                            .Distinct()
-                            .ToList();
-                        foreach (var item in namespaces)
-		                    uniqueNamespaces.Add(item);
-                    }
-                    // if catch exception, forget about it.  Just trying to get a most complete survey possible of all namespaces in all documents.
-                    // if caught exception, chances are the document is bad anyway.
-                    catch (Exception)
-                    {
-                        continue;
-                    }
+                    XDocument xdoc = XDocument.Load(st);
+                    var namespaces = xdoc
+                        .Descendants()
+                        .Attributes()
+                        .Where(a => a.IsNamespaceDeclaration)
+                        .Select(a => string.Format("{0}|{1}", a.Name.LocalName, a.Value))
+                        .OrderBy(t => t)
+                        .Distinct()
+                        .ToList();
+                    foreach (var item in namespaces)
+                        uniqueNamespaces.Add(item);
+                }
+                // if catch exception, forget about it.  Just trying to get a most complete survey possible of all namespaces in all documents.
+                // if caught exception, chances are the document is bad anyway.
+                catch (Exception)
+                {
+                    continue;
                 }
             }
             var xe = new XElement(H.Namespaces,
@@ -666,27 +660,23 @@ namespace Clippit
 
         public static XElement GetXlsxMetrics(SmlDocument smlDoc, MetricsGetterSettings settings)
         {
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(smlDoc))
-            {
-                using (SpreadsheetDocument sDoc = streamDoc.GetSpreadsheetDocument())
-                {
-                    List<XElement> metrics = new List<XElement>();
+            using OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(smlDoc);
+            using SpreadsheetDocument sDoc = streamDoc.GetSpreadsheetDocument();
+            List<XElement> metrics = new List<XElement>();
 
-                    bool valid = ValidateAgainstSpecificVersion(sDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2007, H.SdkValidationError2007);
-                    valid |= ValidateAgainstSpecificVersion(sDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2010, H.SdkValidationError2010);
+            bool valid = ValidateAgainstSpecificVersion(sDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2007, H.SdkValidationError2007);
+            valid |= ValidateAgainstSpecificVersion(sDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2010, H.SdkValidationError2010);
 #if !NET35
-                    valid |= ValidateAgainstSpecificVersion(sDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2013, H.SdkValidationError2013);
+            valid |= ValidateAgainstSpecificVersion(sDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2013, H.SdkValidationError2013);
 #endif
 
-                    return new XElement(H.Metrics,
-                        new XAttribute(H.FileName, smlDoc.FileName),
-                        new XAttribute(H.FileType, "SpreadsheetML"),
-                        metrics,
-                        GetTableInfoForWorkbook(sDoc, settings),
-                        settings.RetrieveNamespaceList ? RetrieveNamespaceList(sDoc) : null,
-                        settings.RetrieveContentTypeList ? RetrieveContentTypeList(sDoc) : null);
-                }
-            }
+            return new XElement(H.Metrics,
+                new XAttribute(H.FileName, smlDoc.FileName),
+                new XAttribute(H.FileType, "SpreadsheetML"),
+                metrics,
+                GetTableInfoForWorkbook(sDoc, settings),
+                settings.RetrieveNamespaceList ? RetrieveNamespaceList(sDoc) : null,
+                settings.RetrieveContentTypeList ? RetrieveContentTypeList(sDoc) : null);
         }
 
         private static XElement GetTableInfoForWorkbook(SpreadsheetDocument spreadsheet, MetricsGetterSettings settings)
@@ -758,25 +748,21 @@ namespace Clippit
 
         public static XElement GetPptxMetrics(PmlDocument pmlDoc, MetricsGetterSettings settings)
         {
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(pmlDoc))
-            {
-                using (PresentationDocument pDoc = streamDoc.GetPresentationDocument())
-                {
-                    List<XElement> metrics = new List<XElement>();
+            using OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(pmlDoc);
+            using PresentationDocument pDoc = streamDoc.GetPresentationDocument();
+            List<XElement> metrics = new List<XElement>();
 
-                    bool valid = ValidateAgainstSpecificVersion(pDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2007, H.SdkValidationError2007);
-                    valid |= ValidateAgainstSpecificVersion(pDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2010, H.SdkValidationError2010);
+            bool valid = ValidateAgainstSpecificVersion(pDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2007, H.SdkValidationError2007);
+            valid |= ValidateAgainstSpecificVersion(pDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2010, H.SdkValidationError2010);
 #if !NET35
-                    valid |= ValidateAgainstSpecificVersion(pDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2013, H.SdkValidationError2013);
+            valid |= ValidateAgainstSpecificVersion(pDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2013, H.SdkValidationError2013);
 #endif
-                    return new XElement(H.Metrics,
-                        new XAttribute(H.FileName, pmlDoc.FileName),
-                        new XAttribute(H.FileType, "PresentationML"),
-                        metrics,
-                        settings.RetrieveNamespaceList ? RetrieveNamespaceList(pDoc) : null,
-                        settings.RetrieveContentTypeList ? RetrieveContentTypeList(pDoc) : null);
-                }
-            }
+            return new XElement(H.Metrics,
+                new XAttribute(H.FileName, pmlDoc.FileName),
+                new XAttribute(H.FileType, "PresentationML"),
+                metrics,
+                settings.RetrieveNamespaceList ? RetrieveNamespaceList(pDoc) : null,
+                settings.RetrieveContentTypeList ? RetrieveContentTypeList(pDoc) : null);
         }
 
         private static object GetStyleHierarchy(WordprocessingDocument document)

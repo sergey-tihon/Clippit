@@ -148,107 +148,105 @@ namespace Clippit
             }
 
             // and then finally can generate the document with revisions
-            using (var ms = new MemoryStream())
+            using var ms = new MemoryStream();
+            ms.Write(wmlResult.DocumentByteArray, 0, wmlResult.DocumentByteArray.Length);
+            using (WordprocessingDocument wDocWithRevisions = WordprocessingDocument.Open(ms, true))
             {
-                ms.Write(wmlResult.DocumentByteArray, 0, wmlResult.DocumentByteArray.Length);
-                using (WordprocessingDocument wDocWithRevisions = WordprocessingDocument.Open(ms, true))
+                XDocument xDoc = wDocWithRevisions.MainDocumentPart.GetXDocument();
+                List<XAttribute> rootNamespaceAttributes = xDoc
+                    .Root?
+                    .Attributes()
+                    .Where(a => a.IsNamespaceDeclaration || a.Name.Namespace == MC.mc)
+                    .ToList();
+
+                // ======================================
+                // The following produces a new valid WordprocessingML document from the listOfComparisonUnitAtoms
+                object newBodyChildren = ProduceNewWmlMarkupFromCorrelatedSequence(
+                    wDocWithRevisions.MainDocumentPart,
+                    listOfComparisonUnitAtoms,
+                    settings);
+
+                var newXDoc = new XDocument();
+                newXDoc.Add(
+                    new XElement(W.document,
+                        rootNamespaceAttributes,
+                        new XElement(W.body, newBodyChildren)));
+
+                MarkContentAsDeletedOrInserted(newXDoc, settings);
+                CoalesceAdjacentRunsWithIdenticalFormatting(newXDoc);
+                IgnorePt14Namespace(newXDoc.Root);
+
+                ProcessFootnoteEndnote(settings,
+                    listOfComparisonUnitAtoms,
+                    wDoc1.MainDocumentPart,
+                    wDoc2.MainDocumentPart,
+                    newXDoc);
+
+                RectifyFootnoteEndnoteIds(
+                    wDoc1.MainDocumentPart,
+                    wDoc2.MainDocumentPart,
+                    wDocWithRevisions.MainDocumentPart,
+                    newXDoc,
+                    settings);
+
+                ConjoinDeletedInsertedParagraphMarks(wDocWithRevisions.MainDocumentPart, newXDoc);
+
+                FixUpRevisionIds(wDocWithRevisions, newXDoc);
+
+                // little bit of cleanup
+                MoveLastSectPrToChildOfBody(newXDoc);
+                var newXDoc2Root = (XElement) WordprocessingMLUtil.WmlOrderElementsPerStandard(newXDoc.Root);
+                xDoc.Root?.ReplaceWith(newXDoc2Root);
+
+                /**********************************************************************************************/
+                // temporary code to remove sections.  When remove this code, get validation errors for some ITU documents.
+                // Note: This is a no-go for use cases in which documents have multiple sections, e.g., for title pages,
+                // front matter, and body matter. Another example is where you have to switch between portrait and
+                // landscape orientation, which requires sections.
+                // TODO: Revisit
+                xDoc.Root?.Descendants(W.sectPr).Remove();
+
+                // move w:sectPr from source document into newly generated document.
+                if (savedSectPr != null)
                 {
-                    XDocument xDoc = wDocWithRevisions.MainDocumentPart.GetXDocument();
-                    List<XAttribute> rootNamespaceAttributes = xDoc
-                        .Root?
-                        .Attributes()
-                        .Where(a => a.IsNamespaceDeclaration || a.Name.Namespace == MC.mc)
-                        .ToList();
+                    XDocument xd = wDocWithRevisions.MainDocumentPart.GetXDocument();
 
-                    // ======================================
-                    // The following produces a new valid WordprocessingML document from the listOfComparisonUnitAtoms
-                    object newBodyChildren = ProduceNewWmlMarkupFromCorrelatedSequence(
-                        wDocWithRevisions.MainDocumentPart,
-                        listOfComparisonUnitAtoms,
-                        settings);
-
-                    var newXDoc = new XDocument();
-                    newXDoc.Add(
-                        new XElement(W.document,
-                            rootNamespaceAttributes,
-                            new XElement(W.body, newBodyChildren)));
-
-                    MarkContentAsDeletedOrInserted(newXDoc, settings);
-                    CoalesceAdjacentRunsWithIdenticalFormatting(newXDoc);
-                    IgnorePt14Namespace(newXDoc.Root);
-
-                    ProcessFootnoteEndnote(settings,
-                        listOfComparisonUnitAtoms,
-                        wDoc1.MainDocumentPart,
-                        wDoc2.MainDocumentPart,
-                        newXDoc);
-
-                    RectifyFootnoteEndnoteIds(
-                        wDoc1.MainDocumentPart,
-                        wDoc2.MainDocumentPart,
-                        wDocWithRevisions.MainDocumentPart,
-                        newXDoc,
-                        settings);
-
-                    ConjoinDeletedInsertedParagraphMarks(wDocWithRevisions.MainDocumentPart, newXDoc);
-
-                    FixUpRevisionIds(wDocWithRevisions, newXDoc);
-
-                    // little bit of cleanup
-                    MoveLastSectPrToChildOfBody(newXDoc);
-                    var newXDoc2Root = (XElement) WordprocessingMLUtil.WmlOrderElementsPerStandard(newXDoc.Root);
-                    xDoc.Root?.ReplaceWith(newXDoc2Root);
-
-                    /**********************************************************************************************/
-                    // temporary code to remove sections.  When remove this code, get validation errors for some ITU documents.
-                    // Note: This is a no-go for use cases in which documents have multiple sections, e.g., for title pages,
-                    // front matter, and body matter. Another example is where you have to switch between portrait and
-                    // landscape orientation, which requires sections.
-                    // TODO: Revisit
-                    xDoc.Root?.Descendants(W.sectPr).Remove();
-
-                    // move w:sectPr from source document into newly generated document.
-                    if (savedSectPr != null)
-                    {
-                        XDocument xd = wDocWithRevisions.MainDocumentPart.GetXDocument();
-
-                        // add everything but headers/footers
-                        var clonedSectPr = new XElement(W.sectPr,
-                            savedSectPr.Attributes(),
-                            savedSectPr.Element(W.type),
-                            savedSectPr.Element(W.pgSz),
-                            savedSectPr.Element(W.pgMar),
-                            savedSectPr.Element(W.cols),
-                            savedSectPr.Element(W.titlePg));
-                        xd.Root?.Element(W.body)?.Add(clonedSectPr);
-                    }
-                    /**********************************************************************************************/
-
-                    wDocWithRevisions.MainDocumentPart.PutXDocument();
-
-                    FixUpFootnotesEndnotesWithCustomMarkers(wDocWithRevisions);
-                    FixUpRevMarkIds(wDocWithRevisions);
-                    FixUpDocPrIds(wDocWithRevisions);
-                    FixUpShapeIds(wDocWithRevisions);
-                    FixUpShapeTypeIds(wDocWithRevisions);
-                    AddFootnotesEndnotesStyles(wDocWithRevisions);
-                    CopyMissingStylesFromOneDocToAnother(wDoc2, wDocWithRevisions);
-                    DeleteFootnotePropertiesInSettings(wDocWithRevisions);
+                    // add everything but headers/footers
+                    var clonedSectPr = new XElement(W.sectPr,
+                        savedSectPr.Attributes(),
+                        savedSectPr.Element(W.type),
+                        savedSectPr.Element(W.pgSz),
+                        savedSectPr.Element(W.pgMar),
+                        savedSectPr.Element(W.cols),
+                        savedSectPr.Element(W.titlePg));
+                    xd.Root?.Element(W.body)?.Add(clonedSectPr);
                 }
+                /**********************************************************************************************/
 
-                foreach (OpenXmlPart part in wDoc1.ContentParts())
-                {
-                    part.PutXDocument();
-                }
+                wDocWithRevisions.MainDocumentPart.PutXDocument();
 
-                foreach (OpenXmlPart part in wDoc2.ContentParts())
-                {
-                    part.PutXDocument();
-                }
-
-                var updatedWmlResult = new WmlDocument("Dummy.docx", ms.ToArray());
-                return updatedWmlResult;
+                FixUpFootnotesEndnotesWithCustomMarkers(wDocWithRevisions);
+                FixUpRevMarkIds(wDocWithRevisions);
+                FixUpDocPrIds(wDocWithRevisions);
+                FixUpShapeIds(wDocWithRevisions);
+                FixUpShapeTypeIds(wDocWithRevisions);
+                AddFootnotesEndnotesStyles(wDocWithRevisions);
+                CopyMissingStylesFromOneDocToAnother(wDoc2, wDocWithRevisions);
+                DeleteFootnotePropertiesInSettings(wDocWithRevisions);
             }
+
+            foreach (OpenXmlPart part in wDoc1.ContentParts())
+            {
+                part.PutXDocument();
+            }
+
+            foreach (OpenXmlPart part in wDoc2.ContentParts())
+            {
+                part.PutXDocument();
+            }
+
+            var updatedWmlResult = new WmlDocument("Dummy.docx", ms.ToArray());
+            return updatedWmlResult;
         }
 
         private static void AddSha1HashToBlockLevelContent(OpenXmlPart part, XElement contentParent, WmlComparerSettings settings)

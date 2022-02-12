@@ -2958,48 +2958,46 @@ namespace Clippit.Word
                 return null;
 
             using var partStream = imagePart.GetStream();
-            using (var image = Image<Rgba32>.Load(partStream))
+            using var image = Image<Rgba32>.Load(partStream);
+            if (extentCx != null && extentCy != null)
             {
-                if (extentCx != null && extentCy != null)
-                {
-                    var imageInfo = new ImageInfo()
-                    {
-                        Image = image,
-                        ImgStyleAttribute = new XAttribute("style",
-                            string.Format(NumberFormatInfo.InvariantInfo,
-                                "width: {0}in; height: {1}in",
-                                (float)extentCx / (float)ImageInfo.EmusPerInch,
-                                (float)extentCy / (float)ImageInfo.EmusPerInch)),
-                        ContentType = contentType,
-                        DrawingElement = element,
-                        AltText = altText,
-                    };
-                    var imgElement2 = imageHandler(imageInfo);
-                    if (hyperlinkUri != null)
-                    {
-                        return new XElement(XhtmlNoNamespace.a,
-                            new XAttribute(XhtmlNoNamespace.href, hyperlinkUri),
-                            imgElement2);
-                    }
-                    return imgElement2;
-                }
-
-                var imageInfo2 = new ImageInfo()
+                var imageInfo = new ImageInfo()
                 {
                     Image = image,
+                    ImgStyleAttribute = new XAttribute("style",
+                        string.Format(NumberFormatInfo.InvariantInfo,
+                            "width: {0}in; height: {1}in",
+                            (float)extentCx / (float)ImageInfo.EmusPerInch,
+                            (float)extentCy / (float)ImageInfo.EmusPerInch)),
                     ContentType = contentType,
                     DrawingElement = element,
                     AltText = altText,
                 };
-                var imgElement = imageHandler(imageInfo2);
+                var imgElement2 = imageHandler(imageInfo);
                 if (hyperlinkUri != null)
                 {
                     return new XElement(XhtmlNoNamespace.a,
                         new XAttribute(XhtmlNoNamespace.href, hyperlinkUri),
-                        imgElement);
+                        imgElement2);
                 }
-                return imgElement;
+                return imgElement2;
             }
+
+            var imageInfo2 = new ImageInfo()
+            {
+                Image = image,
+                ContentType = contentType,
+                DrawingElement = element,
+                AltText = altText,
+            };
+            var imgElement = imageHandler(imageInfo2);
+            if (hyperlinkUri != null)
+            {
+                return new XElement(XhtmlNoNamespace.a,
+                    new XAttribute(XhtmlNoNamespace.href, hyperlinkUri),
+                    imgElement);
+            }
+            return imgElement;
         }
 
         private static XElement ProcessPictureOrObject(WordprocessingDocument wordDoc,

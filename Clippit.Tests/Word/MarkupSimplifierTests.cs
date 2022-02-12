@@ -90,21 +90,19 @@ namespace Clippit.Tests.Word
             XDocument partDocument = XDocument.Parse(SmartTagDocumentXmlString);
             Assert.True(partDocument.Descendants(W.smartTag).Any());
 
-            using (var stream = new MemoryStream())
-            using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(stream, DocumentType))
-            {
-                MainDocumentPart part = wordDocument.AddMainDocumentPart();
-                part.PutXDocument(partDocument);
+            using var stream = new MemoryStream();
+            using WordprocessingDocument wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+            MainDocumentPart part = wordDocument.AddMainDocumentPart();
+            part.PutXDocument(partDocument);
 
-                var settings = new SimplifyMarkupSettings { RemoveSmartTags = true };
-                MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
+            var settings = new SimplifyMarkupSettings { RemoveSmartTags = true };
+            MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
 
-                partDocument = part.GetXDocument();
-                XElement t = partDocument.Descendants(W.t).First();
+            partDocument = part.GetXDocument();
+            XElement t = partDocument.Descendants(W.t).First();
 
-                Assert.False(partDocument.Descendants(W.smartTag).Any());
-                Assert.Equal(SmartTagDocumentTextValue, t.Value);
-            }
+            Assert.False(partDocument.Descendants(W.smartTag).Any());
+            Assert.Equal(SmartTagDocumentTextValue, t.Value);
         }
 
         [Fact]
@@ -113,24 +111,22 @@ namespace Clippit.Tests.Word
             XDocument partDocument = XDocument.Parse(SdtDocumentXmlString);
             Assert.True(partDocument.Descendants(W.sdt).Any());
 
-            using (var stream = new MemoryStream())
-            using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(stream, DocumentType))
-            {
-                MainDocumentPart part = wordDocument.AddMainDocumentPart();
-                part.PutXDocument(partDocument);
+            using var stream = new MemoryStream();
+            using WordprocessingDocument wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+            MainDocumentPart part = wordDocument.AddMainDocumentPart();
+            part.PutXDocument(partDocument);
 
-                var settings = new SimplifyMarkupSettings { RemoveContentControls = true };
-                MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
+            var settings = new SimplifyMarkupSettings { RemoveContentControls = true };
+            MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
 
-                partDocument = part.GetXDocument();
-                XElement element = partDocument
-                    .Descendants(W.body)
-                    .Descendants()
-                    .First();
+            partDocument = part.GetXDocument();
+            XElement element = partDocument
+                .Descendants(W.body)
+                .Descendants()
+                .First();
 
-                Assert.False(partDocument.Descendants(W.sdt).Any());
-                Assert.Equal(W.p, element.Name);
-            }
+            Assert.False(partDocument.Descendants(W.sdt).Any());
+            Assert.Equal(W.p, element.Name);
         }
 
         [Fact]
@@ -144,19 +140,17 @@ namespace Clippit.Tests.Word
                 .Descendants(W.bookmarkEnd)
 , e => e.Attribute(W.id).Value == "0");
 
-            using (var stream = new MemoryStream())
-            using (WordprocessingDocument wordDocument = WordprocessingDocument.Create(stream, DocumentType))
-            {
-                MainDocumentPart part = wordDocument.AddMainDocumentPart();
-                part.PutXDocument(partDocument);
+            using var stream = new MemoryStream();
+            using WordprocessingDocument wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+            MainDocumentPart part = wordDocument.AddMainDocumentPart();
+            part.PutXDocument(partDocument);
 
-                var settings = new SimplifyMarkupSettings { RemoveGoBackBookmark = true };
-                MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
+            var settings = new SimplifyMarkupSettings { RemoveGoBackBookmark = true };
+            MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
 
-                partDocument = part.GetXDocument();
-                Assert.False(partDocument.Descendants(W.bookmarkStart).Any());
-                Assert.False(partDocument.Descendants(W.bookmarkEnd).Any());
-            }
+            partDocument = part.GetXDocument();
+            Assert.False(partDocument.Descendants(W.bookmarkStart).Any());
+            Assert.False(partDocument.Descendants(W.bookmarkEnd).Any());
         }
     }
 }

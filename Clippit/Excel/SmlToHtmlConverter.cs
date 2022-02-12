@@ -48,16 +48,12 @@ namespace Clippit.Excel
         #region PublicApis
         public static XElement ConvertTableToHtml(SmlDocument smlDoc, SmlToHtmlConverterSettings settings, string tableName)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
-                using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(ms, false))
-                {
-                    var rangeXml = SmlDataRetriever.RetrieveTable(sDoc, tableName);
-                    var xhtml = SmlToHtmlConverter.ConvertToHtmlInternal(sDoc, settings, rangeXml);
-                    return xhtml;
-                }
-            }
+            using MemoryStream ms = new MemoryStream();
+            ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
+            using SpreadsheetDocument sDoc = SpreadsheetDocument.Open(ms, false);
+            var rangeXml = SmlDataRetriever.RetrieveTable(sDoc, tableName);
+            var xhtml = SmlToHtmlConverter.ConvertToHtmlInternal(sDoc, settings, rangeXml);
+            return xhtml;
         }
 
         public static XElement ConvertTableToHtml(SpreadsheetDocument sDoc, SmlToHtmlConverterSettings settings, string tableName)

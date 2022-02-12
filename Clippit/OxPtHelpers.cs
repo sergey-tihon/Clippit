@@ -36,61 +36,60 @@ namespace Clippit
             string backColor,
             string styleName)
         {
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(wmlDoc))
+            using OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(wmlDoc);
+            using (WordprocessingDocument wDoc = streamDoc.GetWordprocessingDocument())
             {
-                using (WordprocessingDocument wDoc = streamDoc.GetWordprocessingDocument())
+                StyleDefinitionsPart part = wDoc.MainDocumentPart.StyleDefinitionsPart;
+
+                Body body = wDoc.MainDocumentPart.Document.Body;
+
+                SectionProperties sectionProperties = body.Elements<SectionProperties>().FirstOrDefault();
+
+                Paragraph paragraph = new Paragraph();
+                Run run = paragraph.AppendChild(new Run());
+                RunProperties runProperties = new RunProperties();
+
+                if (isBold)
+                    runProperties.AppendChild(new Bold());
+
+                if (isItalic)
+                    runProperties.AppendChild(new Italic());
+
+
+                if (!string.IsNullOrEmpty(foreColor))
                 {
-                    StyleDefinitionsPart part = wDoc.MainDocumentPart.StyleDefinitionsPart;
+                    int colorValue = ColorParser.FromName(foreColor).ToArgb();
+                    if (colorValue == 0)
+                        throw new OpenXmlPowerToolsException(String.Format("Add-DocxText: The specified color {0} is unsupported, Please specify the valid color. Ex, Red, Green", foreColor));
 
-                    Body body = wDoc.MainDocumentPart.Document.Body;
+                    string ColorHex = string.Format("{0:x6}", colorValue);
+                    runProperties.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Color() { Val = ColorHex.Substring(2) });
+                }
 
-                    SectionProperties sectionProperties = body.Elements<SectionProperties>().FirstOrDefault();
+                if (isUnderline)
+                    runProperties.AppendChild(new Underline() { Val = UnderlineValues.Single });
 
-                    Paragraph paragraph = new Paragraph();
-                    Run run = paragraph.AppendChild(new Run());
-                    RunProperties runProperties = new RunProperties();
+                if (!string.IsNullOrEmpty(backColor))
+                {
+                    int colorShade = ColorParser.FromName(backColor).ToArgb();
+                    if (colorShade == 0)
+                        throw new OpenXmlPowerToolsException(String.Format("Add-DocxText: The specified color {0} is unsupported, Please specify the valid color. Ex, Red, Green", foreColor));
 
-                    if (isBold)
-                        runProperties.AppendChild(new Bold());
+                    string ColorShadeHex = string.Format("{0:x6}", colorShade);
+                    runProperties.AppendChild(new Shading() { Fill = ColorShadeHex.Substring(2), Val = ShadingPatternValues.Clear });
+                }
 
-                    if (isItalic)
-                        runProperties.AppendChild(new Italic());
-
-
-                    if (!string.IsNullOrEmpty(foreColor))
+                if (!string.IsNullOrEmpty(styleName))
+                {
+                    Style style = part.Styles.Elements<Style>().Where(s => s.StyleId == styleName).FirstOrDefault();
+                    //if the specified style is not present in word document add it
+                    if (style == null)
                     {
-                        int colorValue = ColorParser.FromName(foreColor).ToArgb();
-                        if (colorValue == 0)
-                            throw new OpenXmlPowerToolsException(String.Format("Add-DocxText: The specified color {0} is unsupported, Please specify the valid color. Ex, Red, Green", foreColor));
+                        using MemoryStream memoryStream = new MemoryStream();
 
-                        string ColorHex = string.Format("{0:x6}", colorValue);
-                        runProperties.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Color() { Val = ColorHex.Substring(2) });
-                    }
-
-                    if (isUnderline)
-                        runProperties.AppendChild(new Underline() { Val = UnderlineValues.Single });
-
-                    if (!string.IsNullOrEmpty(backColor))
-                    {
-                        int colorShade = ColorParser.FromName(backColor).ToArgb();
-                        if (colorShade == 0)
-                            throw new OpenXmlPowerToolsException(String.Format("Add-DocxText: The specified color {0} is unsupported, Please specify the valid color. Ex, Red, Green", foreColor));
-
-                        string ColorShadeHex = string.Format("{0:x6}", colorShade);
-                        runProperties.AppendChild(new Shading() { Fill = ColorShadeHex.Substring(2), Val = ShadingPatternValues.Clear });
-                    }
-
-                    if (!string.IsNullOrEmpty(styleName))
-                    {
-                        Style style = part.Styles.Elements<Style>().Where(s => s.StyleId == styleName).FirstOrDefault();
-                        //if the specified style is not present in word document add it
-                        if (style == null)
-                        {
-                            using (MemoryStream memoryStream = new MemoryStream())
-                            {
-                                #region Default.dotx Template has been used to get all the paragraph styles
-                                string base64 =
-        @"UEsDBBQABgAIAAAAIQDTMB8uXgEAACAFAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbLSUy27CMBBF
+                        #region Default.dotx Template has been used to get all the paragraph styles
+                        string base64 =
+                            @"UEsDBBQABgAIAAAAIQDTMB8uXgEAACAFAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbLSUy27CMBBF
 95X6D5G3VWLooqoqAos+li1S6QcYewJW/ZI9vP6+EwKoqiCRCmwiJTP33jNWxoPR2ppsCTFp70rW
 L3osAye90m5Wsq/JW/7IsoTCKWG8g5JtILHR8PZmMNkESBmpXSrZHDE8cZ7kHKxIhQ/gqFL5aAXS
 a5zxIOS3mAG/7/UeuPQOwWGOtQcbDl6gEguD2euaPjckEUxi2XPTWGeVTIRgtBRIdb506k9Kvkso
@@ -303,39 +302,35 @@ AAAAAAAAAAAAAAAAOhEAAHdvcmQvc3R5bGVzLnhtbFBLAQItABQABgAIANFqBkEJ28MF3QYAAFAb
 AAAVAAAAAAAAAAAAAAAAALojAAB3b3JkL3RoZW1lL3RoZW1lMS54bWxQSwECLQAUAAYACADRagZB
 joxzCXABAAD0AQAAFAAAAAAAAAAAAAAAAADKKgAAd29yZC93ZWJTZXR0aW5ncy54bWxQSwUGAAAA
 AAsACwDBAgAAbCwAAAAA";
-                                #endregion
+                        #endregion
 
-                                char[] base64CharArray = base64.Where(c => c != '\r' && c != '\n').ToArray();
-                                byte[] byteArray = System.Convert.FromBase64CharArray(base64CharArray, 0, base64CharArray.Length);
-                                memoryStream.Write(byteArray, 0, byteArray.Length);
+                        char[] base64CharArray = base64.Where(c => c != '\r' && c != '\n').ToArray();
+                        byte[] byteArray = System.Convert.FromBase64CharArray(base64CharArray, 0, base64CharArray.Length);
+                        memoryStream.Write(byteArray, 0, byteArray.Length);
 
-                                using (WordprocessingDocument defaultDotx = WordprocessingDocument.Open(memoryStream, true))
-                                {
-                                    //Get the specified style from Default.dotx template for paragraph
-                                    Style templateStyle = defaultDotx.MainDocumentPart.StyleDefinitionsPart.Styles.Elements<Style>().Where(s => s.StyleId == styleName && s.Type == StyleValues.Paragraph).FirstOrDefault();
+                        using WordprocessingDocument defaultDotx = WordprocessingDocument.Open(memoryStream, true);
+                        //Get the specified style from Default.dotx template for paragraph
+                        Style templateStyle = defaultDotx.MainDocumentPart.StyleDefinitionsPart.Styles.Elements<Style>().Where(s => s.StyleId == styleName && s.Type == StyleValues.Paragraph).FirstOrDefault();
 
-                                    //Check if the style is proper style. Ex, Heading1, Heading2
-                                    if (templateStyle == null)
-                                        throw new OpenXmlPowerToolsException(String.Format("Add-DocxText: The specified style name {0} is unsupported, Please specify the valid style. Ex, Heading1, Heading2, Title", styleName));
-                                    else
-                                        part.Styles.Append((templateStyle.CloneNode(true)));
-                                }
-                            }
-                        }
-
-                        paragraph.ParagraphProperties = new ParagraphProperties(new ParagraphStyleId() { Val = styleName });
+                        //Check if the style is proper style. Ex, Heading1, Heading2
+                        if (templateStyle == null)
+                            throw new OpenXmlPowerToolsException(String.Format("Add-DocxText: The specified style name {0} is unsupported, Please specify the valid style. Ex, Heading1, Heading2, Title", styleName));
+                        else
+                            part.Styles.Append((templateStyle.CloneNode(true)));
                     }
 
-                    run.AppendChild(runProperties);
-                    run.AppendChild(new Text(strParagraph));
-
-                    if (sectionProperties != null)
-                        body.InsertBefore(paragraph, sectionProperties);
-                    else
-                        body.AppendChild(paragraph);
+                    paragraph.ParagraphProperties = new ParagraphProperties(new ParagraphStyleId() { Val = styleName });
                 }
-                return streamDoc.GetModifiedWmlDocument();
+
+                run.AppendChild(runProperties);
+                run.AppendChild(new Text(strParagraph));
+
+                if (sectionProperties != null)
+                    body.InsertBefore(paragraph, sectionProperties);
+                else
+                    body.AppendChild(paragraph);
             }
+            return streamDoc.GetModifiedWmlDocument();
         }
     }
 
@@ -480,33 +475,27 @@ AAsACwDBAgAAbCwAAAAA";
             FileInfo fi = new FileInfo(fileName);
             if (Util.IsWordprocessingML(fi.Extension))
             {
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(fileName, false))
-                {
-                    OpenXmlValidator validator = new OpenXmlValidator(fileFormatVersion);
-                    var errors = validator.Validate(wDoc);
-                    bool valid = errors.Count() == 0;
-                    return valid;
-                }
+                using WordprocessingDocument wDoc = WordprocessingDocument.Open(fileName, false);
+                OpenXmlValidator validator = new OpenXmlValidator(fileFormatVersion);
+                var errors = validator.Validate(wDoc);
+                bool valid = errors.Count() == 0;
+                return valid;
             }
             else if (Util.IsSpreadsheetML(fi.Extension))
             {
-                using (SpreadsheetDocument sDoc = SpreadsheetDocument.Open(fileName, false))
-                {
-                    OpenXmlValidator validator = new OpenXmlValidator(fileFormatVersion);
-                    var errors = validator.Validate(sDoc);
-                    bool valid = errors.Count() == 0;
-                    return valid;
-                }
+                using SpreadsheetDocument sDoc = SpreadsheetDocument.Open(fileName, false);
+                OpenXmlValidator validator = new OpenXmlValidator(fileFormatVersion);
+                var errors = validator.Validate(sDoc);
+                bool valid = errors.Count() == 0;
+                return valid;
             }
             else if (Util.IsPresentationML(fi.Extension))
             {
-                using (PresentationDocument pDoc = PresentationDocument.Open(fileName, false))
-                {
-                    OpenXmlValidator validator = new OpenXmlValidator(fileFormatVersion);
-                    var errors = validator.Validate(pDoc);
-                    bool valid = errors.Count() == 0;
-                    return valid;
-                }
+                using PresentationDocument pDoc = PresentationDocument.Open(fileName, false);
+                OpenXmlValidator validator = new OpenXmlValidator(fileFormatVersion);
+                var errors = validator.Validate(pDoc);
+                bool valid = errors.Count() == 0;
+                return valid;
             }
             return false;
         }

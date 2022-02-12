@@ -708,8 +708,8 @@ namespace Clippit.PowerPoint
                     {
                         var newId2 = Relationships.GetNewRelationshipId();
                         var cxpp = newPart.AddNewPart<CustomXmlPropertiesPart>("application/vnd.openxmlformats-officedocument.customXmlProperties+xml", newId2);
-                        using (var stream = itemProps.OpenXmlPart.GetStream())
-                            cxpp.FeedData(stream);
+                        using var stream = itemProps.OpenXmlPart.GetStream();
+                        cxpp.FeedData(stream);
                     }
                     var newId = Relationships.GetNewRelationshipId();
                     newContentPart.CreateRelationshipToPart(newPart, newId);

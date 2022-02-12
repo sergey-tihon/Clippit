@@ -18,59 +18,57 @@ namespace Clippit
             WmlDocument sourceAfterProc,
             WmlComparerSettings settings)
         {
-            using (var msSource = new MemoryStream())
-            using (var msAfterProc = new MemoryStream())
+            using var msSource = new MemoryStream();
+            using var msAfterProc = new MemoryStream();
+            msSource.Write(source.DocumentByteArray, 0, source.DocumentByteArray.Length);
+            msAfterProc.Write(sourceAfterProc.DocumentByteArray, 0, sourceAfterProc.DocumentByteArray.Length);
+
+            using (WordprocessingDocument wDocSource = WordprocessingDocument.Open(msSource, true))
+            using (WordprocessingDocument wDocAfterProc = WordprocessingDocument.Open(msAfterProc, true))
             {
-                msSource.Write(source.DocumentByteArray, 0, source.DocumentByteArray.Length);
-                msAfterProc.Write(sourceAfterProc.DocumentByteArray, 0, sourceAfterProc.DocumentByteArray.Length);
+                // create Unid dictionary for source
+                XDocument sourceMainXDoc = wDocSource.MainDocumentPart.GetXDocument();
+                XElement sourceMainRoot = sourceMainXDoc.Root ?? throw new ArgumentException();
+                Dictionary<string, XElement> sourceUnidDict = sourceMainRoot
+                    .Descendants()
+                    .Where(d => d.Name == W.p || d.Name == W.tbl || d.Name == W.tr)
+                    .ToDictionary(d => (string) d.Attribute(PtOpenXml.Unid));
 
-                using (WordprocessingDocument wDocSource = WordprocessingDocument.Open(msSource, true))
-                using (WordprocessingDocument wDocAfterProc = WordprocessingDocument.Open(msAfterProc, true))
+                XDocument afterProcMainXDoc = wDocAfterProc.MainDocumentPart.GetXDocument();
+                XElement afterProcMainRoot = afterProcMainXDoc.Root ?? throw new ArgumentException();
+                IEnumerable<XElement> blockLevelElements = afterProcMainRoot
+                    .Descendants()
+                    .Where(d => d.Name == W.p || d.Name == W.tbl || d.Name == W.tr);
+
+                foreach (XElement blockLevelContent in blockLevelElements)
                 {
-                    // create Unid dictionary for source
-                    XDocument sourceMainXDoc = wDocSource.MainDocumentPart.GetXDocument();
-                    XElement sourceMainRoot = sourceMainXDoc.Root ?? throw new ArgumentException();
-                    Dictionary<string, XElement> sourceUnidDict = sourceMainRoot
-                        .Descendants()
-                        .Where(d => d.Name == W.p || d.Name == W.tbl || d.Name == W.tr)
-                        .ToDictionary(d => (string) d.Attribute(PtOpenXml.Unid));
+                    var cloneBlockLevelContentForHashing = (XElement) CloneBlockLevelContentForHashing(
+                        wDocAfterProc.MainDocumentPart,
+                        blockLevelContent,
+                        true,
+                        settings);
 
-                    XDocument afterProcMainXDoc = wDocAfterProc.MainDocumentPart.GetXDocument();
-                    XElement afterProcMainRoot = afterProcMainXDoc.Root ?? throw new ArgumentException();
-                    IEnumerable<XElement> blockLevelElements = afterProcMainRoot
-                        .Descendants()
-                        .Where(d => d.Name == W.p || d.Name == W.tbl || d.Name == W.tr);
+                    string shaString = cloneBlockLevelContentForHashing
+                        .ToString(SaveOptions.DisableFormatting)
+                        .Replace(" xmlns=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\"", "");
 
-                    foreach (XElement blockLevelContent in blockLevelElements)
+                    string sha1Hash = WmlComparerUtil.SHA1HashStringForUTF8String(shaString);
+                    var thisUnid = (string) blockLevelContent.Attribute(PtOpenXml.Unid);
+                    if (thisUnid != null)
                     {
-                        var cloneBlockLevelContentForHashing = (XElement) CloneBlockLevelContentForHashing(
-                            wDocAfterProc.MainDocumentPart,
-                            blockLevelContent,
-                            true,
-                            settings);
-
-                        string shaString = cloneBlockLevelContentForHashing
-                            .ToString(SaveOptions.DisableFormatting)
-                            .Replace(" xmlns=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\"", "");
-
-                        string sha1Hash = WmlComparerUtil.SHA1HashStringForUTF8String(shaString);
-                        var thisUnid = (string) blockLevelContent.Attribute(PtOpenXml.Unid);
-                        if (thisUnid != null)
+                        if (sourceUnidDict.ContainsKey(thisUnid))
                         {
-                            if (sourceUnidDict.ContainsKey(thisUnid))
-                            {
-                                XElement correlatedBlockLevelContent = sourceUnidDict[thisUnid];
-                                correlatedBlockLevelContent.Add(new XAttribute(PtOpenXml.CorrelatedSHA1Hash, sha1Hash));
-                            }
+                            XElement correlatedBlockLevelContent = sourceUnidDict[thisUnid];
+                            correlatedBlockLevelContent.Add(new XAttribute(PtOpenXml.CorrelatedSHA1Hash, sha1Hash));
                         }
                     }
-
-                    wDocSource.MainDocumentPart.PutXDocument();
                 }
 
-                var sourceWithCorrelatedSHA1Hash = new WmlDocument(source.FileName, msSource.ToArray());
-                return sourceWithCorrelatedSHA1Hash;
+                wDocSource.MainDocumentPart.PutXDocument();
             }
+
+            var sourceWithCorrelatedSHA1Hash = new WmlDocument(source.FileName, msSource.ToArray());
+            return sourceWithCorrelatedSHA1Hash;
         }
 
         // prohibit
@@ -222,18 +220,16 @@ namespace Clippit
 
                                         if (!oxp.ContentType.EndsWith("xml"))
                                         {
-                                            using (Stream str = oxp.GetStream())
+                                            using Stream str = oxp.GetStream();
+                                            byte[] ba;
+                                            using (var br = new BinaryReader(str))
                                             {
-                                                byte[] ba;
-                                                using (var br = new BinaryReader(str))
-                                                {
-                                                    ba = br.ReadBytes((int) str.Length);
-                                                }
-
-                                                string sha1 = WmlComparerUtil.SHA1HashStringForByteArray(ba);
-                                                oxp.AddAnnotation(new PartSHA1HashAnnotation(sha1));
-                                                return new XAttribute(a.Name, sha1);
+                                                ba = br.ReadBytes((int) str.Length);
                                             }
+
+                                            string sha1 = WmlComparerUtil.SHA1HashStringForByteArray(ba);
+                                            oxp.AddAnnotation(new PartSHA1HashAnnotation(sha1));
+                                            return new XAttribute(a.Name, sha1);
                                         }
                                     }
                                     catch (ArgumentOutOfRangeException)

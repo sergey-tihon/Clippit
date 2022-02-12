@@ -180,20 +180,18 @@ namespace Clippit.Html
 
             WmlDocument newWmlDocument;
 
-            using (OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(emptyDocument))
+            using OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(emptyDocument);
+            using (WordprocessingDocument wDoc = streamDoc.GetWordprocessingDocument())
             {
-                using (WordprocessingDocument wDoc = streamDoc.GetWordprocessingDocument())
-                {
-                    AnnotateOlUl(wDoc, html);
-                    UpdateMainDocumentPart(wDoc, html, settings);
-                    NormalizeMainDocumentPart(wDoc);
-                    StylesUpdater.UpdateStylesPart(wDoc, html, settings, defaultCssDoc, authorCssDoc, userCssDoc);
-                    HtmlToWmlFontUpdater.UpdateFontsPart(wDoc, html, settings);
-                    ThemeUpdater.UpdateThemePart(wDoc, html, settings);
-                    NumberingUpdater.UpdateNumberingPart(wDoc, html, settings);
-                }
-                newWmlDocument = streamDoc.GetModifiedWmlDocument();
+                AnnotateOlUl(wDoc, html);
+                UpdateMainDocumentPart(wDoc, html, settings);
+                NormalizeMainDocumentPart(wDoc);
+                StylesUpdater.UpdateStylesPart(wDoc, html, settings, defaultCssDoc, authorCssDoc, userCssDoc);
+                HtmlToWmlFontUpdater.UpdateFontsPart(wDoc, html, settings);
+                ThemeUpdater.UpdateThemePart(wDoc, html, settings);
+                NumberingUpdater.UpdateNumberingPart(wDoc, html, settings);
             }
+            newWmlDocument = streamDoc.GetModifiedWmlDocument();
 
             return newWmlDocument;
         }

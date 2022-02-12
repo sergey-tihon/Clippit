@@ -486,8 +486,8 @@ namespace Clippit
         public static XmlNode GetXmlNode(this XElement element)
         {
             var xmlDoc = new XmlDocument();
-            using (XmlReader xmlReader = element.CreateReader())
-                xmlDoc.Load(xmlReader);
+            using XmlReader xmlReader = element.CreateReader();
+            xmlDoc.Load(xmlReader);
             return xmlDoc;
         }
 
@@ -507,16 +507,15 @@ namespace Clippit
         public static XmlDocument GetXmlDocument(this XDocument document)
         {
             var xmlDoc = new XmlDocument();
-            using (XmlReader xmlReader = document.CreateReader())
+            using XmlReader xmlReader = document.CreateReader();
+            xmlDoc.Load(xmlReader);
+            if (document.Declaration != null)
             {
-                xmlDoc.Load(xmlReader);
-                if (document.Declaration != null)
-                {
-                    XmlDeclaration dec = xmlDoc.CreateXmlDeclaration(document.Declaration.Version,
-                        document.Declaration.Encoding, document.Declaration.Standalone);
-                    xmlDoc.InsertBefore(dec, xmlDoc.FirstChild);
-                }
+                XmlDeclaration dec = xmlDoc.CreateXmlDeclaration(document.Declaration.Version,
+                    document.Declaration.Encoding, document.Declaration.Standalone);
+                xmlDoc.InsertBefore(dec, xmlDoc.FirstChild);
             }
+
             return xmlDoc;
         }
 
@@ -541,10 +540,10 @@ namespace Clippit
             IEnumerable<TSecond> second,
             Func<TFirst, TSecond, TResult> func)
         {
-            using (IEnumerator<TFirst> ie1 = first.GetEnumerator())
-            using (IEnumerator<TSecond> ie2 = second.GetEnumerator())
-                while (ie1.MoveNext() && ie2.MoveNext())
-                    yield return func(ie1.Current, ie2.Current);
+            using IEnumerator<TFirst> ie1 = first.GetEnumerator();
+            using IEnumerator<TSecond> ie2 = second.GetEnumerator();
+            while (ie1.MoveNext() && ie2.MoveNext())
+                yield return func(ie1.Current, ie2.Current);
         }
 
         public static IEnumerable<IGrouping<TKey, TSource>> GroupAdjacent<TSource, TKey>(
@@ -1064,24 +1063,22 @@ namespace Clippit
             {
                 if (File.Exists(executablePath))
                 {
-                    using (Process proc = new Process())
-                    {
-                        proc.StartInfo.FileName = executablePath;
-                        proc.StartInfo.Arguments = arguments;
-                        proc.StartInfo.WorkingDirectory = workingDirectory;
-                        proc.StartInfo.UseShellExecute = false;
-                        proc.StartInfo.RedirectStandardOutput = true;
-                        proc.StartInfo.RedirectStandardError = true;
-                        proc.OutputDataReceived +=
-                            (o, e) => runResults.Output.Append(e.Data).Append(Environment.NewLine);
-                        proc.ErrorDataReceived +=
-                            (o, e) => runResults.Error.Append(e.Data).Append(Environment.NewLine);
-                        proc.Start();
-                        proc.BeginOutputReadLine();
-                        proc.BeginErrorReadLine();
-                        proc.WaitForExit();
-                        runResults.ExitCode = proc.ExitCode;
-                    }
+                    using Process proc = new Process();
+                    proc.StartInfo.FileName = executablePath;
+                    proc.StartInfo.Arguments = arguments;
+                    proc.StartInfo.WorkingDirectory = workingDirectory;
+                    proc.StartInfo.UseShellExecute = false;
+                    proc.StartInfo.RedirectStandardOutput = true;
+                    proc.StartInfo.RedirectStandardError = true;
+                    proc.OutputDataReceived +=
+                        (o, e) => runResults.Output.Append(e.Data).Append(Environment.NewLine);
+                    proc.ErrorDataReceived +=
+                        (o, e) => runResults.Error.Append(e.Data).Append(Environment.NewLine);
+                    proc.Start();
+                    proc.BeginOutputReadLine();
+                    proc.BeginErrorReadLine();
+                    proc.WaitForExit();
+                    runResults.ExitCode = proc.ExitCode;
                 }
                 else
                 {

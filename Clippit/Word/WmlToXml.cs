@@ -2014,15 +2014,13 @@ namespace Clippit.Word
     {
         public static WmlDocument AssignUnidToBlc(WmlDocument wmlDoc)
         {
-            using (MemoryStream ms = new MemoryStream())
+            using MemoryStream ms = new MemoryStream();
+            ms.Write(wmlDoc.DocumentByteArray, 0, wmlDoc.DocumentByteArray.Length);
+            using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true))
             {
-                ms.Write(wmlDoc.DocumentByteArray, 0, wmlDoc.DocumentByteArray.Length);
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true))
-                {
-                    AssignUnidToBlc(wDoc);
-                }
-                return new WmlDocument(wmlDoc.FileName, ms.ToArray());
+                AssignUnidToBlc(wDoc);
             }
+            return new WmlDocument(wmlDoc.FileName, ms.ToArray());
         }
 
         public static void AssignUnidToBlc(WordprocessingDocument wDoc)

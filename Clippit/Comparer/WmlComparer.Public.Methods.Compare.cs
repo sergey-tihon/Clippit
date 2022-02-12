@@ -193,23 +193,21 @@ namespace Clippit
 
         private static WmlDocument CleanPowerToolsAndRsid(WmlDocument producedDocument)
         {
-            using (var ms = new MemoryStream())
+            using var ms = new MemoryStream();
+            ms.Write(producedDocument.DocumentByteArray, 0, producedDocument.DocumentByteArray.Length);
+            using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true))
             {
-                ms.Write(producedDocument.DocumentByteArray, 0, producedDocument.DocumentByteArray.Length);
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true))
+                foreach (OpenXmlPart cp in wDoc.ContentParts())
                 {
-                    foreach (OpenXmlPart cp in wDoc.ContentParts())
-                    {
-                        XDocument xd = cp.GetXDocument();
-                        object newRoot = CleanPartTransform(xd.Root);
-                        xd.Root?.ReplaceWith(newRoot);
-                        cp.PutXDocument();
-                    }
+                    XDocument xd = cp.GetXDocument();
+                    object newRoot = CleanPartTransform(xd.Root);
+                    xd.Root?.ReplaceWith(newRoot);
+                    cp.PutXDocument();
                 }
-
-                var cleaned = new WmlDocument("cleaned.docx", ms.ToArray());
-                return cleaned;
             }
+
+            var cleaned = new WmlDocument("cleaned.docx", ms.ToArray());
+            return cleaned;
         }
 
         private static object CleanPartTransform(XNode node)

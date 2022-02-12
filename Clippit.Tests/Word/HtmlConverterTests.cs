@@ -129,139 +129,129 @@ namespace Clippit.Tests.Word
         private static void CopyFormattingAssembledDocx(FileInfo source, FileInfo dest)
         {
             var ba = File.ReadAllBytes(source.FullName);
-            using (MemoryStream ms = new MemoryStream())
+            using MemoryStream ms = new MemoryStream();
+            ms.Write(ba, 0, ba.Length);
+            using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(ms, true))
             {
-                ms.Write(ba, 0, ba.Length);
-                using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(ms, true))
+
+                RevisionAccepter.AcceptRevisions(wordDoc);
+                SimplifyMarkupSettings simplifyMarkupSettings = new SimplifyMarkupSettings
                 {
+                    RemoveComments = true,
+                    RemoveContentControls = true,
+                    RemoveEndAndFootNotes = true,
+                    RemoveFieldCodes = false,
+                    RemoveLastRenderedPageBreak = true,
+                    RemovePermissions = true,
+                    RemoveProof = true,
+                    RemoveRsidInfo = true,
+                    RemoveSmartTags = true,
+                    RemoveSoftHyphens = true,
+                    RemoveGoBackBookmark = true,
+                    ReplaceTabsWithSpaces = false,
+                };
+                MarkupSimplifier.SimplifyMarkup(wordDoc, simplifyMarkupSettings);
 
-                    RevisionAccepter.AcceptRevisions(wordDoc);
-                    SimplifyMarkupSettings simplifyMarkupSettings = new SimplifyMarkupSettings
-                    {
-                        RemoveComments = true,
-                        RemoveContentControls = true,
-                        RemoveEndAndFootNotes = true,
-                        RemoveFieldCodes = false,
-                        RemoveLastRenderedPageBreak = true,
-                        RemovePermissions = true,
-                        RemoveProof = true,
-                        RemoveRsidInfo = true,
-                        RemoveSmartTags = true,
-                        RemoveSoftHyphens = true,
-                        RemoveGoBackBookmark = true,
-                        ReplaceTabsWithSpaces = false,
-                    };
-                    MarkupSimplifier.SimplifyMarkup(wordDoc, simplifyMarkupSettings);
+                FormattingAssemblerSettings formattingAssemblerSettings = new FormattingAssemblerSettings
+                {
+                    RemoveStyleNamesFromParagraphAndRunProperties = false,
+                    ClearStyles = false,
+                    RestrictToSupportedLanguages = false,
+                    RestrictToSupportedNumberingFormats = false,
+                    CreateHtmlConverterAnnotationAttributes = true,
+                    OrderElementsPerStandard = false,
+                    ListItemRetrieverSettings =
+                        new ListItemRetrieverSettings()
+                        {
+                            ListItemTextImplementations = ListItemRetrieverSettings.DefaultListItemTextImplementations,
+                        },
+                };
 
-                    FormattingAssemblerSettings formattingAssemblerSettings = new FormattingAssemblerSettings
-                    {
-                        RemoveStyleNamesFromParagraphAndRunProperties = false,
-                        ClearStyles = false,
-                        RestrictToSupportedLanguages = false,
-                        RestrictToSupportedNumberingFormats = false,
-                        CreateHtmlConverterAnnotationAttributes = true,
-                        OrderElementsPerStandard = false,
-                        ListItemRetrieverSettings =
-                            new ListItemRetrieverSettings()
-                            {
-                                ListItemTextImplementations = ListItemRetrieverSettings.DefaultListItemTextImplementations,
-                            },
-                    };
-
-                    FormattingAssembler.AssembleFormatting(wordDoc, formattingAssemblerSettings);
-                }
-                var newBa = ms.ToArray();
-                File.WriteAllBytes(dest.FullName, newBa);
+                FormattingAssembler.AssembleFormatting(wordDoc, formattingAssemblerSettings);
             }
+            var newBa = ms.ToArray();
+            File.WriteAllBytes(dest.FullName, newBa);
         }
 
         private static void ConvertToHtml(FileInfo sourceDocx, FileInfo destFileName)
         {
             byte[] byteArray = File.ReadAllBytes(sourceDocx.FullName);
-            using (MemoryStream memoryStream = new MemoryStream())
+            using MemoryStream memoryStream = new MemoryStream();
+            memoryStream.Write(byteArray, 0, byteArray.Length);
+            using WordprocessingDocument wDoc = WordprocessingDocument.Open(memoryStream, true);
+            var outputDirectory = destFileName.Directory;
+            destFileName = new FileInfo(Path.Combine(outputDirectory.FullName, destFileName.Name));
+            var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
+            int imageCounter = 0;
+            var pageTitle = (string)wDoc.CoreFilePropertiesPart.GetXDocument().Descendants(DC.title).FirstOrDefault();
+            if (pageTitle == null)
+                pageTitle = sourceDocx.FullName;
+
+            WmlToHtmlConverterSettings settings = new WmlToHtmlConverterSettings()
             {
-                memoryStream.Write(byteArray, 0, byteArray.Length);
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(memoryStream, true))
+                PageTitle = pageTitle,
+                FabricateCssClasses = true,
+                CssClassPrefix = "pt-",
+                RestrictToSupportedLanguages = false,
+                RestrictToSupportedNumberingFormats = false,
+                ImageHandler = imageInfo =>
                 {
-                    var outputDirectory = destFileName.Directory;
-                    destFileName = new FileInfo(Path.Combine(outputDirectory.FullName, destFileName.Name));
-                    var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
-                    int imageCounter = 0;
-                    var pageTitle = (string)wDoc.CoreFilePropertiesPart.GetXDocument().Descendants(DC.title).FirstOrDefault();
-                    if (pageTitle == null)
-                        pageTitle = sourceDocx.FullName;
-
-                    WmlToHtmlConverterSettings settings = new WmlToHtmlConverterSettings()
-                    {
-                        PageTitle = pageTitle,
-                        FabricateCssClasses = true,
-                        CssClassPrefix = "pt-",
-                        RestrictToSupportedLanguages = false,
-                        RestrictToSupportedNumberingFormats = false,
-                        ImageHandler = imageInfo =>
-                        {
-                            ++imageCounter;
-                            return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
-                        }
-                    };
-                    XElement html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
-
-                    // Note: the xhtml returned by ConvertToHtmlTransform contains objects of type
-                    // XEntity.  PtOpenXmlUtil.cs define the XEntity class.  See
-                    // http://blogs.msdn.com/ericwhite/archive/2010/01/21/writing-entity-references-using-linq-to-xml.aspx
-                    // for detailed explanation.
-                    //
-                    // If you further transform the XML tree returned by ConvertToHtmlTransform, you
-                    // must do it correctly, or entities will not be serialized properly.
-
-                    var htmlString = html.ToString(SaveOptions.DisableFormatting);
-                    File.WriteAllText(destFileName.FullName, htmlString, Encoding.UTF8);
+                    ++imageCounter;
+                    return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
                 }
-            }
+            };
+            XElement html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+
+            // Note: the xhtml returned by ConvertToHtmlTransform contains objects of type
+            // XEntity.  PtOpenXmlUtil.cs define the XEntity class.  See
+            // http://blogs.msdn.com/ericwhite/archive/2010/01/21/writing-entity-references-using-linq-to-xml.aspx
+            // for detailed explanation.
+            //
+            // If you further transform the XML tree returned by ConvertToHtmlTransform, you
+            // must do it correctly, or entities will not be serialized properly.
+
+            var htmlString = html.ToString(SaveOptions.DisableFormatting);
+            File.WriteAllText(destFileName.FullName, htmlString, Encoding.UTF8);
         }
 
         private static void ConvertToHtmlNoCssClasses(FileInfo sourceDocx, FileInfo destFileName)
         {
             byte[] byteArray = File.ReadAllBytes(sourceDocx.FullName);
-            using (MemoryStream memoryStream = new MemoryStream())
+            using MemoryStream memoryStream = new MemoryStream();
+            memoryStream.Write(byteArray, 0, byteArray.Length);
+            using WordprocessingDocument wDoc = WordprocessingDocument.Open(memoryStream, true);
+            var outputDirectory = destFileName.Directory;
+            destFileName = new FileInfo(Path.Combine(outputDirectory.FullName, destFileName.Name));
+            var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
+            int imageCounter = 0;
+            var pageTitle = (string)wDoc.CoreFilePropertiesPart.GetXDocument().Descendants(DC.title).FirstOrDefault();
+            if (pageTitle == null)
+                pageTitle = sourceDocx.FullName;
+
+            WmlToHtmlConverterSettings settings = new WmlToHtmlConverterSettings()
             {
-                memoryStream.Write(byteArray, 0, byteArray.Length);
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(memoryStream, true))
+                PageTitle = pageTitle,
+                FabricateCssClasses = false,
+                RestrictToSupportedLanguages = false,
+                RestrictToSupportedNumberingFormats = false,
+                ImageHandler = imageInfo =>
                 {
-                    var outputDirectory = destFileName.Directory;
-                    destFileName = new FileInfo(Path.Combine(outputDirectory.FullName, destFileName.Name));
-                    var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
-                    int imageCounter = 0;
-                    var pageTitle = (string)wDoc.CoreFilePropertiesPart.GetXDocument().Descendants(DC.title).FirstOrDefault();
-                    if (pageTitle == null)
-                        pageTitle = sourceDocx.FullName;
-
-                    WmlToHtmlConverterSettings settings = new WmlToHtmlConverterSettings()
-                    {
-                        PageTitle = pageTitle,
-                        FabricateCssClasses = false,
-                        RestrictToSupportedLanguages = false,
-                        RestrictToSupportedNumberingFormats = false,
-                        ImageHandler = imageInfo =>
-                        {
-                            ++imageCounter;
-                            return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
-                        }
-                    };
-                    XElement html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
-
-                    // Note: the xhtml returned by ConvertToHtmlTransform contains objects of type
-                    // XEntity.  PtOpenXmlUtil.cs define the XEntity class.  See
-                    // http://blogs.msdn.com/ericwhite/archive/2010/01/21/writing-entity-references-using-linq-to-xml.aspx
-                    // for detailed explanation.
-                    //
-                    // If you further transform the XML tree returned by ConvertToHtmlTransform, you
-                    // must do it correctly, or entities will not be serialized properly.
-
-                    var htmlString = html.ToString(SaveOptions.DisableFormatting);
-                    File.WriteAllText(destFileName.FullName, htmlString, Encoding.UTF8);
+                    ++imageCounter;
+                    return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
                 }
-            }
+            };
+            XElement html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+
+            // Note: the xhtml returned by ConvertToHtmlTransform contains objects of type
+            // XEntity.  PtOpenXmlUtil.cs define the XEntity class.  See
+            // http://blogs.msdn.com/ericwhite/archive/2010/01/21/writing-entity-references-using-linq-to-xml.aspx
+            // for detailed explanation.
+            //
+            // If you further transform the XML tree returned by ConvertToHtmlTransform, you
+            // must do it correctly, or entities will not be serialized properly.
+
+            var htmlString = html.ToString(SaveOptions.DisableFormatting);
+            File.WriteAllText(destFileName.FullName, htmlString, Encoding.UTF8);
         }
 
 #if DO_CONVERSION_VIA_WORD
