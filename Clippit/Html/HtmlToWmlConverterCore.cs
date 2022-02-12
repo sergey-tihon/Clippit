@@ -2950,12 +2950,14 @@ namespace Clippit.Html
                 if (isLast)
                     newString = newString.TrimEnd();
             }
-            if (textTransform == "uppercase")
-                newString = newString.ToUpper();
-            else if (textTransform == "lowercase")
-                newString = newString.ToLower();
-            else if (textTransform == "capitalize")
-                newString = newString[..1].ToUpper() + newString[1..].ToLower();
+
+            newString = textTransform switch
+            {
+                "uppercase" => newString.ToUpper(),
+                "lowercase" => newString.ToLower(),
+                "capitalize" => newString[..1].ToUpper() + newString[1..].ToLower(),
+                _ => newString
+            };
             return newString;
         }
 
@@ -2987,26 +2989,22 @@ namespace Clippit.Html
                 textAlign = "left";
             if (textAlignProperty != null)
                 textAlign = textAlignProperty.ToString();
-            string jc = null;
-            if (textAlign == "center")
-                jc = "center";
-            else
+            string jc = textAlign switch
             {
-                if (textAlign == "right")
-                    jc = "right";
-                else
-                {
-                    if (textAlign == "justify")
-                        jc = "both";
-                }
-            }
+                "center" => "center",
+                "right" => "right",
+                "justify" => "both",
+                _ => null
+            };
             string direction = GetDirection(blockLevelElement);
             if (direction == "rtl")
             {
-                if (jc == "left")
-                    jc = "right";
-                else if (jc == "right")
-                    jc = "left";
+                jc = jc switch
+                {
+                    "left" => "right",
+                    "right" => "left",
+                    _ => jc
+                };
             }
             XElement jcElement = null;
             if (jc != null)

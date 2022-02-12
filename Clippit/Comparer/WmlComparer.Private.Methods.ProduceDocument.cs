@@ -392,11 +392,12 @@ namespace Clippit
                             tr.AddFirst(trPr);
                         }
 
-                        XName revTrackElementName = null;
-                        if (dcs.CorrelationStatus == CorrelationStatus.Deleted)
-                            revTrackElementName = W.del;
-                        else if (dcs.CorrelationStatus == CorrelationStatus.Inserted)
-                            revTrackElementName = W.ins;
+                        XName revTrackElementName = dcs.CorrelationStatus switch
+                        {
+                            CorrelationStatus.Deleted => W.del,
+                            CorrelationStatus.Inserted => W.ins,
+                            _ => null
+                        };
                         trPr.Add(new XElement(revTrackElementName,
                             new XAttribute(W.author, settings.AuthorForRevisions),
                             new XAttribute(W.id, _maxId++),

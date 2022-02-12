@@ -593,14 +593,14 @@ namespace Clippit
             var languages = distinctFontTypeArray
                 .Select(ft =>
                 {
-                    if (ft == FormattingAssembler.FontType.Ascii)
-                        return csa.LatinLang;
-                    if (ft == FormattingAssembler.FontType.CS)
-                        return csa.BidiLang;
-                    if (ft == FormattingAssembler.FontType.EastAsia)
-                        return csa.EastAsiaLang;
+                    return ft switch
+                    {
+                        FormattingAssembler.FontType.Ascii => csa.LatinLang,
+                        FormattingAssembler.FontType.CS => csa.BidiLang,
+                        FormattingAssembler.FontType.EastAsia => csa.EastAsiaLang,
+                        _ => csa.LatinLang
+                    };
                     //if (ft == FormattingAssembler.FontType.HAnsi)
-                    return csa.LatinLang;
                 })
                 .Select(l =>
                 {

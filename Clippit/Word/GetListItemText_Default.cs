@@ -107,14 +107,14 @@ namespace Clippit.Word
                         if (levelNumber % 100 == 11 || levelNumber % 100 == 12 ||
                             levelNumber % 100 == 13)
                             suffix = "th";
-                        else if (levelNumber % 10 == 1)
-                            suffix = "st";
-                        else if (levelNumber % 10 == 2)
-                            suffix = "nd";
-                        else if (levelNumber % 10 == 3)
-                            suffix = "rd";
                         else
-                            suffix = "th";
+                            suffix = (levelNumber % 10) switch
+                            {
+                                1 => "st",
+                                2 => "nd",
+                                3 => "rd",
+                                _ => "th"
+                            };
                         return levelNumber.ToString() + suffix;
                     }
                 case "cardinalText":

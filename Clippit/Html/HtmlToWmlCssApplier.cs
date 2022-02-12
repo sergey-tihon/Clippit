@@ -656,13 +656,31 @@ namespace Clippit.Html
                 ComputedValue = (element, assignedValue, settings) =>
                     {
                         string assignedValueStr = assignedValue.ToString();
-                        if (assignedValueStr == "thin")
-                            return new CssExpression { Terms = new List<CssTerm> { new() { Value = "0.75", Type = CssTermType.Number, Unit = CssUnit.PT, } } };
-                        if (assignedValueStr == "medium")
-                            return new CssExpression { Terms = new List<CssTerm> { new() { Value = "3.0", Type = CssTermType.Number, Unit = CssUnit.PT, } } };
-                        if (assignedValueStr == "thick")
-                            return new CssExpression { Terms = new List<CssTerm> { new() { Value = "4.5", Type = CssTermType.Number, Unit = CssUnit.PT, } } };
-                        return ComputeAbsoluteLength(element, assignedValue, settings, null);
+                        return assignedValueStr switch
+                        {
+                            "thin" => new CssExpression
+                            {
+                                Terms = new List<CssTerm>
+                                {
+                                    new() { Value = "0.75", Type = CssTermType.Number, Unit = CssUnit.PT, }
+                                }
+                            },
+                            "medium" => new CssExpression
+                            {
+                                Terms = new List<CssTerm>
+                                {
+                                    new() { Value = "3.0", Type = CssTermType.Number, Unit = CssUnit.PT, }
+                                }
+                            },
+                            "thick" => new CssExpression
+                            {
+                                Terms = new List<CssTerm>
+                                {
+                                    new() { Value = "4.5", Type = CssTermType.Number, Unit = CssUnit.PT, }
+                                }
+                            },
+                            _ => ComputeAbsoluteLength(element, assignedValue, settings, null)
+                        };
                     },
             },
 
@@ -1424,18 +1442,16 @@ namespace Clippit.Html
             }
             else
             {
-                if (unit == null && decValue == 0d)
-                    newPtSize = 0d;
-                if (unit == CssUnit.IN)
-                    newPtSize = decValue * 72.0d;
-                if (unit == CssUnit.CM)
-                    newPtSize = (decValue / 2.54d) * 72.0d;
-                if (unit == CssUnit.MM)
-                    newPtSize = (decValue / 25.4d) * 72.0d;
-                if (unit == CssUnit.PC)
-                    newPtSize = decValue * 12d;
-                if (unit == CssUnit.PX)
-                    newPtSize = decValue * 0.75d;
+                newPtSize = unit switch
+                {
+                    null when decValue == 0d => 0d,
+                    CssUnit.IN => decValue * 72.0d,
+                    CssUnit.CM => (decValue / 2.54d) * 72.0d,
+                    CssUnit.MM => (decValue / 25.4d) * 72.0d,
+                    CssUnit.PC => decValue * 12d,
+                    CssUnit.PX => decValue * 0.75d,
+                    _ => newPtSize
+                };
             }
             if (!newPtSize.HasValue)
                 throw new OpenXmlPowerToolsException("Internal error: should not have reached this exception");
@@ -1463,33 +1479,29 @@ namespace Clippit.Html
                 double newPtSize2 = 0;
                 if (value == "larger")
                 {
-                    if (ptSize < 10)
-                        newPtSize2 = 10d;
-                    if (ptSize is 10 or 11)
-                        newPtSize2 = 12d;
-                    if (ptSize == 12)
-                        newPtSize2 = 13.5d;
-                    if (ptSize >= 13 && ptSize <= 15)
-                        newPtSize2 = 18d;
-                    if (ptSize >= 16 && ptSize <= 20)
-                        newPtSize2 = 24d;
-                    if (ptSize >= 21)
-                        newPtSize2 = 36d;
+                    newPtSize2 = ptSize switch
+                    {
+                        < 10 => 10d,
+                        10 or 11 => 12d,
+                        12 => 13.5d,
+                        >= 13 and <= 15 => 18d,
+                        >= 16 and <= 20 => 24d,
+                        >= 21 => 36d,
+                        _ => newPtSize2
+                    };
                 }
                 if (value == "smaller")
                 {
-                    if (ptSize <= 11)
-                        newPtSize2 = 7.5d;
-                    if (ptSize == 12)
-                        newPtSize2 = 10d;
-                    if (ptSize >= 13 && ptSize <= 15)
-                        newPtSize2 = 12d;
-                    if (ptSize >= 16 && ptSize <= 20)
-                        newPtSize2 = 13.5d;
-                    if (ptSize >= 21 && ptSize <= 29)
-                        newPtSize2 = 18d;
-                    if (ptSize >= 30)
-                        newPtSize2 = 24d;
+                    newPtSize2 = ptSize switch
+                    {
+                        <= 11 => 7.5d,
+                        12 => 10d,
+                        >= 13 and <= 15 => 12d,
+                        >= 16 and <= 20 => 13.5d,
+                        >= 21 and <= 29 => 18d,
+                        >= 30 => 24d,
+                        _ => newPtSize2
+                    };
                 }
                 return new CssExpression { Terms = new List<CssTerm> { new() { Value = newPtSize2.ToString(CultureInfo.InvariantCulture), Type = CssTermType.Number, Unit = CssUnit.PT, } } };
             }
@@ -1502,12 +1514,13 @@ namespace Clippit.Html
                 CssExpression parentFontSize = GetComputedPropertyValue(null, element.Parent, "font-size", settings);
                 if (!double.TryParse(parentFontSize.Terms.First().Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var ptSize))
                     throw new OpenXmlPowerToolsException("did not return a double?");
-                if (unit == CssUnit.EM)
-                    newPtSize = ptSize * decValue;
-                if (unit == CssUnit.EX)
-                    newPtSize = ptSize / 2 * decValue;
-                if (unit == CssUnit.Percent)
-                    newPtSize = ptSize * decValue / 100d;
+                newPtSize = unit switch
+                {
+                    CssUnit.EM => ptSize * decValue,
+                    CssUnit.EX => ptSize / 2 * decValue,
+                    CssUnit.Percent => ptSize * decValue / 100d,
+                    _ => newPtSize
+                };
             }
             else if (unit == CssUnit.REM)
             {
@@ -1515,16 +1528,15 @@ namespace Clippit.Html
             }
             else
             {
-                if (unit == CssUnit.IN)
-                    newPtSize = decValue * 72.0d;
-                if (unit == CssUnit.CM)
-                    newPtSize = (decValue / 2.54d) * 72.0d;
-                if (unit == CssUnit.MM)
-                    newPtSize = (decValue / 25.4d) * 72.0d;
-                if (unit == CssUnit.PC)
-                    newPtSize = decValue * 12d;
-                if (unit == CssUnit.PX)
-                    newPtSize = decValue * 0.75d;
+                newPtSize = unit switch
+                {
+                    CssUnit.IN => decValue * 72.0d,
+                    CssUnit.CM => (decValue / 2.54d) * 72.0d,
+                    CssUnit.MM => (decValue / 25.4d) * 72.0d,
+                    CssUnit.PC => decValue * 12d,
+                    CssUnit.PX => decValue * 0.75d,
+                    _ => newPtSize
+                };
             }
             if (!newPtSize.HasValue)
                 throw new OpenXmlPowerToolsException("Internal error: should not have reached this exception");
@@ -2226,27 +2238,20 @@ namespace Clippit.Html
                                     break;
                             }
                         }
-                        if (backgroundPositionList.Count() == 1)
+
+                        backgroundPosition = backgroundPositionList.Count() switch
                         {
-                            backgroundPosition = new CssExpression
+                            1 => new CssExpression
                             {
-                                Terms = new List<CssTerm> {
-                                backgroundPositionList.First(),
-                                new()
+                                Terms = new List<CssTerm>
                                 {
-                                    Value = "center",
-                                    Type = CssTermType.String
-                                },
-                            }
-                            };
-                        }
-                        if (backgroundPositionList.Count() == 2)
-                        {
-                            backgroundPosition = new CssExpression
-                            {
-                                Terms = backgroundPositionList
-                            };
-                        }
+                                    backgroundPositionList.First(),
+                                    new() { Value = "center", Type = CssTermType.String },
+                                }
+                            },
+                            2 => new CssExpression { Terms = backgroundPositionList },
+                            _ => backgroundPosition
+                        };
                     }
                     Property bc = new Property
                     {

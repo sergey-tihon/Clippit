@@ -448,16 +448,15 @@ namespace Clippit.Word
 
         private static XNode NormalizeNode(XNode node, bool havePsvi)
         {
-            // trim comments and processing instructions from normalized tree
-            if (node is XComment or XProcessingInstruction)
-                return null;
-
-            var e = node as XElement;
-            if (e != null)
-                return NormalizeElement(e, havePsvi);
+            return node switch
+            {
+                // trim comments and processing instructions from normalized tree
+                XComment or XProcessingInstruction => null,
+                XElement e => NormalizeElement(e, havePsvi),
+                _ => node
+            };
 
             // Only thing left is XCData and XText, so clone them
-            return node;
         }
 
         private static XElement NormalizeElement(XElement element, bool havePsvi)

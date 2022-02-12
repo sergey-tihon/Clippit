@@ -1374,30 +1374,19 @@ namespace Clippit.Word
                     var newParaContents = grouped
                         .Select((g, i) =>
                         {
-                            if (g.Key is 1 or 2 or 3)
-                                return (object)g.Select(gc => FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele));
-                            if (g.Key == 4)
+                            return g.Key switch
                             {
-                                if (i == 0 || i == gLen - 1)
-                                    return g.Select(gc => FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele));
-                                if (grouped[i-1].Key == 2 &&
-                                    grouped[i+1].Key == 2)
-                                {
-                                    return new XElement(W.del,
-                                        g.Select(gc => TransformInstrTextToDelInstrText(gc.Ele)));
-                                }
-                                else if (grouped[i - 1].Key == 3 &&
-                                    grouped[i + 1].Key == 3)
-                                {
-                                    return new XElement(W.ins,
-                                        g.Select(gc => FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele)));
-                                }
-                                else
-                                {
-                                    return g.Select(gc => FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele));
-                                }
-                            }
-                            throw new OpenXmlPowerToolsException("Internal error");
+                                1 or 2 or 3 => (object)g.Select(gc =>
+                                    FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele)),
+                                4 when i == 0 || i == gLen - 1 => g.Select(gc =>
+                                    FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele)),
+                                4 when grouped[i - 1].Key == 2 && grouped[i + 1].Key == 2 => new XElement(W.del,
+                                    g.Select(gc => TransformInstrTextToDelInstrText(gc.Ele))),
+                                4 when grouped[i - 1].Key == 3 && grouped[i + 1].Key == 3 => new XElement(W.ins,
+                                    g.Select(gc => FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele))),
+                                4 => g.Select(gc => FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele)),
+                                _ => throw new OpenXmlPowerToolsException("Internal error")
+                            };
                         });
 
                     var newParagraph = new XElement(W.p,

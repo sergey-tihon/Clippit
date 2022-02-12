@@ -603,14 +603,12 @@ namespace Clippit.Html
             string hex = "000000";
             if (Type == CssValueType.Hex)
             {
-                if (Value.Length == 7 && Value.StartsWith("#"))
+                hex = Value.Length switch
                 {
-                    hex = Value[1..];
-                }
-                else if (Value.Length == 6)
-                {
-                    hex = Value;
-                }
+                    7 when Value.StartsWith("#") => Value[1..],
+                    6 => Value,
+                    _ => hex
+                };
             }
             else
             {
@@ -1154,14 +1152,12 @@ namespace Clippit.Html
             string hex = "000000";
             if (Type == CssTermType.Hex)
             {
-                if (Value.Length is 7 or 4 && Value.StartsWith("#"))
+                hex = Value.Length switch
                 {
-                    hex = Value[1..];
-                }
-                else if (Value.Length is 6 or 3)
-                {
-                    hex = Value;
-                }
+                    7 or 4 when Value.StartsWith("#") => Value[1..],
+                    6 or 3 => Value,
+                    _ => hex
+                };
             }
             else if (Type == CssTermType.Function)
             {
@@ -1317,19 +1313,13 @@ namespace Clippit.Html
     {
         public static string ToString(CssUnit u)
         {
-            if (u == CssUnit.Percent)
+            return u switch
             {
-                return "%";
-            }
-            else if (u is CssUnit.Hz or CssUnit.kHz)
-            {
-                return u.ToString();
-            }
-            else if (u == CssUnit.None)
-            {
-                return "";
-            }
-            return u.ToString().ToLower();
+                CssUnit.Percent => "%",
+                CssUnit.Hz or CssUnit.kHz => u.ToString(),
+                CssUnit.None => "",
+                _ => u.ToString().ToLower()
+            };
         }
     }
 

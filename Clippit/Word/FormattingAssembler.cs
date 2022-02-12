@@ -320,12 +320,12 @@ namespace Clippit.Word
                         var lvl = listItemInfo.Lvl(ListItemRetriever.GetParagraphLevel(element));
                         XElement suffix = new XElement(W.tab);
                         var su = (string)lvl.Elements(W.suff).Attributes(W.val).FirstOrDefault();
-                        if (su == "space")
-                            suffix = new XElement(W.t,
-                                new XAttribute(XNamespace.Xml + "space", "preserve"),
-                                " ");
-                        else if (su == "nothing")
-                            suffix = null;
+                        suffix = su switch
+                        {
+                            "space" => new XElement(W.t, new XAttribute(XNamespace.Xml + "space", "preserve"), " "),
+                            "nothing" => null,
+                            _ => suffix
+                        };
 
                         var jc = (string)lvl.Elements(W.lvlJc).Attributes(W.val).FirstOrDefault();
                         if (jc == "right")
@@ -2425,27 +2425,18 @@ namespace Clippit.Word
 
                             var bLower = lowerChildElement.Attribute(W.val) == null || lowerChildElement.Attribute(W.val).ToBoolean() == true;
 
-                            // if higher is true and lower is false, then return true element
-                            if (bHigher && !bLower)
+                            return bHigher switch
                             {
-                                return higherChildElement;
-                            }
-
-                            // if higher is false and lower is true, then return false element
-                            if (!bHigher && bLower)
-                            {
-                                return higherChildElement;
-                            }
-
-                            // if higher and lower are both true, then return false
-                            if (bHigher && bLower)
-                            {
-                                return new XElement(higherChildElement.Name,
-                                    new XAttribute(W.val, "0"));
-                            }
+                                // if higher is true and lower is false, then return true element
+                                true when !bLower => higherChildElement,
+                                // if higher is false and lower is true, then return false element
+                                false when bLower => higherChildElement,
+                                // if higher and lower are both true, then return false
+                                true when bLower => new XElement(higherChildElement.Name, new XAttribute(W.val, "0")),
+                                _ => higherChildElement
+                            };
 
                             // otherwise, both higher and lower are false so can return higher element.
-                            return higherChildElement;
                         }
                         return higherChildElement;
                     }),
@@ -2559,19 +2550,16 @@ namespace Clippit.Word
                 if (rPr.Element(propertyName) == null)
                     return null;
                 var s = (string)rPr.Element(propertyName).Attribute(W.val);
-                if (s is null or "1")
-                    return true;
-                if (s == "0")
-                    return false;
-                if (s == "true")
-                    return true;
-                if (s == "false")
-                    return false;
-                if (s == "on")
-                    return true;
-                if (s == "off")
-                    return false;
-                return (bool)(rPr.Element(propertyName).Attribute(W.val));
+                return s switch
+                {
+                    null or "1" => true,
+                    "0" => false,
+                    "true" => true,
+                    "false" => false,
+                    "on" => true,
+                    "off" => false,
+                    _ => (bool)(rPr.Element(propertyName).Attribute(W.val))
+                };
             }
 
             private static XElement GetXmlProperty(XElement rPr, XName propertyName)

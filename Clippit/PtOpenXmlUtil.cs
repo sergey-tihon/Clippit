@@ -747,11 +747,12 @@ namespace Clippit
             if (v == null)
                 return true;
             var s = v.Value.ToLower();
-            if (s is "0" or "false")
-                return false;
-            if (s is "1" or "true")
-                return true;
-            return false;
+            return s switch
+            {
+                "0" or "false" => false,
+                "1" or "true" => true,
+                _ => false
+            };
         }
 
         private static readonly List<XName> AdditionalRunContainerNames = new List<XName>
@@ -1553,18 +1554,13 @@ listSeparator
 
         public static int ColumnIdToInt(string cid)
         {
-            if (cid.Length == 1)
-                return CharToInt(cid[0]);
-            if (cid.Length == 2)
+            return cid.Length switch
             {
-                return CharToInt(cid[0]) * 26 + CharToInt(cid[1]) + 26;
-            }
-            if (cid.Length == 3)
-            {
-
-                return CharToInt(cid[0]) * 676 + CharToInt(cid[1]) * 26 + CharToInt(cid[2]) + 702;
-            }
-            throw new ColumnReferenceOutOfRange(cid);
+                1 => CharToInt(cid[0]),
+                2 => CharToInt(cid[0]) * 26 + CharToInt(cid[1]) + 26,
+                3 => CharToInt(cid[0]) * 676 + CharToInt(cid[1]) * 26 + CharToInt(cid[2]) + 702,
+                _ => throw new ColumnReferenceOutOfRange(cid)
+            };
         }
 
         public static IEnumerable<string> ColumnIDs()
@@ -1640,20 +1636,16 @@ listSeparator
                 return true;
 
             string s = ((string) val).ToLower();
-            if (s == "1")
-                return true;
-            if (s == "0")
-                return false;
-            if (s == "true")
-                return true;
-            if (s == "false")
-                return false;
-            if (s == "on")
-                return true;
-            if (s == "off")
-                return false;
-
-            return (bool) propAtt.Attribute(W.val);
+            return s switch
+            {
+                "1" => true,
+                "0" => false,
+                "true" => true,
+                "false" => false,
+                "on" => true,
+                "off" => false,
+                _ => (bool)propAtt.Attribute(W.val)
+            };
         }
     }
 

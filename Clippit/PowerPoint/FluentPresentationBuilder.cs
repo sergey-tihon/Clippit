@@ -593,9 +593,9 @@ namespace Clippit.PowerPoint
                 {
                     var oldPart = oldPartIdPair.OpenXmlPart;
                     OpenXmlPart newPart = null;
-                    if (oldPart is EmbeddedObjectPart)
+                    newPart = oldPart switch
                     {
-                        newPart = newContentPart switch
+                        EmbeddedObjectPart => newContentPart switch
                         {
                             DialogsheetPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
                             HandoutMasterPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
@@ -605,11 +605,8 @@ namespace Clippit.PowerPoint
                             SlideMasterPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
                             SlidePart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
                             _ => newPart
-                        };
-                    }
-                    else if (oldPart is EmbeddedPackagePart)
-                    {
-                        newPart = newContentPart switch
+                        },
+                        EmbeddedPackagePart => newContentPart switch
                         {
                             ChartPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
                             HandoutMasterPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
@@ -619,8 +616,9 @@ namespace Clippit.PowerPoint
                             SlideMasterPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
                             SlidePart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
                             _ => newPart
-                        };
-                    }
+                        },
+                        _ => newPart
+                    };
                     using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                     {
                         using var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);

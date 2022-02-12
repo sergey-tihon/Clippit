@@ -564,13 +564,13 @@ namespace Clippit.Word
             XElement span;
             if (leader != null)
             {
-                var leaderChar = ".";
-                if (leader == "hyphen")
-                    leaderChar = "-";
-                else if (leader == "dot")
-                    leaderChar = ".";
-                else if (leader == "underscore")
-                    leaderChar = "_";
+                var leaderChar = leader switch
+                {
+                    "hyphen" => "-",
+                    "dot" => ".",
+                    "underscore" => "_",
+                    _ => "."
+                };
 
                 var runContainingTabToReplace = element.Ancestors(W.r).First();
                 var fontNameAtt = runContainingTabToReplace.Attribute(PtOpenXml.pt + "FontName") ??
@@ -788,12 +788,13 @@ namespace Clippit.Word
             if (bidiVisual != null)
             {
                 dir = new XAttribute("dir", "rtl");
-                if (jc == "left")
-                    jcToUse = new XAttribute("align", "right");
-                else if (jc == "right")
-                    jcToUse = new XAttribute("align", "left");
-                else if (jc == "center")
-                    jcToUse = new XAttribute("align", "center");
+                jcToUse = jc switch
+                {
+                    "left" => new XAttribute("align", "right"),
+                    "right" => new XAttribute("align", "left"),
+                    "center" => new XAttribute("align", "center"),
+                    _ => jcToUse
+                };
             }
             else
             {
@@ -1547,13 +1548,13 @@ namespace Clippit.Word
             var rPr = run.Elements(W.rPr).First();
             var languageType = (string)run.Attribute(PtOpenXml.LanguageType);
 
-            string lang = null;
-            if (languageType == "western")
-                lang = (string) rPr.Elements(W.lang).Attributes(W.val).FirstOrDefault();
-            else if (languageType == "bidi")
-                lang = (string) rPr.Elements(W.lang).Attributes(W.bidi).FirstOrDefault();
-            else if (languageType == "eastAsia")
-                lang = (string) rPr.Elements(W.lang).Attributes(W.eastAsia).FirstOrDefault();
+            string lang = languageType switch
+            {
+                "western" => (string)rPr.Elements(W.lang).Attributes(W.val).FirstOrDefault(),
+                "bidi" => (string)rPr.Elements(W.lang).Attributes(W.bidi).FirstOrDefault(),
+                "eastAsia" => (string)rPr.Elements(W.lang).Attributes(W.eastAsia).FirstOrDefault(),
+                _ => null
+            };
             if (lang == null)
                 lang = defaultLanguage;
 
@@ -2574,30 +2575,30 @@ namespace Clippit.Word
                     borderStyle = borderInfo.CssName;
                     if (type == "double")
                     {
-                        if (sz <= 8)
-                            borderWidthInPoints = 2.5m;
-                        else if (sz <= 18)
-                            borderWidthInPoints = 6.75m;
-                        else
-                            borderWidthInPoints = sz / 3m;
+                        borderWidthInPoints = sz switch
+                        {
+                            <= 8 => 2.5m,
+                            <= 18 => 6.75m,
+                            _ => sz / 3m
+                        };
                     }
                     else if (type == "triple")
                     {
-                        if (sz <= 8)
-                            borderWidthInPoints = 8m;
-                        else if (sz <= 18)
-                            borderWidthInPoints = 11.25m;
-                        else
-                            borderWidthInPoints = 11.25m;
+                        borderWidthInPoints = sz switch
+                        {
+                            <= 8 => 8m,
+                            <= 18 => 11.25m,
+                            _ => 11.25m
+                        };
                     }
                     else if (type.ToLower().Contains("dash"))
                     {
-                        if (sz <= 4)
-                            borderWidthInPoints = 1m;
-                        else if (sz <= 12)
-                            borderWidthInPoints = 1.5m;
-                        else
-                            borderWidthInPoints = 2m;
+                        borderWidthInPoints = sz switch
+                        {
+                            <= 4 => 1m,
+                            <= 12 => 1.5m,
+                            _ => 2m
+                        };
                     }
                     else if (type != "single")
                         borderWidthInPoints = borderInfo.CssSize;
@@ -2816,11 +2817,12 @@ namespace Clippit.Word
             if (v == null)
                 return true;
             var s = v.Value.ToLower();
-            if (s is "0" or "false")
-                return false;
-            if (s is "1" or "true")
-                return true;
-            return false;
+            return s switch
+            {
+                "0" or "false" => false,
+                "1" or "true" => true,
+                _ => false
+            };
         }
 
         private static object ConvertContentThatCanContainFields(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings settings,

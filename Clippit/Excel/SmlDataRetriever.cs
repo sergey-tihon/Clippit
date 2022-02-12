@@ -950,16 +950,16 @@ namespace Clippit.Excel
 
         private static object TransformRemoveNamespace(XNode node)
         {
-            if (node == null)
-                return null;
-            XElement element = node as XElement;
-            if (element != null)
+            return node switch
             {
-                return new XElement(element.Name.LocalName,
-                    element.Attributes().Select(a => new XAttribute(a.Name.LocalName, (string)a)).OrderBy(a => (string)a.Name.LocalName),
-                    element.Nodes().Select(n => TransformRemoveNamespace(n)));
-            }
-            return node;
+                null => null,
+                XElement element => new XElement(element.Name.LocalName,
+                    element.Attributes()
+                        .Select(a => new XAttribute(a.Name.LocalName, (string)a))
+                        .OrderBy(a => (string)a.Name.LocalName),
+                    element.Nodes().Select(n => TransformRemoveNamespace(n))),
+                _ => node
+            };
         }
 
         private static string GetFormatCodeFromFmtId(int fmtId)

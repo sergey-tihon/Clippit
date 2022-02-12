@@ -123,17 +123,18 @@ namespace Clippit.Excel
         public XElement GetElements(int row)
         {
             string cellReference = WorksheetAccessor.GetColumnId(column) + row.ToString();
-            XElement newCell = null;
 
-            if (cellValue is int or double)
-                newCell = new XElement(S.c, new XAttribute(NoNamespace.r, cellReference), new XElement(S.v, cellValue.ToString()));
-            else if (cellValue is bool)
-                newCell = new XElement(S.c, new XAttribute(NoNamespace.r, cellReference), new XAttribute(NoNamespace.t, "b"), new XElement(S.v, (bool)cellValue ? "1" : "0"));
-            else if (cellValue is string)
+            XElement newCell = cellValue switch
             {
-                newCell = new XElement(S.c, new XAttribute(NoNamespace.r, cellReference), new XAttribute(NoNamespace.t, "inlineStr"),
-                    new XElement(S._is, new XElement(S.t, cellValue.ToString())));
-            }
+                int or double => new XElement(S.c, new XAttribute(NoNamespace.r, cellReference),
+                    new XElement(S.v, cellValue.ToString())),
+                bool value => new XElement(S.c, new XAttribute(NoNamespace.r, cellReference),
+                    new XAttribute(NoNamespace.t, "b"), new XElement(S.v, value ? "1" : "0")),
+                string => new XElement(S.c, new XAttribute(NoNamespace.r, cellReference),
+                    new XAttribute(NoNamespace.t, "inlineStr"),
+                    new XElement(S._is, new XElement(S.t, cellValue.ToString()))),
+                _ => null
+            };
             if (newCell == null)
                 throw new ArgumentException("Invalid cell type.");
             if (styleIndex != 0)
@@ -262,17 +263,18 @@ namespace Clippit.Excel
         {
             XDocument worksheetXDocument = worksheet.GetXDocument();
             string cellReference = GetColumnId(column) + row.ToString();
-            XElement newCell = null;
 
-            if (value is int or double)
-                newCell = new XElement(S.c, new XAttribute(NoNamespace.r, cellReference), new XElement(S.v, value.ToString()));
-            else if (value is bool)
-                newCell = new XElement(S.c, new XAttribute(NoNamespace.r, cellReference), new XAttribute(NoNamespace.t, "b"), new XElement(S.v, (bool)value ? "1" : "0"));
-            else if (value is string)
+            XElement newCell = value switch
             {
-                newCell = new XElement(S.c, new XAttribute(NoNamespace.r, cellReference), new XAttribute(NoNamespace.t, "inlineStr"),
-                    new XElement(S._is, new XElement(S.t, value.ToString())));
-            }
+                int or double => new XElement(S.c, new XAttribute(NoNamespace.r, cellReference),
+                    new XElement(S.v, value.ToString())),
+                bool b => new XElement(S.c, new XAttribute(NoNamespace.r, cellReference),
+                    new XAttribute(NoNamespace.t, "b"), new XElement(S.v, b ? "1" : "0")),
+                string => new XElement(S.c, new XAttribute(NoNamespace.r, cellReference),
+                    new XAttribute(NoNamespace.t, "inlineStr"),
+                    new XElement(S._is, new XElement(S.t, value.ToString()))),
+                _ => null
+            };
             if (newCell == null)
                 throw new ArgumentException("Invalid cell type.");
 

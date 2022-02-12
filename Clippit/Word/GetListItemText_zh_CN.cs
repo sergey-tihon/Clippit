@@ -46,59 +46,53 @@ namespace Clippit.Word
 
             if (numFmt == "chineseCounting")
             {
-                if (levelNumber >= 1 && levelNumber <= 9)
-                    return ccDigitCharacters[levelNumber];
-                if (levelNumber >= 10 && levelNumber <= 19)
+                return levelNumber switch
                 {
-                    if (levelNumber == 10)
-                        return tenCharacter;
-                    return tenCharacter + ccDigitCharacters[ones];
-                }
-                if (levelNumber >= 11 && levelNumber <= 99)
-                {
-                    if (ones == 0)
-                        return ccDigitCharacters[tens] + tenCharacter;
-                    return ccDigitCharacters[tens] + tenCharacter + ccDigitCharacters[ones];
-                }
-                if (levelNumber >= 100 && levelNumber <= 999)
-                    return ccDigitCharacters[hundreds] + ccDigitCharacters[tens] + ccDigitCharacters[ones];
-                if (levelNumber >= 1000 && levelNumber <= 9999)
-                    return ccDigitCharacters[thousands] + ccDigitCharacters[hundreds] + ccDigitCharacters[tens] + ccDigitCharacters[ones];
-                return levelNumber.ToString();
+                    >= 1 and <= 9 => ccDigitCharacters[levelNumber],
+                    >= 10 and <= 19 when levelNumber == 10 => tenCharacter,
+                    >= 10 and <= 19 => tenCharacter + ccDigitCharacters[ones],
+                    >= 11 and <= 99 when ones == 0 => ccDigitCharacters[tens] + tenCharacter,
+                    >= 11 and <= 99 => ccDigitCharacters[tens] + tenCharacter + ccDigitCharacters[ones],
+                    >= 100 and <= 999 => ccDigitCharacters[hundreds] + ccDigitCharacters[tens] +
+                                         ccDigitCharacters[ones],
+                    >= 1000 and <= 9999 => ccDigitCharacters[thousands] + ccDigitCharacters[hundreds] +
+                                           ccDigitCharacters[tens] + ccDigitCharacters[ones],
+                    _ => levelNumber.ToString()
+                };
             }
             if (numFmt == "chineseCountingThousand")
             {
-                if (levelNumber >= 1 && levelNumber <= 9)
-                    return ccTDigitCharacters[levelNumber];
-                if (levelNumber >= 10 && levelNumber <= 19)
-                    return tenCharacter + ccTDigitCharacters[ones];
-                if (levelNumber >= 20 && levelNumber <= 99)
-                    return ccTDigitCharacters[tens] + tenCharacter + ccTDigitCharacters[ones];
-                if (levelNumber >= 100 && levelNumber <= 999)
+                return levelNumber switch
                 {
-                    if (hundredsRemainder == 0)
-                        return ccTDigitCharacters[hundreds] + hundredCharacter;
-                    if (hundredsRemainder >= 1 && hundredsRemainder <= 9)
-                        return ccTDigitCharacters[hundreds] + hundredCharacter + andCharacter + ccTDigitCharacters[levelNumber % 10];
-                    if (ones == 0)
-                        return ccTDigitCharacters[hundreds] + hundredCharacter + ccTDigitCharacters[tens] + tenCharacter;
-                    return ccTDigitCharacters[hundreds] + hundredCharacter + ccTDigitCharacters[tens] + tenCharacter + ccTDigitCharacters[ones];
-                }
-                if (levelNumber >= 1000 && levelNumber <= 9999)
-                {
-                    if (thousandsRemainder == 0)
-                        return ccTDigitCharacters[thousands] + thousandCharacter;
-                    if (thousandsRemainder >= 1 && thousandsRemainder <= 9)
-                        return ccTDigitCharacters[thousands] + thousandCharacter + andCharacter + GetListItemText("zh_CN", thousandsRemainder, numFmt);
-                    if (thousandsRemainder >= 10 && thousandsRemainder <= 99)
-                        return ccTDigitCharacters[thousands] + thousandCharacter + andCharacter + ccTDigitCharacters[tens] + tenCharacter + ccTDigitCharacters[ones];
-                    if (hundredsRemainder == 0)
-                        return ccTDigitCharacters[thousands] + thousandCharacter + ccTDigitCharacters[hundreds] + hundredCharacter;
-                    if (hundredsRemainder >= 1 && hundredsRemainder <= 9)
-                        return ccTDigitCharacters[thousands] + thousandCharacter + ccTDigitCharacters[hundreds] + hundredCharacter + andCharacter + ccTDigitCharacters[ones];
-                    return ccTDigitCharacters[thousands] + thousandCharacter + ccTDigitCharacters[hundreds] + hundredCharacter + ccTDigitCharacters[tens] + tenCharacter + ccTDigitCharacters[ones];
-                }
-                return levelNumber.ToString();
+                    >= 1 and <= 9 => ccTDigitCharacters[levelNumber],
+                    >= 10 and <= 19 => tenCharacter + ccTDigitCharacters[ones],
+                    >= 20 and <= 99 => ccTDigitCharacters[tens] + tenCharacter + ccTDigitCharacters[ones],
+                    >= 100 and <= 999 when hundredsRemainder == 0 => ccTDigitCharacters[hundreds] + hundredCharacter,
+                    >= 100 and <= 999 when hundredsRemainder >= 1 && hundredsRemainder <= 9 => ccTDigitCharacters
+                        [hundreds] + hundredCharacter + andCharacter + ccTDigitCharacters[levelNumber % 10],
+                    >= 100 and <= 999 when ones == 0 => ccTDigitCharacters[hundreds] + hundredCharacter +
+                                                        ccTDigitCharacters[tens] + tenCharacter,
+                    >= 100 and <= 999 => ccTDigitCharacters[hundreds] + hundredCharacter + ccTDigitCharacters[tens] +
+                                         tenCharacter + ccTDigitCharacters[ones],
+                    >= 1000 and <= 9999 when thousandsRemainder == 0 => ccTDigitCharacters[thousands] +
+                                                                        thousandCharacter,
+                    >= 1000 and <= 9999 when thousandsRemainder >= 1 && thousandsRemainder <= 9 => ccTDigitCharacters
+                            [thousands] + thousandCharacter + andCharacter +
+                        GetListItemText("zh_CN", thousandsRemainder, numFmt),
+                    >= 1000 and <= 9999 when thousandsRemainder >= 10 && thousandsRemainder <= 99 => ccTDigitCharacters
+                            [thousands] + thousandCharacter + andCharacter + ccTDigitCharacters[tens] + tenCharacter +
+                        ccTDigitCharacters[ones],
+                    >= 1000 and <= 9999 when hundredsRemainder == 0 => ccTDigitCharacters[thousands] +
+                                                                       thousandCharacter +
+                                                                       ccTDigitCharacters[hundreds] + hundredCharacter,
+                    >= 1000 and <= 9999 when hundredsRemainder >= 1 && hundredsRemainder <= 9 => ccTDigitCharacters
+                            [thousands] + thousandCharacter + ccTDigitCharacters[hundreds] + hundredCharacter +
+                        andCharacter + ccTDigitCharacters[ones],
+                    >= 1000 and <= 9999 => ccTDigitCharacters[thousands] + thousandCharacter +
+                                           ccTDigitCharacters[hundreds] + hundredCharacter + ccTDigitCharacters[tens] +
+                                           tenCharacter + ccTDigitCharacters[ones],
+                    _ => levelNumber.ToString()
+                };
             }
             if (numFmt == "ideographTraditional")
             {

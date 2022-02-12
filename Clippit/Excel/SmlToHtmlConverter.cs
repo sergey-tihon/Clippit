@@ -260,11 +260,12 @@ namespace Clippit.Excel
             if (v == null)
                 return true;
             var s = v.Value.ToLower();
-            if (s is "0" or "false")
-                return false;
-            if (s is "1" or "true")
-                return true;
-            return false;
+            return s switch
+            {
+                "0" or "false" => false,
+                "1" or "true" => true,
+                _ => false
+            };
         }
     }
 }
