@@ -715,7 +715,7 @@ namespace Clippit.Word
             foreach (var span in paragraph.Elements(Xhtml.span).ToList())
             {
                 var v = span.Value;
-                if (v.Length > 0 && (char.IsWhiteSpace(v[0]) || char.IsWhiteSpace(v[^1])) && span.Attribute(XNamespace.Xml + "space") == null)
+                if (v.Length > 0 && (char.IsWhiteSpace(v[0]) || char.IsWhiteSpace(v[v.Length - 1])) && span.Attribute(XNamespace.Xml + "space") == null)
                     span.Add(new XAttribute(XNamespace.Xml + "space", "preserve"));
             }
 
@@ -729,7 +729,7 @@ namespace Clippit.Word
                 var span = (XElement)ConvertParagraph(wordDoc, settings, element, elementName,
                     suppressTrailingWhiteSpace, currentMarginLeft, isBidi);
                 var v = span.Value;
-                if (v.Length > 0 && (char.IsWhiteSpace(v[0]) || char.IsWhiteSpace(v[^1])) && span.Attribute(XNamespace.Xml + "space") == null)
+                if (v.Length > 0 && (char.IsWhiteSpace(v[0]) || char.IsWhiteSpace(v[v.Length - 1])) && span.Attribute(XNamespace.Xml + "space") == null)
                     span.Add(new XAttribute(XNamespace.Xml + "space", "preserve"));
                 paragraph.Add(span);
             }
