@@ -113,7 +113,7 @@ Following is my new theory of the correct algorithm:
 
 namespace Clippit.Html
 {
-    class CssApplier
+    internal class CssApplier
     {
         private static List<PropertyInfo> PropertyInfoList = new()
         {

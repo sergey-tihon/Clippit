@@ -117,7 +117,7 @@ namespace Clippit.Excel
             return value;
         }
 
-        static Regex UnderRegex = new("_.");
+        private static Regex UnderRegex = new("_.");
 
         // The following Regex transforms currency specifies into a character / string
         // that string.Format can use to properly produce the correct text.
@@ -125,7 +125,7 @@ namespace Clippit.Excel
         // "[$€-2]"      => "€"
         // "[$¥-804]"    => "¥
         // "[$CHF-100C]" => "CHF"
-        static string s_CurrRegex = @"\[\$(?<curr>.*-).*\]";
+        private static string s_CurrRegex = @"\[\$(?<curr>.*-).*\]";
 
         private static string ConvertFormatCode(string formatCode)
         {

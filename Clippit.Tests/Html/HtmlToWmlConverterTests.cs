@@ -44,8 +44,8 @@ namespace Clippit.Tests.Html
         public HtmlToWmlConverterTests(ITestOutputHelper log) : base(log)
         {
         }
-        
-        static bool s_ProduceAnnotatedHtml = true;
+
+        private static bool s_ProduceAnnotatedHtml = true;
 
         // PowerShell oneliner that generates InlineData for all files in a directory
         // dir | % { '[InlineData("' + $_.Name + '")]' } | clip
@@ -474,7 +474,7 @@ namespace Clippit.Tests.Html
             formattedDoc.SaveAs(destDocxFi.FullName);
         }
 
-        static string defaultCss =
+        private static string defaultCss =
             @"html, address,
 blockquote,
 body, dd, div,
@@ -548,7 +548,7 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
 
 ";
 
-        static string userCss = @"";
+        private static string userCss = @"";
         
     }
 }

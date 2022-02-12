@@ -8,8 +8,7 @@ using System.IO;
 
 namespace Clippit.Excel
 {
-      
-      enum EExcelFormula{Formula= 1, Expression= 2, InfixTerms= 3, PreAndPostTerm= 4, 
+    internal enum EExcelFormula{Formula= 1, Expression= 2, InfixTerms= 3, PreAndPostTerm= 4, 
                           Term= 5, RefInfixTerms= 6, RefTerm= 7, Constant= 8, RefConstant= 9, 
                           ErrorConstant= 10, LogicalConstant= 11, NumericalConstant= 12, 
                           SignificandPart= 13, WholeNumberPart= 14, FractionalPart= 15, 
@@ -35,7 +34,8 @@ namespace Clippit.Excel
                           KeywordList= 81, ColumnRange= 82, Column= 83, SimpleColumnName= 84, 
                           EscapeColumnCharacter= 85, UnescapedColumnCharacter= 86, AnyNoSpaceColumnCharacter= 87, 
                           SpacedComma= 88, SpacedLBracket= 89, SpacedRBracket= 90, ws= 91};
-      class ExcelFormula : PegCharParser 
+
+    internal class ExcelFormula : PegCharParser 
       {
         
          #region Input Properties
@@ -84,7 +84,7 @@ namespace Clippit.Excel
 
            return And(()=>  
                      Expression()
-                  && (    Not(()=> Any() ) || Fatal("end of line expected")) );
+                  && (    Not(Any ) || Fatal("end of line expected")) );
 		}
         public bool Expression()    /*Expression: ws InfixTerms;*/
         {

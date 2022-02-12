@@ -1555,20 +1555,20 @@ namespace Clippit.Html
         public const int c_whitespace = 4;
         public const int c_maxT = 49;
 
-        const bool T = true;
-        const bool x = false;
-        const int minErrDist = 2;
+        private const bool T = true;
+        private const bool x = false;
+        private const int minErrDist = 2;
 
         public Scanner m_scanner;
         public Errors m_errors;
 
         public CssToken m_lastRecognizedToken;
         public CssToken m_lookaheadToken;
-        int errDist = minErrDist;
+        private int errDist = minErrDist;
 
         public CssDocument CssDoc;
 
-        bool IsInHex(string value)
+        private bool IsInHex(string value)
         {
             if (value.Length == 7)
             {
@@ -1592,7 +1592,7 @@ namespace Clippit.Html
             return true;
         }
 
-        bool IsUnitOfLength()
+        private bool IsUnitOfLength()
         {
             if (m_lookaheadToken.m_tokenKind != 1)
             {
@@ -1606,7 +1606,7 @@ namespace Clippit.Html
             return units.Contains(m_lookaheadToken.m_tokenValue.ToLower());
         }
 
-        bool IsNumber()
+        private bool IsNumber()
         {
             if (m_lookaheadToken.m_tokenValue.Length > 0)
             {
@@ -1621,7 +1621,7 @@ namespace Clippit.Html
             m_errors = new Errors();
         }
 
-        void SyntaxErr(int n)
+        private void SyntaxErr(int n)
         {
             if (errDist >= minErrDist)
                 m_errors.SyntaxError(m_lookaheadToken.m_tokenLine, m_lookaheadToken.m_tokenColumn, n);
@@ -1635,7 +1635,7 @@ namespace Clippit.Html
             errDist = 0;
         }
 
-        void Get()
+        private void Get()
         {
             for (;;)
             {
@@ -1651,7 +1651,7 @@ namespace Clippit.Html
             }
         }
 
-        void Expect(int n)
+        private void Expect(int n)
         {
             if (m_lookaheadToken.m_tokenKind == n)
                 Get();
@@ -1661,12 +1661,12 @@ namespace Clippit.Html
             }
         }
 
-        bool StartOf(int s)
+        private bool StartOf(int s)
         {
             return set[s, m_lookaheadToken.m_tokenKind];
         }
 
-        void ExpectWeak(int n, int follow)
+        private void ExpectWeak(int n, int follow)
         {
             if (m_lookaheadToken.m_tokenKind == n)
                 Get();
@@ -1679,7 +1679,7 @@ namespace Clippit.Html
         }
 
 
-        bool WeakSeparator(int n, int syFol, int repFol)
+        private bool WeakSeparator(int n, int syFol, int repFol)
         {
             int kind = m_lookaheadToken.m_tokenKind;
             if (kind == n)
@@ -1704,7 +1704,7 @@ namespace Clippit.Html
         }
 
 
-        void Css3()
+        private void Css3()
         {
             CssDoc = new CssDocument();
             CssRuleSet rset = null;
@@ -1755,7 +1755,7 @@ namespace Clippit.Html
             }
         }
 
-        void RuleSet(out CssRuleSet rset)
+        private void RuleSet(out CssRuleSet rset)
         {
             rset = new CssRuleSet();
             CssSelector sel = null;
@@ -1830,7 +1830,7 @@ namespace Clippit.Html
             }
         }
 
-        void Directive(out CssDirective dir)
+        private void Directive(out CssDirective dir)
         {
             dir = new CssDirective();
             CssDeclaration dec = null;
@@ -1996,7 +1996,7 @@ namespace Clippit.Html
             else SyntaxErr(50);
         }
 
-        void QuotedString(out string qs)
+        private void QuotedString(out string qs)
         {
             qs = "";
             if (m_lookaheadToken.m_tokenKind == 7)
@@ -2031,7 +2031,7 @@ namespace Clippit.Html
 
         }
 
-        void URI(out string url)
+        private void URI(out string url)
         {
             url = "";
             Expect(9);
@@ -2074,7 +2074,7 @@ namespace Clippit.Html
             }
         }
 
-        void Medium(out CssMedium m)
+        private void Medium(out CssMedium m)
         {
             m = CssMedium.all;
             switch (m_lookaheadToken.m_tokenKind)
@@ -2143,7 +2143,7 @@ namespace Clippit.Html
             }
         }
 
-        void Identity(out string ident)
+        private void Identity(out string ident)
         {
             ident = "";
             switch (m_lookaheadToken.m_tokenKind)
@@ -2218,7 +2218,7 @@ namespace Clippit.Html
             ident += m_lastRecognizedToken.m_tokenValue;
         }
 
-        void Exprsn(out CssExpression exp)
+        private void Exprsn(out CssExpression exp)
         {
             exp = new CssExpression();
             char? sep = null;
@@ -2264,7 +2264,7 @@ namespace Clippit.Html
             }
         }
 
-        void Declaration(out CssDeclaration dec)
+        private void Declaration(out CssDeclaration dec)
         {
             dec = new CssDeclaration();
             CssExpression exp = null;
@@ -2308,7 +2308,7 @@ namespace Clippit.Html
             }
         }
 
-        void Selector(out CssSelector sel)
+        private void Selector(out CssSelector sel)
         {
             sel = new CssSelector();
             CssSimpleSelector ss = null;
@@ -2359,7 +2359,7 @@ namespace Clippit.Html
             }
         }
 
-        void SimpleSelector(out CssSimpleSelector ss)
+        private void SimpleSelector(out CssSimpleSelector ss)
         {
             ss = new CssSimpleSelector();
             ss.ElementName = "";
@@ -2476,7 +2476,7 @@ namespace Clippit.Html
             }
         }
 
-        void Attrib(out CssAttribute atb)
+        private void Attrib(out CssAttribute atb)
         {
             atb = new CssAttribute();
             atb.Value = "";
@@ -2563,7 +2563,7 @@ namespace Clippit.Html
             Expect(42);
         }
 
-        void Pseudo(out string pseudo)
+        private void Pseudo(out string pseudo)
         {
             pseudo = "";
             CssExpression exp = null;
@@ -2604,7 +2604,7 @@ namespace Clippit.Html
             }
         }
 
-        void Term(out CssTerm trm)
+        private void Term(out CssTerm trm)
         {
             trm = new CssTerm();
             string val = "";
@@ -2839,7 +2839,7 @@ namespace Clippit.Html
             else SyntaxErr(60);
         }
 
-        void HexValue(out string val)
+        private void HexValue(out string val)
         {
             val = "";
             bool found = false;
@@ -2876,7 +2876,7 @@ namespace Clippit.Html
             Expect(0);
         }
 
-        static readonly bool[,] set = {
+        private static readonly bool[,] set = {
 		    {T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
 		    {x,T,x,x, x,x,x,x, x,T,x,x, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x},
 		    {x,T,x,x, x,x,x,x, x,T,x,x, T,T,T,T, T,T,T,T, T,T,T,x, T,x,x,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x},
@@ -3087,15 +3087,15 @@ namespace Clippit.Html
     public class CssBuffer
     {
         public const int EOF = char.MaxValue + 1;
-        const int MIN_BUFFER_LENGTH = 1024;
-        const int MAX_BUFFER_LENGTH = MIN_BUFFER_LENGTH * 64;
-        byte[] m_inputBuffer;
-        int m_bufferStart;
-        int m_bufferLength;
-        int m_inputStreamLength;
-        int m_currentPositionInBuffer;
-        Stream m_inputStream;
-        bool m_isUserStream;
+        private const int MIN_BUFFER_LENGTH = 1024;
+        private const int MAX_BUFFER_LENGTH = MIN_BUFFER_LENGTH * 64;
+        private byte[] m_inputBuffer;
+        private int m_bufferStart;
+        private int m_bufferLength;
+        private int m_inputStreamLength;
+        private int m_currentPositionInBuffer;
+        private Stream m_inputStream;
+        private bool m_isUserStream;
 
         public CssBuffer(Stream s, bool isUserStream)
         {
@@ -3285,28 +3285,28 @@ namespace Clippit.Html
 
     public class Scanner
     {
-        const char END_OF_LINE = '\n';
-        const int c_eof = 0;
-        const int c_maxT = 49;
-        const int c_noSym = 49;
-        const int c_maxTokenLength = 128;
+        private const char END_OF_LINE = '\n';
+        private const int c_eof = 0;
+        private const int c_maxT = 49;
+        private const int c_noSym = 49;
+        private const int c_maxTokenLength = 128;
 
         public CssBuffer m_scannerBuffer;
 
-        CssToken m_currentToken;
-        int m_currentInputCharacter;
-        int m_currentCharacterBytePosition;
-        int m_unicodeCharacterPosition;
-        int m_columnNumberOfCurrentCharacter;
-        int m_lineNumberOfCurrentCharacter;
-        int m_eolInComment;
-        static readonly Hashtable s_start;
+        private CssToken m_currentToken;
+        private int m_currentInputCharacter;
+        private int m_currentCharacterBytePosition;
+        private int m_unicodeCharacterPosition;
+        private int m_columnNumberOfCurrentCharacter;
+        private int m_lineNumberOfCurrentCharacter;
+        private int m_eolInComment;
+        private static readonly Hashtable s_start;
 
-        CssToken m_tokensAlreadyPeeked;
-        CssToken m_currentPeekToken;
+        private CssToken m_tokensAlreadyPeeked;
+        private CssToken m_currentPeekToken;
 
-        char[] m_textOfCurrentToken = new char[c_maxTokenLength];
-        int m_lengthOfCurrentToken;
+        private char[] m_textOfCurrentToken = new char[c_maxTokenLength];
+        private int m_lengthOfCurrentToken;
 
         static Scanner()
         {
@@ -3383,7 +3383,7 @@ namespace Clippit.Html
             Init();
         }
 
-        void Init()
+        private void Init()
         {
             m_currentCharacterBytePosition = -1;
             m_lineNumberOfCurrentCharacter = 1;
@@ -3409,7 +3409,7 @@ namespace Clippit.Html
             m_currentPeekToken = m_tokensAlreadyPeeked = new CssToken();
         }
 
-        void NextCh()
+        private void NextCh()
         {
             if (m_eolInComment > 0)
             {
@@ -3432,7 +3432,7 @@ namespace Clippit.Html
 
         }
 
-        void AddCh()
+        private void AddCh()
         {
             if (m_lengthOfCurrentToken >= m_textOfCurrentToken.Length)
             {
@@ -3447,7 +3447,7 @@ namespace Clippit.Html
             }
         }
 
-        bool Comment0()
+        private bool Comment0()
         {
             int level = 1, pos0 = m_currentCharacterBytePosition, line0 = m_lineNumberOfCurrentCharacter, col0 = m_columnNumberOfCurrentCharacter, charPos0 = m_unicodeCharacterPosition;
             NextCh();
@@ -3489,7 +3489,7 @@ namespace Clippit.Html
         }
 
 
-        void CheckLiteral()
+        private void CheckLiteral()
         {
             switch (m_currentToken.m_tokenValue)
             {
@@ -3537,7 +3537,7 @@ namespace Clippit.Html
             }
         }
 
-        CssToken NextToken()
+        private CssToken NextToken()
         {
             while (m_currentInputCharacter is ' ' or 10 or 13)
                 NextCh();

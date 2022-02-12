@@ -75,7 +75,8 @@ namespace Clippit.Excel
             }
 
         }
-        Encoding FileEncodingToTextEncoding()
+
+        private Encoding FileEncodingToTextEncoding()
         {
             switch (encoding_)
             {
@@ -93,7 +94,8 @@ namespace Clippit.Excel
 
             }
         }
-        static FileEncoding DetermineUnicodeWhenFirstCharIsAscii(string path)
+
+        private static FileEncoding DetermineUnicodeWhenFirstCharIsAscii(string path)
         {
             using var br = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read));
             var startBytes = br.ReadBytes(4);
@@ -106,7 +108,8 @@ namespace Clippit.Excel
             if (startBytes[0] != 0 && startBytes[1] == 0) return FileEncoding.utf16le;
             return FileEncoding.utf8;
         }
-        FileEncoding GetEncoding(EncodingClass encodingClass, UnicodeDetection detection, string path)
+
+        private FileEncoding GetEncoding(EncodingClass encodingClass, UnicodeDetection detection, string path)
         {
             return encodingClass switch
             {
@@ -122,7 +125,8 @@ namespace Clippit.Excel
                 _ => FileEncoding.none
             };
         }
-        string path_;
+
+        private string path_;
         public readonly FileEncoding encoding_;
     }
     #endregion Input File Support
@@ -137,7 +141,8 @@ namespace Clippit.Excel
     public struct PegError
     {
         internal SortedList<int, int> lineStarts;
-        void AddLineStarts(string s, int first, int last, ref int lineNo, out int colNo)
+
+        private void AddLineStarts(string s, int first, int last, ref int lineNo, out int colNo)
         {
             colNo = 2;
             for (int i = first + 1; i <= last; ++i, ++colNo)
@@ -280,11 +285,12 @@ namespace Clippit.Excel
     {
         #region Data Members
         public delegate string GetNodeName(PegNode node);
-        string src_;
-        TextWriter treeOut_;
-        int nMaxLineLen_;
-        bool bVerbose_;
-        GetNodeName GetNodeName_;
+
+        private string src_;
+        private TextWriter treeOut_;
+        private int nMaxLineLen_;
+        private bool bVerbose_;
+        private GetNodeName GetNodeName_;
         #endregion Data Members
         #region Methods
         public TreePrint(TextWriter treeOut, string src, int nMaxLineLen, GetNodeName GetNodeName, bool bVerbose)
@@ -334,7 +340,8 @@ namespace Clippit.Excel
             PrintNodeEnd(parent, bAlignVertical, ref  nOffsetLineBeg, nLevel);
             treeOut_.Flush();
         }
-        int DetermineLineLength(PegNode parent, int nOffsetLineBeg)
+
+        private int DetermineLineLength(PegNode parent, int nOffsetLineBeg)
         {
             int nLen = LenNodeBeg(parent);
             PegNode p;
@@ -436,9 +443,10 @@ namespace Clippit.Excel
         {
             return 1;
         }
-        int LenIdAsName(PegNode p) => GetNodeName_(p).Length;
 
-        void PrintIdAsName(PegNode p) => treeOut_.Write(GetNodeName_(p));
+        private int LenIdAsName(PegNode p) => GetNodeName_(p).Length;
+
+        private void PrintIdAsName(PegNode p) => treeOut_.Write(GetNodeName_(p));
 
         #endregion Methods
     }
@@ -457,7 +465,7 @@ namespace Clippit.Excel
         protected TextWriter errOut_;
         protected Creator nodeCreator_;
         protected int maxpos_;
-        PegTree tree;
+        private PegTree tree;
         #endregion Data members
         public virtual string GetRuleNameFromId(int id)
         {//normally overridden
@@ -521,7 +529,8 @@ namespace Clippit.Excel
              tree.cur_ = null;
              tree.addPolicy = PegTree.AddPolicy.eAddAsChild;
          }
-         void AddTreeNode(int nId, PegTree.AddPolicy newAddPolicy, Creator createNode, ECreatorPhase ePhase)
+
+         private void AddTreeNode(int nId, PegTree.AddPolicy newAddPolicy, Creator createNode, ECreatorPhase ePhase)
          {
              if (bMute_) return;
              if (tree.root_ == null)
@@ -538,7 +547,8 @@ namespace Clippit.Excel
              }
              tree.addPolicy = newAddPolicy;
          }
-         void RestoreTree(PegNode prevCur, PegTree.AddPolicy prevPolicy)
+
+         private void RestoreTree(PegNode prevCur, PegTree.AddPolicy prevPolicy)
          {
              if (bMute_) return;
              if (prevCur == null)
@@ -784,7 +794,7 @@ namespace Clippit.Excel
     {
         #region Data members
         protected byte[] src_;
-        PegError errors;
+        private PegError errors;
         #endregion Data members
         
         #region PEG optimizations
@@ -796,8 +806,9 @@ namespace Clippit.Excel
                 public byte low;
                 public byte high;
             }
-            System.Collections.BitArray charSet_;
-            bool bNegated_;
+
+            private System.Collections.BitArray charSet_;
+            private bool bNegated_;
             public BytesetData(System.Collections.BitArray b)
                 : this(b, false)
             {
@@ -987,7 +998,8 @@ namespace Clippit.Excel
         }
         #endregion Setting host variables
         #region Error handling
-        void LogOutMsg(string sErrKind, string sMsg)
+
+        private void LogOutMsg(string sErrKind, string sMsg)
         {
             errOut_.WriteLine("<{0}>{1}:{2}", pos_, sErrKind, sMsg);
             errOut_.Flush();
@@ -1448,7 +1460,7 @@ namespace Clippit.Excel
     {
         #region Data members
         protected string src_;
-        PegError errors;
+        private PegError errors;
         #endregion Data members
         #region PEG optimizations
         public sealed class OptimizedCharset
@@ -1459,8 +1471,9 @@ namespace Clippit.Excel
                 public char low;
                 public char high;
             }
-            System.Collections.BitArray charSet_;
-            bool bNegated_;
+
+            private System.Collections.BitArray charSet_;
+            private bool bNegated_;
             public OptimizedCharset(System.Collections.BitArray b)
                 : this(b, false)
             {
@@ -1644,7 +1657,8 @@ namespace Clippit.Excel
         }
         #endregion Setting host variables
         #region Error handling
-        void LogOutMsg(string sErrKind, string sMsg)
+
+        private void LogOutMsg(string sErrKind, string sMsg)
         {
             errors.GetLineAndCol(src_, pos_, out var lineNo, out var colNo);
             errOut_.WriteLine("<{0},{1},{2}>{3}:{4}", lineNo, colNo, maxpos_, sErrKind, sMsg);

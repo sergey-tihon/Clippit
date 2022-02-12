@@ -9,7 +9,7 @@ using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Word
 {
-    class ReverseRevisionsInfo
+    internal class ReverseRevisionsInfo
     {
         public bool InInsert;
     }
@@ -2053,13 +2053,13 @@ namespace Clippit.Word
             return withBlockLevelContentControls;
         }
 
-        enum GroupingType
+        private enum GroupingType
         {
             DeletedRange,
             Other,
         };
 
-        class GroupingInfo
+        private class GroupingInfo
         {
             public GroupingType GroupingType;
             public int GroupingKey;

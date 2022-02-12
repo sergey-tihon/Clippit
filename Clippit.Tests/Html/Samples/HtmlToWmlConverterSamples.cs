@@ -94,7 +94,7 @@ namespace Clippit.Tests.Html.Samples
             doc.SaveAs(destDocxFi.FullName);
         }
 
-        static string defaultCss =
+        private static string defaultCss =
             @"html, address,
 blockquote,
 body, dd, div,
@@ -168,7 +168,7 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
 
 ";
 
-        static string userCss = @"";
+        private static string userCss = @"";
         
         private static string[] s_productNames = {
             "Unicycle",

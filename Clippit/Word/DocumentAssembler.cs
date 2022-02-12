@@ -1149,7 +1149,7 @@ namespace Clippit.Word
             return p;
         }
 
-        static object ContentReplacementTransform(XNode node, XElement data, TemplateError templateError, OpenXmlPart part)
+        private static object ContentReplacementTransform(XNode node, XElement data, TemplateError templateError, OpenXmlPart part)
         {
             if (node is not XElement element)
                 return node;

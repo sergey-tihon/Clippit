@@ -3,7 +3,7 @@
 
 namespace Clippit.Word
 {
-    class ListItemTextGetter_Default
+    internal class ListItemTextGetter_Default
     {
         private static string[] RomanOnes =
         {

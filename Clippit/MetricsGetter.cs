@@ -481,7 +481,7 @@ namespace Clippit
             }
         }
 
-        class FormattingMetrics
+        private class FormattingMetrics
         {
             public int RunCount;
             public int RunWithoutRprCount;

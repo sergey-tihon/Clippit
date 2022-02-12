@@ -1799,7 +1799,7 @@ listSeparator
         }
     }
 
-    class ContentPartRelTypeIdTuple
+    internal class ContentPartRelTypeIdTuple
     {
         public OpenXmlPart ContentPart { get; set; }
         public string RelationshipType { get; set; }
@@ -1807,7 +1807,7 @@ listSeparator
     }
 
     // This class is used to prevent duplication of images
-    class ImageData
+    internal class ImageData
     {
         private string ContentType { get; set; }
         private byte[] Image { get; set; }
@@ -1856,7 +1856,7 @@ listSeparator
     }
 
     // This class is used to prevent duplication of media
-    class MediaData
+    internal class MediaData
     {
         private string ContentType { get; set; }
         private byte[] Media { get; set; }

@@ -4071,7 +4071,7 @@ namespace Clippit.Html
         public int Id;
     }
 
-    class HtmlToWmlFontUpdater
+    internal class HtmlToWmlFontUpdater
     {
         public static void UpdateFontsPart(WordprocessingDocument wDoc, XElement html, HtmlToWmlConverterSettings settings)
         {
@@ -4100,7 +4100,7 @@ namespace Clippit.Html
         }
     }
 
-    class NumberingUpdater
+    internal class NumberingUpdater
     {
         public static void InitializeNumberingPart(WordprocessingDocument wDoc)
         {
@@ -4511,7 +4511,7 @@ namespace Clippit.Html
         }
     }
 
-    class StylesUpdater
+    internal class StylesUpdater
     {
         public static void UpdateStylesPart(
             WordprocessingDocument wDoc,
@@ -5199,7 +5199,7 @@ namespace Clippit.Html
         }
     }
 
-    class ThemeUpdater
+    internal class ThemeUpdater
     {
         public static void UpdateThemePart(WordprocessingDocument wDoc, XElement html, HtmlToWmlConverterSettings settings)
         {
