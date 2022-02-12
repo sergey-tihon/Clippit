@@ -2600,7 +2600,7 @@ namespace Clippit
                 var sb = new StringBuilder();
                 foreach (IGrouping<string, ComparisonUnitAtom> group in grouped)
                 {
-                    sb.AppendFormat("Group Key: {0}", @group.Key);
+                    sb.Append($"Group Key: {@group.Key}");
                     sb.Append(Environment.NewLine);
                     foreach (ComparisonUnitAtom groupChildItem in @group)
                     {

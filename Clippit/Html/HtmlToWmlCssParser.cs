@@ -54,7 +54,7 @@ namespace Clippit.Html
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("[{0}", Operand);
+            sb.Append($"[{Operand}");
             if (m_op.HasValue)
             {
                 switch (m_op.Value)
@@ -179,11 +179,11 @@ namespace Clippit.Html
             }
 
             var sb = new StringBuilder();
-            sb.AppendFormat("{0} ", Name);
+            sb.Append($"{Name} ");
 
             if (Expression != null)
             {
-                sb.AppendFormat("{0} ", Expression);
+                sb.Append($"{Expression} ");
             }
 
             bool first = true;
@@ -270,7 +270,7 @@ namespace Clippit.Html
             sb.Append("@import ");
             if (Expression != null)
             {
-                sb.AppendFormat("{0} ", Expression);
+                sb.Append($"{Expression} ");
             }
             bool first = true;
             foreach (CssMedium med in Mediums)
@@ -326,7 +326,7 @@ namespace Clippit.Html
             sb.Append("@page ");
             if (Expression != null)
             {
-                sb.AppendFormat("{0} ", Expression);
+                sb.Append($"{Expression} ");
             }
             sb.Append("{" + Environment.NewLine);
 
@@ -409,8 +409,7 @@ namespace Clippit.Html
                 }
                 else
                 {
-                    sb.AppendFormat("{0} ",
-                        term.Separator.HasValue ? term.Separator.Value.ToString() : "");
+                    sb.Append($"{(term.Separator.HasValue ? term.Separator.Value.ToString() : "")} ");
                 }
                 sb.Append(term.ToString());
             }
@@ -459,7 +458,7 @@ namespace Clippit.Html
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("{0}(", Name);
+            sb.Append($"{Name}(");
             if (Expression != null)
             {
                 bool first = true;
@@ -809,15 +808,15 @@ namespace Clippit.Html
             }
             if (ID != null)
             {
-                sb.AppendFormat("#{0}", ID);
+                sb.Append($"#{ID}");
             }
             if (Class != null)
             {
-                sb.AppendFormat(".{0}", Class);
+                sb.Append($".{Class}");
             }
             if (Pseudo != null)
             {
-                sb.AppendFormat(":{0}", Pseudo);
+                sb.Append($":{Pseudo}");
             }
             if (Attribute != null)
             {
@@ -882,7 +881,7 @@ namespace Clippit.Html
             StringBuilder sb = new StringBuilder();
             if (ParentRelationship != '\0')
             {
-                sb.AppendFormat("{0} ", ParentRelationship.ToString());
+                sb.Append($"{ParentRelationship.ToString()} ");
             }
             if (HasName)
             {
@@ -890,7 +889,7 @@ namespace Clippit.Html
             }
             foreach (string atr in Attributes)
             {
-                sb.AppendFormat("[{0}]", atr);
+                sb.Append($"[{atr}]");
             }
             if (HasClass)
             {
@@ -1007,11 +1006,11 @@ namespace Clippit.Html
             }
             else if (Type == CssTermType.Url)
             {
-                sb.AppendFormat("url('{0}')", Value);
+                sb.Append($"url('{Value}')");
             }
             else if (Type == CssTermType.Unicode)
             {
-                sb.AppendFormat("U\\{0}", Value.ToUpper());
+                sb.Append($"U\\{Value.ToUpper()}");
             }
             else if (Type == CssTermType.Hex)
             {

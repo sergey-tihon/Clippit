@@ -109,22 +109,15 @@ namespace Clippit
 
             if (ContentElement.Name == W.t || ContentElement.Name == W.delText)
             {
-                sb.AppendFormat(
-                    "Atom {0}: {1} {2} SHA1:{3} ",
-                    PadLocalName(xNamePad, this),
-                    ContentElement.Value,
-                    correlationStatus,
-                    SHA1Hash[..8]);
+                sb.Append(
+                    $"Atom {PadLocalName(xNamePad, this)}: {ContentElement.Value} {correlationStatus} SHA1:{SHA1Hash[..8]} ");
 
                 AppendAncestorsDump(sb, this);
             }
             else
             {
-                sb.AppendFormat(
-                    "Atom {0}:   {1} SHA1:{2} ",
-                    PadLocalName(xNamePad, this),
-                    correlationStatus,
-                    SHA1Hash[..8]);
+                sb.Append(
+                    $"Atom {PadLocalName(xNamePad, this)}:   {correlationStatus} SHA1:{SHA1Hash[..8]} ");
 
                 AppendAncestorsDump(sb, this);
             }
@@ -153,22 +146,15 @@ namespace Clippit
 
             if (ContentElement.Name == W.t || ContentElement.Name == W.delText)
             {
-                sb.AppendFormat(
-                    "Atom {0}: {1} {2} SHA1:{3} ",
-                    PadLocalName(xNamePad, this),
-                    ContentElement.Value,
-                    correlationStatus,
-                    SHA1Hash[..8]);
+                sb.Append(
+                    $"Atom {PadLocalName(xNamePad, this)}: {ContentElement.Value} {correlationStatus} SHA1:{SHA1Hash[..8]} ");
 
                 AppendAncestorsUnidsDump(sb, this);
             }
             else
             {
-                sb.AppendFormat(
-                    "Atom {0}:   {1} SHA1:{2} ",
-                    PadLocalName(xNamePad, this),
-                    correlationStatus,
-                    SHA1Hash[..8]);
+                sb.Append(
+                    $"Atom {PadLocalName(xNamePad, this)}:   {correlationStatus} SHA1:{SHA1Hash[..8]} ");
 
                 AppendAncestorsUnidsDump(sb, this);
             }
