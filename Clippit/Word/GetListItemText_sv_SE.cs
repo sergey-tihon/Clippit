@@ -41,13 +41,13 @@ namespace Clippit.Word
 		}
 		private static string NumberAsCardinalText(string languageCultureName, int levelNumber, string numFmt)
 		{
-			string result = "";
+			var result = "";
 
 			var sLevel = (levelNumber + 10000).ToString();
-			int thousands = int.Parse(sLevel.Substring(1, 1));
-			int hundreds = int.Parse(sLevel.Substring(2, 1));
-			int tens = int.Parse(sLevel.Substring(3, 1));
-			int ones = int.Parse(sLevel.Substring(4, 1));
+			var thousands = int.Parse(sLevel.Substring(1, 1));
+			var hundreds = int.Parse(sLevel.Substring(2, 1));
+			var tens = int.Parse(sLevel.Substring(3, 1));
+			var ones = int.Parse(sLevel.Substring(4, 1));
 
 
 			//Validation
@@ -118,7 +118,7 @@ namespace Clippit.Word
 		}
 		private static string NumberAsOrdinalText(string languageCultureName, int levelNumber, string numFmt)
 		{
-			string result = "";
+			var result = "";
 
 			if (levelNumber <= 0)
 				throw new ArgumentOutOfRangeException(nameof(levelNumber), "Converting a zero or negative levelNumber to ordinal text is not supported");
@@ -129,10 +129,10 @@ namespace Clippit.Word
 				return "Första";
 
 			var sLevel = (levelNumber + 10000).ToString();
-			int thousands = int.Parse(sLevel.Substring(1, 1));
-			int hundreds = int.Parse(sLevel.Substring(2, 1));
-			int tens = int.Parse(sLevel.Substring(3, 1));
-			int ones = int.Parse(sLevel.Substring(4, 1));
+			var thousands = int.Parse(sLevel.Substring(1, 1));
+			var hundreds = int.Parse(sLevel.Substring(2, 1));
+			var tens = int.Parse(sLevel.Substring(3, 1));
+			var ones = int.Parse(sLevel.Substring(4, 1));
 
 
 			/* exact thousands */
@@ -192,7 +192,7 @@ namespace Clippit.Word
 		}
 		private static string NumberAsOrdinal(string languageCultureName, int levelNumber, string numFmt)
 		{
-			string levelAsString = levelNumber.ToString();
+			var levelAsString = levelNumber.ToString();
 
             if (levelAsString == null)
                 return "";

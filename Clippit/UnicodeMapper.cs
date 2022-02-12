@@ -73,8 +73,8 @@ namespace Clippit
             // unicode characters.
             if (element.Name == W.br)
             {
-                XAttribute typeAttribute = element.Attribute(W.type);
-                string type = typeAttribute != null ? typeAttribute.Value : null;
+                var typeAttribute = element.Attribute(W.type);
+                var type = typeAttribute != null ? typeAttribute.Value : null;
                 if (type is null or "textWrapping")
                     return CarriageReturn.ToString();
                 if (type == "page")
@@ -161,7 +161,7 @@ namespace Clippit
         /// <returns>The Unicode character used to represent the symbol.</returns>
         public static char SymToChar(string fontAttributeValue, int unicodeValue)
         {
-            int effectiveUnicodeValue = unicodeValue < 0x1000 ? 0xF000 + unicodeValue : unicodeValue;
+            var effectiveUnicodeValue = unicodeValue < 0x1000 ? 0xF000 + unicodeValue : unicodeValue;
             return SymToChar(fontAttributeValue, effectiveUnicodeValue.ToString("X4"));
         }
 
@@ -208,13 +208,13 @@ namespace Clippit
             if (sym.Name != W.sym)
                 throw new ArgumentException(string.Format("Not a w:sym: {0}", sym.Name), nameof(sym));
 
-            XAttribute fontAttribute = sym.Attribute(W.font);
-            string fontAttributeValue = fontAttribute != null ? fontAttribute.Value : null;
+            var fontAttribute = sym.Attribute(W.font);
+            var fontAttributeValue = fontAttribute != null ? fontAttribute.Value : null;
             if (fontAttributeValue == null)
                 throw new ArgumentException("w:sym element has no w:font attribute.", nameof(sym));
 
-            XAttribute charAttribute = sym.Attribute(W._char);
-            string charAttributeValue = charAttribute != null ? charAttribute.Value : null;
+            var charAttribute = sym.Attribute(W._char);
+            var charAttributeValue = charAttribute != null ? charAttribute.Value : null;
             if (charAttributeValue == null)
                 throw new ArgumentException("w:sym element has no w:char attribute.", nameof(sym));
 
@@ -223,7 +223,7 @@ namespace Clippit
                 new XAttribute(W.font, fontAttributeValue),
                 new XAttribute(W._char, charAttributeValue),
                 new XAttribute(XNamespace.Xmlns + "w", W.w));
-            string standardizedSymString = standardizedSym.ToString(SaveOptions.None);
+            var standardizedSymString = standardizedSym.ToString(SaveOptions.None);
             if (SymStringToUnicodeCharDictionary.ContainsKey(standardizedSymString))
                 return SymStringToUnicodeCharDictionary[standardizedSymString];
 

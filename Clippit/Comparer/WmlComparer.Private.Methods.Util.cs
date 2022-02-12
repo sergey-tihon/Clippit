@@ -18,32 +18,32 @@ namespace Clippit
             PackagePart partInNewDocument,
             XElement contentElement)
         {
-            List<XElement> elementsToUpdate = contentElement
+            var elementsToUpdate = contentElement
                 .Descendants()
                 .Where(d => d.Attributes().Any(a => ComparisonUnitWord.RelationshipAttributeNames.Contains(a.Name)))
                 .ToList();
 
-            foreach (XElement element in elementsToUpdate)
+            foreach (var element in elementsToUpdate)
             {
-                List<XAttribute> attributesToUpdate = element
+                var attributesToUpdate = element
                     .Attributes()
                     .Where(a => ComparisonUnitWord.RelationshipAttributeNames.Contains(a.Name))
                     .ToList();
 
-                foreach (XAttribute att in attributesToUpdate)
+                foreach (var att in attributesToUpdate)
                 {
                     var rId = (string) att;
 
-                    PackageRelationship relationshipForDeletedPart = partOfDeletedContent.GetRelationship(rId);
+                    var relationshipForDeletedPart = partOfDeletedContent.GetRelationship(rId);
 
-                    Uri targetUri = PackUriHelper
+                    var targetUri = PackUriHelper
                         .ResolvePartUri(
                             new Uri(partOfDeletedContent.Uri.ToString(), UriKind.Relative),
                             relationshipForDeletedPart.TargetUri);
 
-                    PackagePart relatedPackagePart = partOfDeletedContent.Package.GetPart(targetUri);
-                    string[] uriSplit = relatedPackagePart.Uri.ToString().Split('/');
-                    string[] last = uriSplit[^1].Split('.');
+                    var relatedPackagePart = partOfDeletedContent.Package.GetPart(targetUri);
+                    var uriSplit = relatedPackagePart.Uri.ToString().Split('/');
+                    var last = uriSplit[^1].Split('.');
                     string uriString;
                     if (last.Length == 2)
                     {
@@ -56,20 +56,20 @@ namespace Clippit
                                     "P" + Guid.NewGuid().ToString().Replace("-", "");
                     }
 
-                    Uri uri = relatedPackagePart.Uri.IsAbsoluteUri
+                    var uri = relatedPackagePart.Uri.IsAbsoluteUri
                         ? new Uri(uriString, UriKind.Absolute)
                         : new Uri(uriString, UriKind.Relative);
 
-                    PackagePart newPart = partInNewDocument.Package.CreatePart(uri, relatedPackagePart.ContentType);
+                    var newPart = partInNewDocument.Package.CreatePart(uri, relatedPackagePart.ContentType);
 
                     // ReSharper disable once PossibleNullReferenceException
-                    using (Stream oldPartStream = relatedPackagePart.GetStream())
-                    using (Stream newPartStream = newPart.GetStream())
+                    using (var oldPartStream = relatedPackagePart.GetStream())
+                    using (var newPartStream = newPart.GetStream())
                     {
                         oldPartStream.CopyTo(newPartStream);
                     }
 
-                    string newRid = Relationships.GetNewRelationshipId();
+                    var newRid = Relationships.GetNewRelationshipId();
                     partInNewDocument.CreateRelationship(newPart.Uri, TargetMode.Internal,
                         relationshipForDeletedPart.RelationshipType, newRid);
                     att.Value = newRid;
@@ -77,13 +77,13 @@ namespace Clippit
                     if (newPart.ContentType.EndsWith("xml"))
                     {
                         XDocument newPartXDoc;
-                        using (Stream stream = newPart.GetStream())
+                        using (var stream = newPart.GetStream())
                         {
                             newPartXDoc = XDocument.Load(stream);
                             MoveRelatedPartsToDestination(relatedPackagePart, newPart, newPartXDoc.Root);
                         }
 
-                        using (Stream stream = newPart.GetStream())
+                        using (var stream = newPart.GetStream())
                             newPartXDoc.Save(stream);
                     }
                 }

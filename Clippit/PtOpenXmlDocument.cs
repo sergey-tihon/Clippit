@@ -386,7 +386,7 @@ namespace Clippit
         }
         public static OpenXmlMemoryStreamDocument CreateSpreadsheetDocument()
         {
-            MemoryStream stream = new MemoryStream();
+            var stream = new MemoryStream();
             using var doc = SpreadsheetDocument.Create(stream, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
             doc.AddWorkbookPart();
             XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";

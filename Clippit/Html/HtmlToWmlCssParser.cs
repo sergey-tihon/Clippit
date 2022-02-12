@@ -53,7 +53,7 @@ namespace Clippit.Html
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append($"[{Operand}");
             if (m_op.HasValue)
             {
@@ -186,8 +186,8 @@ namespace Clippit.Html
                 sb.Append($"{Expression} ");
             }
 
-            bool first = true;
-            foreach (CssMedium med in Mediums)
+            var first = true;
+            foreach (var med in Mediums)
             {
                 if (first)
                 {
@@ -201,7 +201,7 @@ namespace Clippit.Html
                 sb.Append(med.ToString());
             }
 
-            bool HasBlock = (this.Declarations.Count > 0 || this.Directives.Count > 0 || this.RuleSets.Count > 0);
+            var HasBlock = (this.Declarations.Count > 0 || this.Directives.Count > 0 || this.RuleSets.Count > 0);
 
             if (!HasBlock)
             {
@@ -211,18 +211,18 @@ namespace Clippit.Html
 
             sb.Append(" {" + Environment.NewLine + start);
 
-            foreach (CssDirective dir in Directives)
+            foreach (var dir in Directives)
             {
                 sb.AppendFormat("{0}" + Environment.NewLine, dir.ToCharSetString(start + "\t"));
             }
 
-            foreach (CssRuleSet rules in RuleSets)
+            foreach (var rules in RuleSets)
             {
                 sb.AppendFormat("{0}" + Environment.NewLine, rules.ToString(indentLevel + 1));
             }
 
             first = true;
-            foreach (CssDeclaration decl in Declarations)
+            foreach (var decl in Declarations)
             {
                 if (first)
                 {
@@ -242,11 +242,11 @@ namespace Clippit.Html
 
         private string ToFontFaceString(string start)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append("@font-face {");
 
-            bool first = true;
-            foreach (CssDeclaration decl in Declarations)
+            var first = true;
+            foreach (var decl in Declarations)
             {
                 if (first)
                 {
@@ -266,14 +266,14 @@ namespace Clippit.Html
 
         private string ToImportString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append("@import ");
             if (Expression != null)
             {
                 sb.Append($"{Expression} ");
             }
-            bool first = true;
-            foreach (CssMedium med in Mediums)
+            var first = true;
+            foreach (var med in Mediums)
             {
                 if (first)
                 {
@@ -292,11 +292,11 @@ namespace Clippit.Html
 
         private string ToMediaString(int indentLevel)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append("@media");
 
-            bool first = true;
-            foreach (CssMedium medium in Mediums)
+            var first = true;
+            foreach (var medium in Mediums)
             {
                 if (first)
                 {
@@ -311,7 +311,7 @@ namespace Clippit.Html
             }
             sb.Append(" {" + Environment.NewLine);
 
-            foreach (CssRuleSet ruleset in RuleSets)
+            foreach (var ruleset in RuleSets)
             {
                 sb.AppendFormat("{0}" + Environment.NewLine, ruleset.ToString(indentLevel + 1));
             }
@@ -322,7 +322,7 @@ namespace Clippit.Html
 
         private string ToPageString(string start)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append("@page ");
             if (Expression != null)
             {
@@ -330,8 +330,8 @@ namespace Clippit.Html
             }
             sb.Append("{" + Environment.NewLine);
 
-            bool first = true;
-            foreach (CssDeclaration decl in Declarations)
+            var first = true;
+            foreach (var decl in Declarations)
             {
                 if (first)
                 {
@@ -399,9 +399,9 @@ namespace Clippit.Html
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            bool first = true;
-            foreach (CssTerm term in Terms)
+            var sb = new StringBuilder();
+            var first = true;
+            foreach (var term in Terms)
             {
                 if (first)
                 {
@@ -427,14 +427,14 @@ namespace Clippit.Html
 
         // will only be called on expression that is in terms of points
         public static explicit operator TPoint(CssExpression e) => 
-            new TPoint(double.Parse(e.Terms.First().Value, CultureInfo.InvariantCulture));
+            new(double.Parse(e.Terms.First().Value, CultureInfo.InvariantCulture));
 
         // will only be called on expression that is in terms of points
         public static explicit operator Twip(CssExpression length)
         {
             if (length.Terms.Count == 1)
             {
-                CssTerm term = length.Terms.First();
+                var term = length.Terms.First();
                 if (term.Unit == CssUnit.PT)
                 {
                     if (double.TryParse(term.Value.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var ptValue))
@@ -457,12 +457,12 @@ namespace Clippit.Html
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append($"{Name}(");
             if (Expression != null)
             {
-                bool first = true;
-                foreach (CssTerm t in Expression.Terms)
+                var first = true;
+                foreach (var t in Expression.Terms)
                 {
                     if (first)
                     {
@@ -473,7 +473,7 @@ namespace Clippit.Html
                         sb.Append(", ");
                     }
 
-                    bool quote = false;
+                    var quote = false;
                     if (t.Type == CssTermType.String && !t.Value.EndsWith("="))
                     {
                         quote = true;
@@ -533,7 +533,7 @@ namespace Clippit.Html
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder(Value);
+            var sb = new StringBuilder(Value);
             if (Type == CssValueType.Unit)
             {
                 sb.Append(Unit.ToString().ToLower());
@@ -552,8 +552,8 @@ namespace Clippit.Html
                     || (Type == CssValueType.String && Value.StartsWith("#")))
                     && (Value.Length == 6 || (Value.Length == 7 && Value.StartsWith("#"))))
                 {
-                    bool hex = true;
-                    foreach (char c in Value)
+                    var hex = true;
+                    foreach (var c in Value)
                     {
                         if (!char.IsDigit(c)
                             && c != '#'
@@ -578,8 +578,8 @@ namespace Clippit.Html
                 }
                 else if (Type == CssValueType.String)
                 {
-                    bool number = true;
-                    foreach (char c in Value)
+                    var number = true;
+                    foreach (var c in Value)
                     {
                         if (!char.IsDigit(c))
                         {
@@ -600,7 +600,7 @@ namespace Clippit.Html
 
         public Color ToColor()
         {
-            string hex = "000000";
+            var hex = "000000";
             if (Type == CssValueType.Hex)
             {
                 hex = Value.Length switch
@@ -617,19 +617,19 @@ namespace Clippit.Html
                     return c;
                 }
             }
-            int r = ConvertFromHex(hex[..2]);
-            int g = ConvertFromHex(hex.Substring(2, 2));
-            int b = ConvertFromHex(hex[4..]);
+            var r = ConvertFromHex(hex[..2]);
+            var g = ConvertFromHex(hex.Substring(2, 2));
+            var b = ConvertFromHex(hex[4..]);
             return Color.FromArgb(r, g, b);
         }
 
         private int ConvertFromHex(string input)
         {
             int val;
-            int result = 0;
-            for (int i = 0; i < input.Length; i++)
+            var result = 0;
+            for (var i = 0; i < input.Length; i++)
             {
-                string chunk = input.Substring(i, 1).ToUpper();
+                var chunk = input.Substring(i, 1).ToUpper();
                 switch (chunk)
                 {
                     case "A":
@@ -680,15 +680,15 @@ namespace Clippit.Html
 
         public string ToString(int indentLevel)
         {
-            string start = "";
-            for (int i = 0; i < indentLevel; i++)
+            var start = "";
+            for (var i = 0; i < indentLevel; i++)
             {
                 start += "\t";
             }
 
-            StringBuilder sb = new StringBuilder();
-            bool first = true;
-            foreach (CssSelector sel in Selectors)
+            var sb = new StringBuilder();
+            var first = true;
+            foreach (var sel in Selectors)
             {
                 if (first)
                 {
@@ -704,7 +704,7 @@ namespace Clippit.Html
             sb.Append(" {" + Environment.NewLine);
             sb.Append(start);
 
-            foreach (CssDeclaration dec in Declarations)
+            foreach (var dec in Declarations)
             {
                 sb.AppendFormat("\t{0};" + Environment.NewLine + "{1}", dec.ToString(), start);
             }
@@ -720,9 +720,9 @@ namespace Clippit.Html
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            bool first = true;
-            foreach (CssSimpleSelector ss in SimpleSelectors)
+            var sb = new StringBuilder();
+            var first = true;
+            foreach (var ss in SimpleSelectors)
             {
                 if (first)
                 {
@@ -784,7 +784,7 @@ namespace Clippit.Html
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             if (m_combinator.HasValue)
             {
                 switch (m_combinator.Value)
@@ -876,7 +876,7 @@ namespace Clippit.Html
 
         public string ToShortString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             if (ParentRelationship != '\0')
             {
                 sb.Append($"{ParentRelationship.ToString()} ");
@@ -885,7 +885,7 @@ namespace Clippit.Html
             {
                 sb.Append(Name);
             }
-            foreach (string atr in Attributes)
+            foreach (var atr in Attributes)
             {
                 sb.Append($"[{atr}]");
             }
@@ -996,7 +996,7 @@ namespace Clippit.Html
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (Type == CssTermType.Function)
             {
@@ -1046,8 +1046,8 @@ namespace Clippit.Html
                     && (Value.Length is 6 or 3 || (Value.Length is 7 or 4
                                                    && Value.StartsWith("#"))))
                 {
-                    bool hex = true;
-                    foreach (char c in Value)
+                    var hex = true;
+                    foreach (var c in Value)
                     {
                         if (!char.IsDigit(c)
                             && c != '#'
@@ -1072,8 +1072,8 @@ namespace Clippit.Html
                 }
                 else if (Type == CssTermType.String)
                 {
-                    bool number = true;
-                    foreach (char c in Value)
+                    var number = true;
+                    foreach (var c in Value)
                     {
                         if (!char.IsDigit(c))
                         {
@@ -1096,7 +1096,7 @@ namespace Clippit.Html
                         || (Function.Name.ToLower().Equals("rgba") && Function.Expression.Terms.Count == 4)
                         )
                     {
-                        for (int i = 0; i < Function.Expression.Terms.Count; i++)
+                        for (var i = 0; i < Function.Expression.Terms.Count; i++)
                         {
                             if (Function.Expression.Terms[i].Type != CssTermType.Number)
                             {
@@ -1109,7 +1109,7 @@ namespace Clippit.Html
                       || (Function.Name.ToLower().Equals("hsla") && Function.Expression.Terms.Count == 4)
                       )
                     {
-                        for (int i = 0; i < Function.Expression.Terms.Count; i++)
+                        for (var i = 0; i < Function.Expression.Terms.Count; i++)
                         {
                             if (Function.Expression.Terms[i].Type != CssTermType.Number)
                             {
@@ -1149,7 +1149,7 @@ namespace Clippit.Html
 
         public Color ToColor()
         {
-            string hex = "000000";
+            var hex = "000000";
             if (Type == CssTermType.Hex)
             {
                 hex = Value.Length switch
@@ -1166,7 +1166,7 @@ namespace Clippit.Html
                     )
                 {
                     int fr = 0, fg = 0, fb = 0;
-                    for (int i = 0; i < Function.Expression.Terms.Count; i++)
+                    for (var i = 0; i < Function.Expression.Terms.Count; i++)
                     {
                         if (Function.Expression.Terms[i].Type != CssTermType.Number)
                         {
@@ -1189,7 +1189,7 @@ namespace Clippit.Html
                   )
                 {
                     int h = 0, s = 0, v = 0;
-                    for (int i = 0; i < Function.Expression.Terms.Count; i++)
+                    for (var i = 0; i < Function.Expression.Terms.Count; i++)
                     {
                         if (Function.Expression.Terms[i].Type != CssTermType.Number) { return Color.Black; }
                         switch (i)
@@ -1202,7 +1202,7 @@ namespace Clippit.Html
                                 break;
                         }
                     }
-                    HueSatVal hsv = new HueSatVal(h, s, v);
+                    var hsv = new HueSatVal(h, s, v);
                     return hsv.Color;
                 }
             }
@@ -1215,25 +1215,25 @@ namespace Clippit.Html
             }
             if (hex.Length == 3)
             {
-                string temp = "";
-                foreach (char c in hex)
+                var temp = "";
+                foreach (var c in hex)
                 {
                     temp += c.ToString() + c.ToString();
                 }
                 hex = temp;
             }
-            int r = ConvertFromHex(hex[..2]);
-            int g = ConvertFromHex(hex.Substring(2, 2));
-            int b = ConvertFromHex(hex[4..]);
+            var r = ConvertFromHex(hex[..2]);
+            var g = ConvertFromHex(hex.Substring(2, 2));
+            var b = ConvertFromHex(hex[4..]);
             return Color.FromArgb(r, g, b);
         }
         private int ConvertFromHex(string input)
         {
             int val;
-            int result = 0;
-            for (int i = 0; i < input.Length; i++)
+            var result = 0;
+            for (var i = 0; i < input.Length; i++)
             {
-                string chunk = input.Substring(i, 1).ToUpper();
+                var chunk = input.Substring(i, 1).ToUpper();
                 switch (chunk)
                 {
                     case "A":
@@ -1337,8 +1337,8 @@ namespace Clippit.Html
     {
         public CssDocument ParseText(string content)
         {
-            MemoryStream mem = new MemoryStream();
-            byte[] bytes = ASCIIEncoding.ASCII.GetBytes(content);
+            var mem = new MemoryStream();
+            var bytes = ASCIIEncoding.ASCII.GetBytes(content);
             mem.Write(bytes, 0, bytes.Length);
             try
             {
@@ -1346,7 +1346,7 @@ namespace Clippit.Html
             }
             catch (OpenXmlPowerToolsException e)
             {
-                string msg = e.Message + ".  CSS => " + content;
+                var msg = e.Message + ".  CSS => " + content;
                 throw new OpenXmlPowerToolsException(msg);
             }
         }
@@ -1354,8 +1354,8 @@ namespace Clippit.Html
         // following method should be private, as it does not properly re-throw OpenXmlPowerToolsException
         private CssDocument ParseStream(Stream stream)
         {
-            Scanner scanner = new Scanner(stream);
-            Parser parser = new Parser(scanner);
+            var scanner = new Scanner(stream);
+            var parser = new Parser(scanner);
             parser.Parse();
             CSSDocument = parser.CssDoc;
             return CSSDocument;
@@ -1400,9 +1400,9 @@ namespace Clippit.Html
         private void ConvertFromRGB(Color color)
         {
             double min; double max; double delta;
-            double r = (double)color.R / 255.0d;
-            double g = (double)color.G / 255.0d;
-            double b = (double)color.B / 255.0d;
+            var r = (double)color.R / 255.0d;
+            var g = (double)color.G / 255.0d;
+            var b = (double)color.B / 255.0d;
             double h; double s; double v;
 
             min = Math.Min(Math.Min(r, g), b);
@@ -1572,7 +1572,7 @@ namespace Clippit.Html
             {
                 "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "a", "b", "c", "d", "e", "f"
             };
-            foreach (char c in m_lookaheadToken.m_tokenValue)
+            foreach (var c in m_lookaheadToken.m_tokenValue)
             {
                 if (!hexes.Contains(c.ToString()))
                 {
@@ -1588,7 +1588,7 @@ namespace Clippit.Html
             {
                 return false;
             }
-            System.Collections.Generic.List<string> units = new System.Collections.Generic.List<string>(
+            var units = new System.Collections.Generic.List<string>(
                 new string[]
                 {
                     "em", "ex", "px", "gd", "rem", "vw", "vh", "vm", "ch", "mm", "cm", "in", "pt", "pc", "deg", "grad", "rad", "turn", "ms", "s", "hz", "khz"
@@ -1671,7 +1671,7 @@ namespace Clippit.Html
 
         private bool WeakSeparator(int n, int syFol, int repFol)
         {
-            int kind = m_lookaheadToken.m_tokenKind;
+            var kind = m_lookaheadToken.m_tokenKind;
             if (kind == n)
             {
                 Get();
@@ -2258,7 +2258,7 @@ namespace Clippit.Html
         {
             dec = new CssDeclaration();
             CssExpression exp = null;
-            string ident = "";
+            var ident = "";
 
             if (m_lookaheadToken.m_tokenKind == 24)
             {
@@ -2355,7 +2355,7 @@ namespace Clippit.Html
             ss.ElementName = "";
             string psd = null;
             CssAttribute atb = null;
-            CssSimpleSelector parent = ss;
+            var parent = ss;
             string ident = null;
 
             if (StartOf(3))
@@ -2419,7 +2419,7 @@ namespace Clippit.Html
             else SyntaxErr(55);
             while (StartOf(13))
             {
-                CssSimpleSelector child = new CssSimpleSelector();
+                var child = new CssSimpleSelector();
                 if (m_lookaheadToken.m_tokenKind == 33)
                 {
                     Get();
@@ -2597,7 +2597,7 @@ namespace Clippit.Html
         private void Term(out CssTerm trm)
         {
             trm = new CssTerm();
-            string val = "";
+            var val = "";
             CssExpression exp = null;
             string ident = null;
 
@@ -2627,7 +2627,7 @@ namespace Clippit.Html
             }
             else if (StartOf(15))
             {
-                bool minus = false;
+                var minus = false;
                 if (m_lookaheadToken.m_tokenKind == 24)
                 {
                     Get();
@@ -2736,7 +2736,7 @@ namespace Clippit.Html
                             Get();
                         }
                         Exprsn(out exp);
-                        CssFunction func = new CssFunction();
+                        var func = new CssFunction();
                         func.Name = trm.Value;
                         func.Expression = exp;
                         trm.Value = null;
@@ -2832,7 +2832,7 @@ namespace Clippit.Html
         private void HexValue(out string val)
         {
             val = "";
-            bool found = false;
+            var found = false;
 
             Expect(33);
             val += m_lastRecognizedToken.m_tokenValue;
@@ -3157,17 +3157,17 @@ namespace Clippit.Html
 
         public int Peek()
         {
-            int curPos = Pos;
-            int ch = Read();
+            var curPos = Pos;
+            var ch = Read();
             Pos = curPos;
             return ch;
         }
 
         public string GetString(int beg, int end)
         {
-            int len = 0;
-            char[] buf = new char[end - beg];
-            int oldPos = Pos;
+            var len = 0;
+            var buf = new char[end - beg];
+            var oldPos = Pos;
             Pos = beg;
             while (Pos < end)
                 buf[len++] = (char)Read();
@@ -3209,15 +3209,15 @@ namespace Clippit.Html
 
         private int ReadNextStreamChunk()
         {
-            int free = m_inputBuffer.Length - m_bufferLength;
+            var free = m_inputBuffer.Length - m_bufferLength;
             if (free == 0)
             {
-                byte[] newBuf = new byte[m_bufferLength * 2];
+                var newBuf = new byte[m_bufferLength * 2];
                 Array.Copy(m_inputBuffer, newBuf, m_bufferLength);
                 m_inputBuffer = newBuf;
                 free = m_bufferLength;
             }
-            int read = m_inputStream.Read(m_inputBuffer, m_bufferLength, free);
+            var read = m_inputStream.Read(m_inputBuffer, m_bufferLength, free);
             if (read > 0)
             {
                 m_inputStreamLength = m_bufferLength = (m_bufferLength + read);
@@ -3244,29 +3244,29 @@ namespace Clippit.Html
             }
             else if ((ch & 0xF0) == 0xF0)
             {
-                int c1 = ch & 0x07;
+                var c1 = ch & 0x07;
                 ch = base.Read();
-                int c2 = ch & 0x3F;
+                var c2 = ch & 0x3F;
                 ch = base.Read();
-                int c3 = ch & 0x3F;
+                var c3 = ch & 0x3F;
                 ch = base.Read();
-                int c4 = ch & 0x3F;
+                var c4 = ch & 0x3F;
                 ch = (((((c1 << 6) | c2) << 6) | c3) << 6) | c4;
             }
             else if ((ch & 0xE0) == 0xE0)
             {
-                int c1 = ch & 0x0F;
+                var c1 = ch & 0x0F;
                 ch = base.Read();
-                int c2 = ch & 0x3F;
+                var c2 = ch & 0x3F;
                 ch = base.Read();
-                int c3 = ch & 0x3F;
+                var c3 = ch & 0x3F;
                 ch = (((c1 << 6) | c2) << 6) | c3;
             }
             else if ((ch & 0xC0) == 0xC0)
             {
-                int c1 = ch & 0x1F;
+                var c1 = ch & 0x1F;
                 ch = base.Read();
-                int c2 = ch & 0x3F;
+                var c2 = ch & 0x3F;
                 ch = (c1 << 6) | c2;
             }
             return ch;
@@ -3301,25 +3301,25 @@ namespace Clippit.Html
         static Scanner()
         {
             s_start = new Hashtable(128);
-            for (int i = 65; i <= 84; ++i)
+            for (var i = 65; i <= 84; ++i)
                 s_start[i] = 1;
-            for (int i = 86; i <= 90; ++i)
+            for (var i = 86; i <= 90; ++i)
                 s_start[i] = 1;
-            for (int i = 95; i <= 95; ++i)
+            for (var i = 95; i <= 95; ++i)
                 s_start[i] = 1;
-            for (int i = 97; i <= 122; ++i)
+            for (var i = 97; i <= 122; ++i)
                 s_start[i] = 1;
-            for (int i = 10; i <= 10; ++i)
+            for (var i = 10; i <= 10; ++i)
                 s_start[i] = 2;
-            for (int i = 13; i <= 13; ++i)
+            for (var i = 13; i <= 13; ++i)
                 s_start[i] = 2;
-            for (int i = 48; i <= 57; ++i)
+            for (var i = 48; i <= 57; ++i)
                 s_start[i] = 3;
-            for (int i = 9; i <= 9; ++i)
+            for (var i = 9; i <= 9; ++i)
                 s_start[i] = 4;
-            for (int i = 11; i <= 12; ++i)
+            for (var i = 11; i <= 12; ++i)
                 s_start[i] = 4;
-            for (int i = 32; i <= 32; ++i)
+            for (var i = 32; i <= 32; ++i)
                 s_start[i] = 4;
             s_start[60] = 5;
             s_start[45] = 40;
@@ -3384,9 +3384,9 @@ namespace Clippit.Html
             if (m_currentInputCharacter == 0xEF)
             {
                 NextCh();
-                int ch1 = m_currentInputCharacter;
+                var ch1 = m_currentInputCharacter;
                 NextCh();
-                int ch2 = m_currentInputCharacter;
+                var ch2 = m_currentInputCharacter;
                 if (ch1 != 0xBB || ch2 != 0xBF)
                 {
                     throw new FatalError(String.Format("illegal byte order mark: EF {0,2:X} {1,2:X}", ch1, ch2));
@@ -3426,7 +3426,7 @@ namespace Clippit.Html
         {
             if (m_lengthOfCurrentToken >= m_textOfCurrentToken.Length)
             {
-                char[] newBuf = new char[2 * m_textOfCurrentToken.Length];
+                var newBuf = new char[2 * m_textOfCurrentToken.Length];
                 Array.Copy(m_textOfCurrentToken, 0, newBuf, 0, m_textOfCurrentToken.Length);
                 m_textOfCurrentToken = newBuf;
             }
@@ -3533,8 +3533,8 @@ namespace Clippit.Html
                 NextCh();
             if (m_currentInputCharacter == '/' && Comment0())
                 return NextToken();
-            int recKind = c_noSym;
-            int recEnd = m_currentCharacterBytePosition;
+            var recKind = c_noSym;
+            var recEnd = m_currentCharacterBytePosition;
             m_currentToken = new CssToken();
             m_currentToken.m_tokenPositionInBytes = m_currentCharacterBytePosition;
             m_currentToken.m_tokenColumn = m_columnNumberOfCurrentCharacter;
@@ -3871,7 +3871,7 @@ namespace Clippit.Html
             m_scannerBuffer.Pos = m_currentToken.m_tokenPositionInBytes;
             NextCh();
             m_lineNumberOfCurrentCharacter = m_currentToken.m_tokenLine; m_columnNumberOfCurrentCharacter = m_currentToken.m_tokenColumn; m_unicodeCharacterPosition = m_currentToken.m_tokenPositionInCharacters;
-            for (int i = 0; i < m_lengthOfCurrentToken; i++) NextCh();
+            for (var i = 0; i < m_lengthOfCurrentToken; i++) NextCh();
         }
 
         public CssToken Scan()

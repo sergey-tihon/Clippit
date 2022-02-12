@@ -52,7 +52,7 @@ namespace Clippit.Word
             // {1} rightTabPosition (default = 9350)
             // {2} switches
 
-            String xmlString =
+            var xmlString =
 @"<w:sdt xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
   <w:sdtPr>
     <w:docPartObj>
@@ -111,20 +111,20 @@ namespace Clippit.Word
   </w:sdtContent>
 </w:sdt>";
 
-            XmlReader sdtReader = XmlReader.Create(new StringReader(String.Format(xmlString, title, rightTabPos, switches)));
-            XElement sdt = XElement.Load(sdtReader);
+            var sdtReader = XmlReader.Create(new StringReader(String.Format(xmlString, title, rightTabPos, switches)));
+            var sdt = XElement.Load(sdtReader);
 
-            XDocument mainXDoc = doc.MainDocumentPart.GetXDocument(out var namespaceManager);
+            var mainXDoc = doc.MainDocumentPart.GetXDocument(out var namespaceManager);
             namespaceManager.AddNamespace("w", "http://schemas.openxmlformats.org/wordprocessingml/2006/main");
-            XElement addBefore = mainXDoc.XPathSelectElement(xPath, namespaceManager);
+            var addBefore = mainXDoc.XPathSelectElement(xPath, namespaceManager);
             if (addBefore == null)
                 throw new OpenXmlPowerToolsException("XPath expression did not select an element");
 
             addBefore.AddBeforeSelf(sdt);
             doc.MainDocumentPart.PutXDocument();
 
-            XDocument settingsXDoc = doc.MainDocumentPart.DocumentSettingsPart.GetXDocument();
-            XElement updateFields = settingsXDoc.Descendants(W.updateFields).FirstOrDefault();
+            var settingsXDoc = doc.MainDocumentPart.DocumentSettingsPart.GetXDocument();
+            var updateFields = settingsXDoc.Descendants(W.updateFields).FirstOrDefault();
             if (updateFields != null)
                 updateFields.Attribute(W.val).Value = "true";
             else
@@ -158,7 +158,7 @@ namespace Clippit.Word
             // {0} rightTabPosition (default = 9350)
             // {1} switches
 
-            string xmlString =
+            var xmlString =
 @"<w:p xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
   <w:pPr>
     <w:pStyle w:val='TableofFigures'/>
@@ -182,22 +182,22 @@ namespace Clippit.Word
     <w:fldChar w:fldCharType='end'/>
   </w:r>
 </w:p>";
-            XDocument mainXDoc = doc.MainDocumentPart.GetXDocument();
+            var mainXDoc = doc.MainDocumentPart.GetXDocument();
 
-            XmlReader paragraphReader = XmlReader.Create(new StringReader(String.Format(xmlString, rightTabPos, switches)));
-            XElement paragraph = XElement.Load(paragraphReader);
-            XmlNameTable nameTable = paragraphReader.NameTable;
-            XmlNamespaceManager namespaceManager = new XmlNamespaceManager(nameTable);
+            var paragraphReader = XmlReader.Create(new StringReader(String.Format(xmlString, rightTabPos, switches)));
+            var paragraph = XElement.Load(paragraphReader);
+            var nameTable = paragraphReader.NameTable;
+            var namespaceManager = new XmlNamespaceManager(nameTable);
             namespaceManager.AddNamespace("w", "http://schemas.openxmlformats.org/wordprocessingml/2006/main");
-            XElement addBefore = mainXDoc.XPathSelectElement(xPath, namespaceManager);
+            var addBefore = mainXDoc.XPathSelectElement(xPath, namespaceManager);
             if (addBefore == null)
                 throw new OpenXmlPowerToolsException("XPath expression did not select an element");
 
             addBefore.AddBeforeSelf(paragraph);
             doc.MainDocumentPart.PutXDocument();
 
-            XDocument settingsXDoc = doc.MainDocumentPart.DocumentSettingsPart.GetXDocument();
-            XElement updateFields = settingsXDoc.Descendants(W.updateFields).FirstOrDefault();
+            var settingsXDoc = doc.MainDocumentPart.DocumentSettingsPart.GetXDocument();
+            var updateFields = settingsXDoc.Descendants(W.updateFields).FirstOrDefault();
             if (updateFields != null)
                 updateFields.Attribute(W.val).Value = "true";
             else
@@ -230,7 +230,7 @@ namespace Clippit.Word
             // {0} rightTabPosition (default = 9350)
             // {1} switches
 
-            string xmlString =
+            var xmlString =
 @"<w:p xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
   <w:pPr>
     <w:pStyle w:val='TOAHeading'/>
@@ -265,22 +265,22 @@ namespace Clippit.Word
   </w:r>
 </w:p>";
 
-            XDocument mainXDoc = doc.MainDocumentPart.GetXDocument();
+            var mainXDoc = doc.MainDocumentPart.GetXDocument();
 
-            XmlReader paragraphReader = XmlReader.Create(new StringReader(String.Format(xmlString, rightTabPos, switches)));
-            XElement paragraph = XElement.Load(paragraphReader);
-            XmlNameTable nameTable = paragraphReader.NameTable;
-            XmlNamespaceManager namespaceManager = new XmlNamespaceManager(nameTable);
+            var paragraphReader = XmlReader.Create(new StringReader(String.Format(xmlString, rightTabPos, switches)));
+            var paragraph = XElement.Load(paragraphReader);
+            var nameTable = paragraphReader.NameTable;
+            var namespaceManager = new XmlNamespaceManager(nameTable);
             namespaceManager.AddNamespace("w", "http://schemas.openxmlformats.org/wordprocessingml/2006/main");
-            XElement addBefore = mainXDoc.XPathSelectElement(xPath, namespaceManager);
+            var addBefore = mainXDoc.XPathSelectElement(xPath, namespaceManager);
             if (addBefore == null)
                 throw new OpenXmlPowerToolsException("XPath expression did not select an element");
 
             addBefore.AddBeforeSelf(paragraph);
             doc.MainDocumentPart.PutXDocument();
 
-            XDocument settingsXDoc = doc.MainDocumentPart.DocumentSettingsPart.GetXDocument();
-            XElement updateFields = settingsXDoc.Descendants(W.updateFields).FirstOrDefault();
+            var settingsXDoc = doc.MainDocumentPart.DocumentSettingsPart.GetXDocument();
+            var updateFields = settingsXDoc.Descendants(W.updateFields).FirstOrDefault();
             if (updateFields != null)
                 updateFields.Attribute(W.val).Value = "true";
             else
@@ -296,17 +296,17 @@ namespace Clippit.Word
         {
             if (existing != null)
                 return;
-            XElement newXElement = XElement.Parse(newElement);
+            var newXElement = XElement.Parse(newElement);
             newXElement.Attributes().Where(a => a.IsNamespaceDeclaration).Remove();
             partXDoc.Root.Add(newXElement);
         }
 
         private static void UpdateFontTablePart(WordprocessingDocument doc)
         {
-            FontTablePart fontTablePart = doc.MainDocumentPart.FontTablePart;
+            var fontTablePart = doc.MainDocumentPart.FontTablePart;
             if (fontTablePart == null)
                 throw new Exception("Todo need to insert font table part");
-            XDocument fontTableXDoc = fontTablePart.GetXDocument();
+            var fontTableXDoc = fontTablePart.GetXDocument();
 
             AddElementIfMissing(fontTableXDoc,
                 fontTableXDoc
@@ -326,7 +326,7 @@ namespace Clippit.Word
 
         private static void UpdatePartForToc(OpenXmlPart part)
         {
-            XDocument xDoc = part.GetXDocument();
+            var xDoc = part.GetXDocument();
 
             AddElementIfMissing(
                 xDoc,
@@ -490,7 +490,7 @@ namespace Clippit.Word
 
         private static void UpdateStylesWithEffectsPartForToc(WordprocessingDocument doc)
         {
-            StylesWithEffectsPart stylesWithEffectsPart = doc.MainDocumentPart.StylesWithEffectsPart;
+            var stylesWithEffectsPart = doc.MainDocumentPart.StylesWithEffectsPart;
             if (stylesWithEffectsPart == null)
                 return;
             UpdatePartForToc(stylesWithEffectsPart);
@@ -498,7 +498,7 @@ namespace Clippit.Word
 
         private static void UpdatePartForTof(OpenXmlPart part)
         {
-            XDocument xDoc = part.GetXDocument();
+            var xDoc = part.GetXDocument();
 
             AddElementIfMissing(
                 xDoc,
@@ -544,7 +544,7 @@ namespace Clippit.Word
 
         private static void UpdateStylesWithEffectsPartForTof(WordprocessingDocument doc)
         {
-            StylesWithEffectsPart stylesWithEffectsPart = doc.MainDocumentPart.StylesWithEffectsPart;
+            var stylesWithEffectsPart = doc.MainDocumentPart.StylesWithEffectsPart;
             if (stylesWithEffectsPart == null)
                 return;
             UpdatePartForTof(stylesWithEffectsPart);
@@ -552,7 +552,7 @@ namespace Clippit.Word
 
         private static void UpdatePartForToa(OpenXmlPart part)
         {
-            XDocument xDoc = part.GetXDocument();
+            var xDoc = part.GetXDocument();
 
             AddElementIfMissing(
                 xDoc,

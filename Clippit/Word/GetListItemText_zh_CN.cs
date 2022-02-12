@@ -7,7 +7,7 @@ namespace Clippit.Word
     {
         public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
         {
-            string[] ccTDigitCharacters = new[] {
+            var ccTDigitCharacters = new[] {
                 "",
                 "一",
                 "二",
@@ -19,12 +19,12 @@ namespace Clippit.Word
                 "八",
                 "九",
             };
-            string tenCharacter = "十";
-            string hundredCharacter = "百";
-            string thousandCharacter = "千";
-            string andCharacter = "〇";
+            var tenCharacter = "十";
+            var hundredCharacter = "百";
+            var thousandCharacter = "千";
+            var andCharacter = "〇";
 
-            string[] ccDigitCharacters = new[] {
+            var ccDigitCharacters = new[] {
                 "○",
                 "一",
                 "二",
@@ -37,12 +37,12 @@ namespace Clippit.Word
                 "九",
             };
 
-            int thousandsRemainder = levelNumber % 1000;
-            int hundredsRemainder = levelNumber % 100;
-            int thousands = levelNumber / 1000;
-            int hundreds = (levelNumber % 1000) / 100;
-            int tens = (levelNumber % 100) / 10;
-            int ones = levelNumber % 10;
+            var thousandsRemainder = levelNumber % 1000;
+            var hundredsRemainder = levelNumber % 100;
+            var thousands = levelNumber / 1000;
+            var hundreds = (levelNumber % 1000) / 100;
+            var tens = (levelNumber % 100) / 10;
+            var ones = levelNumber % 10;
 
             if (numFmt == "chineseCounting")
             {
@@ -96,7 +96,7 @@ namespace Clippit.Word
             }
             if (numFmt == "ideographTraditional")
             {
-                string[] iDigitCharacters = new[] {
+                var iDigitCharacters = new[] {
                     " ",
                     "甲",
                     "乙",

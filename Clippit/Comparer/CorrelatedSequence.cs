@@ -44,7 +44,7 @@ namespace Clippit
             if (CorrelationStatus == CorrelationStatus.Equal)
             {
                 sb.Append(indentString4 + "ComparisonUnitList =====" + Environment.NewLine);
-                foreach (ComparisonUnit item in ComparisonUnitArray2)
+                foreach (var item in ComparisonUnitArray2)
                     sb.Append(item.ToString(6) + Environment.NewLine);
             }
             else
@@ -52,14 +52,14 @@ namespace Clippit
                 if (ComparisonUnitArray1 != null)
                 {
                     sb.Append(indentString4 + "ComparisonUnitList1 =====" + Environment.NewLine);
-                    foreach (ComparisonUnit item in ComparisonUnitArray1)
+                    foreach (var item in ComparisonUnitArray1)
                         sb.Append(item.ToString(6) + Environment.NewLine);
                 }
 
                 if (ComparisonUnitArray2 != null)
                 {
                     sb.Append(indentString4 + "ComparisonUnitList2 =====" + Environment.NewLine);
-                    foreach (ComparisonUnit item in ComparisonUnitArray2)
+                    foreach (var item in ComparisonUnitArray2)
                         sb.Append(item.ToString(6) + Environment.NewLine);
                 }
             }

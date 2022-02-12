@@ -35,7 +35,7 @@ namespace Clippit.Word
         [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public XElement ConvertToHtml(HtmlConverterSettings htmlConverterSettings)
         {
-            WmlToHtmlConverterSettings settings = new WmlToHtmlConverterSettings(htmlConverterSettings);
+            var settings = new WmlToHtmlConverterSettings(htmlConverterSettings);
             return WmlToHtmlConverter.ConvertToHtml(this, settings);
         }
     }
@@ -109,13 +109,13 @@ namespace Clippit.Word
     {
         public static XElement ConvertToHtml(WmlDocument wmlDoc, HtmlConverterSettings htmlConverterSettings)
         {
-            WmlToHtmlConverterSettings settings = new WmlToHtmlConverterSettings(htmlConverterSettings);
+            var settings = new WmlToHtmlConverterSettings(htmlConverterSettings);
             return WmlToHtmlConverter.ConvertToHtml(wmlDoc, settings);
         }
 
         public static XElement ConvertToHtml(WordprocessingDocument wDoc, HtmlConverterSettings htmlConverterSettings)
         {
-            WmlToHtmlConverterSettings settings = new WmlToHtmlConverterSettings(htmlConverterSettings);
+            var settings = new WmlToHtmlConverterSettings(htmlConverterSettings);
             return WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
         }
     }
@@ -146,7 +146,7 @@ namespace Clippit.Word
         public static XElement ConvertToHtml(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings htmlConverterSettings)
         {
             RevisionAccepter.AcceptRevisions(wordDoc);
-            SimplifyMarkupSettings simplifyMarkupSettings = new SimplifyMarkupSettings
+            var simplifyMarkupSettings = new SimplifyMarkupSettings
             {
                 RemoveComments = true,
                 RemoveContentControls = true,
@@ -163,7 +163,7 @@ namespace Clippit.Word
             };
             MarkupSimplifier.SimplifyMarkup(wordDoc, simplifyMarkupSettings);
 
-            FormattingAssemblerSettings formattingAssemblerSettings = new FormattingAssemblerSettings
+            var formattingAssemblerSettings = new FormattingAssemblerSettings
             {
                 RemoveStyleNamesFromParagraphAndRunProperties = false,
                 ClearStyles = false,
@@ -189,11 +189,11 @@ namespace Clippit.Word
             CalculateSpanWidthForTabs(wordDoc);
             ReverseTableBordersForRtlTables(wordDoc);
             AdjustTableBorders(wordDoc);
-            XElement rootElement = wordDoc.MainDocumentPart.GetXDocument().Root;
+            var rootElement = wordDoc.MainDocumentPart.GetXDocument().Root;
             FieldRetriever.AnnotateWithFieldInfo(wordDoc.MainDocumentPart);
             AnnotateForSections(wordDoc);
 
-            XElement xhtml = (XElement)ConvertToHtmlTransform(wordDoc, htmlConverterSettings,
+            var xhtml = (XElement)ConvertToHtmlTransform(wordDoc, htmlConverterSettings,
                 rootElement, false, 0m);
 
             ReifyStylesAndClasses(htmlConverterSettings, xhtml);
@@ -211,7 +211,7 @@ namespace Clippit.Word
 
         private static void ReverseTableBordersForRtlTables(WordprocessingDocument wordDoc)
         {
-            XDocument xd = wordDoc.MainDocumentPart.GetXDocument();
+            var xd = wordDoc.MainDocumentPart.GetXDocument();
             foreach (var tbl in xd.Descendants(W.tbl))
             {
                 var bidiVisual = tbl.Elements(W.tblPr).Elements(W.bidiVisual).FirstOrDefault();
@@ -283,7 +283,7 @@ namespace Clippit.Word
                     })
                     .GroupBy(p => p.StylesString)
                     .ToList();
-                int classCounter = 1000000;
+                var classCounter = 1000000;
                 var sb = new StringBuilder();
                 sb.Append(Environment.NewLine);
                 foreach (var grp in augmented)
@@ -341,7 +341,7 @@ namespace Clippit.Word
                         .OrderBy(p => p.Key)
                         .Select(e => string.Format("{0}: {1};", e.Key, e.Value))
                         .StringConcatenate();
-                    XAttribute st = new XAttribute("style", styleValue);
+                    var st = new XAttribute("style", styleValue);
                     if (d.Attribute("style") != null)
                         d.Attribute("style").Value += styleValue;
                     else
@@ -583,7 +583,7 @@ namespace Clippit.Word
 
                 var widthOfLeaderChar = WordprocessingMLUtil.CalcWidthOfRunInTwips(dummyRun);
 
-                bool forceArial = false;
+                var forceArial = false;
                 if (widthOfLeaderChar == 0)
                 {
                     dummyRun = new XElement(W.r,
@@ -822,7 +822,7 @@ namespace Clippit.Word
                     var currentRow = element.Parent.ElementsBeforeSelf(W.tr).Count();
                     var currentCell = element.ElementsBeforeSelf(W.tc).Count();
                     var tbl = element.Parent.Parent;
-                    int rowSpanCount = 1;
+                    var rowSpanCount = 1;
                     currentRow += 1;
                     while (true)
                     {
@@ -898,7 +898,7 @@ namespace Clippit.Word
             decimal currentMarginLeft)
         {
             var style = new Dictionary<string, string>();
-            int? trHeight = (int?) element.Elements(W.trPr).Elements(W.trHeight).Attributes(W.val).FirstOrDefault();
+            var trHeight = (int?) element.Elements(W.trPr).Elements(W.trHeight).Attributes(W.val).FirstOrDefault();
             if (trHeight != null)
                 style.AddIfMissing("height",
                     string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", (decimal) trHeight/1440m));
@@ -1548,7 +1548,7 @@ namespace Clippit.Word
             var rPr = run.Elements(W.rPr).First();
             var languageType = (string)run.Attribute(PtOpenXml.LanguageType);
 
-            string lang = languageType switch
+            var lang = languageType switch
             {
                 "western" => (string)rPr.Elements(W.lang).Attributes(W.val).FirstOrDefault(),
                 "bidi" => (string)rPr.Elements(W.lang).Attributes(W.bidi).FirstOrDefault(),
@@ -1604,7 +1604,7 @@ namespace Clippit.Word
                 var rowAbove = ta[y - 1];
                 if (x < rowAbove.Length - 1)
                 {
-                    XElement cellAbove = ta[y - 1][x];
+                    var cellAbove = ta[y - 1][x];
                     if (cellAbove != null &&
                         thisCell.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null &&
                         cellAbove.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null)
@@ -1621,7 +1621,7 @@ namespace Clippit.Word
         {
             if (x > 0)
             {
-                XElement cellLeft = ta[y][x - 1];
+                var cellLeft = ta[y][x - 1];
                 if (cellLeft != null &&
                     thisCell.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null &&
                     cellLeft.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null)
@@ -1640,7 +1640,7 @@ namespace Clippit.Word
                 var rowBelow = ta[y + 1];
                 if (x < rowBelow.Length - 1)
                 {
-                    XElement cellBelow = ta[y + 1][x];
+                    var cellBelow = ta[y + 1][x];
                     if (cellBelow != null &&
                         thisCell.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null &&
                         cellBelow.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null)
@@ -1657,7 +1657,7 @@ namespace Clippit.Word
         {
             if (x < ta[y].Length - 1)
             {
-                XElement cellRight = ta[y][x + 1];
+                var cellRight = ta[y][x + 1];
                 if (cellRight != null &&
                     thisCell.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null &&
                     cellRight.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null)
@@ -2236,7 +2236,7 @@ namespace Clippit.Word
         // benefit of leading to a more faithful representation of the Word document in HTML.
         private static object InsertAppropriateNonbreakingSpacesTransform(XNode node)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 // child content of run to look for
@@ -2263,7 +2263,7 @@ namespace Clippit.Word
                     // Translate empty paragraphs to paragraphs having one run with
                     // a normal space. A non-breaking space, i.e., \x00A0, is not
                     // required if we use appropriate CSS.
-                    bool hasContent = element
+                    var hasContent = element
                         .Elements()
                         .Where(e => e.Name != W.pPr)
                         .DescendantsAndSelf()
@@ -2566,7 +2566,7 @@ namespace Clippit.Word
                 else
                     color = ConvertColor(color);
 
-                decimal borderWidthInPoints = Math.Max(1m, Math.Min(96m, Math.Max(2m, sz)) / 8m);
+                var borderWidthInPoints = Math.Max(1m, Math.Min(96m, Math.Max(2m, sz)) / 8m);
 
                 var borderStyle = "solid";
                 if (BorderStyleMap.ContainsKey(type))

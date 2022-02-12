@@ -59,8 +59,8 @@ namespace Clippit.Excel
         {
             try
             {
-                   EExcelFormula ruleEnum = (EExcelFormula)id;
-                    string s= ruleEnum.ToString();
+                   var ruleEnum = (EExcelFormula)id;
+                    var s= ruleEnum.ToString();
                     if( int.TryParse(s,out var val) ){
                         return base.GetRuleNameFromId(id);
                     }else{
@@ -786,13 +786,13 @@ namespace Clippit.Excel
         static ExcelFormula()
         {
             {
-               OptimizedCharset.Range[] ranges = new OptimizedCharset.Range[]
+               var ranges = new OptimizedCharset.Range[]
                   {new('A','Z'),
                    new('a','z'),
                    new('0','9'),
                    new(',','.'),
                    };
-               char[] oneOfChars = new char[]    {'!','"','#','$','%'
+               var oneOfChars = new char[]    {'!','"','#','$','%'
                                                   ,'&','(',')','+',';'
                                                   ,'<','=','>','@','^'
                                                   ,'_','`','{','|','}'
@@ -801,13 +801,13 @@ namespace Clippit.Excel
             }
             
             {
-               OptimizedCharset.Range[] ranges = new OptimizedCharset.Range[]
+               var ranges = new OptimizedCharset.Range[]
                   {new('A','Z'),
                    new('a','z'),
                    new('0','9'),
                    new(',','.'),
                    };
-               char[] oneOfChars = new char[]    {'!','"','#','$','%'
+               var oneOfChars = new char[]    {'!','"','#','$','%'
                                                   ,'&','(',')','*','+'
                                                   ,'/',':',';','<','='
                                                   ,'>','?','@','\\','^'

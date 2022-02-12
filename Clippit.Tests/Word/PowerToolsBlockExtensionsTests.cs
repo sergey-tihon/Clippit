@@ -27,11 +27,11 @@ namespace Clippit.Tests.Word
             using var stream = new MemoryStream();
             CreateEmptyWordprocessingDocument(stream);
 
-            using WordprocessingDocument wordDocument = WordprocessingDocument.Open(stream, true);
-            MainDocumentPart part = wordDocument.MainDocumentPart;
+            using var wordDocument = WordprocessingDocument.Open(stream, true);
+            var part = wordDocument.MainDocumentPart;
 
             // Add a first paragraph through the SDK.
-            Body body = part.Document.Body;
+            var body = part.Document.Body;
             body.AppendChild(new Paragraph(new Run(new Text("First"))));
 
             // This demonstrates the usage of the BeginPowerToolsBlock method to
@@ -41,8 +41,8 @@ namespace Clippit.Tests.Word
 
             // Get content through the PowerTools. We will see the one paragraph added
             // by using the strongly typed SDK classes.
-            XDocument content = part.GetXDocument();
-            List<XElement> paragraphElements = content.Descendants(W.p).ToList();
+            var content = part.GetXDocument();
+            var paragraphElements = content.Descendants(W.p).ToList();
             Assert.Single(paragraphElements);
             Assert.Equal("First", paragraphElements[0].Value);
 
@@ -88,11 +88,11 @@ namespace Clippit.Tests.Word
             using var stream = new MemoryStream();
             CreateEmptyWordprocessingDocument(stream);
 
-            using WordprocessingDocument wordDocument = WordprocessingDocument.Open(stream, true);
-            MainDocumentPart part = wordDocument.MainDocumentPart;
+            using var wordDocument = WordprocessingDocument.Open(stream, true);
+            var part = wordDocument.MainDocumentPart;
 
             // Add a paragraph through the SDK.
-            Body body = part.Document.Body;
+            var body = part.Document.Body;
             body.AppendChild(new Paragraph(new Run(new Text("Added through SDK"))));
 
             // Begin the PowerTools Block, which saves any changes made through the strongly
@@ -103,15 +103,15 @@ namespace Clippit.Tests.Word
             wordDocument.BeginPowerToolsBlock();
 
             // Add a paragraph through the PowerTools.
-            XDocument content = part.GetXDocument();
-            XElement bodyElement = content.Descendants(W.body).First();
+            var content = part.GetXDocument();
+            var bodyElement = content.Descendants(W.body).First();
             bodyElement.Add(new XElement(W.p, new XElement(W.r, new XElement(W.t, "Added through PowerTools"))));
             part.PutXDocument();
 
             // Get the part's content through the SDK. However, we will only see what we
             // added through the SDK, not what we added through the PowerTools functionality.
             body = part.Document.Body;
-            List<Paragraph> paragraphs = body.Elements<Paragraph>().ToList();
+            var paragraphs = body.Elements<Paragraph>().ToList();
             Assert.Single(paragraphs);
             Assert.Equal("Added through SDK", paragraphs[0].InnerText);
 

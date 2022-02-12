@@ -39,7 +39,7 @@ namespace Clippit.Tests.Html.Samples
             // The following method generates a large data file with random data.
             // In a real world scenario, this is where you would query your data source and produce XML that will drive your document generation process.
             var numberOfDocumentsToGenerate = 100;
-            XElement data = GenerateDataFromDataSource(dataFile, numberOfDocumentsToGenerate);
+            var data = GenerateDataFromDataSource(dataFile, numberOfDocumentsToGenerate);
 
             var wmlDoc = new WmlDocument(templateDoc.FullName);
             var count = 1;

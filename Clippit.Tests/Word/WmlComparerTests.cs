@@ -126,8 +126,8 @@ namespace Clippit.Tests.Word
 
         public void WC001_Consolidate(string testId, string originalName, string revisedDocumentsXml)
         {
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo originalDocx = new FileInfo(Path.Combine(sourceDir.FullName, originalName));
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var originalDocx = new FileInfo(Path.Combine(sourceDir.FullName, originalName));
 
             var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
@@ -148,7 +148,7 @@ namespace Clippit.Tests.Word
                 .Elements()
                 .Select(z =>
                 {
-                    FileInfo revisedDocx = new FileInfo(Path.Combine(sourceDir.FullName, z.Element("DocName").Value));
+                    var revisedDocx = new FileInfo(Path.Combine(sourceDir.FullName, z.Element("DocName").Value));
                     var revisedCopiedToDestDocx = new FileInfo(Path.Combine(thisTestTempDir.FullName, revisedDocx.Name));
                     var wml1 = new WmlDocument(revisedDocx.FullName);
                     var wml2 = WordprocessingMLUtil.BreakLinkToTemplate(wml1);
@@ -165,10 +165,10 @@ namespace Clippit.Tests.Word
             var consolidatedDocxName = originalCopiedToDestDocx.Name.Replace(".docx", "-Consolidated.docx");
             var consolidatedDocumentFi = new FileInfo(Path.Combine(thisTestTempDir.FullName, consolidatedDocxName));
 
-            WmlDocument source1Wml = new WmlDocument(originalCopiedToDestDocx.FullName);
-            WmlComparerSettings settings = new WmlComparerSettings();
+            var source1Wml = new WmlDocument(originalCopiedToDestDocx.FullName);
+            var settings = new WmlComparerSettings();
             settings.DebugTempFileDi = thisTestTempDir;
-            WmlDocument consolidatedWml = WmlComparer.Consolidate(
+            var consolidatedWml = WmlComparer.Consolidate(
                 source1Wml,
                 revisedDocumentsArray,
                 settings);
@@ -176,12 +176,12 @@ namespace Clippit.Tests.Word
             wml3.SaveAs(consolidatedDocumentFi.FullName);
 
             var validationErrors = "";
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
                 ms.Write(consolidatedWml.DocumentByteArray, 0, consolidatedWml.DocumentByteArray.Length);
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true))
+                using (var wDoc = WordprocessingDocument.Open(ms, true))
                 {
-                    OpenXmlValidator validator = new OpenXmlValidator();
+                    var validator = new OpenXmlValidator();
                     var errors = validator.Validate(wDoc).Where(e => !ExpectedErrors.Contains(e.Description));
                     if (errors.Count() > 0)
                     {
@@ -209,7 +209,7 @@ namespace Clippit.Tests.Word
 
             if (s_OpenWord)
             {
-                FileInfo wordExe = new FileInfo(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE");
+                var wordExe = new FileInfo(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE");
                 WordRunner.RunWord(wordExe, consolidatedDocumentFi);
                 WordRunner.RunWord(wordExe, originalCopiedToDestDocx);
 
@@ -217,7 +217,7 @@ namespace Clippit.Tests.Word
                     .Elements()
                     .Select(z =>
                     {
-                        FileInfo revisedDocx = new FileInfo(Path.Combine(sourceDir.FullName, z.Element("DocName").Value));
+                        var revisedDocx = new FileInfo(Path.Combine(sourceDir.FullName, z.Element("DocName").Value));
                         var revisedCopiedToDestDocx = new FileInfo(Path.Combine(thisTestTempDir.FullName, revisedDocx.Name));
                         return revisedCopiedToDestDocx;
                     })
@@ -344,9 +344,9 @@ namespace Clippit.Tests.Word
 
         public void WC002_Consolidate_Bulk_Test(string testId, string name1, string name2)
         {
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo source1Docx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
-            FileInfo source2Docx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var source1Docx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
+            var source2Docx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
             var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
@@ -373,8 +373,8 @@ namespace Clippit.Tests.Word
 
             if (s_OpenWord)
             {
-                FileInfo source1DocxForWord = new FileInfo(Path.Combine(sourceDir.FullName, name1));
-                FileInfo source2DocxForWord = new FileInfo(Path.Combine(sourceDir.FullName, name2));
+                var source1DocxForWord = new FileInfo(Path.Combine(sourceDir.FullName, name1));
+                var source2DocxForWord = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
                 var source1CopiedToDestDocxForWord = new FileInfo(Path.Combine(thisTestTempDir.FullName, source1Docx.Name.Replace(".docx", "-For-Word.docx")));
                 var source2CopiedToDestDocxForWord = new FileInfo(Path.Combine(thisTestTempDir.FullName, source2Docx.Name.Replace(".docx", "-For-Word.docx")));
@@ -383,7 +383,7 @@ namespace Clippit.Tests.Word
                 if (!source2CopiedToDestDocxForWord.Exists)
                     File.Copy(source2Docx.FullName, source2CopiedToDestDocxForWord.FullName);
 
-                FileInfo wordExe = new FileInfo(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE");
+                var wordExe = new FileInfo(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE");
                 var path = new DirectoryInfo(@"C:\Users\Eric\Documents\WindowsPowerShellModules\Open-Xml-PowerTools\TestFiles");
                 WordRunner.RunWord(wordExe, source2CopiedToDestDocxForWord);
                 WordRunner.RunWord(wordExe, source1CopiedToDestDocxForWord);
@@ -396,13 +396,13 @@ namespace Clippit.Tests.Word
             var docxWithRevisionsFi = new FileInfo(Path.Combine(thisTestTempDir.FullName, before + "-COMPARE-" + after + ".docx"));
             var docxConsolidatedFi = new FileInfo(Path.Combine(thisTestTempDir.FullName, before + "-CONSOLIDATED-" + after + ".docx"));
 
-            WmlDocument source1Wml = new WmlDocument(source1CopiedToDestDocx.FullName);
-            WmlDocument source2Wml = new WmlDocument(source2CopiedToDestDocx.FullName);
-            WmlComparerSettings settings = new WmlComparerSettings();
-            WmlDocument comparedWml = WmlComparer.Compare(source1Wml, source2Wml, settings);
+            var source1Wml = new WmlDocument(source1CopiedToDestDocx.FullName);
+            var source2Wml = new WmlDocument(source2CopiedToDestDocx.FullName);
+            var settings = new WmlComparerSettings();
+            var comparedWml = WmlComparer.Compare(source1Wml, source2Wml, settings);
             WordprocessingMLUtil.BreakLinkToTemplate(comparedWml).SaveAs(docxWithRevisionsFi.FullName);
 
-            List<WmlRevisedDocumentInfo> revisedDocInfo = new List<WmlRevisedDocumentInfo>()
+            var revisedDocInfo = new List<WmlRevisedDocumentInfo>()
             {
                 new()
                 {
@@ -411,19 +411,19 @@ namespace Clippit.Tests.Word
                     Revisor = "Revised by Eric White",
                 }
             };
-            WmlDocument consolidatedWml = WmlComparer.Consolidate(
+            var consolidatedWml = WmlComparer.Consolidate(
                 source1Wml,
                 revisedDocInfo,
                 settings);
             WordprocessingMLUtil.BreakLinkToTemplate(consolidatedWml).SaveAs(docxConsolidatedFi.FullName);
 
-            string validationErrors = "";
-            using (MemoryStream ms = new MemoryStream())
+            var validationErrors = "";
+            using (var ms = new MemoryStream())
             {
                 ms.Write(consolidatedWml.DocumentByteArray, 0, consolidatedWml.DocumentByteArray.Length);
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true))
+                using (var wDoc = WordprocessingDocument.Open(ms, true))
                 {
-                    OpenXmlValidator validator = new OpenXmlValidator();
+                    var validator = new OpenXmlValidator();
                     var errors = validator.Validate(wDoc).Where(e => !ExpectedErrors.Contains(e.Description));
                     if (errors.Count() > 0)
                     {
@@ -451,7 +451,7 @@ namespace Clippit.Tests.Word
 
             if (s_OpenWord)
             {
-                FileInfo wordExe = new FileInfo(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE");
+                var wordExe = new FileInfo(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE");
                 WordRunner.RunWord(wordExe, docxConsolidatedFi);
             }
 
@@ -601,9 +601,9 @@ namespace Clippit.Tests.Word
 
         public void WC003_Compare(string testId, string name1, string name2, int revisionCount)
         {
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo source1Docx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
-            FileInfo source2Docx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var source1Docx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
+            var source2Docx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
             var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
@@ -625,15 +625,15 @@ namespace Clippit.Tests.Word
 
             if (s_OpenWord)
             {
-                FileInfo source1DocxForWord = new FileInfo(Path.Combine(sourceDir.FullName, name1));
-                FileInfo source2DocxForWord = new FileInfo(Path.Combine(sourceDir.FullName, name2));
+                var source1DocxForWord = new FileInfo(Path.Combine(sourceDir.FullName, name1));
+                var source2DocxForWord = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
                 var source1CopiedToDestDocxForWord = new FileInfo(Path.Combine(thisTestTempDir.FullName, source1Docx.Name.Replace(".docx", "-For-Word.docx")));
                 var source2CopiedToDestDocxForWord = new FileInfo(Path.Combine(thisTestTempDir.FullName, source2Docx.Name.Replace(".docx", "-For-Word.docx")));
                 File.Copy(source1Docx.FullName, source1CopiedToDestDocxForWord.FullName);
                 File.Copy(source2Docx.FullName, source2CopiedToDestDocxForWord.FullName);
 
-                FileInfo wordExe = new FileInfo(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE");
+                var wordExe = new FileInfo(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE");
                 var path = new DirectoryInfo(@"C:\Users\Eric\Documents\WindowsPowerShellModules\Open-Xml-PowerTools\TestFiles");
                 WordRunner.RunWord(wordExe, source2CopiedToDestDocxForWord);
                 WordRunner.RunWord(wordExe, source1CopiedToDestDocxForWord);
@@ -641,11 +641,11 @@ namespace Clippit.Tests.Word
 
             /************************************************************************************************************************/
 
-            WmlDocument source1Wml = new WmlDocument(source1CopiedToDestDocx.FullName);
-            WmlDocument source2Wml = new WmlDocument(source2CopiedToDestDocx.FullName);
-            WmlComparerSettings settings = new WmlComparerSettings();
+            var source1Wml = new WmlDocument(source1CopiedToDestDocx.FullName);
+            var source2Wml = new WmlDocument(source2CopiedToDestDocx.FullName);
+            var settings = new WmlComparerSettings();
             settings.DebugTempFileDi = thisTestTempDir;
-            WmlDocument comparedWml = WmlComparer.Compare(source1Wml, source2Wml, settings);
+            var comparedWml = WmlComparer.Compare(source1Wml, source2Wml, settings);
             comparedWml.SaveAs(docxWithRevisionsFi.FullName);
 
 #if false
@@ -677,12 +677,12 @@ namespace Clippit.Tests.Word
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // validate generated document
             var validationErrors = "";
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
                 ms.Write(comparedWml.DocumentByteArray, 0, comparedWml.DocumentByteArray.Length);
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true))
+                using (var wDoc = WordprocessingDocument.Open(ms, true))
                 {
-                    OpenXmlValidator validator = new OpenXmlValidator();
+                    var validator = new OpenXmlValidator();
                     var errors = validator.Validate(wDoc).Where(e => !ExpectedErrors.Contains(e.Description));
                     if (errors.Count() > 0)
                     {
@@ -710,7 +710,7 @@ namespace Clippit.Tests.Word
 
             if (s_OpenWord)
             {
-                FileInfo wordExe = new FileInfo(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE");
+                var wordExe = new FileInfo(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE");
                 WordRunner.RunWord(wordExe, docxWithRevisionsFi);
             }
 
@@ -747,9 +747,9 @@ namespace Clippit.Tests.Word
                 Assert.True(false, validationErrors);
             }
 
-            WmlComparerSettings settings2 = new WmlComparerSettings();
+            var settings2 = new WmlComparerSettings();
 
-            WmlDocument revisionWml = new WmlDocument(docxWithRevisionsFi.FullName);
+            var revisionWml = new WmlDocument(docxWithRevisionsFi.FullName);
             var revisions = WmlComparer.GetRevisions(revisionWml, settings);
             Assert.Equal(revisionCount, revisions.Count());
 
@@ -763,7 +763,7 @@ namespace Clippit.Tests.Word
                 afterRejectingWml.SaveAs(afterRejectingFi.FullName);
             }
 
-            WmlDocument afterRejectingComparedWml = WmlComparer.Compare(source1Wml, afterRejectingWml, settings);
+            var afterRejectingComparedWml = WmlComparer.Compare(source1Wml, afterRejectingWml, settings);
             var sanityCheck1 = WmlComparer.GetRevisions(afterRejectingComparedWml, settings);
 
             if (WRITE_TEMP_FILES)
@@ -780,7 +780,7 @@ namespace Clippit.Tests.Word
                 afterAcceptingWml.SaveAs(afterAcceptingFi.FullName);
             }
 
-            WmlDocument afterAcceptingComparedWml = WmlComparer.Compare(source2Wml, afterAcceptingWml, settings);
+            var afterAcceptingComparedWml = WmlComparer.Compare(source2Wml, afterAcceptingWml, settings);
             var sanityCheck2 = WmlComparer.GetRevisions(afterAcceptingComparedWml, settings);
 
             if (WRITE_TEMP_FILES)
@@ -887,8 +887,8 @@ namespace Clippit.Tests.Word
 
         public void WC004_Compare_To_Self(string testId, string name)
         {
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
             var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
@@ -904,15 +904,15 @@ namespace Clippit.Tests.Word
             var docxComparedFi = new FileInfo(Path.Combine(thisTestTempDir.FullName, before + "-COMPARE" + ".docx"));
             var docxCompared2Fi = new FileInfo(Path.Combine(thisTestTempDir.FullName, before + "-COMPARE2" + ".docx"));
 
-            WmlDocument source1Wml = new WmlDocument(sourceCopiedToDestDocx.FullName);
-            WmlDocument source2Wml = new WmlDocument(sourceCopiedToDestDocx.FullName);
-            WmlComparerSettings settings = new WmlComparerSettings();
+            var source1Wml = new WmlDocument(sourceCopiedToDestDocx.FullName);
+            var source2Wml = new WmlDocument(sourceCopiedToDestDocx.FullName);
+            var settings = new WmlComparerSettings();
 
-            WmlDocument comparedWml = WmlComparer.Compare(source1Wml, source2Wml, settings);
+            var comparedWml = WmlComparer.Compare(source1Wml, source2Wml, settings);
             comparedWml.SaveAs(docxComparedFi.FullName);
             ValidateDocument(comparedWml);
 
-            WmlDocument comparedWml2 = WmlComparer.Compare(comparedWml, source1Wml, settings);
+            var comparedWml2 = WmlComparer.Compare(comparedWml, source1Wml, settings);
             comparedWml2.SaveAs(docxCompared2Fi.FullName);
             ValidateDocument(comparedWml2);
         }
@@ -922,9 +922,9 @@ namespace Clippit.Tests.Word
 
         public void WC005_Compare_CaseInsensitive(string testId, string name1, string name2, int revisionCount)
         {
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo source1Docx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
-            FileInfo source2Docx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var source1Docx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
+            var source2Docx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
             var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
@@ -943,8 +943,8 @@ namespace Clippit.Tests.Word
 
             if (s_OpenWord)
             {
-                FileInfo source1DocxForWord = new FileInfo(Path.Combine(sourceDir.FullName, name1));
-                FileInfo source2DocxForWord = new FileInfo(Path.Combine(sourceDir.FullName, name2));
+                var source1DocxForWord = new FileInfo(Path.Combine(sourceDir.FullName, name1));
+                var source2DocxForWord = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
                 var source1CopiedToDestDocxForWord = new FileInfo(Path.Combine(thisTestTempDir.FullName, source1Docx.Name.Replace(".docx", "-For-Word.docx")));
                 var source2CopiedToDestDocxForWord = new FileInfo(Path.Combine(thisTestTempDir.FullName, source2Docx.Name.Replace(".docx", "-For-Word.docx")));
@@ -953,7 +953,7 @@ namespace Clippit.Tests.Word
                 if (!source2CopiedToDestDocxForWord.Exists)
                     File.Copy(source2Docx.FullName, source2CopiedToDestDocxForWord.FullName);
 
-                FileInfo wordExe = new FileInfo(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE");
+                var wordExe = new FileInfo(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE");
                 var path = new DirectoryInfo(@"C:\Users\Eric\Documents\WindowsPowerShellModules\Open-Xml-PowerTools\TestFiles");
                 WordRunner.RunWord(wordExe, source2CopiedToDestDocxForWord);
                 WordRunner.RunWord(wordExe, source1CopiedToDestDocxForWord);
@@ -965,20 +965,20 @@ namespace Clippit.Tests.Word
             var after = source2CopiedToDestDocx.Name.Replace(".docx", "");
             var docxWithRevisionsFi = new FileInfo(Path.Combine(thisTestTempDir.FullName, before + "-COMPARE-" + after + ".docx"));
 
-            WmlDocument source1Wml = new WmlDocument(source1CopiedToDestDocx.FullName);
-            WmlDocument source2Wml = new WmlDocument(source2CopiedToDestDocx.FullName);
-            WmlComparerSettings settings = new WmlComparerSettings();
+            var source1Wml = new WmlDocument(source1CopiedToDestDocx.FullName);
+            var source2Wml = new WmlDocument(source2CopiedToDestDocx.FullName);
+            var settings = new WmlComparerSettings();
             settings.CaseInsensitive = true;
             settings.CultureInfo = System.Globalization.CultureInfo.CurrentCulture;
-            WmlDocument comparedWml = WmlComparer.Compare(source1Wml, source2Wml, settings);
+            var comparedWml = WmlComparer.Compare(source1Wml, source2Wml, settings);
             comparedWml.SaveAs(docxWithRevisionsFi.FullName);
 
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
                 ms.Write(comparedWml.DocumentByteArray, 0, comparedWml.DocumentByteArray.Length);
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true))
+                using (var wDoc = WordprocessingDocument.Open(ms, true))
                 {
-                    OpenXmlValidator validator = new OpenXmlValidator();
+                    var validator = new OpenXmlValidator();
                     var errors = validator.Validate(wDoc).Where(e => !ExpectedErrors.Contains(e.Description));
                     if (errors.Count() > 0)
                     {
@@ -1007,23 +1007,23 @@ namespace Clippit.Tests.Word
 
             if (s_OpenWord)
             {
-                FileInfo wordExe = new FileInfo(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE");
+                var wordExe = new FileInfo(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE");
                 WordRunner.RunWord(wordExe, docxWithRevisionsFi);
             }
 
             /************************************************************************************************************************/
 
-            WmlDocument revisionWml = new WmlDocument(docxWithRevisionsFi.FullName);
+            var revisionWml = new WmlDocument(docxWithRevisionsFi.FullName);
             var revisions = WmlComparer.GetRevisions(revisionWml, settings);
             Assert.Equal(revisionCount, revisions.Count());
         }
 
         private static void ValidateDocument(WmlDocument wmlToValidate)
         {
-            using MemoryStream ms = new MemoryStream();
+            using var ms = new MemoryStream();
             ms.Write(wmlToValidate.DocumentByteArray, 0, wmlToValidate.DocumentByteArray.Length);
-            using WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true);
-            OpenXmlValidator validator = new OpenXmlValidator();
+            using var wDoc = WordprocessingDocument.Open(ms, true);
+            var validator = new OpenXmlValidator();
             var errors = validator.Validate(wDoc).Where(e => !ExpectedErrors.Contains(e.Description));
             if (errors.Count() != 0)
             {
@@ -1086,7 +1086,7 @@ namespace Clippit.Tests.Word
         {
             if (executablePath.Exists)
             {
-                using Process proc = new Process();
+                using var proc = new Process();
                 proc.StartInfo.FileName = executablePath.FullName;
                 proc.StartInfo.Arguments = docxPath.FullName;
                 proc.StartInfo.WorkingDirectory = docxPath.DirectoryName;

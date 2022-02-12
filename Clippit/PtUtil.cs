@@ -19,7 +19,7 @@ namespace Clippit
     {
         public static string NormalizeDirName(string dirName)
         {
-            string d = dirName.Replace('\\', '/');
+            var d = dirName.Replace('\\', '/');
             if (d[dirName.Length - 1] != '/' && d[dirName.Length - 1] != '\\')
                 return d + "/";
 
@@ -38,7 +38,7 @@ namespace Clippit
             if (existing != null)
                 return;
 
-            XElement newXElement = XElement.Parse(newElement);
+            var newXElement = XElement.Parse(newElement);
             newXElement.Attributes().Where(a => a.IsNamespaceDeclaration).Remove();
             if (partXDoc.Root != null) partXDoc.Root.Add(newXElement);
         }
@@ -66,7 +66,7 @@ namespace Clippit
             string contentType = null;
             string boundary = null;
 
-            string[] lines = src.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            var lines = src.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
 
             var priambleKeyWords = new[]
@@ -214,7 +214,7 @@ namespace Clippit
     {
         public static XDocument Normalize(XDocument source, XmlSchemaSet schema)
         {
-            bool havePSVI = false;
+            var havePSVI = false;
             // validate, throw errors, add PSVI information
             if (schema != null)
             {
@@ -242,8 +242,8 @@ namespace Clippit
         public static bool DeepEqualsWithNormalization(XDocument doc1, XDocument doc2,
             XmlSchemaSet schemaSet)
         {
-            XDocument d1 = Normalize(doc1, schemaSet);
-            XDocument d2 = Normalize(doc2, schemaSet);
+            var d1 = Normalize(doc1, schemaSet);
+            var d2 = Normalize(doc2, schemaSet);
             return XNode.DeepEquals(d1, d2);
         }
 
@@ -350,8 +350,8 @@ namespace Clippit
     {
         public static DirectoryInfo GetDateTimeStampedDirectoryInfo(string prefix)
         {
-            DateTime now = DateTime.Now;
-            string dirName =
+            var now = DateTime.Now;
+            var dirName =
                 prefix +
                 string.Format("-{0:00}-{1:00}-{2:00}-{3:00}{4:00}{5:00}", now.Year - 2000, now.Month, now.Day, now.Hour,
                     now.Minute, now.Second);
@@ -360,8 +360,8 @@ namespace Clippit
 
         public static FileInfo GetDateTimeStampedFileInfo(string prefix, string suffix)
         {
-            DateTime now = DateTime.Now;
-            string fileName =
+            var now = DateTime.Now;
+            var fileName =
                 prefix +
                 string.Format("-{0:00}-{1:00}-{2:00}-{3:00}{4:00}{5:00}", now.Year - 2000, now.Month, now.Day, now.Hour,
                     now.Minute, now.Second) +
@@ -454,7 +454,7 @@ namespace Clippit
         private static void GetFilesRecursiveInternal(DirectoryInfo dir, string searchPattern, List<string> fileList)
         {
             fileList.AddRange(dir.GetFiles(searchPattern).Select(file => file.FullName));
-            foreach (DirectoryInfo subdir in dir.GetDirectories())
+            foreach (var subdir in dir.GetDirectories())
                 GetFilesRecursiveInternal(subdir, searchPattern, fileList);
         }
 
@@ -468,7 +468,7 @@ namespace Clippit
         private static void GetFilesRecursiveInternal(DirectoryInfo dir, List<string> fileList)
         {
             fileList.AddRange(dir.GetFiles().Select(file => file.FullName));
-            foreach (DirectoryInfo subdir in dir.GetDirectories())
+            foreach (var subdir in dir.GetDirectories())
                 GetFilesRecursiveInternal(subdir, fileList);
         }
     }
@@ -478,7 +478,7 @@ namespace Clippit
         public static XElement GetXElement(this XmlNode node)
         {
             var xDoc = new XDocument();
-            using (XmlWriter xmlWriter = xDoc.CreateWriter())
+            using (var xmlWriter = xDoc.CreateWriter())
                 node.WriteTo(xmlWriter);
             return xDoc.Root;
         }
@@ -486,7 +486,7 @@ namespace Clippit
         public static XmlNode GetXmlNode(this XElement element)
         {
             var xmlDoc = new XmlDocument();
-            using XmlReader xmlReader = element.CreateReader();
+            using var xmlReader = element.CreateReader();
             xmlDoc.Load(xmlReader);
             return xmlDoc;
         }
@@ -494,10 +494,10 @@ namespace Clippit
         public static XDocument GetXDocument(this XmlDocument document)
         {
             var xDoc = new XDocument();
-            using (XmlWriter xmlWriter = xDoc.CreateWriter())
+            using (var xmlWriter = xDoc.CreateWriter())
                 document.WriteTo(xmlWriter);
 
-            XmlDeclaration decl = document.ChildNodes.OfType<XmlDeclaration>().FirstOrDefault();
+            var decl = document.ChildNodes.OfType<XmlDeclaration>().FirstOrDefault();
             if (decl != null)
                 xDoc.Declaration = new XDeclaration(decl.Version, decl.Encoding, decl.Standalone);
 
@@ -507,11 +507,11 @@ namespace Clippit
         public static XmlDocument GetXmlDocument(this XDocument document)
         {
             var xmlDoc = new XmlDocument();
-            using XmlReader xmlReader = document.CreateReader();
+            using var xmlReader = document.CreateReader();
             xmlDoc.Load(xmlReader);
             if (document.Declaration != null)
             {
-                XmlDeclaration dec = xmlDoc.CreateXmlDeclaration(document.Declaration.Version,
+                var dec = xmlDoc.CreateXmlDeclaration(document.Declaration.Version,
                     document.Declaration.Encoding, document.Declaration.Standalone);
                 xmlDoc.InsertBefore(dec, xmlDoc.FirstChild);
             }
@@ -540,8 +540,8 @@ namespace Clippit
             IEnumerable<TSecond> second,
             Func<TFirst, TSecond, TResult> func)
         {
-            using IEnumerator<TFirst> ie1 = first.GetEnumerator();
-            using IEnumerator<TSecond> ie2 = second.GetEnumerator();
+            using var ie1 = first.GetEnumerator();
+            using var ie2 = second.GetEnumerator();
             while (ie1.MoveNext() && ie2.MoveNext())
                 yield return func(ie1.Current, ie2.Current);
         }
@@ -550,13 +550,13 @@ namespace Clippit
             this IEnumerable<TSource> source,
             Func<TSource, TKey> keySelector)
         {
-            TKey last = default(TKey);
+            var last = default(TKey);
             var haveLast = false;
             var list = new List<TSource>();
 
-            foreach (TSource s in source)
+            foreach (var s in source)
             {
-                TKey k = keySelector(s);
+                var k = keySelector(s);
                 if (haveLast)
                 {
                     if (!k.Equals(last))
@@ -586,7 +586,7 @@ namespace Clippit
         private static void InitializeSiblingsReverseDocumentOrder(XElement element)
         {
             XElement prev = null;
-            foreach (XElement e in element.Elements())
+            foreach (var e in element.Elements())
             {
                 e.AddAnnotation(new SiblingsReverseDocumentOrderInfo { PreviousSibling = prev });
                 prev = e;
@@ -599,10 +599,10 @@ namespace Clippit
         {
             if (element.Annotation<SiblingsReverseDocumentOrderInfo>() == null)
                 InitializeSiblingsReverseDocumentOrder(element.Parent);
-            XElement current = element;
+            var current = element;
             while (true)
             {
-                XElement previousElement = current
+                var previousElement = current
                     .Annotation<SiblingsReverseDocumentOrderInfo>()
                     .PreviousSibling;
                 if (previousElement == null)
@@ -617,7 +617,7 @@ namespace Clippit
         private static void InitializeDescendantsReverseDocumentOrder(XElement element)
         {
             XElement prev = null;
-            foreach (XElement e in element.Descendants())
+            foreach (var e in element.Descendants())
             {
                 e.AddAnnotation(new DescendantsReverseDocumentOrderInfo { PreviousElement = prev });
                 prev = e;
@@ -630,10 +630,10 @@ namespace Clippit
         {
             if (element.Annotation<DescendantsReverseDocumentOrderInfo>() == null)
                 InitializeDescendantsReverseDocumentOrder(element.AncestorsAndSelf().Last());
-            XElement current = element;
+            var current = element;
             while (true)
             {
-                XElement previousElement = current
+                var previousElement = current
                     .Annotation<DescendantsReverseDocumentOrderInfo>()
                     .PreviousElement;
                 if (previousElement == null)
@@ -661,15 +661,15 @@ namespace Clippit
         {
             if (element.Annotation<DescendantsTrimmedReverseDocumentOrderInfo>() == null)
             {
-                XElement ances = element.AncestorsAndSelf(W.txbxContent).FirstOrDefault() ??
-                                 element.AncestorsAndSelf().Last();
+                var ances = element.AncestorsAndSelf(W.txbxContent).FirstOrDefault() ??
+                            element.AncestorsAndSelf().Last();
                 InitializeDescendantsTrimmedReverseDocumentOrder(ances, trimName);
             }
 
-            XElement current = element;
+            var current = element;
             while (true)
             {
-                XElement previousElement = current
+                var previousElement = current
                     .Annotation<DescendantsTrimmedReverseDocumentOrderInfo>()
                     .PreviousElement;
                 if (previousElement == null)
@@ -691,7 +691,7 @@ namespace Clippit
             };
             var stringBuilder = new StringBuilder();
             using (var stringWriter = new StringWriter(stringBuilder))
-            using (XmlWriter xmlWriter = XmlWriter.Create(stringWriter, settings))
+            using (var xmlWriter = XmlWriter.Create(stringWriter, settings))
                 element.WriteTo(xmlWriter);
             return stringBuilder.ToString();
         }
@@ -705,13 +705,13 @@ namespace Clippit
         public static IEnumerable<XElement> DescendantsTrimmed(this XElement element,
             Func<XElement, bool> predicate)
         {
-            Stack<IEnumerator<XElement>> iteratorStack = new Stack<IEnumerator<XElement>>();
+            var iteratorStack = new Stack<IEnumerator<XElement>>();
             iteratorStack.Push(element.Elements().GetEnumerator());
             while (iteratorStack.Count > 0)
             {
                 while (iteratorStack.Peek().MoveNext())
                 {
-                    XElement currentXElement = iteratorStack.Peek().Current;
+                    var currentXElement = iteratorStack.Peek().Current;
                     if (predicate(currentXElement))
                     {
                         yield return currentXElement;
@@ -729,10 +729,10 @@ namespace Clippit
             TResult seed,
             Func<TSource, TResult, TResult> projection)
         {
-            TResult nextSeed = seed;
-            foreach (TSource src in source)
+            var nextSeed = seed;
+            foreach (var src in source)
             {
-                TResult projectedValue = projection(src, nextSeed);
+                var projectedValue = projection(src, nextSeed);
                 nextSeed = projectedValue;
                 yield return projectedValue;
             }
@@ -743,11 +743,11 @@ namespace Clippit
             TResult seed,
             Func<TSource, TResult, int, TResult> projection)
         {
-            TResult nextSeed = seed;
-            int index = 0;
-            foreach (TSource src in source)
+            var nextSeed = seed;
+            var index = 0;
+            foreach (var src in source)
             {
-                TResult projectedValue = projection(src, nextSeed, index++);
+                var projectedValue = projection(src, nextSeed, index++);
                 nextSeed = projectedValue;
                 yield return projectedValue;
             }
@@ -755,7 +755,7 @@ namespace Clippit
 
         public static IEnumerable<TSource> SequenceAt<TSource>(this TSource[] source, int index)
         {
-            int i = index;
+            var i = index;
             while (i < source.Length)
                 yield return source[i++];
         }
@@ -764,7 +764,7 @@ namespace Clippit
         {
             var saveList = new Queue<T>();
             var saved = 0;
-            foreach (T item in source)
+            foreach (var item in source)
             {
                 if (saved < count)
                 {
@@ -783,7 +783,7 @@ namespace Clippit
             if (a == null)
                 return null;
 
-            string s = ((string) a).ToLower();
+            var s = ((string) a).ToLower();
             switch (s)
             {
                 case "1":
@@ -805,7 +805,7 @@ namespace Clippit
 
         private static string GetQName(XElement xe)
         {
-            string prefix = xe.GetPrefixOfNamespace(xe.Name.Namespace);
+            var prefix = xe.GetPrefixOfNamespace(xe.Name.Namespace);
             if (xe.Name.Namespace == XNamespace.None || prefix == null)
                 return xe.Name.LocalName;
 
@@ -814,7 +814,7 @@ namespace Clippit
 
         private static string GetQName(XAttribute xa)
         {
-            string prefix = xa.Parent != null ? xa.Parent.GetPrefixOfNamespace(xa.Name.Namespace) : null;
+            var prefix = xa.Parent != null ? xa.Parent.GetPrefixOfNamespace(xa.Name.Namespace) : null;
             if (xa.Name.Namespace == XNamespace.None || prefix == null)
                 return xa.Name.ToString();
 
@@ -958,7 +958,7 @@ namespace Clippit
 
         public static RunResults RunExecutable(string executablePath, string arguments, string workingDirectory)
         {
-            RunResults runResults = new RunResults
+            var runResults = new RunResults
             {
                 Output = new StringBuilder(),
                 Error = new StringBuilder(),
@@ -968,7 +968,7 @@ namespace Clippit
             {
                 if (File.Exists(executablePath))
                 {
-                    using Process proc = new Process();
+                    using var proc = new Process();
                     proc.StartInfo.FileName = executablePath;
                     proc.StartInfo.Arguments = arguments;
                     proc.StartInfo.WorkingDirectory = workingDirectory;
@@ -1049,10 +1049,10 @@ namespace Clippit
 
         public static void Bucket(string bucket)
         {
-            DateTime now = DateTime.Now;
+            var now = DateTime.Now;
             if (LastBucket != null)
             {
-                TimeSpan d = now - LastTime;
+                var d = now - LastTime;
                 if (Buckets.ContainsKey(LastBucket))
                 {
                     Buckets[LastBucket].Count = Buckets[LastBucket].Count + 1;
@@ -1073,16 +1073,16 @@ namespace Clippit
 
         public static string DumpBucketsByKey()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (var bucket in Buckets.OrderBy(b => b.Key))
             {
-                string ts = bucket.Value.Time.ToString();
+                var ts = bucket.Value.Time.ToString();
                 if (ts.Contains('.'))
                     ts = ts[..^5];
-                string s = bucket.Key.PadRight(60, '-') + "  " + string.Format("{0:00000000}", bucket.Value.Count) + "  " + ts;
+                var s = bucket.Key.PadRight(60, '-') + "  " + string.Format("{0:00000000}", bucket.Value.Count) + "  " + ts;
                 sb.Append(s + Environment.NewLine);
             }
-            TimeSpan total = Buckets
+            var total = Buckets
                 .Aggregate(TimeSpan.Zero, (t, b) => t + b.Value.Time);
             var tz = total.ToString();
             sb.Append(string.Format("Total: {0}", tz[..^5]));
@@ -1091,16 +1091,16 @@ namespace Clippit
 
         public static string DumpBucketsByTime()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (var bucket in Buckets.OrderBy(b => b.Value.Time))
             {
-                string ts = bucket.Value.Time.ToString();
+                var ts = bucket.Value.Time.ToString();
                 if (ts.Contains('.'))
                     ts = ts[..^5];
-                string s = bucket.Key.PadRight(60, '-') + "  " + string.Format("{0:00000000}", bucket.Value.Count) + "  " + ts;
+                var s = bucket.Key.PadRight(60, '-') + "  " + string.Format("{0:00000000}", bucket.Value.Count) + "  " + ts;
                 sb.Append(s + Environment.NewLine);
             }
-            TimeSpan total = Buckets
+            var total = Buckets
                 .Aggregate(TimeSpan.Zero, (t, b) => t + b.Value.Time);
             var tz = total.ToString();
             sb.Append(string.Format("Total: {0}", tz[..^5]));
@@ -1119,7 +1119,7 @@ namespace Clippit
         {
             if (Value[..1] == "#")
             {
-                string e = string.Format("&{0};", Value);
+                var e = string.Format("&{0};", Value);
                 writer.WriteRaw(e);
             }
             else

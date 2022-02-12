@@ -87,19 +87,19 @@ namespace Clippit.Tests.Word
         [Fact]
         public void CanRemoveSmartTags()
         {
-            XDocument partDocument = XDocument.Parse(SmartTagDocumentXmlString);
+            var partDocument = XDocument.Parse(SmartTagDocumentXmlString);
             Assert.True(partDocument.Descendants(W.smartTag).Any());
 
             using var stream = new MemoryStream();
-            using WordprocessingDocument wordDocument = WordprocessingDocument.Create(stream, DocumentType);
-            MainDocumentPart part = wordDocument.AddMainDocumentPart();
+            using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+            var part = wordDocument.AddMainDocumentPart();
             part.PutXDocument(partDocument);
 
             var settings = new SimplifyMarkupSettings { RemoveSmartTags = true };
             MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
 
             partDocument = part.GetXDocument();
-            XElement t = partDocument.Descendants(W.t).First();
+            var t = partDocument.Descendants(W.t).First();
 
             Assert.False(partDocument.Descendants(W.smartTag).Any());
             Assert.Equal(SmartTagDocumentTextValue, t.Value);
@@ -108,19 +108,19 @@ namespace Clippit.Tests.Word
         [Fact]
         public void CanRemoveContentControls()
         {
-            XDocument partDocument = XDocument.Parse(SdtDocumentXmlString);
+            var partDocument = XDocument.Parse(SdtDocumentXmlString);
             Assert.True(partDocument.Descendants(W.sdt).Any());
 
             using var stream = new MemoryStream();
-            using WordprocessingDocument wordDocument = WordprocessingDocument.Create(stream, DocumentType);
-            MainDocumentPart part = wordDocument.AddMainDocumentPart();
+            using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+            var part = wordDocument.AddMainDocumentPart();
             part.PutXDocument(partDocument);
 
             var settings = new SimplifyMarkupSettings { RemoveContentControls = true };
             MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
 
             partDocument = part.GetXDocument();
-            XElement element = partDocument
+            var element = partDocument
                 .Descendants(W.body)
                 .Descendants()
                 .First();
@@ -132,7 +132,7 @@ namespace Clippit.Tests.Word
         [Fact]
         public void CanRemoveGoBackBookmarks()
         {
-            XDocument partDocument = XDocument.Parse(GoBackBookmarkDocumentXmlString);
+            var partDocument = XDocument.Parse(GoBackBookmarkDocumentXmlString);
             Assert.Contains(partDocument
                 .Descendants(W.bookmarkStart)
 , e => e.Attribute(W.name).Value == "_GoBack" && e.Attribute(W.id).Value == "0");
@@ -141,8 +141,8 @@ namespace Clippit.Tests.Word
 , e => e.Attribute(W.id).Value == "0");
 
             using var stream = new MemoryStream();
-            using WordprocessingDocument wordDocument = WordprocessingDocument.Create(stream, DocumentType);
-            MainDocumentPart part = wordDocument.AddMainDocumentPart();
+            using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+            var part = wordDocument.AddMainDocumentPart();
             part.PutXDocument(partDocument);
 
             var settings = new SimplifyMarkupSettings { RemoveGoBackBookmark = true };

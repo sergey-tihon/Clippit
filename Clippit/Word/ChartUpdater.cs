@@ -70,7 +70,7 @@ namespace Clippit.Word
                 var chartRid = (string)cc.Descendants(C.chart).Attributes(R.id).FirstOrDefault();
                 if (chartRid != null)
                 {
-                    ChartPart chartPart = (ChartPart)mainDocumentPart.GetPartById(chartRid);
+                    var chartPart = (ChartPart)mainDocumentPart.GetPartById(chartRid);
                     UpdateChart(chartPart, chartData);
                     var newContent = cc.Elements(W.sdtContent).Elements().Select(e => new XElement(e));
                     cc.ReplaceWith(newContent);
@@ -130,8 +130,8 @@ namespace Clippit.Word
         {
             UpdateEmbeddedWorkbook(chartPart, chartData);
 
-            XDocument cpXDoc = chartPart.GetXDocument();
-            XElement root = cpXDoc.Root;
+            var cpXDoc = chartPart.GetXDocument();
+            var root = cpXDoc.Root;
             var firstSeries = root.Descendants(C.ser).FirstOrDefault();
             var numRef = firstSeries.Elements(C.val).Elements(C.numRef).FirstOrDefault();
             string sheetName = null;
@@ -140,7 +140,7 @@ namespace Clippit.Word
                 sheetName = f.Split('!')[0];
 
             // remove all but first series
-            XName chartType = firstSeries.Parent.Name;
+            var chartType = firstSeries.Parent.Name;
             firstSeries.Parent.Elements(C.ser).Skip(1).Remove();
 
             var newSetOfSeries = chartData.SeriesNames
@@ -372,7 +372,7 @@ namespace Clippit.Word
                     if (newSer == null)
                         throw new OpenXmlPowerToolsException("Unsupported chart type");
 
-                    int accentNumber = (si % 6) + 1;
+                    var accentNumber = (si % 6) + 1;
                     newSer = (XElement)UpdateAccentTransform(newSer, accentNumber);
                     return newSer;
                 });
@@ -382,8 +382,8 @@ namespace Clippit.Word
 
         private static void UpdateEmbeddedWorkbook(ChartPart chartPart, ChartData chartData)
         {
-            XDocument cpXDoc = chartPart.GetXDocument();
-            XElement root = cpXDoc.Root;
+            var cpXDoc = chartPart.GetXDocument();
+            var root = cpXDoc.Root;
             var firstSeries = root.Descendants(C.ser).FirstOrDefault();
             if (firstSeries == null)
                 return;
@@ -397,7 +397,7 @@ namespace Clippit.Word
             var embeddedSpreadsheet = chartPart.GetPartById(embeddedSpreadsheetRid);
             if (embeddedSpreadsheet != null)
             {
-                using SpreadsheetDocument sDoc = SpreadsheetDocument.Open(embeddedSpreadsheet.GetStream(), true);
+                using var sDoc = SpreadsheetDocument.Open(embeddedSpreadsheet.GetStream(), true);
                 var workbookPart = sDoc.WorkbookPart;
                 var wbRoot = workbookPart.GetXDocument().Root;
                 var sheetRid = (string)wbRoot
@@ -415,7 +415,7 @@ namespace Clippit.Word
                     var stylePart = workbookPart.WorkbookStylesPart;
                     var xdStyle = stylePart.GetXDocument();
 
-                    int categoryStyleId = 0;
+                    var categoryStyleId = 0;
                     if (chartData.CategoryFormatCode != 0)
                         categoryStyleId = AddDxfToDxfs(xdSheet, xdStyle, chartData.CategoryFormatCode);
                     stylePart.PutXDocument();
@@ -559,7 +559,7 @@ namespace Clippit.Word
 
         private static object UpdateAccentTransform(XNode node, int accentNumber)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (element.Name == A.schemeClr && (string)element.Attribute("val") == "accent1")
@@ -585,7 +585,7 @@ namespace Clippit.Word
                 var chartRid = (string)sXDoc.Descendants(C.chart).Attributes(R.id).FirstOrDefault();
                 if (chartRid != null)
                 {
-                    ChartPart chartPart = (ChartPart)slidePart.GetPartById(chartRid);
+                    var chartPart = (ChartPart)slidePart.GetPartById(chartRid);
                     UpdateChart(chartPart, chartData);
                     return true;
                 }

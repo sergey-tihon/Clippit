@@ -28,19 +28,19 @@ namespace Clippit
                         FileFormatVersions.Office2007)
                 };
 
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true, os))
+                using (var wDoc = WordprocessingDocument.Open(ms, true, os))
                 {
-                    OpenXmlPartRootElement unused = wDoc.MainDocumentPart.RootElement;
+                    var unused = wDoc.MainDocumentPart.RootElement;
                     if (wDoc.MainDocumentPart.FootnotesPart != null)
                     {
                         // contrary to what you might think, looking at the API, it is necessary to access the root element of each part to cause
                         // the SDK to process MC markup.
-                        OpenXmlPartRootElement unused1 = wDoc.MainDocumentPart.FootnotesPart.RootElement;
+                        var unused1 = wDoc.MainDocumentPart.FootnotesPart.RootElement;
                     }
 
                     if (wDoc.MainDocumentPart.EndnotesPart != null)
                     {
-                        OpenXmlPartRootElement unused1 = wDoc.MainDocumentPart.EndnotesPart.RootElement;
+                        var unused1 = wDoc.MainDocumentPart.EndnotesPart.RootElement;
                     }
                 }
 
@@ -58,7 +58,7 @@ namespace Clippit
                         FileFormatVersions.Office2007)
                 };
 
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true, os))
+                using (var wDoc = WordprocessingDocument.Open(ms, true, os))
                 {
                     TestForInvalidContent(wDoc);
                     RemoveExistingPowerToolsMarkup(wDoc);
@@ -98,9 +98,9 @@ namespace Clippit
 
         private static void TestForInvalidContent(WordprocessingDocument wDoc)
         {
-            foreach (OpenXmlPart part in wDoc.ContentParts())
+            foreach (var part in wDoc.ContentParts())
             {
-                XDocument xDoc = part.GetXDocument();
+                var xDoc = part.GetXDocument();
                 if (xDoc.Descendants(W.altChunk).Any())
                     throw new OpenXmlPowerToolsException("Unsupported document, contains w:altChunk");
                 if (xDoc.Descendants(W.subDoc).Any())
@@ -123,10 +123,10 @@ namespace Clippit
 
             wDoc.MainDocumentPart.PutXDocument();
 
-            FootnotesPart fnPart = wDoc.MainDocumentPart.FootnotesPart;
+            var fnPart = wDoc.MainDocumentPart.FootnotesPart;
             if (fnPart != null)
             {
-                XDocument fnXDoc = fnPart.GetXDocument();
+                var fnXDoc = fnPart.GetXDocument();
                 fnXDoc
                     .Root?
                     .Descendants()
@@ -138,10 +138,10 @@ namespace Clippit
                 fnPart.PutXDocument();
             }
 
-            EndnotesPart enPart = wDoc.MainDocumentPart.EndnotesPart;
+            var enPart = wDoc.MainDocumentPart.EndnotesPart;
             if (enPart != null)
             {
-                XDocument enXDoc = enPart.GetXDocument();
+                var enXDoc = enPart.GetXDocument();
                 enXDoc
                     .Root?
                     .Descendants()
@@ -158,29 +158,29 @@ namespace Clippit
             WordprocessingDocument wDoc,
             int startingIdForFootnotesEndnotes)
         {
-            MainDocumentPart mainDocPart = wDoc.MainDocumentPart;
-            FootnotesPart footnotesPart = wDoc.MainDocumentPart.FootnotesPart;
-            EndnotesPart endnotesPart = wDoc.MainDocumentPart.EndnotesPart;
+            var mainDocPart = wDoc.MainDocumentPart;
+            var footnotesPart = wDoc.MainDocumentPart.FootnotesPart;
+            var endnotesPart = wDoc.MainDocumentPart.EndnotesPart;
 
-            XElement document =
+            var document =
                 mainDocPart.GetXDocument().Root ?? throw new OpenXmlPowerToolsException("Invalid document.");
 
-            XElement footnotes = footnotesPart?.GetXDocument().Root;
-            XElement endnotes = endnotesPart?.GetXDocument().Root;
+            var footnotes = footnotesPart?.GetXDocument().Root;
+            var endnotes = endnotesPart?.GetXDocument().Root;
 
-            IEnumerable<XElement> references = document
+            var references = document
                 .Descendants()
                 .Where(d => d.Name == W.footnoteReference || d.Name == W.endnoteReference);
 
-            foreach (XElement r in references)
+            foreach (var r in references)
             {
                 var oldId = (string) r.Attribute(W.id);
-                string newId = startingIdForFootnotesEndnotes.ToString();
+                var newId = startingIdForFootnotesEndnotes.ToString();
                 startingIdForFootnotesEndnotes++;
                 r.SetAttributeValue(W.id, newId);
                 if (r.Name == W.footnoteReference)
                 {
-                    XElement fn = footnotes?
+                    var fn = footnotes?
                         .Elements()
                         .FirstOrDefault(e => (string) e.Attribute(W.id) == oldId);
 
@@ -193,7 +193,7 @@ namespace Clippit
                 }
                 else
                 {
-                    XElement en = endnotes?
+                    var en = endnotes?
                         .Elements()
                         .FirstOrDefault(e => (string) e.Attribute(W.id) == oldId);
 
@@ -213,14 +213,14 @@ namespace Clippit
 
         private static void AddUnidsToMarkupInContentParts(WordprocessingDocument wDoc)
         {
-            XDocument mdp = wDoc.MainDocumentPart.GetXDocument();
+            var mdp = wDoc.MainDocumentPart.GetXDocument();
             AssignUnidToAllElements(mdp.Root);
             IgnorePt14Namespace(mdp.Root);
             wDoc.MainDocumentPart.PutXDocument();
 
             if (wDoc.MainDocumentPart.FootnotesPart != null)
             {
-                XDocument p = wDoc.MainDocumentPart.FootnotesPart.GetXDocument();
+                var p = wDoc.MainDocumentPart.FootnotesPart.GetXDocument();
                 AssignUnidToAllElements(p.Root);
                 IgnorePt14Namespace(p.Root);
                 wDoc.MainDocumentPart.FootnotesPart.PutXDocument();
@@ -228,7 +228,7 @@ namespace Clippit
 
             if (wDoc.MainDocumentPart.EndnotesPart != null)
             {
-                XDocument p = wDoc.MainDocumentPart.EndnotesPart.GetXDocument();
+                var p = wDoc.MainDocumentPart.EndnotesPart.GetXDocument();
                 AssignUnidToAllElements(p.Root);
                 IgnorePt14Namespace(p.Root);
                 wDoc.MainDocumentPart.EndnotesPart.PutXDocument();
@@ -237,12 +237,12 @@ namespace Clippit
 
         private static void AssignUnidToAllElements(XElement contentParent)
         {
-            IEnumerable<XElement> content = contentParent.Descendants();
-            foreach (XElement d in content)
+            var content = contentParent.Descendants();
+            foreach (var d in content)
             {
                 if (d.Attribute(PtOpenXml.Unid) == null)
                 {
-                    string unid = Guid.NewGuid().ToString().Replace("-", "");
+                    var unid = Guid.NewGuid().ToString().Replace("-", "");
                     var newAtt = new XAttribute(PtOpenXml.Unid, unid);
                     d.Add(newAtt);
                 }
@@ -252,11 +252,11 @@ namespace Clippit
         [SuppressMessage("ReSharper", "CoVariantArrayConversion")]
         private static void AddFootnotesEndnotesParts(WordprocessingDocument wDoc)
         {
-            MainDocumentPart mdp = wDoc.MainDocumentPart;
+            var mdp = wDoc.MainDocumentPart;
             if (mdp.FootnotesPart == null)
             {
                 mdp.AddNewPart<FootnotesPart>();
-                XDocument newFootnotes = wDoc.MainDocumentPart.FootnotesPart.GetXDocument();
+                var newFootnotes = wDoc.MainDocumentPart.FootnotesPart.GetXDocument();
                 newFootnotes.Declaration.Standalone = "yes";
                 newFootnotes.Declaration.Encoding = "UTF-8";
                 newFootnotes.Add(new XElement(W.footnotes, NamespaceAttributes));
@@ -266,7 +266,7 @@ namespace Clippit
             if (mdp.EndnotesPart == null)
             {
                 mdp.AddNewPart<EndnotesPart>();
-                XDocument newEndnotes = wDoc.MainDocumentPart.EndnotesPart.GetXDocument();
+                var newEndnotes = wDoc.MainDocumentPart.EndnotesPart.GetXDocument();
                 newEndnotes.Declaration.Standalone = "yes";
                 newEndnotes.Declaration.Encoding = "UTF-8";
                 newEndnotes.Add(new XElement(W.endnotes, NamespaceAttributes));
@@ -276,7 +276,7 @@ namespace Clippit
 
         private static void FillInEmptyFootnotesEndnotes(WordprocessingDocument wDoc)
         {
-            XElement emptyFootnote = XElement.Parse(
+            var emptyFootnote = XElement.Parse(
                 @"<w:p xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
   <w:pPr>
     <w:pStyle w:val='FootnoteText'/>
@@ -289,7 +289,7 @@ namespace Clippit
   </w:r>
 </w:p>");
 
-            XElement emptyEndnote = XElement.Parse(
+            var emptyEndnote = XElement.Parse(
                 @"<w:p xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
   <w:pPr>
     <w:pStyle w:val='EndnoteText'/>
@@ -302,11 +302,11 @@ namespace Clippit
   </w:r>
 </w:p>");
 
-            FootnotesPart footnotePart = wDoc.MainDocumentPart.FootnotesPart;
+            var footnotePart = wDoc.MainDocumentPart.FootnotesPart;
             if (footnotePart != null)
             {
-                XElement fnRoot = footnotePart.GetXDocument().Root ?? throw new ArgumentException();
-                foreach (XElement fn in fnRoot.Elements(W.footnote))
+                var fnRoot = footnotePart.GetXDocument().Root ?? throw new ArgumentException();
+                foreach (var fn in fnRoot.Elements(W.footnote))
                 {
                     if (!fn.HasElements)
                         fn.Add(emptyFootnote);
@@ -315,11 +315,11 @@ namespace Clippit
                 footnotePart.PutXDocument();
             }
 
-            EndnotesPart endnotePart = wDoc.MainDocumentPart.EndnotesPart;
+            var endnotePart = wDoc.MainDocumentPart.EndnotesPart;
             if (endnotePart != null)
             {
-                XElement fnRoot = endnotePart.GetXDocument().Root ?? throw new ArgumentException();
-                foreach (XElement fn in fnRoot.Elements(W.endnote))
+                var fnRoot = endnotePart.GetXDocument().Root ?? throw new ArgumentException();
+                foreach (var fn in fnRoot.Elements(W.endnote))
                 {
                     if (!fn.HasElements)
                         fn.Add(emptyEndnote);

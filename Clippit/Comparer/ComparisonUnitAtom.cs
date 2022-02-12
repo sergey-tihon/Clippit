@@ -45,7 +45,7 @@ namespace Clippit
             }
             else
             {
-                string shaHashString = GetSha1HashStringForElement(ContentElement, settings);
+                var shaHashString = GetSha1HashStringForElement(ContentElement, settings);
                 SHA1Hash = WmlComparerUtil.SHA1HashStringForUTF8String(shaHashString);
             }
         }
@@ -70,7 +70,7 @@ namespace Clippit
 
         private static string GetSha1HashStringForElement(XElement contentElement, WmlComparerSettings settings)
         {
-            string text = contentElement.Value;
+            var text = contentElement.Value;
             if (settings.CaseInsensitive)
             {
                 text = text.ToUpper(settings.CultureInfo);
@@ -96,7 +96,7 @@ namespace Clippit
         public override string ToString(int indent)
         {
             const int xNamePad = 16;
-            string indentString = "".PadRight(indent);
+            var indentString = "".PadRight(indent);
 
             var sb = new StringBuilder();
             sb.Append(indentString);
@@ -133,7 +133,7 @@ namespace Clippit
         private string ToStringAncestorUnids(int indent)
         {
             const int xNamePad = 16;
-            string indentString = "".PadRight(indent);
+            var indentString = "".PadRight(indent);
 
             var sb = new StringBuilder();
             sb.Append(indentString);
@@ -169,7 +169,7 @@ namespace Clippit
 
         private static void AppendAncestorsDump(StringBuilder sb, ComparisonUnitAtom sr)
         {
-            string s = sr
+            var s = sr
                 .AncestorElements.Select(p => p.Name.LocalName + GetUnid(p) + "/")
                 .StringConcatenate()
                 .TrimEnd('/');
@@ -185,7 +185,7 @@ namespace Clippit
                 AncestorUnid = u
             });
 
-            string s = zipped
+            var s = zipped
                 .Select(p => p.AncestorElement.Name.LocalName + "[" + p.AncestorUnid[..8] + "]/")
                 .StringConcatenate().TrimEnd('/');
 

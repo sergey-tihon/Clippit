@@ -50,19 +50,19 @@ namespace Clippit.Excel
         }
         public IEnumerable<TableRow> TableRows()
         {
-            string refStart = Ref.Split(':').First();
-            int rowStart = Int32.Parse(XlsxTables.SplitAddress(refStart)[1]);
-            string refEnd = Ref.Split(':').ElementAt(1);
-            int rowEnd = Int32.Parse(XlsxTables.SplitAddress(refEnd)[1]);
-            int headerRowsCount = HeaderRowCount == null ? 0 : (int)HeaderRowCount;
-            int totalRowsCount = TotalsRowCount == null ? 0 : (int)TotalsRowCount;
+            var refStart = Ref.Split(':').First();
+            var rowStart = Int32.Parse(XlsxTables.SplitAddress(refStart)[1]);
+            var refEnd = Ref.Split(':').ElementAt(1);
+            var rowEnd = Int32.Parse(XlsxTables.SplitAddress(refEnd)[1]);
+            var headerRowsCount = HeaderRowCount == null ? 0 : (int)HeaderRowCount;
+            var totalRowsCount = TotalsRowCount == null ? 0 : (int)TotalsRowCount;
             return Parent
                 .Rows()
                 .Skip(headerRowsCount)
                 .SkipLast(totalRowsCount)
                 .Where(r =>
                 {
-                    int rowId = Int32.Parse(r.RowId);
+                    var rowId = Int32.Parse(r.RowId);
                     return rowId >= rowStart && rowId <= rowEnd;
                 }
                 )
@@ -92,16 +92,16 @@ namespace Clippit.Excel
         {
             get
             {
-                TableColumn tc = Parent
+                var tc = Parent
                     .TableColumns()
                     .Where(x => x.Name.ToLower() == columnName.ToLower())
                     .FirstOrDefault();
                 if (tc == null)
                     throw new Exception("Invalid column name: " + columnName);
-                string[] refs = Parent.Ref.Split(':');
-                string[] startRefs = XlsxTables.SplitAddress(refs[0]);
-                string columnAddress = XlsxTables.IndexToColumnAddress(XlsxTables.ColumnAddressToIndex(startRefs[0]) + tc.ColumnIndex);
-                Cell cell = Row.Cells().Where(c => c.ColumnAddress == columnAddress).FirstOrDefault();
+                var refs = Parent.Ref.Split(':');
+                var startRefs = XlsxTables.SplitAddress(refs[0]);
+                var columnAddress = XlsxTables.IndexToColumnAddress(XlsxTables.ColumnAddressToIndex(startRefs[0]) + tc.ColumnIndex);
+                var cell = Row.Cells().Where(c => c.ColumnAddress == columnAddress).FirstOrDefault();
                 if (cell != null)
                 {
                     if (cell.Type == "s")
@@ -253,9 +253,9 @@ namespace Clippit.Excel
         public List<Cell> Cells()
         {
             XNamespace s = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
-            SpreadsheetDocument doc = (SpreadsheetDocument)Parent.OpenXmlPackage;
-            SharedStringTablePart sharedStringTable = doc.WorkbookPart.SharedStringTablePart;
-            IEnumerable<XElement> cells = this.RowElement.Elements(S.c);
+            var doc = (SpreadsheetDocument)Parent.OpenXmlPackage;
+            var sharedStringTable = doc.WorkbookPart.SharedStringTablePart;
+            var cells = this.RowElement.Elements(S.c);
             var r = cells
                 .Select(cell => {
                     var cellType = (string)cell.Attribute("t");
@@ -317,9 +317,9 @@ namespace Clippit.Excel
             foreach (var worksheetPart in spreadsheet.WorkbookPart.WorksheetParts)
                 foreach (var table in worksheetPart.TableDefinitionParts)
                 {
-                    XDocument tableDefDoc = table.GetXDocument();
+                    var tableDefDoc = table.GetXDocument();
 
-                    Table t = new Table(worksheetPart)
+                    var t = new Table(worksheetPart)
                     {
                         Id = (int)tableDefDoc.Root.Attribute("id"),
                         TableName = (string)tableDefDoc.Root.Attribute("name"),
@@ -345,12 +345,12 @@ namespace Clippit.Excel
         {
             // C5:E7
             var spl = theRef.Split(':');
-            string refStart = spl.First();
+            var refStart = spl.First();
             var refStartSplit = XlsxTables.SplitAddress(refStart);
             leftColumn = XlsxTables.ColumnAddressToIndex(refStartSplit[0]);
             topRow = Int32.Parse(refStartSplit[1]);
 
-            string refEnd = spl.ElementAt(1);
+            var refEnd = spl.ElementAt(1);
             var refEndSplit = XlsxTables.SplitAddress(refEnd);
             rightColumn = XlsxTables.ColumnAddressToIndex(refEndSplit[0]);
             bottomRow = Int32.Parse(refEndSplit[1]);
@@ -401,29 +401,29 @@ namespace Clippit.Excel
         {
             if (index < 26)
             {
-                char c = (char)((int)'A' + index);
-                string s = new string(c, 1);
+                var c = (char)((int)'A' + index);
+                var s = new string(c, 1);
                 return s;
             }
             if (index < 702)
             {
-                int i = index - 26;
-                int i1 = (int)(i / 26);
-                int i2 = i % 26;
-                string s = new string((char)((int)'A' + i1), 1) +
-                    new string((char)((int)'A' + i2), 1);
+                var i = index - 26;
+                var i1 = (int)(i / 26);
+                var i2 = i % 26;
+                var s = new string((char)((int)'A' + i1), 1) +
+                        new string((char)((int)'A' + i2), 1);
                 return s;
             }
             if (index < 18278)
             {
-                int i = index - 702;
-                int i1 = (int)(i / 676);
+                var i = index - 702;
+                var i1 = (int)(i / 676);
                 i = i - i1 * 676;
-                int i2 = (int)(i / 26);
-                int i3 = i % 26;
-                string s = new string((char)((int)'A' + i1), 1) +
-                    new string((char)((int)'A' + i2), 1) +
-                    new string((char)((int)'A' + i3), 1);
+                var i2 = (int)(i / 26);
+                var i3 = i % 26;
+                var s = new string((char)((int)'A' + i1), 1) +
+                        new string((char)((int)'A' + i2), 1) +
+                        new string((char)((int)'A' + i3), 1);
                 return s;
             }
             throw new Exception("Invalid column address");
@@ -433,26 +433,26 @@ namespace Clippit.Excel
         {
             if (columnAddress.Length == 1)
             {
-                char c = columnAddress[0];
-                int i = c - 'A';
+                var c = columnAddress[0];
+                var i = c - 'A';
                 return i;
             }
             if (columnAddress.Length == 2)
             {
-                char c1 = columnAddress[0];
-                char c2 = columnAddress[1];
-                int i1 = c1 - 'A';
-                int i2 = c2 - 'A';
+                var c1 = columnAddress[0];
+                var c2 = columnAddress[1];
+                var i1 = c1 - 'A';
+                var i2 = c2 - 'A';
                 return (i1 + 1) * 26 + i2;
             }
             if (columnAddress.Length == 3)
             {
-                char c1 = columnAddress[0];
-                char c2 = columnAddress[1];
-                char c3 = columnAddress[2];
-                int i1 = c1 - 'A';
-                int i2 = c2 - 'A';
-                int i3 = c3 - 'A';
+                var c1 = columnAddress[0];
+                var c2 = columnAddress[1];
+                var c3 = columnAddress[2];
+                var i1 = c1 - 'A';
+                var i2 = c2 - 'A';
+                var i3 = c3 - 'A';
                 return (i1 + 1) * 676 + (i2 + 1) * 26 + i3;
             }
             throw new FileFormatException("Invalid spreadsheet: Invalid column address.");

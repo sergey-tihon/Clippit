@@ -45,7 +45,7 @@ namespace Clippit
             ComparisonUnit comparisonUnit,
             List<ComparisonUnit> comparisonUnitList)
         {
-            foreach (ComparisonUnit cu in comparisonUnit.Contents)
+            foreach (var cu in comparisonUnit.Contents)
             {
                 comparisonUnitList.Add(cu);
                 if (cu.Contents != null && cu.Contents.Any())
@@ -59,7 +59,7 @@ namespace Clippit
         {
             var sb = new StringBuilder();
             sb.Append("Dump Comparision Unit List To String" + Environment.NewLine);
-            foreach (ComparisonUnit item in cul) sb.Append(item.ToString(2) + Environment.NewLine);
+            foreach (var item in cul) sb.Append(item.ToString(2) + Environment.NewLine);
 
             return sb.ToString();
         }

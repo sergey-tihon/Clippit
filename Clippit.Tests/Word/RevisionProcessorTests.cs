@@ -79,14 +79,14 @@ namespace Clippit.Tests.Word
         [InlineData("RP/RP052-Deleted-Para-Mark.docx")]
         public void RP001(string name)
         {
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
             var sourceFi = new FileInfo(Path.Combine(sourceDir.FullName, name));
             var baselineAcceptedFi = new FileInfo(Path.Combine(sourceDir.FullName, name.Replace(".docx", "-Accepted.docx")));
             var baselineRejectedFi = new FileInfo(Path.Combine(sourceDir.FullName, name.Replace(".docx", "-Rejected.docx")));
 
-            WmlDocument sourceWml = new WmlDocument(sourceFi.FullName);
-            WmlDocument afterRejectingWml = RevisionProcessor.RejectRevisions(sourceWml);
-            WmlDocument afterAcceptingWml = RevisionProcessor.AcceptRevisions(sourceWml);
+            var sourceWml = new WmlDocument(sourceFi.FullName);
+            var afterRejectingWml = RevisionProcessor.RejectRevisions(sourceWml);
+            var afterAcceptingWml = RevisionProcessor.AcceptRevisions(sourceWml);
 
             var processedAcceptedFi = new FileInfo(Path.Combine(TempDir, sourceFi.Name.Replace(".docx", "-Accepted.docx")));
             afterAcceptingWml.SaveAs(processedAcceptedFi.FullName);
@@ -171,8 +171,8 @@ namespace Clippit.Tests.Word
             if (baselineAcceptedFi.Exists)
             {
                 var baselineAcceptedWml = new WmlDocument(baselineAcceptedFi.FullName);
-                WmlComparerSettings wmlComparerSettings = new WmlComparerSettings();
-                WmlDocument result = WmlComparer.Compare(baselineAcceptedWml, afterAcceptingWml, wmlComparerSettings);
+                var wmlComparerSettings = new WmlComparerSettings();
+                var result = WmlComparer.Compare(baselineAcceptedWml, afterAcceptingWml, wmlComparerSettings);
                 var revisions = WmlComparer.GetRevisions(result, wmlComparerSettings);
                 if (revisions.Any())
                 {
@@ -189,8 +189,8 @@ namespace Clippit.Tests.Word
             if (baselineRejectedFi.Exists)
             {
                 var baselineRejectedWml = new WmlDocument(baselineRejectedFi.FullName);
-                WmlComparerSettings wmlComparerSettings = new WmlComparerSettings();
-                WmlDocument result = WmlComparer.Compare(baselineRejectedWml, afterRejectingWml, wmlComparerSettings);
+                var wmlComparerSettings = new WmlComparerSettings();
+                var result = WmlComparer.Compare(baselineRejectedWml, afterRejectingWml, wmlComparerSettings);
                 var revisions = WmlComparer.GetRevisions(result, wmlComparerSettings);
                 if (revisions.Any())
                 {

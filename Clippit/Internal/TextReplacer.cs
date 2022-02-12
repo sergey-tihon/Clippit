@@ -26,7 +26,7 @@ namespace Clippit.Internal
         {
             if (node is XElement element)
             {
-                XElement newElement = new XElement(element.Name,
+                var newElement = new XElement(element.Name,
                     element.Attributes(),
                     element.Nodes().Select(CloneWithAnnotation));
                 if (element.Annotation<MatchSemaphore>() != null)
@@ -42,25 +42,25 @@ namespace Clippit.Internal
             {
                 if (element.Name == W.p)
                 {
-                    string contents = element.Descendants(W.t).Select(t => (string)t).StringConcatenate();
+                    var contents = element.Descendants(W.t).Select(t => (string)t).StringConcatenate();
                     if (contents.Contains(search) ||
                         (!matchCase && contents.ToUpper().Contains(search.ToUpper())))
                     {
-                        XElement paragraphWithSplitRuns = new XElement(W.p,
+                        var paragraphWithSplitRuns = new XElement(W.p,
                             element.Attributes(),
                             element.Nodes().Select(n => WmlSearchAndReplaceTransform(n, search,
                                 replace, matchCase)));
-                        XElement[] subRunArray = paragraphWithSplitRuns
+                        var subRunArray = paragraphWithSplitRuns
                             .Elements(W.r)
                             .Where(e => {
-                                XElement subRunElement = e.Elements().FirstOrDefault(el => el.Name != W.rPr);
+                                var subRunElement = e.Elements().FirstOrDefault(el => el.Name != W.rPr);
                                 if (subRunElement == null)
                                     return false;
                                 return W.SubRunLevelContent.Contains(subRunElement.Name);
                             })
                             .ToArray();
-                        int paragraphChildrenCount = subRunArray.Length;
-                        int matchId = 1;
+                        var paragraphChildrenCount = subRunArray.Length;
+                        var matchId = 1;
                         foreach (var pc in subRunArray
                             .Take(paragraphChildrenCount - (search.Length - 1))
                             .Select((c, i) => new { Child = c, Index = i, }))
@@ -71,7 +71,7 @@ namespace Clippit.Internal
                                 ParagraphChildProjection = pcp,
                                 CharacterToCompare = c,
                             });
-                            bool dontMatch = zipped.Any(z => {
+                            var dontMatch = zipped.Any(z => {
                                 if (z.ParagraphChildProjection.Annotation<MatchSemaphore>() != null)
                                     return true;
                                 bool b;
@@ -81,7 +81,7 @@ namespace Clippit.Internal
                                     b = z.ParagraphChildProjection.Value.ToUpper() != z.CharacterToCompare.ToString().ToUpper();
                                 return b;
                             });
-                            bool match = !dontMatch;
+                            var match = !dontMatch;
                             if (match)
                             {
                                 foreach (var item in subSequence)
@@ -91,10 +91,10 @@ namespace Clippit.Internal
                         }
 
                         // The following code is locally impure, as this is the most expressive way to write it.
-                        XElement paragraphWithReplacedRuns = (XElement)CloneWithAnnotation(paragraphWithSplitRuns);
-                        for (int id = 1; id < matchId; ++id)
+                        var paragraphWithReplacedRuns = (XElement)CloneWithAnnotation(paragraphWithSplitRuns);
+                        for (var id = 1; id < matchId; ++id)
                         {
-                            List<XElement> elementsToReplace = paragraphWithReplacedRuns
+                            var elementsToReplace = paragraphWithReplacedRuns
                                 .Elements()
                                 .Where(e => {
                                     var sem = e.Annotation<MatchSemaphore>();
@@ -123,12 +123,12 @@ namespace Clippit.Internal
                                     return "";
                                 return ce.Element(W.rPr).ToString(SaveOptions.None);
                             });
-                        XElement paragraphWithConsolidatedRuns = new XElement(W.p,
+                        var paragraphWithConsolidatedRuns = new XElement(W.p,
                             groupedAdjacentRunsWithIdenticalFormatting.Select(g =>
                                 {
                                     if (g.Key == "DontConsolidate")
                                         return (object)g;
-                                    string textValue = g.Select(r => r.Element(W.t).Value).StringConcatenate();
+                                    var textValue = g.Select(r => r.Element(W.t).Value).StringConcatenate();
                                     XAttribute xs = null;
                                     if (textValue[0] == ' ' || textValue[^1] == ' ')
                                         xs = new XAttribute(XNamespace.Xml + "space", "preserve");
@@ -148,10 +148,10 @@ namespace Clippit.Internal
                             {
                                 if (e.Name == W.t)
                                 {
-                                    string s = (string)e;
-                                    IEnumerable<XElement> collectionOfSubRuns = s.Select(c =>
+                                    var s = (string)e;
+                                    var collectionOfSubRuns = s.Select(c =>
                                     {
-                                        XElement newRun = new XElement(W.r,
+                                        var newRun = new XElement(W.r,
                                             element.Elements(W.rPr),
                                             new XElement(W.t,
                                                 c == ' ' ?
@@ -163,7 +163,7 @@ namespace Clippit.Internal
                                 }
                                 else
                                 {
-                                    XElement newRun = new XElement(W.r,
+                                    var newRun = new XElement(W.r,
                                         element.Elements(W.rPr),
                                         e);
                                     return newRun;
@@ -182,7 +182,7 @@ namespace Clippit.Internal
         private static void WmlSearchAndReplaceInXDocument(XDocument xDocument, string search,
             string replace, bool matchCase)
         {
-            XElement newRoot = (XElement)WmlSearchAndReplaceTransform(xDocument.Root,
+            var newRoot = (XElement)WmlSearchAndReplaceTransform(xDocument.Root,
                 search, replace, matchCase);
             xDocument.Elements().First().ReplaceWith(newRoot);
         }
@@ -241,31 +241,31 @@ namespace Clippit.Internal
         private static object PmlReplaceTextTransform(XNode node, string search, string replace,
             bool matchCase)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (element.Name == A.p)
                 {
-                    string contents = element.Descendants(A.t).Select(t => (string)t).StringConcatenate();
+                    var contents = element.Descendants(A.t).Select(t => (string)t).StringConcatenate();
                     if (contents.Contains(search) ||
                         (!matchCase && contents.ToUpper().Contains(search.ToUpper())))
                     {
-                        XElement paragraphWithSplitRuns = new XElement(A.p,
+                        var paragraphWithSplitRuns = new XElement(A.p,
                             element.Attributes(),
                             element.Nodes().Select(n => PmlReplaceTextTransform(n, search,
                                 replace, matchCase)));
-                        XElement[] subRunArray = paragraphWithSplitRuns
+                        var subRunArray = paragraphWithSplitRuns
                             .Elements(A.r)
                             .Where(e =>
                             {
-                                XElement subRunElement = e.Elements().FirstOrDefault(el => el.Name != A.rPr);
+                                var subRunElement = e.Elements().FirstOrDefault(el => el.Name != A.rPr);
                                 if (subRunElement == null)
                                     return false;
                                 return subRunElement.Name == A.t;
                             })
                             .ToArray();
-                        int paragraphChildrenCount = subRunArray.Length;
-                        int matchId = 1;
+                        var paragraphChildrenCount = subRunArray.Length;
+                        var matchId = 1;
                         foreach (var pc in subRunArray
                             .Take(paragraphChildrenCount - (search.Length - 1))
                             .Select((c, i) => new { Child = c, Index = i, }))
@@ -276,7 +276,7 @@ namespace Clippit.Internal
                                 ParagraphChildProjection = pcp,
                                 CharacterToCompare = c,
                             });
-                            bool dontMatch = zipped.Any(z =>
+                            var dontMatch = zipped.Any(z =>
                             {
                                 if (z.ParagraphChildProjection.Annotation<MatchSemaphore>() != null)
                                     return true;
@@ -287,7 +287,7 @@ namespace Clippit.Internal
                                     b = z.ParagraphChildProjection.Value.ToUpper() != z.CharacterToCompare.ToString().ToUpper();
                                 return b;
                             });
-                            bool match = !dontMatch;
+                            var match = !dontMatch;
                             if (match)
                             {
                                 foreach (var item in subSequence)
@@ -297,10 +297,10 @@ namespace Clippit.Internal
                         }
 
                         // The following code is locally impure, as this is the most expressive way to write it.
-                        XElement paragraphWithReplacedRuns = (XElement)CloneWithAnnotation(paragraphWithSplitRuns);
-                        for (int id = 1; id < matchId; ++id)
+                        var paragraphWithReplacedRuns = (XElement)CloneWithAnnotation(paragraphWithSplitRuns);
+                        for (var id = 1; id < matchId; ++id)
                         {
-                            List<XElement> elementsToReplace = paragraphWithReplacedRuns
+                            var elementsToReplace = paragraphWithReplacedRuns
                                 .Elements()
                                 .Where(e =>
                                 {
@@ -331,12 +331,12 @@ namespace Clippit.Internal
                                     return "";
                                 return ce.Element(A.rPr).ToString(SaveOptions.None);
                             });
-                        XElement paragraphWithConsolidatedRuns = new XElement(A.p,
+                        var paragraphWithConsolidatedRuns = new XElement(A.p,
                             groupedAdjacentRunsWithIdenticalFormatting.Select(g =>
                             {
                                 if (g.Key == "DontConsolidate")
                                     return (object)g;
-                                string textValue = g.Select(r => r.Element(A.t).Value).StringConcatenate();
+                                var textValue = g.Select(r => r.Element(A.t).Value).StringConcatenate();
                                 return new XElement(A.r,
                                     g.First().Elements(A.rPr),
                                     new XElement(A.t, textValue));
@@ -352,10 +352,10 @@ namespace Clippit.Internal
                         {
                             if (e.Name == A.t)
                             {
-                                string s = (string)e;
-                                IEnumerable<XElement> collectionOfSubRuns = s.Select(c =>
+                                var s = (string)e;
+                                var collectionOfSubRuns = s.Select(c =>
                                 {
-                                    XElement newRun = new XElement(A.r,
+                                    var newRun = new XElement(A.r,
                                         element.Elements(A.rPr),
                                         new XElement(A.t, c));
                                     return newRun;
@@ -364,7 +364,7 @@ namespace Clippit.Internal
                             }
                             else
                             {
-                                XElement newRun = new XElement(A.r,
+                                var newRun = new XElement(A.r,
                                     element.Elements(A.rPr),
                                     e);
                                 return newRun;
@@ -395,9 +395,9 @@ namespace Clippit.Internal
             var presentationPart = pDoc.PresentationPart;
             foreach (var slidePart in presentationPart.SlideParts)
             {
-                XDocument slideXDoc = slidePart.GetXDocument();
-                XElement root = slideXDoc.Root;
-                XElement newRoot = (XElement)PmlReplaceTextTransform(root, search, replace, matchCase);
+                var slideXDoc = slidePart.GetXDocument();
+                var root = slideXDoc.Root;
+                var newRoot = (XElement)PmlReplaceTextTransform(root, search, replace, matchCase);
                 slidePart.PutXDocument(new XDocument(newRoot));
             }
         }

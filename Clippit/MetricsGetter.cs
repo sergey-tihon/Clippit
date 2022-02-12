@@ -30,22 +30,22 @@ namespace Clippit
     {
         public static XElement GetMetrics(string fileName, MetricsGetterSettings settings)
         {
-            FileInfo fi = new FileInfo(fileName);
+            var fi = new FileInfo(fileName);
             if (!fi.Exists)
                 throw new FileNotFoundException("{0} does not exist.", fi.FullName);
             if (Util.IsWordprocessingML(fi.Extension))
             {
-                WmlDocument wmlDoc = new WmlDocument(fi.FullName, true);
+                var wmlDoc = new WmlDocument(fi.FullName, true);
                 return GetDocxMetrics(wmlDoc, settings);
             }
             if (Util.IsSpreadsheetML(fi.Extension))
             {
-                SmlDocument smlDoc = new SmlDocument(fi.FullName, true);
+                var smlDoc = new SmlDocument(fi.FullName, true);
                 return GetXlsxMetrics(smlDoc, settings);
             }
             if (Util.IsPresentationML(fi.Extension))
             {
-                PmlDocument pmlDoc = new PmlDocument(fi.FullName, true);
+                var pmlDoc = new PmlDocument(fi.FullName, true);
                 return GetPptxMetrics(pmlDoc, settings);
             }
             return null;
@@ -55,13 +55,13 @@ namespace Clippit
         {
             try
             {
-                using MemoryStream ms = new MemoryStream();
+                using var ms = new MemoryStream();
                 ms.Write(wmlDoc.DocumentByteArray, 0, wmlDoc.DocumentByteArray.Length);
-                using WordprocessingDocument document = WordprocessingDocument.Open(ms, true);
-                bool hasTrackedRevisions = RevisionAccepter.HasTrackedRevisions(document);
+                using var document = WordprocessingDocument.Open(ms, true);
+                var hasTrackedRevisions = RevisionAccepter.HasTrackedRevisions(document);
                 if (hasTrackedRevisions)
                     RevisionAccepter.AcceptRevisions(document);
-                XElement metrics1 = GetWmlMetrics(wmlDoc.FileName, false, document, settings);
+                var metrics1 = GetWmlMetrics(wmlDoc.FileName, false, document, settings);
                 if (hasTrackedRevisions)
                     metrics1.Add(new XElement(H.RevisionTracking, new XAttribute(H.Val, true)));
                 return metrics1;
@@ -70,7 +70,7 @@ namespace Clippit
             {
                 if (e.ToString().Contains("Invalid Hyperlink"))
                 {
-                    using (MemoryStream ms = new MemoryStream())
+                    using (var ms = new MemoryStream())
                     {
                         ms.Write(wmlDoc.DocumentByteArray, 0, wmlDoc.DocumentByteArray.Length);
 #if !NET35
@@ -78,15 +78,15 @@ namespace Clippit
 #endif
                         wmlDoc = new WmlDocument("dummy.docx", ms.ToArray());
                     }
-                    using (MemoryStream ms = new MemoryStream())
+                    using (var ms = new MemoryStream())
                     {
                         ms.Write(wmlDoc.DocumentByteArray, 0, wmlDoc.DocumentByteArray.Length);
-                        using (WordprocessingDocument document = WordprocessingDocument.Open(ms, true))
+                        using (var document = WordprocessingDocument.Open(ms, true))
                         {
-                            bool hasTrackedRevisions = RevisionAccepter.HasTrackedRevisions(document);
+                            var hasTrackedRevisions = RevisionAccepter.HasTrackedRevisions(document);
                             if (hasTrackedRevisions)
                                 RevisionAccepter.AcceptRevisions(document);
-                            XElement metrics2 = GetWmlMetrics(wmlDoc.FileName, true, document, settings);
+                            var metrics2 = GetWmlMetrics(wmlDoc.FileName, true, document, settings);
                             if (hasTrackedRevisions)
                                 metrics2.Add(new XElement(H.RevisionTracking, new XAttribute(H.Val, true)));
                             return metrics2;
@@ -179,7 +179,7 @@ namespace Clippit
 
         private static XElement RetrieveContentTypeList(OpenXmlPackage oxPkg)
         {
-            Package pkg = oxPkg.Package;
+            var pkg = oxPkg.Package;
 
             var nonRelationshipParts = pkg.GetParts().Cast<ZipPackagePart>().Where(p => p.ContentType != "application/vnd.openxmlformats-package.relationships+xml");
             var contentTypes = nonRelationshipParts
@@ -193,7 +193,7 @@ namespace Clippit
 
         private static XElement RetrieveNamespaceList(OpenXmlPackage oxPkg)
         {
-            Package pkg = oxPkg.Package;
+            var pkg = oxPkg.Package;
 
             var nonRelationshipParts = pkg.GetParts().Cast<ZipPackagePart>().Where(p => p.ContentType != "application/vnd.openxmlformats-package.relationships+xml");
             var xmlParts = nonRelationshipParts
@@ -202,10 +202,10 @@ namespace Clippit
             var uniqueNamespaces = new HashSet<string>();
             foreach (var xp in xmlParts)
             {
-                using Stream st = xp.GetStream();
+                using var st = xp.GetStream();
                 try
                 {
-                    XDocument xdoc = XDocument.Load(st);
+                    var xdoc = XDocument.Load(st);
                     var namespaces = xdoc
                         .Descendants()
                         .Attributes()
@@ -237,14 +237,14 @@ namespace Clippit
 
         private static List<XElement> GetMiscWmlMetrics(WordprocessingDocument document, bool invalidHyperlink)
         {
-            List<XElement> metrics = new List<XElement>();
-            List<string> notes = new List<string>();
-            Dictionary<XName, int> elementCountDictionary = new Dictionary<XName, int>();
+            var metrics = new List<XElement>();
+            var notes = new List<string>();
+            var elementCountDictionary = new Dictionary<XName, int>();
 
             if (invalidHyperlink)
                 metrics.Add(new XElement(H.InvalidHyperlink, new XAttribute(H.Val, invalidHyperlink)));
 
-            bool valid = ValidateWordprocessingDocument(document, metrics, notes, elementCountDictionary);
+            var valid = ValidateWordprocessingDocument(document, metrics, notes, elementCountDictionary);
             if (invalidHyperlink)
                 valid = false;
 
@@ -253,18 +253,18 @@ namespace Clippit
 
         private static bool ValidateWordprocessingDocument(WordprocessingDocument wDoc, List<XElement> metrics, List<string> notes, Dictionary<XName, int> metricCountDictionary)
         {
-            bool valid = ValidateAgainstSpecificVersion(wDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2007, H.SdkValidationError2007);
+            var valid = ValidateAgainstSpecificVersion(wDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2007, H.SdkValidationError2007);
             valid |= ValidateAgainstSpecificVersion(wDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2010, H.SdkValidationError2010);
 #if !NET35
             valid |= ValidateAgainstSpecificVersion(wDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2013, H.SdkValidationError2013);
 #endif
 
-            int elementCount = 0;
-            int paragraphCount = 0;
-            int textCount = 0;
+            var elementCount = 0;
+            var paragraphCount = 0;
+            var textCount = 0;
             foreach (var part in wDoc.ContentParts())
             {
-                XDocument xDoc = part.GetXDocument();
+                var xDoc = part.GetXDocument();
                 foreach (var e in xDoc.Descendants())
                 {
                     if (e.Name == W.txbxContent)
@@ -327,13 +327,13 @@ namespace Clippit
 
             NumberingFormatListAssembly(wDoc, metrics);
 
-            XDocument wxDoc = wDoc.MainDocumentPart.GetXDocument();
+            var wxDoc = wDoc.MainDocumentPart.GetXDocument();
 
             foreach (var d in wxDoc.Descendants())
             {
                 if (d.Name == W.saveThroughXslt)
                 {
-                    string rid = (string)d.Attribute(R.id);
+                    var rid = (string)d.Attribute(R.id);
                     var tempExternalRelationship = wDoc
                         .MainDocumentPart
                         .DocumentSettingsPart
@@ -356,9 +356,9 @@ namespace Clippit
 
         private static bool ValidateAgainstSpecificVersion(WordprocessingDocument wDoc, List<XElement> metrics, DocumentFormat.OpenXml.FileFormatVersions versionToValidateAgainst, XName versionSpecificMetricName)
         {
-            OpenXmlValidator validator = new OpenXmlValidator(versionToValidateAgainst);
+            var validator = new OpenXmlValidator(versionToValidateAgainst);
             var errors = validator.Validate(wDoc);
-            bool valid = errors.Count() == 0;
+            var valid = errors.Count() == 0;
             if (!valid)
             {
                 if (!metrics.Any(e => e.Name == H.SdkValidationError))
@@ -366,7 +366,7 @@ namespace Clippit
                 metrics.Add(new XElement(versionSpecificMetricName, new XAttribute(H.Val, true),
                     errors.Take(3).Select(err =>
                     {
-                        StringBuilder sb = new StringBuilder();
+                        var sb = new StringBuilder();
                         if (err.Description.Length > 300)
                             sb.Append(PtUtils.MakeValidXml(err.Description[..300] + " ... elided ...") + Environment.NewLine);
                         else
@@ -381,9 +381,9 @@ namespace Clippit
 
         private static bool ValidateAgainstSpecificVersion(SpreadsheetDocument sDoc, List<XElement> metrics, DocumentFormat.OpenXml.FileFormatVersions versionToValidateAgainst, XName versionSpecificMetricName)
         {
-            OpenXmlValidator validator = new OpenXmlValidator(versionToValidateAgainst);
+            var validator = new OpenXmlValidator(versionToValidateAgainst);
             var errors = validator.Validate(sDoc);
-            bool valid = errors.Count() == 0;
+            var valid = errors.Count() == 0;
             if (!valid)
             {
                 if (!metrics.Any(e => e.Name == H.SdkValidationError))
@@ -391,7 +391,7 @@ namespace Clippit
                 metrics.Add(new XElement(versionSpecificMetricName, new XAttribute(H.Val, true),
                     errors.Take(3).Select(err =>
                     {
-                        StringBuilder sb = new StringBuilder();
+                        var sb = new StringBuilder();
                         if (err.Description.Length > 300)
                             sb.Append(PtUtils.MakeValidXml(err.Description[..300] + " ... elided ...") + Environment.NewLine);
                         else
@@ -406,9 +406,9 @@ namespace Clippit
 
         private static bool ValidateAgainstSpecificVersion(PresentationDocument pDoc, List<XElement> metrics, DocumentFormat.OpenXml.FileFormatVersions versionToValidateAgainst, XName versionSpecificMetricName)
         {
-            OpenXmlValidator validator = new OpenXmlValidator(versionToValidateAgainst);
+            var validator = new OpenXmlValidator(versionToValidateAgainst);
             var errors = validator.Validate(pDoc);
-            bool valid = errors.Count() == 0;
+            var valid = errors.Count() == 0;
             if (!valid)
             {
                 if (!metrics.Any(e => e.Name == H.SdkValidationError))
@@ -416,7 +416,7 @@ namespace Clippit
                 metrics.Add(new XElement(versionSpecificMetricName, new XAttribute(H.Val, true),
                     errors.Take(3).Select(err =>
                     {
-                        StringBuilder sb = new StringBuilder();
+                        var sb = new StringBuilder();
                         if (err.Description.Length > 300)
                             sb.Append(PtUtils.MakeValidXml(err.Description[..300] + " ... elided ...") + Environment.NewLine);
                         else
@@ -447,7 +447,7 @@ namespace Clippit
 
         private static void NumberingFormatListAssembly(WordprocessingDocument wDoc, List<XElement> metrics)
         {
-            List<string> numFmtList = new List<string>();
+            var numFmtList = new List<string>();
             foreach (var part in wDoc.ContentParts())
             {
                 var xDoc = part.GetXDocument();
@@ -456,10 +456,10 @@ namespace Clippit
                     .Select(p =>
                     {
                         ListItemRetriever.RetrieveListItem(wDoc, p, null);
-                        ListItemRetriever.ListItemInfo lif = p.Annotation<ListItemRetriever.ListItemInfo>();
+                        var lif = p.Annotation<ListItemRetriever.ListItemInfo>();
                         if (lif != null && lif.IsListItem && lif.Lvl(ListItemRetriever.GetParagraphLevel(p)) != null)
                         {
-                            string numFmtForLevel = (string)lif.Lvl(ListItemRetriever.GetParagraphLevel(p)).Elements(W.numFmt).Attributes(W.val).FirstOrDefault();
+                            var numFmtForLevel = (string)lif.Lvl(ListItemRetriever.GetParagraphLevel(p)).Elements(W.numFmt).Attributes(W.val).FirstOrDefault();
                             if (numFmtForLevel == null)
                             {
                                 var numFmtElement = lif.Lvl(ListItemRetriever.GetParagraphLevel(p)).Elements(MC.AlternateContent).Elements(MC.Choice).Elements(W.numFmt).FirstOrDefault();
@@ -508,7 +508,7 @@ namespace Clippit
 
         private static void FontAndCharSetAnalysis(WordprocessingDocument wDoc, List<XElement> metrics, List<string> notes)
         {
-            FormattingAssemblerSettings settings = new FormattingAssemblerSettings
+            var settings = new FormattingAssemblerSettings
             {
                 RemoveStyleNamesFromParagraphAndRunProperties = false,
                 ClearStyles = true,
@@ -577,7 +577,7 @@ namespace Clippit
                 notes.Add(PtUtils.MakeValidXml(string.Format("Error in part {0}: run without rPr at {1}", uri, run.GetXPath())));
                 rPr = new XElement(W.rPr);
             }
-            FormattingAssembler.CharStyleAttributes csa = new FormattingAssembler.CharStyleAttributes(null, rPr);
+            var csa = new FormattingAssembler.CharStyleAttributes(null, rPr);
             var fontTypeArray = runText
                 .Select(ch => FormattingAssembler.DetermineFontTypeFromCharacter(ch, csa))
                 .ToArray();
@@ -660,11 +660,11 @@ namespace Clippit
 
         public static XElement GetXlsxMetrics(SmlDocument smlDoc, MetricsGetterSettings settings)
         {
-            using OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(smlDoc);
-            using SpreadsheetDocument sDoc = streamDoc.GetSpreadsheetDocument();
-            List<XElement> metrics = new List<XElement>();
+            using var streamDoc = new OpenXmlMemoryStreamDocument(smlDoc);
+            using var sDoc = streamDoc.GetSpreadsheetDocument();
+            var metrics = new List<XElement>();
 
-            bool valid = ValidateAgainstSpecificVersion(sDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2007, H.SdkValidationError2007);
+            var valid = ValidateAgainstSpecificVersion(sDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2007, H.SdkValidationError2007);
             valid |= ValidateAgainstSpecificVersion(sDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2010, H.SdkValidationError2010);
 #if !NET35
             valid |= ValidateAgainstSpecificVersion(sDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2013, H.SdkValidationError2013);
@@ -692,7 +692,7 @@ namespace Clippit
                     {
                         var rid = (string)sh.Attribute(R.id);
                         var sheetName = (string)sh.Attribute("name");
-                        WorksheetPart worksheetPart = (WorksheetPart)workbookPart.GetPartById(rid);
+                        var worksheetPart = (WorksheetPart)workbookPart.GetPartById(rid);
                         return GetTableInfoForSheet(spreadsheet, worksheetPart, sheetName, settings);
                     }));
             return partInformation;
@@ -702,12 +702,12 @@ namespace Clippit
             MetricsGetterSettings settings)
         {
             var xd = sheetPart.GetXDocument();
-            XElement sheetInformation = new XElement(H.Sheet,
+            var sheetInformation = new XElement(H.Sheet,
                     new XAttribute(H.Name, sheetName),
                     xd.Root.Elements(S.tableParts).Elements(S.tablePart).Select(tp =>
                     {
-                        string rId = (string)tp.Attribute(R.id);
-                        TableDefinitionPart tablePart = (TableDefinitionPart)sheetPart.GetPartById(rId);
+                        var rId = (string)tp.Attribute(R.id);
+                        var tablePart = (TableDefinitionPart)sheetPart.GetPartById(rId);
                         var txd = tablePart.GetXDocument();
                         var tableName = (string)txd.Root.Attribute("displayName");
                         XElement tableCellData = null;
@@ -748,11 +748,11 @@ namespace Clippit
 
         public static XElement GetPptxMetrics(PmlDocument pmlDoc, MetricsGetterSettings settings)
         {
-            using OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(pmlDoc);
-            using PresentationDocument pDoc = streamDoc.GetPresentationDocument();
-            List<XElement> metrics = new List<XElement>();
+            using var streamDoc = new OpenXmlMemoryStreamDocument(pmlDoc);
+            using var pDoc = streamDoc.GetPresentationDocument();
+            var metrics = new List<XElement>();
 
-            bool valid = ValidateAgainstSpecificVersion(pDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2007, H.SdkValidationError2007);
+            var valid = ValidateAgainstSpecificVersion(pDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2007, H.SdkValidationError2007);
             valid |= ValidateAgainstSpecificVersion(pDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2010, H.SdkValidationError2010);
 #if !NET35
             valid |= ValidateAgainstSpecificVersion(pDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2013, H.SdkValidationError2013);
@@ -791,11 +791,11 @@ namespace Clippit
                 })
                 .OrderBy(n => n)
                 .ToList();
-            XElement styleHierarchy = new XElement(H.StyleHierarchy);
+            var styleHierarchy = new XElement(H.StyleHierarchy);
             foreach (var item in stylesWithPath)
             {
                 var styleChain = item.Split('/');
-                XElement elementToAddTo = styleHierarchy;
+                var elementToAddTo = styleHierarchy;
                 foreach (var inChain in styleChain.SkipLast(1))
                     elementToAddTo = elementToAddTo.Elements(H.Style).FirstOrDefault(z => z.Attribute(H.Id).Value == inChain);
                 var styleToAdd = styleChain.Last();
@@ -828,7 +828,7 @@ namespace Clippit
 
         private static object GetContentControlsTransform(XNode node, MetricsGetterSettings settings)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (element == element.Document.Root)
@@ -838,10 +838,10 @@ namespace Clippit
                 if (element.Name == W.sdt)
                 {
                     var tag = (string)element.Elements(W.sdtPr).Elements(W.tag).Attributes(W.val).FirstOrDefault();
-                    XAttribute tagAttr = tag != null ? new XAttribute(H.Tag, tag) : null;
+                    var tagAttr = tag != null ? new XAttribute(H.Tag, tag) : null;
 
                     var alias = (string)element.Elements(W.sdtPr).Elements(W.alias).Attributes(W.val).FirstOrDefault();
-                    XAttribute aliasAttr = alias != null ? new XAttribute(H.Alias, alias) : null;
+                    var aliasAttr = alias != null ? new XAttribute(H.Alias, alias) : null;
 
                     var xPathAttr = new XAttribute(H.XPath, element.GetXPath());
 

@@ -37,13 +37,13 @@ namespace Clippit.Word
         {
             if (numFmt == "cardinalText")
             {
-                string result = "";
+                var result = "";
 
                 var sLevel = (levelNumber + 10000).ToString();
-                int thousands = int.Parse(sLevel.Substring(1, 1));
-                int hundreds = int.Parse(sLevel.Substring(2, 1));
-                int tens = int.Parse(sLevel.Substring(3, 1));
-                int ones = int.Parse(sLevel.Substring(4, 1));
+                var thousands = int.Parse(sLevel.Substring(1, 1));
+                var hundreds = int.Parse(sLevel.Substring(2, 1));
+                var tens = int.Parse(sLevel.Substring(3, 1));
+                var ones = int.Parse(sLevel.Substring(4, 1));
 
                 /* exact thousands */
                 if (levelNumber == 1000)
@@ -135,16 +135,16 @@ namespace Clippit.Word
             }
             if (numFmt == "ordinalText")
             {
-                string result = "";
+                var result = "";
 
                 if (levelNumber == 1)
                     return "Premier";
 
                 var sLevel = (levelNumber + 10000).ToString();
-                int thousands = int.Parse(sLevel.Substring(1, 1));
-                int hundreds = int.Parse(sLevel.Substring(2, 1));
-                int tens = int.Parse(sLevel.Substring(3, 1));
-                int ones = int.Parse(sLevel.Substring(4, 1));
+                var thousands = int.Parse(sLevel.Substring(1, 1));
+                var hundreds = int.Parse(sLevel.Substring(2, 1));
+                var tens = int.Parse(sLevel.Substring(3, 1));
+                var ones = int.Parse(sLevel.Substring(4, 1));
 
                 /* exact thousands */
                 if (levelNumber == 1000)

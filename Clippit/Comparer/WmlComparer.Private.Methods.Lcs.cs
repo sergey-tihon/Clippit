@@ -15,8 +15,8 @@ namespace Clippit
         {
             var newListOfCorrelatedSequence = new List<CorrelatedSequence>();
 
-            ComparisonUnit[] cul1 = unknown.ComparisonUnitArray1;
-            ComparisonUnit[] cul2 = unknown.ComparisonUnitArray2;
+            var cul1 = unknown.ComparisonUnitArray1;
+            var cul2 = unknown.ComparisonUnitArray2;
 
             // first thing to do - if we have an unknown with zero length on left or right side, create appropriate
             // this is a code optimization that enables easier processing of cases elsewhere.
@@ -51,15 +51,15 @@ namespace Clippit
             }
 
             var currentLongestCommonSequenceLength = 0;
-            int currentI1 = -1;
-            int currentI2 = -1;
+            var currentI1 = -1;
+            var currentI2 = -1;
             for (var i1 = 0; i1 < cul1.Length - currentLongestCommonSequenceLength; i1++)
             {
                 for (var i2 = 0; i2 < cul2.Length - currentLongestCommonSequenceLength; i2++)
                 {
                     var thisSequenceLength = 0;
-                    int thisI1 = i1;
-                    int thisI2 = i2;
+                    var thisI1 = i1;
+                    var thisI2 = i2;
 
                     while (true)
                     {
@@ -102,7 +102,7 @@ namespace Clippit
                 if (currentLongestCommonSequenceLength <= 1)
                     break;
 
-                ComparisonUnit firstCommon = cul1[currentI1];
+                var firstCommon = cul1[currentI1];
 
                 if (!(firstCommon is ComparisonUnitWord firstCommonWord))
                     break;
@@ -133,7 +133,7 @@ namespace Clippit
             var isOnlyParagraphMark = false;
             if (currentLongestCommonSequenceLength == 1)
             {
-                ComparisonUnit firstCommon = cul1[currentI1];
+                var firstCommon = cul1[currentI1];
 
                 if (firstCommon is ComparisonUnitWord firstCommonWord)
                 {
@@ -166,26 +166,26 @@ namespace Clippit
             // don't match only word break characters
             if (currentLongestCommonSequenceLength > 0 && currentLongestCommonSequenceLength <= 3)
             {
-                ComparisonUnit[] commonSequence = cul1.Skip(currentI1).Take(currentLongestCommonSequenceLength).ToArray();
+                var commonSequence = cul1.Skip(currentI1).Take(currentLongestCommonSequenceLength).ToArray();
 
                 // if they are all ComparisonUnitWord objects
-                bool oneIsNotWord = commonSequence.Any(cs => !(cs is ComparisonUnitWord));
-                bool allAreWords = !oneIsNotWord;
+                var oneIsNotWord = commonSequence.Any(cs => !(cs is ComparisonUnitWord));
+                var allAreWords = !oneIsNotWord;
                 if (allAreWords)
                 {
-                    bool contentOtherThanWordSplitChars = commonSequence
+                    var contentOtherThanWordSplitChars = commonSequence
                         .Cast<ComparisonUnitWord>()
                         .Any(cs =>
                         {
-                            bool otherThanText = cs.DescendantContentAtoms().Any(dca => dca.ContentElement.Name != W.t);
+                            var otherThanText = cs.DescendantContentAtoms().Any(dca => dca.ContentElement.Name != W.t);
                             if (otherThanText) return true;
 
-                            bool otherThanWordSplit = cs
+                            var otherThanWordSplit = cs
                                 .DescendantContentAtoms()
                                 .Any(dca =>
                                 {
-                                    string charValue = dca.ContentElement.Value;
-                                    bool isWordSplit = settings.WordSeparators.Contains(charValue[0]);
+                                    var charValue = dca.ContentElement.Value;
+                                    var isWordSplit = settings.WordSeparators.Contains(charValue[0]);
                                     return !isWordSplit;
                                 });
 
@@ -204,12 +204,12 @@ namespace Clippit
             // don't find that LCS.
             if (!isOnlyParagraphMark && currentLongestCommonSequenceLength > 0)
             {
-                bool anyButWord1 = cul1.Any(cu => !(cu is ComparisonUnitWord));
-                bool anyButWord2 = cul2.Any(cu => !(cu is ComparisonUnitWord));
+                var anyButWord1 = cul1.Any(cu => !(cu is ComparisonUnitWord));
+                var anyButWord2 = cul2.Any(cu => !(cu is ComparisonUnitWord));
 
                 if (!anyButWord1 && !anyButWord2)
                 {
-                    int maxLen = Math.Max(cul1.Length, cul2.Length);
+                    var maxLen = Math.Max(cul1.Length, cul2.Length);
                     if (currentLongestCommonSequenceLength / (double) maxLen < settings.DetailThreshold)
                     {
                         currentI1 = -1;
@@ -221,56 +221,56 @@ namespace Clippit
 
             if (currentI1 == -1 && currentI2 == -1)
             {
-                int leftLength = unknown.ComparisonUnitArray1.Length;
+                var leftLength = unknown.ComparisonUnitArray1.Length;
 
-                int leftTables = unknown
+                var leftTables = unknown
                     .ComparisonUnitArray1
                     .OfType<ComparisonUnitGroup>()
                     .Count(l => l.ComparisonUnitGroupType == ComparisonUnitGroupType.Table);
 
-                int leftRows = unknown
+                var leftRows = unknown
                     .ComparisonUnitArray1
                     .OfType<ComparisonUnitGroup>()
                     .Count(l => l.ComparisonUnitGroupType == ComparisonUnitGroupType.Row);
 
-                int leftParagraphs = unknown
+                var leftParagraphs = unknown
                     .ComparisonUnitArray1
                     .OfType<ComparisonUnitGroup>()
                     .Count(l => l.ComparisonUnitGroupType == ComparisonUnitGroupType.Paragraph);
 
-                int leftTextboxes = unknown
+                var leftTextboxes = unknown
                     .ComparisonUnitArray1
                     .OfType<ComparisonUnitGroup>()
                     .Count(l => l.ComparisonUnitGroupType == ComparisonUnitGroupType.Textbox);
 
-                int leftWords = unknown
+                var leftWords = unknown
                     .ComparisonUnitArray1
                     .OfType<ComparisonUnitWord>()
                     .Count();
 
-                int rightLength = unknown.ComparisonUnitArray2.Length;
+                var rightLength = unknown.ComparisonUnitArray2.Length;
 
-                int rightTables = unknown
+                var rightTables = unknown
                     .ComparisonUnitArray2
                     .OfType<ComparisonUnitGroup>()
                     .Count(l => l.ComparisonUnitGroupType == ComparisonUnitGroupType.Table);
 
-                int rightRows = unknown
+                var rightRows = unknown
                     .ComparisonUnitArray2
                     .OfType<ComparisonUnitGroup>()
                     .Count(l => l.ComparisonUnitGroupType == ComparisonUnitGroupType.Row);
 
-                int rightParagraphs = unknown
+                var rightParagraphs = unknown
                     .ComparisonUnitArray2
                     .OfType<ComparisonUnitGroup>()
                     .Count(l => l.ComparisonUnitGroupType == ComparisonUnitGroupType.Paragraph);
 
-                int rightTextboxes = unknown
+                var rightTextboxes = unknown
                     .ComparisonUnitArray2
                     .OfType<ComparisonUnitGroup>()
                     .Count(l => l.ComparisonUnitGroupType == ComparisonUnitGroupType.Textbox);
 
-                int rightWords = unknown
+                var rightWords = unknown
                     .ComparisonUnitArray2
                     .OfType<ComparisonUnitWord>()
                     .Count();
@@ -287,14 +287,14 @@ namespace Clippit
                 // if both are at the end, then done
                 // return the new list of corr sequ
 
-                bool leftOnlyWordsRowsTextboxes = leftLength == leftWords + leftRows + leftTextboxes;
-                bool rightOnlyWordsRowsTextboxes = rightLength == rightWords + rightRows + rightTextboxes;
+                var leftOnlyWordsRowsTextboxes = leftLength == leftWords + leftRows + leftTextboxes;
+                var rightOnlyWordsRowsTextboxes = rightLength == rightWords + rightRows + rightTextboxes;
                 if ((leftWords > 0 || rightWords > 0) &&
                     (leftRows > 0 || rightRows > 0 || leftTextboxes > 0 || rightTextboxes > 0) &&
                     leftOnlyWordsRowsTextboxes &&
                     rightOnlyWordsRowsTextboxes)
                 {
-                    IGrouping<string, ComparisonUnit>[] leftGrouped = unknown
+                    var leftGrouped = unknown
                         .ComparisonUnitArray1
                         .GroupAdjacent(cu =>
                         {
@@ -318,7 +318,7 @@ namespace Clippit
                         })
                         .ToArray();
 
-                    IGrouping<string, ComparisonUnit>[] rightGrouped = unknown
+                    var rightGrouped = unknown
                         .ComparisonUnitArray2
                         .GroupAdjacent(cu =>
                         {
@@ -435,7 +435,7 @@ namespace Clippit
                         // if there is content on the left, but not content on the right
                         if (iRight == rightGrouped.Length)
                         {
-                            for (int j = iLeft; j < leftGrouped.Length; j++)
+                            for (var j = iLeft; j < leftGrouped.Length; j++)
                             {
                                 var deletedCorrelatedSequence = new CorrelatedSequence
                                 {
@@ -453,7 +453,7 @@ namespace Clippit
 
                         if (iLeft == leftGrouped.Length)
                         {
-                            for (int j = iRight; j < rightGrouped.Length; j++)
+                            for (var j = iRight; j < rightGrouped.Length; j++)
                             {
                                 var insertedCorrelatedSequence = new CorrelatedSequence
                                 {
@@ -476,7 +476,7 @@ namespace Clippit
                     leftParagraphs > 0 && rightParagraphs > 0 &&
                     (leftLength > 1 || rightLength > 1))
                 {
-                    IGrouping<string, ComparisonUnit>[] leftGrouped = unknown
+                    var leftGrouped = unknown
                         .ComparisonUnitArray1
                         .GroupAdjacent(cu =>
                         {
@@ -485,7 +485,7 @@ namespace Clippit
                         })
                         .ToArray();
 
-                    IGrouping<string, ComparisonUnit>[] rightGrouped = unknown
+                    var rightGrouped = unknown
                         .ComparisonUnitArray2
                         .GroupAdjacent(cu =>
                         {
@@ -547,7 +547,7 @@ namespace Clippit
                         // if there is content on the left, but not content on the right
                         if (iRight == rightGrouped.Length)
                         {
-                            for (int j = iLeft; j < leftGrouped.Length; j++)
+                            for (var j = iLeft; j < leftGrouped.Length; j++)
                             {
                                 var deletedCorrelatedSequence = new CorrelatedSequence
                                 {
@@ -565,7 +565,7 @@ namespace Clippit
 
                         if (iLeft == leftGrouped.Length)
                         {
-                            for (int j = iRight; j < rightGrouped.Length; j++)
+                            for (var j = iRight; j < rightGrouped.Length; j++)
                             {
                                 var insertedCorrelatedSequence = new CorrelatedSequence
                                 {
@@ -587,24 +587,24 @@ namespace Clippit
                 if (leftTables == 1 && leftLength == 1 &&
                     rightTables == 1 && rightLength == 1)
                 {
-                    List<CorrelatedSequence> result = DoLcsAlgorithmForTable(unknown);
+                    var result = DoLcsAlgorithmForTable(unknown);
                     if (result != null)
                         return result;
                 }
 
                 // If either side contains only paras or tables, then flatten and iterate.
-                bool leftOnlyParasTablesTextboxes = leftLength == leftTables + leftParagraphs + leftTextboxes;
-                bool rightOnlyParasTablesTextboxes = rightLength == rightTables + rightParagraphs + rightTextboxes;
+                var leftOnlyParasTablesTextboxes = leftLength == leftTables + leftParagraphs + leftTextboxes;
+                var rightOnlyParasTablesTextboxes = rightLength == rightTables + rightParagraphs + rightTextboxes;
                 if (leftOnlyParasTablesTextboxes && rightOnlyParasTablesTextboxes)
                 {
                     // flatten paras and tables, and iterate
-                    ComparisonUnit[] left = unknown
+                    var left = unknown
                         .ComparisonUnitArray1
                         .Select(cu => cu.Contents)
                         .SelectMany(m => m)
                         .ToArray();
 
-                    ComparisonUnit[] right = unknown
+                    var right = unknown
                         .ComparisonUnitArray2
                         .Select(cu => cu.Contents)
                         .SelectMany(m => m)
@@ -630,11 +630,11 @@ namespace Clippit
                     if (firstLeft.ComparisonUnitGroupType == ComparisonUnitGroupType.Row &&
                         firstRight.ComparisonUnitGroupType == ComparisonUnitGroupType.Row)
                     {
-                        ComparisonUnit[] leftContent = firstLeft.Contents.ToArray();
-                        ComparisonUnit[] rightContent = firstRight.Contents.ToArray();
+                        var leftContent = firstLeft.Contents.ToArray();
+                        var rightContent = firstRight.Contents.ToArray();
 
-                        int lenLeft = leftContent.Length;
-                        int lenRight = rightContent.Length;
+                        var lenLeft = leftContent.Length;
+                        var lenRight = rightContent.Length;
 
                         if (lenLeft < lenRight)
                         {
@@ -649,7 +649,7 @@ namespace Clippit
                                 .ToArray();
                         }
 
-                        List<CorrelatedSequence> newCs = leftContent.Zip(rightContent, (l, r) =>
+                        var newCs = leftContent.Zip(rightContent, (l, r) =>
                             {
                                 if (l != null && r != null)
                                 {
@@ -684,17 +684,17 @@ namespace Clippit
                             .SelectMany(m => m)
                             .ToList();
 
-                        foreach (CorrelatedSequence cs in newCs)
+                        foreach (var cs in newCs)
                         {
                             newListOfCorrelatedSequence.Add(cs);
                         }
 
-                        ComparisonUnit[] remainderLeft = unknown
+                        var remainderLeft = unknown
                             .ComparisonUnitArray1
                             .Skip(1)
                             .ToArray();
 
-                        ComparisonUnit[] remainderRight = unknown
+                        var remainderRight = unknown
                             .ComparisonUnitArray2
                             .Skip(1)
                             .ToArray();
@@ -733,12 +733,12 @@ namespace Clippit
                         if (False)
                         {
                             var sb = new StringBuilder();
-                            foreach (CorrelatedSequence item in newListOfCorrelatedSequence)
+                            foreach (var item in newListOfCorrelatedSequence)
                             {
                                 sb.Append(item).Append(Environment.NewLine);
                             }
 
-                            string sbs = sb.ToString();
+                            var sbs = sb.ToString();
                             TestUtil.NotePad(sbs);
                         }
 
@@ -748,11 +748,11 @@ namespace Clippit
                     if (firstLeft.ComparisonUnitGroupType == ComparisonUnitGroupType.Cell &&
                         firstRight.ComparisonUnitGroupType == ComparisonUnitGroupType.Cell)
                     {
-                        ComparisonUnit[] left = firstLeft
+                        var left = firstLeft
                             .Contents
                             .ToArray();
 
-                        ComparisonUnit[] right = firstRight
+                        var right = firstRight
                             .Contents
                             .ToArray();
 
@@ -764,12 +764,12 @@ namespace Clippit
                         };
                         newListOfCorrelatedSequence.Add(unknownCorrelatedSequence);
 
-                        ComparisonUnit[] remainderLeft = unknown
+                        var remainderLeft = unknown
                             .ComparisonUnitArray1
                             .Skip(1)
                             .ToArray();
 
-                        ComparisonUnit[] remainderRight = unknown
+                        var remainderRight = unknown
                             .ComparisonUnitArray2
                             .Skip(1)
                             .ToArray();
@@ -857,12 +857,12 @@ namespace Clippit
                         return newListOfCorrelatedSequence;
                     }
 
-                    ComparisonUnitAtom lastContentAtomLeft = unknown
+                    var lastContentAtomLeft = unknown
                         .ComparisonUnitArray1
                         .Select(cu => cu.DescendantContentAtoms().Last())
                         .LastOrDefault();
 
-                    ComparisonUnitAtom lastContentAtomRight = unknown
+                    var lastContentAtomRight = unknown
                         .ComparisonUnitArray2
                         .Select(cu => cu.DescendantContentAtoms().Last())
                         .LastOrDefault();
@@ -949,19 +949,19 @@ namespace Clippit
             var remainingInRightParagraph = 0;
             if (currentLongestCommonSequenceLength != 0)
             {
-                List<ComparisonUnit> commonSeq = unknown
+                var commonSeq = unknown
                     .ComparisonUnitArray1
                     .Skip(currentI1)
                     .Take(currentLongestCommonSequenceLength)
                     .ToList();
 
-                ComparisonUnit firstOfCommonSeq = commonSeq.First();
+                var firstOfCommonSeq = commonSeq.First();
                 if (firstOfCommonSeq is ComparisonUnitWord)
                 {
                     // are there any paragraph marks in the common seq at end?
                     if (commonSeq.Any(cu =>
                     {
-                        ComparisonUnitAtom firstComparisonUnitAtom = cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
+                        var firstComparisonUnitAtom = cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
                         if (firstComparisonUnitAtom == null)
                             return false;
 
@@ -977,7 +977,7 @@ namespace Clippit
                                 if (!(cu is ComparisonUnitWord))
                                     return false;
 
-                                ComparisonUnitAtom firstComparisonUnitAtom =
+                                var firstComparisonUnitAtom =
                                     cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
                                 if (firstComparisonUnitAtom == null)
                                     return true;
@@ -994,7 +994,7 @@ namespace Clippit
                                 if (!(cu is ComparisonUnitWord))
                                     return false;
 
-                                ComparisonUnitAtom firstComparisonUnitAtom =
+                                var firstComparisonUnitAtom =
                                     cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
                                 if (firstComparisonUnitAtom == null)
                                     return true;
@@ -1006,8 +1006,8 @@ namespace Clippit
                 }
             }
 
-            int countBeforeCurrentParagraphLeft = currentI1 - remainingInLeftParagraph;
-            int countBeforeCurrentParagraphRight = currentI2 - remainingInRightParagraph;
+            var countBeforeCurrentParagraphLeft = currentI1 - remainingInLeftParagraph;
+            var countBeforeCurrentParagraphRight = currentI2 - remainingInRightParagraph;
 
             if (countBeforeCurrentParagraphLeft > 0 && countBeforeCurrentParagraphRight == 0)
             {
@@ -1115,14 +1115,14 @@ namespace Clippit
             newListOfCorrelatedSequence.Add(middleEqual);
 
 
-            int endI1 = currentI1 + currentLongestCommonSequenceLength;
-            int endI2 = currentI2 + currentLongestCommonSequenceLength;
+            var endI1 = currentI1 + currentLongestCommonSequenceLength;
+            var endI2 = currentI2 + currentLongestCommonSequenceLength;
 
-            ComparisonUnit[] remaining1 = cul1
+            var remaining1 = cul1
                 .Skip(endI1)
                 .ToArray();
 
-            ComparisonUnit[] remaining2 = cul2
+            var remaining2 = cul2
                 .Skip(endI2)
                 .ToArray();
 
@@ -1132,13 +1132,13 @@ namespace Clippit
 
             if (middleEqual.ComparisonUnitArray1[^1] is ComparisonUnitWord leftCuw)
             {
-                ComparisonUnitAtom lastContentAtom = leftCuw.DescendantContentAtoms().LastOrDefault();
+                var lastContentAtom = leftCuw.DescendantContentAtoms().LastOrDefault();
 
                 // if the middleEqual did not end with a paragraph mark
                 if (lastContentAtom != null && lastContentAtom.ContentElement.Name != W.pPr)
                 {
-                    int idx1 = FindIndexOfNextParaMark(remaining1);
-                    int idx2 = FindIndexOfNextParaMark(remaining2);
+                    var idx1 = FindIndexOfNextParaMark(remaining1);
+                    var idx2 = FindIndexOfNextParaMark(remaining2);
 
                     var unknownCorrelatedSequenceRemaining = new CorrelatedSequence
                     {
@@ -1197,7 +1197,7 @@ namespace Clippit
                         })
                     .ToList();
 
-                bool canCollapse = zipped.All(z => z.Row1.CorrelatedSHA1Hash == z.Row2.CorrelatedSHA1Hash);
+                var canCollapse = zipped.All(z => z.Row1.CorrelatedSHA1Hash == z.Row2.CorrelatedSHA1Hash);
 
                 if (canCollapse)
                 {
@@ -1217,33 +1217,33 @@ namespace Clippit
                 }
             }
 
-            ComparisonUnitAtom firstContentAtom1 = tblGroup1.DescendantContentAtoms().FirstOrDefault();
+            var firstContentAtom1 = tblGroup1.DescendantContentAtoms().FirstOrDefault();
             if (firstContentAtom1 == null)
             {
                 throw new OpenXmlPowerToolsException("Internal error");
             }
 
-            XElement tblElement1 = firstContentAtom1
+            var tblElement1 = firstContentAtom1
                 .AncestorElements
                 .Reverse()
                 .First(a => a.Name == W.tbl);
 
-            ComparisonUnitAtom firstContentAtom2 = tblGroup2.DescendantContentAtoms().FirstOrDefault();
+            var firstContentAtom2 = tblGroup2.DescendantContentAtoms().FirstOrDefault();
             if (firstContentAtom2 == null)
             {
                 throw new OpenXmlPowerToolsException("Internal error");
             }
 
-            XElement tblElement2 = firstContentAtom2
+            var tblElement2 = firstContentAtom2
                 .AncestorElements
                 .Reverse()
                 .First(a => a.Name == W.tbl);
 
-            bool leftContainsMerged = tblElement1
+            var leftContainsMerged = tblElement1
                 .Descendants()
                 .Any(d => d.Name == W.vMerge || d.Name == W.gridSpan);
 
-            bool rightContainsMerged = tblElement2
+            var rightContainsMerged = tblElement2
                 .Descendants()
                 .Any(d => d.Name == W.vMerge || d.Name == W.gridSpan);
 
@@ -1313,7 +1313,7 @@ namespace Clippit
             for (var i = 0; i < cul.Length; i++)
             {
                 var cuw = (ComparisonUnitWord) cul[i];
-                ComparisonUnitAtom lastAtom = cuw.DescendantContentAtoms().LastOrDefault();
+                var lastAtom = cuw.DescendantContentAtoms().LastOrDefault();
                 if (lastAtom?.ContentElement.Name == W.pPr)
                 {
                     return i;

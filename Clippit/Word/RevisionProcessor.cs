@@ -385,7 +385,7 @@ namespace Clippit.Word
 
         private static object RejectRevisionsForStylesTransform(XNode node)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (element.Name == W.pPr &&
@@ -427,7 +427,7 @@ namespace Clippit.Word
         private static void ReverseRevisionsForPart(OpenXmlPart part)
         {
             var xDoc = part.GetXDocument();
-            ReverseRevisionsInfo rri = new ReverseRevisionsInfo();
+            var rri = new ReverseRevisionsInfo();
             rri.InInsert = false;
             var newRoot = (XElement)ReverseRevisionsTransform(xDoc.Root, rri);
             newRoot = (XElement)RemoveRsidTransform(newRoot);
@@ -437,7 +437,7 @@ namespace Clippit.Word
 
         private static object RemoveRsidTransform(XNode node)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (element.Name == W.rsid)
@@ -458,7 +458,7 @@ namespace Clippit.Word
 
         private static object MergeAdjacentTablesTransform(XNode node)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (element.Element(W.tbl) != null)
@@ -514,12 +514,12 @@ namespace Clippit.Word
                                     var newRows = fixedWidthsTbl.Elements(W.tr)
                                         .Select(tr =>
                                         {
-                                            XElement newRow = new XElement(W.tr,
+                                            var newRow = new XElement(W.tr,
                                                 tr.Attributes(),
                                                 tr.Elements().Where(e => e.Name != W.tc),
                                                 tr.Elements(W.tc).Select(tc =>
                                                 {
-                                                    int? w = (int?)tc
+                                                    var w = (int?)tc
                                                         .Elements(W.tcPr)
                                                         .Elements(W.tcW)
                                                         .Attributes(W._w)
@@ -530,7 +530,7 @@ namespace Clippit.Word
                                                         .Parent
                                                         .Elements(W.tc)
                                                         .TakeWhile(btc => btc != tc);
-                                                    int widthToLeft = 0;
+                                                    var widthToLeft = 0;
                                                     if (cellsToLeft.Any())
                                                         widthToLeft = cellsToLeft
                                                         .Elements(W.tcPr)
@@ -1251,8 +1251,8 @@ namespace Clippit.Word
 
         public static WmlDocument AcceptRevisions(WmlDocument document)
         {
-            using OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(document);
-            using (WordprocessingDocument doc = streamDoc.GetWordprocessingDocument())
+            using var streamDoc = new OpenXmlMemoryStreamDocument(document);
+            using (var doc = streamDoc.GetWordprocessingDocument())
             {
                 AcceptRevisions(doc);
             }
@@ -1284,7 +1284,7 @@ namespace Clippit.Word
 
         private static object AcceptRevisionsForStylesTransform(XNode node)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (element.Name == W.pPrChange || element.Name == W.rPrChange)
@@ -1298,7 +1298,7 @@ namespace Clippit.Word
 
         public static void AcceptRevisionsForPart(OpenXmlPart part)
         {
-            XElement documentElement = part.GetXDocument().Root;
+            var documentElement = part.GetXDocument().Root;
             documentElement = (XElement)RemoveRsidTransform(documentElement);
             documentElement = (XElement)FixUpDeletedOrInsertedFieldCodesTransform(documentElement);
             var containsMoveFromMoveTo = documentElement.Descendants(W.moveFrom).Any();
@@ -1316,7 +1316,7 @@ namespace Clippit.Word
             documentElement = (XElement)AddEmptyParagraphToAnyEmptyCells(documentElement);
             documentElement.Descendants().Attributes().Where(a => a.Name == PT.UniqueId || a.Name == PT.RunIds).Remove();
             documentElement.Descendants(W.numPr).Where(np => !np.HasElements).Remove();
-            XDocument newXDoc = new XDocument(documentElement);
+            var newXDoc = new XDocument(documentElement);
             part.PutXDocument(newXDoc);
         }
 
@@ -1326,7 +1326,7 @@ namespace Clippit.Word
         // case.
         public static XElement AcceptRevisionsForElement(XElement element)
         {
-            XElement rElement = element;
+            var rElement = element;
             rElement = (XElement)RemoveRsidTransform(rElement);
             var containsMoveFromMoveTo = rElement.Descendants(W.moveFrom).Any();
             rElement = (XElement)AcceptMoveFromMoveToTransform(rElement);
@@ -1421,7 +1421,7 @@ namespace Clippit.Word
 
         private static object AddEmptyParagraphToAnyEmptyCells(XNode node)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (element.Name == W.tc && !element.Elements().Where(e => e.Name != W.tcPr).Any())
@@ -1461,20 +1461,20 @@ namespace Clippit.Word
             var gridLines = tbl.Elements(W.tblGrid).Elements(W.gridCol).Attributes(W._w).Select(w => (int)w).ToArray();
             foreach (var tr in newTbl.Elements(W.tr))
             {
-                int used = 0;
-                int lastUsed = -1;
+                var used = 0;
+                var lastUsed = -1;
                 foreach (var tc in tr.Elements(W.tc))
                 {
                     var tcW = tc.Elements(W.tcPr).Elements(W.tcW).Attributes(W._w).FirstOrDefault();
                     if (tcW != null)
                     {
-                        int? gridSpan = (int?)tc.Elements(W.tcPr).Elements(W.gridSpan).Attributes(W.val).FirstOrDefault();
+                        var gridSpan = (int?)tc.Elements(W.tcPr).Elements(W.gridSpan).Attributes(W.val).FirstOrDefault();
 
                         if (gridSpan == null)
                             gridSpan = 1;
                         
                         var z = Math.Min(gridLines.Length - 1, lastUsed + (int)gridSpan);
-                        int w = gridLines.Where((g, i) => i > lastUsed && i <= z).Sum();
+                        var w = gridLines.Where((g, i) => i > lastUsed && i <= z).Sum();
                         tcW.Value = w.ToString();
 
                         lastUsed += (int)gridSpan;
@@ -1487,7 +1487,7 @@ namespace Clippit.Word
 
         private static object AcceptMoveFromMoveToTransform(XNode node)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (element.Name == W.moveTo)
@@ -1503,28 +1503,28 @@ namespace Clippit.Word
 
         private static XElement AcceptMoveFromRanges(XElement document)
         {
-            string wordProcessingNamespacePrefix = document.GetPrefixOfNamespace(W.w);
+            var wordProcessingNamespacePrefix = document.GetPrefixOfNamespace(W.w);
 
             // The following lists contain the elements that are between start/end elements.
-            List<XElement> startElementTagsInMoveFromRange = new List<XElement>();
-            List<XElement> endElementTagsInMoveFromRange = new List<XElement>();
+            var startElementTagsInMoveFromRange = new List<XElement>();
+            var endElementTagsInMoveFromRange = new List<XElement>();
 
             // Following are the elements that *may* be in a range that has both start and end
             // elements.
-            Dictionary<string, PotentialInRangeElements> potentialDeletedElements =
+            var potentialDeletedElements =
                 new Dictionary<string, PotentialInRangeElements>();
 
             foreach (var tag in DescendantAndSelfTags(document))
             {
                 if (tag.Element.Name == W.moveFromRangeStart)
                 {
-                    string id = tag.Element.Attribute(W.id).Value;
+                    var id = tag.Element.Attribute(W.id).Value;
                     potentialDeletedElements.Add(id, new PotentialInRangeElements());
                     continue;
                 }
                 if (tag.Element.Name == W.moveFromRangeEnd)
                 {
-                    string id = tag.Element.Attribute(W.id).Value;
+                    var id = tag.Element.Attribute(W.id).Value;
                     if (potentialDeletedElements.ContainsKey(id))
                     {
                         startElementTagsInMoveFromRange.AddRange(
@@ -1583,7 +1583,7 @@ namespace Clippit.Word
 
         private static object AcceptParagraphEndTagsInMoveFromTransform(XNode node)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (W.BlockLevelContentContainers.Contains(element.Name))
@@ -1595,7 +1595,7 @@ namespace Clippit.Word
                             BlockContentInfo pi = c.GetParagraphInfo();
                             if (pi.ThisBlockContentElement != null)
                             {
-                                bool paragraphMarkIsInMoveFromRange =
+                                var paragraphMarkIsInMoveFromRange =
                                     pi.ThisBlockContentElement.Elements(W.moveFromRangeStart).Any() &&
                                     !pi.ThisBlockContentElement.Elements(W.moveFromRangeEnd).Any();
                                 if (paragraphMarkIsInMoveFromRange)
@@ -1621,7 +1621,7 @@ namespace Clippit.Word
                     if (groupedBodyChildren.Count() == 1 &&
                         groupedBodyChildren.First().Key == MoveFromCollectionType.Other)
                     {
-                        XElement newElement = new XElement(element.Name,
+                        var newElement = new XElement(element.Name,
                             element.Attributes(),
                             groupedBodyChildren.Select(g =>
                             {
@@ -1653,7 +1653,7 @@ namespace Clippit.Word
 
         private static object AcceptAllOtherRevisionsTransform(XNode node)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 /// Accept inserted text, inserted paragraph marks, etc.
@@ -1758,7 +1758,7 @@ namespace Clippit.Word
 
         private static object CollapseParagraphTransform(XNode node)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (element.Name == W.p)
@@ -1797,7 +1797,7 @@ namespace Clippit.Word
             //   paragraph.
             if (contentContainer.Annotation<BlockContentInfo>() != null)
                 return;
-            XElement firstContentElement = contentContainer
+            var firstContentElement = contentContainer
                 .Elements()
                 .DescendantsAndSelf()
                 .FirstOrDefault(e => e.Name == W.p || e.Name == W.tbl);
@@ -1805,7 +1805,7 @@ namespace Clippit.Word
                 return;
 
             // Add the annotation on the contentContainer.
-            BlockContentInfo currentContentInfo = new BlockContentInfo()
+            var currentContentInfo = new BlockContentInfo()
             {
                 PreviousBlockContentElement = null,
                 ThisBlockContentElement = firstContentElement,
@@ -1818,7 +1818,7 @@ namespace Clippit.Word
                 currentContentInfo.ThisBlockContentElement.AddAnnotation(currentContentInfo);
                 // Find next sibling content element.
                 XElement nextContentElement = null;
-                XElement current = currentContentInfo.ThisBlockContentElement;
+                var current = currentContentInfo.ThisBlockContentElement;
                 while (true)
                 {
                     nextContentElement = current
@@ -1846,11 +1846,11 @@ namespace Clippit.Word
 
         private static IEnumerable<BlockContentInfo> IterateBlockContentElements(XElement element)
         {
-            XElement current = element.Elements().FirstOrDefault();
+            var current = element.Elements().FirstOrDefault();
             if (current == null)
                 yield break;
             AnnotateBlockContentElements(element);
-            BlockContentInfo currentBlockContentInfo = element.Annotation<BlockContentInfo>();
+            var currentBlockContentInfo = element.Annotation<BlockContentInfo>();
             if (currentBlockContentInfo != null)
             {
                 while (true)
@@ -1872,8 +1872,8 @@ namespace Clippit.Word
 
         private static void AnnotateRunElementsWithId(XElement element)
         {
-            int runId = 0;
-            foreach (XElement e in element.Descendants().Where(e => e.Name == W.r))
+            var runId = 0;
+            foreach (var e in element.Descendants().Where(e => e.Name == W.r))
             {
                 if (e.Name == W.r)
                     e.Add(new XAttribute(PT.UniqueId, runId++));
@@ -1882,8 +1882,8 @@ namespace Clippit.Word
 
         private static void AnnotateContentControlsWithRunIds(XElement element)
         {
-            int sdtId = 0;
-            foreach (XElement e in element.Descendants(W.sdt))
+            var sdtId = 0;
+            foreach (var e in element.Descendants(W.sdt))
             {
                 // old version
                 //e.Add(new XAttribute(PT.RunIds,
@@ -1933,7 +1933,7 @@ namespace Clippit.Word
                 }
                 if (runAncestorIntersection == null)
                     continue;
-                XElement commonAncestor = runAncestorIntersection.InDocumentOrder().Last();
+                var commonAncestor = runAncestorIntersection.InDocumentOrder().Last();
                 // find child of common ancestor that contains first run
                 // find child of common ancestor that contains last run
                 // create new common ancestor:
@@ -1967,12 +1967,12 @@ namespace Clippit.Word
                         .LastOrDefault() == lastRunChild)
                 {
                     // replace commonAncestor with content control containing commonAncestor
-                    XElement newContentControl = new XElement(contentControl.Name,
+                    var newContentControl = new XElement(contentControl.Name,
                         contentControl.Attributes(),
                         contentControl.Elements().Where(e => e.Name != W.sdtContent),
                         new XElement(W.sdtContent, commonAncestor));
 
-                    XElement newContentControlOrdered = new XElement(contentControl.Name,
+                    var newContentControlOrdered = new XElement(contentControl.Name,
                         contentControl.Attributes(),
                         contentControl.Elements().OrderBy(e =>
                         {
@@ -1985,16 +1985,16 @@ namespace Clippit.Word
                     continue;
                 }
 
-                List<XElement> elementsBeforeRange = commonAncestor
+                var elementsBeforeRange = commonAncestor
                     .Elements()
                     .TakeWhile(e => e != firstRunChild)
                     .ToList();
-                List<XElement> elementsInRange = commonAncestor
+                var elementsInRange = commonAncestor
                     .Elements()
                     .SkipWhile(e => e != firstRunChild)
                     .TakeWhile(e => e != lastRunChild.ElementsAfterSelf().FirstOrDefault())
                     .ToList();
-                List<XElement> elementsAfterRange = commonAncestor
+                var elementsAfterRange = commonAncestor
                     .Elements()
                     .SkipWhile(e => e != lastRunChild.ElementsAfterSelf().FirstOrDefault())
                     .ToList();
@@ -2002,12 +2002,12 @@ namespace Clippit.Word
                 // detatch from current parent
                 commonAncestor.Elements().Remove();
 
-                XElement newContentControl2 = new XElement(contentControl.Name,
+                var newContentControl2 = new XElement(contentControl.Name,
                     contentControl.Attributes(),
                     contentControl.Elements().Where(e => e.Name != W.sdtContent),
                     new XElement(W.sdtContent, elementsInRange));
 
-                XElement newContentControlOrdered2 = new XElement(newContentControl2.Name,
+                var newContentControlOrdered2 = new XElement(newContentControl2.Name,
                     newContentControl2.Attributes(),
                     newContentControl2.Elements().OrderBy(e =>
                     {
@@ -2037,8 +2037,8 @@ namespace Clippit.Word
         {
             AnnotateRunElementsWithId(element);
             AnnotateContentControlsWithRunIds(element);
-            XElement newElement = (XElement)AcceptDeletedAndMoveFromParagraphMarksTransform(element);
-            XElement withBlockLevelContentControls = AddBlockLevelContentControls(newElement, element);
+            var newElement = (XElement)AcceptDeletedAndMoveFromParagraphMarksTransform(element);
+            var withBlockLevelContentControls = AddBlockLevelContentControls(newElement, element);
             return withBlockLevelContentControls;
         }
 
@@ -2056,7 +2056,7 @@ namespace Clippit.Word
 
         private static object AcceptDeletedAndMoveFromParagraphMarksTransform(XNode node)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (W.BlockLevelContentContainers.Contains(element.Name))
@@ -2065,10 +2065,10 @@ namespace Clippit.Word
                     if (element.Name == W.body)
                         bodySectPr = element.Element(W.sectPr);
 
-                    int currentKey = 0;
+                    var currentKey = 0;
                     var deletedParagraphGroupingInfo = new List<GroupingInfo>();
 
-                    int state = 0; // 0 = in non deleted paragraphs
+                    var state = 0; // 0 = in non deleted paragraphs
                                    // 1 = in deleted paragraph
                                    // 2 - paragraph following deleted paragraphs
 
@@ -2076,7 +2076,7 @@ namespace Clippit.Word
                     {
                         if (c.ThisBlockContentElement.Name == W.p)
                         {
-                            bool paragraphMarkIsDeletedOrMovedFrom = c
+                            var paragraphMarkIsDeletedOrMovedFrom = c
                                 .ThisBlockContentElement
                                 .Elements(W.pPr)
                                 .Elements(W.rPr)
@@ -2191,14 +2191,14 @@ namespace Clippit.Word
                         .GroupAdjacent(z => z.GroupingInfo.GroupingKey);
 
                     // Create a new block level content container.
-                    XElement newBlockLevelContentContainer = new XElement(element.Name,
+                    var newBlockLevelContentContainer = new XElement(element.Name,
                         element.Attributes(),
                         element.Elements().Where(e => e.Name == W.tcPr),
                         groupedParagraphs.Select((g, i) =>
                         {
                             if (g.First().GroupingInfo.GroupingType == GroupingType.DeletedRange)
                             {
-                                XElement newParagraph = new XElement(W.p,
+                                var newParagraph = new XElement(W.p,
 #if false
                                     // previously, this was set to g.First()
                                     // however, this caused test [InlineData("RP/RP052-Deleted-Para-Mark.docx")] to lose paragraph numbering for a paragraph that we did not want to loose it for.
@@ -2268,7 +2268,7 @@ namespace Clippit.Word
         // dir, bdo, sdt, ins, moveTo, smartTag
         private static object CollapseTransform(XNode node)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (element.Name == W.dir ||
@@ -2339,13 +2339,13 @@ namespace Clippit.Word
                 Element = element,
                 TagType = TagTypeEnum.Element
             };
-            Stack<IEnumerator<XElement>> iteratorStack = new Stack<IEnumerator<XElement>>();
+            var iteratorStack = new Stack<IEnumerator<XElement>>();
             iteratorStack.Push(element.Elements().GetEnumerator());
             while (iteratorStack.Count > 0)
             {
                 if (iteratorStack.Peek().MoveNext())
                 {
-                    XElement currentXElement = iteratorStack.Peek().Current;
+                    var currentXElement = iteratorStack.Peek().Current;
                     if (!currentXElement.Nodes().Any())
                     {
                         yield return new Tag()
@@ -2407,7 +2407,7 @@ namespace Clippit.Word
             XElement[] contentControlElementsToCollapse,
             XElement[] moveFromElementsToDelete)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (element.Name == W.sdt && contentControlElementsToCollapse.Contains(element))
@@ -2428,32 +2428,32 @@ namespace Clippit.Word
 
         private static XElement AcceptDeletedAndMovedFromContentControls(XElement documentRootElement)
         {
-            string wordProcessingNamespacePrefix = documentRootElement.GetPrefixOfNamespace(W.w);
+            var wordProcessingNamespacePrefix = documentRootElement.GetPrefixOfNamespace(W.w);
 
             // The following lists contain the elements that are between start/end elements.
-            List<XElement> startElementTagsInDeleteRange = new List<XElement>();
-            List<XElement> endElementTagsInDeleteRange = new List<XElement>();
-            List<XElement> startElementTagsInMoveFromRange = new List<XElement>();
-            List<XElement> endElementTagsInMoveFromRange = new List<XElement>();
+            var startElementTagsInDeleteRange = new List<XElement>();
+            var endElementTagsInDeleteRange = new List<XElement>();
+            var startElementTagsInMoveFromRange = new List<XElement>();
+            var endElementTagsInMoveFromRange = new List<XElement>();
 
             // Following are the elements that *may* be in a range that has both start and end
             // elements.
-            Dictionary<string, PotentialInRangeElements> potentialDeletedElements =
+            var potentialDeletedElements =
                 new Dictionary<string, PotentialInRangeElements>();
-            Dictionary<string, PotentialInRangeElements> potentialMoveFromElements =
+            var potentialMoveFromElements =
                 new Dictionary<string, PotentialInRangeElements>();
 
             foreach (var tag in DescendantAndSelfTags(documentRootElement))
             {
                 if (tag.Element.Name == W.customXmlDelRangeStart)
                 {
-                    string id = tag.Element.Attribute(W.id).Value;
+                    var id = tag.Element.Attribute(W.id).Value;
                     potentialDeletedElements.Add(id, new PotentialInRangeElements());
                     continue;
                 }
                 if (tag.Element.Name == W.customXmlDelRangeEnd)
                 {
-                    string id = tag.Element.Attribute(W.id).Value;
+                    var id = tag.Element.Attribute(W.id).Value;
                     if (potentialDeletedElements.ContainsKey(id))
                     {
                         startElementTagsInDeleteRange.AddRange(
@@ -2466,13 +2466,13 @@ namespace Clippit.Word
                 }
                 if (tag.Element.Name == W.customXmlMoveFromRangeStart)
                 {
-                    string id = tag.Element.Attribute(W.id).Value;
+                    var id = tag.Element.Attribute(W.id).Value;
                     potentialMoveFromElements.Add(id, new PotentialInRangeElements());
                     continue;
                 }
                 if (tag.Element.Name == W.customXmlMoveFromRangeEnd)
                 {
-                    string id = tag.Element.Attribute(W.id).Value;
+                    var id = tag.Element.Attribute(W.id).Value;
                     if (potentialMoveFromElements.ContainsKey(id))
                     {
                         startElementTagsInMoveFromRange.AddRange(
@@ -2567,7 +2567,7 @@ namespace Clippit.Word
         private static object AcceptMoveFromRangesTransform(XNode node,
             XElement[] elementsToDelete)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (elementsToDelete.Contains(element))
@@ -2583,7 +2583,7 @@ namespace Clippit.Word
         private static object CoalesqueParagraphEndTagsInMoveFromTransform(XNode node,
             IGrouping<MoveFromCollectionType, XElement> g)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (element.Name == W.p)
@@ -2611,7 +2611,7 @@ namespace Clippit.Word
         // else.
         private static object AcceptDeletedCellsTransform(XNode node)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (element.Name == W.tr)
@@ -2620,9 +2620,9 @@ namespace Clippit.Word
                         .Elements()
                         .GroupAdjacent(e =>
                         {
-                            XElement cellAfter = e.ElementsAfterSelf(W.tc).FirstOrDefault();
-                            bool cellAfterIsDeleted = cellAfter != null &&
-                                cellAfter.Descendants(W.cellDel).Any();
+                            var cellAfter = e.ElementsAfterSelf(W.tc).FirstOrDefault();
+                            var cellAfterIsDeleted = cellAfter != null &&
+                                                     cellAfter.Descendants(W.cellDel).Any();
                             if (e.Name == W.tc &&
                                 (cellAfterIsDeleted || e.Descendants(W.cellDel).Any()))
                             {
@@ -2653,17 +2653,17 @@ namespace Clippit.Word
                                 return null;
                             if (g.Key.CollectionType == DeletedCellCollectionType.Other)
                                 return (object)g;
-                            XElement gridSpanElement = g
+                            var gridSpanElement = g
                                 .First()
                                 .Elements(W.tcPr)
                                 .Elements(W.gridSpan)
                                 .FirstOrDefault();
-                            int gridSpan = gridSpanElement != null ?
+                            var gridSpan = gridSpanElement != null ?
                                 (int)gridSpanElement.Attribute(W.val) :
                                 1;
-                            int newGridSpan = gridSpan + g.Count() - 1;
-                            XElement currentTcPr = g.First().Elements(W.tcPr).FirstOrDefault();
-                            XElement newTcPr = new XElement(W.tcPr,
+                            var newGridSpan = gridSpan + g.Count() - 1;
+                            var currentTcPr = g.First().Elements(W.tcPr).FirstOrDefault();
+                            var newTcPr = new XElement(W.tcPr,
                                 currentTcPr != null ? currentTcPr.Attributes() : null,
                                 new XElement(W.gridSpan,
                                     new XAttribute(W.val, newGridSpan)),
@@ -2675,7 +2675,7 @@ namespace Clippit.Word
                                         return Order_tcPr[e.Name];
                                     return 999;
                                 }));
-                            XElement newTc = new XElement(W.tc,
+                            var newTc = new XElement(W.tc,
                                 orderedTcPr,
                                 g.First().Elements().Where(e => e.Name != W.tcPr));
                             return (object)newTc;
@@ -2714,7 +2714,7 @@ namespace Clippit.Word
 
         private static object RemoveRowsLeftEmptyByMoveFrom(XNode node)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (element.Name == W.tr)
@@ -2831,14 +2831,14 @@ namespace Clippit.Word
             {
                 // This may return null, indicating that there is no descendant paragraph.  For
                 // example, comment elements have no descendant elements.
-                XElement paragraph = content
+                var paragraph = content
                     .DescendantsAndSelf()
                     .Where(e => e.Name == W.p || e.Name == W.tc || e.Name == W.txbxContent)
                     .FirstOrDefault();
                 if (paragraph != null &&
                     (paragraph.Name == W.tc || paragraph.Name == W.txbxContent))
                     paragraph = null;
-                BlockContentInfo pi = new BlockContentInfo()
+                var pi = new BlockContentInfo()
                 {
                     PreviousBlockContentElement = prev,
                     ThisBlockContentElement = paragraph
@@ -2850,7 +2850,7 @@ namespace Clippit.Word
 
         public static BlockContentInfo GetParagraphInfo(this XElement contentElement)
         {
-            BlockContentInfo paragraphInfo = contentElement.Annotation<BlockContentInfo>();
+            var paragraphInfo = contentElement.Annotation<BlockContentInfo>();
             if (paragraphInfo != null)
                 return paragraphInfo;
             InitializeParagraphInfo(contentElement.Parent);
@@ -2859,7 +2859,7 @@ namespace Clippit.Word
 
         public static IEnumerable<XElement> ContentElementsBeforeSelf(this XElement element)
         {
-            XElement current = element;
+            var current = element;
             while (true)
             {
                 BlockContentInfo pi = current.GetParagraphInfo();

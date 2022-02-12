@@ -106,8 +106,8 @@ namespace Clippit
             // the same GUID ids are used for footnote and endnote references in both the 'after' document, and in the
             // result document.
 
-            WmlDocument source1AfterAccepting = RevisionProcessor.AcceptRevisions(source1);
-            WmlDocument source2AfterRejecting = RevisionProcessor.RejectRevisions(source2);
+            var source1AfterAccepting = RevisionProcessor.AcceptRevisions(source1);
+            var source2AfterRejecting = RevisionProcessor.RejectRevisions(source2);
 
             SaveDocumentIfDesired(source1AfterAccepting, "Source1-Step2-AfterAccepting.docx", settings);
             SaveDocumentIfDesired(source2AfterRejecting, "Source2-Step2-AfterRejecting.docx", settings);
@@ -134,7 +134,7 @@ namespace Clippit
             using (var ms = new MemoryStream())
             {
                 ms.Write(source2.DocumentByteArray, 0, source2.DocumentByteArray.Length);
-                using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true))
+                using (var wDoc = WordprocessingDocument.Open(ms, true))
                 {
                     AddUnidsToMarkupInContentParts(wDoc);
                 }
@@ -148,8 +148,8 @@ namespace Clippit
                 ms2.Write(source2.DocumentByteArray, 0, source2.DocumentByteArray.Length);
                 WmlDocument producedDocument;
 
-                using (WordprocessingDocument wDoc1 = WordprocessingDocument.Open(ms1, true))
-                using (WordprocessingDocument wDoc2 = WordprocessingDocument.Open(ms2, true))
+                using (var wDoc1 = WordprocessingDocument.Open(ms1, true))
+                using (var wDoc2 = WordprocessingDocument.Open(ms2, true))
                 {
                     producedDocument = ProduceDocumentWithTrackedRevisions(settings, wmlResult, wDoc1, wDoc2);
                 }
@@ -183,10 +183,10 @@ namespace Clippit
         {
             if (SaveIntermediateFilesForDebugging && settings.DebugTempFileDi != null)
             {
-                WmlDocument cleanedSource = CleanPowerToolsAndRsid(source1);
+                var cleanedSource = CleanPowerToolsAndRsid(source1);
                 SaveDocumentIfDesired(cleanedSource, "Cleaned-Source.docx", settings);
 
-                WmlDocument cleanedProduced = CleanPowerToolsAndRsid(producedDocument);
+                var cleanedProduced = CleanPowerToolsAndRsid(producedDocument);
                 SaveDocumentIfDesired(cleanedProduced, "Cleaned-Produced.docx", settings);
             }
         }
@@ -195,12 +195,12 @@ namespace Clippit
         {
             using var ms = new MemoryStream();
             ms.Write(producedDocument.DocumentByteArray, 0, producedDocument.DocumentByteArray.Length);
-            using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true))
+            using (var wDoc = WordprocessingDocument.Open(ms, true))
             {
-                foreach (OpenXmlPart cp in wDoc.ContentParts())
+                foreach (var cp in wDoc.ContentParts())
                 {
-                    XDocument xd = cp.GetXDocument();
-                    object newRoot = CleanPartTransform(xd.Root);
+                    var xd = cp.GetXDocument();
+                    var newRoot = CleanPartTransform(xd.Root);
                     xd.Root?.ReplaceWith(newRoot);
                     cp.PutXDocument();
                 }

@@ -63,7 +63,7 @@ namespace Clippit.Word
                 RemoveRsidInfoInSettings(doc);
             if (settings.AcceptRevisions)
                 RevisionAccepter.AcceptRevisions(doc);
-            foreach (OpenXmlPart part in doc.ContentParts())
+            foreach (var part in doc.ContentParts())
                 SimplifyMarkupForPart(part, settings);
 
             if (doc.MainDocumentPart.StyleDefinitionsPart != null)
@@ -73,20 +73,20 @@ namespace Clippit.Word
 
             if (settings.RemoveComments)
             {
-                WordprocessingCommentsPart commentsPart = doc.MainDocumentPart.WordprocessingCommentsPart;
+                var commentsPart = doc.MainDocumentPart.WordprocessingCommentsPart;
                 if (commentsPart != null) doc.MainDocumentPart.DeletePart(commentsPart);
 
-                WordprocessingCommentsExPart commentsExPart = doc.MainDocumentPart.WordprocessingCommentsExPart;
+                var commentsExPart = doc.MainDocumentPart.WordprocessingCommentsExPart;
                 if (commentsExPart != null) doc.MainDocumentPart.DeletePart(commentsExPart);
             }
         }
 
         private static void RemoveRsidInfoInSettings(WordprocessingDocument doc)
         {
-            DocumentSettingsPart part = doc.MainDocumentPart.DocumentSettingsPart;
+            var part = doc.MainDocumentPart.DocumentSettingsPart;
             if (part == null) return;
 
-            XDocument settingsXDoc = part.GetXDocument();
+            var settingsXDoc = part.GetXDocument();
             settingsXDoc.Descendants(W.rsids).Remove();
             part.PutXDocument();
         }
@@ -96,7 +96,7 @@ namespace Clippit.Word
             OpenXmlPart part = doc.ExtendedFilePropertiesPart;
             if (part != null)
             {
-                XDocument appPropsXDoc = part.GetXDocument();
+                var appPropsXDoc = part.GetXDocument();
                 appPropsXDoc.Descendants(EP.TotalTime).Remove();
                 part.PutXDocument();
             }
@@ -104,21 +104,21 @@ namespace Clippit.Word
             part = doc.CoreFilePropertiesPart;
             if (part != null)
             {
-                XDocument corePropsXDoc = part.GetXDocument();
+                var corePropsXDoc = part.GetXDocument();
                 corePropsXDoc.Descendants(CP.revision).Remove();
                 corePropsXDoc.Descendants(DCTERMS.created).Remove();
                 corePropsXDoc.Descendants(DCTERMS.modified).Remove();
                 part.PutXDocument();
             }
 
-            XDocument mainXDoc = doc.MainDocumentPart.GetXDocument();
-            List<XElement> bookmarkStart = mainXDoc
+            var mainXDoc = doc.MainDocumentPart.GetXDocument();
+            var bookmarkStart = mainXDoc
                 .Descendants(W.bookmarkStart)
                 .Where(b => (string) b.Attribute(W.name) == "_GoBack")
                 .ToList();
-            foreach (XElement item in bookmarkStart)
+            foreach (var item in bookmarkStart)
             {
-                IEnumerable<XElement> bookmarkEnd = mainXDoc
+                var bookmarkEnd = mainXDoc
                     .Descendants(W.bookmarkEnd)
                     .Where(be => (int) be.Attribute(W.id) == (int) item.Attribute(W.id));
                 bookmarkEnd.Remove();
@@ -142,7 +142,7 @@ namespace Clippit.Word
         {
             // After transforming to single character runs, Rsid info will be invalid, so
             // remove from the part.
-            XDocument xDoc = part.GetXDocument();
+            var xDoc = part.GetXDocument();
             var newRoot = (XElement) RemoveRsidTransform(xDoc.Root);
             newRoot = (XElement) SingleCharacterRunTransform(newRoot);
             xDoc.Elements().First().ReplaceWith(newRoot);
@@ -156,14 +156,14 @@ namespace Clippit.Word
                     "Transforming a document to single character runs is not supported for " +
                     "a document with tracked revisions.");
 
-            foreach (OpenXmlPart part in doc.ContentParts())
+            foreach (var part in doc.ContentParts())
                 TransformPartToSingleCharacterRuns(part);
         }
 
         private static object RemoveCustomXmlAndContentControlsTransform(
             XNode node, SimplifyMarkupSettings simplifyMarkupSettings)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (simplifyMarkupSettings.RemoveSmartTags &&
@@ -252,7 +252,7 @@ namespace Clippit.Word
             {
                 if ((element.Name == W.r) && element.Elements(W.instrText).Any())
                 {
-                    IEnumerable<IGrouping<bool, XElement>> grouped =
+                    var grouped =
                         element.Elements().GroupAdjacent(e => e.Name == W.instrText);
                     return new XElement(W.r,
                         grouped.Select(g =>
@@ -263,7 +263,7 @@ namespace Clippit.Word
                             // If .doc files are converted to .docx by the Binary to Open XML Translator,
                             // the w:instrText elements might be empty, in which case newInstrText would
                             // be an empty string.
-                            string newInstrText = g.Select(i => (string) i).StringConcatenate();
+                            var newInstrText = g.Select(i => (string) i).StringConcatenate();
                             if (string.IsNullOrEmpty(newInstrText))
                                 return new XElement(W.instrText);
 
@@ -419,9 +419,9 @@ namespace Clippit.Word
                 {
                     if (havePsvi)
                     {
-                        IXmlSchemaInfo schemaInfo = a.GetSchemaInfo();
-                        XmlSchemaType schemaType = schemaInfo != null ? schemaInfo.SchemaType : null;
-                        XmlTypeCode? typeCode = schemaType != null ? schemaType.TypeCode : (XmlTypeCode?) null;
+                        var schemaInfo = a.GetSchemaInfo();
+                        var schemaType = schemaInfo != null ? schemaInfo.SchemaType : null;
+                        var typeCode = schemaType != null ? schemaType.TypeCode : (XmlTypeCode?) null;
 
                         switch (typeCode)
                         {
@@ -463,9 +463,9 @@ namespace Clippit.Word
         {
             if (havePsvi)
             {
-                IXmlSchemaInfo schemaInfo = element.GetSchemaInfo();
-                XmlSchemaType schemaType = schemaInfo != null ? schemaInfo.SchemaType : null;
-                XmlTypeCode? typeCode = schemaType != null ? schemaType.TypeCode : (XmlTypeCode?) null;
+                var schemaInfo = element.GetSchemaInfo();
+                var schemaType = schemaInfo != null ? schemaInfo.SchemaType : null;
+                var typeCode = schemaType != null ? schemaType.TypeCode : (XmlTypeCode?) null;
 
                 switch (typeCode)
                 {
@@ -514,7 +514,7 @@ namespace Clippit.Word
                 var doc = (WordprocessingDocument) part.OpenXmlPackage;
                 if (settings.RemoveGoBackBookmark)
                 {
-                    XElement goBackBookmark = doc
+                    var goBackBookmark = doc
                         .MainDocumentPart
                         .GetXDocument()
                         .Descendants(W.bookmarkStart)
@@ -524,8 +524,8 @@ namespace Clippit.Word
                 }
             }
 
-            XDocument xdoc = part.GetXDocument();
-            XElement newRoot = xdoc.Root;
+            var xdoc = part.GetXDocument();
+            var newRoot = xdoc.Root;
 
             // Need to do this first to enable simplifying hyperlinks.
             if (settings.RemoveContentControls || settings.RemoveSmartTags)
@@ -592,10 +592,10 @@ namespace Clippit.Word
                     new(MC.Ignorable, "w14 wp14 w15 w16se"),
                 };
 
-                XDocument newXDoc = Normalize(new XDocument(newRoot), null);
+                var newXDoc = Normalize(new XDocument(newRoot), null);
                 newRoot = newXDoc.Root;
                 if (newRoot != null)
-                    foreach (XAttribute nsAttr in nsAttrs)
+                    foreach (var nsAttr in nsAttrs)
                         if (newRoot.Attribute(nsAttr.Name) == null)
                             newRoot.Add(nsAttr);
 
@@ -614,8 +614,8 @@ namespace Clippit.Word
 
             if (element.Name == W.r)
             {
-                IEnumerable<XElement> runChildren = element.Elements().Where(e => e.Name != W.rPr);
-                XElement rPr = element.Element(W.rPr);
+                var runChildren = element.Elements().Where(e => e.Name != W.rPr);
+                var rPr = element.Element(W.rPr);
                 return runChildren.Select(rc => new XElement(W.r, rPr, rc));
             }
 
@@ -637,7 +637,7 @@ namespace Clippit.Word
                     {
                         if (g.Key)
                         {
-                            string s = g.Select(t => (string) t).StringConcatenate();
+                            var s = g.Select(t => (string) t).StringConcatenate();
                             return s.Select(c =>
                                 new XElement(W.r,
                                     element.Elements(W.rPr),

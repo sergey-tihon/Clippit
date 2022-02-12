@@ -103,7 +103,7 @@ namespace Clippit.Excel
                         return z3;
                     }
                 }
-                string fmt = splitFormatCode[3].Replace("@", "{0}").Replace("\"", "");
+                var fmt = splitFormatCode[3].Replace("@", "{0}").Replace("\"", "");
                 try
                 {
                     var s = string.Format(fmt, value);
@@ -187,7 +187,7 @@ namespace Clippit.Excel
 
             if (formatCode == "General")
                 return dv.ToString(CultureInfo.InvariantCulture);
-            bool isDate = IsFormatCodeForDate(formatCode);
+            var isDate = IsFormatCodeForDate(formatCode);
             var cfc = ConvertFormatCode(formatCode);
             if (isDate)
             {
@@ -202,8 +202,8 @@ namespace Clippit.Excel
                 }
                 if (cfc.StartsWith("[h]"))
                 {
-                    DateTime zeroHour = new DateTime(1899, 12, 30, 0, 0, 0);
-                    int deltaInHours = (int)((thisDate - zeroHour).TotalHours);
+                    var zeroHour = new DateTime(1899, 12, 30, 0, 0, 0);
+                    var deltaInHours = (int)((thisDate - zeroHour).TotalHours);
                     var newCfc = cfc[3..];
                     var s = (deltaInHours.ToString() + thisDate.ToString(newCfc)).Trim();
                     return s;
@@ -219,7 +219,7 @@ namespace Clippit.Excel
             }
             if (ExcelFormatCodeToNetFormatCodeExceptionMap.ContainsKey(formatCode))
             {
-                FormatConfig fc = ExcelFormatCodeToNetFormatCodeExceptionMap[formatCode];
+                var fc = ExcelFormatCodeToNetFormatCodeExceptionMap[formatCode];
                 var s = dv.ToString(fc.FormatCode, CultureInfo.InvariantCulture).Trim();
                 return s;
             }

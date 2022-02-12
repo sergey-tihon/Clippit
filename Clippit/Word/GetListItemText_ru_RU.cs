@@ -34,9 +34,9 @@ namespace Clippit.Word
         {
             if (numFmt == "cardinalText")
             {
-                string result = "";
-                int t1 = levelNumber / 1000;
-                int t2 = levelNumber % 1000;
+                var result = "";
+                var t1 = levelNumber / 1000;
+                var t2 = levelNumber % 1000;
                 if (t1 >= 1)
                     result += OneThroughNineteen[t1 - 1] + " thousand";
                 if (t1 >= 1 && t2 == 0)
@@ -44,8 +44,8 @@ namespace Clippit.Word
                         result[1..];
                 if (t1 >= 1)
                     result += " ";
-                int h1 = (levelNumber % 1000) / 100;
-                int h2 = levelNumber % 100;
+                var h1 = (levelNumber % 1000) / 100;
+                var h2 = levelNumber % 100;
                 if (h1 >= 1)
                     result += OneThroughNineteen[h1 - 1] + " hundred";
                 if (h1 >= 1 && h2 == 0)
@@ -53,13 +53,13 @@ namespace Clippit.Word
                         result[1..];
                 if (h1 >= 1)
                     result += " ";
-                int z = levelNumber % 100;
+                var z = levelNumber % 100;
                 if (z <= 19)
                     result += OneThroughNineteen[z - 1];
                 else
                 {
-                    int x = z / 10;
-                    int r = z % 10;
+                    var x = z / 10;
+                    var r = z % 10;
                     result += Tens[x - 1];
                     if (r >= 1)
                         result += "-" + OneThroughNineteen[r - 1];
@@ -69,9 +69,9 @@ namespace Clippit.Word
             }
             if (numFmt == "ordinalText")
             {
-                string result = "";
-                int t1 = levelNumber / 1000;
-                int t2 = levelNumber % 1000;
+                var result = "";
+                var t1 = levelNumber / 1000;
+                var t2 = levelNumber % 1000;
                 if (t1 >= 1 && t2 != 0)
                     result += OneThroughNineteen[t1 - 1] + " thousand";
                 if (t1 >= 1 && t2 == 0)
@@ -82,8 +82,8 @@ namespace Clippit.Word
                 }
                 if (t1 >= 1)
                     result += " ";
-                int h1 = (levelNumber % 1000) / 100;
-                int h2 = levelNumber % 100;
+                var h1 = (levelNumber % 1000) / 100;
+                var h2 = levelNumber % 100;
                 if (h1 >= 1 && h2 != 0)
                     result += OneThroughNineteen[h1 - 1] + " hundred";
                 if (h1 >= 1 && h2 == 0)
@@ -94,13 +94,13 @@ namespace Clippit.Word
                 }
                 if (h1 >= 1)
                     result += " ";
-                int z = levelNumber % 100;
+                var z = levelNumber % 100;
                 if (z <= 19)
                     result += OrdinalOneThroughNineteen[z - 1];
                 else
                 {
-                    int x = z / 10;
-                    int r = z % 10;
+                    var x = z / 10;
+                    var r = z % 10;
                     if (r == 0)
                         result += OrdinalTenths[x - 1];
                     else

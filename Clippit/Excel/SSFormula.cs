@@ -13,7 +13,7 @@ namespace Clippit.Excel
         public ParseFormula(string formula)
         {
             parser = new ExcelFormula(formula, Console.Out);
-            bool parserResult = false;
+            var parserResult = false;
             try
             {
                 parserResult = parser.Formula();
@@ -29,14 +29,14 @@ namespace Clippit.Excel
 
         public string ReplaceSheetName(string oldName, string newName)
         {
-            StringBuilder text = new StringBuilder(parser.GetSource());
+            var text = new StringBuilder(parser.GetSource());
             ReplaceNode(parser.GetRoot(), (int)EExcelFormula.SheetName, oldName, newName, text);
             return text.ToString();
         }
 
         public string ReplaceRelativeCell(int rowOffset, int colOffset)
         {
-            StringBuilder text = new StringBuilder(parser.GetSource());
+            var text = new StringBuilder(parser.GetSource());
             ReplaceRelativeCell(parser.GetRoot(), rowOffset, colOffset, text);
             return text.ToString();
         }
@@ -62,13 +62,13 @@ namespace Clippit.Excel
                 ReplaceRelativeCell(node.next_, rowOffset, colOffset, text);
             if (node.id_ == (int)EExcelFormula.A1Row && parser.GetSource().Substring(node.match_.posBeg_, 1) != "$")
             {
-                int rowNumber = Convert.ToInt32(parser.GetSource().Substring(node.match_.posBeg_, node.match_.Length));
+                var rowNumber = Convert.ToInt32(parser.GetSource().Substring(node.match_.posBeg_, node.match_.Length));
                 text.Remove(node.match_.posBeg_, node.match_.Length);
                 text.Insert(node.match_.posBeg_, Convert.ToString(rowNumber + rowOffset));
             }
             else if (node.id_ == (int)EExcelFormula.A1Column && parser.GetSource().Substring(node.match_.posBeg_, 1) != "$")
             {
-                int colNumber = GetColumnNumber(parser.GetSource().Substring(node.match_.posBeg_, node.match_.Length));
+                var colNumber = GetColumnNumber(parser.GetSource().Substring(node.match_.posBeg_, node.match_.Length));
                 text.Remove(node.match_.posBeg_, node.match_.Length);
                 text.Insert(node.match_.posBeg_, GetColumnId(colNumber + colOffset));
             }
@@ -79,8 +79,8 @@ namespace Clippit.Excel
         // Converts the column reference string to a column number (e.g. A -> 1, B -> 2)
         private static int GetColumnNumber(string cellReference)
         {
-            int columnNumber = 0;
-            foreach (char c in cellReference)
+            var columnNumber = 0;
+            foreach (var c in cellReference)
             {
                 if (Char.IsLetter(c))
                     columnNumber = columnNumber * 26 + System.Convert.ToInt32(c) - System.Convert.ToInt32('A') + 1;
@@ -91,7 +91,7 @@ namespace Clippit.Excel
         // Translates the column number to the column reference string (e.g. 1 -> A, 2-> B)
         private static string GetColumnId(int columnNumber)
         {
-            string result = "";
+            var result = "";
             do
             {
                 result = ((char)((columnNumber - 1) % 26 + (int)'A')).ToString() + result;

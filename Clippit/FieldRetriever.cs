@@ -42,7 +42,7 @@ namespace Clippit
             var groupedSubFields = relevantElements
                 .GroupAdjacent(e =>
                 {
-                    Stack<FieldElementTypeInfo> s = e.Annotation<Stack<FieldElementTypeInfo>>();
+                    var s = e.Annotation<Stack<FieldElementTypeInfo>>();
                     var stackElement = s.FirstOrDefault(z => z.Id == id);
                     var elementsBefore = s.TakeWhile(z => z != stackElement);
                     return elementsBefore.Any();
@@ -56,7 +56,7 @@ namespace Clippit
                     {
                         return g.Select(e =>
                         {
-                            Stack<FieldElementTypeInfo> s = e.Annotation<Stack<FieldElementTypeInfo>>();
+                            var s = e.Annotation<Stack<FieldElementTypeInfo>>();
                             var stackElement = s.FirstOrDefault(z => z.Id == id);
                             if (stackElement.FieldElementType == FieldElementTypeEnum.InstrText &&
                                 e.Name == w + "instrText")
@@ -67,7 +67,7 @@ namespace Clippit
                     }
                     else
                     {
-                        Stack<FieldElementTypeInfo> s = g.First().Annotation<Stack<FieldElementTypeInfo>>();
+                        var s = g.First().Annotation<Stack<FieldElementTypeInfo>>();
                         var stackElement = s.FirstOrDefault(z => z.Id == id);
                         var elementBefore = s.TakeWhile(z => z != stackElement).Last();
                         var subFieldId = elementBefore.Id;
@@ -83,7 +83,7 @@ namespace Clippit
         {
             XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 
-            XElement root = part.GetXDocument().Root;
+            var root = part.GetXDocument().Root;
             var r = root.DescendantsAndSelf()
                 .Rollup(
                     new FieldElementTypeStack
@@ -116,8 +116,8 @@ namespace Clippit
                             };
                             if (e.Attribute(w + "fldCharType").Value == "separate")
                             {
-                                Stack<FieldElementTypeInfo> fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
-                                FieldElementTypeInfo wfi = fis.Pop();
+                                var fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
+                                var wfi = fis.Pop();
                                 fis.Push(
                                     new FieldElementTypeInfo
                                     {
@@ -132,8 +132,8 @@ namespace Clippit
                             }
                             if (e.Attribute(w + "fldCharType").Value == "end")
                             {
-                                Stack<FieldElementTypeInfo> fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
-                                FieldElementTypeInfo wfi = fis.Pop();
+                                var fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
+                                var wfi = fis.Pop();
                                 return new FieldElementTypeStack
                                 {
                                     Id = s.Id,
@@ -143,11 +143,11 @@ namespace Clippit
                         }
                         if (s.FiStack == null || s.FiStack.Count() == 0)
                             return s;
-                        FieldElementTypeInfo wfi3 = s.FiStack.Peek();
+                        var wfi3 = s.FiStack.Peek();
                         if (wfi3.FieldElementType == FieldElementTypeEnum.Begin)
                         {
-                            Stack<FieldElementTypeInfo> fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
-                            FieldElementTypeInfo wfi2 = fis.Pop();
+                            var fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
+                            var wfi2 = fis.Pop();
                             fis.Push(
                                 new FieldElementTypeInfo
                                 {
@@ -162,8 +162,8 @@ namespace Clippit
                         }
                         if (wfi3.FieldElementType == FieldElementTypeEnum.Separate)
                         {
-                            Stack<FieldElementTypeInfo> fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
-                            FieldElementTypeInfo wfi2 = fis.Pop();
+                            var fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
+                            var wfi2 = fis.Pop();
                             fis.Push(
                                 new FieldElementTypeInfo
                                 {
@@ -178,7 +178,7 @@ namespace Clippit
                         }
                         if (wfi3.FieldElementType == FieldElementTypeEnum.End)
                         {
-                            Stack<FieldElementTypeInfo> fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
+                            var fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
                             fis.Pop();
                             if (!fis.Any())
                                 fis = null;
@@ -224,7 +224,7 @@ namespace Clippit
             var cachedAnnotationInformation = new Dictionary<int, List<XElement>>();
             foreach (var desc in root.DescendantsTrimmed(d => d.Name == W.rPr || d.Name == W.pPr))
             {
-                Stack<FieldElementTypeInfo> s = desc.Annotation<Stack<FieldElementTypeInfo>>();
+                var s = desc.Annotation<Stack<FieldElementTypeInfo>>();
 
                 if (s != null )
                 {
@@ -259,11 +259,11 @@ namespace Clippit
 
         private static string[] GetTokens(string field)
         {
-            State state = State.InWhiteSpace;
-            int tokenStart = 0;
-            char quoteStart = char.MinValue;
-            List<string> tokens = new List<string>();
-            for (int c = 0; c < field.Length; c++)
+            var state = State.InWhiteSpace;
+            var tokenStart = 0;
+            var quoteStart = char.MinValue;
+            var tokens = new List<string>();
+            for (var c = 0; c < field.Length; c++)
             {
                 if (Char.IsWhiteSpace(field[c]))
                 {
@@ -355,7 +355,7 @@ namespace Clippit
 
         public static FieldInfo ParseField(string field)
         {
-            FieldInfo emptyField = new FieldInfo
+            var emptyField = new FieldInfo
             {
                 FieldType = "",
                 Arguments = new string[] { },
@@ -364,7 +364,7 @@ namespace Clippit
 
             if (field.Length == 0)
                 return emptyField;
-            string fieldType = field.TrimStart().Split(' ').FirstOrDefault();
+            var fieldType = field.TrimStart().Split(' ').FirstOrDefault();
             if (fieldType == null)
                 return emptyField;
             if (fieldType.ToUpper() != "HYPERLINK" &&
@@ -372,10 +372,10 @@ namespace Clippit
                 fieldType.ToUpper() != "SEQ" &&
                 fieldType.ToUpper() != "STYLEREF")
                 return emptyField;
-            string[] tokens = GetTokens(field);
+            var tokens = GetTokens(field);
             if (tokens.Length == 0)
                 return emptyField;
-            FieldInfo fieldInfo = new FieldInfo()
+            var fieldInfo = new FieldInfo()
             {
                 FieldType = tokens[0],
                 Switches = tokens.Where(t => t[0] == '\\').ToArray(),

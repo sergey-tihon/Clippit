@@ -18,15 +18,15 @@ namespace Clippit
         {
             Contents = comparisonUnitList.ToList();
             ComparisonUnitGroupType = groupType;
-            ComparisonUnit first = Contents.First();
-            ComparisonUnitAtom comparisonUnitAtom = GetFirstComparisonUnitAtomOfGroup(first);
+            var first = Contents.First();
+            var comparisonUnitAtom = GetFirstComparisonUnitAtomOfGroup(first);
 
-            XElement[] ancestorsToLookAt = comparisonUnitAtom
+            var ancestorsToLookAt = comparisonUnitAtom
                 .AncestorElements
                 .Where(e => e.Name == W.tbl || e.Name == W.tr || e.Name == W.tc || e.Name == W.p || e.Name == W.txbxContent)
                 .ToArray();
 
-            XElement ancestor = ancestorsToLookAt[level];
+            var ancestor = ancestorsToLookAt[level];
             if (ancestor == null) throw new OpenXmlPowerToolsException("Internal error: ComparisonUnitGroup");
 
             SHA1Hash = (string) ancestor.Attribute(PtOpenXml.SHA1Hash);
@@ -42,7 +42,7 @@ namespace Clippit
 
         private static ComparisonUnitAtom GetFirstComparisonUnitAtomOfGroup(ComparisonUnit group)
         {
-            ComparisonUnit thisGroup = group;
+            var thisGroup = group;
             while (true)
             {
                 if (thisGroup is ComparisonUnitGroup tg)
@@ -66,7 +66,7 @@ namespace Clippit
             var sb = new StringBuilder();
             sb.Append("".PadRight(indent) + "Group Type: " + ComparisonUnitGroupType + " SHA1:" + SHA1Hash + Environment.NewLine);
 
-            foreach (ComparisonUnit comparisonUnitAtom in Contents)
+            foreach (var comparisonUnitAtom in Contents)
             {
                 sb.Append(comparisonUnitAtom.ToString(indent + 2));
             }

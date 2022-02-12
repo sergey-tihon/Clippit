@@ -48,9 +48,9 @@ namespace Clippit.Excel
         #region PublicApis
         public static XElement ConvertTableToHtml(SmlDocument smlDoc, SmlToHtmlConverterSettings settings, string tableName)
         {
-            using MemoryStream ms = new MemoryStream();
+            using var ms = new MemoryStream();
             ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
-            using SpreadsheetDocument sDoc = SpreadsheetDocument.Open(ms, false);
+            using var sDoc = SpreadsheetDocument.Open(ms, false);
             var rangeXml = SmlDataRetriever.RetrieveTable(sDoc, tableName);
             var xhtml = SmlToHtmlConverter.ConvertToHtmlInternal(sDoc, settings, rangeXml);
             return xhtml;
@@ -67,7 +67,7 @@ namespace Clippit.Excel
 
         private static XElement ConvertToHtmlInternal(SpreadsheetDocument sDoc, SmlToHtmlConverterSettings htmlConverterSettings, XElement rangeXml)
         {
-            XElement xhtml = (XElement)ConvertToHtmlTransform(sDoc, htmlConverterSettings, rangeXml);
+            var xhtml = (XElement)ConvertToHtmlTransform(sDoc, htmlConverterSettings, rangeXml);
 
             ReifyStylesAndClasses(htmlConverterSettings, xhtml);
 
@@ -116,7 +116,7 @@ namespace Clippit.Excel
                     })
                     .GroupBy(p => p.StylesString)
                     .ToList();
-                int classCounter = 1000000;
+                var classCounter = 1000000;
                 var sb = new StringBuilder();
                 sb.Append(Environment.NewLine);
                 foreach (var grp in augmented)
@@ -174,7 +174,7 @@ namespace Clippit.Excel
                         .OrderBy(p => p.Key)
                         .Select(e => string.Format("{0}: {1};", e.Key, e.Value))
                         .StringConcatenate();
-                    XAttribute st = new XAttribute("style", styleValue);
+                    var st = new XAttribute("style", styleValue);
                     if (d.Attribute("style") != null)
                         d.Attribute("style").Value += styleValue;
                     else

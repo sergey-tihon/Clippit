@@ -92,8 +92,8 @@ namespace Clippit.Tests.Word
         
         public void HC001(string name)
         {
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
 #if COPY_FILES_FOR_DEBUGGING
             var sourceCopiedToDestDocx = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-1-Source.docx")));
@@ -119,8 +119,8 @@ namespace Clippit.Tests.Word
         [InlineData("HC006-Test-01.docx")]
         public void HC002_NoCssClasses(string name)
         {
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
-            FileInfo sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
             var oxPtConvertedDestHtml = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-5-OxPt-No-CSS-Classes.html")));
             ConvertToHtmlNoCssClasses(sourceDocx, oxPtConvertedDestHtml);
@@ -129,13 +129,13 @@ namespace Clippit.Tests.Word
         private static void CopyFormattingAssembledDocx(FileInfo source, FileInfo dest)
         {
             var ba = File.ReadAllBytes(source.FullName);
-            using MemoryStream ms = new MemoryStream();
+            using var ms = new MemoryStream();
             ms.Write(ba, 0, ba.Length);
-            using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(ms, true))
+            using (var wordDoc = WordprocessingDocument.Open(ms, true))
             {
 
                 RevisionAccepter.AcceptRevisions(wordDoc);
-                SimplifyMarkupSettings simplifyMarkupSettings = new SimplifyMarkupSettings
+                var simplifyMarkupSettings = new SimplifyMarkupSettings
                 {
                     RemoveComments = true,
                     RemoveContentControls = true,
@@ -152,7 +152,7 @@ namespace Clippit.Tests.Word
                 };
                 MarkupSimplifier.SimplifyMarkup(wordDoc, simplifyMarkupSettings);
 
-                FormattingAssemblerSettings formattingAssemblerSettings = new FormattingAssemblerSettings
+                var formattingAssemblerSettings = new FormattingAssemblerSettings
                 {
                     RemoveStyleNamesFromParagraphAndRunProperties = false,
                     ClearStyles = false,
@@ -175,19 +175,19 @@ namespace Clippit.Tests.Word
 
         private static void ConvertToHtml(FileInfo sourceDocx, FileInfo destFileName)
         {
-            byte[] byteArray = File.ReadAllBytes(sourceDocx.FullName);
-            using MemoryStream memoryStream = new MemoryStream();
+            var byteArray = File.ReadAllBytes(sourceDocx.FullName);
+            using var memoryStream = new MemoryStream();
             memoryStream.Write(byteArray, 0, byteArray.Length);
-            using WordprocessingDocument wDoc = WordprocessingDocument.Open(memoryStream, true);
+            using var wDoc = WordprocessingDocument.Open(memoryStream, true);
             var outputDirectory = destFileName.Directory;
             destFileName = new FileInfo(Path.Combine(outputDirectory.FullName, destFileName.Name));
             var imageDirectoryName = destFileName.FullName[..^5] + "_files";
-            int imageCounter = 0;
+            var imageCounter = 0;
             var pageTitle = (string)wDoc.CoreFilePropertiesPart.GetXDocument().Descendants(DC.title).FirstOrDefault();
             if (pageTitle == null)
                 pageTitle = sourceDocx.FullName;
 
-            WmlToHtmlConverterSettings settings = new WmlToHtmlConverterSettings()
+            var settings = new WmlToHtmlConverterSettings()
             {
                 PageTitle = pageTitle,
                 FabricateCssClasses = true,
@@ -200,7 +200,7 @@ namespace Clippit.Tests.Word
                     return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
                 }
             };
-            XElement html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+            var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
 
             // Note: the xhtml returned by ConvertToHtmlTransform contains objects of type
             // XEntity.  PtOpenXmlUtil.cs define the XEntity class.  See
@@ -216,19 +216,19 @@ namespace Clippit.Tests.Word
 
         private static void ConvertToHtmlNoCssClasses(FileInfo sourceDocx, FileInfo destFileName)
         {
-            byte[] byteArray = File.ReadAllBytes(sourceDocx.FullName);
-            using MemoryStream memoryStream = new MemoryStream();
+            var byteArray = File.ReadAllBytes(sourceDocx.FullName);
+            using var memoryStream = new MemoryStream();
             memoryStream.Write(byteArray, 0, byteArray.Length);
-            using WordprocessingDocument wDoc = WordprocessingDocument.Open(memoryStream, true);
+            using var wDoc = WordprocessingDocument.Open(memoryStream, true);
             var outputDirectory = destFileName.Directory;
             destFileName = new FileInfo(Path.Combine(outputDirectory.FullName, destFileName.Name));
             var imageDirectoryName = destFileName.FullName[..^5] + "_files";
-            int imageCounter = 0;
+            var imageCounter = 0;
             var pageTitle = (string)wDoc.CoreFilePropertiesPart.GetXDocument().Descendants(DC.title).FirstOrDefault();
             if (pageTitle == null)
                 pageTitle = sourceDocx.FullName;
 
-            WmlToHtmlConverterSettings settings = new WmlToHtmlConverterSettings()
+            var settings = new WmlToHtmlConverterSettings()
             {
                 PageTitle = pageTitle,
                 FabricateCssClasses = false,
@@ -240,7 +240,7 @@ namespace Clippit.Tests.Word
                     return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
                 }
             };
-            XElement html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+            var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
 
             // Note: the xhtml returned by ConvertToHtmlTransform contains objects of type
             // XEntity.  PtOpenXmlUtil.cs define the XEntity class.  See

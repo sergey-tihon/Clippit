@@ -35,7 +35,7 @@ namespace Clippit.Tests.Html
     {
         public static XElement ReadAsXElement(FileInfo sourceHtmlFi)
         {
-            string htmlString = File.ReadAllText(sourceHtmlFi.FullName);
+            var htmlString = File.ReadAllText(sourceHtmlFi.FullName);
             XElement html = null;
             try
             {
@@ -74,7 +74,7 @@ namespace Clippit.Tests.Html
 
         private static object ConvertToNoNamespace(XNode node)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 return new XElement(element.Name.LocalName,

@@ -313,10 +313,10 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
 
         public static HtmlToWmlConverterSettings GetDefaultSettings(WmlDocument wmlDocument)
         {
-            HtmlToWmlConverterSettings settings = new HtmlToWmlConverterSettings();
-            using MemoryStream ms = new MemoryStream();
+            var settings = new HtmlToWmlConverterSettings();
+            using var ms = new MemoryStream();
             ms.Write(wmlDocument.DocumentByteArray, 0, wmlDocument.DocumentByteArray.Length);
-            using WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, false);
+            using var wDoc = WordprocessingDocument.Open(ms, false);
             GetDefaultFontInfo(wDoc, out var majorLatinFont, out var minorLatinFont, out var defaultFontSize);
             settings.MajorLatinFont = majorLatinFont;
             settings.MinorLatinFont = minorLatinFont;
@@ -340,8 +340,8 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
                 new XAttribute(W.line, 240),
                 new XAttribute(W.lineRule, "auto"));
 
-            XDocument mXDoc = wDoc.MainDocumentPart.GetXDocument();
-            XElement existingSectPr = mXDoc.Root.Descendants(W.sectPr).FirstOrDefault();
+            var mXDoc = wDoc.MainDocumentPart.GetXDocument();
+            var existingSectPr = mXDoc.Root.Descendants(W.sectPr).FirstOrDefault();
             settings.SectPr = new XElement(W.sectPr,
                 existingSectPr.Elements(W.pgSz),
                 existingSectPr.Elements(W.pgMar));
@@ -353,12 +353,12 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
         {
             if (wDoc.MainDocumentPart.ThemePart != null)
             {
-                XElement fontScheme = wDoc.MainDocumentPart.ThemePart.GetXDocument().Root.Elements(A.themeElements).Elements(A.fontScheme).FirstOrDefault();
+                var fontScheme = wDoc.MainDocumentPart.ThemePart.GetXDocument().Root.Elements(A.themeElements).Elements(A.fontScheme).FirstOrDefault();
                 if (fontScheme != null)
                 {
                     majorLatinFont = (string)fontScheme.Elements(A.majorFont).Elements(A.latin).Attributes(NoNamespace.typeface).FirstOrDefault();
                     minorLatinFont = (string)fontScheme.Elements(A.minorFont).Elements(A.latin).Attributes(NoNamespace.typeface).FirstOrDefault();
-                    string defaultFontSizeString = (string)wDoc.MainDocumentPart.StyleDefinitionsPart.GetXDocument().Root.Elements(W.docDefaults)
+                    var defaultFontSizeString = (string)wDoc.MainDocumentPart.StyleDefinitionsPart.GetXDocument().Root.Elements(W.docDefaults)
                         .Elements(W.rPrDefault).Elements(W.rPr).Elements(W.sz).Attributes(W.val).FirstOrDefault();
                     if (defaultFontSizeString != null)
                     {
@@ -382,10 +382,10 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
             if (css == null)
                 return "";
             css = css.Trim();
-            string cleanCss = Regex.Split(css, "\r\n|\r|\n")
+            var cleanCss = Regex.Split(css, "\r\n|\r|\n")
                 .Where(l =>
                 {
-                    string lTrim = l.Trim();
+                    var lTrim = l.Trim();
                     if (lTrim is "//" or "////" or "<!--" or "&lt;!--" or "-->" or "--&gt;")
                         return false;
                     return true;
@@ -403,18 +403,18 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
 
         public static Emu TwipsToEmus(long twips)
         {
-            float v1 = (float)twips / 20f;
-            float v2 = v1 / 72f;
-            float v3 = v2 * s_EmusPerInch;
-            long emus = (long)v3;
+            var v1 = (float)twips / 20f;
+            var v2 = v1 / 72f;
+            var v3 = v2 * s_EmusPerInch;
+            var emus = (long)v3;
             return new Emu(emus);
         }
 
         public static Emu PointsToEmus(double points)
         {
-            double v1 = points / 72;
-            double v2 = v1 * s_EmusPerInch;
-            long emus = (long)v2;
+            var v1 = points / 72;
+            var v2 = v1 * s_EmusPerInch;
+            var emus = (long)v2;
             return new Emu(emus);
         }
 

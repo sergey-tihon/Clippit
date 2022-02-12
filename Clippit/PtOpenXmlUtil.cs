@@ -35,10 +35,10 @@ namespace Clippit
         {
             if (part is null) throw new ArgumentNullException(nameof(part));
 
-            XDocument partXDocument = part.Annotation<XDocument>();
+            var partXDocument = part.Annotation<XDocument>();
             if (partXDocument is not null) return partXDocument;
 
-            using (Stream partStream = part.GetStream())
+            using (var partStream = part.GetStream())
             {
                 if (partStream.Length == 0)
                 {
@@ -47,7 +47,7 @@ namespace Clippit
                 }
                 else
                 {
-                    using XmlReader partXmlReader = XmlReader.Create(partStream);
+                    using var partXmlReader = XmlReader.Create(partStream);
                     partXDocument = XDocument.Load(partXmlReader);
                 }
             }
@@ -61,7 +61,7 @@ namespace Clippit
             if (part is null) throw new ArgumentNullException(nameof(part));
 
             namespaceManager = part.Annotation<XmlNamespaceManager>();
-            XDocument partXDocument = part.Annotation<XDocument>();
+            var partXDocument = part.Annotation<XDocument>();
             if (partXDocument is not null)
             {
                 if (namespaceManager is not null) return partXDocument;
@@ -72,7 +72,7 @@ namespace Clippit
                 return partXDocument;
             }
 
-            using Stream partStream = part.GetStream();
+            using var partStream = part.GetStream();
             if (partStream.Length == 0)
             {
                 partXDocument = new XDocument();
@@ -84,7 +84,7 @@ namespace Clippit
             }
             else
             {
-                using XmlReader partXmlReader = XmlReader.Create(partStream);
+                using var partXmlReader = XmlReader.Create(partStream);
                 partXDocument = XDocument.Load(partXmlReader);
                 namespaceManager = new XmlNamespaceManager(partXmlReader.NameTable);
 
@@ -99,12 +99,12 @@ namespace Clippit
         {
             if (part is null) throw new ArgumentNullException(nameof(part));
 
-            XDocument partXDocument = part.GetXDocument();
+            var partXDocument = part.GetXDocument();
             if (partXDocument != null)
             {
 #if true
-                using Stream partStream = part.GetStream(FileMode.Create, FileAccess.Write);
-                using XmlWriter partXmlWriter = XmlWriter.Create(partStream);
+                using var partStream = part.GetStream(FileMode.Create, FileAccess.Write);
+                using var partXmlWriter = XmlWriter.Create(partStream);
                 partXDocument.Save(partXmlWriter);
 #else
                 byte[] array = Encoding.UTF8.GetBytes(partXDocument.ToString(SaveOptions.DisableFormatting));
@@ -118,15 +118,15 @@ namespace Clippit
         {
             if (part is null) throw new ArgumentNullException(nameof(part));
 
-            XDocument partXDocument = part.GetXDocument();
+            var partXDocument = part.GetXDocument();
             if (partXDocument != null)
             {
-                using Stream partStream = part.GetStream(FileMode.Create, FileAccess.Write);
-                XmlWriterSettings settings = new XmlWriterSettings();
+                using var partStream = part.GetStream(FileMode.Create, FileAccess.Write);
+                var settings = new XmlWriterSettings();
                 settings.Indent = true;
                 settings.OmitXmlDeclaration = true;
                 settings.NewLineOnAttributes = true;
-                using XmlWriter partXmlWriter = XmlWriter.Create(partStream, settings);
+                using var partXmlWriter = XmlWriter.Create(partStream, settings);
                 partXDocument.Save(partXmlWriter);
             }
         }
@@ -136,8 +136,8 @@ namespace Clippit
             if (part is null) throw new ArgumentNullException(nameof(part));
             if (document is null) throw new ArgumentNullException(nameof(document));
 
-            using (Stream partStream = part.GetStream(FileMode.Create, FileAccess.Write))
-            using (XmlWriter partXmlWriter = XmlWriter.Create(partStream))
+            using (var partStream = part.GetStream(FileMode.Create, FileAccess.Write))
+            using (var partXmlWriter = XmlWriter.Create(partStream))
                 document.Save(partXmlWriter);
 
             part.RemoveAnnotations<XDocument>();
@@ -146,14 +146,14 @@ namespace Clippit
 
         private static XmlNamespaceManager GetManagerFromXDocument(XDocument xDocument)
         {
-            XmlReader reader = xDocument.CreateReader();
-            XDocument newXDoc = XDocument.Load(reader);
+            var reader = xDocument.CreateReader();
+            var newXDoc = XDocument.Load(reader);
 
-            XElement rootElement = xDocument.Elements().FirstOrDefault();
+            var rootElement = xDocument.Elements().FirstOrDefault();
             rootElement.ReplaceWith(newXDoc.Root);
 
-            XmlNameTable nameTable = reader.NameTable;
-            XmlNamespaceManager namespaceManager = new XmlNamespaceManager(nameTable);
+            var nameTable = reader.NameTable;
+            var namespaceManager = new XmlNamespaceManager(nameTable);
             return namespaceManager;
         }
 
@@ -217,7 +217,7 @@ namespace Clippit
 
         public static IEnumerable<XElement> LogicalChildrenContent(this IEnumerable<XElement> source)
         {
-            foreach (XElement e1 in source)
+            foreach (var e1 in source)
                 foreach (XElement e2 in e1.LogicalChildrenContent())
                     yield return e2;
         }
@@ -229,7 +229,7 @@ namespace Clippit
 
         public static IEnumerable<XElement> LogicalChildrenContent(this IEnumerable<XElement> source, XName name)
         {
-            foreach (XElement e1 in source)
+            foreach (var e1 in source)
                 foreach (XElement e2 in e1.LogicalChildrenContent(name))
                     yield return e2;
         }
@@ -262,9 +262,9 @@ namespace Clippit
         public static List<OpenXmlPart> GetAllParts(this OpenXmlPartContainer container)
         {
             // Use a HashSet so that parts are processed only once.
-            HashSet<OpenXmlPart> partList = new HashSet<OpenXmlPart>();
+            var partList = new HashSet<OpenXmlPart>();
 
-            foreach (IdPartPair p in container.Parts)
+            foreach (var p in container.Parts)
                 AddPart(partList, p.OpenXmlPart);
 
             return partList.OrderBy(p => p.ContentType).ThenBy(p => p.Uri.ToString()).ToList();
@@ -275,7 +275,7 @@ namespace Clippit
             if (partList.Contains(part)) return;
 
             partList.Add(part);
-            foreach (IdPartPair p in part.Parts)
+            foreach (var p in part.Parts)
                 AddPart(partList, p.OpenXmlPart);
         }
     }
@@ -294,9 +294,9 @@ namespace Clippit
 
             if (part.ContentType.EndsWith("xml"))
             {
-                using Stream str = part.GetStream();
-                using StreamReader streamReader = new StreamReader(str);
-                using XmlReader xr = XmlReader.Create(streamReader);
+                using var str = part.GetStream();
+                using var streamReader = new StreamReader(str);
+                using var xr = XmlReader.Create(streamReader);
                 return new XElement(pkg + "part",
                     new XAttribute(pkg + "name", part.Uri),
                     new XAttribute(pkg + "contentType", part.ContentType),
@@ -307,13 +307,13 @@ namespace Clippit
             }
             else
             {
-                using Stream str = part.GetStream();
-                using BinaryReader binaryReader = new BinaryReader(str);
-                int len = (int)binaryReader.BaseStream.Length;
-                byte[] byteArray = binaryReader.ReadBytes(len);
+                using var str = part.GetStream();
+                using var binaryReader = new BinaryReader(str);
+                var len = (int)binaryReader.BaseStream.Length;
+                var byteArray = binaryReader.ReadBytes(len);
                 // the following expression creates the base64String, then chunks
                 // it to lines of 76 characters long
-                string base64String = (System.Convert.ToBase64String(byteArray))
+                var base64String = (System.Convert.ToBase64String(byteArray))
                     .Select
                     (
                         (c, i) => new FlatOpcTupple()
@@ -362,11 +362,11 @@ namespace Clippit
 
         public static XmlDocument OpcToXmlDocument(string fileName)
         {
-            using Package package = Package.Open(fileName);
+            using var package = Package.Open(fileName);
             XNamespace pkg = "http://schemas.microsoft.com/office/2006/xmlPackage";
 
-            XDeclaration declaration = new XDeclaration("1.0", "UTF-8", "yes");
-            XDocument doc = new XDocument(
+            var declaration = new XDeclaration("1.0", "UTF-8", "yes");
+            var doc = new XDocument(
                 declaration,
                 GetProcessingInstruction(fileName),
                 new XElement(pkg + "package",
@@ -379,11 +379,11 @@ namespace Clippit
 
         public static XDocument OpcToXDocument(string fileName)
         {
-            using Package package = Package.Open(fileName);
+            using var package = Package.Open(fileName);
             XNamespace pkg = "http://schemas.microsoft.com/office/2006/xmlPackage";
 
-            XDeclaration declaration = new XDeclaration("1.0", "UTF-8", "yes");
-            XDocument doc = new XDocument(
+            var declaration = new XDeclaration("1.0", "UTF-8", "yes");
+            var doc = new XDocument(
                 declaration,
                 GetProcessingInstruction(fileName),
                 new XElement(pkg + "package",
@@ -396,11 +396,11 @@ namespace Clippit
 
         public static string[] OpcToText(string fileName)
         {
-            using Package package = Package.Open(fileName);
+            using var package = Package.Open(fileName);
             XNamespace pkg = "http://schemas.microsoft.com/office/2006/xmlPackage";
 
-            XDeclaration declaration = new XDeclaration("1.0", "UTF-8", "yes");
-            XDocument doc = new XDocument(
+            var declaration = new XDeclaration("1.0", "UTF-8", "yes");
+            var doc = new XDocument(
                 declaration,
                 GetProcessingInstruction(fileName),
                 new XElement(pkg + "package",
@@ -413,12 +413,12 @@ namespace Clippit
 
         private static XmlDocument GetXmlDocument(XDocument document)
         {
-            using XmlReader xmlReader = document.CreateReader();
-            XmlDocument xmlDoc = new XmlDocument();
+            using var xmlReader = document.CreateReader();
+            var xmlDoc = new XmlDocument();
             xmlDoc.Load(xmlReader);
             if (document.Declaration != null)
             {
-                XmlDeclaration dec = xmlDoc.CreateXmlDeclaration(document.Declaration.Version,
+                var dec = xmlDoc.CreateXmlDeclaration(document.Declaration.Version,
                     document.Declaration.Encoding, document.Declaration.Standalone);
                 xmlDoc.InsertBefore(dec, xmlDoc.FirstChild);
             }
@@ -427,10 +427,10 @@ namespace Clippit
 
         private static XDocument GetXDocument(this XmlDocument document)
         {
-            XDocument xDoc = new XDocument();
-            using (XmlWriter xmlWriter = xDoc.CreateWriter())
+            var xDoc = new XDocument();
+            using (var xmlWriter = xDoc.CreateWriter())
                 document.WriteTo(xmlWriter);
-            XmlDeclaration decl =
+            var decl =
                 document.ChildNodes.OfType<XmlDeclaration>().FirstOrDefault();
             if (decl != null)
                 xDoc.Declaration = new XDeclaration(decl.Version, decl.Encoding,
@@ -440,13 +440,13 @@ namespace Clippit
 
         public static void FlatToOpc(XmlDocument doc, string outputPath)
         {
-            XDocument xd = GetXDocument(doc);
+            var xd = GetXDocument(doc);
             FlatToOpc(xd, outputPath);
         }
 
         public static void FlatToOpc(string xmlText, string outputPath)
         {
-            XDocument xd = XDocument.Parse(xmlText);
+            var xd = XDocument.Parse(xmlText);
             FlatToOpc(xd, outputPath);
         }
 
@@ -457,7 +457,7 @@ namespace Clippit
             XNamespace rel =
                 "http://schemas.openxmlformats.org/package/2006/relationships";
 
-            using Package package = Package.Open(outputPath, FileMode.Create);
+            using var package = Package.Open(outputPath, FileMode.Create);
             // add all parts (but not relationships)
             foreach (var xmlPart in doc.Root
                          .Elements()
@@ -465,15 +465,15 @@ namespace Clippit
                              (string)p.Attribute(pkg + "contentType") !=
                              "application/vnd.openxmlformats-package.relationships+xml"))
             {
-                string name = (string)xmlPart.Attribute(pkg + "name");
-                string contentType = (string)xmlPart.Attribute(pkg + "contentType");
+                var name = (string)xmlPart.Attribute(pkg + "name");
+                var contentType = (string)xmlPart.Attribute(pkg + "contentType");
                 if (contentType.EndsWith("xml"))
                 {
-                    Uri u = new Uri(name, UriKind.Relative);
-                    PackagePart part = package.CreatePart(u, contentType,
+                    var u = new Uri(name, UriKind.Relative);
+                    var part = package.CreatePart(u, contentType,
                         CompressionOption.SuperFast);
-                    using Stream str = part.GetStream(FileMode.Create);
-                    using XmlWriter xmlWriter = XmlWriter.Create(str);
+                    using var str = part.GetStream(FileMode.Create);
+                    using var xmlWriter = XmlWriter.Create(str);
                     xmlPart.Element(pkg + "xmlData")
                         .Elements()
                         .First()
@@ -481,16 +481,16 @@ namespace Clippit
                 }
                 else
                 {
-                    Uri u = new Uri(name, UriKind.Relative);
-                    PackagePart part = package.CreatePart(u, contentType,
+                    var u = new Uri(name, UriKind.Relative);
+                    var part = package.CreatePart(u, contentType,
                         CompressionOption.SuperFast);
-                    using Stream str = part.GetStream(FileMode.Create);
-                    using BinaryWriter binaryWriter = new BinaryWriter(str);
-                    string base64StringInChunks =
+                    using var str = part.GetStream(FileMode.Create);
+                    using var binaryWriter = new BinaryWriter(str);
+                    var base64StringInChunks =
                         (string)xmlPart.Element(pkg + "binaryData");
-                    char[] base64CharArray = base64StringInChunks
+                    var base64CharArray = base64StringInChunks
                         .Where(c => c != '\r' && c != '\n').ToArray();
-                    byte[] byteArray =
+                    var byteArray =
                         System.Convert.FromBase64CharArray(base64CharArray,
                             0, base64CharArray.Length);
                     binaryWriter.Write(byteArray);
@@ -499,21 +499,21 @@ namespace Clippit
 
             foreach (var xmlPart in doc.Root.Elements())
             {
-                string name = (string)xmlPart.Attribute(pkg + "name");
-                string contentType = (string)xmlPart.Attribute(pkg + "contentType");
+                var name = (string)xmlPart.Attribute(pkg + "name");
+                var contentType = (string)xmlPart.Attribute(pkg + "contentType");
                 if (contentType ==
                     "application/vnd.openxmlformats-package.relationships+xml")
                 {
                     // add the package level relationships
                     if (name == "/_rels/.rels")
                     {
-                        foreach (XElement xmlRel in
+                        foreach (var xmlRel in
                                  xmlPart.Descendants(rel + "Relationship"))
                         {
-                            string id = (string)xmlRel.Attribute("Id");
-                            string type = (string)xmlRel.Attribute("Type");
-                            string target = (string)xmlRel.Attribute("Target");
-                            string targetMode =
+                            var id = (string)xmlRel.Attribute("Id");
+                            var type = (string)xmlRel.Attribute("Type");
+                            var target = (string)xmlRel.Attribute("Target");
+                            var targetMode =
                                 (string)xmlRel.Attribute("TargetMode");
                             if (targetMode == "External")
                                 package.CreateRelationship(
@@ -528,19 +528,19 @@ namespace Clippit
                     else
                         // add part level relationships
                     {
-                        string directory = name[..name.IndexOf("/_rels")];
-                        string relsFilename = name[name.LastIndexOf('/')..];
-                        string filename =
+                        var directory = name[..name.IndexOf("/_rels")];
+                        var relsFilename = name[name.LastIndexOf('/')..];
+                        var filename =
                             relsFilename[..relsFilename.IndexOf(".rels")];
-                        PackagePart fromPart = package.GetPart(
+                        var fromPart = package.GetPart(
                             new Uri(directory + filename, UriKind.Relative));
-                        foreach (XElement xmlRel in
+                        foreach (var xmlRel in
                                  xmlPart.Descendants(rel + "Relationship"))
                         {
-                            string id = (string)xmlRel.Attribute("Id");
-                            string type = (string)xmlRel.Attribute("Type");
-                            string target = (string)xmlRel.Attribute("Target");
-                            string targetMode =
+                            var id = (string)xmlRel.Attribute("Id");
+                            var type = (string)xmlRel.Attribute("Type");
+                            var target = (string)xmlRel.Attribute("Target");
+                            var targetMode =
                                 (string)xmlRel.Attribute("TargetMode");
                             if (targetMode == "External")
                                 fromPart.CreateRelationship(
@@ -561,8 +561,8 @@ namespace Clippit
     {
         public static string ConvertToBase64(string fileName)
         {
-            byte[] ba = System.IO.File.ReadAllBytes(fileName);
-            string base64String = (System.Convert.ToBase64String(ba))
+            var ba = System.IO.File.ReadAllBytes(fileName);
+            var base64String = (System.Convert.ToBase64String(ba))
                 .Select
                 (
                     (c, i) => new
@@ -595,8 +595,8 @@ namespace Clippit
 
         public static byte[] ConvertFromBase64(string fileName, string b64)
         {
-            string b64b = b64.Replace("\r\n", "");
-            byte[] ba = System.Convert.FromBase64String(b64b);
+            var b64b = b64.Replace("\r\n", "");
+            var ba = System.Convert.FromBase64String(b64b);
             return ba;
         }
     }
@@ -683,7 +683,7 @@ namespace Clippit
             if (runText.Length == 0 && tabLength == 0)
                 return (0, tabLength);
 
-            int multiplier = runText.Length switch
+            var multiplier = runText.Length switch
             {
                 <= 2 => 100,
                 <= 4 => 50,
@@ -694,8 +694,8 @@ namespace Clippit
             };
             if (multiplier != 1)
             {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < multiplier; i++)
+                var sb = new StringBuilder();
+                for (var i = 0; i < multiplier; i++)
                     sb.Append(runText);
                 runText = sb.ToString();
             }
@@ -771,7 +771,7 @@ namespace Clippit
         {
             const string dontConsolidate = "DontConsolidate";
 
-            IEnumerable<IGrouping<string, XElement>> groupedAdjacentRunsWithIdenticalFormatting =
+            var groupedAdjacentRunsWithIdenticalFormatting =
                 runContainer
                     .Elements()
                     .GroupAdjacent(ce =>
@@ -781,8 +781,8 @@ namespace Clippit
                             if (ce.Elements().Count(e => e.Name != W.rPr) != 1)
                                 return dontConsolidate;
 
-                            XElement rPr = ce.Element(W.rPr);
-                            string rPrString = rPr != null ? rPr.ToString(SaveOptions.None) : string.Empty;
+                            var rPr = ce.Element(W.rPr);
+                            var rPrString = rPr != null ? rPr.ToString(SaveOptions.None) : string.Empty;
 
                             if (ce.Element(W.t) != null)
                                 return "Wt" + rPrString;
@@ -835,14 +835,14 @@ namespace Clippit
                                 !ce.Elements().Elements(W.t).Any())
                                 return dontConsolidate;
 
-                            XAttribute dateIns2 = ce.Attribute(W.date);
+                            var dateIns2 = ce.Attribute(W.date);
 
-                            string authorIns2 = (string) ce.Attribute(W.author) ?? string.Empty;
-                            string dateInsString2 = dateIns2 != null
+                            var authorIns2 = (string) ce.Attribute(W.author) ?? string.Empty;
+                            var dateInsString2 = dateIns2 != null
                                 ? ((DateTime) dateIns2).ToString("s")
                                 : string.Empty;
 
-                            string idIns2 = (string)ce.Attribute(W.id);
+                            var idIns2 = (string)ce.Attribute(W.id);
 
                             return "Wins2" +
                                    authorIns2 +
@@ -860,10 +860,10 @@ namespace Clippit
                                 !ce.Elements().Elements(W.delText).Any())
                                 return dontConsolidate;
 
-                            XAttribute dateDel2 = ce.Attribute(W.date);
+                            var dateDel2 = ce.Attribute(W.date);
 
-                            string authorDel2 = (string) ce.Attribute(W.author) ?? string.Empty;
-                            string dateDelString2 = dateDel2 != null ? ((DateTime) dateDel2).ToString("s") : string.Empty;
+                            var authorDel2 = (string) ce.Attribute(W.author) ?? string.Empty;
+                            var dateDelString2 = dateDel2 != null ? ((DateTime) dateDel2).ToString("s") : string.Empty;
 
                             return "Wdel" +
                                    authorDel2 +
@@ -884,20 +884,20 @@ namespace Clippit
                     if (g.Key == dontConsolidate)
                         return (object) g;
 
-                    string textValue = g
+                    var textValue = g
                         .Select(r =>
                             r.Descendants()
                                 .Where(d => (d.Name == W.t) || (d.Name == W.delText) || (d.Name == W.instrText))
                                 .Select(d => d.Value)
                                 .StringConcatenate())
                         .StringConcatenate();
-                    XAttribute xs = XmlUtil.GetXmlSpaceAttribute(textValue);
+                    var xs = XmlUtil.GetXmlSpaceAttribute(textValue);
 
                     if (g.First().Name == W.r)
                     {
                         if (g.First().Element(W.t) != null)
                         {
-                            IEnumerable<IEnumerable<XAttribute>> statusAtt =
+                            var statusAtt =
                                 g.Select(r => r.Descendants(W.t).Take(1).Attributes(PtOpenXml.Status));
                             return new XElement(W.r,
                                 g.First().Elements(W.rPr),
@@ -940,21 +940,21 @@ namespace Clippit
                 }));
 
             // Process w:txbxContent//w:p
-            foreach (XElement txbx in runContainerWithConsolidatedRuns.Descendants(W.txbxContent))
-                foreach (XElement txbxPara in txbx.DescendantsTrimmed(W.txbxContent).Where(d => d.Name == W.p))
+            foreach (var txbx in runContainerWithConsolidatedRuns.Descendants(W.txbxContent))
+                foreach (var txbxPara in txbx.DescendantsTrimmed(W.txbxContent).Where(d => d.Name == W.p))
                 {
-                    XElement newPara = CoalesceAdjacentRunsWithIdenticalFormatting(txbxPara);
+                    var newPara = CoalesceAdjacentRunsWithIdenticalFormatting(txbxPara);
                     txbxPara.ReplaceWith(newPara);
                 }
 
             // Process additional run containers.
-            List<XElement> runContainers = runContainerWithConsolidatedRuns
+            var runContainers = runContainerWithConsolidatedRuns
                 .Descendants()
                 .Where(d => AdditionalRunContainerNames.Contains(d.Name))
                 .ToList();
-            foreach (XElement container in runContainers)
+            foreach (var container in runContainers)
             {
-                XElement newContainer = CoalesceAdjacentRunsWithIdenticalFormatting(container);
+                var newContainer = CoalesceAdjacentRunsWithIdenticalFormatting(container);
                 container.ReplaceWith(newContainer);
             }
 
@@ -1329,7 +1329,7 @@ listSeparator
 
         public static object WmlOrderElementsPerStandard(XNode node)
         {
-            XElement element = node as XElement;
+            var element = node as XElement;
             if (element != null)
             {
                 if (element.Name == W.pPr)
@@ -1436,9 +1436,9 @@ listSeparator
 
         public static WmlDocument BreakLinkToTemplate(WmlDocument source)
         {
-            using MemoryStream ms = new MemoryStream();
+            using var ms = new MemoryStream();
             ms.Write(source.DocumentByteArray, 0, source.DocumentByteArray.Length);
-            using (WordprocessingDocument wDoc = WordprocessingDocument.Open(ms, true))
+            using (var wDoc = WordprocessingDocument.Open(ms, true))
             {
                 var efpp = wDoc.ExtendedFilePropertiesPart;
                 if (efpp != null)
@@ -1463,7 +1463,7 @@ listSeparator
             {
                 if (part.ContentType is "application/vnd.openxmlformats-officedocument.presentationml.slide+xml" or "application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml" or "application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml" or "application/vnd.openxmlformats-officedocument.presentationml.notesMaster+xml" or "application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml" or "application/vnd.openxmlformats-officedocument.presentationml.handoutMaster+xml" or "application/vnd.openxmlformats-officedocument.theme+xml" or "application/vnd.openxmlformats-officedocument.drawingml.chart+xml" or "application/vnd.openxmlformats-officedocument.drawingml.diagramData+xml" or "application/vnd.openxmlformats-officedocument.drawingml.chartshapes+xml" or "application/vnd.ms-office.drawingml.diagramDrawing+xml")
                 {
-                    XDocument xd = part.GetXDocument();
+                    var xd = part.GetXDocument();
                     xd.Descendants().Attributes("smtClean").Remove();
                     xd.Descendants().Attributes("smtId").Remove();
                     part.PutXDocument();
@@ -1478,7 +1478,7 @@ listSeparator
                         {
                             //string input = @"    <![if gte mso 9]><v:imagedata o:relid=""rId15""";
                             var input = sr.ReadToEnd();
-                            string pattern = @"<!\[(?<test>.*)\]>";
+                            var pattern = @"<!\[(?<test>.*)\]>";
                             //string replacement = "<![CDATA[${test}]]>";
                             //fixedContent = Regex.Replace(input, pattern, replacement, RegexOptions.Multiline);
                             fixedContent = Regex.Replace(input, pattern, m =>
@@ -1527,19 +1527,19 @@ listSeparator
                 return ((char)(((int)'A') + i)).ToString();
             if (i >= 26 && i <= 701)
             {
-                int v = i - 26;
-                int h = v / 26;
-                int l = v % 26;
+                var v = i - 26;
+                var h = v / 26;
+                var l = v % 26;
                 return ((char)(((int)'A') + h)).ToString() + ((char)(((int)'A') + l)).ToString();
             }
             // 17576
             if (i >= 702 && i <= 18277)
             {
-                int v = i - 702;
-                int h = v / 676;
-                int r = v % 676;
-                int m = r / 26;
-                int l = r % 26;
+                var v = i - 702;
+                var h = v / 676;
+                var r = v % 676;
+                var m = r / 26;
+                var l = r % 26;
                 return ((char)(((int)'A') + h)).ToString() +
                     ((char)(((int)'A') + m)).ToString() +
                     ((char)(((int)'A') + l)).ToString();
@@ -1578,7 +1578,7 @@ listSeparator
 
         public static string ColumnIdOf(string cellReference)
         {
-            string columnIdOf = cellReference.Split('0', '1', '2', '3', '4', '5', '6', '7', '8', '9').First();
+            var columnIdOf = cellReference.Split('0', '1', '2', '3', '4', '5', '6', '7', '8', '9').First();
             return columnIdOf;
         }
     }
@@ -1627,15 +1627,15 @@ listSeparator
 
         public static bool? GetBoolProp(XElement rPr, XName propertyName)
         {
-            XElement propAtt = rPr.Element(propertyName);
+            var propAtt = rPr.Element(propertyName);
             if (propAtt == null)
                 return null;
 
-            XAttribute val = propAtt.Attribute(W.val);
+            var val = propAtt.Attribute(W.val);
             if (val == null)
                 return true;
 
-            string s = ((string) val).ToLower();
+            var s = ((string) val).ToLower();
             return s switch
             {
                 "1" => true,
@@ -1670,11 +1670,11 @@ listSeparator
 
         private static string[] GetTokens(string field)
         {
-            State state = State.InWhiteSpace;
-            int tokenStart = 0;
-            char quoteStart = char.MinValue;
-            List<string> tokens = new List<string>();
-            for (int c = 0; c < field.Length; c++)
+            var state = State.InWhiteSpace;
+            var tokenStart = 0;
+            var quoteStart = char.MinValue;
+            var tokens = new List<string>();
+            for (var c = 0; c < field.Length; c++)
             {
                 if (Char.IsWhiteSpace(field[c]))
                 {
@@ -1766,7 +1766,7 @@ listSeparator
 
         public static FieldInfo ParseField(string field)
         {
-            FieldInfo emptyField = new FieldInfo
+            var emptyField = new FieldInfo
             {
                 FieldType = "",
                 Arguments = new string[] { },
@@ -1775,13 +1775,13 @@ listSeparator
 
             if (field.Length == 0)
                 return emptyField;
-            string fieldType = field.TrimStart().Split(' ').FirstOrDefault();
+            var fieldType = field.TrimStart().Split(' ').FirstOrDefault();
             if (fieldType == null || fieldType.ToUpper() != "HYPERLINK" || fieldType.ToUpper() != "REF")
                 return emptyField;
-            string[] tokens = GetTokens(field);
+            var tokens = GetTokens(field);
             if (tokens.Length == 0)
                 return emptyField;
-            FieldInfo fieldInfo = new FieldInfo()
+            var fieldInfo = new FieldInfo()
             {
                 FieldType = tokens[0],
                 Switches = tokens.Where(t => t[0] == '\\').ToArray(),
@@ -1809,7 +1809,7 @@ listSeparator
         public ImageData(ImagePart part)
         {
             ContentType = part.ContentType;
-            using Stream s = part.GetStream(FileMode.Open, FileAccess.Read);
+            using var s = part.GetStream(FileMode.Open, FileAccess.Read);
             Image = s.ReadToArray();
         }
 
@@ -1826,7 +1826,7 @@ listSeparator
 
         public void WriteImage(ImagePart part)
         {
-            using Stream s = part.GetStream(FileMode.Create, FileAccess.ReadWrite);
+            using var s = part.GetStream(FileMode.Create, FileAccess.ReadWrite);
             s.Write(Image, 0, Image.GetUpperBound(0) + 1);
         }
 
@@ -1837,9 +1837,9 @@ listSeparator
             if (Image.GetLongLength(0) != arg.Image.GetLongLength(0))
                 return false;
             // Compare the arrays byte by byte
-            long length = Image.GetLongLength(0);
-            byte[] image1 = Image;
-            byte[] image2 = arg.Image;
+            var length = Image.GetLongLength(0);
+            var image1 = Image;
+            var image2 = arg.Image;
             for (long n = 0; n < length; n++)
                 if (image1[n] != image2[n])
                     return false;
@@ -1858,7 +1858,7 @@ listSeparator
         public MediaData(DataPart part)
         {
             ContentType = part.ContentType;
-            using Stream s = part.GetStream(FileMode.Open, FileAccess.Read);
+            using var s = part.GetStream(FileMode.Open, FileAccess.Read);
             Media = s.ReadToArray();
         }
 
@@ -1875,7 +1875,7 @@ listSeparator
 
         public void WriteMedia(DataPart part)
         {
-            using Stream s = part.GetStream(FileMode.Create, FileAccess.ReadWrite);
+            using var s = part.GetStream(FileMode.Create, FileAccess.ReadWrite);
             s.Write(Media, 0, Media.GetUpperBound(0) + 1);
         }
 
@@ -1886,9 +1886,9 @@ listSeparator
             if (Media.GetLongLength(0) != arg.Media.GetLongLength(0))
                 return false;
             // Compare the arrays byte by byte
-            long length = Media.GetLongLength(0);
-            byte[] media1 = Media;
-            byte[] media2 = arg.Media;
+            var length = Media.GetLongLength(0);
+            var media1 = Media;
+            var media2 = arg.Media;
             for (long n = 0; n < length; n++)
                 if (media1[n] != media2[n])
                     return false;
@@ -1902,12 +1902,12 @@ listSeparator
         public static void FixInvalidUri(Stream fs, Func<string, Uri> invalidUriHandler)
         {
             XNamespace relNs = "http://schemas.openxmlformats.org/package/2006/relationships";
-            using ZipArchive za = new ZipArchive(fs, ZipArchiveMode.Update);
+            using var za = new ZipArchive(fs, ZipArchiveMode.Update);
             foreach (var entry in za.Entries.ToList())
             {
                 if (!entry.Name.EndsWith(".rels"))
                     continue;
-                bool replaceEntry = false;
+                var replaceEntry = false;
                 XDocument entryXDoc = null;
                 using (var entryStream = entry.Open())
                 {
@@ -1926,11 +1926,11 @@ listSeparator
                                 {
                                     try
                                     {
-                                        Uri uri = new Uri(target);
+                                        var uri = new Uri(target);
                                     }
                                     catch (UriFormatException)
                                     {
-                                        Uri newUri = invalidUriHandler(target);
+                                        var newUri = invalidUriHandler(target);
                                         rel.Attribute("Target").Value = newUri.ToString();
                                         replaceEntry = true;
                                     }
@@ -1948,8 +1948,8 @@ listSeparator
                     var fullName = entry.FullName;
                     entry.Delete();
                     var newEntry = za.CreateEntry(fullName);
-                    using StreamWriter writer = new StreamWriter(newEntry.Open());
-                    using XmlWriter xmlWriter = XmlWriter.Create(writer);
+                    using var writer = new StreamWriter(newEntry.Open());
+                    using var xmlWriter = XmlWriter.Create(writer);
                     entryXDoc.WriteTo(xmlWriter);
                 }
             }

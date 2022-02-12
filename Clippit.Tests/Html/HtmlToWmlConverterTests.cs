@@ -306,7 +306,7 @@ namespace Clippit.Tests.Html
             string[] htmlFilter = null;
 #endif
 
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
             var sourceHtmlFi = new FileInfo(Path.Combine(sourceDir.FullName, name));
             var sourceImageDi = new DirectoryInfo(Path.Combine(sourceDir.FullName, sourceHtmlFi.Name.Replace(".html", "_files")));
 
@@ -321,12 +321,12 @@ namespace Clippit.Tests.Html
                 Directory.CreateDirectory(sourceCopiedToDestHtmlFi.DirectoryName);
                 File.Copy(sourceHtmlFi.FullName, sourceCopiedToDestHtmlFi.FullName);
             }
-            XElement html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceCopiedToDestHtmlFi);
+            var html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceCopiedToDestHtmlFi);
 
-            string htmlString = html.ToString();
+            var htmlString = html.ToString();
             if (htmlFilter != null && htmlFilter.Any())
             {
-                bool found = false;
+                var found = false;
                 foreach (var item in htmlFilter)
                 {
                     if (htmlString.Contains(item))
@@ -342,12 +342,12 @@ namespace Clippit.Tests.Html
                 }
             }
 
-            string usedAuthorCss = HtmlToWmlConverter.CleanUpCss((string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style"));
+            var usedAuthorCss = HtmlToWmlConverter.CleanUpCss((string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style"));
             File.WriteAllText(destCssFi.FullName, usedAuthorCss);
 
             if (cssFilter != null && cssFilter.Any())
             {
-                bool found = false;
+                var found = false;
                 foreach (var item in cssFilter)
                 {
                     if (usedAuthorCss.Contains(item))
@@ -373,12 +373,12 @@ namespace Clippit.Tests.Html
                 }
             }
 
-            HtmlToWmlConverterSettings settings = HtmlToWmlConverter.GetDefaultSettings();
+            var settings = HtmlToWmlConverter.GetDefaultSettings();
             // image references in HTML files contain the path to the subdir that contains the images, so base URI is the name of the directory
             // that contains the HTML files
             settings.BaseUriForImages = Path.Combine(TempDir);
 
-            WmlDocument doc = HtmlToWmlConverter.ConvertHtmlToWml(defaultCss, usedAuthorCss, userCss, html, settings, null, s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null);
+            var doc = HtmlToWmlConverter.ConvertHtmlToWml(defaultCss, usedAuthorCss, userCss, html, settings, null, s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null);
             Assert.NotNull(doc);
             if (doc != null)
                 SaveValidateAndFormatMainDocPart(destDocxFi, doc);
@@ -396,7 +396,7 @@ namespace Clippit.Tests.Html
         public void HW004(string name)
         {
 
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
             var sourceHtmlFi = new FileInfo(Path.Combine(sourceDir.FullName, name));
             var sourceImageDi = new DirectoryInfo(Path.Combine(sourceDir.FullName, sourceHtmlFi.Name.Replace(".html", "_files")));
 
@@ -407,12 +407,12 @@ namespace Clippit.Tests.Html
             var annotatedHtmlFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt")));
 
             File.Copy(sourceHtmlFi.FullName, sourceCopiedToDestHtmlFi.FullName);
-            XElement html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceCopiedToDestHtmlFi);
+            var html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceCopiedToDestHtmlFi);
 
-            string usedAuthorCss = HtmlToWmlConverter.CleanUpCss((string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style"));
+            var usedAuthorCss = HtmlToWmlConverter.CleanUpCss((string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style"));
             File.WriteAllText(destCssFi.FullName, usedAuthorCss);
 
-            HtmlToWmlConverterSettings settings = HtmlToWmlConverter.GetDefaultSettings();
+            var settings = HtmlToWmlConverter.GetDefaultSettings();
             settings.BaseUriForImages = Path.Combine(TempDir);
 
             Assert.Throws<OpenXmlPowerToolsException>(() => HtmlToWmlConverter.ConvertHtmlToWml(defaultCss, usedAuthorCss, userCss, html, settings, null, s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null));
@@ -422,7 +422,7 @@ namespace Clippit.Tests.Html
         [InlineData("T1880.html")]
         public void TestingNestedRowspan(string name)
         {
-            DirectoryInfo sourceDir = new DirectoryInfo("../../../../TestFiles/");
+            var sourceDir = new DirectoryInfo("../../../../TestFiles/");
             var sourceHtmlFi = new FileInfo(Path.Combine(sourceDir.FullName, name));
             var sourceImageDi = new DirectoryInfo(Path.Combine(sourceDir.FullName, sourceHtmlFi.Name.Replace(".html", "_files")));
 
@@ -433,15 +433,15 @@ namespace Clippit.Tests.Html
             var annotatedHtmlFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt")));
 
             File.Copy(sourceHtmlFi.FullName, sourceCopiedToDestHtmlFi.FullName);
-            XElement html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceCopiedToDestHtmlFi);
+            var html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceCopiedToDestHtmlFi);
 
-            string usedAuthorCss = HtmlToWmlConverter.CleanUpCss((string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style"));
+            var usedAuthorCss = HtmlToWmlConverter.CleanUpCss((string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style"));
             File.WriteAllText(destCssFi.FullName, usedAuthorCss);
 
-            HtmlToWmlConverterSettings settings = HtmlToWmlConverter.GetDefaultSettings();
+            var settings = HtmlToWmlConverter.GetDefaultSettings();
             settings.BaseUriForImages = Path.Combine(TempDir);
 
-            WmlDocument doc = HtmlToWmlConverter.ConvertHtmlToWml(defaultCss, usedAuthorCss, userCss, html, settings, null, s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null);
+            var doc = HtmlToWmlConverter.ConvertHtmlToWml(defaultCss, usedAuthorCss, userCss, html, settings, null, s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null);
 
             Assert.NotNull(doc);
             if (doc != null)
@@ -453,14 +453,14 @@ namespace Clippit.Tests.Html
             WmlDocument formattedDoc;
 
             doc.SaveAs(destDocxFi.FullName);
-            using (MemoryStream ms = new MemoryStream())
+            using (var ms = new MemoryStream())
             {
                 ms.Write(doc.DocumentByteArray, 0, doc.DocumentByteArray.Length);
-                using (WordprocessingDocument document = WordprocessingDocument.Open(ms, true))
+                using (var document = WordprocessingDocument.Open(ms, true))
                 {
-                    XDocument xDoc = document.MainDocumentPart.GetXDocument();
+                    var xDoc = document.MainDocumentPart.GetXDocument();
                     document.MainDocumentPart.PutXDocumentWithFormatting();
-                    OpenXmlValidator validator = new OpenXmlValidator();
+                    var validator = new OpenXmlValidator();
                     var errors = validator.Validate(document);
                     var errorsString = errors
                         .Select(e => e.Description + Environment.NewLine)

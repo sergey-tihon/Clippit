@@ -36,18 +36,18 @@ namespace Clippit
             string backColor,
             string styleName)
         {
-            using OpenXmlMemoryStreamDocument streamDoc = new OpenXmlMemoryStreamDocument(wmlDoc);
-            using (WordprocessingDocument wDoc = streamDoc.GetWordprocessingDocument())
+            using var streamDoc = new OpenXmlMemoryStreamDocument(wmlDoc);
+            using (var wDoc = streamDoc.GetWordprocessingDocument())
             {
-                StyleDefinitionsPart part = wDoc.MainDocumentPart.StyleDefinitionsPart;
+                var part = wDoc.MainDocumentPart.StyleDefinitionsPart;
 
-                Body body = wDoc.MainDocumentPart.Document.Body;
+                var body = wDoc.MainDocumentPart.Document.Body;
 
-                SectionProperties sectionProperties = body.Elements<SectionProperties>().FirstOrDefault();
+                var sectionProperties = body.Elements<SectionProperties>().FirstOrDefault();
 
-                Paragraph paragraph = new Paragraph();
-                Run run = paragraph.AppendChild(new Run());
-                RunProperties runProperties = new RunProperties();
+                var paragraph = new Paragraph();
+                var run = paragraph.AppendChild(new Run());
+                var runProperties = new RunProperties();
 
                 if (isBold)
                     runProperties.AppendChild(new Bold());
@@ -58,11 +58,11 @@ namespace Clippit
 
                 if (!string.IsNullOrEmpty(foreColor))
                 {
-                    int colorValue = ColorParser.FromName(foreColor).ToArgb();
+                    var colorValue = ColorParser.FromName(foreColor).ToArgb();
                     if (colorValue == 0)
                         throw new OpenXmlPowerToolsException(String.Format("Add-DocxText: The specified color {0} is unsupported, Please specify the valid color. Ex, Red, Green", foreColor));
 
-                    string ColorHex = string.Format("{0:x6}", colorValue);
+                    var ColorHex = string.Format("{0:x6}", colorValue);
                     runProperties.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Color() { Val = ColorHex[2..] });
                 }
 
@@ -71,24 +71,24 @@ namespace Clippit
 
                 if (!string.IsNullOrEmpty(backColor))
                 {
-                    int colorShade = ColorParser.FromName(backColor).ToArgb();
+                    var colorShade = ColorParser.FromName(backColor).ToArgb();
                     if (colorShade == 0)
                         throw new OpenXmlPowerToolsException(String.Format("Add-DocxText: The specified color {0} is unsupported, Please specify the valid color. Ex, Red, Green", foreColor));
 
-                    string ColorShadeHex = string.Format("{0:x6}", colorShade);
+                    var ColorShadeHex = string.Format("{0:x6}", colorShade);
                     runProperties.AppendChild(new Shading() { Fill = ColorShadeHex[2..], Val = ShadingPatternValues.Clear });
                 }
 
                 if (!string.IsNullOrEmpty(styleName))
                 {
-                    Style style = part.Styles.Elements<Style>().Where(s => s.StyleId == styleName).FirstOrDefault();
+                    var style = part.Styles.Elements<Style>().Where(s => s.StyleId == styleName).FirstOrDefault();
                     //if the specified style is not present in word document add it
                     if (style == null)
                     {
-                        using MemoryStream memoryStream = new MemoryStream();
+                        using var memoryStream = new MemoryStream();
 
                         #region Default.dotx Template has been used to get all the paragraph styles
-                        string base64 =
+                        var base64 =
                             @"UEsDBBQABgAIAAAAIQDTMB8uXgEAACAFAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbLSUy27CMBBF
 95X6D5G3VWLooqoqAos+li1S6QcYewJW/ZI9vP6+EwKoqiCRCmwiJTP33jNWxoPR2ppsCTFp70rW
 L3osAye90m5Wsq/JW/7IsoTCKWG8g5JtILHR8PZmMNkESBmpXSrZHDE8cZ7kHKxIhQ/gqFL5aAXS
@@ -304,13 +304,13 @@ joxzCXABAAD0AQAAFAAAAAAAAAAAAAAAAADKKgAAd29yZC93ZWJTZXR0aW5ncy54bWxQSwUGAAAA
 AAsACwDBAgAAbCwAAAAA";
                         #endregion
 
-                        char[] base64CharArray = base64.Where(c => c != '\r' && c != '\n').ToArray();
-                        byte[] byteArray = System.Convert.FromBase64CharArray(base64CharArray, 0, base64CharArray.Length);
+                        var base64CharArray = base64.Where(c => c != '\r' && c != '\n').ToArray();
+                        var byteArray = System.Convert.FromBase64CharArray(base64CharArray, 0, base64CharArray.Length);
                         memoryStream.Write(byteArray, 0, byteArray.Length);
 
-                        using WordprocessingDocument defaultDotx = WordprocessingDocument.Open(memoryStream, true);
+                        using var defaultDotx = WordprocessingDocument.Open(memoryStream, true);
                         //Get the specified style from Default.dotx template for paragraph
-                        Style templateStyle = defaultDotx.MainDocumentPart.StyleDefinitionsPart.Styles.Elements<Style>().Where(s => s.StyleId == styleName && s.Type == StyleValues.Paragraph).FirstOrDefault();
+                        var templateStyle = defaultDotx.MainDocumentPart.StyleDefinitionsPart.Styles.Elements<Style>().Where(s => s.StyleId == styleName && s.Type == StyleValues.Paragraph).FirstOrDefault();
 
                         //Check if the style is proper style. Ex, Heading1, Heading2
                         if (templateStyle == null)
@@ -388,7 +388,7 @@ AAsACwDBAgAAbCwAAAAA";
             {
                 return null;
             }
-            XElement img = new XElement(Xhtml.img,
+            var img = new XElement(Xhtml.img,
                 new XAttribute(NoNamespace.src, imageFileName),
                 imageInfo.ImgStyleAttribute,
                 imageInfo.AltText != null ?
@@ -455,7 +455,7 @@ AAsACwDBAgAAbCwAAAAA";
         public static bool IsValid(string fileName, string officeVersion)
         {
 #if !NET35
-            FileFormatVersions fileFormatVersion = FileFormatVersions.Office2013;
+            var fileFormatVersion = FileFormatVersions.Office2013;
 #else
             FileFormatVersions fileFormatVersion = FileFormatVersions.Office2010;
 #endif
@@ -472,29 +472,29 @@ AAsACwDBAgAAbCwAAAAA";
 #endif
             }
 
-            FileInfo fi = new FileInfo(fileName);
+            var fi = new FileInfo(fileName);
             if (Util.IsWordprocessingML(fi.Extension))
             {
-                using WordprocessingDocument wDoc = WordprocessingDocument.Open(fileName, false);
-                OpenXmlValidator validator = new OpenXmlValidator(fileFormatVersion);
+                using var wDoc = WordprocessingDocument.Open(fileName, false);
+                var validator = new OpenXmlValidator(fileFormatVersion);
                 var errors = validator.Validate(wDoc);
-                bool valid = errors.Count() == 0;
+                var valid = errors.Count() == 0;
                 return valid;
             }
             else if (Util.IsSpreadsheetML(fi.Extension))
             {
-                using SpreadsheetDocument sDoc = SpreadsheetDocument.Open(fileName, false);
-                OpenXmlValidator validator = new OpenXmlValidator(fileFormatVersion);
+                using var sDoc = SpreadsheetDocument.Open(fileName, false);
+                var validator = new OpenXmlValidator(fileFormatVersion);
                 var errors = validator.Validate(sDoc);
-                bool valid = errors.Count() == 0;
+                var valid = errors.Count() == 0;
                 return valid;
             }
             else if (Util.IsPresentationML(fi.Extension))
             {
-                using PresentationDocument pDoc = PresentationDocument.Open(fileName, false);
-                OpenXmlValidator validator = new OpenXmlValidator(fileFormatVersion);
+                using var pDoc = PresentationDocument.Open(fileName, false);
+                var validator = new OpenXmlValidator(fileFormatVersion);
                 var errors = validator.Validate(pDoc);
-                bool valid = errors.Count() == 0;
+                var valid = errors.Count() == 0;
                 return valid;
             }
             return false;
@@ -504,7 +504,7 @@ AAsACwDBAgAAbCwAAAAA";
             string officeVersion)
         {
 #if !NET35
-            FileFormatVersions fileFormatVersion = FileFormatVersions.Office2013;
+            var fileFormatVersion = FileFormatVersions.Office2013;
 #else
             FileFormatVersions fileFormatVersion = FileFormatVersions.Office2010;
 #endif
@@ -597,12 +597,12 @@ AAsACwDBAgAAbCwAAAAA";
     {
         public static DocxMetrics GetDocxMetrics(string fileName)
         {
-            WmlDocument wmlDoc = new WmlDocument(fileName);
-            MetricsGetterSettings settings = new MetricsGetterSettings();
+            var wmlDoc = new WmlDocument(fileName);
+            var settings = new MetricsGetterSettings();
             settings.IncludeTextInContentControls = false;
             settings.IncludeXlsxTableCellData = false;
             var metricsXml = MetricsGetter.GetDocxMetrics(wmlDoc, settings);
-            DocxMetrics metrics = new DocxMetrics();
+            var metrics = new DocxMetrics();
             metrics.FileName = wmlDoc.FileName;
 
             metrics.StyleHierarchy         = GetXmlDocumentForMetrics(metricsXml, H.StyleHierarchy);
