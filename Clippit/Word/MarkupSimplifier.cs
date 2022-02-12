@@ -268,7 +268,7 @@ namespace Clippit.Word
                                 return new XElement(W.instrText);
 
                             return new XElement(W.instrText,
-                                (newInstrText[0] == ' ') || (newInstrText[newInstrText.Length - 1] == ' ')
+                                (newInstrText[0] == ' ') || (newInstrText[^1] == ' ')
                                     ? new XAttribute(XNamespace.Xml + "space", "preserve")
                                     : null,
                                 newInstrText);

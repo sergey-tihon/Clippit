@@ -1130,7 +1130,7 @@ namespace Clippit
             // contains the equal parts.
             // this will never hurt anything, and will in many cases result in a better difference.
 
-            if (middleEqual.ComparisonUnitArray1[middleEqual.ComparisonUnitArray1.Length - 1] is ComparisonUnitWord leftCuw)
+            if (middleEqual.ComparisonUnitArray1[^1] is ComparisonUnitWord leftCuw)
             {
                 ComparisonUnitAtom lastContentAtom = leftCuw.DescendantContentAtoms().LastOrDefault();
 

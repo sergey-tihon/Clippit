@@ -43,7 +43,7 @@ namespace Clippit
 
                     PackagePart relatedPackagePart = partOfDeletedContent.Package.GetPart(targetUri);
                     string[] uriSplit = relatedPackagePart.Uri.ToString().Split('/');
-                    string[] last = uriSplit[uriSplit.Length - 1].Split('.');
+                    string[] last = uriSplit[^1].Split('.');
                     string uriString;
                     if (last.Length == 2)
                     {
@@ -95,7 +95,7 @@ namespace Clippit
         private static XAttribute GetXmlSpaceAttribute(string textOfTextElement)
         {
             if (char.IsWhiteSpace(textOfTextElement[0]) ||
-                char.IsWhiteSpace(textOfTextElement[textOfTextElement.Length - 1]))
+                char.IsWhiteSpace(textOfTextElement[^1]))
                 return new XAttribute(XNamespace.Xml + "space", "preserve");
 
             return null;
