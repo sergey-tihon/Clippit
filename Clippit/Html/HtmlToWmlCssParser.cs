@@ -233,7 +233,7 @@ namespace Clippit.Html
                     sb.Append(";");
                 }
                 sb.Append(Environment.NewLine + "\t" + start);
-                sb.Append(decl.ToString());
+                sb.Append(decl);
             }
 
             sb.Append(Environment.NewLine + "}");
@@ -257,7 +257,7 @@ namespace Clippit.Html
                     sb.Append(";");
                 }
                 sb.Append(Environment.NewLine + "\t" + start);
-                sb.Append(decl.ToString());
+                sb.Append(decl);
             }
 
             sb.Append(Environment.NewLine + "}");
@@ -342,7 +342,7 @@ namespace Clippit.Html
                     sb.Append(";");
                 }
                 sb.Append(Environment.NewLine + "\t" + start);
-                sb.Append(decl.ToString());
+                sb.Append(decl);
             }
 
             sb.Append("}");
@@ -411,7 +411,7 @@ namespace Clippit.Html
                 {
                     sb.Append($"{(term.Separator.HasValue ? term.Separator.Value.ToString() : "")} ");
                 }
-                sb.Append(term.ToString());
+                sb.Append(term);
             }
             return sb.ToString();
         }
@@ -437,7 +437,7 @@ namespace Clippit.Html
                 var term = length.Terms.First();
                 if (term.Unit == CssUnit.PT)
                 {
-                    if (double.TryParse(term.Value.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var ptValue))
+                    if (double.TryParse(term.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var ptValue))
                     {
                         if (term.Sign == '-')
                             ptValue = -ptValue;
@@ -482,7 +482,7 @@ namespace Clippit.Html
                     {
                         sb.Append("'");
                     }
-                    sb.Append(t.ToString());
+                    sb.Append(t);
                     if (quote)
                     {
                         sb.Append("'");
@@ -685,14 +685,14 @@ namespace Clippit.Html
                 {
                     sb.Append(", ");
                 }
-                sb.Append(sel.ToString());
+                sb.Append(sel);
             }
             sb.Append(" {" + Environment.NewLine);
             sb.Append(start);
 
             foreach (var dec in Declarations)
             {
-                sb.AppendFormat("\t{0};" + Environment.NewLine + "{1}", dec.ToString(), start);
+                sb.AppendFormat("\t{0};" + Environment.NewLine + "{1}", dec, start);
             }
 
             sb.Append("}");
@@ -718,7 +718,7 @@ namespace Clippit.Html
                 {
                     sb.Append(" ");
                 }
-                sb.Append(ss.ToString());
+                sb.Append(ss);
             }
             return sb.ToString();
         }
@@ -804,11 +804,11 @@ namespace Clippit.Html
             }
             if (Attribute != null)
             {
-                sb.Append(Attribute.ToString());
+                sb.Append(Attribute);
             }
             if (Function != null)
             {
-                sb.Append(Function.ToString());
+                sb.Append(Function);
             }
             if (Child != null)
             {
@@ -816,7 +816,7 @@ namespace Clippit.Html
                 {
                     sb.Append(" ");
                 }
-                sb.Append(Child.ToString());
+                sb.Append(Child);
             }
             return sb.ToString();
         }
@@ -986,7 +986,7 @@ namespace Clippit.Html
 
             if (Type == CssTermType.Function)
             {
-                sb.Append(Function.ToString());
+                sb.Append(Function);
             }
             else if (Type == CssTermType.Url)
             {
@@ -1204,7 +1204,7 @@ namespace Clippit.Html
                 var temp = "";
                 foreach (var c in hex)
                 {
-                    temp += c.ToString() + c.ToString();
+                    temp += c + c.ToString();
                 }
                 hex = temp;
             }

@@ -131,7 +131,7 @@ namespace Clippit.Word
                     suffix = "er";
                 else
                     suffix = "e";
-                return levelNumber.ToString() + suffix;
+                return levelNumber + suffix;
             }
             if (numFmt == "ordinalText")
             {

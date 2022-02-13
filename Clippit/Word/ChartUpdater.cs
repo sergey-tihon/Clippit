@@ -555,7 +555,7 @@ namespace Clippit.Word
 
         private static string RowColToString(int row, int col)
         {
-            var str = SpreadsheetMLUtil.IntToColumnId(col) + (row + 1).ToString();
+            var str = SpreadsheetMLUtil.IntToColumnId(col) + (row + 1);
             return str;
         }
 

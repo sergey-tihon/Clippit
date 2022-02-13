@@ -372,7 +372,7 @@ namespace Clippit.Excel
             xw.WriteValue(rowCount);
             xw.WriteEndAttribute();
             xw.WriteStartAttribute("spans");
-            xw.WriteValue("1:" + row.Cells.Count().ToString());
+            xw.WriteValue("1:" + row.Cells.Count());
             xw.WriteEndAttribute();
             var cellCount = 0;
             foreach (var cell in row.Cells)
@@ -381,7 +381,7 @@ namespace Clippit.Excel
                 {
                     xw.WriteStartElement("c", ns);
                     xw.WriteStartAttribute("r");
-                    xw.WriteValue(SpreadsheetMLUtil.IntToColumnId(cellCount) + rowCount.ToString());
+                    xw.WriteValue(SpreadsheetMLUtil.IntToColumnId(cellCount) + rowCount);
                     xw.WriteEndAttribute();
                     if (cell.Bold != null ||
                         cell.Italic != null ||

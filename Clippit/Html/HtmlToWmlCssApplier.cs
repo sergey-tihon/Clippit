@@ -1646,7 +1646,7 @@ namespace Clippit.Html
             if (simpleSelector.Pseudo != null)
                 return false;
             if (simpleSelector.ElementName != null && simpleSelector.ElementName != "" && simpleSelector.ElementName != "*")
-                elemantNameMatch = element.Name.ToString() == simpleSelector.ElementName.ToString();
+                elemantNameMatch = element.Name.ToString() == simpleSelector.ElementName;
             if (elemantNameMatch)
             {
                 if (simpleSelector.Class != null && simpleSelector.Class != "")

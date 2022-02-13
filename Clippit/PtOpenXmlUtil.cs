@@ -1530,7 +1530,7 @@ listSeparator
                 var v = i - 26;
                 var h = v / 26;
                 var l = v % 26;
-                return ((char)(((int)'A') + h)).ToString() + ((char)(((int)'A') + l)).ToString();
+                return ((char)(((int)'A') + h)) + ((char)(((int)'A') + l)).ToString();
             }
             // 17576
             if (i >= 702 && i <= 18277)
@@ -1540,9 +1540,9 @@ listSeparator
                 var r = v % 676;
                 var m = r / 26;
                 var l = r % 26;
-                return ((char)(((int)'A') + h)).ToString() +
+                return ((char)(((int)'A') + h)) +
                     ((char)(((int)'A') + m)).ToString() +
-                    ((char)(((int)'A') + l)).ToString();
+                    ((char)(((int)'A') + l));
             }
             throw new ColumnReferenceOutOfRange(i.ToString());
         }
@@ -1569,11 +1569,11 @@ listSeparator
                 yield return ((char)c).ToString();
             for (var c1 = (int)'A'; c1 <= (int)'Z'; ++c1)
                 for (var c2 = (int)'A'; c2 <= (int)'Z'; ++c2)
-                    yield return ((char)c1).ToString() + ((char)c2).ToString();
+                    yield return ((char)c1) + ((char)c2).ToString();
             for (var d1 = (int)'A'; d1 <= (int)'Z'; ++d1)
                 for (var d2 = (int)'A'; d2 <= (int)'Z'; ++d2)
                     for (var d3 = (int)'A'; d3 <= (int)'Z'; ++d3)
-                        yield return ((char)d1).ToString() + ((char)d2).ToString() + ((char)d3).ToString();
+                        yield return ((char)d1) + ((char)d2).ToString() + ((char)d3);
         }
 
         public static string ColumnIdOf(string cellReference)

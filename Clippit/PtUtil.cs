@@ -824,7 +824,7 @@ namespace Clippit
         {
             return source.Aggregate(new StringBuilder(),
                        (sb, i) => sb
-                           .Append(i.ToString())
+                           .Append(i)
                            .Append(separator),
                        s => s.ToString());
         }

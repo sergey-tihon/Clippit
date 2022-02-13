@@ -58,7 +58,7 @@ namespace Clippit.Word
                 case "decimal":
                     return levelNumber.ToString();
                 case "decimalZero" when levelNumber <= 9:
-                    return "0" + levelNumber.ToString();
+                    return "0" + levelNumber;
                 case "decimalZero":
                     return levelNumber.ToString();
                 case "upperRoman":
@@ -115,7 +115,7 @@ namespace Clippit.Word
                                 3 => "rd",
                                 _ => "th"
                             };
-                        return levelNumber.ToString() + suffix;
+                        return levelNumber + suffix;
                     }
                 case "cardinalText":
                     {

@@ -302,7 +302,7 @@ namespace Clippit.Word
                         var levelNumsString = levelNums
                             .LevelNumbersArray
                             .Take(paragraphLevel + 1)
-                            .Select(i => i.ToString() + ".")
+                            .Select(i => i + ".")
                             .StringConcatenate()
                             .TrimEnd('.');
 
@@ -2877,12 +2877,12 @@ namespace Clippit.Word
             {
                 if (paraOrRun.Attribute(PtOpenXml.FontName) == null)
                 {
-                    var fta = new XAttribute(PtOpenXml.FontName, fontType.ToString());
+                    var fta = new XAttribute(PtOpenXml.FontName, fontType);
                     paraOrRun.Add(fta);
                 }
                 else
                 {
-                    paraOrRun.Attribute(PtOpenXml.FontName).Value = fontType.ToString();
+                    paraOrRun.Attribute(PtOpenXml.FontName).Value = fontType;
                 }
             }
             if (languageType != null)

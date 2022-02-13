@@ -60,7 +60,7 @@ namespace Clippit.Tests.Word.Samples
                         var levelNumsForThisIndent = levelNums.LevelNumbersArray;
                         var levelText = levelNums
                             .LevelNumbersArray
-                            .Select(l => l.ToString() + ".")
+                            .Select(l => l + ".")
                             .StringConcatenate()
                             .TrimEnd('.');
                         var newCurrentElement = new XElement("Indent",
@@ -82,7 +82,7 @@ namespace Clippit.Tests.Word.Samples
                                 .ToArray();
                             var levelText = levelNums
                                 .LevelNumbersArray
-                                .Select(l => l.ToString() + ".")
+                                .Select(l => l + ".")
                                 .StringConcatenate()
                                 .TrimEnd('.');
                             var newCurrentElement = new XElement("Indent",
@@ -106,7 +106,7 @@ namespace Clippit.Tests.Word.Samples
                         var levelNumsForThisIndent = levelNums.LevelNumbersArray;
                         var levelText = levelNums
                             .LevelNumbersArray
-                            .Select(l => l.ToString() + ".")
+                            .Select(l => l + ".")
                             .StringConcatenate()
                             .TrimEnd('.');
                         var newCurrentElement = new XElement("Indent",

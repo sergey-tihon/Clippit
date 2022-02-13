@@ -2643,9 +2643,9 @@ namespace Clippit
                             }
 
                             if (gc.AncestorElements.Skip(level).Any(ae => ae.Name == W.txbxContent))
-                                key += "|" + CorrelationStatus.Equal.ToString();
+                                key += "|" + CorrelationStatus.Equal;
                             else
-                                key += "|" + gc.CorrelationStatus.ToString();
+                                key += "|" + gc.CorrelationStatus;
                             return key;
                         })
                         .ToList();

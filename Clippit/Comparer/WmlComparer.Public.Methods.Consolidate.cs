@@ -261,7 +261,7 @@ namespace Clippit
                     // process before
                     var contentToAddBefore = lci
                         .Where(ci => ci.InsertBefore)
-                        .GroupAdjacent(ci => ci.Revisor + ci.Color.ToString())
+                        .GroupAdjacent(ci => ci.Revisor + ci.Color)
                         .Select((groupedCi, idx) => AssembledConjoinedRevisionContent(emptyParagraph, groupedCi, idx,
                             consolidatedWDoc, consolidateSettings));
                     ele.AddBeforeSelf(contentToAddBefore);
@@ -344,7 +344,7 @@ namespace Clippit
 
                     var contentToAddAfter = lci
                         .Where(ci => ci.InsertBefore == false)
-                        .GroupAdjacent(ci => ci.Revisor + ci.Color.ToString())
+                        .GroupAdjacent(ci => ci.Revisor + ci.Color)
                         .Select((groupedCi, idx) => AssembledConjoinedRevisionContent(emptyParagraph, groupedCi, idx,
                             consolidatedWDoc, consolidateSettings));
                     ele.AddAfterSelf(contentToAddAfter);

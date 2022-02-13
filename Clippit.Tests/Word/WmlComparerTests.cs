@@ -192,9 +192,9 @@ namespace Clippit.Tests.Word
                         {
 #if true
                             sb.Append("Error" + Environment.NewLine);
-                            sb.Append(ind + "ErrorType: " + err.ErrorType.ToString() + Environment.NewLine);
+                            sb.Append(ind + "ErrorType: " + err.ErrorType + Environment.NewLine);
                             sb.Append(ind + "Description: " + err.Description + Environment.NewLine);
-                            sb.Append(ind + "Part: " + err.Part.Uri.ToString() + Environment.NewLine);
+                            sb.Append(ind + "Part: " + err.Part.Uri + Environment.NewLine);
                             sb.Append(ind + "XPath: " + err.Path.XPath + Environment.NewLine);
 #else
                         sb.Append("            \"" + err.Description + "\"," + Environment.NewLine);
@@ -434,9 +434,9 @@ namespace Clippit.Tests.Word
                         {
 #if true
                             sb.Append("Error" + Environment.NewLine);
-                            sb.Append(ind + "ErrorType: " + err.ErrorType.ToString() + Environment.NewLine);
+                            sb.Append(ind + "ErrorType: " + err.ErrorType + Environment.NewLine);
                             sb.Append(ind + "Description: " + err.Description + Environment.NewLine);
-                            sb.Append(ind + "Part: " + err.Part.Uri.ToString() + Environment.NewLine);
+                            sb.Append(ind + "Part: " + err.Part.Uri + Environment.NewLine);
                             sb.Append(ind + "XPath: " + err.Path.XPath + Environment.NewLine);
 #else
                         sb.Append("            \"" + err.Description + "\"," + Environment.NewLine);
@@ -693,9 +693,9 @@ namespace Clippit.Tests.Word
                         {
 #if true
                             sb.Append("Error" + Environment.NewLine);
-                            sb.Append(ind + "ErrorType: " + err.ErrorType.ToString() + Environment.NewLine);
+                            sb.Append(ind + "ErrorType: " + err.ErrorType + Environment.NewLine);
                             sb.Append(ind + "Description: " + err.Description + Environment.NewLine);
-                            sb.Append(ind + "Part: " + err.Part.Uri.ToString() + Environment.NewLine);
+                            sb.Append(ind + "Part: " + err.Part.Uri + Environment.NewLine);
                             sb.Append(ind + "XPath: " + err.Path.XPath + Environment.NewLine);
 #else
                         sb.Append("            \"" + err.Description + "\"," + Environment.NewLine);
@@ -989,9 +989,9 @@ namespace Clippit.Tests.Word
                         {
 #if true
                             sb.Append("Error" + Environment.NewLine);
-                            sb.Append(ind + "ErrorType: " + err.ErrorType.ToString() + Environment.NewLine);
+                            sb.Append(ind + "ErrorType: " + err.ErrorType + Environment.NewLine);
                             sb.Append(ind + "Description: " + err.Description + Environment.NewLine);
-                            sb.Append(ind + "Part: " + err.Part.Uri.ToString() + Environment.NewLine);
+                            sb.Append(ind + "Part: " + err.Part.Uri + Environment.NewLine);
                             sb.Append(ind + "XPath: " + err.Path.XPath + Environment.NewLine);
 #else
                         sb.Append("            \"" + err.Description + "\"," + Environment.NewLine);
@@ -1033,9 +1033,9 @@ namespace Clippit.Tests.Word
                 {
 #if true
                     sb.Append("Error" + Environment.NewLine);
-                    sb.Append(ind + "ErrorType: " + err.ErrorType.ToString() + Environment.NewLine);
+                    sb.Append(ind + "ErrorType: " + err.ErrorType + Environment.NewLine);
                     sb.Append(ind + "Description: " + err.Description + Environment.NewLine);
-                    sb.Append(ind + "Part: " + err.Part.Uri.ToString() + Environment.NewLine);
+                    sb.Append(ind + "Part: " + err.Part.Uri + Environment.NewLine);
                     sb.Append(ind + "XPath: " + err.Path.XPath + Environment.NewLine);
 #else
                         sb.Append("            \"" + err.Description + "\"," + Environment.NewLine);

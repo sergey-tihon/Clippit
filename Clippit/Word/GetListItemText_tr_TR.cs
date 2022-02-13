@@ -65,7 +65,7 @@ namespace Clippit.Word
             if (numFmt == "decimalZero")
             {
                 if (levelNumber <= 9)
-                    return "0" + levelNumber.ToString();
+                    return "0" + levelNumber;
                 else
                     return levelNumber.ToString();
             }
@@ -119,7 +119,7 @@ namespace Clippit.Word
                 else
                     suffix = "th";*/
                 suffix = ".";
-                return levelNumber.ToString() + suffix;
+                return levelNumber + suffix;
             }
             if (numFmt == "cardinalText")
             {

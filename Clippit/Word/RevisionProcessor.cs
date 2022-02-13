@@ -2258,7 +2258,7 @@ namespace Clippit.Word
                     var b = IsRunContent(ce.Name);
                     if (b != null)
                         return (bool)b;
-                    throw new Exception("Internal error 20, found element " + ce.Name.ToString());
+                    throw new Exception("Internal error 20, found element " + ce.Name);
                 });
             if (contentElements.Any())
                 return false;

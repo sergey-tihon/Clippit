@@ -122,7 +122,7 @@ namespace Clippit.Excel
 
         public XElement GetElements(int row)
         {
-            var cellReference = WorksheetAccessor.GetColumnId(column) + row.ToString();
+            var cellReference = WorksheetAccessor.GetColumnId(column) + row;
 
             var newCell = cellValue switch
             {
@@ -177,7 +177,7 @@ namespace Clippit.Excel
 
             // If name is null, generate a name based on the sheet ID
             if (worksheetName == null)
-                worksheetName = "Sheet" + sheetId.ToString();
+                worksheetName = "Sheet" + sheetId;
 
             // Create the new sheet element in the workbook
             wb.Root.Element(S.sheets).Add(new XElement(S.sheet,
@@ -202,7 +202,7 @@ namespace Clippit.Excel
             var result = "";
             do
             {
-                result = ((char)((columnNumber - 1) % 26 + (int)'A')).ToString() + result;
+                result = ((char)((columnNumber - 1) % 26 + (int)'A')) + result;
                 columnNumber = (columnNumber - 1) / 26;
             } while (columnNumber != 0);
             return result;
@@ -247,7 +247,7 @@ namespace Clippit.Excel
         // Gets the cell element (c) for the specified cell
         private static XElement GetCell(XDocument worksheet, int column, int row)
         {
-            var cellReference = GetColumnId(column) + row.ToString();
+            var cellReference = GetColumnId(column) + row;
             var rowElement = worksheet.Root
                    .Element(S.sheetData)
                    .Elements(S.row)
@@ -262,7 +262,7 @@ namespace Clippit.Excel
         public static void SetCellValue(SpreadsheetDocument document, WorksheetPart worksheet, int row, int column, object value)
         {
             var worksheetXDocument = worksheet.GetXDocument();
-            var cellReference = GetColumnId(column) + row.ToString();
+            var cellReference = GetColumnId(column) + row;
 
             var newCell = value switch
             {
@@ -450,7 +450,7 @@ namespace Clippit.Excel
             if (element != null)
             {
                 var original = element.Value;
-                element.SetValue(original.Substring(0, original.Length - 1) + lastRow.ToString());
+                element.SetValue(original.Substring(0, original.Length - 1) + lastRow);
             }
             doc.WorkbookPart.PutXDocument();
         }
@@ -511,7 +511,7 @@ namespace Clippit.Excel
                     if (oldCell != null)
                     {
                         var newCell = new XElement(oldCell);
-                        newCell.SetAttributeValue(NoNamespace.r, GetColumnId(column + columnOffset) + (row + rowOffset).ToString());
+                        newCell.SetAttributeValue(NoNamespace.r, GetColumnId(column + columnOffset) + (row + rowOffset));
                         var formula = newCell.Element(S.f);
                         if (formula != null)
                         {
@@ -2032,7 +2032,7 @@ namespace Clippit.Excel
         private static void AddValue(XDocument worksheet, int row, int column, string value)
         {
             //Set the cell reference
-            var cellReference = GetColumnId(column) + row.ToString();
+            var cellReference = GetColumnId(column) + row;
             //Determining if value for cell is text or numeric
             var valueIsNumeric = double.TryParse(value, out var numericValue);
 
