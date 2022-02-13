@@ -239,8 +239,7 @@ namespace Clippit.Tests.Common
             part.PutXDocument(partDocument);
 
             var content = partDocument.Descendants(W.p);
-            var regex = new Regex(string.Format("{0}(?<words>{1}){2}", LeftDoubleQuotationMarks, Words,
-                RightDoubleQuotationMarks));
+            var regex = new Regex($"{LeftDoubleQuotationMarks}(?<words>{Words}){RightDoubleQuotationMarks}");
             var count = OpenXmlRegex.Replace(content, regex, "‘changed ${words}’", null);
 
             p = partDocument.Descendants(W.p).First();
@@ -269,8 +268,7 @@ namespace Clippit.Tests.Common
             part.PutXDocument(partDocument);
 
             var content = partDocument.Descendants(W.p);
-            var regex = new Regex(string.Format("{0}(?<words>{1}){2}", LeftDoubleQuotationMarks, Words,
-                RightDoubleQuotationMarks));
+            var regex = new Regex($"{LeftDoubleQuotationMarks}(?<words>{Words}){RightDoubleQuotationMarks}");
             var count = OpenXmlRegex.Replace(content, regex, "‘changed ${words}’", null, true, "John Doe");
 
             p = partDocument.Descendants(W.p).First();
@@ -305,8 +303,7 @@ namespace Clippit.Tests.Common
             part.PutXDocument(partDocument);
 
             var content = partDocument.Descendants(W.p);
-            var regex = new Regex(string.Format("{0}(?<words>{1}){2}", LeftDoubleQuotationMarks, Words,
-                RightDoubleQuotationMarks));
+            var regex = new Regex($"{LeftDoubleQuotationMarks}(?<words>{Words}){RightDoubleQuotationMarks}");
             var count = OpenXmlRegex.Replace(content, regex, "‘changed ${words}’", null, true, "John Doe");
 
             p = partDocument.Descendants(W.p).First();

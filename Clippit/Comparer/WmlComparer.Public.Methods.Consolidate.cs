@@ -96,7 +96,7 @@ namespace Clippit
 
                     if (SaveIntermediateFilesForDebugging && settings.DebugTempFileDi != null)
                     {
-                        var name1 = string.Format("Delta-{0}.docx", deltaNbr++);
+                        var name1 = $"Delta-{deltaNbr++}.docx";
                         var deltaFi = new FileInfo(Path.Combine(settings.DebugTempFileDi.FullName, name1));
                         delta.SaveAs(deltaFi.FullName);
                     }

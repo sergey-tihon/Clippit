@@ -3138,10 +3138,10 @@ namespace Clippit.Html
         {
             //if (whichBorder == "right")
             //    Console.WriteLine(1);
-            var styleProp = element.GetProp(string.Format("border-{0}-style", whichBorder));
-            var colorProp = element.GetProp(string.Format("border-{0}-color", whichBorder));
-            var paddingProp = element.GetProp(string.Format("padding-{0}", whichBorder));
-            var marginProp = element.GetProp(string.Format("margin-{0}", whichBorder));
+            var styleProp = element.GetProp($"border-{whichBorder}-style");
+            var colorProp = element.GetProp($"border-{whichBorder}-color");
+            var paddingProp = element.GetProp($"padding-{whichBorder}");
+            var marginProp = element.GetProp($"margin-{whichBorder}");
 
             // The space attribute is equivalent to the margin properties of CSS
             // the ind element of the parent is more or less equivalent to the padding properties of CSS, except that ind takes space
@@ -3220,7 +3220,7 @@ namespace Clippit.Html
 
         private static Twip GetBorderSize(XElement element, string whichBorder)
         {
-            var widthProp = element.GetProp(string.Format("border-{0}-width", whichBorder));
+            var widthProp = element.GetProp($"border-{whichBorder}-width");
 
             if (widthProp != null && widthProp.Terms.Count() == 1)
             {

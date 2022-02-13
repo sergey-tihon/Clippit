@@ -562,7 +562,8 @@ namespace Clippit.Word
             foreach (var item in list)
             {
                 if (item.Attribute(PtOpenXml.IndentLevel) == null)
-                    throw new OpenXmlPowerToolsException(string.Format("Invalid Content Type Hierarchy Definition - missing def for {0}", item.Name));
+                    throw new OpenXmlPowerToolsException(
+                        $"Invalid Content Type Hierarchy Definition - missing def for {item.Name}");
                 if ((int)item.Attribute(PtOpenXml.IndentLevel) == level)
                 {
                     currentGroupingKey += 1;
@@ -1212,7 +1213,7 @@ namespace Clippit.Word
                     ++count;
                     if (count < 50 || (count) % 10 == 0 || count == totalCount)
                     {
-                        var msg = string.Format("  {0} of {1}", count, totalCount);
+                        var msg = $"  {count} of {totalCount}";
                         msg += "".PadRight(msg.Length, '\b');
                         var pi2 = new WmlToXmlProgressInfo()
                         {

@@ -112,7 +112,8 @@ namespace Clippit.Excel
                     {
                         p.Element,
                         p.Styles,
-                        StylesString = p.Element.Name.LocalName + "|" + p.Styles.OrderBy(k => k.Key).Select(s => string.Format("{0}: {1};", s.Key, s.Value)).StringConcatenate(),
+                        StylesString = p.Element.Name.LocalName + "|" + p.Styles.OrderBy(k => k.Key).Select(s =>
+                            $"{s.Key}: {s.Value};").StringConcatenate(),
                     })
                     .GroupBy(p => p.StylesString)
                     .ToList();
@@ -172,7 +173,7 @@ namespace Clippit.Excel
                         style
                         .Where(p => p.Key != "PtStyleName")
                         .OrderBy(p => p.Key)
-                        .Select(e => string.Format("{0}: {1};", e.Key, e.Value))
+                        .Select(e => $"{e.Key}: {e.Value};")
                         .StringConcatenate();
                     var st = new XAttribute("style", styleValue);
                     if (d.Attribute("style") != null)

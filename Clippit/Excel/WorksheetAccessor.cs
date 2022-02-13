@@ -436,7 +436,7 @@ namespace Clippit.Excel
                 element = new XElement(S.definedName, new XAttribute(NoNamespace.name, rangeName));
                 book.Root.Element(S.definedNames).Add(element);
             }
-            element.SetValue(string.Format("{0}!${1}${2}:${3}${4}", sheetName, GetColumnId(startColumn), startRow, GetColumnId(endColumn), endRow));
+            element.SetValue($"{sheetName}!${GetColumnId(startColumn)}${startRow}:${GetColumnId(endColumn)}${endRow}");
             doc.WorkbookPart.PutXDocument();
         }
 
@@ -2168,7 +2168,7 @@ namespace Clippit.Excel
                 .Element(ns + "sheets")
                 .Add(
                     new XElement(ns + "sheet",
-                        new XAttribute("name", string.Format("sheet{0}", worksheetCount)),
+                        new XAttribute("name", $"sheet{worksheetCount}"),
                         new XAttribute("sheetId", sheetId),
                         new XAttribute(relationshipsns + "id", workbook.GetIdOfPart(worksheetPart))
                     )

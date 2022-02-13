@@ -29,7 +29,7 @@ namespace Clippit
         public static string MakeValidXml(string p)
         {
             return p.Any(c => c < 0x20)
-                ? p.Select(c => c < 0x20 ? string.Format("_{0:X}_", (int) c) : c.ToString()).StringConcatenate()
+                ? p.Select(c => c < 0x20 ? $"_{(int)c:X}_" : c.ToString()).StringConcatenate()
                 : p;
         }
 
@@ -353,8 +353,7 @@ namespace Clippit
             var now = DateTime.Now;
             var dirName =
                 prefix +
-                string.Format("-{0:00}-{1:00}-{2:00}-{3:00}{4:00}{5:00}", now.Year - 2000, now.Month, now.Day, now.Hour,
-                    now.Minute, now.Second);
+                $"-{now.Year - 2000:00}-{now.Month:00}-{now.Day:00}-{now.Hour:00}{now.Minute:00}{now.Second:00}";
             return new DirectoryInfo(dirName);
         }
 
@@ -363,8 +362,7 @@ namespace Clippit
             var now = DateTime.Now;
             var fileName =
                 prefix +
-                string.Format("-{0:00}-{1:00}-{2:00}-{3:00}{4:00}{5:00}", now.Year - 2000, now.Month, now.Day, now.Hour,
-                    now.Minute, now.Second) +
+                $"-{now.Year - 2000:00}-{now.Month:00}-{now.Day:00}-{now.Hour:00}{now.Minute:00}{now.Second:00}" +
                 suffix;
             return new FileInfo(fileName);
         }
@@ -1079,13 +1077,13 @@ namespace Clippit
                 var ts = bucket.Value.Time.ToString();
                 if (ts.Contains('.'))
                     ts = ts.Substring(0, ts.Length - 5);
-                var s = bucket.Key.PadRight(60, '-') + "  " + string.Format("{0:00000000}", bucket.Value.Count) + "  " + ts;
+                var s = bucket.Key.PadRight(60, '-') + "  " + $"{bucket.Value.Count:00000000}" + "  " + ts;
                 sb.Append(s + Environment.NewLine);
             }
             var total = Buckets
                 .Aggregate(TimeSpan.Zero, (t, b) => t + b.Value.Time);
             var tz = total.ToString();
-            sb.Append(string.Format("Total: {0}", tz.Substring(0, tz.Length - 5)));
+            sb.Append($"Total: {tz.Substring(0, tz.Length - 5)}");
             return sb.ToString();
         }
 
@@ -1097,13 +1095,13 @@ namespace Clippit
                 var ts = bucket.Value.Time.ToString();
                 if (ts.Contains('.'))
                     ts = ts.Substring(0, ts.Length - 5);
-                var s = bucket.Key.PadRight(60, '-') + "  " + string.Format("{0:00000000}", bucket.Value.Count) + "  " + ts;
+                var s = bucket.Key.PadRight(60, '-') + "  " + $"{bucket.Value.Count:00000000}" + "  " + ts;
                 sb.Append(s + Environment.NewLine);
             }
             var total = Buckets
                 .Aggregate(TimeSpan.Zero, (t, b) => t + b.Value.Time);
             var tz = total.ToString();
-            sb.Append(string.Format("Total: {0}", tz.Substring(0, tz.Length - 5)));
+            sb.Append($"Total: {tz.Substring(0, tz.Length - 5)}");
             return sb.ToString();
         }
 
@@ -1119,8 +1117,7 @@ namespace Clippit
         {
             if (Value.Substring(0, 1) == "#")
             {
-                var e = string.Format("&{0};", Value);
-                writer.WriteRaw(e);
+                writer.WriteRaw($"&{Value};");
             }
             else
                 writer.WriteEntityRef(Value);

@@ -203,7 +203,7 @@ namespace Clippit.Word
             }
             if (numFmt == "0001, 0002, 0003, ...")
             {
-                return string.Format("{0:0000}", levelNumber);
+                return $"{levelNumber:0000}";
             }
             if (numFmt == "bullet")
                 return "";

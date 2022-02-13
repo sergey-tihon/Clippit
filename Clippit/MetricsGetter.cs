@@ -210,7 +210,7 @@ namespace Clippit
                         .Descendants()
                         .Attributes()
                         .Where(a => a.IsNamespaceDeclaration)
-                        .Select(a => string.Format("{0}|{1}", a.Name.LocalName, a.Value))
+                        .Select(a => $"{a.Name.LocalName}|{a.Value}")
                         .OrderBy(t => t)
                         .Distinct()
                         .ToList();
@@ -574,7 +574,7 @@ namespace Clippit
             if (rPr == null)
             {
                 formattingMetrics.RunWithoutRprCount++;
-                notes.Add(PtUtils.MakeValidXml(string.Format("Error in part {0}: run without rPr at {1}", uri, run.GetXPath())));
+                notes.Add(PtUtils.MakeValidXml($"Error in part {uri}: run without rPr at {run.GetXPath()}"));
                 rPr = new XElement(W.rPr);
             }
             var csa = new FormattingAssembler.CharStyleAttributes(null, rPr);

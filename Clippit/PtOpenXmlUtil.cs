@@ -5928,7 +5928,7 @@ listSeparator
     public class ColumnReferenceOutOfRange : Exception
     {
         public ColumnReferenceOutOfRange(string columnReference)
-            : base(string.Format("Column reference ({0}) is out of range.", columnReference))
+            : base($"Column reference ({columnReference}) is out of range.")
         {
         }
     }
@@ -5936,7 +5936,7 @@ listSeparator
     public class WorksheetAlreadyExistsException : Exception
     {
         public WorksheetAlreadyExistsException(string sheetName)
-            : base(string.Format("The worksheet ({0}) already exists.", sheetName))
+            : base($"The worksheet ({sheetName}) already exists.")
         {
         }
     }

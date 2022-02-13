@@ -170,7 +170,7 @@ namespace Clippit.Excel
         /// </summary>
         private static string GetRangeReference(string worksheet, int column, int row)
         {
-            return string.Format("{0}!{1}{2}", worksheet, WorksheetAccessor.GetColumnId(column), row);
+            return $"{worksheet}!{WorksheetAccessor.GetColumnId(column)}{row}";
         }
 
         /// <summary>
@@ -178,13 +178,8 @@ namespace Clippit.Excel
         /// </summary>
         private static string GetRangeReference(string worksheet, int startColumn, int startRow, int endColumn, int endRow)
         {
-            return string.Format("{0}!{1}{2}:{3}{4}",
-                worksheet,
-                WorksheetAccessor.GetColumnId(startColumn),
-                startRow,
-                WorksheetAccessor.GetColumnId(endColumn),
-                endRow
-            );
+            return
+                $"{worksheet}!{WorksheetAccessor.GetColumnId(startColumn)}{startRow}:{WorksheetAccessor.GetColumnId(endColumn)}{endRow}";
         }
 
         /// <summary>

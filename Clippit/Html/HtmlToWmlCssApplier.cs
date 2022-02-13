@@ -2703,7 +2703,7 @@ namespace Clippit.Html
         {
             var depth = element.Ancestors().Count() * 2;
             var dummyElement = new XElement(element.Name, element.Attributes());
-            sb.Append(string.Format("{0}{1}", "".PadRight(depth), dummyElement) + Environment.NewLine);
+            sb.Append($"{"".PadRight(depth)}{dummyElement}" + Environment.NewLine);
             var propList = element.Annotation<Dictionary<string, Property>>();
             if (propList != null)
             {
@@ -2712,10 +2712,9 @@ namespace Clippit.Html
                 foreach (var kvp in propList.OrderBy(p => p.Key).ThenBy(p => p.Value))
                 {
                     var prop = kvp.Value;
-                    var propString = string.Format("{0} High:{1} Id:{2} Att:{3} Ell:{4} Seq:{5}",
-                        (prop.Name + ":" + prop.Expression + " ").PadRight(50 - depth + 2, '.'), (int)prop.HighOrderSort, prop.IdAttributesInSelector, prop.AttributesInSelector,
-                        prop.ElementNamesInSelector, prop.SequenceNumber);
-                    sb.Append(string.Format("{0}{1}", "".PadRight(depth + 2), propString) + Environment.NewLine);
+                    var propString =
+                        $"{(prop.Name + ":" + prop.Expression + " ").PadRight(50 - depth + 2, '.')} High:{(int)prop.HighOrderSort} Id:{prop.IdAttributesInSelector} Att:{prop.AttributesInSelector} Ell:{prop.ElementNamesInSelector} Seq:{prop.SequenceNumber}";
+                    sb.Append($"{"".PadRight(depth + 2)}{propString}" + Environment.NewLine);
                 }
                 sb.Append(Environment.NewLine);
             }
@@ -2727,7 +2726,7 @@ namespace Clippit.Html
                 foreach (var prop in computedProperties.OrderBy(cp => cp.Key))
                 {
                     var propString = prop.Key + ":" + prop.Value;
-                    sb.Append(string.Format("{0}{1}", "".PadRight(depth + 2), propString) + Environment.NewLine);
+                    sb.Append($"{"".PadRight(depth + 2)}{propString}" + Environment.NewLine);
                 }
                 sb.Append(Environment.NewLine);
             }
@@ -2978,8 +2977,8 @@ namespace Clippit.Html
                         var v1 = lt.First().Value;
                         var v2 = lt.ElementAt(1).Value;
                         var v3 = lt.ElementAt(2).Value;
-                        var colorInHex = string.Format("{0:x2}{1:x2}{2:x2}", (int)((float.Parse(v1) / 100.0) * 255),
-                            (int)((float.Parse(v2) / 100.0) * 255), (int)((float.Parse(v3) / 100.0) * 255));
+                        var colorInHex =
+                            $"{(int)((float.Parse(v1) / 100.0) * 255):x2}{(int)((float.Parse(v2) / 100.0) * 255):x2}{(int)((float.Parse(v3) / 100.0) * 255):x2}";
                         return colorInHex;
                     }
                     else
@@ -2987,7 +2986,7 @@ namespace Clippit.Html
                         var v1 = lt.First().Value;
                         var v2 = lt.ElementAt(1).Value;
                         var v3 = lt.ElementAt(2).Value;
-                        var colorInHex = string.Format("{0:x2}{1:x2}{2:x2}", int.Parse(v1), int.Parse(v2), int.Parse(v3));
+                        var colorInHex = $"{int.Parse(v1):x2}{int.Parse(v2):x2}{int.Parse(v3):x2}";
                         return colorInHex;
                     }
                 }

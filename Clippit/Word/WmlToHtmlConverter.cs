@@ -279,7 +279,8 @@ namespace Clippit.Word
                     {
                         p.Element,
                         p.Styles,
-                        StylesString = p.Element.Name.LocalName + "|" + p.Styles.OrderBy(k => k.Key).Select(s => string.Format("{0}: {1};", s.Key, s.Value)).StringConcatenate(),
+                        StylesString = p.Element.Name.LocalName + "|" + p.Styles.OrderBy(k => k.Key).Select(s =>
+                            $"{s.Key}: {s.Value};").StringConcatenate(),
                     })
                     .GroupBy(p => p.StylesString)
                     .ToList();
@@ -339,7 +340,7 @@ namespace Clippit.Word
                         style
                         .Where(p => p.Key != "PtStyleName")
                         .OrderBy(p => p.Key)
-                        .Select(e => string.Format("{0}: {1};", e.Key, e.Value))
+                        .Select(e => $"{e.Key}: {e.Value};")
                         .StringConcatenate();
                     var st = new XAttribute("style", styleValue);
                     if (d.Attribute("style") != null)
@@ -463,7 +464,7 @@ namespace Clippit.Word
             {
                 var cs = (string)element.Attribute(W._char);
                 var c = Convert.ToInt32(cs, 16);
-                return new XElement(Xhtml.span, new XEntity(string.Format("#{0}", c)));
+                return new XElement(Xhtml.span, new XEntity($"#{c}"));
             }
 
             // Transform tabs that have the pt:TabWidth attribute set
@@ -936,7 +937,7 @@ namespace Clippit.Word
                 (int?) style.Elements(W.pPr).Elements(W.outlineLvl).Attributes(W.val).FirstOrDefault();
             if (outlineLevel != null && outlineLevel <= 5)
             {
-                elementName = Xhtml.xhtml + string.Format("h{0}", outlineLevel + 1);
+                elementName = Xhtml.xhtml + $"h{outlineLevel + 1}";
             }
 
             return elementName;
@@ -2680,7 +2681,7 @@ namespace Clippit.Word
             var finalRed = (int)(fillRed - (fillRed - colorRed) * pct);
             var finalGreen = (int)(fillGreen - (fillGreen - colorGreen) * pct);
             var finalBlue = (int)(fillBlue - (fillBlue - colorBlue) * pct);
-            var returnValue = string.Format("{0:x2}{1:x2}{2:x2}", finalRed, finalGreen, finalBlue);
+            var returnValue = $"{finalRed:x2}{finalGreen:x2}{finalBlue:x2}";
             ShadeCache.Add(key, returnValue);
             return returnValue;
         }

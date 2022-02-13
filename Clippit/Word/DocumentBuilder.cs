@@ -1506,7 +1506,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     $"Source {sourceNumber} is unsupported document - contains Mail Merge content");
             if (doc.MainDocumentPart.WebSettingsPart != null &&
                 doc.MainDocumentPart.WebSettingsPart.GetXDocument().Descendants().Any(d => d.Name == W.frameset))
-                throw new DocumentBuilderException(string.Format("Source {0} is unsupported document - contains a frameset", sourceNumber));
+                throw new DocumentBuilderException(
+                    $"Source {sourceNumber} is unsupported document - contains a frameset");
             var numberingElements = doc.MainDocumentPart
                 .GetXDocument()
                 .Descendants(W.numPr)
@@ -1521,8 +1522,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 .ToList();
             if (numberingElements.Any() &&
                 doc.MainDocumentPart.NumberingDefinitionsPart == null)
-                throw new DocumentBuilderException(string.Format(
-                    "Source {0} is invalid document - contains numbering markup but no numbering part", sourceNumber));
+                throw new DocumentBuilderException(
+                    $"Source {sourceNumber} is invalid document - contains numbering markup but no numbering part");
         }
 
         private static void FixUpSectionProperties(WordprocessingDocument newDocument)

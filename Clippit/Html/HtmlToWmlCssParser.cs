@@ -2816,7 +2816,8 @@ namespace Clippit.Html
                                 }
                                 catch
                                 {
-                                    m_errors.SemanticError(m_lastRecognizedToken.m_tokenLine, m_lastRecognizedToken.m_tokenColumn, string.Format("Unrecognized unit '{0}'", ident));
+                                    m_errors.SemanticError(m_lastRecognizedToken.m_tokenLine, m_lastRecognizedToken.m_tokenColumn,
+                                        $"Unrecognized unit '{ident}'");
                                 }
 
                             }
@@ -3389,7 +3390,7 @@ namespace Clippit.Html
                 var ch2 = m_currentInputCharacter;
                 if (ch1 != 0xBB || ch2 != 0xBF)
                 {
-                    throw new FatalError(string.Format("illegal byte order mark: EF {0,2:X} {1,2:X}", ch1, ch2));
+                    throw new FatalError($"illegal byte order mark: EF {ch1,2:X} {ch2,2:X}");
                 }
                 m_scannerBuffer = new UTF8Buffer(m_scannerBuffer);
                 m_columnNumberOfCurrentCharacter = 0;

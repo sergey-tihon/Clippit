@@ -60,9 +60,10 @@ namespace Clippit
                 {
                     var colorValue = ColorParser.FromName(foreColor).ToArgb();
                     if (colorValue == 0)
-                        throw new OpenXmlPowerToolsException(string.Format("Add-DocxText: The specified color {0} is unsupported, Please specify the valid color. Ex, Red, Green", foreColor));
+                        throw new OpenXmlPowerToolsException(
+                            $"Add-DocxText: The specified color {foreColor} is unsupported, Please specify the valid color. Ex, Red, Green");
 
-                    var ColorHex = string.Format("{0:x6}", colorValue);
+                    var ColorHex = $"{colorValue:x6}";
                     runProperties.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Color() { Val = ColorHex.Substring(2) });
                 }
 
@@ -73,9 +74,10 @@ namespace Clippit
                 {
                     var colorShade = ColorParser.FromName(backColor).ToArgb();
                     if (colorShade == 0)
-                        throw new OpenXmlPowerToolsException(string.Format("Add-DocxText: The specified color {0} is unsupported, Please specify the valid color. Ex, Red, Green", foreColor));
+                        throw new OpenXmlPowerToolsException(
+                            $"Add-DocxText: The specified color {foreColor} is unsupported, Please specify the valid color. Ex, Red, Green");
 
-                    var ColorShadeHex = string.Format("{0:x6}", colorShade);
+                    var ColorShadeHex = $"{colorShade:x6}";
                     runProperties.AppendChild(new Shading() { Fill = ColorShadeHex.Substring(2), Val = ShadingPatternValues.Clear });
                 }
 
@@ -314,7 +316,8 @@ AAsACwDBAgAAbCwAAAAA";
 
                         //Check if the style is proper style. Ex, Heading1, Heading2
                         if (templateStyle == null)
-                            throw new OpenXmlPowerToolsException(string.Format("Add-DocxText: The specified style name {0} is unsupported, Please specify the valid style. Ex, Heading1, Heading2, Title", styleName));
+                            throw new OpenXmlPowerToolsException(
+                                $"Add-DocxText: The specified style name {styleName} is unsupported, Please specify the valid style. Ex, Heading1, Heading2, Title");
                         else
                             part.Styles.Append((templateStyle.CloneNode(true)));
                     }

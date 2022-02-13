@@ -206,7 +206,7 @@ namespace Clippit
             if (sym == null)
                 throw new ArgumentNullException(nameof(sym));
             if (sym.Name != W.sym)
-                throw new ArgumentException(string.Format("Not a w:sym: {0}", sym.Name), nameof(sym));
+                throw new ArgumentException($"Not a w:sym: {sym.Name}", nameof(sym));
 
             var fontAttribute = sym.Attribute(W.font);
             var fontAttributeValue = fontAttribute != null ? fontAttribute.Value : null;

@@ -157,7 +157,7 @@ namespace Clippit.Word
                     {
                         XElement newFormula = null;
                         if (sheetName != null)
-                            newFormula = new XElement(C.f, string.Format("{0}!$A$2:$A${1}", sheetName, chartData.CategoryNames.Length + 1));
+                            newFormula = new XElement(C.f, $"{sheetName}!$A$2:$A${chartData.CategoryNames.Length + 1}");
                         if (chartData.CategoryDataType == ChartDataType.String)
                         {
                             cat = new XElement(C.cat,
@@ -259,7 +259,7 @@ namespace Clippit.Word
                     {
                         XElement newFormula = null;
                         if (sheetName != null)
-                            newFormula = new XElement(C.f, string.Format("{0}!${1}$1", sheetName, SpreadsheetMLUtil.IntToColumnId(si + 1)));
+                            newFormula = new XElement(C.f, $"{sheetName}!${SpreadsheetMLUtil.IntToColumnId(si + 1)}$1");
                         tx = new XElement(C.tx,
                             new XElement(C.strRef,
                                 newFormula,
@@ -422,7 +422,7 @@ namespace Clippit.Word
 
                     var firstRow = new XElement(S.row,
                         new XAttribute("r", "1"),
-                        new XAttribute("spans", string.Format("1:{0}", chartData.SeriesNames.Length + 1)),
+                        new XAttribute("spans", $"1:{chartData.SeriesNames.Length + 1}"),
                         new [] { new XElement(S.c,
                                 new XAttribute("r", "A1"),
                                 new XAttribute("t", "str"),
@@ -441,7 +441,7 @@ namespace Clippit.Word
                         {
                             var row = new XElement(S.row,
                                 new XAttribute("r", r + 2),
-                                new XAttribute("spans", string.Format("1:{0}", chartData.SeriesNames.Length + 1)),
+                                new XAttribute("spans", $"1:{chartData.SeriesNames.Length + 1}"),
                                 new[] {
                                     new XElement(S.c,
                                         new XAttribute("r", RowColToString(r + 1, 0)),
@@ -478,7 +478,8 @@ namespace Clippit.Word
                         var partTable = sheetPart.GetPartById(tablePartRid);
                         var xdTablePart = partTable.GetXDocument();
                         var xaRef = xdTablePart.Root.Attribute("ref");
-                        xaRef.Value = string.Format("A1:{0}", RowColToString(chartData.CategoryNames.Length - 1, chartData.SeriesNames.Length));
+                        xaRef.Value =
+                            $"A1:{RowColToString(chartData.CategoryNames.Length - 1, chartData.SeriesNames.Length)}";
                         var xeNewTableColumns = new XElement(S.tableColumns,
                             new XAttribute("count", chartData.SeriesNames.Count() + 1),
                             new[] {
