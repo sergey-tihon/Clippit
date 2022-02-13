@@ -36,9 +36,8 @@ namespace Clippit
             return sb.ToString();
         }
 
-        public static ComparisonUnitGroupType ComparisonUnitGroupTypeFromLocalName(string localName)
-        {
-            return localName switch
+        public static ComparisonUnitGroupType ComparisonUnitGroupTypeFromLocalName(string localName) =>
+            localName switch
             {
                 "p" => ComparisonUnitGroupType.Paragraph,
                 "tbl" => ComparisonUnitGroupType.Table,
@@ -47,6 +46,5 @@ namespace Clippit
                 "txbxContent" => ComparisonUnitGroupType.Textbox,
                 _ => throw new ArgumentOutOfRangeException(nameof(localName), $@"Unsupported localName: '{localName}'.")
             };
-        }
     }
 }

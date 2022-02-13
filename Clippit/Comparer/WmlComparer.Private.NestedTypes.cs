@@ -10,27 +10,27 @@ namespace Clippit
     {
         private class Atgbw
         {
-            public int? Key;
-            public ComparisonUnitAtom ComparisonUnitAtomMember;
-            public int NextIndex;
+            public int? Key { get; set; }
+            public ComparisonUnitAtom ComparisonUnitAtomMember { get; set; }
+            public int NextIndex { get; set; }
         }
 
         private class ConsolidationInfo
         {
-            public string Revisor;
-            public Color Color;
-            public XElement RevisionElement;
-            public bool InsertBefore;
-            public string RevisionHash;
-            public XElement[] Footnotes;
-            public XElement[] Endnotes;
-            public string RevisionString; // for debugging purposes only
+            public string Revisor { get; set; }
+            public Color Color { get; set; }
+            public XElement RevisionElement { get; set; }
+            public bool InsertBefore { get; set; }
+            public string RevisionHash { get; set; }
+            public XElement[] Footnotes { get; set; }
+            public XElement[] Endnotes { get; set; }
+            public string RevisionString { get; set; }// for debugging purposes only
         }
 
         private class RecursionInfo
         {
-            public XName ElementName;
-            public XName[] ChildElementPropertyNames;
+            public XName ElementName { get; set; }
+            public XName[] ChildElementPropertyNames { get; set; }
         }
     }
 }

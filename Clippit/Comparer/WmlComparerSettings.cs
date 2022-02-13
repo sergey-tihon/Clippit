@@ -9,16 +9,16 @@ namespace Clippit
 {
     public class WmlComparerSettings
     {
-        public char[] WordSeparators;
-        public string AuthorForRevisions = "Open-Xml-PowerTools";
-        public string DateTimeForRevisions = DateTime.Now.ToString("o");
-        public double DetailThreshold = 0.15;
-        public bool CaseInsensitive = false;
-        public CultureInfo CultureInfo = null;
-        public Action<string> LogCallback = null;
-        public int StartingIdForFootnotesEndnotes = 1;
+        public char[] WordSeparators { get; set; }
+        public string AuthorForRevisions { get; set; } = "Open-Xml-PowerTools";
+        public string DateTimeForRevisions { get; set; } = DateTime.Now.ToString("o");
+        public double DetailThreshold { get; set; } = 0.15;
+        public bool CaseInsensitive { get; set; } = false;
+        public CultureInfo CultureInfo { get; set; } = null;
+        public Action<string> LogCallback { get; set; } = null;
+        public int StartingIdForFootnotesEndnotes { get; set; } = 1;
 
-        public DirectoryInfo DebugTempFileDi;
+        public DirectoryInfo DebugTempFileDi { get; set; }
 
         public WmlComparerSettings()
         {

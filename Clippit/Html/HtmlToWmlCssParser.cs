@@ -349,7 +349,7 @@ namespace Clippit.Html
             return sb.ToString();
         }
 
-        private string ToCharSetString(string start) => 
+        private string ToCharSetString(string start) =>
             $"{start}{Name} {Expression}";
     }
 
@@ -416,17 +416,17 @@ namespace Clippit.Html
             return sb.ToString();
         }
 
-        public static implicit operator string(CssExpression e) => 
+        public static implicit operator string(CssExpression e) =>
             e.ToString();
 
-        public static explicit operator double(CssExpression e) => 
+        public static explicit operator double(CssExpression e) =>
             double.Parse(e.Terms.First().Value, CultureInfo.InvariantCulture);
 
-        public static explicit operator Emu(CssExpression e) => 
+        public static explicit operator Emu(CssExpression e) =>
             Emu.PointsToEmus(double.Parse(e.Terms.First().Value, CultureInfo.InvariantCulture));
 
         // will only be called on expression that is in terms of points
-        public static explicit operator TPoint(CssExpression e) => 
+        public static explicit operator TPoint(CssExpression e) =>
             new(double.Parse(e.Terms.First().Value, CultureInfo.InvariantCulture));
 
         // will only be called on expression that is in terms of points
@@ -3001,7 +3001,7 @@ namespace Clippit.Html
                 Pos = 0;
             else
                 m_currentPositionInBuffer = 0;
-            
+
             if (m_bufferLength == m_inputStreamLength && m_inputStream.CanSeek)
                 Close();
         }
@@ -3020,7 +3020,7 @@ namespace Clippit.Html
 
         ~CssBuffer() { Close(); }
 
-        protected void Close()
+        private void Close()
         {
             if (!m_isUserStream && m_inputStream != null)
             {
@@ -3037,10 +3037,9 @@ namespace Clippit.Html
             }
             else if (Pos < m_inputStreamLength)
             {
-                Pos = Pos;
                 return m_inputBuffer[m_currentPositionInBuffer++];
             }
-            else if (m_inputStream != null && !m_inputStream.CanSeek && ReadNextStreamChunk() > 0)
+            else if (m_inputStream is { CanSeek: false } && ReadNextStreamChunk() > 0)
             {
                 return m_inputBuffer[m_currentPositionInBuffer++];
             }

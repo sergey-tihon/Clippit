@@ -47,10 +47,10 @@ namespace Clippit.Excel
         {
             if (node.next_ != null)
                 ReplaceNode(node.next_, id, oldName, newName, text);
-            if (node.id_ == id && _parser.GetSource().Substring(node.match_.posBeg_, node.match_.Length) == oldName)
+            if (node.id_ == id && _parser.GetSource().Substring(node.match_._posBeg, node.match_.Length) == oldName)
             {
-                text.Remove(node.match_.posBeg_, node.match_.Length);
-                text.Insert(node.match_.posBeg_, newName);
+                text.Remove(node.match_._posBeg, node.match_.Length);
+                text.Insert(node.match_._posBeg, newName);
             }
             else if (node.child_ != null)
                 ReplaceNode(node.child_, id, oldName, newName, text);
@@ -61,17 +61,17 @@ namespace Clippit.Excel
         {
             if (node.next_ != null)
                 ReplaceRelativeCell(node.next_, rowOffset, colOffset, text);
-            if (node.id_ == (int)EExcelFormula.A1Row && _parser.GetSource().Substring(node.match_.posBeg_, 1) != "$")
+            if (node.id_ == (int)EExcelFormula.A1Row && _parser.GetSource().Substring(node.match_._posBeg, 1) != "$")
             {
-                var rowNumber = Convert.ToInt32(_parser.GetSource().Substring(node.match_.posBeg_, node.match_.Length));
-                text.Remove(node.match_.posBeg_, node.match_.Length);
-                text.Insert(node.match_.posBeg_, Convert.ToString(rowNumber + rowOffset));
+                var rowNumber = Convert.ToInt32(_parser.GetSource().Substring(node.match_._posBeg, node.match_.Length));
+                text.Remove(node.match_._posBeg, node.match_.Length);
+                text.Insert(node.match_._posBeg, Convert.ToString(rowNumber + rowOffset));
             }
-            else if (node.id_ == (int)EExcelFormula.A1Column && _parser.GetSource().Substring(node.match_.posBeg_, 1) != "$")
+            else if (node.id_ == (int)EExcelFormula.A1Column && _parser.GetSource().Substring(node.match_._posBeg, 1) != "$")
             {
-                var colNumber = GetColumnNumber(_parser.GetSource().Substring(node.match_.posBeg_, node.match_.Length));
-                text.Remove(node.match_.posBeg_, node.match_.Length);
-                text.Insert(node.match_.posBeg_, GetColumnId(colNumber + colOffset));
+                var colNumber = GetColumnNumber(_parser.GetSource().Substring(node.match_._posBeg, node.match_.Length));
+                text.Remove(node.match_._posBeg, node.match_.Length);
+                text.Insert(node.match_._posBeg, GetColumnId(colNumber + colOffset));
             }
             else if (node.child_ != null)
                 ReplaceRelativeCell(node.child_, rowOffset, colOffset, text);
