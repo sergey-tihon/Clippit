@@ -5,7 +5,7 @@ namespace Clippit
 {
     internal class PartSHA1HashAnnotation
     {
-        public string Hash;
+        public string Hash { get; set; }
 
         public PartSHA1HashAnnotation(string hash)
         {

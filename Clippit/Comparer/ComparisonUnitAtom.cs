@@ -95,7 +95,7 @@ namespace Clippit
 
         public override string ToString(int indent)
         {
-            const int xNamePad = 16;
+            const int XNamePad = 16;
             var indentString = "".PadRight(indent);
 
             var sb = new StringBuilder();
@@ -110,13 +110,13 @@ namespace Clippit
             if (ContentElement.Name == W.t || ContentElement.Name == W.delText)
             {
                 sb.Append(
-                    $"Atom {PadLocalName(xNamePad, this)}: {ContentElement.Value} {correlationStatus} SHA1:{SHA1Hash.Substring(0, 8)} ");
+                    $"Atom {PadLocalName(XNamePad, this)}: {ContentElement.Value} {correlationStatus} SHA1:{SHA1Hash.Substring(0, 8)} ");
                 AppendAncestorsDump(sb, this);
             }
             else
             {
                 sb.Append(
-                    $"Atom {PadLocalName(xNamePad, this)}:   {correlationStatus} SHA1:{SHA1Hash.Substring(0, 8)} ");
+                    $"Atom {PadLocalName(XNamePad, this)}:   {correlationStatus} SHA1:{SHA1Hash.Substring(0, 8)} ");
 
                 AppendAncestorsDump(sb, this);
             }

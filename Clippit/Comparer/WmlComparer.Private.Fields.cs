@@ -8,15 +8,13 @@ namespace Clippit
 {
     public static partial class WmlComparer
     {
-#pragma warning disable 414
-        private static readonly bool False = false;
-        private static readonly bool True = true;
-        private static readonly bool SaveIntermediateFilesForDebugging = false;
-#pragma warning restore 414
+        private static bool False => false;
+        private static bool True => true;
+        private static bool SaveIntermediateFilesForDebugging => false;
 
-        private static readonly string NewLine = Environment.NewLine;
+        private static string NewLine => Environment.NewLine;
 
-        private static readonly XAttribute[] NamespaceAttributes =
+        private static XAttribute[] NamespaceAttributes => new XAttribute[]
         {
             new(XNamespace.Xmlns + "wpc", WPC.wpc),
             new(XNamespace.Xmlns + "mc", MC.mc),
@@ -36,14 +34,14 @@ namespace Clippit
             new(MC.Ignorable, "w14 wp14")
         };
 
-        private static readonly XName[] RevElementsWithNoText =
+        private static XName[] RevElementsWithNoText => new[]
         {
             M.oMath,
             M.oMathPara,
             W.drawing
         };
 
-        private static readonly XName[] AttributesToTrimWhenCloning =
+        private static XName[] AttributesToTrimWhenCloning => new[]
         {
             WP14.anchorId,
             WP14.editId,
@@ -53,9 +51,9 @@ namespace Clippit
             "type"
         };
 
-        private static int _maxId;
+        private static int s_maxId;
 
-        private static readonly XName[] WordBreakElements =
+        private static XName[] WordBreakElements => new[]
         {
             W.pPr,
             W.tab,
@@ -83,7 +81,7 @@ namespace Clippit
             W.endnoteReference
         };
 
-        private static readonly XName[] AllowableRunChildren =
+        private static XName[] AllowableRunChildren => new[]
         {
             W.br,
             W.drawing,
@@ -110,7 +108,7 @@ namespace Clippit
             W.instrText
         };
 
-        private static readonly XName[] ElementsToThrowAway =
+        private static XName[] ElementsToThrowAway => new[]
         {
             W.bookmarkStart,
             W.bookmarkEnd,
@@ -128,7 +126,7 @@ namespace Clippit
             W.continuationSeparator
         };
 
-        private static readonly XName[] ElementsToHaveSha1Hash =
+        private static XName[] ElementsToHaveSha1Hash => new[]
         {
             W.p,
             W.tbl,
@@ -139,7 +137,7 @@ namespace Clippit
             W.txbxContent
         };
 
-        private static readonly XName[] InvalidElements =
+        private static XName[] InvalidElements => new[]
         {
             W.altChunk,
             W.customXml,
@@ -160,7 +158,7 @@ namespace Clippit
             W.subDoc
         };
 
-        private static readonly RecursionInfo[] RecursionElements =
+        private static RecursionInfo[] RecursionElements => new RecursionInfo[]
         {
             new()
             {
@@ -264,7 +262,7 @@ namespace Clippit
             }
         };
 
-        private static readonly XName[] ComparisonGroupingElements =
+        private static XName[] ComparisonGroupingElements => new[]
         {
             W.p,
             W.tbl,

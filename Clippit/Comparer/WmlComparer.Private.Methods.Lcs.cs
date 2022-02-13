@@ -104,14 +104,14 @@ namespace Clippit
 
                 var firstCommon = cul1[currentI1];
 
-                if (!(firstCommon is ComparisonUnitWord firstCommonWord))
+                if (firstCommon is not ComparisonUnitWord firstCommonWord)
                     break;
 
                 // if the word contains more than one atom, then not a paragraph mark
                 if (firstCommonWord.Contents.Count != 1)
                     break;
 
-                if (!(firstCommonWord.Contents.First() is ComparisonUnitAtom firstCommonAtom))
+                if (firstCommonWord.Contents.First() is not ComparisonUnitAtom firstCommonAtom)
                     break;
 
                 if (firstCommonAtom.ContentElement.Name != W.pPr)
@@ -164,7 +164,7 @@ namespace Clippit
             }
 
             // don't match only word break characters
-            if (currentLongestCommonSequenceLength > 0 && currentLongestCommonSequenceLength <= 3)
+            if (currentLongestCommonSequenceLength is > 0 and <= 3)
             {
                 var commonSequence = cul1.Skip(currentI1).Take(currentLongestCommonSequenceLength).ToArray();
 
@@ -974,7 +974,7 @@ namespace Clippit
                             .Reverse()
                             .TakeWhile(cu =>
                             {
-                                if (!(cu is ComparisonUnitWord))
+                                if (cu is not ComparisonUnitWord)
                                     return false;
 
                                 var firstComparisonUnitAtom =
@@ -991,7 +991,7 @@ namespace Clippit
                             .Reverse()
                             .TakeWhile(cu =>
                             {
-                                if (!(cu is ComparisonUnitWord))
+                                if (cu is not ComparisonUnitWord)
                                     return false;
 
                                 var firstComparisonUnitAtom =

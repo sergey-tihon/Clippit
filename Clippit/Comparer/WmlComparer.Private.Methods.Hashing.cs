@@ -67,8 +67,7 @@ namespace Clippit
                 wDocSource.MainDocumentPart.PutXDocument();
             }
 
-            var sourceWithCorrelatedSHA1Hash = new WmlDocument(source.FileName, msSource.ToArray());
-            return sourceWithCorrelatedSHA1Hash;
+            return new WmlDocument(source.FileName, msSource.ToArray());
         }
 
         // prohibit
