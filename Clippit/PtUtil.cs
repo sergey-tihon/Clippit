@@ -424,7 +424,6 @@ namespace Clippit
             }
         }
 
-#if !NET35
         internal static void ThreadSafeAppendAllLines(FileInfo file, string[] strings)
         {
             while (true)
@@ -440,7 +439,6 @@ namespace Clippit
                 }
             }
         }
-#endif
 
         public static List<string> GetFilesRecursive(DirectoryInfo dir, string searchPattern)
         {

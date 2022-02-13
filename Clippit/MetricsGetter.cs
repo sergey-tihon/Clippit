@@ -14,6 +14,7 @@ using System.Globalization;
 using Clippit.Excel;
 using Clippit.PowerPoint;
 using Clippit.Word;
+using DocumentFormat.OpenXml;
 using SixLabors.Fonts;
 
 namespace Clippit
@@ -73,9 +74,7 @@ namespace Clippit
                     using (var ms = new MemoryStream())
                     {
                         ms.Write(wmlDoc.DocumentByteArray, 0, wmlDoc.DocumentByteArray.Length);
-#if !NET35
                         UriFixer.FixInvalidUri(ms, FixUri);
-#endif
                         wmlDoc = new WmlDocument("dummy.docx", ms.ToArray());
                     }
                     using (var ms = new MemoryStream())
@@ -251,13 +250,24 @@ namespace Clippit
             return metrics;
         }
 
+        private static readonly (FileFormatVersions, XName)[] s_validationSchemas =
+            {
+                (FileFormatVersions.Office2007, H.SdkValidationError2007),
+                (FileFormatVersions.Office2010, H.SdkValidationError2010),
+                (FileFormatVersions.Office2013, H.SdkValidationError2013),
+                (FileFormatVersions.Office2016, H.SdkValidationError2016),
+                (FileFormatVersions.Office2019, H.SdkValidationError2019),
+                (FileFormatVersions.Office2021, H.SdkValidationError2021),
+                (FileFormatVersions.Microsoft365, H.SdkValidationErrorMicrosoft365),
+            };
+        
         private static bool ValidateWordprocessingDocument(WordprocessingDocument wDoc, List<XElement> metrics, List<string> notes, Dictionary<XName, int> metricCountDictionary)
         {
-            var valid = ValidateAgainstSpecificVersion(wDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2007, H.SdkValidationError2007);
-            valid |= ValidateAgainstSpecificVersion(wDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2010, H.SdkValidationError2010);
-#if !NET35
-            valid |= ValidateAgainstSpecificVersion(wDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2013, H.SdkValidationError2013);
-#endif
+            var valid = false;
+            foreach (var (fileFormatVersion, xName) in s_validationSchemas)
+            {
+                valid |= ValidateAgainstSpecificVersion(wDoc, metrics, fileFormatVersion, xName);
+            }
 
             var elementCount = 0;
             var paragraphCount = 0;
@@ -664,11 +674,11 @@ namespace Clippit
             using var sDoc = streamDoc.GetSpreadsheetDocument();
             var metrics = new List<XElement>();
 
-            var valid = ValidateAgainstSpecificVersion(sDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2007, H.SdkValidationError2007);
-            valid |= ValidateAgainstSpecificVersion(sDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2010, H.SdkValidationError2010);
-#if !NET35
-            valid |= ValidateAgainstSpecificVersion(sDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2013, H.SdkValidationError2013);
-#endif
+            var valid = false;
+            foreach (var (fileFormatVersion, xName) in s_validationSchemas)
+            {
+                valid |= ValidateAgainstSpecificVersion(sDoc, metrics, fileFormatVersion, xName);
+            }
 
             return new XElement(H.Metrics,
                 new XAttribute(H.FileName, smlDoc.FileName),
@@ -752,11 +762,12 @@ namespace Clippit
             using var pDoc = streamDoc.GetPresentationDocument();
             var metrics = new List<XElement>();
 
-            var valid = ValidateAgainstSpecificVersion(pDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2007, H.SdkValidationError2007);
-            valid |= ValidateAgainstSpecificVersion(pDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2010, H.SdkValidationError2010);
-#if !NET35
-            valid |= ValidateAgainstSpecificVersion(pDoc, metrics, DocumentFormat.OpenXml.FileFormatVersions.Office2013, H.SdkValidationError2013);
-#endif
+            var valid = false;
+            foreach (var (fileFormatVersion, xName) in s_validationSchemas)
+            {
+                valid |= ValidateAgainstSpecificVersion(pDoc, metrics, fileFormatVersion, xName);
+            }
+
             return new XElement(H.Metrics,
                 new XAttribute(H.FileName, pmlDoc.FileName),
                 new XAttribute(H.FileType, "PresentationML"),
@@ -1009,6 +1020,10 @@ namespace Clippit
         public static XName SdkValidationError2007 = "SdkValidationError2007";
         public static XName SdkValidationError2010 = "SdkValidationError2010";
         public static XName SdkValidationError2013 = "SdkValidationError2013";
+        public static XName SdkValidationError2016 = "SdkValidationError2016";
+        public static XName SdkValidationError2019 = "SdkValidationError2019";
+        public static XName SdkValidationError2021 = "SdkValidationError2021";
+        public static XName SdkValidationErrorMicrosoft365 = "SdkValidationErrorMicrosoft365";
         public static XName Sheet = "Sheet";
         public static XName Sheets = "Sheets";
         public static XName SimpleField = "SimpleField";

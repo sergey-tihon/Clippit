@@ -1896,7 +1896,6 @@ listSeparator
         }
     }
 
-#if !NET35
     public static class UriFixer
     {
         public static void FixInvalidUri(Stream fs, Func<string, Uri> invalidUriHandler)
@@ -1955,7 +1954,6 @@ listSeparator
             }
         }
     }
-#endif
 
     public static class ACTIVEX
     {

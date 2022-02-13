@@ -83,7 +83,7 @@ namespace Clippit
 
                 if (!string.IsNullOrEmpty(styleName))
                 {
-                    var style = part.Styles.Elements<Style>().Where(s => s.StyleId == styleName).FirstOrDefault();
+                    var style = part.Styles.Elements<Style>().FirstOrDefault(s => s.StyleId == styleName);
                     //if the specified style is not present in word document add it
                     if (style == null)
                     {
@@ -457,22 +457,14 @@ AAsACwDBAgAAbCwAAAAA";
     {
         public static bool IsValid(string fileName, string officeVersion)
         {
-#if !NET35
             var fileFormatVersion = FileFormatVersions.Office2013;
-#else
-            FileFormatVersions fileFormatVersion = FileFormatVersions.Office2010;
-#endif
             try
             {
                 fileFormatVersion = (FileFormatVersions)Enum.Parse(fileFormatVersion.GetType(), officeVersion);
             }
             catch (Exception)
             {
-#if !NET35
                 fileFormatVersion = FileFormatVersions.Office2013;
-#else
-                fileFormatVersion = FileFormatVersions.Office2010;
-#endif
             }
 
             var fi = new FileInfo(fileName);
@@ -481,24 +473,21 @@ AAsACwDBAgAAbCwAAAAA";
                 using var wDoc = WordprocessingDocument.Open(fileName, false);
                 var validator = new OpenXmlValidator(fileFormatVersion);
                 var errors = validator.Validate(wDoc);
-                var valid = errors.Count() == 0;
-                return valid;
+                return !errors.Any();
             }
             else if (Util.IsSpreadsheetML(fi.Extension))
             {
                 using var sDoc = SpreadsheetDocument.Open(fileName, false);
                 var validator = new OpenXmlValidator(fileFormatVersion);
                 var errors = validator.Validate(sDoc);
-                var valid = errors.Count() == 0;
-                return valid;
+                return !errors.Any();
             }
             else if (Util.IsPresentationML(fi.Extension))
             {
                 using var pDoc = PresentationDocument.Open(fileName, false);
                 var validator = new OpenXmlValidator(fileFormatVersion);
                 var errors = validator.Validate(pDoc);
-                var valid = errors.Count() == 0;
-                return valid;
+                return !errors.Any();
             }
             return false;
         }
@@ -506,22 +495,14 @@ AAsACwDBAgAAbCwAAAAA";
         public static IEnumerable<ValidationErrorInfo> GetOpenXmlValidationErrors(string fileName,
             string officeVersion)
         {
-#if !NET35
             var fileFormatVersion = FileFormatVersions.Office2013;
-#else
-            FileFormatVersions fileFormatVersion = FileFormatVersions.Office2010;
-#endif
             try
             {
                 fileFormatVersion = (FileFormatVersions)Enum.Parse(fileFormatVersion.GetType(), officeVersion);
             }
             catch (Exception)
             {
-#if !NET35
                 fileFormatVersion = FileFormatVersions.Office2013;
-#else
-                fileFormatVersion = FileFormatVersions.Office2010;
-#endif
             }
 
             var fi = new FileInfo(fileName);
