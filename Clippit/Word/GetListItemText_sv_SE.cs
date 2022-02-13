@@ -26,19 +26,15 @@ namespace Clippit.Word
         };
 
 		public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
-		{
-			switch (numFmt)
-			{
-				case "cardinalText":
-					return NumberAsCardinalText(languageCultureName, levelNumber, numFmt);
-				case "ordinalText":
-					return NumberAsOrdinalText(languageCultureName, levelNumber, numFmt);
-				case "ordinal":
-					return NumberAsOrdinal(languageCultureName, levelNumber, numFmt);
-				default:
-					return null;
-			}
-		}
+        {
+            return numFmt switch
+            {
+                "cardinalText" => NumberAsCardinalText(languageCultureName, levelNumber, numFmt),
+                "ordinalText" => NumberAsOrdinalText(languageCultureName, levelNumber, numFmt),
+                "ordinal" => NumberAsOrdinal(languageCultureName, levelNumber, numFmt),
+                _ => null
+            };
+        }
 		private static string NumberAsCardinalText(string languageCultureName, int levelNumber, string numFmt)
 		{
 			var result = "";

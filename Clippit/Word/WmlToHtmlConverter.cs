@@ -1378,15 +1378,12 @@ namespace Clippit.Word
             {
                 XElement newContent = null;
                 var vertAlignVal = (string)rPr.Elements(W.vertAlign).Attributes(W.val).FirstOrDefault();
-                switch (vertAlignVal)
+                newContent = vertAlignVal switch
                 {
-                    case "superscript":
-                        newContent = new XElement(Xhtml.sup, content);
-                        break;
-                    case "subscript":
-                        newContent = new XElement(Xhtml.sub, content);
-                        break;
-                }
+                    "superscript" => new XElement(Xhtml.sup, content),
+                    "subscript" => new XElement(Xhtml.sub, content),
+                    _ => newContent
+                };
                 if (newContent != null && newContent.Nodes().Any())
                     content = newContent;
             }

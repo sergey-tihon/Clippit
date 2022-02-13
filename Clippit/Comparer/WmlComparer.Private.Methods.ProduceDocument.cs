@@ -2926,25 +2926,15 @@ namespace Clippit
                     var groupType = cua1.ComparisonUnitGroupType;
                     var da1 = cua1.DescendantContentAtoms();
                     var da2 = cua2.DescendantContentAtoms();
-                    XName takeThruName = null;
-                    switch (groupType)
+                    XName takeThruName = groupType switch
                     {
-                        case ComparisonUnitGroupType.Paragraph:
-                            takeThruName = W.p;
-                            break;
-                        case ComparisonUnitGroupType.Table:
-                            takeThruName = W.tbl;
-                            break;
-                        case ComparisonUnitGroupType.Row:
-                            takeThruName = W.tr;
-                            break;
-                        case ComparisonUnitGroupType.Cell:
-                            takeThruName = W.tc;
-                            break;
-                        case ComparisonUnitGroupType.Textbox:
-                            takeThruName = W.txbxContent;
-                            break;
-                    }
+                        ComparisonUnitGroupType.Paragraph => W.p,
+                        ComparisonUnitGroupType.Table => W.tbl,
+                        ComparisonUnitGroupType.Row => W.tr,
+                        ComparisonUnitGroupType.Cell => W.tc,
+                        ComparisonUnitGroupType.Textbox => W.txbxContent,
+                        _ => null
+                    };
 
                     if (takeThruName == null)
                         throw new OpenXmlPowerToolsException("Internal error");

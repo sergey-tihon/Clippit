@@ -38,22 +38,15 @@ namespace Clippit
 
         public static ComparisonUnitGroupType ComparisonUnitGroupTypeFromLocalName(string localName)
         {
-            switch (localName)
+            return localName switch
             {
-                case "p":
-                    return ComparisonUnitGroupType.Paragraph;
-                case "tbl":
-                    return ComparisonUnitGroupType.Table;
-                case "tr":
-                    return ComparisonUnitGroupType.Row;
-                case "tc":
-                    return ComparisonUnitGroupType.Cell;
-                case "txbxContent":
-                    return ComparisonUnitGroupType.Textbox;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(localName),
-                        $@"Unsupported localName: '{localName}'.");
-            }
+                "p" => ComparisonUnitGroupType.Paragraph,
+                "tbl" => ComparisonUnitGroupType.Table,
+                "tr" => ComparisonUnitGroupType.Row,
+                "tc" => ComparisonUnitGroupType.Cell,
+                "txbxContent" => ComparisonUnitGroupType.Textbox,
+                _ => throw new ArgumentOutOfRangeException(nameof(localName), $@"Unsupported localName: '{localName}'.")
+            };
         }
     }
 }

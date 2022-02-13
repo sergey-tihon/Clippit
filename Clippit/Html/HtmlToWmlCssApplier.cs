@@ -1690,23 +1690,16 @@ namespace Clippit.Html
             if (attribute.Operator == null)
                 return true;
             var value = attribute.Value;
-            switch (attribute.Operator)
+            return attribute.Operator switch
             {
-                case CssAttributeOperator.Equals:
-                    return attValue == value;
-                case CssAttributeOperator.BeginsWith:
-                    return attValue.StartsWith(value);
-                case CssAttributeOperator.Contains:
-                    return attValue.Contains(value);
-                case CssAttributeOperator.EndsWith:
-                    return attValue.EndsWith(value);
-                case CssAttributeOperator.InList:
-                    return attValue.Split(' ').Contains(value);
-                case CssAttributeOperator.Hyphenated:
-                    return attValue.Split('-')[0] == value;
-                default:
-                    return false;
-            }
+                CssAttributeOperator.Equals => attValue == value,
+                CssAttributeOperator.BeginsWith => attValue.StartsWith(value),
+                CssAttributeOperator.Contains => attValue.Contains(value),
+                CssAttributeOperator.EndsWith => attValue.EndsWith(value),
+                CssAttributeOperator.InList => attValue.Split(' ').Contains(value),
+                CssAttributeOperator.Hyphenated => attValue.Split('-')[0] == value,
+                _ => false
+            };
         }
 
         private static int CountIdAttributesInSimpleSelector(CssSimpleSelector simpleSelector)

@@ -630,30 +630,16 @@ namespace Clippit.Html
             for (var i = 0; i < input.Length; i++)
             {
                 var chunk = input.Substring(i, 1).ToUpper();
-                switch (chunk)
+                val = chunk switch
                 {
-                    case "A":
-                        val = 10;
-                        break;
-                    case "B":
-                        val = 11;
-                        break;
-                    case "C":
-                        val = 12;
-                        break;
-                    case "D":
-                        val = 13;
-                        break;
-                    case "E":
-                        val = 14;
-                        break;
-                    case "F":
-                        val = 15;
-                        break;
-                    default:
-                        val = int.Parse(chunk);
-                        break;
-                }
+                    "A" => 10,
+                    "B" => 11,
+                    "C" => 12,
+                    "D" => 13,
+                    "E" => 14,
+                    "F" => 15,
+                    _ => int.Parse(chunk)
+                };
                 if (i == 0)
                 {
                     result += val * 16;
@@ -1234,30 +1220,16 @@ namespace Clippit.Html
             for (var i = 0; i < input.Length; i++)
             {
                 var chunk = input.Substring(i, 1).ToUpper();
-                switch (chunk)
+                val = chunk switch
                 {
-                    case "A":
-                        val = 10;
-                        break;
-                    case "B":
-                        val = 11;
-                        break;
-                    case "C":
-                        val = 12;
-                        break;
-                    case "D":
-                        val = 13;
-                        break;
-                    case "E":
-                        val = 14;
-                        break;
-                    case "F":
-                        val = 15;
-                        break;
-                    default:
-                        val = int.Parse(chunk);
-                        break;
-                }
+                    "A" => 10,
+                    "B" => 11,
+                    "C" => 12,
+                    "D" => 13,
+                    "E" => 14,
+                    "F" => 15,
+                    _ => int.Parse(chunk)
+                };
                 if (i == 0)
                 {
                     result += val * 16;
@@ -1838,30 +1810,16 @@ namespace Clippit.Html
             }
             Identity(out ident);
             dir.Name += ident;
-            switch (dir.Name.ToLower())
+            dir.Type = dir.Name.ToLower() switch
             {
-                case "@media":
-                    dir.Type = CssDirectiveType.Media;
-                    break;
-                case "@import":
-                    dir.Type = CssDirectiveType.Import;
-                    break;
-                case "@charset":
-                    dir.Type = CssDirectiveType.Charset;
-                    break;
-                case "@page":
-                    dir.Type = CssDirectiveType.Page;
-                    break;
-                case "@font-face":
-                    dir.Type = CssDirectiveType.FontFace;
-                    break;
-                case "@namespace":
-                    dir.Type = CssDirectiveType.Namespace;
-                    break;
-                default:
-                    dir.Type = CssDirectiveType.Other;
-                    break;
-            }
+                "@media" => CssDirectiveType.Media,
+                "@import" => CssDirectiveType.Import,
+                "@charset" => CssDirectiveType.Charset,
+                "@page" => CssDirectiveType.Page,
+                "@font-face" => CssDirectiveType.FontFace,
+                "@namespace" => CssDirectiveType.Namespace,
+                _ => CssDirectiveType.Other
+            };
 
             while (m_lookaheadToken.m_tokenKind == 4)
             {
@@ -2900,137 +2858,72 @@ namespace Clippit.Html
 
         public virtual void SyntaxError(int line, int col, int n)
         {
-            string s;
-            switch (n)
+            string s = n switch
             {
-                case 0: s = "EOF expected";
-                    break;
-                case 1: s = "identifier expected";
-                    break;
-                case 2: s = "newline expected";
-                    break;
-                case 3: s = "digit expected";
-                    break;
-                case 4: s = "whitespace expected";
-                    break;
-                case 5: s = "\"<!--\" expected";
-                    break;
-                case 6: s = "\"-->\" expected";
-                    break;
-                case 7: s = "\"\'\" expected";
-                    break;
-                case 8: s = "\"\"\" expected";
-                    break;
-                case 9: s = "\"url\" expected";
-                    break;
-                case 10: s = "\"(\" expected";
-                    break;
-                case 11: s = "\")\" expected";
-                    break;
-                case 12: s = "\"all\" expected";
-                    break;
-                case 13: s = "\"aural\" expected";
-                    break;
-                case 14: s = "\"braille\" expected";
-                    break;
-                case 15: s = "\"embossed\" expected";
-                    break;
-                case 16: s = "\"handheld\" expected";
-                    break;
-                case 17: s = "\"print\" expected";
-                    break;
-                case 18: s = "\"projection\" expected";
-                    break;
-                case 19: s = "\"screen\" expected";
-                    break;
-                case 20: s = "\"tty\" expected";
-                    break;
-                case 21: s = "\"tv\" expected";
-                    break;
-                case 22: s = "\"n\" expected";
-                    break;
-                case 23: s = "\"@\" expected";
-                    break;
-                case 24: s = "\"-\" expected";
-                    break;
-                case 25: s = "\",\" expected";
-                    break;
-                case 26: s = "\"{\" expected";
-                    break;
-                case 27: s = "\";\" expected";
-                    break;
-                case 28: s = "\"}\" expected";
-                    break;
-                case 29: s = "\"+\" expected";
-                    break;
-                case 30: s = "\">\" expected";
-                    break;
-                case 31: s = "\"~\" expected";
-                    break;
-                case 32: s = "\"*\" expected";
-                    break;
-                case 33: s = "\"#\" expected";
-                    break;
-                case 34: s = "\".\" expected";
-                    break;
-                case 35: s = "\"[\" expected";
-                    break;
-                case 36: s = "\"=\" expected";
-                    break;
-                case 37: s = "\"~=\" expected";
-                    break;
-                case 38: s = "\"|=\" expected";
-                    break;
-                case 39: s = "\"$=\" expected";
-                    break;
-                case 40: s = "\"^=\" expected";
-                    break;
-                case 41: s = "\"*=\" expected";
-                    break;
-                case 42: s = "\"]\" expected";
-                    break;
-                case 43: s = "\":\" expected";
-                    break;
-                case 44: s = "\"!\" expected";
-                    break;
-                case 45: s = "\"important\" expected";
-                    break;
-                case 46: s = "\"/\" expected";
-                    break;
-                case 47: s = "\"U\\\\\" expected";
-                    break;
-                case 48: s = "\"%\" expected";
-                    break;
-                case 49: s = "??? expected";
-                    break;
-                case 50: s = "invalid directive";
-                    break;
-                case 51: s = "invalid QuotedString";
-                    break;
-                case 52: s = "invalid URI";
-                    break;
-                case 53: s = "invalid medium";
-                    break;
-                case 54: s = "invalid identity";
-                    break;
-                case 55: s = "invalid simpleselector";
-                    break;
-                case 56: s = "invalid attrib";
-                    break;
-                case 57: s = "invalid term";
-                    break;
-                case 58: s = "invalid term";
-                    break;
-                case 59: s = "invalid term";
-                    break;
-                case 60: s = "invalid term";
-                    break;
-                case 61: s = "invalid HexValue";
-                    break;
-
-                default: s = "error " + n;
-                    break;
-            }
+                0 => "EOF expected",
+                1 => "identifier expected",
+                2 => "newline expected",
+                3 => "digit expected",
+                4 => "whitespace expected",
+                5 => "\"<!--\" expected",
+                6 => "\"-->\" expected",
+                7 => "\"\'\" expected",
+                8 => "\"\"\" expected",
+                9 => "\"url\" expected",
+                10 => "\"(\" expected",
+                11 => "\")\" expected",
+                12 => "\"all\" expected",
+                13 => "\"aural\" expected",
+                14 => "\"braille\" expected",
+                15 => "\"embossed\" expected",
+                16 => "\"handheld\" expected",
+                17 => "\"print\" expected",
+                18 => "\"projection\" expected",
+                19 => "\"screen\" expected",
+                20 => "\"tty\" expected",
+                21 => "\"tv\" expected",
+                22 => "\"n\" expected",
+                23 => "\"@\" expected",
+                24 => "\"-\" expected",
+                25 => "\",\" expected",
+                26 => "\"{\" expected",
+                27 => "\";\" expected",
+                28 => "\"}\" expected",
+                29 => "\"+\" expected",
+                30 => "\">\" expected",
+                31 => "\"~\" expected",
+                32 => "\"*\" expected",
+                33 => "\"#\" expected",
+                34 => "\".\" expected",
+                35 => "\"[\" expected",
+                36 => "\"=\" expected",
+                37 => "\"~=\" expected",
+                38 => "\"|=\" expected",
+                39 => "\"$=\" expected",
+                40 => "\"^=\" expected",
+                41 => "\"*=\" expected",
+                42 => "\"]\" expected",
+                43 => "\":\" expected",
+                44 => "\"!\" expected",
+                45 => "\"important\" expected",
+                46 => "\"/\" expected",
+                47 => "\"U\\\\\" expected",
+                48 => "\"%\" expected",
+                49 => "??? expected",
+                50 => "invalid directive",
+                51 => "invalid QuotedString",
+                52 => "invalid URI",
+                53 => "invalid medium",
+                54 => "invalid identity",
+                55 => "invalid simpleselector",
+                56 => "invalid attrib",
+                57 => "invalid term",
+                58 => "invalid term",
+                59 => "invalid term",
+                60 => "invalid term",
+                61 => "invalid HexValue",
+                _ => "error " + n
+            };
             var errorString = string.Format(errMsgFormat, line, col, s);
             throw new OpenXmlPowerToolsException(errorString);
         }

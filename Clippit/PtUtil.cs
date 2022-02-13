@@ -780,23 +780,16 @@ namespace Clippit
                 return null;
 
             var s = ((string) a).ToLower();
-            switch (s)
+            return s switch
             {
-                case "1":
-                    return true;
-                case "0":
-                    return false;
-                case "true":
-                    return true;
-                case "false":
-                    return false;
-                case "on":
-                    return true;
-                case "off":
-                    return false;
-                default:
-                    return (bool) a;
-            }
+                "1" => true,
+                "0" => false,
+                "true" => true,
+                "false" => false,
+                "on" => true,
+                "off" => false,
+                _ => (bool)a
+            };
         }
 
         private static string GetQName(XElement xe)

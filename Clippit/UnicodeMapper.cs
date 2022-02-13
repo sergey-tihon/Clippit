@@ -93,15 +93,12 @@ namespace Clippit
             if (element.Name == W.fldChar)
             {
                 var fldCharType = element.Attributes(W.fldCharType).Select(a => a.Value).FirstOrDefault();
-                switch (fldCharType)
+                return fldCharType switch
                 {
-                    case "begin":
-                        return "{";
-                    case "end":
-                        return "}";
-                    default:
-                        return "_";
-                }
+                    "begin" => "{",
+                    "end" => "}",
+                    _ => "_"
+                };
             }
 
             if (element.Name == W.instrText)

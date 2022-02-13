@@ -468,15 +468,16 @@ namespace Clippit.Excel
         private PegTree tree;
         #endregion Data members
         public virtual string GetRuleNameFromId(int id)
-        {//normally overridden
-            switch (id)
+        {
+            //normally overridden
+            return id switch
             {
-                case (int)ESpecialNodes.eFatal: return "FATAL";
-                case (int)ESpecialNodes.eAnonymNTNode: return "Nonterminal";
-                case (int)ESpecialNodes.eAnonymASTNode: return "ASTNode";
-                case (int)ESpecialNodes.eAnonymousNode: return "Node";
-                default: return id.ToString();
-            }
+                (int)ESpecialNodes.eFatal => "FATAL",
+                (int)ESpecialNodes.eAnonymNTNode => "Nonterminal",
+                (int)ESpecialNodes.eAnonymASTNode => "ASTNode",
+                (int)ESpecialNodes.eAnonymousNode => "Node",
+                _ => id.ToString()
+            };
         }
         public virtual void GetProperties(out EncodingClass encoding, out UnicodeDetection detection)
         {
