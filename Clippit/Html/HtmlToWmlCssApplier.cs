@@ -561,7 +561,7 @@ namespace Clippit.Html
                                 return new CssExpression { Terms = new List<CssTerm> { new() { Value = "auto", Type = CssTermType.String } } };
                             else if (settings.DefaultBlockContentMargin.ToLower().EndsWith("pt"))
                             {
-                                var s1 = settings.DefaultBlockContentMargin[..^2];
+                                var s1 = settings.DefaultBlockContentMargin.Substring(0, settings.DefaultBlockContentMargin.Length - 2);
                                 if (double.TryParse(s1, NumberStyles.Float, CultureInfo.InvariantCulture, out var d1))
                                 {
                                     return new CssExpression { Terms = new List<CssTerm> { new() { Value = d1.ToString(CultureInfo.InvariantCulture), Type = CssTermType.Number, Unit = CssUnit.PT } } };
@@ -2992,15 +2992,15 @@ namespace Clippit.Html
                     }
                 }
                 var value = term.Value;
-                if (value[..1] == "#" && value.Length == 4)
+                if (value.Substring(0, 1) == "#" && value.Length == 4)
                 {
                     var e = ConvertSingleDigit(value.Substring(1, 1)) +
                             ConvertSingleDigit(value.Substring(2, 1)) +
                             ConvertSingleDigit(value.Substring(3, 1));
                     return e;
                 }
-                if (value[..1] == "#")
-                    return value[1..];
+                if (value.Substring(0, 1) == "#")
+                    return value.Substring(1);
                 if (ColorMap.ContainsKey(value))
                     return ColorMap[value];
                 return value;
@@ -3733,4 +3733,3 @@ em
 tbody
 
 #endif
-

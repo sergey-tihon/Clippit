@@ -710,7 +710,7 @@ namespace Clippit.Html
                 var cssWidth = (string) run.Attribute(PtOpenXml.HtmlToWmlCssWidth);
                 if (!cssWidth.EndsWith("pt")) continue;
 
-                cssWidth = cssWidth[..^2];
+                cssWidth = cssWidth.Substring(0, cssWidth.Length - 2);
                 if (!decimal.TryParse(cssWidth, out var cssWidthInDecimal)) continue;
 
                 // calculate the number of non-breaking spaces to add
@@ -2181,7 +2181,7 @@ namespace Clippit.Html
             {
                 var semiIndex = srcAttribute.IndexOf(';');
                 var commaIndex = srcAttribute.IndexOf(',', semiIndex);
-                var base64 = srcAttribute[(commaIndex + 1)..];
+                var base64 = srcAttribute.Substring(commaIndex + 1);
                 ba = Convert.FromBase64String(base64);
                 using var ms = new MemoryStream(ba);
                 bmp = Image<Rgba32>.Load(ms);
@@ -2950,12 +2950,11 @@ namespace Clippit.Html
                 if (isLast)
                     newString = newString.TrimEnd();
             }
-
             newString = textTransform switch
             {
                 "uppercase" => newString.ToUpper(),
                 "lowercase" => newString.ToLower(),
-                "capitalize" => newString[..1].ToUpper() + newString[1..].ToLower(),
+                "capitalize" => newString.Substring(0, 1).ToUpper() + newString.Substring(1).ToLower(),
                 _ => newString
             };
             return newString;

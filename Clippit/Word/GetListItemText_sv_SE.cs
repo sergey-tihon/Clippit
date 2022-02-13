@@ -64,7 +64,7 @@ namespace Clippit.Word
 			if (levelNumber > 1000 && hundreds == 0 && tens == 0 && ones == 0)
 			{
 				result = OneThroughNineteen[thousands] + "tusen";
-				return result[..1].ToUpper() + result[1..];
+				return result.Substring(0, 1).ToUpper() + result.Substring(1);
 			}
 
 			/* > 1000 */
@@ -80,7 +80,7 @@ namespace Clippit.Word
 					result += "etthundra";
 				else
 					result += OneThroughNineteen[hundreds] + "hundra";
-				return result[..1].ToUpper() + result[1..];
+				return result.Substring(0, 1).ToUpper() + result.Substring(1);
 			}
 
 			/* > 100 */
@@ -96,24 +96,24 @@ namespace Clippit.Word
 			if (tens > 0 && ones == 0)
 			{
 				result += Tens[tens];
-				return result[..1].ToUpper() + result[1..];
+				return result.Substring(0, 1).ToUpper() + result.Substring(1);
 			}
 
 			/* > 20 */
 			if (tens == 1)
 			{
 				result += OneThroughNineteen[tens * 10 + ones];
-				return result[..1].ToUpper() + result[1..];
+				return result.Substring(0, 1).ToUpper() + result.Substring(1);
 			}
 			else if (tens > 1)
 			{
 				result += Tens[tens] + OneThroughNineteen[ones]; ;
-				return result[..1].ToUpper() + result[1..];
+				return result.Substring(0, 1).ToUpper() + result.Substring(1);
 			}
 			else
 			{
 				result += OneThroughNineteen[ones];
-				return result[..1].ToUpper() + result[1..];
+				return result.Substring(0, 1).ToUpper() + result.Substring(1);
 			}
 		}
 		private static string NumberAsOrdinalText(string languageCultureName, int levelNumber, string numFmt)
@@ -141,7 +141,7 @@ namespace Clippit.Word
 			if (levelNumber > 1000 && hundreds == 0 && tens == 0 && ones == 0)
 			{
 				result = OneThroughNineteen[thousands] + "tusende";
-				return result[..1].ToUpper() + result[1..];
+				return result.Substring(0, 1).ToUpper() + result.Substring(1);
 			}
 
 			/* > 1000 */
@@ -157,7 +157,7 @@ namespace Clippit.Word
 					result += "etthundrade";
 				else
 					result += OneThroughNineteen[hundreds] + "hundrade";
-				return result[..1].ToUpper() + result[1..];
+				return result.Substring(0, 1).ToUpper() + result.Substring(1);
 			}
 
 			/* > 100 */
@@ -170,24 +170,24 @@ namespace Clippit.Word
 			if (tens > 0 && ones == 0)
 			{
 				result += Tens[tens] + "nde";
-				return result[..1].ToUpper() + result[1..];
+				return result.Substring(0, 1).ToUpper() + result.Substring(1);
 			}
 
 			/* > 20 */
 			if (tens == 1)
 			{
 				result += OrdinalOneThroughNineteen[tens * 10 + ones];
-				return result[..1].ToUpper() + result[1..];
+				return result.Substring(0, 1).ToUpper() + result.Substring(1);
 			}
 			else if (tens > 1)
 			{
 				result += Tens[tens] + OrdinalOneThroughNineteen[ones]; ;
-				return result[..1].ToUpper() + result[1..];
+				return result.Substring(0, 1).ToUpper() + result.Substring(1);
 			}
 			else
 			{
 				result += OrdinalOneThroughNineteen[ones];
-				return result[..1].ToUpper() + result[1..];
+				return result.Substring(0, 1).ToUpper() + result.Substring(1);
 			}
 		}
 		private static string NumberAsOrdinal(string languageCultureName, int levelNumber, string numFmt)

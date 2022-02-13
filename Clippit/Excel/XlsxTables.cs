@@ -392,8 +392,8 @@ namespace Clippit.Excel
             if (i == address.Length)
                 throw new FileFormatException("Invalid spreadsheet.  Bad cell address.");
             return new[] {
-                address[..i],
-                address[i..]
+                address.Substring(0, i),
+                address.Substring(i)
             };
         }
 

@@ -1098,9 +1098,9 @@ namespace Clippit.Word
             var isLgl = lvl.Elements(W.isLgl).Any();
             var listItem = formatTokens.Select((t, l) =>
             {
-                if (t[..1] != "%")
+                if (t.Substring(0, 1) != "%")
                     return t;
-                if (!int.TryParse(t[1..], out var indentationLevel))
+                if (!int.TryParse(t.Substring(1), out var indentationLevel))
                     return t;
                 indentationLevel -= 1;
                 if (indentationLevel >= levelNumbers.Length)
@@ -1151,7 +1151,7 @@ namespace Clippit.Word
                 var percentIndex = lvlText.IndexOf('%', i);
                 if (percentIndex == -1 || percentIndex > lvlText.Length - 2)
                 {
-                    yield return lvlText[i..];
+                    yield return lvlText.Substring(i);
                     yield break;
                 }
                 yield return lvlText.Substring(i, percentIndex - i);

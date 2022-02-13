@@ -181,7 +181,7 @@ namespace Clippit.Tests.Word
             using var wDoc = WordprocessingDocument.Open(memoryStream, true);
             var outputDirectory = destFileName.Directory;
             destFileName = new FileInfo(Path.Combine(outputDirectory.FullName, destFileName.Name));
-            var imageDirectoryName = destFileName.FullName[..^5] + "_files";
+            var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
             var imageCounter = 0;
             var pageTitle = (string)wDoc.CoreFilePropertiesPart.GetXDocument().Descendants(DC.title).FirstOrDefault();
             if (pageTitle == null)
@@ -222,7 +222,7 @@ namespace Clippit.Tests.Word
             using var wDoc = WordprocessingDocument.Open(memoryStream, true);
             var outputDirectory = destFileName.Directory;
             destFileName = new FileInfo(Path.Combine(outputDirectory.FullName, destFileName.Name));
-            var imageDirectoryName = destFileName.FullName[..^5] + "_files";
+            var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
             var imageCounter = 0;
             var pageTitle = (string)wDoc.CoreFilePropertiesPart.GetXDocument().Descendants(DC.title).FirstOrDefault();
             if (pageTitle == null)

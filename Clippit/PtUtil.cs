@@ -84,10 +84,10 @@ namespace Clippit
             foreach (var item in priamble)
             {
                 if (item.ToUpper().StartsWith("MIME-VERSION:"))
-                    mimeVersion = item["MIME-VERSION:".Length..].Trim();
+                    mimeVersion = item.Substring("MIME-VERSION:".Length).Trim();
                 else if (item.ToUpper().StartsWith("CONTENT-TYPE:"))
                 {
-                    var contentTypeLine = item["CONTENT-TYPE:".Length..].Trim();
+                    var contentTypeLine = item.Substring("CONTENT-TYPE:".Length).Trim();
                     var spl = contentTypeLine.Split(';').Select(z => z.Trim()).ToArray();
                     foreach (var s in spl)
                     {
@@ -142,11 +142,11 @@ namespace Clippit
                     foreach (var item in partPriamble)
                     {
                         if (item.ToUpper().StartsWith("CONTENT-LOCATION:"))
-                            contentLocation = item["CONTENT-LOCATION:".Length..].Trim();
+                            contentLocation = item.Substring("CONTENT-LOCATION:".Length).Trim();
                         else if (item.ToUpper().StartsWith("CONTENT-TRANSFER-ENCODING:"))
-                            contentTransferEncoding = item["CONTENT-TRANSFER-ENCODING:".Length..].Trim();
+                            contentTransferEncoding = item.Substring("CONTENT-TRANSFER-ENCODING:".Length).Trim();
                         else if (item.ToUpper().StartsWith("CONTENT-TYPE:"))
-                            partContentType = item["CONTENT-TYPE:".Length..].Trim();
+                            partContentType = item.Substring("CONTENT-TYPE:".Length).Trim();
                     }
 
                     var blankLinesAtBeginning = rp
@@ -1078,14 +1078,14 @@ namespace Clippit
             {
                 var ts = bucket.Value.Time.ToString();
                 if (ts.Contains('.'))
-                    ts = ts[..^5];
+                    ts = ts.Substring(0, ts.Length - 5);
                 var s = bucket.Key.PadRight(60, '-') + "  " + string.Format("{0:00000000}", bucket.Value.Count) + "  " + ts;
                 sb.Append(s + Environment.NewLine);
             }
             var total = Buckets
                 .Aggregate(TimeSpan.Zero, (t, b) => t + b.Value.Time);
             var tz = total.ToString();
-            sb.Append(string.Format("Total: {0}", tz[..^5]));
+            sb.Append(string.Format("Total: {0}", tz.Substring(0, tz.Length - 5)));
             return sb.ToString();
         }
 
@@ -1096,14 +1096,14 @@ namespace Clippit
             {
                 var ts = bucket.Value.Time.ToString();
                 if (ts.Contains('.'))
-                    ts = ts[..^5];
+                    ts = ts.Substring(0, ts.Length - 5);
                 var s = bucket.Key.PadRight(60, '-') + "  " + string.Format("{0:00000000}", bucket.Value.Count) + "  " + ts;
                 sb.Append(s + Environment.NewLine);
             }
             var total = Buckets
                 .Aggregate(TimeSpan.Zero, (t, b) => t + b.Value.Time);
             var tz = total.ToString();
-            sb.Append(string.Format("Total: {0}", tz[..^5]));
+            sb.Append(string.Format("Total: {0}", tz.Substring(0, tz.Length - 5)));
             return sb.ToString();
         }
 
@@ -1117,7 +1117,7 @@ namespace Clippit
     {
         public override void WriteTo(XmlWriter writer)
         {
-            if (Value[..1] == "#")
+            if (Value.Substring(0, 1) == "#")
             {
                 var e = string.Format("&{0};", Value);
                 writer.WriteRaw(e);

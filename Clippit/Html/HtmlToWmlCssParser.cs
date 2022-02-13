@@ -605,7 +605,7 @@ namespace Clippit.Html
             {
                 hex = Value.Length switch
                 {
-                    7 when Value.StartsWith("#") => Value[1..],
+                    7 when Value.StartsWith("#") => Value.Substring(1),
                     6 => Value,
                     _ => hex
                 };
@@ -617,9 +617,9 @@ namespace Clippit.Html
                     return c;
                 }
             }
-            var r = ConvertFromHex(hex[..2]);
+            var r = ConvertFromHex(hex.Substring(0, 2));
             var g = ConvertFromHex(hex.Substring(2, 2));
-            var b = ConvertFromHex(hex[4..]);
+            var b = ConvertFromHex(hex.Substring(4));
             return Color.FromArgb(r, g, b);
         }
 
@@ -1154,7 +1154,7 @@ namespace Clippit.Html
             {
                 hex = Value.Length switch
                 {
-                    7 or 4 when Value.StartsWith("#") => Value[1..],
+                    7 or 4 when Value.StartsWith("#") => Value.Substring(1),
                     6 or 3 => Value,
                     _ => hex
                 };
@@ -1222,9 +1222,9 @@ namespace Clippit.Html
                 }
                 hex = temp;
             }
-            var r = ConvertFromHex(hex[..2]);
+            var r = ConvertFromHex(hex.Substring(0, 2));
             var g = ConvertFromHex(hex.Substring(2, 2));
-            var b = ConvertFromHex(hex[4..]);
+            var b = ConvertFromHex(hex.Substring(4));
             return Color.FromArgb(r, g, b);
         }
         private int ConvertFromHex(string input)

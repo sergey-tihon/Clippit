@@ -51,7 +51,7 @@ namespace Clippit.Word
                 if (levelNumber > 1000 && hundreds == 0 && tens == 0 && ones == 0)
                 {
                     result = OneThroughNineteen[thousands] + " mille";
-                    return result[..1].ToUpper() + result[1..];
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
 
                 /* > 1000 */
@@ -67,7 +67,7 @@ namespace Clippit.Word
                         result += "cent";
                     else
                         result += OneThroughNineteen[hundreds] + " cents";
-                    return result[..1].ToUpper() + result[1..];
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
 
                 /* > 100 */
@@ -86,7 +86,7 @@ namespace Clippit.Word
                         result += "quatre-vingts";
                     else
                         result += Tens[tens];
-                    return result[..1].ToUpper() + result[1..];
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
 
                 /* 71-79 */
@@ -96,14 +96,14 @@ namespace Clippit.Word
                         result += Tens[6] + " et " + OneThroughNineteen[ones + 10];
                     else
                         result += Tens[6] + "-" + OneThroughNineteen[ones + 10];
-                    return result[..1].ToUpper() + result[1..];
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
 
                 /* 91-99 */
                 if (tens == 9)
                 {
                     result += Tens[8] + "-" + OneThroughNineteen[ones + 10];
-                    return result[..1].ToUpper() + result[1..];
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
 
                 if (tens >= 2)
@@ -112,17 +112,17 @@ namespace Clippit.Word
                         result += Tens[tens] + " et un";
                     else
                         result += Tens[tens] + "-" + OneThroughNineteen[ones];
-                    return result[..1].ToUpper() + result[1..];
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
 
                 if (levelNumber < 20)
                 {
                     result += OneThroughNineteen[tens * 10 + ones];
-                    return result[..1].ToUpper() + result[1..];
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
 
                 result += OneThroughNineteen[tens * 10 + ones];
-                return result[..1].ToUpper() + result[1..];
+                return result.Substring(0, 1).ToUpper() + result.Substring(1);
             }
             if (numFmt == "ordinal")
             {
@@ -152,7 +152,7 @@ namespace Clippit.Word
                 if (levelNumber > 1000 && hundreds == 0 && tens == 0 && ones == 0)
                 {
                     result = OneThroughNineteen[thousands] + " millième";
-                    return result[..1].ToUpper() + result[1..];
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
 
                 /* > 1000 */
@@ -168,7 +168,7 @@ namespace Clippit.Word
                         result += "centième";
                     else
                         result += OneThroughNineteen[hundreds] + " centième";
-                    return result[..1].ToUpper() + result[1..];
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
 
                 /* > 100 */
@@ -184,7 +184,7 @@ namespace Clippit.Word
                 if (tens > 0 && ones == 0)
                 {
                     result += OrdinalTenths[tens];
-                    return result[..1].ToUpper() + result[1..];
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
 
                 /* 71-79 */
@@ -194,14 +194,14 @@ namespace Clippit.Word
                         result += OrdinalTenthsPlus[6] + " et " + OrdinalOneThroughNineteen[ones + 10];
                     else
                         result += OrdinalTenthsPlus[6] + "-" + OrdinalOneThroughNineteen[ones + 10];
-                    return result[..1].ToUpper() + result[1..];
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
 
                 /* 91-99 */
                 if (tens == 9)
                 {
                     result += OrdinalTenthsPlus[8] + "-" + OrdinalOneThroughNineteen[ones + 10];
-                    return result[..1].ToUpper() + result[1..];
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
 
                 if (tens >= 2)
@@ -210,17 +210,17 @@ namespace Clippit.Word
                         result += OrdinalTenthsPlus[tens] + " et unième";
                     else
                         result += OrdinalTenthsPlus[tens] + "-" + OrdinalOneThroughNineteen[ones];
-                    return result[..1].ToUpper() + result[1..];
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
 
                 if (levelNumber < 20)
                 {
                     result += OrdinalOneThroughNineteen[tens * 10 + ones];
-                    return result[..1].ToUpper() + result[1..];
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
 
                 result += OrdinalOneThroughNineteen[tens * 10 + ones];
-                return result[..1].ToUpper() + result[1..];
+                return result.Substring(0, 1).ToUpper() + result.Substring(1);
             }
             return null;
         }

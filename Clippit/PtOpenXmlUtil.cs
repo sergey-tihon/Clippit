@@ -528,10 +528,10 @@ namespace Clippit
                     else
                         // add part level relationships
                     {
-                        var directory = name[..name.IndexOf("/_rels")];
-                        var relsFilename = name[name.LastIndexOf('/')..];
+                        var directory = name.Substring(0, name.IndexOf("/_rels"));
+                        var relsFilename = name.Substring(name.LastIndexOf('/'));
                         var filename =
-                            relsFilename[..relsFilename.IndexOf(".rels")];
+                            relsFilename.Substring(0, relsFilename.IndexOf(".rels"));
                         var fromPart = package.GetPart(
                             new Uri(directory + filename, UriKind.Relative));
                         foreach (var xmlRel in

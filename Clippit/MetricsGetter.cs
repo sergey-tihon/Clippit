@@ -368,7 +368,7 @@ namespace Clippit
                     {
                         var sb = new StringBuilder();
                         if (err.Description.Length > 300)
-                            sb.Append(PtUtils.MakeValidXml(err.Description[..300] + " ... elided ...") + Environment.NewLine);
+                            sb.Append(PtUtils.MakeValidXml(err.Description.Substring(0, 300) + " ... elided ...") + Environment.NewLine);
                         else
                             sb.Append(PtUtils.MakeValidXml(err.Description) + Environment.NewLine);
                         sb.Append("  in part " + PtUtils.MakeValidXml(err.Part.Uri.ToString()) + Environment.NewLine);
@@ -393,7 +393,7 @@ namespace Clippit
                     {
                         var sb = new StringBuilder();
                         if (err.Description.Length > 300)
-                            sb.Append(PtUtils.MakeValidXml(err.Description[..300] + " ... elided ...") + Environment.NewLine);
+                            sb.Append(PtUtils.MakeValidXml(err.Description.Substring(0, 300) + " ... elided ...") + Environment.NewLine);
                         else
                             sb.Append(PtUtils.MakeValidXml(err.Description) + Environment.NewLine);
                         sb.Append("  in part " + PtUtils.MakeValidXml(err.Part.Uri.ToString()) + Environment.NewLine);
@@ -418,7 +418,7 @@ namespace Clippit
                     {
                         var sb = new StringBuilder();
                         if (err.Description.Length > 300)
-                            sb.Append(PtUtils.MakeValidXml(err.Description[..300] + " ... elided ...") + Environment.NewLine);
+                            sb.Append(PtUtils.MakeValidXml(err.Description.Substring(0, 300) + " ... elided ...") + Environment.NewLine);
                         else
                             sb.Append(PtUtils.MakeValidXml(err.Description) + Environment.NewLine);
                         sb.Append("  in part " + PtUtils.MakeValidXml(err.Part.Uri.ToString()) + Environment.NewLine);

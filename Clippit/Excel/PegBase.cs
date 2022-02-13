@@ -1599,7 +1599,7 @@ namespace Clippit.Excel
             {
                 var value = node.GetAsString(src_);
                 if (value.Length < 32) label += " <" + value + ">";
-                else label += " <" + value[..29] + "...>";
+                else label += " <" + value.Substring(0, 29) + "...>";
             }
             return label;
         }

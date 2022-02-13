@@ -169,7 +169,7 @@ namespace Clippit.Excel
                 {
                     if (color.StartsWith("Color"))
                     {
-                        var idxStr = color[5..];
+                        var idxStr = color.Substring(5);
                         if (int.TryParse(idxStr, out var colorIdx))
                         {
                             if (colorIdx < SmlDataRetriever.IndexedColors.Length)
@@ -178,7 +178,7 @@ namespace Clippit.Excel
                                 color = null;
                         }
                     }
-                    formatCode = trimmed[(colorLen + 1)..];
+                    formatCode = trimmed.Substring(colorLen + 1);
                 }
                 else
                     color = null;
@@ -204,7 +204,7 @@ namespace Clippit.Excel
                 {
                     var zeroHour = new DateTime(1899, 12, 30, 0, 0, 0);
                     var deltaInHours = (int)((thisDate - zeroHour).TotalHours);
-                    var newCfc = cfc[3..];
+                    var newCfc = cfc.Substring(3);
                     var s = (deltaInHours.ToString() + thisDate.ToString(newCfc)).Trim();
                     return s;
                 }
