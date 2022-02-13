@@ -12,7 +12,7 @@ using PBT = Clippit.PowerPoint.PresentationBuilderTools;
 
 namespace Clippit.PowerPoint
 {
-    internal class FluentPresentationBuilder : IDisposable
+    internal sealed class FluentPresentationBuilder : IDisposable
     {
         private readonly PresentationDocument _newDocument;
         private SlideSize _slideSize;

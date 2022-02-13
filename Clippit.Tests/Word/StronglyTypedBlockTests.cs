@@ -61,7 +61,10 @@ namespace Clippit.Tests.Word
         [Fact]
         public void ConstructorThrowsWhenPassingNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new StronglyTypedBlock(null));
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                using var _ = new StronglyTypedBlock(null);
+            });
         }
         
     }

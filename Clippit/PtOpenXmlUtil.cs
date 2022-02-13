@@ -146,7 +146,7 @@ namespace Clippit
 
         private static XmlNamespaceManager GetManagerFromXDocument(XDocument xDocument)
         {
-            var reader = xDocument.CreateReader();
+            using var reader = xDocument.CreateReader();
             var newXDoc = XDocument.Load(reader);
 
             var rootElement = xDocument.Elements().FirstOrDefault();

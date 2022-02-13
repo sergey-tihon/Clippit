@@ -6,6 +6,7 @@ framework: net6.0, netstandard2.0
 nuget DocumentFormat.OpenXml
 nuget SixLabors.ImageSharp.Drawing prerelease
 
+nuget IDisposableAnalyzers
 nuget Microsoft.NET.Test.Sdk
 nuget xunit
 nuget xunit.runner.console

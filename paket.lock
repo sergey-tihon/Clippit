@@ -4,6 +4,7 @@ NUGET
   remote: https://api.nuget.org/v3/index.json
     DocumentFormat.OpenXml (2.15)
       System.IO.Packaging (>= 4.7)
+    IDisposableAnalyzers (4.0.1)
     Microsoft.CodeCoverage (17.0) - restriction: || (== net6.0) (&& (== netstandard2.0) (>= net45)) (&& (== netstandard2.0) (>= netcoreapp1.0))
     Microsoft.NET.Test.Sdk (17.0)
       Microsoft.CodeCoverage (>= 17.0) - restriction: || (== net6.0) (&& (== netstandard2.0) (>= net45)) (&& (== netstandard2.0) (>= netcoreapp1.0))

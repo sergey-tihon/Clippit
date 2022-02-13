@@ -2204,7 +2204,7 @@ namespace Clippit.Html
                 {
                     return null;
                 }
-                var ms = new MemoryStream();
+                using var ms = new MemoryStream();
                 bmp.Save(ms, new BmpEncoder());
                 ba = ms.ToArray();
             }

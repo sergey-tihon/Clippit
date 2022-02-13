@@ -63,7 +63,10 @@ namespace Clippit.Tests.Word
         [Fact]
         public void ConstructorThrowsWhenPassingNull()
         {
-            Assert.Throws<ArgumentNullException>(() => new PowerToolsBlock(null));
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                using var _ = new PowerToolsBlock(null);
+            });
         }
     }
 }

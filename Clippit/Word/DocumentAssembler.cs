@@ -711,7 +711,9 @@ namespace Clippit.Word
                 {
                     var itemPAss = item.Value;
                     var schemas = new XmlSchemaSet();
-                    schemas.Add("", XmlReader.Create(new StringReader(itemPAss.XsdMarkup)));
+                    using (var stringReader = new StringReader(itemPAss.XsdMarkup))
+                    using (var xmlReader = XmlReader.Create(stringReader))
+                        schemas.Add("", xmlReader);
                     itemPAss.SchemaSet = schemas;
                 }
             }
@@ -975,58 +977,62 @@ namespace Clippit.Word
                 return para;
 
             // Add the image to main document part
-            var stream = Image2Stream(imagePath, out var imagePartType, out var error);
-            if (stream is not null)
+            using (var stream = Image2Stream(imagePath, out var imagePartType, out var error))
             {
-                var ip = GetImagePart(part, imagePartType, relationshipId);
-                if (ip is null)
+                if (stream is not null)
                 {
-                    error = "Failed to get image part";
+                    var ip = GetImagePart(part, imagePartType, relationshipId);
+                    if (ip is null)
+                    {
+                        error = "Failed to get image part";
+                        return CreateContextErrorMessage(element, string.Concat("Image: ", error), templateError);
+                    }
+
+                    ip.FeedData(stream);
+                    stream.Close();
+
+                    // access the saved image and get the dimensions
+                    using var savedStream = ip.GetStream(FileMode.Open);
+                    using var image = Image<Rgba32>.Load(savedStream);
+                    // one inch is 914400 EMUs
+                    // 96dpi where dot is pixel
+                    var pixelInEMU = 914400 / 96;
+                    var width = image.Width;
+                    var height = image.Height;
+
+                    if (keepSourceImageAspect)
+                    {
+                        var ratio = height / (width * 1.0);
+                        if (!int.TryParse(extent.Attribute(NoNamespace.cx).Value, out width))
+                        {
+                            return CreateContextErrorMessage(element, "Image: Invalid image attributes",
+                                templateError);
+                        }
+
+                        height = (int)(width * ratio);
+
+                        // replace attributes
+                        extent.SetAttributeValue(NoNamespace.cy, height);
+                        pictureExtent.SetAttributeValue(NoNamespace.cx, width);
+                        pictureExtent.SetAttributeValue(NoNamespace.cy, height);
+                    }
+
+                    if (keepOriginalImageSize)
+                    {
+                        width = image.Width * pixelInEMU;
+                        height = image.Height * pixelInEMU;
+
+                        // replace attributes
+                        extent.SetAttributeValue(NoNamespace.cx, width);
+                        extent.SetAttributeValue(NoNamespace.cy, height);
+                        pictureExtent.SetAttributeValue(NoNamespace.cx, width);
+                        pictureExtent.SetAttributeValue(NoNamespace.cy, height);
+                    }
+                }
+                else
+                {
                     return CreateContextErrorMessage(element, string.Concat("Image: ", error), templateError);
                 }
-                ip.FeedData(stream);
-                stream.Close();
-
-                // access the saved image and get the dimensions
-                using var savedStream = ip.GetStream(FileMode.Open);
-                using var image = Image<Rgba32>.Load(savedStream);
-                // one inch is 914400 EMUs
-                // 96dpi where dot is pixel
-                var pixelInEMU = 914400 / 96;
-                var width = image.Width;
-                var height = image.Height;
-
-                if (keepSourceImageAspect)
-                {
-                    var ratio = height / (width * 1.0);
-                    if (!int.TryParse(extent.Attribute(NoNamespace.cx).Value, out width))
-                    {
-                        return CreateContextErrorMessage(element, "Image: Invalid image attributes",
-                            templateError);
-                    }
-                    height = (int)(width * ratio);
-
-                    // replace attributes
-                    extent.SetAttributeValue(NoNamespace.cy, height);
-                    pictureExtent.SetAttributeValue(NoNamespace.cx, width);
-                    pictureExtent.SetAttributeValue(NoNamespace.cy, height);
-                }
-
-                if (keepOriginalImageSize)
-                {
-                    width = image.Width * pixelInEMU;
-                    height = image.Height * pixelInEMU;
-
-                    // replace attributes
-                    extent.SetAttributeValue(NoNamespace.cx, width);
-                    extent.SetAttributeValue(NoNamespace.cy, height);
-                    pictureExtent.SetAttributeValue(NoNamespace.cx, width);
-                    pictureExtent.SetAttributeValue(NoNamespace.cy, height);
-                }
-            }
-            else
-            {
-                return CreateContextErrorMessage(element, string.Concat("Image: ", error), templateError);
             }
 
             blip.SetAttributeValue(R.embed, relationshipId);

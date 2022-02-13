@@ -12,14 +12,14 @@ namespace Clippit
         public static string SHA1HashStringForUTF8String(string s)
         {
             var bytes = Encoding.UTF8.GetBytes(s);
-            var sha1 = SHA1.Create();
+            using var sha1 = SHA1.Create();
             var hashBytes = sha1.ComputeHash(bytes);
             return HexStringFromBytes(hashBytes);
         }
 
         public static string SHA1HashStringForByteArray(byte[] bytes)
         {
-            var sha1 = SHA1.Create();
+            using var sha1 = SHA1.Create();
             var hashBytes = sha1.ComputeHash(bytes);
             return HexStringFromBytes(hashBytes);
         }

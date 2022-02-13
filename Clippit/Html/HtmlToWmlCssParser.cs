@@ -1337,8 +1337,8 @@ namespace Clippit.Html
     {
         public CssDocument ParseText(string content)
         {
-            var mem = new MemoryStream();
-            var bytes = ASCIIEncoding.ASCII.GetBytes(content);
+            using var mem = new MemoryStream();
+            var bytes = Encoding.ASCII.GetBytes(content);
             mem.Write(bytes, 0, bytes.Length);
             try
             {
@@ -3108,6 +3108,7 @@ namespace Clippit.Html
                 Pos = 0;
             else
                 m_currentPositionInBuffer = 0;
+            
             if (m_bufferLength == m_inputStreamLength && m_inputStream.CanSeek)
                 Close();
         }

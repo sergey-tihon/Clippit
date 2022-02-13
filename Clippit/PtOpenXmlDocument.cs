@@ -332,7 +332,7 @@ namespace Clippit
             //File.WriteAllBytes(filePath, partContent);
 
             using var fileStream = File.Create(filePath);
-            var partStream = part.GetStream(FileMode.Open, FileAccess.Read);
+            using var partStream = part.GetStream(FileMode.Open, FileAccess.Read);
             partStream.CopyTo(fileStream);
         }
     }
@@ -343,6 +343,7 @@ namespace Clippit
         private MemoryStream _docMemoryStream;
         private Package _docPackage;
 
+#pragma warning disable IDISP003
         public OpenXmlMemoryStreamDocument(OpenXmlPowerToolsDocument doc)
         {
             _document = doc;
@@ -357,8 +358,9 @@ namespace Clippit
                 throw new PowerToolsDocumentException(e.Message);
             }
         }
+#pragma warning restore IDISP003
 
-        internal OpenXmlMemoryStreamDocument(MemoryStream stream)
+        private OpenXmlMemoryStreamDocument(MemoryStream stream)
         {
             _docMemoryStream = stream;
             try
@@ -422,8 +424,8 @@ namespace Clippit
         public static OpenXmlMemoryStreamDocument CreatePackage()
         {
             var stream = new MemoryStream();
-            var package = Package.Open(stream, FileMode.Create);
-            package.Close();
+            using (var package = Package.Open(stream, FileMode.Create))
+                package.Close();
             return new OpenXmlMemoryStreamDocument(stream);
         }
 
@@ -509,6 +511,7 @@ namespace Clippit
             return null;
         }
 
+#pragma warning disable IDISP003
         public OpenXmlPowerToolsDocument GetModifiedDocument()
         {
             _docPackage.Close();
@@ -537,14 +540,12 @@ namespace Clippit
             return new PmlDocument(_document?.FileName, _docMemoryStream);
         }
 
-        public void Close()
-        {
-            Dispose(true);
-        }
+        private bool _disposedValue;
 
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         ~OpenXmlMemoryStreamDocument()
@@ -554,16 +555,19 @@ namespace Clippit
 
         private void Dispose(bool disposing)
         {
+            if (_disposedValue)
+                return;
+
             if (disposing)
             {
                 _docPackage?.Close();
                 _docMemoryStream?.Dispose();
+                _docPackage = null;
+                _docMemoryStream = null;
             }
-            if (_docPackage is null && _docMemoryStream is null)
-                return;
-            _docPackage = null;
-            _docMemoryStream = null;
-            GC.SuppressFinalize(this);
+            _disposedValue = true;
         }
+#pragma warning restore IDISP003
+        
     }
 }

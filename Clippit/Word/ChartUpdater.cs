@@ -397,7 +397,8 @@ namespace Clippit.Word
             var embeddedSpreadsheet = chartPart.GetPartById(embeddedSpreadsheetRid);
             if (embeddedSpreadsheet != null)
             {
-                using var sDoc = SpreadsheetDocument.Open(embeddedSpreadsheet.GetStream(), true);
+                using var stream = embeddedSpreadsheet.GetStream();
+                using var sDoc = SpreadsheetDocument.Open(stream, true);
                 var workbookPart = sDoc.WorkbookPart;
                 var wbRoot = workbookPart.GetXDocument().Root;
                 var sheetRid = (string)wbRoot

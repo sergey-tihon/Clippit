@@ -111,7 +111,8 @@ namespace Clippit.Word
   </w:sdtContent>
 </w:sdt>";
 
-            var sdtReader = XmlReader.Create(new StringReader(string.Format(xmlString, title, rightTabPos, switches)));
+            using var stream = new StringReader(string.Format(xmlString, title, rightTabPos, switches));
+            using var sdtReader = XmlReader.Create(stream);
             var sdt = XElement.Load(sdtReader);
 
             var mainXDoc = doc.MainDocumentPart.GetXDocument(out var namespaceManager);
@@ -126,7 +127,7 @@ namespace Clippit.Word
             var settingsXDoc = doc.MainDocumentPart.DocumentSettingsPart.GetXDocument();
             var updateFields = settingsXDoc.Descendants(W.updateFields).FirstOrDefault();
             if (updateFields != null)
-                updateFields.Attribute(W.val).Value = "true";
+                updateFields.SetAttributeValue(W.val, "true");
             else
             {
                 updateFields = new XElement(W.updateFields,
@@ -184,7 +185,8 @@ namespace Clippit.Word
 </w:p>";
             var mainXDoc = doc.MainDocumentPart.GetXDocument();
 
-            var paragraphReader = XmlReader.Create(new StringReader(string.Format(xmlString, rightTabPos, switches)));
+            using var stream = new StringReader(string.Format(xmlString, rightTabPos, switches));
+            using var paragraphReader = XmlReader.Create(stream);
             var paragraph = XElement.Load(paragraphReader);
             var nameTable = paragraphReader.NameTable;
             var namespaceManager = new XmlNamespaceManager(nameTable);
@@ -267,7 +269,8 @@ namespace Clippit.Word
 
             var mainXDoc = doc.MainDocumentPart.GetXDocument();
 
-            var paragraphReader = XmlReader.Create(new StringReader(string.Format(xmlString, rightTabPos, switches)));
+            using var stream = new StringReader(string.Format(xmlString, rightTabPos, switches));
+            using var paragraphReader = XmlReader.Create(stream);
             var paragraph = XElement.Load(paragraphReader);
             var nameTable = paragraphReader.NameTable;
             var namespaceManager = new XmlNamespaceManager(nameTable);
@@ -282,7 +285,7 @@ namespace Clippit.Word
             var settingsXDoc = doc.MainDocumentPart.DocumentSettingsPart.GetXDocument();
             var updateFields = settingsXDoc.Descendants(W.updateFields).FirstOrDefault();
             if (updateFields != null)
-                updateFields.Attribute(W.val).Value = "true";
+                updateFields.SetAttributeValue(W.val, "true");
             else
             {
                 updateFields = new XElement(W.updateFields,

@@ -39,7 +39,7 @@ namespace Clippit.Core
     /// <seealso cref="StronglyTypedBlock" />
     /// <seealso cref="PowerToolsBlockExtensions.BeginPowerToolsBlock"/>
     /// <seealso cref="PowerToolsBlockExtensions.EndPowerToolsBlock"/>
-    public class PowerToolsBlock : IDisposable
+    public sealed class PowerToolsBlock : IDisposable
     {
         private OpenXmlPackage _package;
 

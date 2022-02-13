@@ -517,8 +517,7 @@ namespace Clippit.Excel
          public void Rewind() { pos_ = 0; }
          public void SetErrorDestination(TextWriter errOut)
          {
-             errOut_ = errOut == null ? new StreamWriter(System.Console.OpenStandardError())
-                 : errOut;
+             errOut_ = errOut ?? new StreamWriter(Console.OpenStandardError());
          }
         #endregion Reinitialization, TextWriter access,Tree Access
          #region Tree root access, Tree Node generation/display
