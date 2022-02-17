@@ -280,8 +280,11 @@ namespace Clippit.PowerPoint
             
             _isDocumentInitialized = true;
         }
+
+        public void AppendSlides(PresentationDocument sourceDocument, int start, int count) =>
+            AppendSlides(sourceDocument, start, count, false);
         
-        public void AppendSlides(PresentationDocument sourceDocument, int start, int count)
+        internal void AppendSlides(PresentationDocument sourceDocument, int start, int count, bool unHideSlides)
         {
             EnsureDocumentInitialized(sourceDocument);
             
@@ -304,8 +307,10 @@ namespace Clippit.PowerPoint
                 // cached annotation should be removed because it will be used in a new slide
                 slide.RemoveAnnotations<XDocument>();
 
-                // If we extract one slide, this slide should be visible
-                slideDocument.Root?.Attribute(NoNamespace.show)?.Remove();
+                if (unHideSlides)
+                {
+                    slideDocument.Root?.Attribute(NoNamespace.show)?.Remove();
+                }
 
                 SlideLayoutData.ScaleShapes(slideDocument, scaleFactor);
                 newSlide.PutXDocument(slideDocument);
