@@ -115,7 +115,7 @@ namespace Clippit.PowerPoint
             using var fluentBuilder = new FluentPresentationBuilder(output);
             try
             {
-                fluentBuilder.AppendSlides(srcDoc, slideNumber, 1);
+                fluentBuilder.AppendSlides(srcDoc, slideNumber, 1, true);
             }
             catch (PresentationBuilderInternalException dbie)
             {

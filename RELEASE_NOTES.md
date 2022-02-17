@@ -1,3 +1,6 @@
+#### 1.9.2 - Feb 17, 2022
+- Fix: Don't show hidden slides after PresentationBuilder.BuildPresentation
+
 #### 1.9.1 - Feb 9, 2022
 - Fixed incorrect usage of Stream API
 
