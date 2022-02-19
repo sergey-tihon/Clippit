@@ -4,10 +4,11 @@ using System.Linq;
 using Clippit.PowerPoint;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Clippit.Tests.PowerPoint
 {
-    public class PresentationBuilderSlidePublishingTests
+    public class PresentationBuilderSlidePublishingTests : TestsBase
     {
         public static string SourceDirectory = "../../../../TestFiles/PublishSlides/";
         public static string TargetDirectory = "../../../../TestFiles/PublishSlides/output";
@@ -18,7 +19,7 @@ namespace Clippit.Tests.PowerPoint
             return files.OrderBy(x=>x).Select(path => new[] {path});
         }
 
-        public PresentationBuilderSlidePublishingTests()
+        public PresentationBuilderSlidePublishingTests(ITestOutputHelper log): base(log)
         {
             if (!Directory.Exists(TargetDirectory))
                 Directory.CreateDirectory(TargetDirectory);
@@ -70,6 +71,29 @@ namespace Clippit.Tests.PowerPoint
             slide.SaveAs(Path.Combine(TargetDirectory, Path.GetFileName(slide.FileName)));
         }
 
+        [Fact]
+        public void ExtractSlideWithExtendedChart()
+        {
+            var sourcePath = Path.Combine(SourceDirectory, "SlideWithExtendedChart.pptx");
+            using var srcStream = File.Open(sourcePath, FileMode.Open);
+            var openSettings = new OpenSettings {AutoSave = false};
+            using var srcDoc = OpenXmlExtensions.OpenPresentation(srcStream, false, openSettings);
+            
+            var srcEmbeddingCount = srcDoc.PresentationPart.SlideParts
+                .SelectMany(slide => slide.ExtendedChartParts)
+                .Count();
+            Assert.Equal(1, srcEmbeddingCount);
+            
+            var slide = PresentationBuilder.PublishSlides(srcDoc, Path.GetFileName(sourcePath)).First();
+            using var streamDoc = new OpenXmlMemoryStreamDocument(slide);
+            using var slideDoc = streamDoc.GetPresentationDocument(openSettings);
+
+            var slideEmbeddingCount = slideDoc.PresentationPart.SlideParts
+                 .Select(slide => slide.ExtendedChartParts)
+                 .Count();
+            Assert.Equal(srcEmbeddingCount, slideEmbeddingCount);
+        }
+        
         [Theory]
         [InlineData("BRK3066.pptx")]
         public void ReassemblePresentation(string fileName)
@@ -140,6 +164,25 @@ namespace Clippit.Tests.PowerPoint
 
             var baseSize = presentation.DocumentByteArray.Length;
             Assert.InRange(newDocument.DocumentByteArray.Length, 0.5 * baseSize, 1.1 * baseSize);
+        }
+
+        [Fact]
+        public void MergeAllPowerPoints()
+        {
+            var root = SourceDirectory;
+            var files = Directory
+                .GetFiles(root, "*.pptx", SearchOption.TopDirectoryOnly)
+                .Select(OpenXmlPowerToolsDocument.FromFileName)
+                .Cast<PmlDocument>()
+                .ToList();
+
+            var sources = files
+                .Select(x => new SlideSource(x, 0, 1000, true))
+                .ToList();
+
+            var result = PresentationBuilder.BuildPresentation(sources);
+            var resultFile = Path.Combine(TempDir, "MergedDeck.pptx");
+            result.SaveAs(resultFile);
         }
     }
 }

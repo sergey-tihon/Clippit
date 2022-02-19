@@ -1131,6 +1131,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     { C.chart,            new [] { R.id }},
                     { C.externalData,     new [] { R.id }},
                     { C.userShapes,       new [] { R.id }},
+                    { Cx.chart,           new [] { R.id }},
+                    { Cx.externalData,    new [] { R.id }},
                     { DGM.relIds,         new [] { R.cs, R.dm, R.lo, R.qs }},
                     { O.OLEObject,        new [] { R.id }},
                     { VML.fill,           new [] { R.id }},
@@ -3430,6 +3432,35 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 CopyChartObjects(oldPart, newPart);
                 CopyRelatedPartsForContentParts(oldPart, newPart, new[] { newChart.Root }, images);
             }
+            
+            foreach (var chartReference in newContent.DescendantsAndSelf(Cx.chart))
+            {
+                var relId = (string)chartReference.Attribute(R.id);
+                if (string.IsNullOrEmpty(relId))
+                    continue;
+                var ipp2 = newContentPart.Parts.FirstOrDefault(z => z.RelationshipId == relId);
+                if (ipp2 != null)
+                {
+                    var tempPart = ipp2.OpenXmlPart;
+                    continue;
+                }
+
+                var tempEr2 = newContentPart.ExternalRelationships.FirstOrDefault(z => z.Id == relId);
+                if (tempEr2 != null)
+                    continue;
+
+                var ipp3 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
+                if (ipp3 == null)
+                    continue;
+                var oldPart = (ExtendedChartPart)ipp3.OpenXmlPart;
+                var oldChart = oldPart.GetXDocument();
+                var newPart = newContentPart.AddNewPart<ExtendedChartPart>();
+                var newChart = newPart.GetXDocument();
+                newChart.Add(oldChart.Root);
+                chartReference.Attribute(R.id).Value = newContentPart.GetIdOfPart(newPart);
+                CopyExtendedChartObjects(oldPart, newPart);
+                CopyRelatedPartsForContentParts(oldPart, newPart, new[] { newChart.Root }, images);
+            }
 
             foreach (var userShape in newContent.DescendantsAndSelf(C.userShapes))
             {
@@ -3510,39 +3541,102 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 if (ipp1 != null)
                 {
                     var oldRelatedPart = ipp1.OpenXmlPart;
-                    if (oldRelatedPart is EmbeddedPackagePart)
+                    switch (oldRelatedPart)
                     {
-                        var oldPart = (EmbeddedPackagePart)ipp1.OpenXmlPart;
-                        var newPart = newChart.AddEmbeddedPackagePart(oldPart.ContentType);
-                        using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
-                        using (var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
-                        {
-                            oldObject.CopyTo(newObject);
-                        }
-                        dataReference.SetAttributeValue(R.id, newChart.GetIdOfPart(newPart));
-                    }
-                    else if (oldRelatedPart is EmbeddedObjectPart)
-                    {
-                        var oldPart = (EmbeddedObjectPart)ipp1.OpenXmlPart;
-                        var relType = oldRelatedPart.RelationshipType;
-                        var conType = oldRelatedPart.ContentType;
-                        var id = Relationships.GetNewRelationshipId();
-                        var newPart = newChart.AddExtendedPart(relType, conType, ".bin", id);
-                        using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
-                        using (var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
-                        {
-                            oldObject.CopyTo(newObject);
-                        }
-                        dataReference.SetAttributeValue(R.id, newChart.GetIdOfPart(newPart));
+                        case EmbeddedPackagePart:
+                            {
+                                var oldPart = (EmbeddedPackagePart)ipp1.OpenXmlPart;
+                                var newPart = newChart.AddEmbeddedPackagePart(oldPart.ContentType);
+                                using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
+                                using (var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
+                                {
+                                    oldObject.CopyTo(newObject);
+                                }
+                                dataReference.SetAttributeValue(R.id, newChart.GetIdOfPart(newPart));
+                                break;
+                            }
+                        case EmbeddedObjectPart:
+                            {
+                                var oldPart = (EmbeddedObjectPart)ipp1.OpenXmlPart;
+                                var relType = oldRelatedPart.RelationshipType;
+                                var conType = oldRelatedPart.ContentType;
+                                var g = new Guid();
+                                var id = $"R{g:N}".Substring(0, 8);
+                                var newPart = newChart.AddExtendedPart(relType, conType, ".bin", id);
+                                using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
+                                using (var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
+                                {
+                                    oldObject.CopyTo(newObject);
+                                }
+                                dataReference.SetAttributeValue(R.id, newChart.GetIdOfPart(newPart));
+                                break;
+                            }
                     }
                 }
                 else
                 {
                     var oldRelationship = oldChart.GetExternalRelationship(relId);
-                    var newRid = Relationships.GetNewRelationshipId();
-                    var oldRel =
-                        oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId)
-                        ?? throw new DocumentBuilderInternalException("Internal Error 0007");
+                    var g = Guid.NewGuid();
+                    var newRid = $"R{g:N}";
+                    var oldRel = oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
+                    if (oldRel == null)
+                        throw new DocumentBuilderInternalException("Internal Error 0007");
+                    newChart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
+                    dataReference.SetAttributeValue(R.id, newRid);
+                }
+            }
+        }
+        
+        private static void CopyExtendedChartObjects(ExtendedChartPart oldChart, ExtendedChartPart newChart)
+        {
+            foreach (var dataReference in newChart.GetXDocument().Descendants(Cx.externalData))
+            {
+                var relId = dataReference.Attribute(R.id).Value;
+
+                var ipp1 = oldChart.Parts.FirstOrDefault(z => z.RelationshipId == relId);
+                if (ipp1 != null)
+                {
+                    var oldRelatedPart = ipp1.OpenXmlPart;
+                    switch (oldRelatedPart)
+                    {
+                        case EmbeddedPackagePart:
+                            {
+                                var oldPart = (EmbeddedPackagePart)ipp1.OpenXmlPart;
+                                var newPart = newChart.AddEmbeddedPackagePart(oldPart.ContentType);
+                                using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
+                                using (var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
+                                {
+                                    oldObject.CopyTo(newObject);
+                                }
+                                dataReference.SetAttributeValue(R.id, newChart.GetIdOfPart(newPart));
+                                break;
+                            }
+                        case EmbeddedObjectPart:
+                            {
+                                var oldPart = (EmbeddedObjectPart)ipp1.OpenXmlPart;
+                                var relType = oldRelatedPart.RelationshipType;
+                                var conType = oldRelatedPart.ContentType;
+                                var g = new Guid();
+                                var id = $"R{g:N}".Substring(0, 8);
+                                var newPart = newChart.AddExtendedPart(relType, conType, ".bin", id);
+                                using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
+                                using (var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
+                                {
+                                    oldObject.CopyTo(newObject);
+                                }
+                                dataReference.SetAttributeValue(R.id, newChart.GetIdOfPart(newPart));
+                                break;
+                            }
+                    }
+                }
+                else
+                {
+                    var oldRelationship = oldChart.GetExternalRelationship(relId);
+                    var g = Guid.NewGuid();
+                    var newRid = $"R{g:N}";
+                    var oldRel = oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
+                    if (oldRel == null)
+                        throw new DocumentBuilderInternalException("Internal Error 0007");
                     newChart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     dataReference.SetAttributeValue(R.id, newRid);
                 }

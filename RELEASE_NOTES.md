@@ -4,6 +4,9 @@
 - Removed `libgdiplus` dependency
 - Drop old `WmlComparer`
 
+#### 1.10.0 - Feb 19, 2022
+- Added support of ExtendedChartPart (http://schemas.microsoft.com/office/drawing/2014/chartex) in PresentationBuilder and DocumentBuilder.
+
 #### 1.9.2 - Feb 17, 2022
 - Fix: Don't show hidden slides after PresentationBuilder.BuildPresentation
 
