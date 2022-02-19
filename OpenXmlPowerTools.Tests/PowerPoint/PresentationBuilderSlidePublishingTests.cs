@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Clippit.PowerPoint;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
 
@@ -71,6 +72,29 @@ namespace Clippit.Tests.PowerPoint
             slide.SaveAs(Path.Combine(TargetDirectory, Path.GetFileName(slide.FileName)));
         }
 
+        [Fact]
+        public void ExtractSlideWithExtendedChart()
+        {
+            var sourcePath = Path.Combine(SourceDirectory, "SlideWithExtendedChart.pptx");
+            using var srcStream = File.Open(sourcePath, FileMode.Open);
+            var openSettings = new OpenSettings {AutoSave = false};
+            using var srcDoc = OpenXmlExtensions.OpenPresentation(srcStream, false, openSettings);
+            
+            var srcEmbeddingCount = srcDoc.PresentationPart.SlideParts
+                .SelectMany(slide => slide.ExtendedChartParts)
+                .Count();
+            Assert.Equal(1, srcEmbeddingCount);
+            
+            var slide = PresentationBuilder.PublishSlides(srcDoc, Path.GetFileName(sourcePath)).First();
+            using var streamDoc = new OpenXmlMemoryStreamDocument(slide);
+            using var slideDoc = streamDoc.GetPresentationDocument(openSettings);
+
+            var slideEmbeddingCount = slideDoc.PresentationPart.SlideParts
+                 .Select(slide => slide.ExtendedChartParts)
+                 .Count();
+            Assert.Equal(srcEmbeddingCount, slideEmbeddingCount);
+        }
+        
         [Theory]
         [InlineData("BRK3066.pptx")]
         public void ReassemblePresentation(string fileName)

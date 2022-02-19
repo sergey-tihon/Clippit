@@ -6998,6 +6998,8 @@ namespace Clippit.Previous
             C.chart,
             C.externalData,
             C.userShapes,
+            Cx.chart,
+            Cx.externalData,
             DGM.relIds,
             O.OLEObject,
             VML.fill,
@@ -7397,4 +7399,3 @@ namespace Clippit.Previous
         }
     }
 }
-

@@ -659,6 +659,25 @@ namespace Clippit.PowerPoint
                     CopyRelatedPartsForContentParts(oldPart, newPart, new[] { newChart.Root });
                 }
             }
+            
+            foreach (var chartReference in newContent.DescendantsAndSelf(Cx.chart))
+            {
+                var relId = (string)chartReference.Attribute(R.id);
+                if (newContentPart.HasRelationship(relId))
+                    continue;
+
+                var oldPartIdPair2 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
+                if (oldPartIdPair2?.OpenXmlPart is ExtendedChartPart oldPart)
+                {
+                    var oldChart = oldPart.GetXDocument();
+                    var newPart = newContentPart.AddNewPart<ExtendedChartPart>();
+                    var newChart = newPart.GetXDocument();
+                    newChart.Add(oldChart.Root);
+                    chartReference.Attribute(R.id).Value = newContentPart.GetIdOfPart(newPart);
+                    PBT.CopyExtendedChartObjects(oldPart, newPart);
+                    CopyRelatedPartsForContentParts(oldPart, newPart, new[] { newChart.Root });
+                }
+            }
 
             foreach (var userShape in newContent.DescendantsAndSelf(C.userShapes))
             {

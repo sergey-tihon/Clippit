@@ -2749,6 +2749,15 @@ listSeparator
         public static readonly XName yMode = c + "yMode";
         public static readonly XName yVal = c + "yVal";
     }
+    
+    public static class Cx
+    {
+        public static readonly XNamespace c =
+            "http://schemas.microsoft.com/office/drawing/2014/chartex";
+        public static readonly XName chart = c + "chart";
+        public static readonly XName externalData = c + "externalData";
+    }
+
 
     public static class CDR
     {

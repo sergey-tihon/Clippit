@@ -80,6 +80,8 @@ namespace Clippit.PowerPoint
                 {C.chart, new[] {R.id}},
                 {C.externalData, new[] {R.id}},
                 {C.userShapes, new[] {R.id}},
+                {Cx.chart, new[] {R.id}},
+                {Cx.externalData, new[] {R.id}},
                 {DGM.relIds, new[] {R.cs, R.dm, R.lo, R.qs}},
                 {A14.imgLayer, new[] {R.embed}},
                 {P14.media, new[] {R.embed, R.link}},
@@ -100,6 +102,95 @@ namespace Clippit.PowerPoint
         internal static void CopyChartObjects(ChartPart oldChart, ChartPart newChart)
         {
             foreach (var dataReference in newChart.GetXDocument().Descendants(C.externalData))
+            {
+                var relId = dataReference.Attribute(R.id).Value;
+
+                if (oldChart.Parts.FirstOrDefault(p => p.RelationshipId == relId) is {} oldPartIdPair)
+                {
+                    switch (oldPartIdPair.OpenXmlPart)
+                    {
+                        case EmbeddedPackagePart oldPart:
+                        {
+                            var newPart = newChart.AddEmbeddedPackagePart(oldPart.ContentType);
+                            using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
+                            {
+                                using var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);
+                                oldObject.CopyTo(newObject);
+                            }
+                            dataReference.Attribute(R.id).Set(newChart.GetIdOfPart(newPart));
+                            continue;
+                        }
+                        case EmbeddedObjectPart oldEmbeddedObjectPart:
+                        {
+                            var newPart = newChart.AddEmbeddedPackagePart(oldEmbeddedObjectPart.ContentType);
+                            using (var oldObject = oldEmbeddedObjectPart.GetStream(FileMode.Open, FileAccess.Read))
+                            {
+                                using var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);
+                                oldObject.CopyTo(newObject);
+                            }
+
+                            var rId = newChart.GetIdOfPart(newPart);
+                            dataReference.Attribute(R.id).Set(rId);
+
+                            // following is a hack to fix the package because the Open XML SDK does not let us create
+                            // a relationship from a chart with the oleObject relationship type.
+
+                            var pkg = newChart.OpenXmlPackage.Package;
+                            var fromPart = pkg.GetParts().FirstOrDefault(p => p.Uri == newChart.Uri);
+                            var rel = fromPart?.GetRelationships().FirstOrDefault(p => p.Id == rId);
+                            var targetUri = rel?.TargetUri;
+
+                            fromPart?.DeleteRelationship(rId);
+                            fromPart?.CreateRelationship(targetUri, System.IO.Packaging.TargetMode.Internal,
+                                "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject", rId);
+
+                            continue;
+                        }
+                    }
+                }
+                else
+                {
+                    //ExternalRelationship oldRelationship = oldChart.GetExternalRelationship(relId);
+                    var oldRel = oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
+                    if (oldRel is null)
+                        throw new PresentationBuilderInternalException("Internal Error 0007");
+                    
+                    var newRid = NewRelationshipId();
+                    newChart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
+                    dataReference.Attribute(R.id).Set(newRid);
+                }
+            }
+
+            foreach (var idPartPair in oldChart.Parts)
+            {
+                switch (idPartPair.OpenXmlPart)
+                {
+                    case ThemeOverridePart oldThemeOverridePart:
+                        CopyPart(oldThemeOverridePart);
+                        break;
+                    case ChartColorStylePart oldChartColorStylePart:
+                        CopyPart(oldChartColorStylePart);
+                        break;
+                    case ChartStylePart oldChartColorStylePart:
+                        CopyPart(oldChartColorStylePart);
+                        break;
+                }
+            }
+
+            void CopyPart<T>(T oldPart) where T : OpenXmlPart
+            {
+                var newRid = NewRelationshipId();
+                var newPart = newChart.AddNewPart<T>(oldPart.ContentType, newRid);
+                
+                using var oldStream = oldPart.GetStream(FileMode.Open, FileAccess.Read);
+                using var newStream = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);
+                oldStream.CopyTo(newStream);
+            }
+        }
+        
+        internal static void CopyExtendedChartObjects(ExtendedChartPart oldChart, ExtendedChartPart newChart)
+        {
+            foreach (var dataReference in newChart.GetXDocument().Descendants(Cx.externalData))
             {
                 var relId = dataReference.Attribute(R.id).Value;
 
@@ -211,8 +302,8 @@ namespace Clippit.PowerPoint
         internal static void AddRelationships(OpenXmlPart oldPart, OpenXmlPart newPart, IEnumerable<XElement> newContent)
         {
             var relevantElements = newContent.DescendantsAndSelf()
-                .Where(d => PresentationBuilderTools.s_relationshipMarkup.ContainsKey(d.Name) &&
-                            d.Attributes().Any(a => PresentationBuilderTools.s_relationshipMarkup[d.Name].Contains(a.Name)))
+                .Where(d => s_relationshipMarkup.ContainsKey(d.Name) &&
+                            d.Attributes().Any(a => s_relationshipMarkup[d.Name].Contains(a.Name)))
                 .ToList();
             foreach (var e in relevantElements)
             {
