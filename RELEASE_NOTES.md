@@ -1,3 +1,6 @@
+#### 1.10.1 - Mar 16, 2022
+- DocumentFormat.OpenXml (2.16.0)
+
 #### 1.10.0 - Feb 19, 2022
 - Added support of ExtendedChartPart (http://schemas.microsoft.com/office/drawing/2014/chartex) in PresentationBuilder and DocumentBuilder.
 
