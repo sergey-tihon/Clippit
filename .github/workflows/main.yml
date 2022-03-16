@@ -31,6 +31,11 @@ jobs:
       run: dotnet paket restore
     - name: Build and Test
       run: dotnet fake run build.fsx
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v2
+      with: 
+        name: bin
+        path: bin/*.nupkg
 
   generate-docs:
     runs-on: windows-latest

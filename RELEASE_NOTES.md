@@ -1,8 +1,12 @@
-#### 2.0.0-beta1 - Feb 12, 2022
+#### 2.0.0-beta2 - Mar 16, 2022
 - Migration to .NET 6.0
 - `System.Drawing.Common` replaced by `SixLabors.ImageSharp.Drawing`
 - Removed `libgdiplus` dependency
 - Drop old `WmlComparer`
+
+#### 1.10.2 - Mar 16, 2022
+- DocumentFormat.OpenXml (2.16.0)
+- Lock `System.Drawing.Common` version to `v5`
 
 #### 1.10.0 - Feb 19, 2022
 - Added support of ExtendedChartPart (http://schemas.microsoft.com/office/drawing/2014/chartex) in PresentationBuilder and DocumentBuilder.
