@@ -4,7 +4,7 @@ storage: none
 framework: net5.0, netstandard2.0
 
 nuget DocumentFormat.OpenXml
-nuget System.Drawing.Common 5.0.2
+nuget System.Drawing.Common ~> 5
 
 nuget Microsoft.NETFramework.ReferenceAssemblies
 nuget Microsoft.NET.Test.Sdk
