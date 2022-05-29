@@ -1,8 +1,11 @@
-#### 2.0.0-beta2 - Mar 16, 2022
+#### 2.0.0-beta3 - May 29, 2022
 - Migration to .NET 6.0
 - `System.Drawing.Common` replaced by `SixLabors.ImageSharp.Drawing`
 - Removed `libgdiplus` dependency
 - Drop old `WmlComparer`
+
+#### 1.11.0 - May 29, 2022
+- PublishSlides: reduced memory consumption [#53](https://github.com/sergey-tihon/Clippit/pull/53)
 
 #### 1.10.2 - Mar 16, 2022
 - DocumentFormat.OpenXml (2.16.0)

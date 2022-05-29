@@ -18,8 +18,7 @@ namespace Clippit.PowerPoint
         private SlideSize _slideSize;
         private bool _isDocumentInitialized;
         
-        private readonly List<ImageData> _images = new();
-        private readonly List<MediaData> _mediaList = new();
+        private readonly List<ContentData> _mediaCache = new();
         private readonly List<SlideMasterData> _slideMasterList = new();
 
         internal FluentPresentationBuilder(PresentationDocument presentationDocument)
@@ -885,7 +884,8 @@ namespace Clippit.PowerPoint
                     var id = newContentPart.GetIdOfPart(newPart);
                     temp.AddContentPartRelTypeResourceIdTupple(newContentPart, newPart.RelationshipType, id);
 
-                    temp.WriteImage(newPart);
+                    using (var stream = oldPart.GetStream())
+                        newPart.FeedData(stream);
                     imageReference.SetAttributeValue(attributeName, id);
                 }
                 else
@@ -1064,27 +1064,25 @@ namespace Clippit.PowerPoint
         // General function for handling images that tries to use an existing image if they are the same
         private ImageData ManageImageCopy(ImagePart oldImage)
         {
-            var oldImageData = new ImageData(oldImage);
-            foreach (var item in _images)
-            {
-                if (item.Compare(oldImageData))
-                    return item;
-            }
-            _images.Add(oldImageData);
-            return oldImageData;
+            return GetOrAddCachedMedia(new ImageData(oldImage));
         }
 
         // General function for handling media that tries to use an existing media item if they are the same
         private MediaData ManageMediaCopy(DataPart oldMedia)
         {
-            var oldMediaData = new MediaData(oldMedia);
-            foreach (var item in _mediaList)
+            return GetOrAddCachedMedia(new MediaData(oldMedia));
+        }
+        
+        private T GetOrAddCachedMedia<T>(T contentData) where T : ContentData
+        {
+            var duplicateItem = _mediaCache.FirstOrDefault(x => x.Compare(contentData));
+            if (duplicateItem != null)
             {
-                if (item.Compare(oldMediaData))
-                    return item;
+                return (T)duplicateItem;
             }
-            _mediaList.Add(oldMediaData);
-            return oldMediaData;
+
+            _mediaCache.Add(contentData);
+            return contentData;
         }
 
         private ThemePart CopyThemePart(SlideMasterPart slideMasterPart, ThemePart oldThemePart, double scaleFactor)
