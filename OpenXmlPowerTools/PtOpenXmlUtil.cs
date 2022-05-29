@@ -28,6 +28,12 @@ namespace Clippit
             stream.CopyTo(ms);
             return ms.ToArray();
         }
+
+        public static byte[] ComputeHash(this Stream stream)
+        {
+            using var hashAlgo = System.Security.Cryptography.SHA256.Create();
+            return hashAlgo.ComputeHash(stream);
+        }
     }
 
     public static class PtOpenXmlExtensions
@@ -1816,101 +1822,52 @@ listSeparator
         public string RelationshipId { get; set; }
     }
 
-    // This class is used to prevent duplication of images
-    class ImageData
+    abstract class ContentData
     {
-        private string ContentType { get; set; }
-        private byte[] Image { get; set; }
+        protected string ContentType { get; set; }
+        protected byte[] Hash { get; set; }
+        
+        public List<ContentPartRelTypeIdTuple> ContentPartRelTypeIdList = new();
+        
+        public void AddContentPartRelTypeResourceIdTupple(OpenXmlPart contentPart, string relationshipType, string relationshipId)
+        {
+            ContentPartRelTypeIdList.Add(new ContentPartRelTypeIdTuple
+            {
+                ContentPart = contentPart,
+                RelationshipType = relationshipType,
+                RelationshipId = relationshipId,
+            });
+        }
+
+        public bool Compare(ContentData arg)
+        {
+            return ContentType == arg.ContentType && Hash.SequenceEqual(arg.Hash);
+        }
+    }
+
+    // This class is used to prevent duplication of images
+    class ImageData : ContentData
+    {
         public OpenXmlPart ImagePart { get; set; }
-        public List<ContentPartRelTypeIdTuple> ContentPartRelTypeIdList = new List<ContentPartRelTypeIdTuple>();
 
         public ImageData(ImagePart part)
         {
             ContentType = part.ContentType;
-            using (Stream s = part.GetStream(FileMode.Open, FileAccess.Read))
-                Image = s.ReadToArray();
-        }
-
-        public void AddContentPartRelTypeResourceIdTupple(OpenXmlPart contentPart, string relationshipType, string relationshipId)
-        {
-            ContentPartRelTypeIdList.Add(
-                new ContentPartRelTypeIdTuple()
-                {
-                    ContentPart = contentPart,
-                    RelationshipType = relationshipType,
-                    RelationshipId = relationshipId,
-                });
-        }
-
-        public void WriteImage(ImagePart part)
-        {
-            using (Stream s = part.GetStream(FileMode.Create, FileAccess.ReadWrite))
-                s.Write(Image, 0, Image.GetUpperBound(0) + 1);
-        }
-
-        public bool Compare(ImageData arg)
-        {
-            if (ContentType != arg.ContentType)
-                return false;
-            if (Image.GetLongLength(0) != arg.Image.GetLongLength(0))
-                return false;
-            // Compare the arrays byte by byte
-            long length = Image.GetLongLength(0);
-            byte[] image1 = Image;
-            byte[] image2 = arg.Image;
-            for (long n = 0; n < length; n++)
-                if (image1[n] != image2[n])
-                    return false;
-            return true;
+            using var s = part.GetStream();
+            Hash = s.ComputeHash();
         }
     }
 
     // This class is used to prevent duplication of media
-    class MediaData
+    class MediaData : ContentData
     {
-        private string ContentType { get; set; }
-        private byte[] Media { get; set; }
         public DataPart DataPart { get; set; }
-        public List<ContentPartRelTypeIdTuple> ContentPartRelTypeIdList = new List<ContentPartRelTypeIdTuple>();
 
         public MediaData(DataPart part)
         {
             ContentType = part.ContentType;
-            using (Stream s = part.GetStream(FileMode.Open, FileAccess.Read))
-                Media = s.ReadToArray();
-        }
-
-        public void AddContentPartRelTypeResourceIdTupple(OpenXmlPart contentPart, string relationshipType, string relationshipId)
-        {
-            ContentPartRelTypeIdList.Add(
-                new ContentPartRelTypeIdTuple()
-                {
-                    ContentPart = contentPart,
-                    RelationshipType = relationshipType,
-                    RelationshipId = relationshipId,
-                });
-        }
-
-        public void WriteMedia(DataPart part)
-        {
-            using (Stream s = part.GetStream(FileMode.Create, FileAccess.ReadWrite))
-                s.Write(Media, 0, Media.GetUpperBound(0) + 1);
-        }
-
-        public bool Compare(MediaData arg)
-        {
-            if (ContentType != arg.ContentType)
-                return false;
-            if (Media.GetLongLength(0) != arg.Media.GetLongLength(0))
-                return false;
-            // Compare the arrays byte by byte
-            long length = Media.GetLongLength(0);
-            byte[] media1 = Media;
-            byte[] media2 = arg.Media;
-            for (long n = 0; n < length; n++)
-                if (media1[n] != media2[n])
-                    return false;
-            return true;
+            using var s = part.GetStream();
+            Hash = s.ComputeHash();
         }
     }
 
