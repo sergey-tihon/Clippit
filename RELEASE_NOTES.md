@@ -1,3 +1,6 @@
+#### 1.11.0 - May 29, 2022
+- PublishSlides: reduced memory consumption [#53](https://github.com/sergey-tihon/Clippit/pull/53)
+
 #### 1.10.2 - Mar 16, 2022
 - DocumentFormat.OpenXml (2.16.0)
 - Lock `System.Drawing.Common` version to `v5`
