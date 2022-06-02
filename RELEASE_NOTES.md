@@ -1,8 +1,12 @@
-#### 2.0.0-beta3 - May 29, 2022
+#### 2.0.0-beta4 - Jun 2, 2022
 - Migration to .NET 6.0
 - `System.Drawing.Common` replaced by `SixLabors.ImageSharp.Drawing`
 - Removed `libgdiplus` dependency
 - Drop old `WmlComparer`
+
+#### 1.12.0 - Jun 2, 2022
+- Static Cell builder class for simpler and safer Excel generation
+- Auto new modified date for decks composed with PresentationBuilder
 
 #### 1.11.0 - May 29, 2022
 - PublishSlides: reduced memory consumption [#53](https://github.com/sergey-tihon/Clippit/pull/53)
