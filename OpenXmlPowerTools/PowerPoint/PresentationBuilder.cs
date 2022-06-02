@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -72,6 +73,7 @@ namespace Clippit.PowerPoint
             using (var output = streamDoc.GetPresentationDocument(new OpenSettings { AutoSave = false}))
             {
                 BuildPresentation(sources, output);
+                output.PackageProperties.Modified = DateTime.Now;
             }
             return streamDoc.GetModifiedPmlDocument();
         }

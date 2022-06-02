@@ -1,3 +1,7 @@
+#### 1.12.0 - Jun 2, 2022
+- Static Cell builder class for simpler and safer Excel generation
+- Auto new modified date for decks composed with PresentationBuilder
+
 #### 1.11.0 - May 29, 2022
 - PublishSlides: reduced memory consumption [#53](https://github.com/sergey-tihon/Clippit/pull/53)
 
