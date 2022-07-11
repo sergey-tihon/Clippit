@@ -1,3 +1,6 @@
+#### 1.12.1 - Jul 11, 2022
+- DocumentFormat.OpenXml (2.17.1)
+
 #### 1.12.0 - Jun 2, 2022
 - Static Cell builder class for simpler and safer Excel generation
 - Auto new modified date for decks composed with PresentationBuilder
