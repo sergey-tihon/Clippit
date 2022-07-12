@@ -31,6 +31,11 @@ namespace Clippit
 
         public static byte[] ComputeHash(this Stream stream)
         {
+            // HACK: disable Crc32 validation on zip entries to support corrupted content
+            // SetLength disables validation on a ProgressiveCrcCalculatingStream (NetFramework)
+            // see https://github.com/sergey-tihon/Clippit/issues/55
+            if (stream.CanSeek) stream.SetLength(stream.Length);
+
             using var hashAlgo = System.Security.Cryptography.SHA256.Create();
             return hashAlgo.ComputeHash(stream);
         }
