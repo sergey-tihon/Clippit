@@ -1,3 +1,6 @@
+#### 1.12.2 - Jul 13, 2022
+- fix: PtOpenXmlUtil: process corrupted OpenXmlPart items [#56](https://github.com/sergey-tihon/Clippit/pull/56)
+
 #### 1.12.1 - Jul 11, 2022
 - DocumentFormat.OpenXml (2.17.1)
 
