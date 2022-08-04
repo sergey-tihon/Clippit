@@ -1,4 +1,4 @@
-#### 2.0.0-beta5 - Jun 11, 2022
+#### 2.0.0-beta6 - Aug 4, 2022
 - Migration to .NET 6.0
 - `System.Drawing.Common` replaced by `SixLabors.ImageSharp.Drawing`
 - Removed `libgdiplus` dependency

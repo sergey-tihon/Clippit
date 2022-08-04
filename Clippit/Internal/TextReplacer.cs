@@ -11,7 +11,7 @@ using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Internal
 {
-    internal class TextReplacer
+    public class TextReplacer
     {
         private class MatchSemaphore
         {
