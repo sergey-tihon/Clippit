@@ -213,6 +213,14 @@ namespace Clippit.Tests.Word
             DA101(name, data, err);
             var assembledDocx = new FileInfo(Path.Combine(TempDir, name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
             var afterAssembling = new WmlDocument(assembledDocx.FullName);
+
+            var descendants = afterAssembling.MainDocumentPart.Value;
+
+            if (descendants.Contains(">"))
+            {
+                Assert.Fail("Found > on text");
+            }
+
             // compare result in file
         }
 
