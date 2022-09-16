@@ -216,10 +216,9 @@ namespace Clippit.Tests.Word
 
             var descendants = afterAssembling.MainDocumentPart.Value;
 
-            if (descendants.Contains(">"))
-            {
-                Assert.Fail("Found > on text");
-            }
+
+            Assert.False(descendants.Contains(">"), "Found > on text");
+
 
             // compare result in file
         }
