@@ -224,12 +224,19 @@ namespace Clippit.Tests.Word
         }
 
         [Theory]
-        [InlineData("DA-XmlError.docx", "DA-XmlError.xml", false)]
+        [InlineData("DA-XmlError.docx", "DA-XmlError.xml", true)]
         public void DAXmlError(string name, string data, bool err)
         {
 
-            DA101(name, data, err);
-            var assembledDocx = new FileInfo(Path.Combine(TempDir, name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
+            var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
+            var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
+
+            var wmlTemplate = new WmlDocument(templateDocx.FullName);
+            var xmlData = XElement.Load(dataFile.FullName);
+
+            var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var returnedTemplateError);
+            var assembledDocx = new FileInfo(Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
+            afterAssembling.SaveAs(assembledDocx.FullName);
 
             // compare result in file
         }
