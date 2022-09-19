@@ -53,7 +53,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.400
+        dotnet-version: 5.0.408
     - name: Install local tools
       run: dotnet tool restore
     - name: Paket Restore
