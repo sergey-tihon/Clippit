@@ -224,7 +224,7 @@ namespace Clippit.Tests.Word
         }
 
         [Theory]
-        [InlineData("DA-XmlError.docx", "DA-XmlError.xml", true)]
+        [InlineData("DA-xmlerror.docx", "DA-xmlerror.xml", true)]
         public void DAXmlError(string name, string data, bool err)
         {
 
