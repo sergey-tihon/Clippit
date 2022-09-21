@@ -207,7 +207,7 @@ namespace Clippit.Tests.Word
         }
 
         [Theory]
-        [InlineData("DA-templateMaior.docx", "DA-templateMaior.xml", false)]
+        [InlineData("DA-TemplateMaior.docx", "DA-templateMaior.xml", false)]
         public void DATemplateMaior(string name, string data, bool err)
         {
             DA101(name, data, err);
