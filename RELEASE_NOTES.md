@@ -1,5 +1,6 @@
-#### 1.13.0 - Sept 18, 2022
+#### 1.13.0 - Sept 27, 2022
 - DocumentFormat.OpenXml (2.18)
+- Added Cell.Bool for Excel helpers
 
 #### 1.12.2 - Jul 13, 2022
 - fix: PtOpenXmlUtil: process corrupted OpenXmlPart items [#56](https://github.com/sergey-tihon/Clippit/pull/56)
