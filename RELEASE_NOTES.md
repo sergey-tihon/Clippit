@@ -1,3 +1,6 @@
+#### 1.13.1 - Sept 27, 2022
+- `long` overload for `Cell.Number`
+
 #### 1.13.0 - Sept 27, 2022
 - DocumentFormat.OpenXml (2.18)
 - Added Cell.Bool for Excel helpers
