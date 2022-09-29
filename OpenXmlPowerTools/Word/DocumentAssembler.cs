@@ -514,7 +514,8 @@ namespace Clippit.Word
                     OpenXmlRegex.Replace(new[] { element }, r, thisGuid, (_, match) =>
                     {
                         var matchString = match.Value.Trim();
-                        var xmlText = CleanInvalidXmlChars(matchString.Substring(2, matchString.Length - 4).Trim().Replace('“', '"').Replace('”', '"'));
+                        var xmlText = matchString.Substring(2, matchString.Length - 4).Trim()
+                            .Replace('“', '"').Replace('”', '"');
 
                         try
                         {
@@ -578,16 +579,6 @@ namespace Clippit.Word
             return new XElement(element.Name,
                 element.Attributes(),
                 element.Nodes().Select(n => TransformToMetadata(n, te)));
-        }
-        public static string CleanInvalidXmlChars(string text)
-        {
-            // From xml spec valid chars: 
-            // #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]     
-            // any Unicode character, excluding the surrogate blocks, FFFE, and FFFF. 
-            //string re = @"[^\x09\x0A\x0D\x20-\xD7FF\xE000-\xFFFD\x10000-x10FFFF]";
-            //return Regex.Replace(text, re, "");
-
-            return new string(text.Where(ch => System.Xml.XmlConvert.IsXmlChar(ch)).ToArray());
         }
 
         private static XElement TransformXmlTextToMetadata(TemplateError te, string xmlText)
