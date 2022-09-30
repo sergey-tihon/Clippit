@@ -214,6 +214,7 @@ namespace Clippit
 
                     var charsAndRuns = runsTrimmed
                         .Select(r => new { Ch = UnicodeMapper.RunToString(r), r })
+                        .Where(w => !string.IsNullOrEmpty(w.Ch))
                         .ToList();
 
                     string content = charsAndRuns.Select(t => t.Ch).StringConcatenate();
