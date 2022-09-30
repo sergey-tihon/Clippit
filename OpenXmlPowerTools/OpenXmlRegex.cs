@@ -214,10 +214,12 @@ namespace Clippit
 
                     var charsAndRuns = runsTrimmed
                         .Select(r => new { Ch = UnicodeMapper.RunToString(r), r })
-                        .Where(w => !string.IsNullOrEmpty(w.Ch))
                         .ToList();
 
-                    string content = charsAndRuns.Select(t => t.Ch).StringConcatenate();
+                    string content = charsAndRuns
+                        // each run should take some space in content to be able to be covered by regex and replaced/deleted
+                        .Select(t => string.IsNullOrEmpty(t.Ch) ? " " : t.Ch) 
+                        .StringConcatenate();
                     XElement[] alignedRuns = charsAndRuns.Select(t => t.r).ToArray();
 
                     MatchCollection matchCollection = regex.Matches(content);
