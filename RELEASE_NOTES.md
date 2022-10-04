@@ -1,8 +1,22 @@
-#### 2.0.0-beta6 - Aug 4, 2022
+#### 2.0.0-beta7 - Oct 4, 2022
 - Migration to .NET 6.0
 - `System.Drawing.Common` replaced by `SixLabors.ImageSharp.Drawing`
 - Removed `libgdiplus` dependency
 - Drop old `WmlComparer`
+- 
+#### 1.13.2 - Oct 4, 2022
+- remove caracters to prevent > at document assembler [#57](https://github.com/sergey-tihon/Clippit/pull/57)
+- Handle W.lastRenderedPageBreak in UnicodeMapper [#58](https://github.com/sergey-tihon/Clippit/pull/58)
+
+#### 1.13.1 - Sept 27, 2022
+- `long` overload for `Cell.Number`
+
+#### 1.13.0 - Sept 27, 2022
+- DocumentFormat.OpenXml (2.18)
+- Added Cell.Bool for Excel helpers
+
+#### 1.12.2 - Jul 13, 2022
+- fix: PtOpenXmlUtil: process corrupted OpenXmlPart items [#56](https://github.com/sergey-tihon/Clippit/pull/56)
 
 #### 1.12.1 - Jul 11, 2022
 - DocumentFormat.OpenXml (2.17.1)

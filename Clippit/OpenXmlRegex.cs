@@ -216,7 +216,10 @@ namespace Clippit
                         .Select(r => new { Ch = UnicodeMapper.RunToString(r), r })
                         .ToList();
 
-                    var content = charsAndRuns.Select(t => t.Ch).StringConcatenate();
+                    var content = charsAndRuns
+                        // each run should take some space in content to be able to be covered by regex and replaced/deleted
+                        .Select(t => string.IsNullOrEmpty(t.Ch) ? " " : t.Ch) 
+                        .StringConcatenate();
                     var alignedRuns = charsAndRuns.Select(t => t.r).ToArray();
 
                     var matchCollection = regex.Matches(content);

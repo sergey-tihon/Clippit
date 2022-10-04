@@ -81,6 +81,10 @@ namespace Clippit
                     return FormFeed.ToString();
             }
 
+            // no visually appearing element used by office to format the document
+            if (element.Name == W.lastRenderedPageBreak)
+                return string.Empty;
+
             if (element.Name == W.cr)
                 return CarriageReturn.ToString();
             if (element.Name == W.noBreakHyphen)

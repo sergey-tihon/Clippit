@@ -23,7 +23,7 @@ namespace Clippit.Tests.Word
         }
 
         private readonly DirectoryInfo _sourceDir;
-        
+
         [Theory]
         [InlineData("DA001-TemplateDocument.docx", "DA-Data.xml", false)]
         [InlineData("DA002-TemplateDocument.docx", "DA-DataNotHighValueCust.xml", false)]
@@ -155,7 +155,7 @@ namespace Clippit.Tests.Word
         [InlineData("DA284A-ImageSelectWithHeaderAndFooter.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA285-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
         [InlineData("DA285A-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
-        
+
         [InlineData("DA-I0038-TemplateWithMultipleXPathResults.docx", "DA-I0038-Data.xml", false)]
         public void DA101(string name, string data, bool err)
         {
@@ -206,6 +206,36 @@ namespace Clippit.Tests.Word
         }
 
         [Theory]
+        [InlineData("DA-TemplateMaior.docx", "DA-templateMaior.xml", false)]
+        public void DATemplateMaior(string name, string data, bool err)
+        {
+            DA101(name, data, err);
+            var assembledDocx = new FileInfo(Path.Combine(TempDir, name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
+            var afterAssembling = new WmlDocument(assembledDocx.FullName);
+
+            var descendants = afterAssembling.MainDocumentPart.Value;
+
+            Assert.False(descendants.Contains(">"), "Found > on text");
+        }
+
+        [Theory]
+        [InlineData("DA-xmlerror.docx", "DA-xmlerror.xml", true)]
+        public void DAXmlError(string name, string data, bool err)
+        {
+
+            var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
+            var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
+
+            var wmlTemplate = new WmlDocument(templateDocx.FullName);
+            var xmlData = XElement.Load(dataFile.FullName);
+
+            var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var returnedTemplateError);
+            var assembledDocx = new FileInfo(Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
+            afterAssembling.SaveAs(assembledDocx.FullName);
+        }
+
+
+        [Theory]
         [InlineData("DA025-TemplateDocument.docx", "DA-Data.xml", false)]
         public void DA103_UseXmlDocument(string name, string data, bool err)
         {
@@ -223,7 +253,7 @@ namespace Clippit.Tests.Word
             Validate(assembledDocx);
             Assert.Equal(err, returnedTemplateError);
         }
-        
+
         private void Validate(FileInfo fi)
         {
             using var wDoc = WordprocessingDocument.Open(fi.FullName, false);
