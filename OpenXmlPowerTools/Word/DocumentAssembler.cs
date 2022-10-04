@@ -2,16 +2,16 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using System.Xml.Schema;
+using System.Xml.XPath;
 using DocumentFormat.OpenXml.Packaging;
-using System.Collections;
 using Path = System.IO.Path;
 
 namespace Clippit.Word
@@ -29,7 +29,7 @@ namespace Clippit.Word
             var byteArray = templateDoc.DocumentByteArray;
             using var mem = new MemoryStream();
             mem.Write(byteArray, 0, byteArray.Length);
-            
+
             using (var wordDoc = WordprocessingDocument.Open(mem, true))
             {
                 if (RevisionAccepter.HasTrackedRevisions(wordDoc))
@@ -48,7 +48,7 @@ namespace Clippit.Word
                 // update image docPr ids for the whole document
                 FixUpDocPrIds(wordDoc, macDocPrId);
             }
-            
+
             var assembledDocument = new WmlDocument("TempFileName.docx", mem.ToArray());
             return assembledDocument;
         }
@@ -76,8 +76,8 @@ namespace Clippit.Word
                         dataPartRoot = (XElement)ContentReplacementTransform(dataPartRoot, data, te, part);
                         diagramDoc.Elements().First().ReplaceWith(dataPartRoot);
                         diagramPart.PutXDocument();
-                    }                
-                }                
+                    }
+                }
             }
 
             // content controls in cells can surround the W.tc element, so transform so that such content controls are within the cell content
@@ -196,7 +196,7 @@ namespace Clippit.Word
         {
             if (node is not XElement element)
                 return node;
-            
+
             if (element.Name == W.sdt && element.Parent.Name == W.tr)
             {
                 var newCell = new XElement(W.tc,
@@ -208,7 +208,7 @@ namespace Clippit.Word
                             element.Elements(W.sdtContent).Elements(W.tc).Elements().Where(e => e.Name != W.tcPr))));
                 return newCell;
             }
-            
+
             return new XElement(element.Name,
                 element.Attributes(),
                 element.Nodes().Select(NormalizeContentControlsInCells));
@@ -263,7 +263,7 @@ namespace Clippit.Word
                                 CreateParaErrorMessage("Image metadata does not contain picture element", te));
                             continue;
                         }
-                    }                    
+                    }
                 }
                 else
                 {
@@ -386,8 +386,8 @@ namespace Clippit.Word
                         }
                         if (alias != null && xml.Name.LocalName != alias)
                         {
-                            return element.Parent.Name == W.p 
-                                ? CreateRunErrorMessage("Error: Content control alias does not match metadata element name", te) 
+                            return element.Parent.Name == W.p
+                                ? CreateRunErrorMessage("Error: Content control alias does not match metadata element name", te)
                                 : CreateParaErrorMessage("Error: Content control alias does not match metadata element name", te);
                         }
                         xml.Add(element.Elements(W.sdtContent).Elements());
@@ -514,7 +514,9 @@ namespace Clippit.Word
                     OpenXmlRegex.Replace(new[] { element }, r, thisGuid, (_, match) =>
                     {
                         var matchString = match.Value.Trim();
-                        var xmlText = matchString.Substring(2, matchString.Length - 4).Trim().Replace('“', '"').Replace('”', '"');
+                        var xmlText = matchString.Substring(2, matchString.Length - 4).Trim()
+                            .Replace('“', '"').Replace('”', '"');
+
                         try
                         {
                             xml = XElement.Parse(xmlText);
@@ -599,8 +601,8 @@ namespace Clippit.Word
         private class RunReplacementInfo
         {
             public XElement Xml { get; set; }
-            public string XmlExceptionMessage  { get; set; }
-            public string SchemaValidationMessage  { get; set; }
+            public string XmlExceptionMessage { get; set; }
+            public string SchemaValidationMessage { get; set; }
         }
 
         private static string ValidatePerSchema(XElement element)
@@ -1138,7 +1140,7 @@ namespace Clippit.Word
 
             var p = new XElement(A.r, para.Elements(A.rPr));
             var rPr = para.Elements(A.t).Elements(A.rPr).FirstOrDefault();
-            
+
             var lines = newValues.SelectMany(x => x.Split('\n'));
             foreach (var line in lines)
             {
@@ -1208,8 +1210,8 @@ namespace Clippit.Word
                 var para = element.Descendants(W.p).FirstOrDefault();
                 var run = element.Descendants(W.r).FirstOrDefault();
 
-                var xPath = (string) element.Attribute(PA.Select);
-                var optionalString = (string) element.Attribute(PA.Optional);
+                var xPath = (string)element.Attribute(PA.Select);
+                var optionalString = (string)element.Attribute(PA.Optional);
                 var optional = (optionalString != null && optionalString.ToLower() == "true");
 
                 string[] newValues;
@@ -1227,7 +1229,7 @@ namespace Clippit.Word
                 {
                     var p = new XElement(W.p, para.Elements(W.pPr));
                     var rPr = para.Elements(W.r).Elements(W.rPr).FirstOrDefault();
-                    foreach(var line in lines)
+                    foreach (var line in lines)
                     {
                         p.Add(new XElement(W.r, rPr,
                             (p.Elements().Count() > 1) ? new XElement(W.br) : null,
@@ -1239,7 +1241,7 @@ namespace Clippit.Word
                 {
                     var list = new List<XElement>();
                     var rPr = run.Elements().Where(e => e.Name != W.t);
-                    foreach(var line in lines)
+                    foreach (var line in lines)
                     {
                         list.Add(new XElement(W.r, rPr,
                             (list.Count > 0) ? new XElement(W.br) : null,
@@ -1377,9 +1379,9 @@ namespace Clippit.Word
 
                                     var pPr = paragraph.Element(W.pPr);
                                     var rPr = cellRun != null ? cellRun.Element(W.rPr) : new XElement(W.rPr); //if the cell was empty there is no cellRun
-                                    var newCell = new XElement(W.tc, 
+                                    var newCell = new XElement(W.tc,
                                         tc.Elements().Where(z => z.Name != W.p),
-                                        newValues.Select(text => 
+                                        newValues.Select(text =>
                                             new XElement(W.p, pPr,
                                                 new XElement(W.r, rPr,
                                                     new XElement(W.t, text)))));
@@ -1409,7 +1411,7 @@ namespace Clippit.Word
                 {
                     return CreateContextErrorMessage(element, e.Message, templateError);
                 }
-                  
+
                 if ((match != null && testValue == match) || (notMatch != null && testValue != notMatch))
                 {
                     var content = element.Elements().Select(e => ContentReplacementTransform(e, data, templateError, part));
@@ -1485,7 +1487,7 @@ namespace Clippit.Word
 
             return new[] { xPathSelectResult.ToString() };
         }
-        
+
         private static string EvaluateXPathToString(XElement element, string xPath, bool optional)
         {
             var selectedData = EvaluateXPath(element, xPath, true);
