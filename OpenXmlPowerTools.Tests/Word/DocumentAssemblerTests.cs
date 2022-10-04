@@ -216,11 +216,7 @@ namespace Clippit.Tests.Word
 
             var descendants = afterAssembling.MainDocumentPart.Value;
 
-
             Assert.False(descendants.Contains(">"), "Found > on text");
-
-
-            // compare result in file
         }
 
         [Theory]
@@ -237,8 +233,6 @@ namespace Clippit.Tests.Word
             var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var returnedTemplateError);
             var assembledDocx = new FileInfo(Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
             afterAssembling.SaveAs(assembledDocx.FullName);
-
-            // compare result in file
         }
 
 
