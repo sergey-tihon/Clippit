@@ -1,4 +1,5 @@
-#### 1.14.0 - Dec 5, 2022
+#### 1.13.3 - Dec 5, 2022
+- fix: PublishSlides: missing ppt/metadata for google presentations #59
 - Dependencies updated
 
 #### 1.13.2 - Oct 4, 2022
