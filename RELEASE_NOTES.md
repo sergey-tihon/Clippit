@@ -1,3 +1,6 @@
+#### 1.14.0 - Dec 5, 2022
+- Dependencies updated
+
 #### 1.13.2 - Oct 4, 2022
 - remove caracters to prevent > at document assembler [#57](https://github.com/sergey-tihon/Clippit/pull/57)
 - Handle W.lastRenderedPageBreak in UnicodeMapper [#58](https://github.com/sergey-tihon/Clippit/pull/58)
