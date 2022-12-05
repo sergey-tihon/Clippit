@@ -163,7 +163,7 @@ namespace Clippit.PowerPoint
             }
 
             newPresentation.Root.Add(oldPresentationDoc.Root.Element(P.defaultTextStyle));
-            newPresentation.Root.Add(oldPresentationDoc.Root.Elements(P.extLst));
+            newPresentation.Root.Add(SanitizeExtLst(oldPresentationDoc.Root.Elements(P.extLst)));
 
             //<p:embeddedFont xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
             //                         xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
@@ -228,7 +228,37 @@ namespace Clippit.PowerPoint
             newPresentation.Root.Add(
                 listOfRootChildren.OrderBy(e => PresentationBuilderTools.s_orderPresentation.ContainsKey(e.Name) ? PresentationBuilderTools.s_orderPresentation[e.Name] : 999));
         }
-        
+
+        /// <summary>
+        /// This method remove custom p:ext elements from the extLst element, especially ones that reference custom metadata
+        /// Example:
+        ///     <p:extLst>
+        ///       <p:ext uri="http://customooxmlschemas.google.com/">
+        ///         <go:slidesCustomData xmlns="" ... r:id="rId16" ... />  
+        /// </summary>
+        /// <param name="extLsts">List of all <p:extLst> from source presentation.xml</param>
+        /// <returns>Modified copy of all elements</returns>
+        private IEnumerable<XElement> SanitizeExtLst(IEnumerable<XElement> extLstList)
+        {
+            foreach (var srcExtLst in extLstList)
+            {
+                // Deep clone the element
+                var extLst = new XElement(srcExtLst);
+                
+                // Sanitize all p:ext elements with r:Id attributes on any child element
+                foreach (var ext in extLst.Elements(P.ext).ToList())
+                {
+                    var hasRid = ext.Descendants().Any(e => 
+                        e.Attributes().Any(a => a.Name == R.id)
+                    );
+                    if (hasRid)
+                        ext.Remove();
+                }
+
+                yield return extLst;
+            }
+        }
+
         private XElement CreateEmbeddedFontPart(PresentationDocument sourceDocument, XElement font, XName fontXName)
         {
             var oldFontPartId = (string)font.Element(fontXName).Attributes(R.id).FirstOrDefault();

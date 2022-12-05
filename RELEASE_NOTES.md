@@ -1,9 +1,13 @@
-#### 2.0.0-beta7 - Oct 4, 2022
+#### 2.0.0-beta8 - Dec 5, 2022
 - Migration to .NET 6.0
 - `System.Drawing.Common` replaced by `SixLabors.ImageSharp.Drawing`
 - Removed `libgdiplus` dependency
 - Drop old `WmlComparer`
-- 
+
+#### 1.13.3 - Dec 5, 2022
+- fix: PublishSlides: missing ppt/metadata for google presentations #59
+- Dependencies updated
+
 #### 1.13.2 - Oct 4, 2022
 - remove caracters to prevent > at document assembler [#57](https://github.com/sergey-tihon/Clippit/pull/57)
 - Handle W.lastRenderedPageBreak in UnicodeMapper [#58](https://github.com/sergey-tihon/Clippit/pull/58)
