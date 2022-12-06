@@ -6,6 +6,14 @@ framework: net5.0, netstandard2.0
 nuget DocumentFormat.OpenXml
 nuget System.Drawing.Common ~> 5
 
+ // hack to run on .net 6
+ nuget System.IO.Packaging 6.0
+ nuget Microsoft.NETCore.Platforms 6.0
+ nuget System.Collections.Immutable 6.0
+ nuget System.Reflection.Metadata 6.0
+ nuget System.Text.Encoding.CodePages 6.0
+ nuget Microsoft.Win32.SystemEvents 6.0
+
 nuget Microsoft.NETFramework.ReferenceAssemblies
 nuget Microsoft.NET.Test.Sdk
 nuget xunit
