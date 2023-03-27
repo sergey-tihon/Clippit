@@ -1,3 +1,6 @@
+#### 1.13.5 - Mar 27, 2023
+- perf: improved PublishSlides perf #61
+
 #### 1.13.4 - Dec 6, 2022
 - fix: issues with 7.0 packages
 
