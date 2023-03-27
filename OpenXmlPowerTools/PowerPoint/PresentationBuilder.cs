@@ -87,7 +87,7 @@ namespace Clippit.PowerPoint
 
         public static IEnumerable<PmlDocument> PublishSlides(PresentationDocument srcDoc, string fileName)
         {
-            var slidesCount = srcDoc.PresentationPart.GetXDocument().Root.Descendants(P.sldId).Count();
+            var slidesCount = srcDoc.PresentationPart.GetXElement().Descendants(P.sldId).Count();
             for (var slideNumber = 0; slideNumber < slidesCount; slideNumber++)
             {
                 using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument();
@@ -95,10 +95,12 @@ namespace Clippit.PowerPoint
                 {
                     ExtractSlide(srcDoc, slideNumber, output);
 
-                    var slides = output.PresentationPart.GetXDocument().Root.Descendants(P.sldId);
-                    var slidePartId = slides.ElementAt(0).Attribute(R.id)?.Value;
+                    var slides = output.PresentationPart.GetXElement().Descendants(P.sldId);
+                    var slidePartId = slides.Single().Attribute(R.id)?.Value;
                     var slidePart = (SlidePart)output.PresentationPart.GetPartById(slidePartId);
-                    output.PackageProperties.Title = PresentationBuilderTools.GetSlideTitle(slidePart);
+                    var title = PresentationBuilderTools.GetSlideTitle(slidePart.GetXElement());
+
+                    output.PackageProperties.Title = title;
                 }
 
                 var slideDoc = streamDoc.GetModifiedPmlDocument();

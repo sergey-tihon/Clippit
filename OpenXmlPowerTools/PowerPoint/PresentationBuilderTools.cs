@@ -5,41 +5,40 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using Presentation = DocumentFormat.OpenXml.Presentation;
-using Drawing = DocumentFormat.OpenXml.Drawing;
 
 namespace Clippit.PowerPoint
 {
     internal static class PresentationBuilderTools
     {
-        internal static string GetSlideTitle(SlidePart slidePart)
+        internal static string GetSlideTitle(XElement slide)
         {
-            var titleShapes =
-                slidePart.Slide.CommonSlideData.ShapeTree
-                    .Descendants<Presentation.Shape>()
-                    .Where(shape =>
-                        shape.NonVisualShapeProperties
-                                ?.ApplicationNonVisualDrawingProperties
-                                ?.PlaceholderShape?.Type?.Value switch
-                            {
-                                Presentation.PlaceholderValues.Title => true,
-                                Presentation.PlaceholderValues.CenteredTitle => true,
-                                _ => false
-                            })
-                    .ToList();
+            var titleShapes = slide
+                .Element(P.cSld)
+                .Element(P.spTree)
+                .Descendants(P.sp)
+                .Where(shape => shape
+                        .Element(P.nvSpPr)
+                        ?.Element(P.nvPr)
+                        ?.Element(P.ph)
+                        ?.Attribute(NoNamespace.type)
+                        ?.Value switch
+                    {
+                        "title" => true,
+                        "ctrTitle" => true,
+                        _ => false
+                    })
+                .ToList();
 
             var paragraphText = new StringBuilder();
             foreach (var shape in titleShapes)
             {
                 // Get the text in each paragraph in this shape.
-                foreach (var paragraph in shape.TextBody.Descendants<Drawing.Paragraph>())
+                foreach (var paragraph in shape.Element(P.txBody).Descendants(A.p))
                 {
-                    foreach (var text in paragraph.Descendants<Drawing.Text>())
+                    foreach (var text in paragraph.Descendants(A.t))
                     {
-                        paragraphText.Append(text.Text);
+                        paragraphText.Append(text.Value);
                     }
-                    //if (paragraphText.Length > 0)
-                    //    paragraphText.Append(Environment.NewLine);
                 }
             }
 
