@@ -329,20 +329,21 @@ namespace Clippit.PowerPoint
             while (count > 0 && start < slideList.Count)
             {
                 var slide = (SlidePart)sourceDocument.PresentationPart.GetPartById(slideList.ElementAt(start).Attribute(R.id).Value);
-
                 var newSlide = _newDocument.PresentationPart.AddNewPart<SlidePart>();
-                var slideDocument = slide.GetXDocument();
-                
-                // cached annotation should be removed because it will be used in a new slide
-                slide.RemoveAnnotations<XDocument>();
 
+                using (var sourceStream = slide.GetStream())
+                using (var targetStream = newSlide.GetStream(FileMode.Create, FileAccess.Write))
+                {
+                    sourceStream.CopyTo(targetStream);
+                }
+                
+                var slideDocument = newSlide.GetXDocument();
                 if (unHideSlides)
                 {
                     slideDocument.Root?.Attribute(NoNamespace.show)?.Remove();
                 }
-
+                
                 SlideLayoutData.ScaleShapes(slideDocument, scaleFactor);
-                newSlide.PutXDocument(slideDocument);
                 
                 PBT.AddRelationships(slide, newSlide, new[] { newSlide.GetXDocument().Root });
                 CopyRelatedPartsForContentParts(slide, newSlide, new[] { newSlide.GetXDocument().Root });
