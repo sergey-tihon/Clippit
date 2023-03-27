@@ -5,6 +5,7 @@ framework: net6.0, netstandard2.0
 
 nuget DocumentFormat.OpenXml
 nuget SixLabors.ImageSharp.Drawing prerelease
+nuget SixLabors.ImageSharp 2.1.3
 
 // hack to run on .net 6
 nuget System.IO.Packaging 6.0

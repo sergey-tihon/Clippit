@@ -1,8 +1,14 @@
-#### 2.0.0-beta9 - Dec 6, 2022
+#### 2.0.0-theta-001 Mar 27, 2023
 - Migration to .NET 6.0
 - `System.Drawing.Common` replaced by `SixLabors.ImageSharp.Drawing`
 - Removed `libgdiplus` dependency
 - Drop old `WmlComparer`
+
+#### 1.13.5 - Mar 27, 2023
+- perf: improved PublishSlides perf #61
+
+#### 1.13.4 - Dec 6, 2022
+- fix: issues with 7.0 packages
 
 #### 1.13.3 - Dec 5, 2022
 - fix: PublishSlides: missing ppt/metadata for google presentations #59
