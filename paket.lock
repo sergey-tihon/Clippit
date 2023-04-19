@@ -2,9 +2,9 @@ STORAGE: NONE
 RESTRICTION: || (== net6.0) (== netstandard2.0)
 NUGET
   remote: https://api.nuget.org/v3/index.json
-    DocumentFormat.OpenXml (2.19)
+    DocumentFormat.OpenXml (2.20)
       System.IO.Packaging (>= 4.7)
-    IDisposableAnalyzers (4.0.2)
+    IDisposableAnalyzers (4.0.6)
     Microsoft.CodeCoverage (17.5) - restriction: || (== net6.0) (&& (== netstandard2.0) (>= net462)) (&& (== netstandard2.0) (>= netcoreapp3.1))
     Microsoft.NET.Test.Sdk (17.5)
       Microsoft.CodeCoverage (>= 17.5) - restriction: || (== net6.0) (&& (== netstandard2.0) (>= net462)) (&& (== netstandard2.0) (>= netcoreapp3.1))

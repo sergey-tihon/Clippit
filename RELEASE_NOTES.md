@@ -1,4 +1,4 @@
-#### 2.0.0-theta-001 Mar 27, 2023
+#### 2.0.0-theta-002 Apr 19, 2023
 - Migration to .NET 6.0
 - `System.Drawing.Common` replaced by `SixLabors.ImageSharp.Drawing`
 - Removed `libgdiplus` dependency
