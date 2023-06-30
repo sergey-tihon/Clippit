@@ -5,6 +5,8 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using Clippit.Internal;
+using DocumentFormat.OpenXml.Experimental;
+using DocumentFormat.OpenXml.Features;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Presentation;
 using Path = System.IO.Path;
@@ -676,7 +678,7 @@ namespace Clippit.PowerPoint
                     continue;
 
                 var oldPartIdPair2 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (oldPartIdPair2?.OpenXmlPart is ChartPart oldPart)
+                if (oldPartIdPair2.OpenXmlPart is ChartPart oldPart)
                 {
                     var oldChart = oldPart.GetXDocument();
                     var newPart = newContentPart.AddNewPart<ChartPart>();
@@ -695,7 +697,7 @@ namespace Clippit.PowerPoint
                     continue;
 
                 var oldPartIdPair2 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (oldPartIdPair2?.OpenXmlPart is ExtendedChartPart oldPart)
+                if (oldPartIdPair2.OpenXmlPart is ExtendedChartPart oldPart)
                 {
                     var oldChart = oldPart.GetXDocument();
                     var newPart = newContentPart.AddNewPart<ExtendedChartPart>();
@@ -714,7 +716,7 @@ namespace Clippit.PowerPoint
                     continue;
 
                 var oldPartIdPair3 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (oldPartIdPair3?.OpenXmlPart is ChartDrawingPart oldPart)
+                if (oldPartIdPair3.OpenXmlPart is ChartDrawingPart oldPart)
                 {
                     var oldXDoc = oldPart.GetXDocument();
                     var newPart = newContentPart.AddNewPart<ChartDrawingPart>();
@@ -733,7 +735,7 @@ namespace Clippit.PowerPoint
                     continue;
 
                 var oldPartIdPair4 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (oldPartIdPair4?.OpenXmlPart is UserDefinedTagsPart oldPart)
+                if (oldPartIdPair4.OpenXmlPart is UserDefinedTagsPart oldPart)
                 {
                     var oldXDoc = oldPart.GetXDocument();
                     var newPart = newContentPart.AddNewPart<UserDefinedTagsPart>();
@@ -884,8 +886,7 @@ namespace Clippit.PowerPoint
                         "image/svg+xml" => ".svg",
                         _ => ".image"
                     };
-                    newContentPart.OpenXmlPackage.PartExtensionProvider
-                        .MakeSurePartExtensionExist(contentType, targetExtension);
+                    newContentPart.Features.GetRequired<IPartExtensionFeature>().Register(contentType, targetExtension);
 
                     var newPart = newContentPart switch
                     {
@@ -961,10 +962,10 @@ namespace Clippit.PowerPoint
                 }
                 else
                 {
-                    var newPart = newContentPart.OpenXmlPackage.Package.GetParts().FirstOrDefault(p => p.Uri == newContentPart.Uri);
-                    if (newPart?.RelationshipExists(relId) == false)
+                    var newPart = newContentPart.OpenXmlPackage.GetPackage().GetParts().FirstOrDefault(p => p.Uri == newContentPart.Uri);
+                    if (newPart is not null && !newPart.Relationships.Contains(relId))
                     {
-                        newPart.CreateRelationship(new Uri("NULL", UriKind.RelativeOrAbsolute),
+                        newPart.Relationships.Create(new Uri("NULL", UriKind.RelativeOrAbsolute),
                             System.IO.Packaging.TargetMode.Internal,
                             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image", relId);
                     }

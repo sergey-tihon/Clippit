@@ -310,7 +310,6 @@ namespace Clippit.Word
             using (var output = streamDoc.GetWordprocessingDocument())
             {
                 BuildDocument(sources, output, new DocumentBuilderSettings());
-                output.Close();
             }
             streamDoc.GetModifiedDocument().SaveAs(fileName);
         }
@@ -321,7 +320,6 @@ namespace Clippit.Word
             using (var output = streamDoc.GetWordprocessingDocument())
             {
                 BuildDocument(sources, output, settings);
-                output.Close();
             }
             streamDoc.GetModifiedDocument().SaveAs(fileName);
         }
@@ -332,7 +330,6 @@ namespace Clippit.Word
             using (var output = streamDoc.GetWordprocessingDocument())
             {
                 BuildDocument(sources, output, new DocumentBuilderSettings());
-                output.Close();
             }
             return streamDoc.GetModifiedWmlDocument();
         }
@@ -343,7 +340,6 @@ namespace Clippit.Word
             using (var output = streamDoc.GetWordprocessingDocument())
             {
                 BuildDocument(sources, output, settings);
-                output.Close();
             }
             return streamDoc.GetModifiedWmlDocument();
         }

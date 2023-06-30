@@ -1,5 +1,6 @@
-#### 2.0.0-theta-002 Apr 19, 2023
+#### 2.0.0-theta-003 Jun 30, 2023
 - Migration to .NET 6.0
+- DocumentFormat.OpenXml 3.0.0-beta0002
 - `System.Drawing.Common` replaced by `SixLabors.ImageSharp.Drawing`
 - Removed `libgdiplus` dependency
 - Drop old `WmlComparer`

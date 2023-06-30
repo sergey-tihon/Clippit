@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Clippit.Word;
+using DocumentFormat.OpenXml.Experimental;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit
@@ -2756,8 +2757,8 @@ namespace Clippit
                                         var openXmlPartInNewDocument = part;
                                         return gc.Select(gce =>
                                         {
-                                            var packageOfDeletedContent = openXmlPartOfDeletedContent.OpenXmlPackage.Package;
-                                            var packageOfNewContent = openXmlPartInNewDocument.OpenXmlPackage.Package;
+                                            var packageOfDeletedContent = openXmlPartOfDeletedContent.OpenXmlPackage.GetPackage();
+                                            var packageOfNewContent = openXmlPartInNewDocument.OpenXmlPackage.GetPackage();
                                             var partInDeletedDocument = packageOfDeletedContent.GetPart(part.Uri);
                                             var partInNewDocument = packageOfNewContent.GetPart(part.Uri);
 
@@ -2781,8 +2782,8 @@ namespace Clippit
                                         var openXmlPartInNewDocument = part;
                                         return gc.Select(gce =>
                                         {
-                                            var packageOfSourceContent = openXmlPartOfInsertedContent.OpenXmlPackage.Package;
-                                            var packageOfNewContent = openXmlPartInNewDocument.OpenXmlPackage.Package;
+                                            var packageOfSourceContent = openXmlPartOfInsertedContent.OpenXmlPackage.GetPackage();
+                                            var packageOfNewContent = openXmlPartInNewDocument.OpenXmlPackage.GetPackage();
                                             var partInDeletedDocument = packageOfSourceContent.GetPart(part.Uri);
                                             var partInNewDocument = packageOfNewContent.GetPart(part.Uri);
 

@@ -15,6 +15,7 @@ using Clippit.Excel;
 using Clippit.PowerPoint;
 using Clippit.Word;
 using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Experimental;
 using SixLabors.Fonts;
 
 namespace Clippit
@@ -178,7 +179,7 @@ namespace Clippit
 
         private static XElement RetrieveContentTypeList(OpenXmlPackage oxPkg)
         {
-            var pkg = oxPkg.Package;
+            var pkg = oxPkg.GetPackage();
 
             var nonRelationshipParts = pkg.GetParts().Cast<ZipPackagePart>().Where(p => p.ContentType != "application/vnd.openxmlformats-package.relationships+xml");
             var contentTypes = nonRelationshipParts
@@ -192,7 +193,7 @@ namespace Clippit
 
         private static XElement RetrieveNamespaceList(OpenXmlPackage oxPkg)
         {
-            var pkg = oxPkg.Package;
+            var pkg = oxPkg.GetPackage();
 
             var nonRelationshipParts = pkg.GetParts().Cast<ZipPackagePart>().Where(p => p.ContentType != "application/vnd.openxmlformats-package.relationships+xml");
             var xmlParts = nonRelationshipParts
