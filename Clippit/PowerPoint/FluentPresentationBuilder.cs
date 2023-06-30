@@ -334,9 +334,8 @@ namespace Clippit.PowerPoint
                 var newSlide = _newDocument.PresentationPart.AddNewPart<SlidePart>();
 
                 using (var sourceStream = slide.GetStream())
-                using (var targetStream = newSlide.GetStream(FileMode.Create, FileAccess.Write))
                 {
-                    sourceStream.CopyTo(targetStream);
+                    newSlide.FeedData(sourceStream);
                 }
                 
                 var slideDocument = newSlide.GetXDocument();
@@ -658,8 +657,7 @@ namespace Clippit.PowerPoint
                     };
                     using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                     {
-                        using var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);
-                        oldObject.CopyTo(newObject);
+                        newPart.FeedData(oldObject);
                     }
                     oleReference.Attribute(R.id).Value = newContentPart.GetIdOfPart(newPart);
                 }

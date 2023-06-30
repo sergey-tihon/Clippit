@@ -65,7 +65,7 @@ namespace Clippit
 
                     // ReSharper disable once PossibleNullReferenceException
                     using (var oldPartStream = relatedPackagePart.GetStream(FileMode.Open, FileAccess.Read))
-                    using (var newPartStream = newPart.GetStream(FileMode.OpenOrCreate, FileAccess.Write))
+                    using (var newPartStream = newPart.GetStream(FileMode.Create, FileAccess.Write))
                     {
                         oldPartStream.CopyTo(newPartStream);
                     }
@@ -84,7 +84,7 @@ namespace Clippit
                             MoveRelatedPartsToDestination(relatedPackagePart, newPart, newPartXDoc.Root);
                         }
 
-                        using (var stream = newPart.GetStream(FileMode.OpenOrCreate, FileAccess.Write))
+                        using (var stream = newPart.GetStream(FileMode.Create, FileAccess.Write))
                             newPartXDoc.Save(stream);
                     }
                 }

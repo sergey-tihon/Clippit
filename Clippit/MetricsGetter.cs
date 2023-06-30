@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Packaging;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
@@ -181,7 +180,8 @@ namespace Clippit
         {
             var pkg = oxPkg.GetPackage();
 
-            var nonRelationshipParts = pkg.GetParts().Cast<ZipPackagePart>().Where(p => p.ContentType != "application/vnd.openxmlformats-package.relationships+xml");
+            var nonRelationshipParts = pkg.GetParts()
+                .Where(p => p.ContentType != "application/vnd.openxmlformats-package.relationships+xml");
             var contentTypes = nonRelationshipParts
                 .Select(p => p.ContentType)
                 .OrderBy(t => t)
@@ -195,14 +195,15 @@ namespace Clippit
         {
             var pkg = oxPkg.GetPackage();
 
-            var nonRelationshipParts = pkg.GetParts().Cast<ZipPackagePart>().Where(p => p.ContentType != "application/vnd.openxmlformats-package.relationships+xml");
+            var nonRelationshipParts = pkg.GetParts()
+                .Where(p => p.ContentType != "application/vnd.openxmlformats-package.relationships+xml");
             var xmlParts = nonRelationshipParts
                 .Where(p => p.ContentType.ToLower().EndsWith("xml"));
 
             var uniqueNamespaces = new HashSet<string>();
             foreach (var xp in xmlParts)
             {
-                using var st = xp.GetStream();
+                using var st = xp.GetStream(FileMode.Open, FileAccess.Read);
                 try
                 {
                     var xdoc = XDocument.Load(st);

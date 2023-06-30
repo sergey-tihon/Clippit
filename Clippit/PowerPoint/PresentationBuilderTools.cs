@@ -115,8 +115,7 @@ namespace Clippit.PowerPoint
                             var newPart = newChart.AddEmbeddedPackagePart(oldPart.ContentType);
                             using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
-                                using var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);
-                                oldObject.CopyTo(newObject);
+                                newPart.FeedData(oldObject);
                             }
                             dataReference.Attribute(R.id).Set(newChart.GetIdOfPart(newPart));
                             continue;
@@ -126,8 +125,7 @@ namespace Clippit.PowerPoint
                             var newPart = newChart.AddEmbeddedPackagePart(oldEmbeddedObjectPart.ContentType);
                             using (var oldObject = oldEmbeddedObjectPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
-                                using var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);
-                                oldObject.CopyTo(newObject);
+                                newPart.FeedData(oldObject);
                             }
 
                             var rId = newChart.GetIdOfPart(newPart);
@@ -188,8 +186,7 @@ namespace Clippit.PowerPoint
                 var newPart = newChart.AddNewPart<T>(oldPart.ContentType, newRid);
                 
                 using var oldStream = oldPart.GetStream(FileMode.Open, FileAccess.Read);
-                using var newStream = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);
-                oldStream.CopyTo(newStream);
+                newPart.FeedData(oldStream);
             }
         }
         
@@ -208,8 +205,7 @@ namespace Clippit.PowerPoint
                             var newPart = newChart.AddEmbeddedPackagePart(oldPart.ContentType);
                             using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
-                                using var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);
-                                oldObject.CopyTo(newObject);
+                                newPart.FeedData(oldObject);
                             }
                             dataReference.Attribute(R.id).Set(newChart.GetIdOfPart(newPart));
                             continue;
@@ -219,8 +215,7 @@ namespace Clippit.PowerPoint
                             var newPart = newChart.AddEmbeddedPackagePart(oldEmbeddedObjectPart.ContentType);
                             using (var oldObject = oldEmbeddedObjectPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
-                                using var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);
-                                oldObject.CopyTo(newObject);
+                                newPart.FeedData(oldObject);
                             }
 
                             var rId = newChart.GetIdOfPart(newPart);
