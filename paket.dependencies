@@ -6,7 +6,7 @@ framework: net6.0, netstandard2.0
 nuget DocumentFormat.OpenXml 3.0.0-beta0002
 nuget DocumentFormat.OpenXml.Framework 3.0.0-beta0002
 nuget SixLabors.ImageSharp.Drawing prerelease
-nuget SixLabors.ImageSharp 2.1.3
+nuget SixLabors.ImageSharp 2.1.4
 
 nuget System.IO.Packaging
 nuget Microsoft.NETCore.Platforms
