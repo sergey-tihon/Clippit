@@ -1291,7 +1291,7 @@ namespace Clippit.Word
                     return null;
                 return new XElement(element.Name,
                     element.Attributes(),
-                    element.Nodes().Select(n => AcceptRevisionsForStylesTransform(n)));
+                    element.Nodes().Select(AcceptRevisionsForStylesTransform));
             }
             return node;
         }
@@ -3212,4 +3212,3 @@ namespace Clippit.Word
 ///   cell immediately preceding the group of deleted cells by the
 ///   ***sum*** of the values of the w:val attributes of w:gridSpan
 ///   elements of each of the deleted cells.
-

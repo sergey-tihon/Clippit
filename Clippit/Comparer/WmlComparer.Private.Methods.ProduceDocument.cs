@@ -847,9 +847,7 @@ namespace Clippit
                     }
                     else if (status == "Inserted")
                     {
-                        var rPr = pPr.Element(W.rPr);
-                        if (rPr == null)
-                            rPr = new XElement(W.rPr);
+                        var rPr = pPr.Element(W.rPr) ?? new XElement(W.rPr);
                         rPr.Add(new XElement(W.ins,
                             new XAttribute(W.author, settings.AuthorForRevisions),
                             new XAttribute(W.id, s_maxId++),
@@ -893,7 +891,7 @@ namespace Clippit
             }
 
             var ignorable = (string) root.Attribute(MC.Ignorable);
-            if (ignorable != null)
+            if (ignorable is not null)
             {
                 var list = ignorable.Split(' ');
                 if (!list.Contains("pt14"))

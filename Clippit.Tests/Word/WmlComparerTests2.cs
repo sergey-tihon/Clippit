@@ -77,8 +77,7 @@ namespace Clippit.Tests.Word
 
             var source1Wml = new WmlDocument(source1CopiedToDestDocx.FullName);
             var source2Wml = new WmlDocument(source2CopiedToDestDocx.FullName);
-            var settings = new WmlComparerSettings();
-            settings.DebugTempFileDi = thisTestTempDir;
+            var settings = new WmlComparerSettings { DebugTempFileDi = thisTestTempDir };
             var comparedWml = WmlComparer.Compare(source1Wml, source2Wml, settings);
 
             ///////////////////////////
@@ -90,7 +89,7 @@ namespace Clippit.Tests.Word
                 {
                     var validator = new OpenXmlValidator();
                     var errors = validator.Validate(wDoc).Where(e => !ExpectedErrors.Contains(e.Description));
-                    if (errors.Count() > 0)
+                    if (errors.Any())
                     {
 
                         var ind = "  ";
