@@ -452,7 +452,7 @@ namespace Clippit
         private static void ValidateImageExists(OpenXmlPart part, string relId, Dictionary<XName, int> metrics)
         {
             var imagePart = part.Parts.FirstOrDefault(ipp => ipp.RelationshipId == relId);
-            if (imagePart == null)
+            if (imagePart == default)
                 IncrementMetric(metrics, H.ReferenceToNullImage);
         }
 

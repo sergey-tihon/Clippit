@@ -2936,7 +2936,7 @@ namespace Clippit.Word
             if (imageRid == null) return null;
 
             var pp3 = wordDoc.MainDocumentPart.Parts.FirstOrDefault(pp => pp.RelationshipId == imageRid);
-            if (pp3 == null) return null;
+            if (pp3 == default) return null;
 
             var imagePart = (ImagePart)pp3.OpenXmlPart;
             if (imagePart == null) return null;
@@ -3007,10 +3007,10 @@ namespace Clippit.Word
             try
             {
                 var pp = wordDoc.MainDocumentPart.Parts.FirstOrDefault(pp2 => pp2.RelationshipId == imageRid);
-                if (pp == null) return null;
+                if (pp == default) return null;
 
                 var imagePart = (ImagePart)pp.OpenXmlPart;
-                if (imagePart == null) return null;
+                if (imagePart == default) return null;
 
                 var contentType = imagePart.ContentType;
                 if (!ImageContentTypes.Contains(contentType))
