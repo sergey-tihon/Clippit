@@ -1,5 +1,6 @@
 #r @"paket:
 source https://nuget.org/api/v2
+strategy: min
 framework net6.0
 nuget FSharp.Core 6.0.0.0
 nuget Fake.Core.Target
