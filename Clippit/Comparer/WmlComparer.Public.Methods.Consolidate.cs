@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Clippit.Word;
+using DocumentFormat.OpenXml.Experimental;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit
@@ -873,8 +874,8 @@ namespace Clippit
             ConsolidationInfo consolidationInfo,
             WmlComparerSettings settings)
         {
-            var packageOfDeletedContent = wDocDelta.MainDocumentPart.OpenXmlPackage.Package;
-            var packageOfNewContent = consolidatedWDoc.MainDocumentPart.OpenXmlPackage.Package;
+            var packageOfDeletedContent = wDocDelta.MainDocumentPart.OpenXmlPackage.GetPackage();
+            var packageOfNewContent = consolidatedWDoc.MainDocumentPart.OpenXmlPackage.GetPackage();
             var partInDeletedDocument = packageOfDeletedContent.GetPart(wDocDelta.MainDocumentPart.Uri);
             var partInNewDocument = packageOfNewContent.GetPart(consolidatedWDoc.MainDocumentPart.Uri);
             consolidationInfo.RevisionElement =

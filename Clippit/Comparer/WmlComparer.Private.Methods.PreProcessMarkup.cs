@@ -54,7 +54,7 @@ namespace Clippit
                 var os = new OpenSettings
                 {
                     MarkupCompatibilityProcessSettings = new MarkupCompatibilityProcessSettings(
-                        MarkupCompatibilityProcessMode.ProcessAllParts,
+                        MarkupCompatibilityProcessMode.NoProcess, // Otherwise OpenXml delete custom `pt14:Unid` attributes on save
                         FileFormatVersions.Office2007)
                 };
 

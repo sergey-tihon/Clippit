@@ -1,4 +1,5 @@
 DocumentFormat.OpenXml
+DocumentFormat.OpenXml.Framework
 IDisposableAnalyzers
 Microsoft.NET.Test.Sdk
 xunit

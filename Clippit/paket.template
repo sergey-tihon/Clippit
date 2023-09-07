@@ -28,7 +28,9 @@ files
 dependencies
     framework: netstandard20
         DocumentFormat.OpenXml >= LOCKEDVERSION
+        DocumentFormat.OpenXml.Framework >= LOCKEDVERSION
         SixLabors.ImageSharp.Drawing >= LOCKEDVERSION
     framework: net6.0
         DocumentFormat.OpenXml >= LOCKEDVERSION
+        DocumentFormat.OpenXml.Framework >= LOCKEDVERSION
         SixLabors.ImageSharp.Drawing >= LOCKEDVERSION

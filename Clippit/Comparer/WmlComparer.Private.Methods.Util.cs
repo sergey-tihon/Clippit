@@ -8,14 +8,15 @@ using System.IO.Packaging;
 using System.Linq;
 using System.Xml.Linq;
 using Clippit.Internal;
+using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit
 {
     public static partial class WmlComparer
     {
         private static XElement MoveRelatedPartsToDestination(
-            PackagePart partOfDeletedContent,
-            PackagePart partInNewDocument,
+            IPackagePart partOfDeletedContent,
+            IPackagePart partInNewDocument,
             XElement contentElement)
         {
             var elementsToUpdate = contentElement
@@ -34,7 +35,7 @@ namespace Clippit
                 {
                     var rId = (string) att;
 
-                    var relationshipForDeletedPart = partOfDeletedContent.GetRelationship(rId);
+                    var relationshipForDeletedPart = partOfDeletedContent.Relationships[rId];
 
                     var targetUri = PackUriHelper
                         .ResolvePartUri(
@@ -60,30 +61,30 @@ namespace Clippit
                         ? new Uri(uriString, UriKind.Absolute)
                         : new Uri(uriString, UriKind.Relative);
 
-                    var newPart = partInNewDocument.Package.CreatePart(uri, relatedPackagePart.ContentType);
+                    var newPart = partInNewDocument.Package.CreatePart(uri, relatedPackagePart.ContentType, CompressionOption.Normal);
 
                     // ReSharper disable once PossibleNullReferenceException
-                    using (var oldPartStream = relatedPackagePart.GetStream())
-                    using (var newPartStream = newPart.GetStream())
+                    using (var oldPartStream = relatedPackagePart.GetStream(FileMode.Open, FileAccess.Read))
+                    using (var newPartStream = newPart.GetStream(FileMode.Create, FileAccess.Write))
                     {
                         oldPartStream.CopyTo(newPartStream);
                     }
 
                     var newRid = Relationships.GetNewRelationshipId();
-                    partInNewDocument.CreateRelationship(newPart.Uri, TargetMode.Internal,
+                    partInNewDocument.Relationships.Create(newPart.Uri, TargetMode.Internal,
                         relationshipForDeletedPart.RelationshipType, newRid);
                     att.Value = newRid;
 
                     if (newPart.ContentType.EndsWith("xml"))
                     {
                         XDocument newPartXDoc;
-                        using (var stream = newPart.GetStream())
+                        using (var stream = newPart.GetStream(FileMode.Open, FileAccess.Read))
                         {
                             newPartXDoc = XDocument.Load(stream);
                             MoveRelatedPartsToDestination(relatedPackagePart, newPart, newPartXDoc.Root);
                         }
 
-                        using (var stream = newPart.GetStream())
+                        using (var stream = newPart.GetStream(FileMode.Create, FileAccess.Write))
                             newPartXDoc.Save(stream);
                     }
                 }

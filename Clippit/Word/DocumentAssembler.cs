@@ -871,7 +871,7 @@ namespace Clippit.Word
         /// <param name="imagePartType">Type of the image part.</param>
         /// <param name="relationshipId">The relationship identifier.</param>
         /// <returns>ImagePart.</returns>
-        private static ImagePart GetImagePart(OpenXmlPart part, ImagePartType imagePartType, string relationshipId) =>
+        private static ImagePart GetImagePart(OpenXmlPart part, PartTypeInfo imagePartType, string relationshipId) =>
             part switch
             {
                 MainDocumentPart mainDocumentPart => mainDocumentPart.AddImagePart(imagePartType, relationshipId),
@@ -1051,7 +1051,7 @@ namespace Clippit.Word
         /// <param name="imagePartType">Image Part Type to be embedded in the document and to be
         /// referenced by image control</param>
         /// <param name="error">Error message</param>
-        private static Stream Image2Stream(string inputImage, out ImagePartType imagePartType, out string error)
+        private static Stream Image2Stream(string inputImage, out PartTypeInfo imagePartType, out string error)
         {
             string imageType;
             Stream stream;
@@ -1071,7 +1071,7 @@ namespace Clippit.Word
                 }
                 catch (Exception)
                 {
-                    imagePartType = default(ImagePartType);
+                    imagePartType = default;
                     error = "Invalid Image data format";
                     return null;
                 }

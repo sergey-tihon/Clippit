@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Clippit.Word;
+using DocumentFormat.OpenXml.Experimental;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit
@@ -846,9 +847,7 @@ namespace Clippit
                     }
                     else if (status == "Inserted")
                     {
-                        var rPr = pPr.Element(W.rPr);
-                        if (rPr == null)
-                            rPr = new XElement(W.rPr);
+                        var rPr = pPr.Element(W.rPr) ?? new XElement(W.rPr);
                         rPr.Add(new XElement(W.ins,
                             new XAttribute(W.author, settings.AuthorForRevisions),
                             new XAttribute(W.id, s_maxId++),
@@ -892,7 +891,7 @@ namespace Clippit
             }
 
             var ignorable = (string) root.Attribute(MC.Ignorable);
-            if (ignorable != null)
+            if (ignorable is not null)
             {
                 var list = ignorable.Split(' ');
                 if (!list.Contains("pt14"))
@@ -2756,8 +2755,8 @@ namespace Clippit
                                         var openXmlPartInNewDocument = part;
                                         return gc.Select(gce =>
                                         {
-                                            var packageOfDeletedContent = openXmlPartOfDeletedContent.OpenXmlPackage.Package;
-                                            var packageOfNewContent = openXmlPartInNewDocument.OpenXmlPackage.Package;
+                                            var packageOfDeletedContent = openXmlPartOfDeletedContent.OpenXmlPackage.GetPackage();
+                                            var packageOfNewContent = openXmlPartInNewDocument.OpenXmlPackage.GetPackage();
                                             var partInDeletedDocument = packageOfDeletedContent.GetPart(part.Uri);
                                             var partInNewDocument = packageOfNewContent.GetPart(part.Uri);
 
@@ -2781,8 +2780,8 @@ namespace Clippit
                                         var openXmlPartInNewDocument = part;
                                         return gc.Select(gce =>
                                         {
-                                            var packageOfSourceContent = openXmlPartOfInsertedContent.OpenXmlPackage.Package;
-                                            var packageOfNewContent = openXmlPartInNewDocument.OpenXmlPackage.Package;
+                                            var packageOfSourceContent = openXmlPartOfInsertedContent.OpenXmlPackage.GetPackage();
+                                            var packageOfNewContent = openXmlPartInNewDocument.OpenXmlPackage.GetPackage();
                                             var partInDeletedDocument = packageOfSourceContent.GetPart(part.Uri);
                                             var partInNewDocument = packageOfNewContent.GetPart(part.Uri);
 

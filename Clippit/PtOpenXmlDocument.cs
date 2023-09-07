@@ -376,48 +376,56 @@ namespace Clippit
         public static OpenXmlMemoryStreamDocument CreateWordprocessingDocument()
         {
             var stream = new MemoryStream();
-            using var doc = WordprocessingDocument.Create(stream, DocumentFormat.OpenXml.WordprocessingDocumentType.Document);
-            doc.AddMainDocumentPart();
-            doc.MainDocumentPart.PutXDocument(new XDocument(
-                new XElement(W.document,
-                    new XAttribute(XNamespace.Xmlns + "w", W.w),
-                    new XAttribute(XNamespace.Xmlns + "r", R.r),
-                    new XElement(W.body))));
-            doc.Close();
+            using (var doc = WordprocessingDocument.Create(stream, DocumentFormat.OpenXml.WordprocessingDocumentType.Document)) {
+                doc.AddMainDocumentPart();
+                doc.MainDocumentPart.PutXDocument(new XDocument(
+                    new XElement(W.document,
+                        new XAttribute(XNamespace.Xmlns + "w", W.w),
+                        new XAttribute(XNamespace.Xmlns + "r", R.r),
+                        new XElement(W.body))));
+            }
+            
             return new OpenXmlMemoryStreamDocument(stream);
         }
         public static OpenXmlMemoryStreamDocument CreateSpreadsheetDocument()
         {
             var stream = new MemoryStream();
-            using var doc = SpreadsheetDocument.Create(stream, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook);
-            doc.AddWorkbookPart();
-            XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
-            XNamespace relationshipsns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
-            doc.WorkbookPart.PutXDocument(new XDocument(
-                new XElement(ns + "workbook",
-                    new XAttribute("xmlns", ns),
-                    new XAttribute(XNamespace.Xmlns + "r", relationshipsns),
-                    new XElement(ns + "sheets"))));
-            doc.Close();
+            using (var doc = SpreadsheetDocument.Create(stream,
+                       DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook))
+            {
+                doc.AddWorkbookPart();
+                XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+                XNamespace relationshipsns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+                doc.WorkbookPart.PutXDocument(new XDocument(
+                    new XElement(ns + "workbook",
+                        new XAttribute("xmlns", ns),
+                        new XAttribute(XNamespace.Xmlns + "r", relationshipsns),
+                        new XElement(ns + "sheets"))));
+            }
+
             return new OpenXmlMemoryStreamDocument(stream);
         }
         public static OpenXmlMemoryStreamDocument CreatePresentationDocument()
         {
             var stream = new MemoryStream();
-            using var doc = PresentationDocument.Create(stream, DocumentFormat.OpenXml.PresentationDocumentType.Presentation);
-            doc.AddPresentationPart();
-            XNamespace ns = "http://schemas.openxmlformats.org/presentationml/2006/main";
-            XNamespace relationshipsns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
-            XNamespace drawingns = "http://schemas.openxmlformats.org/drawingml/2006/main";
-            doc.PresentationPart.PutXDocument(new XDocument(
-                new XElement(ns + "presentation",
-                    new XAttribute(XNamespace.Xmlns + "a", drawingns),
-                    new XAttribute(XNamespace.Xmlns + "r", relationshipsns),
-                    new XAttribute(XNamespace.Xmlns + "p", ns),
-                    new XElement(ns + "sldMasterIdLst"),
-                    new XElement(ns + "sldIdLst"),
-                    new XElement(ns + "notesSz", new XAttribute("cx", "6858000"), new XAttribute("cy", "9144000")))));
-            doc.Close();
+            using (var doc = PresentationDocument.Create(stream,
+                       DocumentFormat.OpenXml.PresentationDocumentType.Presentation))
+            {
+                doc.AddPresentationPart();
+                XNamespace ns = "http://schemas.openxmlformats.org/presentationml/2006/main";
+                XNamespace relationshipsns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+                XNamespace drawingns = "http://schemas.openxmlformats.org/drawingml/2006/main";
+                doc.PresentationPart.PutXDocument(new XDocument(
+                    new XElement(ns + "presentation",
+                        new XAttribute(XNamespace.Xmlns + "a", drawingns),
+                        new XAttribute(XNamespace.Xmlns + "r", relationshipsns),
+                        new XAttribute(XNamespace.Xmlns + "p", ns),
+                        new XElement(ns + "sldMasterIdLst"),
+                        new XElement(ns + "sldIdLst"),
+                        new XElement(ns + "notesSz", new XAttribute("cx", "6858000"),
+                            new XAttribute("cy", "9144000")))));
+            }
+
             return new OpenXmlMemoryStreamDocument(stream);
         }
 

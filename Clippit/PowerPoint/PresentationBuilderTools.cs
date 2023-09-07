@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Clippit.Internal;
+using DocumentFormat.OpenXml.Experimental;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.PowerPoint
@@ -114,8 +115,7 @@ namespace Clippit.PowerPoint
                             var newPart = newChart.AddEmbeddedPackagePart(oldPart.ContentType);
                             using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
-                                using var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);
-                                oldObject.CopyTo(newObject);
+                                newPart.FeedData(oldObject);
                             }
                             dataReference.Attribute(R.id).Set(newChart.GetIdOfPart(newPart));
                             continue;
@@ -125,8 +125,7 @@ namespace Clippit.PowerPoint
                             var newPart = newChart.AddEmbeddedPackagePart(oldEmbeddedObjectPart.ContentType);
                             using (var oldObject = oldEmbeddedObjectPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
-                                using var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);
-                                oldObject.CopyTo(newObject);
+                                newPart.FeedData(oldObject);
                             }
 
                             var rId = newChart.GetIdOfPart(newPart);
@@ -135,14 +134,18 @@ namespace Clippit.PowerPoint
                             // following is a hack to fix the package because the Open XML SDK does not let us create
                             // a relationship from a chart with the oleObject relationship type.
 
-                            var pkg = newChart.OpenXmlPackage.Package;
+                            var pkg = newChart.OpenXmlPackage.GetPackage();
                             var fromPart = pkg.GetParts().FirstOrDefault(p => p.Uri == newChart.Uri);
-                            var rel = fromPart?.GetRelationships().FirstOrDefault(p => p.Id == rId);
-                            var targetUri = rel?.TargetUri;
+                            if (fromPart is not null)
+                            {
+                                var rel = fromPart.Relationships.FirstOrDefault(p => p.Id == rId);
+                                var targetUri = rel?.TargetUri;
 
-                            fromPart?.DeleteRelationship(rId);
-                            fromPart?.CreateRelationship(targetUri, System.IO.Packaging.TargetMode.Internal,
-                                "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject", rId);
+                                fromPart.Relationships.Remove(rId);
+                                fromPart.Relationships.Create(targetUri, System.IO.Packaging.TargetMode.Internal,
+                                    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject",
+                                    rId);
+                            }
 
                             continue;
                         }
@@ -183,8 +186,7 @@ namespace Clippit.PowerPoint
                 var newPart = newChart.AddNewPart<T>(oldPart.ContentType, newRid);
                 
                 using var oldStream = oldPart.GetStream(FileMode.Open, FileAccess.Read);
-                using var newStream = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);
-                oldStream.CopyTo(newStream);
+                newPart.FeedData(oldStream);
             }
         }
         
@@ -203,8 +205,7 @@ namespace Clippit.PowerPoint
                             var newPart = newChart.AddEmbeddedPackagePart(oldPart.ContentType);
                             using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
-                                using var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);
-                                oldObject.CopyTo(newObject);
+                                newPart.FeedData(oldObject);
                             }
                             dataReference.Attribute(R.id).Set(newChart.GetIdOfPart(newPart));
                             continue;
@@ -214,8 +215,7 @@ namespace Clippit.PowerPoint
                             var newPart = newChart.AddEmbeddedPackagePart(oldEmbeddedObjectPart.ContentType);
                             using (var oldObject = oldEmbeddedObjectPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
-                                using var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);
-                                oldObject.CopyTo(newObject);
+                                newPart.FeedData(oldObject);
                             }
 
                             var rId = newChart.GetIdOfPart(newPart);
@@ -224,14 +224,17 @@ namespace Clippit.PowerPoint
                             // following is a hack to fix the package because the Open XML SDK does not let us create
                             // a relationship from a chart with the oleObject relationship type.
 
-                            var pkg = newChart.OpenXmlPackage.Package;
+                            var pkg = newChart.OpenXmlPackage.GetPackage();
                             var fromPart = pkg.GetParts().FirstOrDefault(p => p.Uri == newChart.Uri);
-                            var rel = fromPart?.GetRelationships().FirstOrDefault(p => p.Id == rId);
-                            var targetUri = rel?.TargetUri;
+                            if (fromPart is not null)
+                            {
+                                var rel = fromPart.Relationships.FirstOrDefault(p => p.Id == rId);
+                                var targetUri = rel?.TargetUri;
 
-                            fromPart?.DeleteRelationship(rId);
-                            fromPart?.CreateRelationship(targetUri, System.IO.Packaging.TargetMode.Internal,
-                                "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject", rId);
+                                fromPart.Relationships.Remove(rId);
+                                fromPart.Relationships.Create(targetUri, System.IO.Packaging.TargetMode.Internal,
+                                    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject", rId);    
+                            }
 
                             continue;
                         }
@@ -550,10 +553,10 @@ namespace Clippit.PowerPoint
                 }
                 catch (KeyNotFoundException)
                 {
-                    var newPart = newContentPart.OpenXmlPackage.Package.GetParts().FirstOrDefault(p => p.Uri == newContentPart.Uri);
-                    if (newPart.RelationshipExists(relId) == false)
+                    var newPart = newContentPart.OpenXmlPackage.GetPackage().GetParts().FirstOrDefault(p => p.Uri == newContentPart.Uri);
+                    if (!newPart.Relationships.Contains(relId))
                     {
-                        newPart.CreateRelationship(new Uri("NULL", UriKind.RelativeOrAbsolute),
+                        newPart.Relationships.Create(new Uri("NULL", UriKind.RelativeOrAbsolute),
                             System.IO.Packaging.TargetMode.Internal,
                             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image", relId);
                     }
