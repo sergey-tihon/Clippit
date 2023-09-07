@@ -2452,7 +2452,7 @@ namespace Clippit.Html
         {
             var hres = bmp.Metadata.HorizontalResolution;
             var vres = bmp.Metadata.VerticalResolution;
-            var s = bmp.Size();
+            var s = bmp.Size;
             Emu cx = (long)((double)(s.Width / hres) * (double)Emu.s_EmusPerInch);
             Emu cy = (long)((double)(s.Height / vres) * (double)Emu.s_EmusPerInch);
 
