@@ -141,7 +141,7 @@ namespace Clippit
                                 };
                             }
                         }
-                        if (s.FiStack == null || s.FiStack.Count() == 0)
+                        if (s.FiStack == null || s.FiStack.Count == 0)
                             return s;
                         var wfi3 = s.FiStack.Peek();
                         if (wfi3.FieldElementType == FieldElementTypeEnum.Begin)

@@ -131,7 +131,7 @@ namespace Clippit.Tests.Word
 
             var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
-                Assert.True(false, "Duplicate test id: " + testId);
+                Assert.Fail("Duplicate test id: " + testId);
             else
                 thisTestTempDir.Create();
 
@@ -254,7 +254,7 @@ namespace Clippit.Tests.Word
             }
 
             if (validationErrors != "")
-                Assert.True(false, validationErrors);
+                Assert.Fail(validationErrors);
         }
 
         [Theory]
@@ -350,7 +350,7 @@ namespace Clippit.Tests.Word
 
             var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
-                Assert.True(false, "Duplicate test id: " + testId);
+                Assert.Fail("Duplicate test id: " + testId);
             else
                 thisTestTempDir.Create();
 
@@ -482,7 +482,7 @@ namespace Clippit.Tests.Word
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             if (validationErrors != "")
-                Assert.True(false, validationErrors);
+                Assert.Fail(validationErrors);
         }
 
         [Theory]
@@ -607,7 +607,7 @@ namespace Clippit.Tests.Word
 
             var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
-                Assert.True(false, "Duplicate test id???");
+                Assert.Fail("Duplicate test id???");
             else
                 thisTestTempDir.Create();
 
@@ -744,14 +744,14 @@ namespace Clippit.Tests.Word
 
             if (validationErrors != "")
             {
-                Assert.True(false, validationErrors);
+                Assert.Fail(validationErrors);
             }
 
             var settings2 = new WmlComparerSettings();
 
             var revisionWml = new WmlDocument(docxWithRevisionsFi.FullName);
             var revisions = WmlComparer.GetRevisions(revisionWml, settings);
-            Assert.Equal(revisionCount, revisions.Count());
+            Assert.Equal(revisionCount, revisions.Count);
 
             var afterRejectingWml = RevisionProcessor.RejectRevisions(revisionWml);
 
@@ -789,10 +789,10 @@ namespace Clippit.Tests.Word
                 afterAcceptingComparedWml.SaveAs(afterAcceptingComparedFi.FullName);
             }
 
-            if (sanityCheck1.Count() != 0)
-                Assert.True(false, "Sanity Check #1 failed");
-            if (sanityCheck2.Count() != 0)
-                Assert.True(false, "Sanity Check #2 failed");
+            if (sanityCheck1.Count != 0)
+                Assert.Fail("Sanity Check #1 failed");
+            if (sanityCheck2.Count != 0)
+                Assert.Fail("Sanity Check #2 failed");
         }
 
 #if false
@@ -892,7 +892,7 @@ namespace Clippit.Tests.Word
 
             var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
-                Assert.True(false, "Duplicate test id???");
+                Assert.Fail("Duplicate test id???");
             else
                 thisTestTempDir.Create();
 
@@ -928,7 +928,7 @@ namespace Clippit.Tests.Word
 
             var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
-                Assert.True(false, "Duplicate test id???");
+                Assert.Fail("Duplicate test id???");
             else
                 thisTestTempDir.Create();
 
@@ -980,7 +980,7 @@ namespace Clippit.Tests.Word
                 {
                     var validator = new OpenXmlValidator();
                     var errors = validator.Validate(wDoc).Where(e => !ExpectedErrors.Contains(e.Description));
-                    if (errors.Count() > 0)
+                    if (errors.Any())
                     {
 
                         var ind = "  ";
@@ -1015,7 +1015,7 @@ namespace Clippit.Tests.Word
 
             var revisionWml = new WmlDocument(docxWithRevisionsFi.FullName);
             var revisions = WmlComparer.GetRevisions(revisionWml, settings);
-            Assert.Equal(revisionCount, revisions.Count());
+            Assert.Equal(revisionCount, revisions.Count);
         }
 
         private static void ValidateDocument(WmlDocument wmlToValidate)

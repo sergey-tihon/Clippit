@@ -42,7 +42,7 @@ namespace Clippit.Tests.Word
 
             var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
-                Assert.True(false, "Duplicate test id???");
+                Assert.Fail("Duplicate test id???");
             else
                 thisTestTempDir.Create();
             var source1CopiedToDestDocx = new FileInfo(Path.Combine(thisTestTempDir.FullName, source1Docx.Name));
@@ -104,7 +104,7 @@ namespace Clippit.Tests.Word
                         }
                         var sbs = sb.ToString();
                         if (sbs != "")
-                            Assert.True(false, sbs);
+                            Assert.Fail(sbs);
                     }
                 }
             }

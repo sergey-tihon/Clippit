@@ -1569,7 +1569,7 @@ namespace Clippit.Word
             var moveFromElementsToDelete = startElementTagsInMoveFromRange
                 .Intersect(endElementTagsInMoveFromRange)
                 .ToArray();
-            if (moveFromElementsToDelete.Count() > 0)
+            if (moveFromElementsToDelete.Length > 0)
                 return (XElement)AcceptMoveFromRangesTransform(
                     document, moveFromElementsToDelete);
             return document;
@@ -1618,7 +1618,7 @@ namespace Clippit.Word
 
                     // If there is only one group, and it's key is MoveFromCollectionType.Other
                     // then there is nothing to do.
-                    if (groupedBodyChildren.Count() == 1 &&
+                    if (groupedBodyChildren.Count == 1 &&
                         groupedBodyChildren.First().Key == MoveFromCollectionType.Other)
                     {
                         var newElement = new XElement(element.Name,
@@ -2517,7 +2517,7 @@ namespace Clippit.Word
                     }
                     throw new PowerToolsInvalidDataException("Should not have reached this point.");
                 }
-                if (potentialMoveFromElements.Count() > 0 &&
+                if (potentialMoveFromElements.Count > 0 &&
                     tag.Element.Name != W.moveFromRangeStart &&
                     tag.Element.Name != W.moveFromRangeEnd &&
                     tag.Element.Name != W.customXmlMoveFromRangeStart &&

@@ -3222,7 +3222,7 @@ namespace Clippit.Html
         {
             var widthProp = element.GetProp($"border-{whichBorder}-width");
 
-            if (widthProp != null && widthProp.Terms.Count() == 1)
+            if (widthProp != null && widthProp.Terms.Count == 1)
             {
                 var term = widthProp.Terms.First();
                 var twips = (Twip)widthProp;
@@ -3288,7 +3288,7 @@ namespace Clippit.Html
         private static Twip GetTwipWidth(CssExpression columnWidth, int printable)
         {
             Twip defaultTwipWidth = 1440;
-            if (columnWidth.Terms.Count() == 1)
+            if (columnWidth.Terms.Count == 1)
             {
                 var term = columnWidth.Terms.First();
                 if (term.Unit == CssUnit.PT)
@@ -3308,7 +3308,7 @@ namespace Clippit.Html
         {
             var rowList = table.DescendantsTrimmed(XhtmlNoNamespace.table).Where(e => e.Name == XhtmlNoNamespace.tr).ToList();
             var numberColumns = rowList.Select(r => r.Elements().Where(e => e.Name == XhtmlNoNamespace.td || e.Name == XhtmlNoNamespace.th).Count()).Max();
-            var tableArray = new XElement[rowList.Count()][];
+            var tableArray = new XElement[rowList.Count][];
             var rowNumber = 0;
             foreach (var row in rowList)
             {
@@ -4018,7 +4018,7 @@ namespace Clippit.Html
         {
             if (fontSize == null)
                 return null;
-            if (fontSize.Terms.Count() == 1)
+            if (fontSize.Terms.Count == 1)
             {
                 var term = fontSize.Terms.First();
                 double size = 0;
@@ -4540,7 +4540,7 @@ namespace Clippit.Html
                     var selector = ruleSet.Selectors.Where(
                         sel =>
                         {
-                            var found = sel.SimpleSelectors.Count() == 1 &&
+                            var found = sel.SimpleSelectors.Count == 1 &&
                                         sel.SimpleSelectors.First().Class == item &&
                                         sel.SimpleSelectors.First().ElementName is "" or null;
                             return found;
