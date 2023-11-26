@@ -106,8 +106,8 @@ namespace Clippit.Word
             }
             if (numFmt == "ordinal")
             {
-                string suffix;
-                /*if (levelNumber % 100 == 11 || levelNumber % 100 == 12 ||
+                var suffix =
+                    /*if (levelNumber % 100 == 11 || levelNumber % 100 == 12 ||
                     levelNumber % 100 == 13)
                     suffix = "th";
                 else if (levelNumber % 10 == 1)
@@ -118,7 +118,7 @@ namespace Clippit.Word
                     suffix = "rd";
                 else
                     suffix = "th";*/
-                suffix = ".";
+                    ".";
                 return levelNumber + suffix;
             }
             if (numFmt == "cardinalText")

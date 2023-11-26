@@ -204,8 +204,7 @@ namespace Clippit.Internal
                 throw new InvalidDataException(
                     "Search and replace will not work with documents " +
                     "that contain revision tracking.");
-            XDocument xDoc;
-            xDoc = wordDoc.MainDocumentPart.DocumentSettingsPart.GetXDocument();
+            var xDoc = wordDoc.MainDocumentPart.DocumentSettingsPart.GetXDocument();
             if (xDoc.Descendants(W.trackRevisions).Any())
                 throw new InvalidDataException("Revision tracking is turned on for document.");
 

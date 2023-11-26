@@ -1371,16 +1371,15 @@ namespace Clippit.Html
         }
         private void ConvertFromRGB(Color color)
         {
-            double min; double max; double delta;
             var r = color.R / 255.0d;
             var g = color.G / 255.0d;
             var b = color.B / 255.0d;
-            double h; double s; double v;
+            double h; double s;
 
-            min = Math.Min(Math.Min(r, g), b);
-            max = Math.Max(Math.Max(r, g), b);
-            v = max;
-            delta = max - min;
+            var min = Math.Min(Math.Min(r, g), b);
+            var max = Math.Max(Math.Max(r, g), b);
+            var v = max;
+            var delta = max - min;
             if (max == 0 || delta == 0)
             {
                 s = 0;
@@ -1414,16 +1413,13 @@ namespace Clippit.Html
 
         private Color ConvertToRGB()
         {
-            double h;
-            double s;
-            double v;
             double r = 0;
             double g = 0;
             double b = 0;
 
-            h = (Hue / 255.0d * 360.0d) % 360.0d;
-            s = Saturation / 255.0d;
-            v = Value / 255.0d;
+            var h = (Hue / 255.0d * 360.0d) % 360.0d;
+            var s = Saturation / 255.0d;
+            var v = Value / 255.0d;
 
             if (s == 0)
             {
@@ -1433,22 +1429,14 @@ namespace Clippit.Html
             }
             else
             {
-                double p;
-                double q;
-                double t;
+                var sectorPos = h / 60.0d;
+                var sectorNumber = (int)(Math.Floor(sectorPos));
 
-                double fractionalPart;
-                int sectorNumber;
-                double sectorPos;
+                var fractionalPart = sectorPos - sectorNumber;
 
-                sectorPos = h / 60.0d;
-                sectorNumber = (int)(Math.Floor(sectorPos));
-
-                fractionalPart = sectorPos - sectorNumber;
-
-                p = v * (1.0d - s);
-                q = v * (1.0d - (s * fractionalPart));
-                t = v * (1.0d - (s * (1.0d - fractionalPart)));
+                var p = v * (1.0d - s);
+                var q = v * (1.0d - (s * fractionalPart));
+                var t = v * (1.0d - (s * (1.0d - fractionalPart)));
 
                 switch (sectorNumber)
                 {

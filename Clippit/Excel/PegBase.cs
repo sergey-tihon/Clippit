@@ -604,11 +604,11 @@ namespace Clippit.Excel
          public bool TreeNT(Creator nodeCreator, int nRuleId, Matcher toMatch)
          {
              if (_bMute) return toMatch();
-             PegNode prevCur = _tree._cur, ruleNode;
+             var prevCur = _tree._cur;
              var prevPolicy = _tree._addPolicy;
              var posBeg = _pos;
              AddTreeNode(nRuleId, PegTree.AddPolicy.eAddAsChild, nodeCreator, ECreatorPhase.eCreate);
-             ruleNode = _tree._cur;
+             var ruleNode = _tree._cur;
              var bMatches = toMatch();
              if (!bMatches) RestoreTree(prevCur, prevPolicy);
              else

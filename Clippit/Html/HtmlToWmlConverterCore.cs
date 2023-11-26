@@ -177,8 +177,6 @@ namespace Clippit.Html
                 out var userCssDoc,
                 annotatedHtmlDumpFileName);
 
-            WmlDocument newWmlDocument;
-
             using var streamDoc = new OpenXmlMemoryStreamDocument(emptyDocument);
             using (var wDoc = streamDoc.GetWordprocessingDocument())
             {
@@ -190,7 +188,7 @@ namespace Clippit.Html
                 ThemeUpdater.UpdateThemePart(wDoc, html, settings);
                 NumberingUpdater.UpdateNumberingPart(wDoc, html, settings);
             }
-            newWmlDocument = streamDoc.GetModifiedWmlDocument();
+            var newWmlDocument = streamDoc.GetModifiedWmlDocument();
 
             return newWmlDocument;
         }
@@ -1045,8 +1043,7 @@ namespace Clippit.Html
                     }
                     else
                     {
-                        XElement p;
-                        p = new XElement(W.p,
+                        var p = new XElement(W.p,
                             GetParagraphProperties(element, null, settings),
                             new XElement(W.r,
                                 GetRunProperties(element, settings),
@@ -1107,8 +1104,6 @@ namespace Clippit.Html
 
         private static XElement FontMerge(XElement higherPriorityFont, XElement lowerPriorityFont)
         {
-            XElement rFonts;
-
             if (higherPriorityFont == null)
                 return lowerPriorityFont;
             if (lowerPriorityFont == null)
@@ -1116,7 +1111,7 @@ namespace Clippit.Html
             if (higherPriorityFont == null && lowerPriorityFont == null)
                 return null;
 
-            rFonts = new XElement(W.rFonts,
+            var rFonts = new XElement(W.rFonts,
                 (higherPriorityFont.Attribute(W.ascii) != null || higherPriorityFont.Attribute(W.asciiTheme) != null) ?
                     new[] { higherPriorityFont.Attribute(W.ascii), higherPriorityFont.Attribute(W.asciiTheme) } :
                     new[] { lowerPriorityFont.Attribute(W.ascii), lowerPriorityFont.Attribute(W.asciiTheme) },
@@ -2137,8 +2132,7 @@ namespace Clippit.Html
                     if (xTextNode != null)
                     {
                         var textNodeString = GetDisplayText(xTextNode, preserveWhiteSpace);
-                        XElement p;
-                        p = new XElement(W.p,
+                        var p = new XElement(W.p,
                             GetParagraphProperties(node.Parent, null, settings),
                             new XElement(W.r,
                                 GetRunProperties((XText)node, settings),
@@ -4416,9 +4410,8 @@ namespace Clippit.Html
             InitializeNumberingPart(wDoc);
             var numberingPart = wDoc.MainDocumentPart.NumberingDefinitionsPart;
             var numberingXDoc = numberingPart.GetXDocument();
-            int nextAbstractId, nextNumId;
-            nextNumId = numberingXDoc.Root.Elements(W.num).Attributes(W.numId).Select(ni => (int)ni).Concat(new[] { 1 }).Max();
-            nextAbstractId = numberingXDoc.Root.Elements(W.abstractNum).Attributes(W.abstractNumId).Select(ani => (int)ani).Concat(new[] { 0 }).Max();
+            var nextNumId = numberingXDoc.Root.Elements(W.num).Attributes(W.numId).Select(ni => (int)ni).Concat(new[] { 1 }).Max();
+            var nextAbstractId = numberingXDoc.Root.Elements(W.abstractNum).Attributes(W.abstractNumId).Select(ani => (int)ani).Concat(new[] { 0 }).Max();
             var numberingElements = html.DescendantsAndSelf().Where(d => d.Name == XhtmlNoNamespace.ol || d.Name == XhtmlNoNamespace.ul).ToList();
 
             var numToAbstractNum = new Dictionary<int, int>();

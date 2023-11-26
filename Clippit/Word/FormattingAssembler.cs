@@ -1767,8 +1767,6 @@ namespace Clippit.Word
 
         private static XElement FontMerge(XElement higherPriorityFont, XElement lowerPriorityFont)
         {
-            XElement rFonts;
-
             if (higherPriorityFont == null)
                 return lowerPriorityFont;
             if (lowerPriorityFont == null)
@@ -1776,7 +1774,7 @@ namespace Clippit.Word
             if (higherPriorityFont == null && lowerPriorityFont == null)
                 return null;
 
-            rFonts = new XElement(W.rFonts,
+            var rFonts = new XElement(W.rFonts,
                 (higherPriorityFont.Attribute(W.ascii) != null || higherPriorityFont.Attribute(W.asciiTheme) != null) ?
                     new[] { higherPriorityFont.Attribute(W.ascii), higherPriorityFont.Attribute(W.asciiTheme) } :
                     new[] { lowerPriorityFont.Attribute(W.ascii), lowerPriorityFont.Attribute(W.asciiTheme) },
