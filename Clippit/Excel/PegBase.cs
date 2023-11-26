@@ -972,7 +972,7 @@ namespace Clippit.Excel
         {
             into = 0.0;
             if (!Into(toMatch,out byte[] s)) return false;
-            var encoding = System.Text.Encoding.UTF8;
+            var encoding = Encoding.UTF8;
             var sAsString = encoding.GetString(s);
             if (!double.TryParse(sAsString, out into)) return false;
             return true;

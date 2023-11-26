@@ -324,7 +324,7 @@ namespace Clippit
                 var byteArray = binaryReader.ReadBytes(len);
                 // the following expression creates the base64String, then chunks
                 // it to lines of 76 characters long
-                var base64String = (System.Convert.ToBase64String(byteArray))
+                var base64String = (Convert.ToBase64String(byteArray))
                     .Select
                     (
                         (c, i) => new FlatOpcTupple()
@@ -502,7 +502,7 @@ namespace Clippit
                     var base64CharArray = base64StringInChunks
                         .Where(c => c != '\r' && c != '\n').ToArray();
                     var byteArray =
-                        System.Convert.FromBase64CharArray(base64CharArray,
+                        Convert.FromBase64CharArray(base64CharArray,
                             0, base64CharArray.Length);
                     binaryWriter.Write(byteArray);
                 }
@@ -572,8 +572,8 @@ namespace Clippit
     {
         public static string ConvertToBase64(string fileName)
         {
-            var ba = System.IO.File.ReadAllBytes(fileName);
-            var base64String = (System.Convert.ToBase64String(ba))
+            var ba = File.ReadAllBytes(fileName);
+            var base64String = (Convert.ToBase64String(ba))
                 .Select
                 (
                     (c, i) => new
@@ -607,7 +607,7 @@ namespace Clippit
         public static byte[] ConvertFromBase64(string fileName, string b64)
         {
             var b64b = b64.Replace("\r\n", "");
-            var ba = System.Convert.FromBase64String(b64b);
+            var ba = Convert.FromBase64String(b64b);
             return ba;
         }
     }
@@ -5392,35 +5392,35 @@ listSeparator
 
         public static readonly XName[] BlockLevelContentContainers =
         {
-            W.body,
-            W.tc,
-            W.txbxContent,
-            W.hdr,
-            W.ftr,
-            W.endnote,
-            W.footnote
+            body,
+            tc,
+            txbxContent,
+            hdr,
+            ftr,
+            endnote,
+            footnote
         };
 
         public static readonly XName[] SubRunLevelContent =
         {
-            W.br,
-            W.cr,
-            W.dayLong,
-            W.dayShort,
-            W.drawing,
-            W.drawing,
-            W.monthLong,
-            W.monthShort,
-            W.noBreakHyphen,
-            W.ptab,
-            W.pgNum,
-            W.pict,
-            W.softHyphen,
-            W.sym,
-            W.t,
-            W.tab,
-            W.yearLong,
-            W.yearShort,
+            br,
+            cr,
+            dayLong,
+            dayShort,
+            drawing,
+            drawing,
+            monthLong,
+            monthShort,
+            noBreakHyphen,
+            ptab,
+            pgNum,
+            pict,
+            softHyphen,
+            sym,
+            t,
+            tab,
+            yearLong,
+            yearShort,
             MC.AlternateContent,
         };
     }

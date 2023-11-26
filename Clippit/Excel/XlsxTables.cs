@@ -346,13 +346,13 @@ namespace Clippit.Excel
             // C5:E7
             var spl = theRef.Split(':');
             var refStart = spl.First();
-            var refStartSplit = XlsxTables.SplitAddress(refStart);
-            leftColumn = XlsxTables.ColumnAddressToIndex(refStartSplit[0]);
+            var refStartSplit = SplitAddress(refStart);
+            leftColumn = ColumnAddressToIndex(refStartSplit[0]);
             topRow = int.Parse(refStartSplit[1]);
 
             var refEnd = spl.ElementAt(1);
-            var refEndSplit = XlsxTables.SplitAddress(refEnd);
-            rightColumn = XlsxTables.ColumnAddressToIndex(refEndSplit[0]);
+            var refEndSplit = SplitAddress(refEnd);
+            rightColumn = ColumnAddressToIndex(refEndSplit[0]);
             bottomRow = int.Parse(refEndSplit[1]);
         }
 

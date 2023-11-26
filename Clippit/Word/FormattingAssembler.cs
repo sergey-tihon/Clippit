@@ -86,7 +86,7 @@ namespace Clippit.Word
             {
                 var pxd = part.GetXDocument();
                 pxd.Root.Descendants().Attributes().Where(a => a.IsNamespaceDeclaration).Remove();
-                FormattingAssembler.NormalizePropsForPart(pxd, settings);
+                NormalizePropsForPart(pxd, settings);
                 var newRoot = (XElement)CleanupTransform(pxd.Root);
                 pxd.Root.ReplaceWith(newRoot);
                 part.PutXDocument();

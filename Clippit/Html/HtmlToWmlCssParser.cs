@@ -1548,7 +1548,7 @@ namespace Clippit.Html
             {
                 return false;
             }
-            var units = new System.Collections.Generic.List<string>(
+            var units = new List<string>(
                 new string[]
                 {
                     "em", "ex", "px", "gd", "rem", "vw", "vh", "vm", "ch", "mm", "cm", "in", "pt", "pc", "deg", "grad", "rad", "turn", "ms", "s", "hz", "khz"

@@ -229,7 +229,7 @@ namespace Clippit.Excel
                     case "b":
                         return (cellValue.Element(S.v).Value == "1");
                     case "s":
-                        return GetSharedString(document, System.Convert.ToInt32(cellValue.Element(S.v).Value));
+                        return GetSharedString(document, Convert.ToInt32(cellValue.Element(S.v).Value));
                     case "inlineStr":
                         return cellValue.Element(S._is).Element(S.t).Value;
                 }
@@ -364,7 +364,7 @@ namespace Clippit.Excel
             return worksheet.Root
                 .Element(S.sheetData)
                 .Elements(S.row)
-                .FirstOrDefault(r => System.Convert.ToInt32(r.Attribute(NoNamespace.r).Value) > row);
+                .FirstOrDefault(r => Convert.ToInt32(r.Attribute(NoNamespace.r).Value) > row);
         }
 
         // Finds the cell element (c) in the specified row that is after the specified "column" number
@@ -373,7 +373,7 @@ namespace Clippit.Excel
             return worksheet.Root
                 .Element(S.sheetData)
                 .Elements(S.row)
-                .FirstOrDefault(r => System.Convert.ToInt32(r.Attribute(NoNamespace.r).Value) == row)
+                .FirstOrDefault(r => Convert.ToInt32(r.Attribute(NoNamespace.r).Value) == row)
                 .Elements(S.c)
                 .FirstOrDefault(c => GetColumnNumber(c.Attribute(NoNamespace.r).Value) > GetColumnNumber(GetColumnId(column) + row));
         }
@@ -385,7 +385,7 @@ namespace Clippit.Excel
             foreach (var c in cellReference)
             {
                 if (char.IsLetter(c))
-                    columnNumber = columnNumber * 26 + System.Convert.ToInt32(c) - System.Convert.ToInt32('A') + 1;
+                    columnNumber = columnNumber * 26 + Convert.ToInt32(c) - Convert.ToInt32('A') + 1;
             }
             return columnNumber;
         }
@@ -399,9 +399,9 @@ namespace Clippit.Excel
             foreach (var c in cellReference)
             {
                 if (char.IsLetter(c))
-                    column = column * 26 + System.Convert.ToInt32(c) - System.Convert.ToInt32('A') + 1;
+                    column = column * 26 + Convert.ToInt32(c) - Convert.ToInt32('A') + 1;
                 else
-                    row = row * 10 + System.Convert.ToInt32(c) - System.Convert.ToInt32('0');
+                    row = row * 10 + Convert.ToInt32(c) - Convert.ToInt32('0');
             }
         }
 
@@ -644,7 +644,7 @@ namespace Clippit.Excel
             foreach (var rec in records.Descendants(S.r))
             {
                 var val = rec.Elements().Skip(index).First();
-                var x = Array.FindIndex(values.ToArray(), z => XElement.DeepEquals(z, val));
+                var x = Array.FindIndex(values.ToArray(), z => XNode.DeepEquals(z, val));
                 if (x == -1)
                 {
                     values.Add(val);
@@ -844,7 +844,7 @@ namespace Clippit.Excel
                 numFmts = styles.Root.Element(S.numFmts);
             }
             var index = Array.FindIndex(numFmts.Elements(S.numFmt).ToArray(),
-                z => XElement.DeepEquals(z, numFmt));
+                z => XNode.DeepEquals(z, numFmt));
             if (index == -1)
             {
                 numFmts.Add(numFmt);
@@ -965,7 +965,7 @@ namespace Clippit.Excel
             var styles = document.WorkbookPart.WorkbookStylesPart.GetXDocument();
             var fonts = styles.Root.Element(S.fonts);
             var index = Array.FindIndex(fonts.Elements(S.font).ToArray(),
-                z => XElement.DeepEquals(z, font));
+                z => XNode.DeepEquals(z, font));
             if (index != -1)
                 return index;
             fonts.Add(font);
@@ -1147,7 +1147,7 @@ namespace Clippit.Excel
             var styles = document.WorkbookPart.WorkbookStylesPart.GetXDocument();
             var fills = styles.Root.Element(S.fills);
             var index = Array.FindIndex(fills.Elements(S.fill).ToArray(),
-                z => XElement.DeepEquals(z, fill));
+                z => XNode.DeepEquals(z, fill));
             if (index != -1)
                 return index;
             fills.Add(fill);
@@ -1278,7 +1278,7 @@ namespace Clippit.Excel
             var styles = document.WorkbookPart.WorkbookStylesPart.GetXDocument();
             var borders = styles.Root.Element(S.borders);
             var index = Array.FindIndex(borders.Elements(S.border).ToArray(),
-                z => XElement.DeepEquals(z, border));
+                z => XNode.DeepEquals(z, border));
             if (index != -1)
                 return index;
             borders.Add(border);
@@ -1430,7 +1430,7 @@ namespace Clippit.Excel
             var styles = document.WorkbookPart.WorkbookStylesPart.GetXDocument();
             var cellXfs = styles.Root.Element(S.cellXfs);
             var index = Array.FindIndex(cellXfs.Elements(S.xf).ToArray(),
-                z => XElement.DeepEquals(z, xf));
+                z => XNode.DeepEquals(z, xf));
             if (index != -1)
                 return index;
             cellXfs.Add(xf);

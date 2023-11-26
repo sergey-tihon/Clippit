@@ -18,7 +18,7 @@ namespace Clippit.Word
     {
         public IEnumerable<WmlDocument> SplitOnSections()
         {
-            return Word.DocumentBuilder.SplitOnSections(this);
+            return DocumentBuilder.SplitOnSections(this);
         }
     }
 
@@ -1082,7 +1082,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         private static WmlDocument CoalesceGlossaryDocumentParts(IEnumerable<ISource> sources, DocumentBuilderSettings settings)
         {
             var allGlossaryDocuments = sources
-                .Select(s => DocumentBuilder.ExtractGlossaryDocument(s.WmlDocument))
+                .Select(s => ExtractGlossaryDocument(s.WmlDocument))
                 .Where(s => s != null)
                 .Select(s => new Source(s) as ISource)
                 .ToList();
@@ -1090,7 +1090,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             if (!allGlossaryDocuments.Any())
                 return null;
 
-            var coalescedRaw = DocumentBuilder.BuildDocument(allGlossaryDocuments);
+            var coalescedRaw = BuildDocument(allGlossaryDocuments);
 
             // now need to do some fix up
             using var ms = new MemoryStream();

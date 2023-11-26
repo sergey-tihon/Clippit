@@ -995,7 +995,7 @@ namespace Clippit.Word
 
                     // access the saved image and get the dimensions
                     using var savedStream = ip.GetStream(FileMode.Open);
-                    using var image = Image<Rgba32>.Load(savedStream);
+                    using var image = Image.Load(savedStream);
                     // one inch is 914400 EMUs
                     // 96dpi where dot is pixel
                     var pixelInEMU = 914400 / 96;

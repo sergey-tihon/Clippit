@@ -51,14 +51,14 @@ namespace Clippit.Excel
             ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
             using var sDoc = SpreadsheetDocument.Open(ms, false);
             var rangeXml = SmlDataRetriever.RetrieveTable(sDoc, tableName);
-            var xhtml = SmlToHtmlConverter.ConvertToHtmlInternal(sDoc, settings, rangeXml);
+            var xhtml = ConvertToHtmlInternal(sDoc, settings, rangeXml);
             return xhtml;
         }
 
         public static XElement ConvertTableToHtml(SpreadsheetDocument sDoc, SmlToHtmlConverterSettings settings, string tableName)
         {
             var rangeXml = SmlDataRetriever.RetrieveTable(sDoc, tableName);
-            var xhtml = SmlToHtmlConverter.ConvertToHtmlInternal(sDoc, settings, rangeXml);
+            var xhtml = ConvertToHtmlInternal(sDoc, settings, rangeXml);
             return xhtml;
         }
         #endregion

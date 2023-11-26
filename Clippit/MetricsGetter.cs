@@ -365,7 +365,7 @@ namespace Clippit
             return valid;
         }
 
-        private static bool ValidateAgainstSpecificVersion(WordprocessingDocument wDoc, List<XElement> metrics, DocumentFormat.OpenXml.FileFormatVersions versionToValidateAgainst, XName versionSpecificMetricName)
+        private static bool ValidateAgainstSpecificVersion(WordprocessingDocument wDoc, List<XElement> metrics, FileFormatVersions versionToValidateAgainst, XName versionSpecificMetricName)
         {
             var validator = new OpenXmlValidator(versionToValidateAgainst);
             var errors = validator.Validate(wDoc);
@@ -390,7 +390,7 @@ namespace Clippit
             return valid;
         }
 
-        private static bool ValidateAgainstSpecificVersion(SpreadsheetDocument sDoc, List<XElement> metrics, DocumentFormat.OpenXml.FileFormatVersions versionToValidateAgainst, XName versionSpecificMetricName)
+        private static bool ValidateAgainstSpecificVersion(SpreadsheetDocument sDoc, List<XElement> metrics, FileFormatVersions versionToValidateAgainst, XName versionSpecificMetricName)
         {
             var validator = new OpenXmlValidator(versionToValidateAgainst);
             var errors = validator.Validate(sDoc);
@@ -415,7 +415,7 @@ namespace Clippit
             return valid;
         }
 
-        private static bool ValidateAgainstSpecificVersion(PresentationDocument pDoc, List<XElement> metrics, DocumentFormat.OpenXml.FileFormatVersions versionToValidateAgainst, XName versionSpecificMetricName)
+        private static bool ValidateAgainstSpecificVersion(PresentationDocument pDoc, List<XElement> metrics, FileFormatVersions versionToValidateAgainst, XName versionSpecificMetricName)
         {
             var validator = new OpenXmlValidator(versionToValidateAgainst);
             var errors = validator.Validate(pDoc);

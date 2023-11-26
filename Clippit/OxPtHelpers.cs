@@ -64,7 +64,7 @@ namespace Clippit
                             $"Add-DocxText: The specified color {foreColor} is unsupported, Please specify the valid color. Ex, Red, Green");
 
                     var ColorHex = $"{colorValue:x6}";
-                    runProperties.AppendChild(new DocumentFormat.OpenXml.Wordprocessing.Color() { Val = ColorHex.Substring(2) });
+                    runProperties.AppendChild(new Color() { Val = ColorHex.Substring(2) });
                 }
 
                 if (isUnderline)
@@ -307,7 +307,7 @@ AAsACwDBAgAAbCwAAAAA";
                         #endregion
 
                         var base64CharArray = base64.Where(c => c != '\r' && c != '\n').ToArray();
-                        var byteArray = System.Convert.FromBase64CharArray(base64CharArray, 0, base64CharArray.Length);
+                        var byteArray = Convert.FromBase64CharArray(base64CharArray, 0, base64CharArray.Length);
                         memoryStream.Write(byteArray, 0, byteArray.Length);
 
                         using var defaultDotx = WordprocessingDocument.Open(memoryStream, true);

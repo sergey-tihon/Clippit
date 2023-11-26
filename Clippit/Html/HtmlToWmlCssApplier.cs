@@ -1762,7 +1762,7 @@ namespace Clippit.Html
             else
             {
                 var current = propList[property.Name];
-                if (((System.IComparable<Property>)property).CompareTo(current) == 1)
+                if (((IComparable<Property>)property).CompareTo(current) == 1)
                     propList[property.Name] = property;
             }
         }
@@ -1776,7 +1776,7 @@ namespace Clippit.Html
             else
             {
                 var current = propList[property.Name];
-                if (((System.IComparable<Property>)property).CompareTo(current) == 1)
+                if (((IComparable<Property>)property).CompareTo(current) == 1)
                     propList[property.Name] = property;
             }
         }
@@ -2904,7 +2904,7 @@ namespace Clippit.Html
                 UserHigh = 10,
             };
 
-            int System.IComparable<Property>.CompareTo(Property other)
+            int IComparable<Property>.CompareTo(Property other)
             {
                 // if this is less than other, return -1
                 // if this is greater than other, return 1

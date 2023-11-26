@@ -19,7 +19,7 @@ namespace Clippit.Tests.Excel.Samples
         {
             var sourceFile = GetFilePath("Formulas1/Formulas.xlsx");
             // Change sheet name in formulas
-            using (var streamDoc = new OpenXmlMemoryStreamDocument( SmlDocument.FromFileName(sourceFile)))
+            using (var streamDoc = new OpenXmlMemoryStreamDocument( OpenXmlPowerToolsDocument.FromFileName(sourceFile)))
             {
                 using (var doc = streamDoc.GetSpreadsheetDocument())
                 {
@@ -29,7 +29,7 @@ namespace Clippit.Tests.Excel.Samples
             }
 
             // Change sheet name in formulas
-            using (var streamDoc = new OpenXmlMemoryStreamDocument(SmlDocument.FromFileName(sourceFile)))
+            using (var streamDoc = new OpenXmlMemoryStreamDocument(OpenXmlPowerToolsDocument.FromFileName(sourceFile)))
             {
                 using (var doc = streamDoc.GetSpreadsheetDocument())
                 {
@@ -49,7 +49,7 @@ namespace Clippit.Tests.Excel.Samples
 
             var row = 1;
             using (var streamDoc = new OpenXmlMemoryStreamDocument(
-               SmlDocument.FromFileName(qs.FullName)))
+               OpenXmlPowerToolsDocument.FromFileName(qs.FullName)))
             {
                 using (var doc = streamDoc.GetSpreadsheetDocument())
                 {
@@ -523,7 +523,7 @@ namespace Clippit.Tests.Excel.Samples
             // Add pivot table to existing spreadsheet
             // Demonstrate multiple data fields
             using (var streamDoc = new OpenXmlMemoryStreamDocument(
-                SmlDocument.FromFileName(GetFilePath("PivotTables1/QuarterlyUnitSales.xlsx"))))
+                OpenXmlPowerToolsDocument.FromFileName(GetFilePath("PivotTables1/QuarterlyUnitSales.xlsx"))))
             {
                 using (var doc = streamDoc.GetSpreadsheetDocument())
                 {

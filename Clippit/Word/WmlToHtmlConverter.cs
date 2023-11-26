@@ -9,7 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Image = SixLabors.ImageSharp.Image;
 
@@ -2954,7 +2953,7 @@ namespace Clippit.Word
                 return null;
 
             using var partStream = imagePart.GetStream();
-            using var image = Image<Rgba32>.Load(partStream);
+            using var image = Image.Load(partStream);
             if (extentCx != null && extentCy != null)
             {
                 var imageInfo = new ImageInfo()
@@ -3017,7 +3016,7 @@ namespace Clippit.Word
                 using var partStream = imagePart.GetStream();
                 try
                 {
-                    using var bitmap = Image<Rgba32>.Load(partStream);
+                    using var bitmap = Image.Load(partStream);
                     var imageInfo = new ImageInfo
                     {
                         Image = bitmap,

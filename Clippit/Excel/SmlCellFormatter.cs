@@ -30,7 +30,7 @@ namespace Clippit.Excel
                 "# ?/?",
                 new FormatConfig
                 {
-                    CellType = SmlCellFormatter.CellType.Number,
+                    CellType = CellType.Number,
                     FormatCode = "0.00",
                 }
             },
@@ -38,7 +38,7 @@ namespace Clippit.Excel
                 "# ??/??",
                 new FormatConfig
                 {
-                    CellType = SmlCellFormatter.CellType.Number,
+                    CellType = CellType.Number,
                     FormatCode = "0.00",
                 }
             },

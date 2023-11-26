@@ -104,7 +104,6 @@ using System.Xml.Linq;
 using Clippit.Internal;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.PixelFormats;
 using Image = SixLabors.ImageSharp.Image;
@@ -2177,13 +2176,13 @@ namespace Clippit.Html
                 var base64 = srcAttribute.Substring(commaIndex + 1);
                 ba = Convert.FromBase64String(base64);
                 using var ms = new MemoryStream(ba);
-                bmp = Image<Rgba32>.Load(ms);
+                bmp = Image.Load(ms);
             }
             else
             {
                 try
                 {
-                    bmp = Image<Rgba32>.Load(settings.BaseUriForImages + "/" + srcAttribute);
+                    bmp = Image.Load(settings.BaseUriForImages + "/" + srcAttribute);
                 }
                 catch (DirectoryNotFoundException)
                 {
