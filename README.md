@@ -1,6 +1,6 @@
 ﻿# Clippit [![NuGet Badge](https://buildstats.info/nuget/Clippit)](https://www.nuget.org/packages/Clippit)
 
-[![Build Status](https://github.com/sergey-tihon/Clippit/workflows/Build%20and%20Test/badge.svg?branch=master)](https://github.com/sergey-tihon/Clippit/actions?query=branch%3Amaster)
+[![Build and Test](https://github.com/sergey-tihon/Clippit/actions/workflows/main.yml/badge.svg)](https://github.com/sergey-tihon/Clippit/actions/workflows/main.yml)
 
 ## Build Instructions
 
