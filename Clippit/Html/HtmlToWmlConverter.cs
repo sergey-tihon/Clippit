@@ -403,7 +403,7 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
 
         public static Emu TwipsToEmus(long twips)
         {
-            var v1 = (float)twips / 20f;
+            var v1 = twips / 20f;
             var v2 = v1 / 72f;
             var v3 = v2 * s_EmusPerInch;
             var emus = (long)v3;

@@ -1917,7 +1917,7 @@ namespace Clippit.Word
 
                     currentElement.Add(new XAttribute(PtOpenXml.TabWidth,
                         string.Format(NumberFormatInfo.InvariantInfo,
-                            "{0:0.000}", (decimal)firstInTwips / 1440m)));
+                            "{0:0.000}", firstInTwips / 1440m)));
 
                     currentElementIdx++;
                     if (currentElementIdx >= contentToMeasure.Length)
@@ -1975,7 +1975,7 @@ namespace Clippit.Word
                             delta2 = 0;
                         currentElement.Add(
                             new XAttribute(PtOpenXml.TabWidth,
-                                string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", (decimal)delta2 / 1440m)),
+                                string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta2 / 1440m)),
                             GetLeader(tabAfterText));
                         twipCounter = Math.Max((int)tabAfterText.Attribute(W.pos), twipCounter + widthOfTextAfterTab);
 
@@ -2022,7 +2022,7 @@ namespace Clippit.Word
                                 delta2 = 0;
                             currentElement.Add(
                                 new XAttribute(PtOpenXml.TabWidth,
-                                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", (decimal)delta2 / 1440m)),
+                                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta2 / 1440m)),
                                 GetLeader(tabAfterText));
 
                             var decims = textAfterTab.Substring(textAfterTab.IndexOf('.'));
@@ -2057,7 +2057,7 @@ namespace Clippit.Word
                                 delta2 = 0;
                             currentElement.Add(
                                 new XAttribute(PtOpenXml.TabWidth,
-                                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", (decimal)delta2 / 1440m)),
+                                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta2 / 1440m)),
                                 GetLeader(tabAfterText));
                             twipCounter = Math.Max((int)tabAfterText.Attribute(W.pos), twipCounter + widthOfTextAfterTab);
 
@@ -2101,7 +2101,7 @@ namespace Clippit.Word
                             delta2 = 0;
                         currentElement.Add(
                             new XAttribute(PtOpenXml.TabWidth,
-                                string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", (decimal)delta2 / 1440m)),
+                                string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta2 / 1440m)),
                             GetLeader(tabAfterText));
                         twipCounter = Math.Max((int)tabAfterText.Attribute(W.pos) + widthOfText / 2, twipCounter + widthOfText);
 
@@ -2120,7 +2120,7 @@ namespace Clippit.Word
                         var delta = (int)tabAfterText.Attribute(W.pos) - twipCounter;
                         currentElement.Add(
                             new XAttribute(PtOpenXml.TabWidth,
-                                string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", (decimal)delta / 1440m)),
+                                string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta / 1440m)),
                             GetLeader(tabAfterText));
                         twipCounter = (int)tabAfterText.Attribute(W.pos);
 
@@ -2151,7 +2151,7 @@ namespace Clippit.Word
                     //var widthOfText = CalcWidthOfRunInTwips(dummyRun3);
                     const int widthOfText = 0;
                     currentElement.Add(new XAttribute(PtOpenXml.TabWidth,
-                        string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", (decimal) widthOfText/1440m)));
+                        string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", widthOfText/1440m)));
                     twipCounter += widthOfText;
 
                     currentElementIdx++;
@@ -2474,7 +2474,7 @@ namespace Clippit.Word
                     var last = g.Count() - 1;
                     return g.Select((e, i) => ConvertToHtmlTransform(wordDoc, settings, e, i != last, currentMarginLeft));
                 });
-            return (IEnumerable<object>)newContent;
+            return newContent;
         }
 
         private class BorderMappingInfo
@@ -2965,8 +2965,8 @@ namespace Clippit.Word
                     ImgStyleAttribute = new XAttribute("style",
                         string.Format(NumberFormatInfo.InvariantInfo,
                             "width: {0}in; height: {1}in",
-                            (float)extentCx / (float)ImageInfo.EmusPerInch,
-                            (float)extentCy / (float)ImageInfo.EmusPerInch)),
+                            (float)extentCx / ImageInfo.EmusPerInch,
+                            (float)extentCy / ImageInfo.EmusPerInch)),
                     ContentType = contentType,
                     DrawingElement = element,
                     AltText = altText,

@@ -172,7 +172,7 @@ namespace Clippit.Tests.Excel.Samples
                                     },
                                     new CellDfn {
                                         CellDataType = CellDataType.Number,
-                                        Value = (int)100,
+                                        Value = 100,
                                     },
                                 }
                             },
@@ -256,7 +256,7 @@ namespace Clippit.Tests.Excel.Samples
                                     },
                                     new CellDfn {
                                         CellDataType = CellDataType.Number,
-                                        Value = (double)123.45,
+                                        Value = 123.45,
                                     },
                                 }
                             },

@@ -15,15 +15,15 @@ namespace Clippit.Word
     {
         public WmlDocument AddToc(string xPath, string switches, string title, int? rightTabPos)
         {
-            return (WmlDocument)ReferenceAdder.AddToc(this, xPath, switches, title, rightTabPos);
+            return ReferenceAdder.AddToc(this, xPath, switches, title, rightTabPos);
         }
         public WmlDocument AddTof(string xPath, string switches, int? rightTabPos)
         {
-            return (WmlDocument)ReferenceAdder.AddTof(this, xPath, switches, rightTabPos);
+            return ReferenceAdder.AddTof(this, xPath, switches, rightTabPos);
         }
         public WmlDocument AddToa(string xPath, string switches, int? rightTabPos)
         {
-            return (WmlDocument)ReferenceAdder.AddToa(this, xPath, switches, rightTabPos);
+            return ReferenceAdder.AddToa(this, xPath, switches, rightTabPos);
         }
     }
 

@@ -140,12 +140,12 @@ namespace Clippit.Excel
         }
         public static bool operator ==(TableCell left, TableCell right)
         {
-            if ((object)left != (object)right) return false;
+            if (left != (object)right) return false;
             return left.Value == right.Value;
         }
         public static bool operator !=(TableCell left, TableCell right)
         {
-            if ((object)left != (object)right) return false;
+            if (left != (object)right) return false;
             return left.Value != right.Value;
         }
         public static explicit operator string(TableCell cell)
@@ -401,29 +401,29 @@ namespace Clippit.Excel
         {
             if (index < 26)
             {
-                var c = (char)((int)'A' + index);
+                var c = (char)('A' + index);
                 var s = new string(c, 1);
                 return s;
             }
             if (index < 702)
             {
                 var i = index - 26;
-                var i1 = (int)(i / 26);
+                var i1 = i / 26;
                 var i2 = i % 26;
-                var s = new string((char)((int)'A' + i1), 1) +
-                        new string((char)((int)'A' + i2), 1);
+                var s = new string((char)('A' + i1), 1) +
+                        new string((char)('A' + i2), 1);
                 return s;
             }
             if (index < 18278)
             {
                 var i = index - 702;
-                var i1 = (int)(i / 676);
+                var i1 = i / 676;
                 i = i - i1 * 676;
-                var i2 = (int)(i / 26);
+                var i2 = i / 26;
                 var i3 = i % 26;
-                var s = new string((char)((int)'A' + i1), 1) +
-                        new string((char)((int)'A' + i2), 1) +
-                        new string((char)((int)'A' + i3), 1);
+                var s = new string((char)('A' + i1), 1) +
+                        new string((char)('A' + i2), 1) +
+                        new string((char)('A' + i3), 1);
                 return s;
             }
             throw new Exception("Invalid column address");

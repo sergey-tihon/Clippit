@@ -162,7 +162,7 @@ namespace Clippit.Html
             var html = (XElement)TransformToLower(xhtml);
 
             // add pseudo cells for rowspan
-            html = (XElement)AddPseudoCells(html);
+            html = AddPseudoCells(html);
 
             html = (XElement)TransformWhiteSpaceInPreCodeTtKbdSamp(html, false, false);
 
@@ -2301,26 +2301,26 @@ namespace Clippit.Html
                 relativeFromColumn = marginLeftInEmus;
                 var parentMarginLeft = element.Parent.GetProp("margin-left");
                 if (parentMarginLeft.IsNotAuto)
-                    relativeFromColumn += (long)(Emu)parentMarginLeft;
+                    relativeFromColumn += (Emu)parentMarginLeft;
                 marginRightInEmus = Math.Max(marginRightInEmus, minDistFromEdge);
             }
             else if (floatValue == "right")
             {
-                Emu printWidth = (long)settings.PageWidthEmus - (long)settings.PageMarginLeftEmus - (long)settings.PageMarginRightEmus;
+                Emu printWidth = settings.PageWidthEmus - settings.PageMarginLeftEmus - settings.PageMarginRightEmus;
                 var sl = GetImageSizeInEmus(element, bmp);
                 relativeFromColumn = printWidth - sl.m_Width;
                 if (marginRightProp.IsNotAuto)
-                    relativeFromColumn -= (long)(Emu)marginRightInEmus;
+                    relativeFromColumn -= marginRightInEmus;
                 var parentMarginRight = element.Parent.GetProp("margin-right");
                 if (parentMarginRight.IsNotAuto)
-                    relativeFromColumn -= (long)(Emu)parentMarginRight;
+                    relativeFromColumn -= (Emu)parentMarginRight;
                 marginLeftInEmus = Math.Max(marginLeftInEmus, minDistFromEdge);
             }
 
             var relativeFromParagraph = marginTopInEmus;
             var parentMarginTop = element.Parent.GetProp("margin-top");
             if (parentMarginTop.IsNotAuto)
-                relativeFromParagraph += (long)(Emu)parentMarginTop;
+                relativeFromParagraph += (Emu)parentMarginTop;
 
             var anchor = new XElement(WP.anchor,
                 new XAttribute(XNamespace.Xmlns + "wp", WP.wp.NamespaceName),
@@ -2453,15 +2453,15 @@ namespace Clippit.Html
             var hres = bmp.Metadata.HorizontalResolution;
             var vres = bmp.Metadata.VerticalResolution;
             var s = bmp.Size;
-            Emu cx = (long)((double)(s.Width / hres) * (double)Emu.s_EmusPerInch);
-            Emu cy = (long)((double)(s.Height / vres) * (double)Emu.s_EmusPerInch);
+            Emu cx = (long)(s.Width / hres * Emu.s_EmusPerInch);
+            Emu cy = (long)(s.Height / vres * Emu.s_EmusPerInch);
 
             var width = img.GetProp("width");
             var height = img.GetProp("height");
             if (width.IsNotAuto && height.IsAuto)
             {
                 var widthInEmus = (Emu)width;
-                double percentChange = (float)widthInEmus / (float)cx;
+                double percentChange = widthInEmus / (float)cx;
                 cx = widthInEmus;
                 cy = (long)(cy * percentChange);
                 return new SizeEmu(cx, cy);
@@ -2469,7 +2469,7 @@ namespace Clippit.Html
             if (width.IsAuto && height.IsNotAuto)
             {
                 var heightInEmus = (Emu)height;
-                double percentChange = (float)heightInEmus / (float)cy;
+                double percentChange = heightInEmus / (float)cy;
                 cy = heightInEmus;
                 cx = (long)(cx * percentChange);
                 return new SizeEmu(cx, cy);
@@ -2696,7 +2696,7 @@ namespace Clippit.Html
                     ind = new XElement(W.ind,
                         leftIndent != 0 ? new XAttribute(W.left, (long)leftIndent) : null,
                         rightIndent != 0 ? new XAttribute(W.right, (long)rightIndent) : null,
-                        firstLine != 0 ? new XAttribute(W.hanging, -(long)firstLine) : null);
+                        firstLine != 0 ? new XAttribute(W.hanging, -firstLine) : null);
                 else
                     ind = new XElement(W.ind,
                         leftIndent != 0 ? new XAttribute(W.left, (long)leftIndent) : null,
@@ -2744,7 +2744,7 @@ namespace Clippit.Html
             if (lineHeightProperty != null && lineHeightProperty.IsNotAuto && lineHeightProperty.IsNotNormal)
             {
                 // line is in twips if lineRule == "atLeast"
-                line = (long)(Twip)lineHeightProperty;
+                line = (Twip)lineHeightProperty;
                 lineRule = "atLeast";
             }
 
@@ -3190,7 +3190,7 @@ namespace Clippit.Html
                 {
                     // space is specified in points, not twips
                     var points = (TPoint)paddingProp;
-                    space = new XAttribute(W.space, (int)(Math.Min(31, (double)points)));
+                    space = new XAttribute(W.space, (int)(Math.Min(31, points)));
                 }
             }
 
@@ -3439,7 +3439,7 @@ namespace Clippit.Html
         private static XElement GetCellShading(XElement element)
         {
             var backgroundColorProp = element.GetProp("background-color");
-            if (backgroundColorProp != null && (string)backgroundColorProp != "transparent")
+            if (backgroundColorProp != null && backgroundColorProp != "transparent")
             {
                 var shd = new XElement(W.shd,
                     new XAttribute(W.val, "clear"),
@@ -3508,7 +3508,7 @@ namespace Clippit.Html
             if (table != null)
             {
                 var borderCollapse = table.GetProp("border-collapse");
-                if (borderCollapse == null || (string)borderCollapse != "collapse")
+                if (borderCollapse == null || borderCollapse != "collapse")
                 {
                     // todo very incomplete
                     var borderSpacing = table.GetProp("border-spacing");
@@ -3523,11 +3523,11 @@ namespace Clippit.Html
                     Twip minTwips = 15;
                     if (borderSpacing != null)
                         minTwips = (Twip)borderSpacing;
-                    var twipToUse = Math.Max((long)twips1, (long)twips2);
-                    twipToUse = Math.Max(twipToUse, (long)minTwips);
+                    var twipToUse = Math.Max(twips1, twips2);
+                    twipToUse = Math.Max(twipToUse, minTwips);
                     // have to divide twipToUse by 2 because border-spacing specifies the space between the border of once cell and its adjacent.
                     // tblCellSpacing specifies the distance between the border and the half way point between two cells.
-                    var twipToUseOverTwo = (long)twipToUse / 2;
+                    var twipToUseOverTwo = twipToUse / 2;
                     tblCellSpacing = new XElement(W.tblCellSpacing, new XAttribute(W._w, twipToUseOverTwo),
                         new XAttribute(W.type, "dxa"));
                 }
@@ -3588,7 +3588,7 @@ namespace Clippit.Html
 
                 var borderCollapseProperty = table.GetProp("border-collapse");
                 XElement borderCollapse = null;
-                if (borderCollapseProperty != null && (string)borderCollapseProperty != "collapse")
+                if (borderCollapseProperty != null && borderCollapseProperty != "collapse")
                     borderCollapse = GetTableCellSpacing(element);
 
                 trPr = new XElement(W.trPr,

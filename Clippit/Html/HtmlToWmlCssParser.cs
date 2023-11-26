@@ -1372,9 +1372,9 @@ namespace Clippit.Html
         private void ConvertFromRGB(Color color)
         {
             double min; double max; double delta;
-            var r = (double)color.R / 255.0d;
-            var g = (double)color.G / 255.0d;
-            var b = (double)color.B / 255.0d;
+            var r = color.R / 255.0d;
+            var g = color.G / 255.0d;
+            var b = color.B / 255.0d;
             double h; double s; double v;
 
             min = Math.Min(Math.Min(r, g), b);
@@ -1421,9 +1421,9 @@ namespace Clippit.Html
             double g = 0;
             double b = 0;
 
-            h = ((double)Hue / 255.0d * 360.0d) % 360.0d;
-            s = (double)Saturation / 255.0d;
-            v = (double)Value / 255.0d;
+            h = (Hue / 255.0d * 360.0d) % 360.0d;
+            s = Saturation / 255.0d;
+            v = Value / 255.0d;
 
             if (s == 0)
             {

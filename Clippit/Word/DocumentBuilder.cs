@@ -383,7 +383,7 @@ namespace Clippit.Word
                 })
                 .Rollup(new Atbid
                     {
-                        BlockLevelContent = (XElement)null,
+                        BlockLevelContent = null,
                         Index = -1,
                         Div = 0,
                     },

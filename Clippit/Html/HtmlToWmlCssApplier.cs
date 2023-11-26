@@ -335,7 +335,7 @@ namespace Clippit.Html
                 Names = new[] { "font-size" },
                 Inherits = true,
                 Includes = (e, settings) => true,
-                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new() { Value = ((double)settings.DefaultFontSize).ToString(CultureInfo.InvariantCulture), Type = CssTermType.String, Unit = CssUnit.PT } } },
+                InitialValue = (element, settings) => new CssExpression { Terms = new List<CssTerm> { new() { Value = settings.DefaultFontSize.ToString(CultureInfo.InvariantCulture), Type = CssTermType.String, Unit = CssUnit.PT } } },
                 ComputedValue = (element, assignedValue, settings) => ComputeAbsoluteFontSize(element, assignedValue, settings),
             },
 

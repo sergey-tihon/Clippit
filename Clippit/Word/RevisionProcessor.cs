@@ -1626,7 +1626,7 @@ namespace Clippit.Word
                             groupedBodyChildren.Select(g =>
                             {
                                 if (g.Key == MoveFromCollectionType.Other)
-                                    return (object)g;
+                                    return g;
 
                                 // This is a transform that produces the first element in the
                                 // collection, except that the paragraph in the descendents is
@@ -2652,7 +2652,7 @@ namespace Clippit.Word
                                 && g.First().Descendants(W.cellDel).Any())
                                 return null;
                             if (g.Key.CollectionType == DeletedCellCollectionType.Other)
-                                return (object)g;
+                                return g;
                             var gridSpanElement = g
                                 .First()
                                 .Elements(W.tcPr)

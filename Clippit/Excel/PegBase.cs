@@ -847,7 +847,7 @@ namespace Clippit.Excel
             }
             public bool Matches(byte c)
             {
-                var bMatches = c < charSet_.Length && charSet_[(int)c];
+                var bMatches = c < charSet_.Length && charSet_[c];
                 if (bNegated_) return !bMatches;
                 else return bMatches;
             }
@@ -1514,7 +1514,7 @@ namespace Clippit.Excel
 
             public bool Matches(char c)
             {
-                var bMatches = c < charSet_.Length && charSet_[(int)c];
+                var bMatches = c < charSet_.Length && charSet_[c];
                 if (bNegated_) return !bMatches;
                 else return bMatches;
             }

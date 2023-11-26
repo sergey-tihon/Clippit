@@ -247,7 +247,7 @@ namespace Clippit.Tests.Excel
                                     new()
                                     {
                                         CellDataType = CellDataType.Number,
-                                        Value = (int)100,
+                                        Value = 100,
                                     },
                                 }
                             },
@@ -343,7 +343,7 @@ namespace Clippit.Tests.Excel
                                     new()
                                     {
                                         CellDataType = CellDataType.Number,
-                                        Value = (double)123.45,
+                                        Value = 123.45,
                                     },
                                 }
                             },

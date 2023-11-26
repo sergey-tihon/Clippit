@@ -2657,7 +2657,7 @@ namespace Clippit
                                 var spl = gc.Key.Split('|');
                                 if (spl[0] == "")
                                 {
-                                    return (object) gc.Select(gcc =>
+                                    return gc.Select(gcc =>
                                     {
                                         var dup = new XElement(gcc.ContentElement);
                                         if (spl[1] == "Deleted")
@@ -2688,7 +2688,7 @@ namespace Clippit
                                 var spl = gc.Key.Split('|');
                                 if (spl[0] == "")
                                 {
-                                    return (object) gc.Select(gcc =>
+                                    return gc.Select(gcc =>
                                     {
                                         var dup = new XElement(gcc.ContentElement);
                                         if (spl[1] == "Deleted")
@@ -2720,12 +2720,12 @@ namespace Clippit
                                 var del = gc.First().CorrelationStatus == CorrelationStatus.Deleted;
                                 var ins = gc.First().CorrelationStatus == CorrelationStatus.Inserted;
                                 if (del)
-                                    return (object) new XElement(W.delText,
+                                    return new XElement(W.delText,
                                         new XAttribute(PtOpenXml.Status, "Deleted"),
                                         GetXmlSpaceAttribute(textOfTextElement),
                                         textOfTextElement);
                                 if (ins)
-                                    return (object) new XElement(W.t,
+                                    return new XElement(W.t,
                                         new XAttribute(PtOpenXml.Status, "Inserted"),
                                         GetXmlSpaceAttribute(textOfTextElement),
                                         textOfTextElement);

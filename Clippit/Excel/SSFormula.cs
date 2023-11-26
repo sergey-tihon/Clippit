@@ -88,7 +88,7 @@ namespace Clippit.Excel
             var result = "";
             do
             {
-                result = ((char)((columnNumber - 1) % 26 + (int)'A')) + result;
+                result = ((char)((columnNumber - 1) % 26 + 'A')) + result;
                 columnNumber = (columnNumber - 1) / 26;
             } while (columnNumber != 0);
             return result;

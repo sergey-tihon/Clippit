@@ -905,7 +905,7 @@ namespace Clippit.Word
                 {
                     var listItemInfo = paragraph.Annotation<ListItemInfo>();
                     if (!listItemInfo.IsListItem)
-                        return (int?)null;
+                        return null;
                     return listItemInfo.AbstractNumId;
                 })
                 .Where(a => a != null)

@@ -215,7 +215,7 @@ namespace Clippit.Excel
                                         out color);
                                 else
                                     displayValue = displayValue = SmlCellFormatter.FormatCell(
-                                        (string)"General",
+                                        "General",
                                         cell.Value,
                                         out color);
                                 var newCell2 = new XElement("Cell",
@@ -441,7 +441,7 @@ namespace Clippit.Excel
                                     out color);
                             else
                                 displayValue = SmlCellFormatter.FormatCell(
-                                    (string)"General",
+                                    "General",
                                     tc.Value,
                                     out color);
                             var newCell = new XElement("Cell",
@@ -956,7 +956,7 @@ namespace Clippit.Excel
                 XElement element => new XElement(element.Name.LocalName,
                     element.Attributes()
                         .Select(a => new XAttribute(a.Name.LocalName, (string)a))
-                        .OrderBy(a => (string)a.Name.LocalName),
+                        .OrderBy(a => a.Name.LocalName),
                     element.Nodes().Select(n => TransformRemoveNamespace(n))),
                 _ => node
             };

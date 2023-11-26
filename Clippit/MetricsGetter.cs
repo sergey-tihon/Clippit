@@ -332,7 +332,7 @@ namespace Clippit
             }
 
             metrics.Add(new XElement(H.ElementCount, new XAttribute(H.Val, elementCount)));
-            metrics.Add(new XElement(H.AverageParagraphLength, new XAttribute(H.Val, (int)((double)textCount / (double)paragraphCount))));
+            metrics.Add(new XElement(H.AverageParagraphLength, new XAttribute(H.Val, (int)(textCount / (double)paragraphCount))));
 
             if (wDoc.GetAllParts().Any(part => part.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 metrics.Add(new XElement(H.EmbeddedXlsx, new XAttribute(H.Val, true)));
