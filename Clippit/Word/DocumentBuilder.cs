@@ -1018,7 +1018,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             var newStyleId = styleName
                 .Replace("_", "")
                 .Replace("#", "")
-                .Replace(".", "") + ((new Random()).Next(990) + 9).ToString();
+                .Replace(".", "") + ((new Random()).Next(990) + 9);
             return newStyleId;
         }
 

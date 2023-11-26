@@ -2062,12 +2062,12 @@ namespace Clippit.Html
             {
                 if (paraOrRun.Attribute(PtOpenXml.FontName) == null)
                 {
-                    var fta = new XAttribute(PtOpenXml.FontName, fontType.ToString());
+                    var fta = new XAttribute(PtOpenXml.FontName, fontType);
                     paraOrRun.Add(fta);
                 }
                 else
                 {
-                    paraOrRun.Attribute(PtOpenXml.FontName).Value = fontType.ToString();
+                    paraOrRun.Attribute(PtOpenXml.FontName).Value = fontType;
                 }
             }
             if (languageType != null)
@@ -2221,7 +2221,7 @@ namespace Clippit.Html
             var pictureId = pid.Id;
             ++pid.Id;
 
-            var pictureDescription = "Picture " + pictureId.ToString();
+            var pictureDescription = "Picture " + pictureId;
 
             var floatValue = element.GetProp("float").ToString();
             if (floatValue == "none")
