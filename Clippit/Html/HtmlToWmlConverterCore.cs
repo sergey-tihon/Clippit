@@ -108,7 +108,6 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.PixelFormats;
 using Image = SixLabors.ImageSharp.Image;
-using Size = SixLabors.ImageSharp.Size;
 
 namespace Clippit.Html
 {

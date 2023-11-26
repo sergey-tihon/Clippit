@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using Clippit.Internal;
-using Clippit.PowerPoint;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Excel

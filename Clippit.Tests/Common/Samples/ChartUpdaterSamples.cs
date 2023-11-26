@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
@@ -213,7 +214,7 @@ namespace Clippit.Tests.Common.Samples
 
         private static string ToExcelInteger(DateTime dateTime)
         {
-            return dateTime.ToOADate().ToString();
+            return dateTime.ToOADate().ToString(CultureInfo.CurrentCulture);
         }
     }
 }

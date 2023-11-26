@@ -16,7 +16,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Xml.Linq;
-using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Word

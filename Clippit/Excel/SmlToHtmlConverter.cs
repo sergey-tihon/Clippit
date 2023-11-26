@@ -10,7 +10,6 @@ using System.Text;
 using System.Xml.Linq;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
-using SixLabors.Fonts;
 
 namespace Clippit.Excel
 {

@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Globalization;
 using System.IO;
 using Clippit.PowerPoint;
 using Clippit.Word;
@@ -231,7 +232,7 @@ namespace Clippit.Tests.Common
 
         private static string ToExcelInteger(DateTime dateTime)
         {
-            return dateTime.ToOADate().ToString();
+            return dateTime.ToOADate().ToString(CultureInfo.CurrentCulture);
         }
     }
 }

@@ -47,7 +47,6 @@ Here is creating a new WmlDocument:
 */
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
