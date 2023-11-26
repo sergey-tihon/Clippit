@@ -1589,7 +1589,7 @@ namespace Clippit.Html
             CssSelector selector,
             XElement element)
         {
-            var currentSimpleSelector = selector.SimpleSelectors.Count() - 1;
+            var currentSimpleSelector = selector.SimpleSelectors.Count - 1;
             var currentElement = element;
             while (true)
             {
@@ -2027,7 +2027,7 @@ namespace Clippit.Html
                     CssExpression borderColor;
                     CssExpression borderWidth;
                     CssExpression borderStyle;
-                    if (p.Expression.Terms.Count() == 1 && p.Expression.Terms.First().Value == "inherit")
+                    if (p.Expression.Terms.Count == 1 && p.Expression.Terms.First().Value == "inherit")
                     {
                         borderColor = new CssExpression { Terms = new List<CssTerm> { new() { Value = "inherit", Type = CssTermType.String } } };
                         borderWidth = new CssExpression { Terms = new List<CssTerm> { new() { Value = "inherit", Type = CssTermType.String } } };
@@ -2232,7 +2232,7 @@ namespace Clippit.Html
                             }
                         }
 
-                        backgroundPosition = backgroundPositionList.Count() switch
+                        backgroundPosition = backgroundPositionList.Count switch
                         {
                             1 => new CssExpression
                             {
@@ -2312,7 +2312,7 @@ namespace Clippit.Html
                     CssExpression fontSize;
                     CssExpression lineHeight;
                     CssExpression fontFamily;
-                    if (p.Expression.Terms.Count() == 1 && p.Expression.Terms.First().Value == "inherit")
+                    if (p.Expression.Terms.Count == 1 && p.Expression.Terms.First().Value == "inherit")
                     {
                         fontStyle = new CssExpression { Terms = new List<CssTerm> { new() { Value = "inherit", Type = CssTermType.String } } };
                         fontVarient = new CssExpression { Terms = new List<CssTerm> { new() { Value = "inherit", Type = CssTermType.String } } };
@@ -2735,8 +2735,8 @@ namespace Clippit.Html
             Pr(sb, indent, "CSS Tree Dump");
             Pr(sb, indent, "=============");
 
-            Pr(sb, indent, "Directives count: {0}", css.Directives.Count());
-            Pr(sb, indent, "RuleSet count: {0}", css.RuleSets.Count());
+            Pr(sb, indent, "Directives count: {0}", css.Directives.Count);
+            Pr(sb, indent, "RuleSet count: {0}", css.RuleSets.Count);
             foreach (var rs in css.RuleSets)
                 DumpRuleSet(sb, indent, rs);
 
@@ -2795,7 +2795,7 @@ namespace Clippit.Html
         private static void DumpSelectors(StringBuilder sb, int indent, CssSelector s)
         {
             indent++;
-            Pr(sb, indent, "SimpleSelectors count: {0}", s.SimpleSelectors.Count());
+            Pr(sb, indent, "SimpleSelectors count: {0}", s.SimpleSelectors.Count);
             foreach (var ss in s.SimpleSelectors)
                 DumpSimpleSelector(sb, indent, ss);
             indent--;
@@ -2822,7 +2822,7 @@ namespace Clippit.Html
         {
             Pr(sb, indent, "Expression >{0}<", e.ToString());
             indent++;
-            Pr(sb, indent, "Terms count: {0}", e.Terms.Count());
+            Pr(sb, indent, "Terms count: {0}", e.Terms.Count);
             foreach (var t in e.Terms)
                 DumpTerm(sb, indent, t);
             indent--;
@@ -2845,10 +2845,10 @@ namespace Clippit.Html
             indent++;
             Pr(sb, indent, "RuleSet");
             indent++;
-            Pr(sb, indent, "Selectors count: {0}", rs.Selectors.Count());
+            Pr(sb, indent, "Selectors count: {0}", rs.Selectors.Count);
             foreach (var s in rs.Selectors)
                 DumpSelectors(sb, indent, s);
-            Pr(sb, indent, "Declarations count: {0}", rs.Declarations.Count());
+            Pr(sb, indent, "Declarations count: {0}", rs.Declarations.Count);
             foreach (var d in rs.Declarations)
                 DumpDeclarations(sb, indent, d);
             indent--;
@@ -2959,7 +2959,7 @@ namespace Clippit.Html
         public static string GetWmlColorFromExpression(CssExpression color)
         {
             // todo have to handle all forms of colors here
-            if (color.Terms.Count() == 1)
+            if (color.Terms.Count == 1)
             {
                 var term = color.Terms.First();
                 if (term.Type == CssTermType.Function && term.Function.Name.ToUpper() == "RGB" && term.Function.Expression.Terms.Count == 3)

@@ -157,7 +157,7 @@ namespace Clippit.Excel
         }
         public void GetLineAndCol(string s, int pos, out int lineNo, out int colNo)
         {
-            for (var i = _lineStarts.Count(); i > 0; --i)
+            for (var i = _lineStarts.Count; i > 0; --i)
             {
                 var curLs = _lineStarts.ElementAt(i - 1);
                 if (curLs.Key == pos)

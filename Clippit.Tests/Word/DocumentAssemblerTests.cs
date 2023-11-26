@@ -219,8 +219,8 @@ namespace Clippit.Tests.Word
         }
 
         [Theory]
-        [InlineData("DA-xmlerror.docx", "DA-xmlerror.xml", true)]
-        public void DAXmlError(string name, string data, bool err)
+        [InlineData("DA-xmlerror.docx", "DA-xmlerror.xml")]
+        public void DAXmlError(string name, string data)
         {
 
             var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));

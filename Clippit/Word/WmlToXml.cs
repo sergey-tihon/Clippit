@@ -453,7 +453,7 @@ namespace Clippit.Word
                 }
                 if (found)
                 {
-                    item.Add(new XAttribute(PtOpenXml.IndentLevel, stack.Count()));
+                    item.Add(new XAttribute(PtOpenXml.IndentLevel, stack.Count));
                     stack.Push(item);
                     currentlyLookingAt = FindCurrentlyLookingAt(hierarchyDefinition, item);
                     continue;
@@ -462,11 +462,11 @@ namespace Clippit.Word
                 {
                     while (true)
                     {
-                        if (stack.Count() == 1)
+                        if (stack.Count == 1)
                         {
                             // have encountered an unexpected hierarchy element.  have gone up the stack, and no element up the stack allows for this as a child element.
                             // Therefore, put it at level one, and let the Narrdoc transform generate invalid narrdoc.
-                            item.Add(new XAttribute(PtOpenXml.IndentLevel, stack.Count()));
+                            item.Add(new XAttribute(PtOpenXml.IndentLevel, stack.Count));
                             break;
                         }
                         stack.Pop();
@@ -497,12 +497,12 @@ namespace Clippit.Word
                         }
                         if (found2)
                         {
-                            item.Add(new XAttribute(PtOpenXml.IndentLevel, stack.Count()));
+                            item.Add(new XAttribute(PtOpenXml.IndentLevel, stack.Count));
                             stack.Push(item);
                             currentlyLookingAt = FindCurrentlyLookingAt(hierarchyDefinition, item);
                             break;
                         }
-                        if (stack.Count() == 0)
+                        if (stack.Count == 0)
                             throw new OpenXmlPowerToolsException("Internal error = reached top of hierarchy - prob not an internal error - some other error");
                     }
                     continue;
@@ -748,9 +748,9 @@ namespace Clippit.Word
                             .TakeWhile(ch => ch is '.' or ' ')
                             .ToList();
 
-                        sepCharsString = nextRunText.Substring(0, sepChars.Count());
+                        sepCharsString = nextRunText.Substring(0, sepChars.Count);
 
-                        nextRunText = nextRunText.Substring(sepChars.Count());
+                        nextRunText = nextRunText.Substring(sepChars.Count);
                         nextRunTextElement.Value = nextRunText;
 
                         lastFldCharRunText.Value = lastFldCharRunText.Value + sepCharsString;

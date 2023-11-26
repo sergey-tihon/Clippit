@@ -62,7 +62,7 @@ namespace Clippit
                 originalWithUnids.SaveAs(preProcFi1.FullName);
             }
 
-            var revisedDocumentInfoListCount = revisedDocumentInfoList.Count();
+            var revisedDocumentInfoListCount = revisedDocumentInfoList.Count;
 
             using var consolidatedMs = new MemoryStream();
             consolidatedMs.Write(consolidated.DocumentByteArray, 0, consolidated.DocumentByteArray.Length);
@@ -293,7 +293,7 @@ namespace Clippit
                             })
                             .OrderByDescending(g => g.Count())
                             .ToList();
-                        var uniqueRevisionCount = uniqueRevisions.Count();
+                        var uniqueRevisionCount = uniqueRevisions.Count;
 
                         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

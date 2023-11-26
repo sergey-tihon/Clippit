@@ -1,4 +1,4 @@
-#### 2.0.0-theta-004 Sep 7, 2023
+#### 2.0.0 Nov 26, 2023
 - Migration to .NET 6.0
 - DocumentFormat.OpenXml 3.0.0-beta0003
 - `System.Drawing.Common` replaced by `SixLabors.ImageSharp.Drawing`

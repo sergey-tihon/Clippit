@@ -48,7 +48,7 @@ namespace Clippit
         private static void MoveLastSectPrIntoLastParagraph(XElement contentParent)
         {
             var lastSectPrList = contentParent.Elements(W.sectPr).ToList();
-            if (lastSectPrList.Count() > 1)
+            if (lastSectPrList.Count > 1)
                 throw new OpenXmlPowerToolsException("Invalid document");
 
             var lastSectPr = lastSectPrList.FirstOrDefault();

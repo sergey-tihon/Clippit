@@ -122,7 +122,7 @@ namespace Clippit.Word
             if (element.Name == W.p)
             {
                 var childMeta = element.Elements().Where(n => s_metaToForceToBlock.Contains(n.Name)).ToList();
-                if (childMeta.Count() == 1)
+                if (childMeta.Count == 1)
                 {
                     var child = childMeta.First();
                     var otherTextInParagraph = element.Elements(W.r).Elements(W.t).Select(t => (string)t).StringConcatenate().Trim();
@@ -141,7 +141,7 @@ namespace Clippit.Word
                             child.Elements()));
                     return meta;
                 }
-                var count = childMeta.Count();
+                var count = childMeta.Count;
                 if (count % 2 == 0)
                 {
                     if (childMeta.Count(c => c.Name == PA.Repeat) != childMeta.Count(c => c.Name == PA.EndRepeat))

@@ -259,7 +259,7 @@ namespace Clippit.Tests.Word
             // Create the dir for the test
             var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
-                Assert.True(false, "Duplicate test id: " + testId);
+                Assert.Fail("Duplicate test id: " + testId);
             else
                 thisTestTempDir.Create();
             var tempDirFullName = thisTestTempDir.FullName;
@@ -785,7 +785,7 @@ namespace Clippit.Tests.Word
             // Create the dir for the test
             var thisTestTempDir = new DirectoryInfo(Path.Combine(TempDir, testId));
             if (thisTestTempDir.Exists)
-                Assert.True(false, "Duplicate test id: " + testId);
+                Assert.Fail("Duplicate test id: " + testId);
             else
                 thisTestTempDir.Create();
             var tempDirFullName = thisTestTempDir.FullName;

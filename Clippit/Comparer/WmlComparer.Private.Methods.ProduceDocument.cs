@@ -786,7 +786,7 @@ namespace Clippit
                         .Distinct()
                         .ToList();
 
-                    if (statusList.Count() > 1)
+                    if (statusList.Count > 1)
                     {
                         throw new OpenXmlPowerToolsException(
                             "Internal error - have both deleted and inserted text elements in the same run.");
@@ -2130,7 +2130,7 @@ namespace Clippit
                         {
                             var split1 = SplitAtParagraphMark(remainingInLeft);
                             var split2 = SplitAtParagraphMark(remainingInRight);
-                            if (split1.Count() == 1 && split2.Count() == 1)
+                            if (split1.Count == 1 && split2.Count == 1)
                             {
                                 var csUnknown2 = new CorrelatedSequence
                                 {
