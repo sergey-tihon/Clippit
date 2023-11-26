@@ -1731,7 +1731,6 @@ listSeparator
                         {
                             tokens.Add(field.Substring(tokenStart, c - tokenStart));
                             state = State.OnClosingQuote;
-                            continue;
                         }
                         continue;
                     }
@@ -1740,13 +1739,11 @@ listSeparator
                         if (field[c] == quoteStart)
                         {
                             state = State.OnClosingQuote;
-                            continue;
                         }
                         else
                         {
                             tokenStart = c;
                             state = State.InQuotedToken;
-                            continue;
                         }
                     }
                     continue;
@@ -1767,7 +1764,6 @@ listSeparator
                 {
                     tokenStart = c;
                     state = State.InToken;
-                    continue;
                 }
             }
             if (state == State.InToken)

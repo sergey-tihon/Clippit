@@ -179,7 +179,6 @@ namespace Clippit
                     }
                     catch (Exception)
                     {
-                        continue;
                     }
                 }
             }
@@ -195,7 +194,6 @@ namespace Clippit
                     }
                     catch (Exception)
                     {
-                        continue;
                     }
                 }
             }
@@ -211,7 +209,6 @@ namespace Clippit
                     }
                     catch (Exception)
                     {
-                        continue;
                     }
                 }
             }

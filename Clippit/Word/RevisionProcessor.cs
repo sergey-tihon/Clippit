@@ -1562,7 +1562,6 @@ namespace Clippit.Word
                     {
                         foreach (var id in potentialDeletedElements)
                             id.Value.PotentialEndElementTagsInRange.Add(tag.Element);
-                        continue;
                     }
                 }
             }
@@ -2130,7 +2129,6 @@ namespace Clippit.Word
                                         GroupingType = GroupingType.Other,
                                         GroupingKey = currentKey,
                                     });
-                                continue;
                             }
                             else if (state == 1)
                             {
@@ -2141,7 +2139,6 @@ namespace Clippit.Word
                                         GroupingType = GroupingType.DeletedRange,
                                         GroupingKey = currentKey,
                                     });
-                                continue;
                             }
                             else if (state == 2)
                             {
@@ -2153,7 +2150,6 @@ namespace Clippit.Word
                                         GroupingType = GroupingType.Other,
                                         GroupingKey = currentKey,
                                     });
-                                continue;
                             }
                         }
                         else if (c.ThisBlockContentElement.Name == W.tbl || c.ThisBlockContentElement.Name.Namespace == M.m)
@@ -2166,7 +2162,6 @@ namespace Clippit.Word
                                     GroupingKey = currentKey,
                                 });
                             state = 0;
-                            continue;
                         }
                         else
                         {
@@ -2177,7 +2172,6 @@ namespace Clippit.Word
                                     GroupingType = GroupingType.Other,
                                     GroupingKey = currentKey,
                                 });
-                            continue;
                         }
                     }
 
@@ -2542,7 +2536,6 @@ namespace Clippit.Word
                     {
                         foreach (var id in potentialMoveFromElements)
                             id.Value.PotentialEndElementTagsInRange.Add(tag.Element);
-                        continue;
                     }
                 }
             }

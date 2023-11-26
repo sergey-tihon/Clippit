@@ -505,7 +505,6 @@ namespace Clippit.Word
                         if (stack.Count == 0)
                             throw new OpenXmlPowerToolsException("Internal error = reached top of hierarchy - prob not an internal error - some other error");
                     }
-                    continue;
                 }
                 // otherwise continue on to next item.
             }
@@ -2048,20 +2047,17 @@ namespace Clippit.Word
                 if (childElement.Name == W.p)
                 {
                     elementList.Add(childElement);
-                    continue;
                 }
                 else if (childElement.Name == W.tbl || childElement.Name == W.tc || childElement.Name == W.sdt ||
                     childElement.Name == W.sdtContent)
                 {
                     DetermineElementOrder(childElement, elementList);
-                    continue;
                 }
                 else if (childElement.Name == W.tr)
                 {
                     foreach (var tc in childElement.Elements())
                         DetermineElementOrder(tc, elementList);
                     elementList.Add(childElement);
-                    continue;
                 }
             }
         }

@@ -309,7 +309,6 @@ namespace Clippit
                         {
                             tokens.Add(field.Substring(tokenStart, c - tokenStart));
                             state = State.OnClosingQuote;
-                            continue;
                         }
                         continue;
                     }
@@ -318,13 +317,11 @@ namespace Clippit
                         if (field[c] == quoteStart)
                         {
                             state = State.OnClosingQuote;
-                            continue;
                         }
                         else
                         {
                             tokenStart = c;
                             state = State.InQuotedToken;
-                            continue;
                         }
                     }
                     continue;
@@ -345,7 +342,6 @@ namespace Clippit
                 {
                     tokenStart = c;
                     state = State.InToken;
-                    continue;
                 }
             }
             if (state == State.InToken)

@@ -222,7 +222,6 @@ namespace Clippit
                 // if caught exception, chances are the document is bad anyway.
                 catch (Exception)
                 {
-                    continue;
                 }
             }
             var xe = new XElement(H.Namespaces,

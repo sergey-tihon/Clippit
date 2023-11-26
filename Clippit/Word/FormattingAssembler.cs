@@ -2057,7 +2057,6 @@ namespace Clippit.Word
                     .Attributes(W.val)
                     .FirstOrDefault();
             }
-            yield break;
         }
 
         private static void AnnotateRuns(FormattingAssemblerInfo fai, WordprocessingDocument wDoc, XElement root, FormattingAssemblerSettings settings)
