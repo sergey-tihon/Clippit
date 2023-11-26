@@ -108,7 +108,7 @@ namespace Clippit.Tests.Word.Samples
                         .Elements(W.pStyle)
                         .Attributes(W.val)
                         .FirstOrDefault() != "Note")
-                    .Where(g => g.Key == true)
+                    .Where(g => g.Key)
                     .Select(g => new Source(
                         new WmlDocument(GetFilePath("Sample2/Notes.docx")), g.First().Index,
                         g.Last().Index - g.First().Index + 1, true))

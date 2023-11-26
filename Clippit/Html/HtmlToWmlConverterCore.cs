@@ -355,7 +355,7 @@ namespace Clippit.Html
                 var groupedCharacters = val.GroupAdjacent(c => c is '\r' or '\n');
                 var newNodes = groupedCharacters.Select(g =>
                 {
-                    if (g.Key == true)
+                    if (g.Key)
                         return (object)(new XElement(XhtmlNoNamespace.br));
                     var x = g.Select(c => c.ToString()).StringConcatenate();
                     return new XText(x);
@@ -2937,7 +2937,7 @@ namespace Clippit.Html
 
             var newString = groupedCharacters.Select(g =>
             {
-                if (g.Key == true)
+                if (g.Key)
                     return " ";
                 var x = g.Select(c => c.ToString()).StringConcatenate();
                 return x;

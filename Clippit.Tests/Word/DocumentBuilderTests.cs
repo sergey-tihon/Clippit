@@ -214,7 +214,7 @@ namespace Clippit.Tests.Word
                         .Elements(W.pStyle)
                         .Attributes(W.val)
                         .FirstOrDefault() != "Note")
-                    .Where(g => g.Key == true)
+                    .Where(g => g.Key)
                     .Select(g => (ISource) new Source(
                         new WmlDocument(notes.FullName), g.First().Index,
                             g.Last().Index - g.First().Index + 1, true))
