@@ -196,7 +196,7 @@ namespace Clippit.Word
             public ListItemSource FromStyle;
             public ListItemSource FromParagraph;
 
-            private int? mAbstractNumId = null;
+            private int? mAbstractNumId;
 
             public int? AbstractNumId
             {

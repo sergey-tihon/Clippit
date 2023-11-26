@@ -2561,7 +2561,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             }
         }
 
-        private static Dictionary<XName, XName[]> RelationshipMarkup = null;
+        private static Dictionary<XName, XName[]> RelationshipMarkup;
 
         private static void UpdateContent(IEnumerable<XElement> newContent, XName elementToModify, string oldRid, string newRid)
         {

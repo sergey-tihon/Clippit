@@ -1032,7 +1032,7 @@ namespace Clippit
             public TimeSpan Time;
         }
 
-        private static string LastBucket = null;
+        private static string LastBucket;
         private static DateTime LastTime;
         private static Dictionary<string, BucketInfo> Buckets;
 

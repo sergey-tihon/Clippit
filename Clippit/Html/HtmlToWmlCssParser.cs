@@ -28,7 +28,7 @@ namespace Clippit.Html
 {
     public class CssAttribute
     {
-        private CssAttributeOperator? m_op = null;
+        private CssAttributeOperator? m_op;
 
         public string Operand { get; set; }
 
@@ -726,7 +726,7 @@ namespace Clippit.Html
 
     public class CssSimpleSelector
     {
-        private CssCombinator? m_combinator = null;
+        private CssCombinator? m_combinator;
 
         public CssCombinator? Combinator
         {

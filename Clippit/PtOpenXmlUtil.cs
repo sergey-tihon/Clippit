@@ -630,7 +630,7 @@ namespace Clippit
     public static class WordprocessingMLUtil
     {
         private static readonly HashSet<string> UnknownFonts = new HashSet<string>();
-        private static HashSet<string> KnownFamilies = null;
+        private static HashSet<string> KnownFamilies;
 
         private static (double width, decimal tabLength) CalcWidthOfRun(XElement r)
         {
