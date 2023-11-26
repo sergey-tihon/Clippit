@@ -3,8 +3,8 @@ source https://api.nuget.org/v3/index.json
 storage: none
 framework: net6.0
 
-nuget DocumentFormat.OpenXml 3.0.0-beta0003
-nuget DocumentFormat.OpenXml.Framework 3.0.0-beta0003
+nuget DocumentFormat.OpenXml
+nuget DocumentFormat.OpenXml.Framework
 nuget SixLabors.ImageSharp.Drawing
 nuget SixLabors.ImageSharp
 
