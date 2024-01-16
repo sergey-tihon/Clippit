@@ -1,3 +1,10 @@
+#### 2.0.1 Jan 16, 2024
+- Fix regression cased by migration to struct inside OpenXML v3
+- DocumentFormat.OpenXml 3.0 -> 3.0.1
+- SixLabors.Fonts 2.0 -> 2.0.1
+- SixLabors.ImageSharp 3.0.2 -> 3.1.2
+- SixLabors.ImageSharp.Drawing 2.0.1 -> 2.1.0
+
 #### 2.0.0 Nov 26, 2023
 - Migration to .NET 6.0
 - DocumentFormat.OpenXml 3.0.0-beta0003

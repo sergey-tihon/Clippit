@@ -1835,6 +1835,8 @@ listSeparator
 
         public ImageData(ImagePart part)
         {
+            ArgumentNullException.ThrowIfNull(part);
+            
             ContentType = part.ContentType;
             using var s = part.GetStream();
             Hash = s.ComputeHash();
@@ -1848,6 +1850,8 @@ listSeparator
 
         public MediaData(DataPart part)
         {
+            ArgumentNullException.ThrowIfNull(part);
+            
             ContentType = part.ContentType;
             using var s = part.GetStream();
             Hash = s.ComputeHash();
