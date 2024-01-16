@@ -326,7 +326,7 @@ namespace Clippit.PowerPoint
                         continue;
                     }
                     var tempHyperlink = newPart.HyperlinkRelationships.FirstOrDefault(h => h.Id == relId);
-                    if (tempHyperlink is {})
+                    if (tempHyperlink is not null)
                         continue;
                     var newRid = Relationships.GetNewRelationshipId();
                     var oldHyperlink = oldPart.HyperlinkRelationships.FirstOrDefault(h => h.Id == relId);

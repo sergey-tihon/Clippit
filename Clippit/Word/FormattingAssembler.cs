@@ -1771,8 +1771,7 @@ namespace Clippit.Word
                 return lowerPriorityFont;
             if (lowerPriorityFont == null)
                 return higherPriorityFont;
-            if (higherPriorityFont == null && lowerPriorityFont == null)
-                return null;
+
 
             var rFonts = new XElement(W.rFonts,
                 (higherPriorityFont.Attribute(W.ascii) != null || higherPriorityFont.Attribute(W.asciiTheme) != null) ?

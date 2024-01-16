@@ -75,7 +75,7 @@ namespace Clippit.PowerPoint
                     xd.Descendants().Attributes("smtClean").Remove();
                     part.PutXDocument();
                 }
-                else if (part.Annotation<XDocument>() is {})
+                else if (part.Annotation<XDocument>() is not null)
                     part.PutXDocument();
             }
         }
@@ -84,7 +84,7 @@ namespace Clippit.PowerPoint
         {
             // A Core File Properties part does not have implicit or explicit relationships to other parts.
             var corePart = sourceDocument.CoreFilePropertiesPart;
-            if (corePart?.GetXDocument().Root is {})
+            if (corePart?.GetXDocument().Root is not null)
             {
                 _newDocument.AddCoreFilePropertiesPart();
                 var newXDoc = _newDocument.CoreFilePropertiesPart.GetXDocument();
@@ -143,20 +143,20 @@ namespace Clippit.PowerPoint
                 newPresentation.Root.Add(oldElement);
 
             // Copy Font Parts
-            if (oldPresentationDoc.Root.Element(P.embeddedFontLst) is {})
+            if (oldPresentationDoc.Root.Element(P.embeddedFontLst) is not null)
             {
                 var newFontLst = new XElement(P.embeddedFontLst);
                 foreach (var font in oldPresentationDoc.Root.Element(P.embeddedFontLst).Elements(P.embeddedFont))
                 {
                     var newEmbeddedFont = new XElement(P.embeddedFont, font.Elements(P.font));
 
-                    if (font.Element(P.regular) is {})
+                    if (font.Element(P.regular) is not null)
                         newEmbeddedFont.Add(CreateEmbeddedFontPart(sourceDocument, font, P.regular));
-                    if (font.Element(P.bold) is {})
+                    if (font.Element(P.bold) is not null)
                         newEmbeddedFont.Add(CreateEmbeddedFontPart(sourceDocument, font, P.bold));
-                    if (font.Element(P.italic) is {})
+                    if (font.Element(P.italic) is not null)
                         newEmbeddedFont.Add(CreateEmbeddedFontPart(sourceDocument, font, P.italic));
-                    if (font.Element(P.boldItalic) is {})
+                    if (font.Element(P.boldItalic) is not null)
                         newEmbeddedFont.Add(CreateEmbeddedFontPart(sourceDocument, font, P.boldItalic));
 
                     newFontLst.Add(newEmbeddedFont);
@@ -357,7 +357,7 @@ namespace Clippit.PowerPoint
                     var newPart = newSlide.AddNewPart<NotesSlidePart>();
                     newPart.PutXDocument(notesSlide.GetXDocument());
                     newPart.AddPart(newSlide);
-                    if (_newDocument.PresentationPart.NotesMasterPart is {})
+                    if (_newDocument.PresentationPart.NotesMasterPart is not null)
                         newPart.AddPart(_newDocument.PresentationPart.NotesMasterPart);
                     PBT.AddRelationships(notesSlide, newPart, new[] { newPart.GetXDocument().Root });
                     CopyRelatedPartsForContentParts(slide.NotesSlidePart, newPart, new[] { newPart.GetXDocument().Root });
@@ -505,7 +505,7 @@ namespace Clippit.PowerPoint
                     tableStyles = _newDocument.PresentationPart.TableStylesPart.GetXDocument();
 
                 // Search new TableStylesPart to see if it contains the ID
-                if (tableStyles.Root.Elements(A.tblStyle).FirstOrDefault(f => f.Attribute(NoNamespace.styleId).Value == styleId) is {})
+                if (tableStyles.Root.Elements(A.tblStyle).FirstOrDefault(f => f.Attribute(NoNamespace.styleId).Value == styleId) is not null)
                     continue;
 
                 // Copy style to new part
@@ -803,7 +803,7 @@ namespace Clippit.PowerPoint
                     _ => null
                 };
 
-                if (vmlDrawingParts is {})
+                if (vmlDrawingParts is not null)
                 {
                     // Transitional: Copy VML Drawing parts, implicit relationship
                     foreach (var vmlPart in vmlDrawingParts)
@@ -863,7 +863,8 @@ namespace Clippit.PowerPoint
             if (newContentPart.HasRelationship(relId))
                 return;
 
-            if (oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId) is {} oldPartIdPair)
+            var oldPartIdPair = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
+            if (oldPartIdPair != default)
             {
                 var oldPart = oldPartIdPair.OpenXmlPart as ImagePart;
                 var temp = ManageImageCopy(oldPart);
@@ -1042,7 +1043,7 @@ namespace Clippit.PowerPoint
                 };
 
                 var existingRel = temp.ContentPartRelTypeIdList.FirstOrDefault(cp => cp.ContentPart == newContentPart && cp.RelationshipType == desiredRelType);
-                if (existingRel is {})
+                if (existingRel is not null)
                 {
                     imageReference.Attribute(attributeName).Set(existingRel.RelationshipId);
                 }
