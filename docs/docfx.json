@@ -19,7 +19,7 @@
       {
         "files": [
           "api/**.yml",
-          "api/RELEASE_NOTES.md"
+          "api/CHANGELOG.md"
         ]
       },
       {
