@@ -14,17 +14,17 @@ licenseUrl
 requireLicenseAcceptance
     false
 copyright
-    Copyright 2012-2023
+    Copyright 2012-2024
 tags
     OpenXML PowerTools PowerPoint Word Excel HTML
 description
     Fresh PowerTools for OpenXml
 files
-    bin/Release/net6.0/Clippit.dll ==> lib/net6.0
-    bin/Release/net6.0/Clippit.pdb ==> lib/net6.0
+    bin/Release/net8.0/Clippit.dll ==> lib/net8.0
+    bin/Release/net8.0/Clippit.pdb ==> lib/net8.0
 
 dependencies
-    framework: net6.0
+    framework: net8.0
         DocumentFormat.OpenXml >= LOCKEDVERSION
         DocumentFormat.OpenXml.Framework >= LOCKEDVERSION
         SixLabors.ImageSharp.Drawing >= LOCKEDVERSION

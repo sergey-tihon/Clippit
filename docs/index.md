@@ -53,6 +53,6 @@ It supports scenarios such as:
 ```
 Copyright (c) Microsoft Corporation 2012-2017
 Portions Copyright (c) Eric White Inc 2018-2019
-Portions Copyright (c) Sergey Tihon 2019-2021
+Portions Copyright (c) Sergey Tihon 2019-2024
 Licensed under the MIT License.
 ```
