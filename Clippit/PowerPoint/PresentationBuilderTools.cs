@@ -331,8 +331,6 @@ namespace Clippit.PowerPoint
                     var newRid = Relationships.GetNewRelationshipId();
                     var oldHyperlink = oldPart.HyperlinkRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldHyperlink is null) {
-                        //TODO Issue with reference to another part: var temp = oldPart.GetPartById(relId);
-                        RemoveContent(newContent, e.Name, relId);
                         continue;
                     }
                     newPart.AddHyperlinkRelationship(oldHyperlink.Uri, oldHyperlink.IsExternal, newRid);
