@@ -324,7 +324,8 @@ namespace Clippit.PowerPoint
                         // handle the following:
                         //<a:hlinkClick r:id=""
                         //              action="ppaction://customshow?id=0" />
-                        if (e.Attribute("action") is {} attr)
+                        var attr = e.Attribute("action");
+                        if (attr is not null)
                         {
                             if (attr.Value.Contains("customshow"))
                                 attr.Remove();
@@ -337,6 +338,8 @@ namespace Clippit.PowerPoint
                     var newRid = Relationships.GetNewRelationshipId();
                     var oldHyperlink = oldPart.HyperlinkRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldHyperlink is null) {
+                        //TODO Issue with reference to another part: var temp = oldPart.GetPartById(relId);
+                        RemoveContent(newContent, e.Name, relId);
                         continue;
                     }
                     newPart.AddHyperlinkRelationship(oldHyperlink.Uri, oldHyperlink.IsExternal, newRid);
@@ -425,7 +428,8 @@ namespace Clippit.PowerPoint
             if (newPart.ContentType == "application/vnd.ms-office.activeX+xml")
             {
                 var axc = newPart.GetXDocument();
-                if (axc.Root?.Attribute(R.id) is {} attr)
+                var attr = axc.Root?.Attribute(R.id);
+                if (attr is not null)
                 {
                     var oldPersistencePart = oldPart.GetPartById(attr.Value);
 
