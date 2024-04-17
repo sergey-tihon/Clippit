@@ -672,7 +672,9 @@ namespace Clippit.PowerPoint
             foreach (var chartReference in newContent.DescendantsAndSelf(C.chart))
             {
                 var relId = (string)chartReference.Attribute(R.id);
-
+                if (newContentPart.HasRelationship(relId))
+                    continue;
+                
                 var oldPartIdPair2 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
                 if (oldPartIdPair2.OpenXmlPart is ChartPart oldPart)
                 {
