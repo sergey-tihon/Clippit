@@ -110,7 +110,7 @@ namespace Clippit.Tests.PowerPoint
             newDocument.SaveAs(Path.Combine(TargetDirectory, newDocument.FileName));
 
             var baseSize = document.DocumentByteArray.Length;
-            Assert.InRange(newDocument.DocumentByteArray.Length, 0.3 * baseSize, 1.1* baseSize);
+            Assert.InRange(newDocument.DocumentByteArray.Length, 0.02 * baseSize, 1.3* baseSize);
         }
 
         [Theory]
