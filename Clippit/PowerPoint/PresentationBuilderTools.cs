@@ -106,48 +106,54 @@ namespace Clippit.PowerPoint
             {
                 var relId = dataReference.Attribute(R.id).Value;
 
-                if (oldChart.Parts.FirstOrDefault(p => p.RelationshipId == relId) is {} oldPartIdPair)
+                if (!string.IsNullOrEmpty(oldChart.Parts.FirstOrDefault(p => p.RelationshipId == relId).RelationshipId))
                 {
-                    switch (oldPartIdPair.OpenXmlPart)
+                    if (oldChart.Parts.FirstOrDefault(p => p.RelationshipId == relId) is { } oldPartIdPair)
                     {
-                        case EmbeddedPackagePart oldPart:
+                        switch (oldPartIdPair.OpenXmlPart)
                         {
-                            var newPart = newChart.AddEmbeddedPackagePart(oldPart.ContentType);
-                            using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
-                            {
-                                newPart.FeedData(oldObject);
-                            }
-                            dataReference.Attribute(R.id).Set(newChart.GetIdOfPart(newPart));
-                            continue;
-                        }
-                        case EmbeddedObjectPart oldEmbeddedObjectPart:
-                        {
-                            var newPart = newChart.AddEmbeddedPackagePart(oldEmbeddedObjectPart.ContentType);
-                            using (var oldObject = oldEmbeddedObjectPart.GetStream(FileMode.Open, FileAccess.Read))
-                            {
-                                newPart.FeedData(oldObject);
-                            }
+                            case EmbeddedPackagePart oldPart:
+                                {
+                                    var newPart = newChart.AddEmbeddedPackagePart(oldPart.ContentType);
+                                    using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
+                                    {
+                                        newPart.FeedData(oldObject);
+                                    }
 
-                            var rId = newChart.GetIdOfPart(newPart);
-                            dataReference.Attribute(R.id).Set(rId);
+                                    dataReference.Attribute(R.id).Set(newChart.GetIdOfPart(newPart));
+                                    continue;
+                                }
+                            case EmbeddedObjectPart oldEmbeddedObjectPart:
+                                {
+                                    var newPart = newChart.AddEmbeddedPackagePart(oldEmbeddedObjectPart.ContentType);
+                                    using (var oldObject =
+                                           oldEmbeddedObjectPart.GetStream(FileMode.Open, FileAccess.Read))
+                                    {
+                                        newPart.FeedData(oldObject);
+                                    }
 
-                            // following is a hack to fix the package because the Open XML SDK does not let us create
-                            // a relationship from a chart with the oleObject relationship type.
+                                    var rId = newChart.GetIdOfPart(newPart);
+                                    dataReference.Attribute(R.id).Set(rId);
 
-                            var pkg = newChart.OpenXmlPackage.GetPackage();
-                            var fromPart = pkg.GetParts().FirstOrDefault(p => p.Uri == newChart.Uri);
-                            if (fromPart is not null)
-                            {
-                                var rel = fromPart.Relationships.FirstOrDefault(p => p.Id == rId);
-                                var targetUri = rel?.TargetUri;
+                                    // following is a hack to fix the package because the Open XML SDK does not let us create
+                                    // a relationship from a chart with the oleObject relationship type.
 
-                                fromPart.Relationships.Remove(rId);
-                                fromPart.Relationships.Create(targetUri, System.IO.Packaging.TargetMode.Internal,
-                                    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject",
-                                    rId);
-                            }
+                                    var pkg = newChart.OpenXmlPackage.GetPackage();
+                                    var fromPart = pkg.GetParts().FirstOrDefault(p => p.Uri == newChart.Uri);
+                                    if (fromPart is not null)
+                                    {
+                                        var rel = fromPart.Relationships.FirstOrDefault(p => p.Id == rId);
+                                        var targetUri = rel?.TargetUri;
 
-                            continue;
+                                        fromPart.Relationships.Remove(rId);
+                                        fromPart.Relationships.Create(targetUri,
+                                            System.IO.Packaging.TargetMode.Internal,
+                                            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject",
+                                            rId);
+                                    }
+
+                                    continue;
+                                }
                         }
                     }
                 }
