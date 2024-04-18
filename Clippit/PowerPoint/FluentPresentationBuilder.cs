@@ -32,9 +32,8 @@ namespace Clippit.PowerPoint
             mainPart.Declaration.Encoding = "UTF-8";
             
             _isDocumentInitialized = false;
-            if (presentationDocument.PresentationPart is not null)
+            if (presentationDocument.PresentationPart is {} presentation)
             {
-                var presentation = presentationDocument.PresentationPart;
                 foreach (var slideMasterPart in presentation.SlideMasterParts)
                 {
                     foreach (var slideLayoutPart in slideMasterPart.SlideLayoutParts)
@@ -96,9 +95,8 @@ namespace Clippit.PowerPoint
             }
 
             // An application attributes part does not have implicit or explicit relationships to other parts.
-            if (sourceDocument.ExtendedFilePropertiesPart is not null)
+            if (sourceDocument.ExtendedFilePropertiesPart is {} extPart)
             {
-                var extPart = sourceDocument.ExtendedFilePropertiesPart;
                 _newDocument.AddExtendedFilePropertiesPart();
                 var newXDoc = _newDocument.ExtendedFilePropertiesPart.GetXDocument();
                 newXDoc.Declaration.Standalone = "yes";
@@ -107,13 +105,13 @@ namespace Clippit.PowerPoint
             }
 
             // An custom file properties part does not have implicit or explicit relationships to other parts.
-            if (sourceDocument.CustomFilePropertiesPart is not null)
+            if (sourceDocument.CustomFilePropertiesPart is {} customPart)
             {
                 _newDocument.AddCustomFilePropertiesPart();
                 var newXDoc = _newDocument.CustomFilePropertiesPart.GetXDocument();
                 newXDoc.Declaration.Standalone = "yes";
                 newXDoc.Declaration.Encoding = "UTF-8";
-                newXDoc.Add(sourceDocument.CustomFilePropertiesPart.GetXDocument().Root);
+                newXDoc.Add(customPart.GetXDocument().Root);
             }
         }
         
@@ -204,19 +202,18 @@ namespace Clippit.PowerPoint
             CopyNotesMaster(sourceDocument);
 
             // Copy Presentation Properties
-            if (sourceDocument.PresentationPart.PresentationPropertiesPart is not null)
+            if (sourceDocument.PresentationPart.PresentationPropertiesPart is {} presentationPropertiesPart)
             {
                 var newPart = _newDocument.PresentationPart.AddNewPart<PresentationPropertiesPart>();
-                var xd1 = sourceDocument.PresentationPart.PresentationPropertiesPart.GetXDocument();
-                xd1.Descendants(P.custShow).Remove();
+                var xd1 = presentationPropertiesPart.GetXDocument();
                 newPart.PutXDocument(xd1);
             }
 
             // Copy View Properties
-            if (sourceDocument.PresentationPart.ViewPropertiesPart is not null)
+            if (sourceDocument.PresentationPart.ViewPropertiesPart is {} viewPropertiesPart)
             {
                 var newPart = _newDocument.PresentationPart.AddNewPart<ViewPropertiesPart>();
-                var xd = sourceDocument.PresentationPart.ViewPropertiesPart.GetXDocument();
+                var xd = viewPropertiesPart.GetXDocument();
                 xd.Descendants(P.outlineViewPr).Elements(P.sldLst).Remove();
                 newPart.PutXDocument(xd);
             }
@@ -354,8 +351,7 @@ namespace Clippit.PowerPoint
                 CopyRelatedPartsForContentParts(slide, newSlide, new[] { newSlide.GetXDocument().Root });
                 CopyTableStyles(sourceDocument, newSlide);
 
-                var notesSlide = slide.NotesSlidePart;
-                if (notesSlide is not null)
+                if (slide.NotesSlidePart is {} notesSlide)
                 {
                     if (_newDocument.PresentationPart.NotesMasterPart is null)
                         CopyNotesMaster(sourceDocument);
@@ -404,14 +400,12 @@ namespace Clippit.PowerPoint
             newPresentation.Root.Element(P.notesSz).ReplaceWith(oldElement);
 
             // Copy Notes Master
-            var oldMaster = sourceDocument.PresentationPart.NotesMasterPart;
-            if ( oldMaster is not null)
+            if (sourceDocument.PresentationPart.NotesMasterPart is {} oldMaster)
             {
                 var newMaster = _newDocument.PresentationPart.AddNewPart<NotesMasterPart>();
 
                 // Copy theme for master
-                var themePart = oldMaster.ThemePart;
-                if (themePart is not null)
+                if (oldMaster.ThemePart is {} themePart)
                 {
                     var newThemePart = newMaster.AddNewPart<ThemePart>();
                     newThemePart.PutXDocument(new XDocument(themePart.GetXDocument()));
