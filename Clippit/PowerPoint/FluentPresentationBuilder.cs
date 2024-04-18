@@ -625,7 +625,8 @@ namespace Clippit.PowerPoint
                 if (newContentPart.HasRelationship(relId))
                     continue;
 
-                if (oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId) is {} oldPartIdPair)
+                var oldPartIdPair = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
+                if (oldPartIdPair != default)
                 {
                     var oldPart = oldPartIdPair.OpenXmlPart;
                     OpenXmlPart newPart = null;
@@ -751,7 +752,7 @@ namespace Clippit.PowerPoint
                     continue;
 
                 var oldPartIdPair9 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-                if (oldPartIdPair9 is {})
+                if (oldPartIdPair9 != default)
                 {
                     var newPart = _newDocument.PresentationPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
                     using (var stream = oldPartIdPair9.OpenXmlPart.GetStream())
