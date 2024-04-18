@@ -106,7 +106,8 @@ namespace Clippit.PowerPoint
             {
                 var relId = dataReference.Attribute(R.id).Value;
 
-                if (oldChart.Parts.FirstOrDefault(p => p.RelationshipId == relId) is {} oldPartIdPair)
+                var oldPartIdPair = oldChart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
+                if (oldPartIdPair != default)
                 {
                     switch (oldPartIdPair.OpenXmlPart)
                     {
@@ -196,7 +197,8 @@ namespace Clippit.PowerPoint
             {
                 var relId = dataReference.Attribute(R.id).Value;
 
-                if (oldChart.Parts.FirstOrDefault(p => p.RelationshipId == relId) is {} oldPartIdPair)
+                var oldPartIdPair = oldChart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
+                if (oldPartIdPair != default)
                 {
                     switch (oldPartIdPair.OpenXmlPart)
                     {
