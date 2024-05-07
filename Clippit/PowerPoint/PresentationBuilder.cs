@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
+using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.PowerPoint
@@ -128,7 +130,49 @@ namespace Clippit.PowerPoint
                 throw;
             }
         }
+        
+        public static void ModifyPresentationWithCustomColors(string presentationFilePath, IEnumerable<XElement> customColors)
+        {
+            using (PresentationDocument presentationDocument = PresentationDocument.Open(presentationFilePath, true))
+            {
+                var presentationPart = presentationDocument.PresentationPart;
+                var slideMasterPart = presentationPart.SlideMasterParts.First();
+                var themePart = slideMasterPart.ThemePart;
+                var theme = themePart.Theme;
+                ModifyCustomColors(theme, customColors);
 
+                // Save the changes
+                themePart.Theme.Save();
+            }
+        }
+        public static void ModifyCustomColors(Theme theme, IEnumerable<XElement> colors)
+        {
+            var customColors = new List<CustomColor>();
+            XNamespace ns = "http://schemas.openxmlformats.org/drawingml/2006/main";
+            foreach (var color in colors)
+            {
+                customColors.Add(new CustomColor(
+                    new RgbColorModelHex()
+                    {
+                        Val = color.Element(ns + "srgbClr")
+                            .Attribute("val").Value
+                    }
+                )
+                {
+                    Name = color.Attribute("name").Value
+                });
+            }
+            theme.CustomColorList = new CustomColorList(customColors);
+        }
+        
+        public static IEnumerable<XElement> LoadCustomColors(string filePath)
+        {
+            var doc = XDocument.Load(filePath);
+            XNamespace a = "http://schemas.openxmlformats.org/drawingml/2006/main";
+            
+            return doc.Root.Elements(A.custClrLst).Elements(A.custClr);
+        }
+        
         private static void BuildPresentation(List<SlideSource> sources, PresentationDocument output)
         {
             using var fluentBuilder = new FluentPresentationBuilder(output);
