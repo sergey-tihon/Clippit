@@ -108,7 +108,7 @@ namespace Clippit
 
         public static void PutXDocument(this OpenXmlPart part)
         {
-            if (part is null) throw new ArgumentNullException(nameof(part));
+            ArgumentNullException.ThrowIfNull(part);
 
             var partXDocument = part.GetXDocument();
             if (partXDocument != null)

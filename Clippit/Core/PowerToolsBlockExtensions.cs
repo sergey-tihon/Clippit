@@ -27,7 +27,7 @@ public static class PowerToolsBlockExtensions
     /// </param>
     public static void BeginPowerToolsBlock(this OpenXmlPackage package)
     {
-        if (package is null) throw new ArgumentNullException(nameof(package));
+        ArgumentNullException.ThrowIfNull(package);
 
         package.RemovePowerToolsAnnotations();
         package.Save();
@@ -44,7 +44,7 @@ public static class PowerToolsBlockExtensions
     /// </param>
     public static void EndPowerToolsBlock(this OpenXmlPackage package)
     {
-        if (package is null) throw new ArgumentNullException(nameof(package));
+        ArgumentNullException.ThrowIfNull(package);
 
         foreach (var part in package.GetAllParts())
         {
@@ -55,7 +55,7 @@ public static class PowerToolsBlockExtensions
 
     private static void RemovePowerToolsAnnotations(this OpenXmlPackage package)
     {
-        if (package is null) throw new ArgumentNullException(nameof(package));
+        ArgumentNullException.ThrowIfNull(package);
 
         foreach (var part in package.GetAllParts())
         {
