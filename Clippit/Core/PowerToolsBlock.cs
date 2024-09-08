@@ -20,12 +20,12 @@ namespace Clippit.Core
     /// </para>
     /// <code>
     ///     [Your code using the strongly typed classes]
-    /// 
+    ///
     ///     using (new PowerToolsBlock(wordprocessingDocument))
     ///     {
     ///         [Your code using the PowerTools]
     ///     }
-    /// 
+    ///
     ///    [Your code using the strongly typed classes]
     /// </code>
     /// <para>
@@ -51,7 +51,8 @@ namespace Clippit.Core
 
         public void Dispose()
         {
-            if (_package is null) return;
+            if (_package is null)
+                return;
 
             _package.EndPowerToolsBlock();
             _package = null;

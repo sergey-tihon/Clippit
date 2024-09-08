@@ -4,14 +4,17 @@ using System.IO.Compression;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Tests.PowerPoint
 {
     public static class OpenXmlExtensions
     {
-        public static PresentationDocument OpenPresentation(Stream stream, bool isEditable, OpenSettings openSettings)
+        public static PresentationDocument OpenPresentation(
+            Stream stream,
+            bool isEditable,
+            OpenSettings openSettings
+        )
         {
             try
             {
@@ -52,7 +55,7 @@ namespace Clippit.Tests.PowerPoint
                                 .Where(r => r.Attribute("TargetMode")?.Value == "External");
                             foreach (var rel in urisToCheck)
                             {
-                                if (rel.Attribute("Target") is {} attr)
+                                if (rel.Attribute("Target") is { } attr)
                                 {
                                     try
                                     {

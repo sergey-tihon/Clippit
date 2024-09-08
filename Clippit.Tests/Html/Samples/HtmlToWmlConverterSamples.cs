@@ -13,9 +13,8 @@ namespace Clippit.Tests.Html.Samples
 {
     public class HtmlToWmlConverterSamples : TestsBase
     {
-        public HtmlToWmlConverterSamples(ITestOutputHelper log) : base(log)
-        {
-        }
+        public HtmlToWmlConverterSamples(ITestOutputHelper log)
+            : base(log) { }
 
         private static string GetFilePath(string path) =>
             Path.Combine("../../../Html/Samples/HtmlToWmlConverter/", path);
@@ -45,13 +44,22 @@ namespace Clippit.Tests.Html.Samples
             var count = 1;
             foreach (var customer in data.Elements("Customer"))
             {
-                var assembledDoc = new FileInfo(Path.Combine(TempDir, $"Letter-{count++:0000}.docx"));
+                var assembledDoc = new FileInfo(
+                    Path.Combine(TempDir, $"Letter-{count++:0000}.docx")
+                );
                 Log.WriteLine("Generating {0}", assembledDoc.Name);
-                var wmlAssembledDoc = DocumentAssembler.AssembleDocument(wmlDoc, customer, out var templateError);
+                var wmlAssembledDoc = DocumentAssembler.AssembleDocument(
+                    wmlDoc,
+                    customer,
+                    out var templateError
+                );
                 if (templateError)
                 {
                     Log.WriteLine("Errors in template.");
-                    Log.WriteLine("See {0} to determine the errors in the template.", assembledDoc.Name);
+                    Log.WriteLine(
+                        "See {0} to determine the errors in the template.",
+                        assembledDoc.Name
+                    );
                 }
                 wmlAssembledDoc.SaveAs(assembledDoc.FullName);
 
@@ -71,17 +79,25 @@ namespace Clippit.Tests.Html.Samples
             Log.WriteLine("Converting " + sourceHtmlFi.Name);
             var sourceImageDi = new DirectoryInfo(destinationDir);
 
-            var destCssFi = new FileInfo(Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(".html", "-2.css")));
-            var destDocxFi = new FileInfo(Path.Combine(destinationDir,
-                sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx")));
-            var annotatedHtmlFi =
-                new FileInfo(Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt")));
+            var destCssFi = new FileInfo(
+                Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(".html", "-2.css"))
+            );
+            var destDocxFi = new FileInfo(
+                Path.Combine(
+                    destinationDir,
+                    sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx")
+                )
+            );
+            var annotatedHtmlFi = new FileInfo(
+                Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt"))
+            );
 
             var html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceHtmlFi);
 
-            var usedAuthorCss =
-                HtmlToWmlConverter.CleanUpCss((string)html.Descendants()
-                    .FirstOrDefault(d => d.Name.LocalName.ToLower() == "style"));
+            var usedAuthorCss = HtmlToWmlConverter.CleanUpCss(
+                (string)
+                    html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style")
+            );
             File.WriteAllText(destCssFi.FullName, usedAuthorCss);
 
             var settings = HtmlToWmlConverter.GetDefaultSettings();
@@ -89,8 +105,15 @@ namespace Clippit.Tests.Html.Samples
             // that contains the HTML files
             settings.BaseUriForImages = sourceHtmlFi.DirectoryName;
 
-            var doc = HtmlToWmlConverter.ConvertHtmlToWml(defaultCss, usedAuthorCss, userCss, html, settings, null,
-                s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null);
+            var doc = HtmlToWmlConverter.ConvertHtmlToWml(
+                defaultCss,
+                usedAuthorCss,
+                userCss,
+                html,
+                settings,
+                null,
+                s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null
+            );
             doc.SaveAs(destDocxFi.FullName);
         }
 
@@ -169,8 +192,9 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
 ";
 
         private static readonly string userCss = @"";
-        
-        private static readonly string[] s_productNames = {
+
+        private static readonly string[] s_productNames =
+        {
             "Unicycle",
             "Bicycle",
             "Tricycle",
@@ -179,26 +203,36 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
             "Hang Glider",
         };
 
-        private static XElement GenerateDataFromDataSource(FileInfo dataFi, int numberOfDocumentsToGenerate)
+        private static XElement GenerateDataFromDataSource(
+            FileInfo dataFi,
+            int numberOfDocumentsToGenerate
+        )
         {
             var customers = new XElement("Customers");
             var r = new Random();
             for (var i = 0; i < numberOfDocumentsToGenerate; ++i)
             {
-                var customer = new XElement("Customer",
+                var customer = new XElement(
+                    "Customer",
                     new XElement("CustomerID", i + 1),
                     new XElement("Name", "Eric White"),
                     new XElement("HighValueCustomer", r.Next(2) == 0 ? "True" : "False"),
-                    new XElement("Orders"));
+                    new XElement("Orders")
+                );
                 var orders = customer.Element("Orders");
                 var numberOfOrders = r.Next(10) + 1;
                 for (var j = 0; j < numberOfOrders; j++)
                 {
-                    var order = new XElement("Order",
+                    var order = new XElement(
+                        "Order",
                         new XAttribute("Number", j + 1),
-                        new XElement("ProductDescription", s_productNames[r.Next(s_productNames.Length)]),
+                        new XElement(
+                            "ProductDescription",
+                            s_productNames[r.Next(s_productNames.Length)]
+                        ),
                         new XElement("Quantity", r.Next(10)),
-                        new XElement("OrderDate", "September 26, 2015"));
+                        new XElement("OrderDate", "September 26, 2015")
+                    );
                     orders.Add(order);
                 }
                 customers.Add(customer);
@@ -206,7 +240,7 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
             customers.Save(dataFi.FullName);
             return customers;
         }
-        
+
         public static FileInfo ConvertToHtml(string file, string outputDirectory)
         {
             var fi = new FileInfo(file);
@@ -217,14 +251,17 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
             var destFileName = new FileInfo(fi.Name.Replace(".docx", ".html"));
             destFileName = new FileInfo(Path.Combine(TempDir, destFileName.Name));
 
-            var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
+            var imageDirectoryName =
+                destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
             var imageCounter = 0;
 
             var pageTitle = fi.FullName;
             var part = wDoc.CoreFilePropertiesPart;
             if (part != null)
             {
-                pageTitle = (string)part.GetXDocument().Descendants(DC.title).FirstOrDefault() ?? fi.FullName;
+                pageTitle =
+                    (string)part.GetXDocument().Descendants(DC.title).FirstOrDefault()
+                    ?? fi.FullName;
             }
 
             // TODO: Determine max-width from size of content area.
@@ -239,16 +276,18 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
                 ImageHandler = imageInfo =>
                 {
                     ++imageCounter;
-                    return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
-                }
+                    return ImageHelper.DefaultImageHandler(
+                        imageInfo,
+                        imageDirectoryName,
+                        imageCounter
+                    );
+                },
             };
             var htmlElement = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
 
             // Produce HTML document with <!DOCTYPE html > declaration to tell the browser
             // we are using HTML5.
-            var html = new XDocument(
-                new XDocumentType("html", null, null, null),
-                htmlElement);
+            var html = new XDocument(new XDocumentType("html", null, null, null), htmlElement);
 
             // Note: the xhtml returned by ConvertToHtmlTransform contains objects of type
             // XEntity.  PtOpenXmlUtil.cs define the XEntity class.  See

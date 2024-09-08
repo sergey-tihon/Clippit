@@ -7,8 +7,7 @@ namespace Clippit.Internal;
 
 internal static class ColorParser
 {
-    public static Color FromName(string name) => 
-        Color.FromName(name);
+    public static Color FromName(string name) => Color.FromName(name);
 
     public static bool TryFromName(string name, out Color color)
     {
@@ -24,6 +23,5 @@ internal static class ColorParser
         }
     }
 
-    public static bool IsValidName(string name) => 
-        TryFromName(name, out _);
+    public static bool IsValidName(string name) => TryFromName(name, out _);
 }

@@ -14,10 +14,9 @@ namespace Clippit.Tests.Excel
 {
     public class SmlCellFormatterTests : TestsBase
     {
-        public SmlCellFormatterTests(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public SmlCellFormatterTests(ITestOutputHelper log)
+            : base(log) { }
+
         [Theory]
         [InlineData("General", "0", "0", null)]
         [InlineData("0", "1.1000000000000001", "1", null)]
@@ -80,7 +79,6 @@ namespace Clippit.Tests.Excel
         [InlineData("mm:ss.0", "42344.295445092591", "05:26:456", null)]
         [InlineData("##0.0E+0", "100.0", "100.0E+0", null)]
         [InlineData("##0.0E+0", "543.210", "543.2E+0", null)]
-
         public void CF001(string formatCode, string value, string expected, string expectedColor)
         {
             var r = SmlCellFormatter.FormatCell(formatCode, value, out var color);
@@ -93,47 +91,91 @@ namespace Clippit.Tests.Excel
         [InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "A2:A2", "-$123.45", null)]
         [InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "A3:A3", "$0.00", null)]
         [InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "B1:B1", "$ 123.45", null)]
-        [InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "B2:B2", "$ (123.45)", null)]
+        [InlineData(
+            "SH151-Custom-Cell-Format-Currency.xlsx",
+            "Sheet1",
+            "B2:B2",
+            "$ (123.45)",
+            null
+        )]
         //[InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "B3:B3", "$ -", null)]
         [InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "C1:C1", "£ 123.45", null)]
         [InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "C2:C2", "-£ 123.45", null)]
         //[InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "C3:C3", "£ -", null)]
         [InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "D1:D1", "€  123.45", null)]
-        [InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "D2:D2", "€  (123.45)", null)]
+        [InlineData(
+            "SH151-Custom-Cell-Format-Currency.xlsx",
+            "Sheet1",
+            "D2:D2",
+            "€  (123.45)",
+            null
+        )]
         //[InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "D3:D3", "€  -", null)]
         [InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "E1:E1", "¥ 123.45", null)]
         [InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "E2:E2", "¥ -123.45", null)]
         //[InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "E3:E3", "¥ -", null)]
-        [InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "F1:F1", "CHF  123.45", null)]
-        [InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "F2:F2", "CHF  -123.45", null)]
+        [InlineData(
+            "SH151-Custom-Cell-Format-Currency.xlsx",
+            "Sheet1",
+            "F1:F1",
+            "CHF  123.45",
+            null
+        )]
+        [InlineData(
+            "SH151-Custom-Cell-Format-Currency.xlsx",
+            "Sheet1",
+            "F2:F2",
+            "CHF  -123.45",
+            null
+        )]
         //[InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "F3:F3", "CHF  -", null)]
         [InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "G1:G1", "₩ 123.45", null)]
         [InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "G2:G2", "-₩ 123.45", null)]
         //[InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "G3:G3", "₩ -", null)]
         [InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "H1:H1", "£ 123.45", null)]
-        [InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "H2:H2", "-£ 123.45", "Red")]
+        [InlineData(
+            "SH151-Custom-Cell-Format-Currency.xlsx",
+            "Sheet1",
+            "H2:H2",
+            "-£ 123.45",
+            "Red"
+        )]
         //[InlineData("SH151-Custom-Cell-Format-Currency.xlsx", "Sheet1", "H3:H3", "£ -", null)]
 
         [InlineData("SH152-Custom-Cell-Format.xlsx", "Sheet1", "A1:A1", "1,234,567.0000", null)]
-        [InlineData("SH152-Custom-Cell-Format.xlsx", "Sheet1", "B1:B1", "This is the value: abc", null)]
-
+        [InlineData(
+            "SH152-Custom-Cell-Format.xlsx",
+            "Sheet1",
+            "B1:B1",
+            "This is the value: abc",
+            null
+        )]
         [InlineData("SH201-Cell-C1-Without-R-Attr.xlsx", "Sheet1", "C1:C1", "3", null)]
         [InlineData("SH202-Cell-C1-D1-Without-R-Attr.xlsx", "Sheet1", "C1:C1", "3", null)]
         [InlineData("SH203-Cell-C1-D1-E1-Without-R-Attr.xlsx", "Sheet1", "C1:C1", "3", null)]
         [InlineData("SH204-Cell-A1-B1-C1-Without-R-Attr.xlsx", "Sheet1", "A1:A1", "1", null)]
-
-        public void CF002(string name, string sheetName, string range, string expected, string expectedColor)
+        public void CF002(
+            string name,
+            string sheetName,
+            string range,
+            string expected,
+            string expectedColor
+        )
         {
             var sourceDir = new DirectoryInfo("../../../../TestFiles/");
             var sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
-            var sourceCopiedToDestXlsx = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx")));
+            var sourceCopiedToDestXlsx = new FileInfo(
+                Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx"))
+            );
             if (!sourceCopiedToDestXlsx.Exists)
                 File.Copy(sourceXlsx.FullName, sourceCopiedToDestXlsx.FullName);
 
             var dataTemplateFileNameSuffix = $"-2-Generated-XmlData-{range.Replace(":", "")}.xml";
-            var dataXmlFi = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix)));
-            
+            var dataXmlFi = new FileInfo(
+                Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix))
+            );
+
             using var sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false);
             var rangeXml = SmlDataRetriever.RetrieveRange(sDoc, sheetName, range);
             var displayValue = (string)rangeXml.Descendants("DisplayValue").FirstOrDefault();

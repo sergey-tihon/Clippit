@@ -9,10 +9,9 @@ namespace Clippit.Tests.Common.Samples
 {
     public class TextReplacerSamples : TestsBase
     {
-        public TextReplacerSamples(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public TextReplacerSamples(ITestOutputHelper log)
+            : base(log) { }
+
         private static string GetFilePath(string path) =>
             Path.Combine("../../../Common/Samples/TextReplacer/", path);
 
@@ -22,7 +21,10 @@ namespace Clippit.Tests.Common.Samples
         [InlineData("PowerPoint/Test03.pptx")]
         public void PowerPoint(string filePath)
         {
-            var outFile = Path.Combine(TempDir, Path.GetFileName(filePath).Replace(".pptx", "out.pptx"));
+            var outFile = Path.Combine(
+                TempDir,
+                Path.GetFileName(filePath).Replace(".pptx", "out.pptx")
+            );
             File.Copy(GetFilePath(filePath), outFile);
             using var pDoc = PresentationDocument.Open(outFile, true);
             TextReplacer.SearchAndReplace(pDoc, "Hello", "Goodbye", true);
@@ -35,35 +37,60 @@ namespace Clippit.Tests.Common.Samples
             foreach (var file in di2.GetFiles("*.docx"))
                 file.CopyTo(Path.Combine(TempDir, file.Name));
 
-            using (var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test01.docx"), true))
+            using (
+                var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test01.docx"), true)
+            )
                 TextReplacer.SearchAndReplace(doc, "the", "this", false);
-            
+
             try
             {
-                using var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test02.docx"), true);
+                using var doc = WordprocessingDocument.Open(
+                    Path.Combine(TempDir, "Test02.docx"),
+                    true
+                );
                 TextReplacer.SearchAndReplace(doc, "the", "this", false);
             }
             catch (Exception) { }
-            
+
             try
             {
-                using var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test03.docx"), true);
+                using var doc = WordprocessingDocument.Open(
+                    Path.Combine(TempDir, "Test03.docx"),
+                    true
+                );
                 TextReplacer.SearchAndReplace(doc, "the", "this", false);
             }
             catch (Exception) { }
-            
-            using (var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test04.docx"), true))
+
+            using (
+                var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test04.docx"), true)
+            )
                 TextReplacer.SearchAndReplace(doc, "the", "this", true);
-            using (var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test05.docx"), true))
+            using (
+                var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test05.docx"), true)
+            )
                 TextReplacer.SearchAndReplace(doc, "is on", "is above", true);
-            using (var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test06.docx"), true))
+            using (
+                var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test06.docx"), true)
+            )
                 TextReplacer.SearchAndReplace(doc, "the", "this", false);
-            using (var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test07.docx"), true))
+            using (
+                var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test07.docx"), true)
+            )
                 TextReplacer.SearchAndReplace(doc, "the", "this", true);
-            using (var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test08.docx"), true))
+            using (
+                var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test08.docx"), true)
+            )
                 TextReplacer.SearchAndReplace(doc, "the", "this", true);
-            using (var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test09.docx"), true))
-                TextReplacer.SearchAndReplace(doc, "===== Replace this text =====", "***zzz***", true);
+            using (
+                var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test09.docx"), true)
+            )
+                TextReplacer.SearchAndReplace(
+                    doc,
+                    "===== Replace this text =====",
+                    "***zzz***",
+                    true
+                );
         }
     }
 }

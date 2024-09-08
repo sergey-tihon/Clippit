@@ -17,21 +17,41 @@ namespace Clippit.Tests.Word
 {
     public class WmlComparerTests2 : TestsBase
     {
-        public WmlComparerTests2(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public WmlComparerTests2(ITestOutputHelper log)
+            : base(log) { }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public static bool m_OpenWord = false;
         public static bool m_OpenTempDirInExplorer = false;
+
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         [Theory]
         [InlineData("CZ-1000", "CZ/CZ001-Plain.docx", "CZ/CZ001-Plain-Mod.docx", 1)]
-        [InlineData("CZ-1010", "CZ/CZ002-Multi-Paragraphs.docx", "CZ/CZ002-Multi-Paragraphs-Mod.docx", 1)]
-        [InlineData("CZ-1020", "CZ/CZ003-Multi-Paragraphs.docx", "CZ/CZ003-Multi-Paragraphs-Mod.docx", 1)]
-        [InlineData("CZ-1030", "CZ/CZ004-Multi-Paragraphs-in-Cell.docx", "CZ/CZ004-Multi-Paragraphs-in-Cell-Mod.docx", 1)]
-        public void CZ001_CompareTrackedInPrev(string testId, string name1, string name2, int revisionCount)
+        [InlineData(
+            "CZ-1010",
+            "CZ/CZ002-Multi-Paragraphs.docx",
+            "CZ/CZ002-Multi-Paragraphs-Mod.docx",
+            1
+        )]
+        [InlineData(
+            "CZ-1020",
+            "CZ/CZ003-Multi-Paragraphs.docx",
+            "CZ/CZ003-Multi-Paragraphs-Mod.docx",
+            1
+        )]
+        [InlineData(
+            "CZ-1030",
+            "CZ/CZ004-Multi-Paragraphs-in-Cell.docx",
+            "CZ/CZ004-Multi-Paragraphs-in-Cell-Mod.docx",
+            1
+        )]
+        public void CZ001_CompareTrackedInPrev(
+            string testId,
+            string name1,
+            string name2,
+            int revisionCount
+        )
         {
             // TODO: Do we need to keep the revision count parameter?
             Assert.Equal(1, revisionCount);
@@ -45,8 +65,12 @@ namespace Clippit.Tests.Word
                 Assert.Fail("Duplicate test id???");
             else
                 thisTestTempDir.Create();
-            var source1CopiedToDestDocx = new FileInfo(Path.Combine(thisTestTempDir.FullName, source1Docx.Name));
-            var source2CopiedToDestDocx = new FileInfo(Path.Combine(thisTestTempDir.FullName, source2Docx.Name));
+            var source1CopiedToDestDocx = new FileInfo(
+                Path.Combine(thisTestTempDir.FullName, source1Docx.Name)
+            );
+            var source2CopiedToDestDocx = new FileInfo(
+                Path.Combine(thisTestTempDir.FullName, source2Docx.Name)
+            );
             File.Copy(source1Docx.FullName, source1CopiedToDestDocx.FullName);
             File.Copy(source2Docx.FullName, source2CopiedToDestDocx.FullName);
 
@@ -57,14 +81,26 @@ namespace Clippit.Tests.Word
                 var source1DocxForWord = new FileInfo(Path.Combine(sourceDir.FullName, name1));
                 var source2DocxForWord = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
-                var source1CopiedToDestDocxForWord = new FileInfo(Path.Combine(thisTestTempDir.FullName, source1Docx.Name.Replace(".docx", "-For-Word.docx")));
-                var source2CopiedToDestDocxForWord = new FileInfo(Path.Combine(thisTestTempDir.FullName, source2Docx.Name.Replace(".docx", "-For-Word.docx")));
+                var source1CopiedToDestDocxForWord = new FileInfo(
+                    Path.Combine(
+                        thisTestTempDir.FullName,
+                        source1Docx.Name.Replace(".docx", "-For-Word.docx")
+                    )
+                );
+                var source2CopiedToDestDocxForWord = new FileInfo(
+                    Path.Combine(
+                        thisTestTempDir.FullName,
+                        source2Docx.Name.Replace(".docx", "-For-Word.docx")
+                    )
+                );
                 if (!source1CopiedToDestDocxForWord.Exists)
                     File.Copy(source1Docx.FullName, source1CopiedToDestDocxForWord.FullName);
                 if (!source2CopiedToDestDocxForWord.Exists)
                     File.Copy(source2Docx.FullName, source2CopiedToDestDocxForWord.FullName);
 
-                var wordExe = new FileInfo(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE");
+                var wordExe = new FileInfo(
+                    @"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE"
+                );
                 WordRunner.RunWord(wordExe, source2CopiedToDestDocxForWord);
                 WordRunner.RunWord(wordExe, source1CopiedToDestDocxForWord);
             }
@@ -73,7 +109,9 @@ namespace Clippit.Tests.Word
 
             var before = source1CopiedToDestDocx.Name.Replace(".docx", "");
             var after = source2CopiedToDestDocx.Name.Replace(".docx", "");
-            var docxWithRevisionsFi = new FileInfo(Path.Combine(thisTestTempDir.FullName, before + "-COMPARE-" + after + ".docx"));
+            var docxWithRevisionsFi = new FileInfo(
+                Path.Combine(thisTestTempDir.FullName, before + "-COMPARE-" + after + ".docx")
+            );
 
             var source1Wml = new WmlDocument(source1CopiedToDestDocx.FullName);
             var source2Wml = new WmlDocument(source2CopiedToDestDocx.FullName);
@@ -88,17 +126,20 @@ namespace Clippit.Tests.Word
                 using (var wDoc = WordprocessingDocument.Open(ms, true))
                 {
                     var validator = new OpenXmlValidator();
-                    var errors = validator.Validate(wDoc).Where(e => !ExpectedErrors.Contains(e.Description));
+                    var errors = validator
+                        .Validate(wDoc)
+                        .Where(e => !ExpectedErrors.Contains(e.Description));
                     if (errors.Any())
                     {
-
                         var ind = "  ";
                         var sb = new StringBuilder();
                         foreach (var err in errors)
                         {
                             sb.Append("Error" + Environment.NewLine);
                             sb.Append(ind + "ErrorType: " + err.ErrorType + Environment.NewLine);
-                            sb.Append(ind + "Description: " + err.Description + Environment.NewLine);
+                            sb.Append(
+                                ind + "Description: " + err.Description + Environment.NewLine
+                            );
                             sb.Append(ind + "Part: " + err.Part.Uri + Environment.NewLine);
                             sb.Append(ind + "XPath: " + err.Path.XPath + Environment.NewLine);
                         }
@@ -113,7 +154,9 @@ namespace Clippit.Tests.Word
 
             if (m_OpenWord)
             {
-                var wordExe = new FileInfo(@"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE");
+                var wordExe = new FileInfo(
+                    @"C:\Program Files (x86)\Microsoft Office\root\Office16\WINWORD.EXE"
+                );
                 WordRunner.RunWord(wordExe, docxWithRevisionsFi);
             }
 
@@ -126,7 +169,9 @@ namespace Clippit.Tests.Word
                     try
                     {
                         ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                        var semaphorFi = new FileInfo(Path.Combine(TempDir, "z_ExplorerOpenedSemaphore.txt"));
+                        var semaphorFi = new FileInfo(
+                            Path.Combine(TempDir, "z_ExplorerOpenedSemaphore.txt")
+                        );
                         if (!semaphorFi.Exists)
                         {
                             File.WriteAllText(semaphorFi.FullName, "");
@@ -906,7 +951,9 @@ namespace Clippit.Tests.Word
             ms.Write(wmlToValidate.DocumentByteArray, 0, wmlToValidate.DocumentByteArray.Length);
             using var wDoc = WordprocessingDocument.Open(ms, true);
             var validator = new OpenXmlValidator();
-            var errors = validator.Validate(wDoc).Where(e => !ExpectedErrors.Contains(e.Description));
+            var errors = validator
+                .Validate(wDoc)
+                .Where(e => !ExpectedErrors.Contains(e.Description));
             if (errors.Count() != 0)
             {
                 var ind = "  ";
@@ -924,7 +971,8 @@ namespace Clippit.Tests.Word
             }
         }
 
-        public static string[] ExpectedErrors = new string[] {
+        public static string[] ExpectedErrors = new string[]
+        {
             "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRow' attribute is not declared.",
             "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRow' attribute is not declared.",
             "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstColumn' attribute is not declared.",

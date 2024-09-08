@@ -10,8 +10,9 @@ namespace Clippit.Word;
 
 public partial class WmlDocument : OpenXmlPowerToolsDocument
 {
-    private const string NotWordprocessingExceptionMessage = "The document is not a WordprocessingML document.";
-    
+    private const string NotWordprocessingExceptionMessage =
+        "The document is not a WordprocessingML document.";
+
     public WmlDocument(OpenXmlPowerToolsDocument original)
         : base(original)
     {
@@ -57,15 +58,11 @@ public partial class WmlDocument : OpenXmlPowerToolsDocument
     }
 
     public WmlDocument(string fileName, MemoryStream memStream)
-        : base(fileName, memStream)
-    {
-    }
+        : base(fileName, memStream) { }
 
     public WmlDocument(string fileName, MemoryStream memStream, bool convertToTransitional)
-        : base(fileName, memStream, convertToTransitional)
-    {
-    }
-    
+        : base(fileName, memStream, convertToTransitional) { }
+
     public PtMainDocumentPart MainDocumentPart
     {
         get
@@ -76,7 +73,13 @@ public partial class WmlDocument : OpenXmlPowerToolsDocument
             var childNodes = partElement.Nodes().ToList();
             foreach (var item in childNodes)
                 item.Remove();
-            return new PtMainDocumentPart(this, wDoc.MainDocumentPart.Uri, partElement.Name, partElement.Attributes(), childNodes);
+            return new PtMainDocumentPart(
+                this,
+                wDoc.MainDocumentPart.Uri,
+                partElement.Name,
+                partElement.Attributes(),
+                childNodes
+            );
         }
     }
 
@@ -90,7 +93,9 @@ public partial class WmlDocument : OpenXmlPowerToolsDocument
             {
                 var uriAttribute = replacementPart.Attribute(PtOpenXml.Uri);
                 if (uriAttribute == null)
-                    throw new OpenXmlPowerToolsException("Replacement part does not contain a Uri as an attribute");
+                    throw new OpenXmlPowerToolsException(
+                        "Replacement part does not contain a Uri as an attribute"
+                    );
                 var uri = uriAttribute.Value;
                 var part = package.GetParts().FirstOrDefault(p => p.Uri.ToString() == uri);
                 using var partStream = part.GetStream(FileMode.Create, FileAccess.Write);
@@ -100,7 +105,7 @@ public partial class WmlDocument : OpenXmlPowerToolsDocument
         }
         this.DocumentByteArray = streamDoc.GetModifiedDocument().DocumentByteArray;
     }
-    
+
     public WmlDocument SearchAndReplace(string search, string replace, bool matchCase)
     {
         return TextReplacer.SearchAndReplace(this, search, replace, matchCase);
@@ -124,8 +129,13 @@ public class PtMainDocumentPart : XElement
             var childNodes = partElement.Nodes().ToList();
             foreach (var item in childNodes)
                 item.Remove();
-            return new PtWordprocessingCommentsPart(this.ParentWmlDocument, commentsPart.Uri, partElement.Name,
-                partElement.Attributes(), childNodes);
+            return new PtWordprocessingCommentsPart(
+                this.ParentWmlDocument,
+                commentsPart.Uri,
+                partElement.Name,
+                partElement.Attributes(),
+                childNodes
+            );
         }
     }
 
@@ -144,7 +154,12 @@ public class PtWordprocessingCommentsPart : XElement
 {
     private WmlDocument ParentWmlDocument;
 
-    public PtWordprocessingCommentsPart(WmlDocument wmlDocument, Uri uri, XName name, params object[] values)
+    public PtWordprocessingCommentsPart(
+        WmlDocument wmlDocument,
+        Uri uri,
+        XName name,
+        params object[] values
+    )
         : base(name, values)
     {
         ParentWmlDocument = wmlDocument;

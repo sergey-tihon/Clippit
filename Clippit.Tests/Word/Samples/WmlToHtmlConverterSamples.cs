@@ -11,10 +11,9 @@ namespace Clippit.Tests.Word.Samples
 {
     public class WmlToHtmlConverterSamples : TestsBase
     {
-        public WmlToHtmlConverterSamples(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public WmlToHtmlConverterSamples(ITestOutputHelper log)
+            : base(log) { }
+
         private static string RootFolder => "../../../Word/Samples/WmlToHtmlConverter/";
 
         [Fact]
@@ -30,7 +29,7 @@ namespace Clippit.Tests.Word.Samples
         {
             var fi = new FileInfo(file);
             Log.WriteLine(fi.Name);
-            
+
             using var memoryStream = new MemoryStream();
             var byteArray = File.ReadAllBytes(fi.FullName);
             memoryStream.Write(byteArray, 0, byteArray.Length);
@@ -46,14 +45,17 @@ namespace Clippit.Tests.Word.Samples
                 }
                 destFileName = new FileInfo(Path.Combine(di.FullName, destFileName.Name));
             }
-            var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
+            var imageDirectoryName =
+                destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
             var imageCounter = 0;
 
             var pageTitle = fi.FullName;
             var part = wDoc.CoreFilePropertiesPart;
             if (part is not null)
             {
-                pageTitle = (string)part.GetXDocument().Descendants(DC.title).FirstOrDefault() ?? fi.FullName;
+                pageTitle =
+                    (string)part.GetXDocument().Descendants(DC.title).FirstOrDefault()
+                    ?? fi.FullName;
             }
 
             // TODO: Determine max-width from size of content area.
@@ -68,16 +70,18 @@ namespace Clippit.Tests.Word.Samples
                 ImageHandler = imageInfo =>
                 {
                     ++imageCounter;
-                    return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
-                }
+                    return ImageHelper.DefaultImageHandler(
+                        imageInfo,
+                        imageDirectoryName,
+                        imageCounter
+                    );
+                },
             };
             var htmlElement = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
 
             // Produce HTML document with <!DOCTYPE html > declaration to tell the browser
             // we are using HTML5.
-            var html = new XDocument(
-                new XDocumentType("html", null, null, null),
-                htmlElement);
+            var html = new XDocument(new XDocumentType("html", null, null, null), htmlElement);
 
             // Note: the xhtml returned by ConvertToHtmlTransform contains objects of type
             // XEntity.  PtOpenXmlUtil.cs define the XEntity class.  See
@@ -90,8 +94,7 @@ namespace Clippit.Tests.Word.Samples
             var htmlString = html.ToString(SaveOptions.DisableFormatting);
             File.WriteAllText(destFileName.FullName, htmlString, Encoding.UTF8);
         }
-        
-        
+
         [Fact]
         public void Sample2()
         {
@@ -105,11 +108,11 @@ namespace Clippit.Tests.Word.Samples
         {
             var fi = new FileInfo(file);
             Log.WriteLine(fi.Name);
-            
+
             using var memoryStream = new MemoryStream();
             var byteArray = File.ReadAllBytes(fi.FullName);
             memoryStream.Write(byteArray, 0, byteArray.Length);
-            
+
             using var wDoc = WordprocessingDocument.Open(memoryStream, true);
             var destFileName = new FileInfo(fi.Name.Replace(".docx", ".html"));
             if (!string.IsNullOrEmpty(outputDirectory))
@@ -129,7 +132,9 @@ namespace Clippit.Tests.Word.Samples
             var part = wDoc.CoreFilePropertiesPart;
             if (part != null)
             {
-                pageTitle = (string)part.GetXDocument().Descendants(DC.title).FirstOrDefault() ?? fi.FullName;
+                pageTitle =
+                    (string)part.GetXDocument().Descendants(DC.title).FirstOrDefault()
+                    ?? fi.FullName;
             }
 
             // TODO: Determine max-width from size of content area.
@@ -146,7 +151,7 @@ namespace Clippit.Tests.Word.Samples
                     ++imageCounter;
                     var extension = imageInfo.ContentType.Split('/')[1].ToLower();
                     var imageEncoder = ImageHelper.GetEncoder(extension, out extension);
-                    
+
                     // If the image format isn't one that we expect, ignore it,
                     // and don't return markup for the link.
                     if (imageEncoder is null)
@@ -168,20 +173,22 @@ namespace Clippit.Tests.Word.Samples
                     var mimeType = "image/" + extension;
                     var imageSource = $"data:{mimeType};base64,{base64}";
 
-                    var img = new XElement(Xhtml.img,
+                    var img = new XElement(
+                        Xhtml.img,
                         new XAttribute(NoNamespace.src, imageSource),
                         imageInfo.ImgStyleAttribute,
-                        imageInfo.AltText != null ? new XAttribute(NoNamespace.alt, imageInfo.AltText) : null);
+                        imageInfo.AltText != null
+                            ? new XAttribute(NoNamespace.alt, imageInfo.AltText)
+                            : null
+                    );
                     return img;
-                }
+                },
             };
             var htmlElement = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
 
             // Produce HTML document with <!DOCTYPE html > declaration to tell the browser
             // we are using HTML5.
-            var html = new XDocument(
-                new XDocumentType("html", null, null, null),
-                htmlElement);
+            var html = new XDocument(new XDocumentType("html", null, null, null), htmlElement);
 
             // Note: the xhtml returned by ConvertToHtmlTransform contains objects of type
             // XEntity.  PtOpenXmlUtil.cs define the XEntity class.  See

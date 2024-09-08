@@ -10,32 +10,97 @@ namespace Clippit.Excel
 {
     internal enum EExcelFormula
     {
-        Formula = 1, Expression = 2, InfixTerms = 3, PreAndPostTerm = 4,
-        Term = 5, RefInfixTerms = 6, RefTerm = 7, Constant = 8, RefConstant = 9,
-        ErrorConstant = 10, LogicalConstant = 11, NumericalConstant = 12,
-        SignificandPart = 13, WholeNumberPart = 14, FractionalPart = 15,
-        ExponentPart = 16, StringConstant = 17, StringCharacter = 18, HighCharacter = 19,
-        ArrayConstant = 20, ConstantListRows = 21, ConstantListRow = 22,
-        InfixOperator = 23, ValueInfixOperator = 24, RefInfixOperator = 25,
-        UnionOperator = 26, IntersectionOperator = 27, RangeOperator = 28,
-        PostfixOperator = 29, PrefixOperator = 30, CellReference = 31, LocalCellReference = 32,
-        ExternalCellReference = 33, BookPrefix = 34, BangReference = 35,
-        SheetRangeReference = 36, SingleSheetPrefix = 37, SingleSheetReference = 38,
-        SingleSheetArea = 39, SingleSheet = 40, SheetRange = 41, WorkbookIndex = 42,
-        SheetName = 43, SheetNameCharacter = 44, SheetNameSpecial = 45,
-        SheetNameBaseCharacter = 46, A1Reference = 47, A1Cell = 48, A1Area = 49,
-        A1Column = 50, A1AbsoluteColumn = 51, A1RelativeColumn = 52, A1Row = 53,
-        A1AbsoluteRow = 54, A1RelativeRow = 55, CellFunctionCall = 56, UserDefinedFunctionCall = 57,
-        UserDefinedFunctionName = 58, ArgumentList = 59, Argument = 60,
-        ArgumentExpression = 61, ArgumentInfixTerms = 62, ArgumentPreAndPostTerm = 63,
-        ArgumentTerm = 64, ArgumentRefInfixTerms = 65, ArgumentRefTerm = 66,
-        ArgumentInfixOperator = 67, RefArgumentInfixOperator = 68, NameReference = 69,
-        ExternalName = 70, BangName = 71, Name = 72, NameStartCharacter = 73,
-        NameCharacter = 74, StructureReference = 75, TableIdentifier = 76,
-        TableName = 77, IntraTableReference = 78, InnerReference = 79, Keyword = 80,
-        KeywordList = 81, ColumnRange = 82, Column = 83, SimpleColumnName = 84,
-        EscapeColumnCharacter = 85, UnescapedColumnCharacter = 86, AnyNoSpaceColumnCharacter = 87,
-        SpacedComma = 88, SpacedLBracket = 89, SpacedRBracket = 90, ws = 91
+        Formula = 1,
+        Expression = 2,
+        InfixTerms = 3,
+        PreAndPostTerm = 4,
+        Term = 5,
+        RefInfixTerms = 6,
+        RefTerm = 7,
+        Constant = 8,
+        RefConstant = 9,
+        ErrorConstant = 10,
+        LogicalConstant = 11,
+        NumericalConstant = 12,
+        SignificandPart = 13,
+        WholeNumberPart = 14,
+        FractionalPart = 15,
+        ExponentPart = 16,
+        StringConstant = 17,
+        StringCharacter = 18,
+        HighCharacter = 19,
+        ArrayConstant = 20,
+        ConstantListRows = 21,
+        ConstantListRow = 22,
+        InfixOperator = 23,
+        ValueInfixOperator = 24,
+        RefInfixOperator = 25,
+        UnionOperator = 26,
+        IntersectionOperator = 27,
+        RangeOperator = 28,
+        PostfixOperator = 29,
+        PrefixOperator = 30,
+        CellReference = 31,
+        LocalCellReference = 32,
+        ExternalCellReference = 33,
+        BookPrefix = 34,
+        BangReference = 35,
+        SheetRangeReference = 36,
+        SingleSheetPrefix = 37,
+        SingleSheetReference = 38,
+        SingleSheetArea = 39,
+        SingleSheet = 40,
+        SheetRange = 41,
+        WorkbookIndex = 42,
+        SheetName = 43,
+        SheetNameCharacter = 44,
+        SheetNameSpecial = 45,
+        SheetNameBaseCharacter = 46,
+        A1Reference = 47,
+        A1Cell = 48,
+        A1Area = 49,
+        A1Column = 50,
+        A1AbsoluteColumn = 51,
+        A1RelativeColumn = 52,
+        A1Row = 53,
+        A1AbsoluteRow = 54,
+        A1RelativeRow = 55,
+        CellFunctionCall = 56,
+        UserDefinedFunctionCall = 57,
+        UserDefinedFunctionName = 58,
+        ArgumentList = 59,
+        Argument = 60,
+        ArgumentExpression = 61,
+        ArgumentInfixTerms = 62,
+        ArgumentPreAndPostTerm = 63,
+        ArgumentTerm = 64,
+        ArgumentRefInfixTerms = 65,
+        ArgumentRefTerm = 66,
+        ArgumentInfixOperator = 67,
+        RefArgumentInfixOperator = 68,
+        NameReference = 69,
+        ExternalName = 70,
+        BangName = 71,
+        Name = 72,
+        NameStartCharacter = 73,
+        NameCharacter = 74,
+        StructureReference = 75,
+        TableIdentifier = 76,
+        TableName = 77,
+        IntraTableReference = 78,
+        InnerReference = 79,
+        Keyword = 80,
+        KeywordList = 81,
+        ColumnRange = 82,
+        Column = 83,
+        SimpleColumnName = 84,
+        EscapeColumnCharacter = 85,
+        UnescapedColumnCharacter = 86,
+        AnyNoSpaceColumnCharacter = 87,
+        SpacedComma = 88,
+        SpacedLBracket = 89,
+        SpacedRBracket = 90,
+        ws = 91,
     };
 
     internal class ExcelFormula : PegCharParser
@@ -43,14 +108,11 @@ namespace Clippit.Excel
         private static readonly EncodingClass EncodingClass = EncodingClass.ascii;
         private static readonly UnicodeDetection UnicodeDetection = UnicodeDetection.notApplicable;
 
-        public ExcelFormula() : base()
-        {
-        }
+        public ExcelFormula()
+            : base() { }
 
         public ExcelFormula(string src, TextWriter fErrOut)
-            : base(src, fErrOut)
-        {
-        }
+            : base(src, fErrOut) { }
 
         public override string GetRuleNameFromId(int id)
         {
@@ -66,7 +128,10 @@ namespace Clippit.Excel
             }
         }
 
-        public override void GetProperties(out EncodingClass encoding, out UnicodeDetection detection)
+        public override void GetProperties(
+            out EncodingClass encoding,
+            out UnicodeDetection detection
+        )
         {
             encoding = EncodingClass;
             detection = UnicodeDetection;
@@ -74,9 +139,7 @@ namespace Clippit.Excel
 
         public bool Formula() /*Formula: Expression (!./FATAL<"end of line expected">);*/
         {
-            return And(() =>
-                Expression()
-                && (Not(Any) || Fatal("end of line expected")));
+            return And(() => Expression() && (Not(Any) || Fatal("end of line expected")));
         }
 
         public bool Expression() /*Expression: ws InfixTerms;*/
@@ -86,50 +149,47 @@ namespace Clippit.Excel
 
         public bool InfixTerms() /*InfixTerms: PreAndPostTerm (InfixOperator ws PreAndPostTerm)*;*/
         {
-            return And(() =>
-                PreAndPostTerm()
-                && OptRepeat(() =>
-                    And(() =>
-                        InfixOperator()
-                        && ws()
-                        && PreAndPostTerm())));
+            return And(
+                () =>
+                    PreAndPostTerm()
+                    && OptRepeat(() => And(() => InfixOperator() && ws() && PreAndPostTerm()))
+            );
         }
 
         public bool PreAndPostTerm() /*PreAndPostTerm: (PrefixOperator ws)* Term (PostfixOperator ws)*;*/
         {
-            return And(() =>
-                OptRepeat(() => And(() => PrefixOperator() && ws()))
-                && Term()
-                && OptRepeat(() => And(() => PostfixOperator() && ws())));
+            return And(
+                () =>
+                    OptRepeat(() => And(() => PrefixOperator() && ws()))
+                    && Term()
+                    && OptRepeat(() => And(() => PostfixOperator() && ws()))
+            );
         }
 
         public bool Term() /*Term: (RefInfixTerms / '(' Expression ')' / Constant) ws;*/
         {
-            return And(() =>
-                (
-                    RefInfixTerms()
-                    || And(() => Char('(') && Expression() && Char(')'))
-                    || Constant())
-                && ws());
+            return And(
+                () =>
+                    (
+                        RefInfixTerms()
+                        || And(() => Char('(') && Expression() && Char(')'))
+                        || Constant()
+                    ) && ws()
+            );
         }
 
         public bool RefInfixTerms() /*RefInfixTerms: RefTerm (RefInfixOperator ws RefTerm)*;*/
         {
-            return And(() =>
-                RefTerm()
-                && OptRepeat(() =>
-                    And(() => RefInfixOperator() && ws() && RefTerm())));
+            return And(
+                () =>
+                    RefTerm() && OptRepeat(() => And(() => RefInfixOperator() && ws() && RefTerm()))
+            );
         }
 
         public bool RefTerm() /*RefTerm: '(' ws RefInfixTerms ')' / RefConstant / CellFunctionCall / CellReference / UserDefinedFunctionCall
 	/ NameReference / StructureReference;*/
         {
-            return
-                And(() =>
-                    Char('(')
-                    && ws()
-                    && RefInfixTerms()
-                    && Char(')'))
+            return And(() => Char('(') && ws() && RefInfixTerms() && Char(')'))
                 || RefConstant()
                 || CellFunctionCall()
                 || CellReference()
@@ -138,15 +198,17 @@ namespace Clippit.Excel
                 || StructureReference();
         }
 
-        public bool
-            Constant() /*^^Constant: ErrorConstant / LogicalConstant / NumericalConstant / StringConstant / ArrayConstant;*/
+        public bool Constant() /*^^Constant: ErrorConstant / LogicalConstant / NumericalConstant / StringConstant / ArrayConstant;*/
         {
-            return TreeNT((int)EExcelFormula.Constant, () =>
-                ErrorConstant()
-                || LogicalConstant()
-                || NumericalConstant()
-                || StringConstant()
-                || ArrayConstant());
+            return TreeNT(
+                (int)EExcelFormula.Constant,
+                () =>
+                    ErrorConstant()
+                    || LogicalConstant()
+                    || NumericalConstant()
+                    || StringConstant()
+                    || ArrayConstant()
+            );
         }
 
         public bool RefConstant() /*RefConstant: '#REF!';*/
@@ -154,11 +216,9 @@ namespace Clippit.Excel
             return Char('#', 'R', 'E', 'F', '!');
         }
 
-        public bool
-            ErrorConstant() /*ErrorConstant: RefConstant / '#DIV/0!' / '#N/A' / '#NAME?' / '#NULL!' / '#NUM!' / '#VALUE!' / '#GETTING_DATA';*/
+        public bool ErrorConstant() /*ErrorConstant: RefConstant / '#DIV/0!' / '#N/A' / '#NAME?' / '#NULL!' / '#NUM!' / '#VALUE!' / '#GETTING_DATA';*/
         {
-            return
-                RefConstant()
+            return RefConstant()
                 || Char('#', 'D', 'I', 'V', '/', '0', '!')
                 || Char('#', 'N', '/', 'A')
                 || Char('#', 'N', 'A', 'M', 'E', '?')
@@ -175,19 +235,12 @@ namespace Clippit.Excel
 
         public bool NumericalConstant() /*NumericalConstant: '-'? SignificandPart ExponentPart?;*/
         {
-            return And(() =>
-                Option(() => Char('-'))
-                && SignificandPart()
-                && Option(ExponentPart));
+            return And(() => Option(() => Char('-')) && SignificandPart() && Option(ExponentPart));
         }
 
         public bool SignificandPart() /*SignificandPart: WholeNumberPart FractionalPart? / FractionalPart;*/
         {
-            return
-                And(() =>
-                    WholeNumberPart()
-                    && Option(FractionalPart))
-                || FractionalPart();
+            return And(() => WholeNumberPart() && Option(FractionalPart)) || FractionalPart();
         }
 
         public bool WholeNumberPart() /*WholeNumberPart: [0-9]+;*/
@@ -202,27 +255,24 @@ namespace Clippit.Excel
 
         public bool ExponentPart() /*ExponentPart: 'E' ('+' / '-')? [0-9]*;*/
         {
-            return And(() =>
-                Char('E')
-                && Option(() => Char('+') || Char('-'))
-                && OptRepeat(() => In('0', '9')));
+            return And(
+                () =>
+                    Char('E')
+                    && Option(() => Char('+') || Char('-'))
+                    && OptRepeat(() => In('0', '9'))
+            );
         }
 
         public bool StringConstant() /*StringConstant: '"' ('""'/StringCharacter)* '"';*/
         {
-            return And(() =>
-                Char('"')
-                && OptRepeat(() => Char('"', '"') || StringCharacter())
-                && Char('"'));
+            return And(
+                () => Char('"') && OptRepeat(() => Char('"', '"') || StringCharacter()) && Char('"')
+            );
         }
 
         public bool StringCharacter() /*StringCharacter: [#-~] / '!' / ' ' / HighCharacter;*/
         {
-            return
-                In('#', '~')
-                || Char('!')
-                || Char(' ')
-                || HighCharacter();
+            return In('#', '~') || Char('!') || Char(' ') || HighCharacter();
         }
 
         public bool HighCharacter() /*HighCharacter: [#x80-#xFFFF];*/
@@ -232,24 +282,26 @@ namespace Clippit.Excel
 
         public bool ArrayConstant() /*^^ArrayConstant: '{' ConstantListRows '}';*/
         {
-            return TreeNT((int)EExcelFormula.ArrayConstant, () =>
-                And(() => Char('{') && ConstantListRows() && Char('}')));
+            return TreeNT(
+                (int)EExcelFormula.ArrayConstant,
+                () => And(() => Char('{') && ConstantListRows() && Char('}'))
+            );
         }
 
         public bool ConstantListRows() /*ConstantListRows: ConstantListRow (';' ConstantListRow)*;*/
         {
-            return And(() =>
-                ConstantListRow()
-                && OptRepeat(() =>
-                    And(() => Char(';') && ConstantListRow())));
+            return And(
+                () =>
+                    ConstantListRow() && OptRepeat(() => And(() => Char(';') && ConstantListRow()))
+            );
         }
 
         public bool ConstantListRow() /*^^ConstantListRow: Constant (',' Constant)*;*/
         {
-            return TreeNT((int)EExcelFormula.ConstantListRow, () =>
-                And(() =>
-                    Constant()
-                    && OptRepeat(() => And(() => Char(',') && Constant()))));
+            return TreeNT(
+                (int)EExcelFormula.ConstantListRow,
+                () => And(() => Constant() && OptRepeat(() => And(() => Char(',') && Constant())))
+            );
         }
 
         public bool InfixOperator() /*InfixOperator: RefInfixOperator / ValueInfixOperator;*/
@@ -257,49 +309,42 @@ namespace Clippit.Excel
             return RefInfixOperator() || ValueInfixOperator();
         }
 
-        public bool
-            ValueInfixOperator() /*^^ValueInfixOperator: '<>' / '>=' / '<=' / '^' / '*' / '/' / '+' / '-' / '&' / '=' / '<' / '>';*/
+        public bool ValueInfixOperator() /*^^ValueInfixOperator: '<>' / '>=' / '<=' / '^' / '*' / '/' / '+' / '-' / '&' / '=' / '<' / '>';*/
         {
-            return TreeNT((int)EExcelFormula.ValueInfixOperator, () =>
-                OneOfLiterals(s_optimizedLiterals0));
+            return TreeNT(
+                (int)EExcelFormula.ValueInfixOperator,
+                () => OneOfLiterals(s_optimizedLiterals0)
+            );
         }
 
         public bool RefInfixOperator() /*RefInfixOperator: RangeOperator / UnionOperator / IntersectionOperator;*/
         {
-            return
-                RangeOperator()
-                || UnionOperator()
-                || IntersectionOperator();
+            return RangeOperator() || UnionOperator() || IntersectionOperator();
         }
 
         public bool UnionOperator() /*^^UnionOperator: ',';*/
         {
-            return TreeNT((int)EExcelFormula.UnionOperator, () =>
-                Char(','));
+            return TreeNT((int)EExcelFormula.UnionOperator, () => Char(','));
         }
 
         public bool IntersectionOperator() /*^^IntersectionOperator: ' ';*/
         {
-            return TreeNT((int)EExcelFormula.IntersectionOperator, () =>
-                Char(' '));
+            return TreeNT((int)EExcelFormula.IntersectionOperator, () => Char(' '));
         }
 
         public bool RangeOperator() /*^^RangeOperator: ':';*/
         {
-            return TreeNT((int)EExcelFormula.RangeOperator, () =>
-                Char(':'));
+            return TreeNT((int)EExcelFormula.RangeOperator, () => Char(':'));
         }
 
         public bool PostfixOperator() /*^^PostfixOperator: '%';*/
         {
-            return TreeNT((int)EExcelFormula.PostfixOperator, () =>
-                Char('%'));
+            return TreeNT((int)EExcelFormula.PostfixOperator, () => Char('%'));
         }
 
         public bool PrefixOperator() /*^^PrefixOperator: '+' / '-';*/
         {
-            return TreeNT((int)EExcelFormula.PrefixOperator, () =>
-                Char('+') || Char('-'));
+            return TreeNT((int)EExcelFormula.PrefixOperator, () => Char('+') || Char('-'));
         }
 
         public bool CellReference() /*CellReference: ExternalCellReference / LocalCellReference;*/
@@ -312,13 +357,9 @@ namespace Clippit.Excel
             return A1Reference();
         }
 
-        public bool
-            ExternalCellReference() /*ExternalCellReference: BangReference / SheetRangeReference / SingleSheetReference;*/
+        public bool ExternalCellReference() /*ExternalCellReference: BangReference / SheetRangeReference / SingleSheetReference;*/
         {
-            return
-                BangReference()
-                || SheetRangeReference()
-                || SingleSheetReference();
+            return BangReference() || SheetRangeReference() || SingleSheetReference();
         }
 
         public bool BookPrefix() /*BookPrefix: WorkbookIndex '!';*/
@@ -328,28 +369,24 @@ namespace Clippit.Excel
 
         public bool BangReference() /*BangReference: '!' (A1Reference / '#REF!');*/
         {
-            return And(() =>
-                Char('!')
-                && (A1Reference() || Char('#', 'R', 'E', 'F', '!')));
+            return And(() => Char('!') && (A1Reference() || Char('#', 'R', 'E', 'F', '!')));
         }
 
         public bool SheetRangeReference() /*SheetRangeReference: SheetRange '!' A1Reference;*/
         {
-
             return And(() => SheetRange() && Char('!') && A1Reference());
         }
 
         public bool SingleSheetPrefix() /*SingleSheetPrefix: SingleSheet '!';*/
         {
-
             return And(() => SingleSheet() && Char('!'));
         }
 
         public bool SingleSheetReference() /*SingleSheetReference: SingleSheetPrefix (A1Reference / '#REF!');*/
         {
-            return And(() =>
-                SingleSheetPrefix()
-                && (A1Reference() || Char('#', 'R', 'E', 'F', '!')));
+            return And(
+                () => SingleSheetPrefix() && (A1Reference() || Char('#', 'R', 'E', 'F', '!'))
+            );
         }
 
         public bool SingleSheetArea() /*SingleSheetArea: SingleSheetPrefix A1Area;*/
@@ -359,86 +396,84 @@ namespace Clippit.Excel
 
         public bool SingleSheet() /*SingleSheet: WorkbookIndex? SheetName / '\'' WorkbookIndex? SheetNameSpecial '\'';*/
         {
-            return
-                And(() =>
-                    Option(WorkbookIndex)
-                    && SheetName())
-                || And(() =>
-                    Char('\'')
-                    && Option(WorkbookIndex)
-                    && SheetNameSpecial()
-                    && Char('\''));
+            return And(() => Option(WorkbookIndex) && SheetName())
+                || And(
+                    () => Char('\'') && Option(WorkbookIndex) && SheetNameSpecial() && Char('\'')
+                );
         }
 
-        public bool
-            SheetRange() /*SheetRange: WorkbookIndex? SheetName ':' SheetName / '\'' WorkbookIndex? SheetNameSpecial ':' SheetNameSpecial '\'';*/
+        public bool SheetRange() /*SheetRange: WorkbookIndex? SheetName ':' SheetName / '\'' WorkbookIndex? SheetNameSpecial ':' SheetNameSpecial '\'';*/
         {
-            return
-                And(() =>
-                    Option(WorkbookIndex)
-                    && SheetName()
-                    && Char(':')
-                    && SheetName())
-                || And(() =>
-                    Char('\'')
-                    && Option(WorkbookIndex)
-                    && SheetNameSpecial()
-                    && Char(':')
-                    && SheetNameSpecial()
-                    && Char('\''));
+            return And(() => Option(WorkbookIndex) && SheetName() && Char(':') && SheetName())
+                || And(
+                    () =>
+                        Char('\'')
+                        && Option(WorkbookIndex)
+                        && SheetNameSpecial()
+                        && Char(':')
+                        && SheetNameSpecial()
+                        && Char('\'')
+                );
         }
 
         public bool WorkbookIndex() /*^^WorkbookIndex: '[' WholeNumberPart ']';*/
         {
-            return TreeNT((int)EExcelFormula.WorkbookIndex, () =>
-                And(() => Char('[') && WholeNumberPart() && Char(']')));
+            return TreeNT(
+                (int)EExcelFormula.WorkbookIndex,
+                () => And(() => Char('[') && WholeNumberPart() && Char(']'))
+            );
         }
 
         public bool SheetName() /*^^SheetName: SheetNameCharacter+;*/
         {
-            return TreeNT((int)EExcelFormula.SheetName, () =>
-                PlusRepeat(SheetNameCharacter));
+            return TreeNT((int)EExcelFormula.SheetName, () => PlusRepeat(SheetNameCharacter));
         }
 
         public bool SheetNameCharacter() /*SheetNameCharacter: [A-Za-z0-9._] / HighCharacter;*/
         {
-            return
-                (In('A', 'Z', 'a', 'z', '0', '9') || OneOf("._"))
-                || HighCharacter();
+            return (In('A', 'Z', 'a', 'z', '0', '9') || OneOf("._")) || HighCharacter();
         }
 
         public bool SheetNameSpecial() /*^^SheetNameSpecial: SheetNameBaseCharacter ('\'\''* SheetNameBaseCharacter)*;*/
         {
-            return TreeNT((int)EExcelFormula.SheetNameSpecial, () =>
-                And(() =>
-                    SheetNameBaseCharacter()
-                    && OptRepeat(() =>
-                        And(() =>
-                            OptRepeat(() => Char('\'', '\''))
-                            && SheetNameBaseCharacter()))));
+            return TreeNT(
+                (int)EExcelFormula.SheetNameSpecial,
+                () =>
+                    And(
+                        () =>
+                            SheetNameBaseCharacter()
+                            && OptRepeat(
+                                () =>
+                                    And(
+                                        () =>
+                                            OptRepeat(() => Char('\'', '\''))
+                                            && SheetNameBaseCharacter()
+                                    )
+                            )
+                    )
+            );
         }
 
-        public bool
-            SheetNameBaseCharacter() /*SheetNameBaseCharacter: [A-Za-z0-9!"#$%&()+,-.;<=>@^_`{|}~ ] / HighCharacter;*/
+        public bool SheetNameBaseCharacter() /*SheetNameBaseCharacter: [A-Za-z0-9!"#$%&()+,-.;<=>@^_`{|}~ ] / HighCharacter;*/
         {
             return OneOf(s_optimizedCharset0) || HighCharacter();
         }
 
         public bool A1Reference() /*^^A1Reference: (A1Column ':' A1Column) / (A1Row ':' A1Row) / A1Area / A1Cell;*/
         {
-            return TreeNT((int)EExcelFormula.A1Reference, () =>
-                And(() => A1Column() && Char(':') && A1Column())
-                || And(() => A1Row() && Char(':') && A1Row())
-                || A1Area()
-                || A1Cell());
+            return TreeNT(
+                (int)EExcelFormula.A1Reference,
+                () =>
+                    And(() => A1Column() && Char(':') && A1Column())
+                    || And(() => A1Row() && Char(':') && A1Row())
+                    || A1Area()
+                    || A1Cell()
+            );
         }
 
         public bool A1Cell() /*A1Cell: A1Column A1Row !NameCharacter;*/
         {
-            return And(() =>
-                A1Column()
-                && A1Row()
-                && Not(NameCharacter));
+            return And(() => A1Column() && A1Row() && Not(NameCharacter));
         }
 
         public bool A1Area() /*A1Area: A1Cell ':' A1Cell;*/
@@ -448,8 +483,10 @@ namespace Clippit.Excel
 
         public bool A1Column() /*^^A1Column: A1AbsoluteColumn / A1RelativeColumn;*/
         {
-            return TreeNT((int)EExcelFormula.A1Column, () =>
-                A1AbsoluteColumn() || A1RelativeColumn());
+            return TreeNT(
+                (int)EExcelFormula.A1Column,
+                () => A1AbsoluteColumn() || A1RelativeColumn()
+            );
         }
 
         public bool A1AbsoluteColumn() /*A1AbsoluteColumn: '$' A1RelativeColumn;*/
@@ -457,11 +494,9 @@ namespace Clippit.Excel
             return And(() => Char('$') && A1RelativeColumn());
         }
 
-        public bool
-            A1RelativeColumn() /*A1RelativeColumn: 'XF' [A-D] / 'X' [A-E] [A-Z] / [A-W][A-Z][A-Z] / [A-Z][A-Z] / [A-Z];*/
+        public bool A1RelativeColumn() /*A1RelativeColumn: 'XF' [A-D] / 'X' [A-E] [A-Z] / [A-W][A-Z][A-Z] / [A-Z][A-Z] / [A-Z];*/
         {
-            return
-                And(() => Char('X', 'F') && In('A', 'D'))
+            return And(() => Char('X', 'F') && In('A', 'D'))
                 || And(() => Char('X') && In('A', 'E') && In('A', 'Z'))
                 || And(() => In('A', 'W') && In('A', 'Z') && In('A', 'Z'))
                 || And(() => In('A', 'Z') && In('A', 'Z'))
@@ -470,8 +505,7 @@ namespace Clippit.Excel
 
         public bool A1Row() /*^^A1Row: A1AbsoluteRow / A1RelativeRow;*/
         {
-            return TreeNT((int)EExcelFormula.A1Row, () =>
-                A1AbsoluteRow() || A1RelativeRow());
+            return TreeNT((int)EExcelFormula.A1Row, () => A1AbsoluteRow() || A1RelativeRow());
         }
 
         public bool A1AbsoluteRow() /*A1AbsoluteRow: '$' A1RelativeRow;*/
@@ -486,23 +520,19 @@ namespace Clippit.Excel
 
         public bool CellFunctionCall() /*^^CellFunctionCall: A1Cell '(' ArgumentList ')';*/
         {
-            return TreeNT((int)EExcelFormula.CellFunctionCall, () =>
-                And(() =>
-                    A1Cell()
-                    && Char('(')
-                    && ArgumentList()
-                    && Char(')')));
+            return TreeNT(
+                (int)EExcelFormula.CellFunctionCall,
+                () => And(() => A1Cell() && Char('(') && ArgumentList() && Char(')'))
+            );
         }
 
-        public bool
-            UserDefinedFunctionCall() /*^^UserDefinedFunctionCall: UserDefinedFunctionName '(' ArgumentList ')';*/
+        public bool UserDefinedFunctionCall() /*^^UserDefinedFunctionCall: UserDefinedFunctionName '(' ArgumentList ')';*/
         {
-            return TreeNT((int)EExcelFormula.UserDefinedFunctionCall, () =>
-                And(() =>
-                    UserDefinedFunctionName()
-                    && Char('(')
-                    && ArgumentList()
-                    && Char(')')));
+            return TreeNT(
+                (int)EExcelFormula.UserDefinedFunctionCall,
+                () =>
+                    And(() => UserDefinedFunctionName() && Char('(') && ArgumentList() && Char(')'))
+            );
         }
 
         public bool UserDefinedFunctionName() /*UserDefinedFunctionName: NameReference;*/
@@ -512,9 +542,7 @@ namespace Clippit.Excel
 
         public bool ArgumentList() /*ArgumentList: Argument (',' Argument)*;*/
         {
-            return And(() =>
-                Argument()
-                && OptRepeat(() => And(() => Char(',') && Argument())));
+            return And(() => Argument() && OptRepeat(() => And(() => Char(',') && Argument())));
         }
 
         public bool Argument() /*Argument: ArgumentExpression / ws;*/
@@ -524,63 +552,60 @@ namespace Clippit.Excel
 
         public bool ArgumentExpression() /*^^ArgumentExpression: ws ArgumentInfixTerms;*/
         {
-            return TreeNT((int)EExcelFormula.ArgumentExpression, () =>
-                And(() => ws() && ArgumentInfixTerms()));
+            return TreeNT(
+                (int)EExcelFormula.ArgumentExpression,
+                () => And(() => ws() && ArgumentInfixTerms())
+            );
         }
 
-        public bool
-            ArgumentInfixTerms() /*ArgumentInfixTerms: ArgumentPreAndPostTerm (ArgumentInfixOperator ws ArgumentPreAndPostTerm)*;*/
+        public bool ArgumentInfixTerms() /*ArgumentInfixTerms: ArgumentPreAndPostTerm (ArgumentInfixOperator ws ArgumentPreAndPostTerm)*;*/
         {
-            return And(() =>
-                ArgumentPreAndPostTerm()
-                && OptRepeat(() =>
-                    And(() =>
-                        ArgumentInfixOperator()
-                        && ws()
-                        && ArgumentPreAndPostTerm())));
+            return And(
+                () =>
+                    ArgumentPreAndPostTerm()
+                    && OptRepeat(
+                        () => And(() => ArgumentInfixOperator() && ws() && ArgumentPreAndPostTerm())
+                    )
+            );
         }
 
-        public bool
-            ArgumentPreAndPostTerm() /*ArgumentPreAndPostTerm: (PrefixOperator ws)* ArgumentTerm (PostfixOperator ws)*;*/
+        public bool ArgumentPreAndPostTerm() /*ArgumentPreAndPostTerm: (PrefixOperator ws)* ArgumentTerm (PostfixOperator ws)*;*/
         {
-            return And(() =>
-                OptRepeat(() => And(() => PrefixOperator() && ws()))
-                && ArgumentTerm()
-                && OptRepeat(() => And(() => PostfixOperator() && ws())));
+            return And(
+                () =>
+                    OptRepeat(() => And(() => PrefixOperator() && ws()))
+                    && ArgumentTerm()
+                    && OptRepeat(() => And(() => PostfixOperator() && ws()))
+            );
         }
 
         public bool ArgumentTerm() /*ArgumentTerm: (ArgumentRefInfixTerms / '(' Expression ')' / Constant) ws;*/
         {
-            return And(() =>
-                (
-                    ArgumentRefInfixTerms()
-                    || And(() => Char('(') && Expression() && Char(')'))
-                    || Constant())
-                && ws());
+            return And(
+                () =>
+                    (
+                        ArgumentRefInfixTerms()
+                        || And(() => Char('(') && Expression() && Char(')'))
+                        || Constant()
+                    ) && ws()
+            );
         }
 
-        public bool
-            ArgumentRefInfixTerms() /*ArgumentRefInfixTerms: ArgumentRefTerm (RefArgumentInfixOperator ws ArgumentRefTerm)*;*/
+        public bool ArgumentRefInfixTerms() /*ArgumentRefInfixTerms: ArgumentRefTerm (RefArgumentInfixOperator ws ArgumentRefTerm)*;*/
         {
-            return And(() =>
-                ArgumentRefTerm()
-                && OptRepeat(() =>
-                    And(() =>
-                        RefArgumentInfixOperator()
-                        && ws()
-                        && ArgumentRefTerm())));
+            return And(
+                () =>
+                    ArgumentRefTerm()
+                    && OptRepeat(
+                        () => And(() => RefArgumentInfixOperator() && ws() && ArgumentRefTerm())
+                    )
+            );
         }
 
-        public bool
-            ArgumentRefTerm() /*ArgumentRefTerm: '(' ws RefInfixTerms ')' / RefConstant / CellFunctionCall / CellReference / UserDefinedFunctionCall
+        public bool ArgumentRefTerm() /*ArgumentRefTerm: '(' ws RefInfixTerms ')' / RefConstant / CellFunctionCall / CellReference / UserDefinedFunctionCall
 	/ NameReference / StructureReference;*/
         {
-            return
-                And(() =>
-                    Char('(')
-                    && ws()
-                    && RefInfixTerms()
-                    && Char(')'))
+            return And(() => Char('(') && ws() && RefInfixTerms() && Char(')'))
                 || RefConstant()
                 || CellFunctionCall()
                 || CellReference()
@@ -601,19 +626,15 @@ namespace Clippit.Excel
 
         public bool NameReference() /*^^NameReference: (ExternalName / Name) !'[';*/
         {
-            return TreeNT((int)EExcelFormula.NameReference, () =>
-                And(() =>
-                    (ExternalName() || Name())
-                    && Not(() => Char('['))));
+            return TreeNT(
+                (int)EExcelFormula.NameReference,
+                () => And(() => (ExternalName() || Name()) && Not(() => Char('[')))
+            );
         }
 
         public bool ExternalName() /*ExternalName: BangName / (SingleSheetPrefix / BookPrefix) Name;*/
         {
-            return
-                BangName()
-                || And(() =>
-                    (SingleSheetPrefix() || BookPrefix())
-                    && Name());
+            return BangName() || And(() => (SingleSheetPrefix() || BookPrefix()) && Name());
         }
 
         public bool BangName() /*BangName: '!' Name;*/
@@ -623,22 +644,17 @@ namespace Clippit.Excel
 
         public bool Name() /*Name: NameStartCharacter NameCharacter*;*/
         {
-            return And(() =>
-                NameStartCharacter()
-                && OptRepeat(NameCharacter));
+            return And(() => NameStartCharacter() && OptRepeat(NameCharacter));
         }
 
         public bool NameStartCharacter() /*NameStartCharacter: [_\\A-Za-z] / HighCharacter;*/
         {
-            return
-                (In('A', 'Z', 'a', 'z') || OneOf("_\\"))
-                || HighCharacter();
+            return (In('A', 'Z', 'a', 'z') || OneOf("_\\")) || HighCharacter();
         }
 
         public bool NameCharacter() /*NameCharacter: NameStartCharacter / [0-9] / '.' / '?' / HighCharacter;*/
         {
-            return
-                NameStartCharacter()
+            return NameStartCharacter()
                 || In('0', '9')
                 || Char('.')
                 || Char('?')
@@ -647,10 +663,10 @@ namespace Clippit.Excel
 
         public bool StructureReference() /*^^StructureReference: TableIdentifier? IntraTableReference;*/
         {
-            return TreeNT((int)EExcelFormula.StructureReference, () =>
-                And(() =>
-                    Option(TableIdentifier)
-                    && IntraTableReference()));
+            return TreeNT(
+                (int)EExcelFormula.StructureReference,
+                () => And(() => Option(TableIdentifier) && IntraTableReference())
+            );
         }
 
         public bool TableIdentifier() /*TableIdentifier: BookPrefix? TableName;*/
@@ -663,84 +679,64 @@ namespace Clippit.Excel
             return Name();
         }
 
-        public bool
-            IntraTableReference() /*IntraTableReference: SpacedLBracket InnerReference SpacedRBracket / Keyword / '[' SimpleColumnName ']';*/
+        public bool IntraTableReference() /*IntraTableReference: SpacedLBracket InnerReference SpacedRBracket / Keyword / '[' SimpleColumnName ']';*/
         {
-            return
-                And(() =>
-                    SpacedLBracket()
-                    && InnerReference()
-                    && SpacedRBracket())
+            return And(() => SpacedLBracket() && InnerReference() && SpacedRBracket())
                 || Keyword()
-                || And(() =>
-                    Char('[')
-                    && SimpleColumnName()
-                    && Char(']'));
+                || And(() => Char('[') && SimpleColumnName() && Char(']'));
         }
 
         public bool InnerReference() /*InnerReference: (KeywordList SpacedComma)? ColumnRange / KeywordList;*/
         {
-            return
-                And(() =>
-                    Option(() =>
-                        And(() => KeywordList() && SpacedComma()))
-                    && ColumnRange())
-                || KeywordList();
+            return And(
+                    () => Option(() => And(() => KeywordList() && SpacedComma())) && ColumnRange()
+                ) || KeywordList();
         }
 
         public bool Keyword() /*Keyword: '[#All]' / '[#Data]' / '[#Headers]' / '[#Totals]' / '[#This Row]';*/
         {
-            return
-                Char('[', '#', 'A', 'l', 'l', ']')
+            return Char('[', '#', 'A', 'l', 'l', ']')
                 || Char('[', '#', 'D', 'a', 't', 'a', ']')
                 || Char("[#Headers]")
                 || Char("[#Totals]")
                 || Char("[#This Row]");
         }
 
-        public bool
-            KeywordList() /*KeywordList: '[#Headers]' SpacedComma '[#Data]' / '[#Data]' SpacedComma '[#Totals]' / Keyword;*/
+        public bool KeywordList() /*KeywordList: '[#Headers]' SpacedComma '[#Data]' / '[#Data]' SpacedComma '[#Totals]' / Keyword;*/
         {
-            return
-                And(() =>
-                    Char("[#Headers]")
-                    && SpacedComma()
-                    && Char('[', '#', 'D', 'a', 't', 'a', ']'))
-                || And(() =>
-                    Char('[', '#', 'D', 'a', 't', 'a', ']')
-                    && SpacedComma()
-                    && Char("[#Totals]"))
+            return And(
+                    () =>
+                        Char("[#Headers]")
+                        && SpacedComma()
+                        && Char('[', '#', 'D', 'a', 't', 'a', ']')
+                )
+                || And(
+                    () =>
+                        Char('[', '#', 'D', 'a', 't', 'a', ']')
+                        && SpacedComma()
+                        && Char("[#Totals]")
+                )
                 || Keyword();
         }
 
         public bool ColumnRange() /*ColumnRange: Column (':' Column)?;*/
         {
-            return And(() =>
-                Column()
-                && Option(() => And(() => Char(':') && Column())));
+            return And(() => Column() && Option(() => And(() => Char(':') && Column())));
         }
 
         public bool Column() /*Column: '[' ws SimpleColumnName ws ']' / SimpleColumnName;*/
         {
-            return
-                And(() =>
-                    Char('[')
-                    && ws()
-                    && SimpleColumnName()
-                    && ws()
-                    && Char(']'))
+            return And(() => Char('[') && ws() && SimpleColumnName() && ws() && Char(']'))
                 || SimpleColumnName();
         }
 
-        public bool
-            SimpleColumnName() /*SimpleColumnName: AnyNoSpaceColumnCharacter+ (ws AnyNoSpaceColumnCharacter+)*;*/
+        public bool SimpleColumnName() /*SimpleColumnName: AnyNoSpaceColumnCharacter+ (ws AnyNoSpaceColumnCharacter+)*;*/
         {
-            return And(() =>
-                PlusRepeat(AnyNoSpaceColumnCharacter)
-                && OptRepeat(() =>
-                    And(() =>
-                        ws()
-                        && PlusRepeat(AnyNoSpaceColumnCharacter))));
+            return And(
+                () =>
+                    PlusRepeat(AnyNoSpaceColumnCharacter)
+                    && OptRepeat(() => And(() => ws() && PlusRepeat(AnyNoSpaceColumnCharacter)))
+            );
         }
 
         public bool EscapeColumnCharacter() /*EscapeColumnCharacter: '\'' / '#' / '[' / ']';*/
@@ -748,26 +744,19 @@ namespace Clippit.Excel
             return Char('\'') || Char('#') || Char('[') || Char(']');
         }
 
-        public bool
-            UnescapedColumnCharacter() /*UnescapedColumnCharacter: [A-Za-z0-9!"#$%&()*+,-./:;<=>?@\\^_`{|}~] / HighCharacter;*/
+        public bool UnescapedColumnCharacter() /*UnescapedColumnCharacter: [A-Za-z0-9!"#$%&()*+,-./:;<=>?@\\^_`{|}~] / HighCharacter;*/
         {
             return OneOf(s_optimizedCharset1) || HighCharacter();
         }
 
-        public bool
-            AnyNoSpaceColumnCharacter() /*AnyNoSpaceColumnCharacter: ('\'' EscapeColumnCharacter) / UnescapedColumnCharacter;*/
+        public bool AnyNoSpaceColumnCharacter() /*AnyNoSpaceColumnCharacter: ('\'' EscapeColumnCharacter) / UnescapedColumnCharacter;*/
         {
-            return
-                And(() => Char('\'') && EscapeColumnCharacter())
-                || UnescapedColumnCharacter();
+            return And(() => Char('\'') && EscapeColumnCharacter()) || UnescapedColumnCharacter();
         }
 
         public bool SpacedComma() /*SpacedComma: ' '? ',' ' '?;*/
         {
-            return And(() =>
-                Option(() => Char(' '))
-                && Char(',')
-                && Option(() => Char(' ')));
+            return And(() => Option(() => Char(' ')) && Char(',') && Option(() => Char(' ')));
         }
 
         public bool SpacedLBracket() /*SpacedLBracket: '[' ' '?;*/
@@ -785,7 +774,6 @@ namespace Clippit.Excel
             return OptRepeat(() => Char(' '));
         }
 
-
         private static readonly OptimizedCharset s_optimizedCharset0;
         private static readonly OptimizedCharset s_optimizedCharset1;
         private static readonly OptimizedLiterals s_optimizedLiterals0;
@@ -795,12 +783,35 @@ namespace Clippit.Excel
             {
                 var ranges = new OptimizedCharset.Range[]
                 {
-                    new('A', 'Z'), new('a', 'z'), new('0', '9'), new(',', '.'),
+                    new('A', 'Z'),
+                    new('a', 'z'),
+                    new('0', '9'),
+                    new(',', '.'),
                 };
                 var oneOfChars = new char[]
                 {
-                    '!', '"', '#', '$', '%', '&', '(', ')', '+', ';', '<', '=', '>', '@', '^', '_', '`', '{', '|',
-                    '}', '~', ' '
+                    '!',
+                    '"',
+                    '#',
+                    '$',
+                    '%',
+                    '&',
+                    '(',
+                    ')',
+                    '+',
+                    ';',
+                    '<',
+                    '=',
+                    '>',
+                    '@',
+                    '^',
+                    '_',
+                    '`',
+                    '{',
+                    '|',
+                    '}',
+                    '~',
+                    ' ',
                 };
                 s_optimizedCharset0 = new OptimizedCharset(ranges, oneOfChars);
             }
@@ -808,18 +819,59 @@ namespace Clippit.Excel
             {
                 var ranges = new OptimizedCharset.Range[]
                 {
-                    new('A', 'Z'), new('a', 'z'), new('0', '9'), new(',', '.'),
+                    new('A', 'Z'),
+                    new('a', 'z'),
+                    new('0', '9'),
+                    new(',', '.'),
                 };
                 var oneOfChars = new char[]
                 {
-                    '!', '"', '#', '$', '%', '&', '(', ')', '*', '+', '/', ':', ';', '<', '=', '>', '?', '@', '\\',
-                    '^', '_', '`', '{', '|', '}', '~'
+                    '!',
+                    '"',
+                    '#',
+                    '$',
+                    '%',
+                    '&',
+                    '(',
+                    ')',
+                    '*',
+                    '+',
+                    '/',
+                    ':',
+                    ';',
+                    '<',
+                    '=',
+                    '>',
+                    '?',
+                    '@',
+                    '\\',
+                    '^',
+                    '_',
+                    '`',
+                    '{',
+                    '|',
+                    '}',
+                    '~',
                 };
                 s_optimizedCharset1 = new OptimizedCharset(ranges, oneOfChars);
             }
 
             {
-                string[] literals = { "<>", ">=", "<=", "^", "*", "/", "+", "-", "&", "=", "<", ">" };
+                string[] literals =
+                {
+                    "<>",
+                    ">=",
+                    "<=",
+                    "^",
+                    "*",
+                    "/",
+                    "+",
+                    "-",
+                    "&",
+                    "=",
+                    "<",
+                    ">",
+                };
                 s_optimizedLiterals0 = new OptimizedLiterals(literals);
             }
         }

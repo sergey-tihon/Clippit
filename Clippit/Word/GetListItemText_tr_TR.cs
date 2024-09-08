@@ -7,55 +7,162 @@ namespace Clippit.Word
     {
         private static readonly string[] RomanOnes =
         {
-            "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"
+            "",
+            "I",
+            "II",
+            "III",
+            "IV",
+            "V",
+            "VI",
+            "VII",
+            "VIII",
+            "IX",
         };
 
         private static readonly string[] RomanTens =
         {
-            "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"
+            "",
+            "X",
+            "XX",
+            "XXX",
+            "XL",
+            "L",
+            "LX",
+            "LXX",
+            "LXXX",
+            "XC",
         };
 
         private static readonly string[] RomanHundreds =
         {
-            "", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM", "M"
+            "",
+            "C",
+            "CC",
+            "CCC",
+            "CD",
+            "D",
+            "DC",
+            "DCC",
+            "DCCC",
+            "CM",
+            "M",
         };
 
         private static readonly string[] RomanThousands =
         {
-            "", "M", "MM", "MMM", "MMMM", "MMMMM", "MMMMMM", "MMMMMMM", "MMMMMMMM",
-            "MMMMMMMMM", "MMMMMMMMMM"
+            "",
+            "M",
+            "MM",
+            "MMM",
+            "MMMM",
+            "MMMMM",
+            "MMMMMM",
+            "MMMMMMM",
+            "MMMMMMMM",
+            "MMMMMMMMM",
+            "MMMMMMMMMM",
         };
 
-        private static readonly string[] OneThroughNineteen = {
-            "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz",
-            "dokuz", "on", "onbir", "oniki", "onüç", "ondört",
-            "onbeş", "onaltı", "onyedi", "onsekiz", "ondokuz"
+        private static readonly string[] OneThroughNineteen =
+        {
+            "bir",
+            "iki",
+            "üç",
+            "dört",
+            "beş",
+            "altı",
+            "yedi",
+            "sekiz",
+            "dokuz",
+            "on",
+            "onbir",
+            "oniki",
+            "onüç",
+            "ondört",
+            "onbeş",
+            "onaltı",
+            "onyedi",
+            "onsekiz",
+            "ondokuz",
         };
 
-        private static readonly string[] Tens = {
-            "on", "yirmi", "otuz", "kırk", "elli", "altmış", "yetmiş",
-            "seksen", "doksan"
+        private static readonly string[] Tens =
+        {
+            "on",
+            "yirmi",
+            "otuz",
+            "kırk",
+            "elli",
+            "altmış",
+            "yetmiş",
+            "seksen",
+            "doksan",
         };
 
-        private static readonly string[] OrdinalOneThroughNineteen = {
-            "birinci", "ikinci", "üçüncü", "dördüncü", "beşinci", "altıncı",
-            "yedinci", "sekizinci", "dokuzuncu", "onuncu", "onbirinci", "onikinci",
-            "onüçüncü", "ondördüncü", "onbeşinci", "onaltıncı",
-            "onyedinci", "onsekizinci", "ondokuzuncu"
+        private static readonly string[] OrdinalOneThroughNineteen =
+        {
+            "birinci",
+            "ikinci",
+            "üçüncü",
+            "dördüncü",
+            "beşinci",
+            "altıncı",
+            "yedinci",
+            "sekizinci",
+            "dokuzuncu",
+            "onuncu",
+            "onbirinci",
+            "onikinci",
+            "onüçüncü",
+            "ondördüncü",
+            "onbeşinci",
+            "onaltıncı",
+            "onyedinci",
+            "onsekizinci",
+            "ondokuzuncu",
         };
 
-        private static readonly string[] TwoThroughNineteen = {
-            "", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz",
-            "dokuz", "on", "onbir", "oniki", "onüç", "ondört",
-            "onbeş", "onaltı", "onyedi", "onsekiz", "ondokuz"
+        private static readonly string[] TwoThroughNineteen =
+        {
+            "",
+            "iki",
+            "üç",
+            "dört",
+            "beş",
+            "altı",
+            "yedi",
+            "sekiz",
+            "dokuz",
+            "on",
+            "onbir",
+            "oniki",
+            "onüç",
+            "ondört",
+            "onbeş",
+            "onaltı",
+            "onyedi",
+            "onsekiz",
+            "ondokuz",
         };
 
-        private static readonly string[] OrdinalTenths = {
-            "onuncu", "yirminci", "otuzuncu", "kırkıncı", "ellinci",
-            "altmışıncı", "yetmişinci", "sekseninci", "doksanıncı"
+        private static readonly string[] OrdinalTenths =
+        {
+            "onuncu",
+            "yirminci",
+            "otuzuncu",
+            "kırkıncı",
+            "ellinci",
+            "altmışıncı",
+            "yetmişinci",
+            "sekseninci",
+            "doksanıncı",
         };
 
-        public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
+        public static string GetListItemText(
+            string languageCultureName,
+            int levelNumber,
+            string numFmt
+        )
         {
             #region
             if (numFmt == "decimal")
@@ -75,8 +182,10 @@ namespace Clippit.Word
                 var tens = (levelNumber % 100) / 10;
                 var hundreds = (levelNumber % 1000) / 100;
                 var thousands = levelNumber / 1000;
-                return RomanThousands[thousands] + RomanHundreds[hundreds] +
-                    RomanTens[tens] + RomanOnes[ones];
+                return RomanThousands[thousands]
+                    + RomanHundreds[hundreds]
+                    + RomanTens[tens]
+                    + RomanOnes[ones];
             }
             if (numFmt == "lowerRoman")
             {
@@ -84,8 +193,12 @@ namespace Clippit.Word
                 var tens = (levelNumber % 100) / 10;
                 var hundreds = (levelNumber % 1000) / 100;
                 var thousands = levelNumber / 1000;
-                return (RomanThousands[thousands] + RomanHundreds[hundreds] +
-                    RomanTens[tens] + RomanOnes[ones]).ToLower();
+                return (
+                    RomanThousands[thousands]
+                    + RomanHundreds[hundreds]
+                    + RomanTens[tens]
+                    + RomanOnes[ones]
+                ).ToLower();
             }
             if (numFmt == "upperLetter")
             {
@@ -129,8 +242,7 @@ namespace Clippit.Word
                 if (t1 >= 1)
                     result += OneThroughNineteen[t1 - 1] + " yüz";
                 if (t1 >= 1 && t2 == 0)
-                    return result.Substring(0, 1).ToUpper() +
-                        result.Substring(1);
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 if (t1 >= 1)
                     result += " ";
                 var h1 = (levelNumber % 1000) / 100;
@@ -138,8 +250,7 @@ namespace Clippit.Word
                 if (h1 >= 1)
                     result += OneThroughNineteen[h1 - 1] + " bin";
                 if (h1 >= 1 && h2 == 0)
-                    return result.Substring(0, 1).ToUpper() +
-                        result.Substring(1);
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 if (h1 >= 1)
                     result += " ";
                 var z = levelNumber % 100;
@@ -151,10 +262,10 @@ namespace Clippit.Word
                     var r = z % 10;
                     result += Tens[x - 1];
                     if (r >= 1)
-                        result += /*"-" + */OneThroughNineteen[r - 1];
+                        result += /*"-" + */
+                        OneThroughNineteen[r - 1];
                 }
-                return result.Substring(0, 1).ToUpper() +
-                    result.Substring(1);
+                return result.Substring(0, 1).ToUpper() + result.Substring(1);
             }
             #endregion
             if (numFmt == "ordinalText")
@@ -167,8 +278,7 @@ namespace Clippit.Word
                 if (t1 >= 1 && t2 == 0)
                 {
                     result += TwoThroughNineteen[t1 - 1] + "bininci";
-                    return result.Substring(0, 1).ToUpper() +
-                        result.Substring(1);
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
                 //if (t1 >= 1)
                 //    result += " ";
@@ -179,8 +289,7 @@ namespace Clippit.Word
                 if (h1 >= 1 && h2 == 0)
                 {
                     result += TwoThroughNineteen[h1 - 1] + "yüzüncü";
-                    return result.Substring(0, 1).ToUpper() +
-                        result.Substring(1);
+                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
                 //if (h1 >= 1)
                 //    result += " ";
@@ -198,8 +307,7 @@ namespace Clippit.Word
                     if (r >= 1)
                         result += OrdinalOneThroughNineteen[r - 1]; //result += "-" + OrdinalOneThroughNineteen[r - 1];
                 }
-                return result.Substring(0, 1).ToUpper() +
-                    result.Substring(1);
+                return result.Substring(0, 1).ToUpper() + result.Substring(1);
             }
             if (numFmt == "0001, 0002, 0003, ...")
             {

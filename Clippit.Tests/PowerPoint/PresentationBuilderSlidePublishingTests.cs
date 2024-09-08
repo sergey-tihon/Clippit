@@ -15,11 +15,16 @@ namespace Clippit.Tests.PowerPoint
 
         public static IEnumerable<object[]> GetData()
         {
-            var files = Directory.GetFiles(SourceDirectory, "*.pptx", SearchOption.TopDirectoryOnly);
-            return files.OrderBy(x=>x).Select(path => new[] {path});
+            var files = Directory.GetFiles(
+                SourceDirectory,
+                "*.pptx",
+                SearchOption.TopDirectoryOnly
+            );
+            return files.OrderBy(x => x).Select(path => new[] { path });
         }
 
-        public PresentationBuilderSlidePublishingTests(ITestOutputHelper log): base(log)
+        public PresentationBuilderSlidePublishingTests(ITestOutputHelper log)
+            : base(log)
         {
             if (!Directory.Exists(TargetDirectory))
                 Directory.CreateDirectory(TargetDirectory);
@@ -29,13 +34,16 @@ namespace Clippit.Tests.PowerPoint
         [MemberData(nameof(GetData))]
         public void PublishUsingPublishSlides(string sourcePath)
         {
-            var targetDir = Path.Combine(TargetDirectory, Path.GetFileNameWithoutExtension(sourcePath));
+            var targetDir = Path.Combine(
+                TargetDirectory,
+                Path.GetFileNameWithoutExtension(sourcePath)
+            );
             if (Directory.Exists(targetDir))
                 Directory.Delete(targetDir, true);
             Directory.CreateDirectory(targetDir);
 
             using var srcStream = File.Open(sourcePath, FileMode.Open);
-            var openSettings = new OpenSettings {AutoSave = false};
+            var openSettings = new OpenSettings { AutoSave = false };
             using var srcDoc = OpenXmlExtensions.OpenPresentation(srcStream, false, openSettings);
 
             var title = srcDoc.PackageProperties.Title ?? string.Empty;
@@ -47,14 +55,16 @@ namespace Clippit.Tests.PowerPoint
                 slide.SaveAs(Path.Combine(targetDir, Path.GetFileName(slide.FileName)));
 
                 using var streamDoc = new OpenXmlMemoryStreamDocument(slide);
-                using var slideDoc = streamDoc.GetPresentationDocument(new OpenSettings {AutoSave = false});
+                using var slideDoc = streamDoc.GetPresentationDocument(
+                    new OpenSettings { AutoSave = false }
+                );
 
                 Assert.Equal(modified, slideDoc.PackageProperties.Modified);
 
                 if (title.Equals(slideDoc.PackageProperties.Title))
                     sameTitle++;
             }
-            Assert.InRange(sameTitle, 0,4);
+            Assert.InRange(sameTitle, 0, 4);
         }
 
         [Theory]
@@ -76,24 +86,26 @@ namespace Clippit.Tests.PowerPoint
         {
             var sourcePath = Path.Combine(SourceDirectory, "SlideWithExtendedChart.pptx");
             using var srcStream = File.Open(sourcePath, FileMode.Open);
-            var openSettings = new OpenSettings {AutoSave = false};
+            var openSettings = new OpenSettings { AutoSave = false };
             using var srcDoc = OpenXmlExtensions.OpenPresentation(srcStream, false, openSettings);
-            
-            var srcEmbeddingCount = srcDoc.PresentationPart.SlideParts
-                .SelectMany(slide => slide.ExtendedChartParts)
+
+            var srcEmbeddingCount = srcDoc
+                .PresentationPart.SlideParts.SelectMany(slide => slide.ExtendedChartParts)
                 .Count();
             Assert.Equal(1, srcEmbeddingCount);
-            
-            var slide = PresentationBuilder.PublishSlides(srcDoc, Path.GetFileName(sourcePath)).First();
+
+            var slide = PresentationBuilder
+                .PublishSlides(srcDoc, Path.GetFileName(sourcePath))
+                .First();
             using var streamDoc = new OpenXmlMemoryStreamDocument(slide);
             using var slideDoc = streamDoc.GetPresentationDocument(openSettings);
 
-            var slideEmbeddingCount = slideDoc.PresentationPart.SlideParts
-                 .Select(slide => slide.ExtendedChartParts)
-                 .Count();
+            var slideEmbeddingCount = slideDoc
+                .PresentationPart.SlideParts.Select(slide => slide.ExtendedChartParts)
+                .Count();
             Assert.Equal(srcEmbeddingCount, slideEmbeddingCount);
         }
-        
+
         [Theory]
         [InlineData("BRK3066.pptx")]
         public void ReassemblePresentation(string fileName)
@@ -110,7 +122,7 @@ namespace Clippit.Tests.PowerPoint
             newDocument.SaveAs(Path.Combine(TargetDirectory, newDocument.FileName));
 
             var baseSize = document.DocumentByteArray.Length;
-            Assert.InRange(newDocument.DocumentByteArray.Length, 0.3 * baseSize, 1.1* baseSize);
+            Assert.InRange(newDocument.DocumentByteArray.Length, 0.3 * baseSize, 1.1 * baseSize);
         }
 
         [Theory]
@@ -125,10 +137,9 @@ namespace Clippit.Tests.PowerPoint
                 numberOfMasters = doc1.PresentationPart.SlideMasterParts.Count();
             }
 
-
-            var onlyMaster =
-                PresentationBuilder.BuildPresentation(
-                    new List<SlideSource> {new(source, 0, 0, true)});
+            var onlyMaster = PresentationBuilder.BuildPresentation(
+                new List<SlideSource> { new(source, 0, 0, true) }
+            );
 
             onlyMaster.FileName = fileName.Replace(".pptx", "_masterOnly.pptx");
             onlyMaster.SaveAs(Path.Combine(TargetDirectory, onlyMaster.FileName));
@@ -149,13 +160,14 @@ namespace Clippit.Tests.PowerPoint
 
             // generate presentation with all masters
             var onlyMaster = PresentationBuilder.BuildPresentation(
-                new List<SlideSource> {new(presentation, 0, 0, true)});
+                new List<SlideSource> { new(presentation, 0, 0, true) }
+            );
 
             // publish slides with one-layout masters
             var slides = PresentationBuilder.PublishSlides(presentation);
 
             // compose them together using only master as the first source
-            var sources = new List<SlideSource> {new(onlyMaster, true)};
+            var sources = new List<SlideSource> { new(onlyMaster, true) };
             sources.AddRange(slides.Select(x => new SlideSource(x, false)));
             var newDocument = PresentationBuilder.BuildPresentation(sources);
 
@@ -176,9 +188,7 @@ namespace Clippit.Tests.PowerPoint
                 .Cast<PmlDocument>()
                 .ToList();
 
-            var sources = files
-                .Select(x => new SlideSource(x, 0, 1000, true))
-                .ToList();
+            var sources = files.Select(x => new SlideSource(x, 0, 1000, true)).ToList();
 
             var result = PresentationBuilder.BuildPresentation(sources);
             var resultFile = Path.Combine(TempDir, "MergedDeck.pptx");

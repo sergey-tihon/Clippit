@@ -13,10 +13,9 @@ namespace Clippit.Tests.Excel
 {
     public class SmlToHtmlConverterTests : TestsBase
     {
-        public SmlToHtmlConverterTests(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public SmlToHtmlConverterTests(ITestOutputHelper log)
+            : base(log) { }
+
         // PowerShell oneliner that generates InlineData for all files in a directory
         // dir | % { '[InlineData("' + $_.Name + '")]' } | clip
 
@@ -51,18 +50,21 @@ namespace Clippit.Tests.Excel
         [InlineData("SH129-FmtNumId-20.xlsx", "Sheet1")]
         [InlineData("SH130-FmtNumId-21.xlsx", "Sheet1")]
         [InlineData("SH131-FmtNumId-22.xlsx", "Sheet1")]
-
         public void SH005_ConvertSheet(string name, string sheetName)
         {
             var sourceDir = new DirectoryInfo("../../../../TestFiles/");
             var sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
-            var sourceCopiedToDestXlsx = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx")));
+            var sourceCopiedToDestXlsx = new FileInfo(
+                Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx"))
+            );
             if (!sourceCopiedToDestXlsx.Exists)
                 File.Copy(sourceXlsx.FullName, sourceCopiedToDestXlsx.FullName);
 
             var dataTemplateFileNameSuffix = "-2-Generated-XmlData-Entire-Sheet.xml";
-            var dataXmlFi = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix)));
+            var dataXmlFi = new FileInfo(
+                Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix))
+            );
             using var sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false);
             var settings = new SmlToHtmlConverterSettings();
             var rangeXml = SmlDataRetriever.RetrieveSheet(sDoc, sheetName);
@@ -108,24 +110,26 @@ namespace Clippit.Tests.Excel
         [InlineData("SH129-FmtNumId-20.xlsx", "Sheet1", "A1:A10")]
         [InlineData("SH130-FmtNumId-21.xlsx", "Sheet1", "A1:A10")]
         [InlineData("SH131-FmtNumId-22.xlsx", "Sheet1", "A1:A10")]
-        
         public void SH004_ConvertRange(string name, string sheetName, string range)
         {
             var sourceDir = new DirectoryInfo("../../../../TestFiles/");
             var sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
-            var sourceCopiedToDestXlsx = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx")));
+            var sourceCopiedToDestXlsx = new FileInfo(
+                Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx"))
+            );
             if (!sourceCopiedToDestXlsx.Exists)
                 File.Copy(sourceXlsx.FullName, sourceCopiedToDestXlsx.FullName);
 
             var dataTemplateFileNameSuffix = $"-2-Generated-XmlData-{range.Replace(":", "")}.xml";
-            var dataXmlFi = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix)));
+            var dataXmlFi = new FileInfo(
+                Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix))
+            );
             using var sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false);
             var settings = new SmlToHtmlConverterSettings();
             var rangeXml = SmlDataRetriever.RetrieveRange(sDoc, sheetName, range);
             rangeXml.Save(dataXmlFi.FullName);
         }
-        
 
         [Theory]
         [InlineData("SH001-Table.xlsx", "MyTable")]
@@ -137,17 +141,20 @@ namespace Clippit.Tests.Excel
         [InlineData("SH007-One-Cell-Table.xlsx", "Table1")]
         [InlineData("SH008-Table-With-Tall-Row.xlsx", "Table1")]
         [InlineData("SH009-Table-With-Wide-Column.xlsx", "Table1")]
-        
         public void SH003_ConvertTable(string name, string tableName)
         {
             var sourceDir = new DirectoryInfo("../../../../TestFiles/");
             var sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
-            var sourceCopiedToDestXlsx = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx")));
+            var sourceCopiedToDestXlsx = new FileInfo(
+                Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx"))
+            );
             if (!sourceCopiedToDestXlsx.Exists)
                 File.Copy(sourceXlsx.FullName, sourceCopiedToDestXlsx.FullName);
 
-            var dataXmlFi = new FileInfo(Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-2-Generated-XmlData.xml")));
+            var dataXmlFi = new FileInfo(
+                Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-2-Generated-XmlData.xml"))
+            );
             using var sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false);
             //var settings = new SmlToHtmlConverterSettings();
             var rangeXml = SmlDataRetriever.RetrieveTable(sDoc, tableName);
@@ -176,7 +183,6 @@ namespace Clippit.Tests.Excel
             var table = SmlDataRetriever.TableNames(sDoc);
             Assert.Equal(numberOfTables, table.Length);
         }
-        
     }
 }
 

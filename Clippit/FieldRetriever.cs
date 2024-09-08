@@ -12,7 +12,6 @@ namespace Clippit
     {
         public static string InstrText(XElement root, int id)
         {
-
             XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 
 #if false
@@ -54,14 +53,16 @@ namespace Clippit
                     if (g.Key == false)
                     {
                         return g.Select(e =>
-                        {
-                            var s = e.Annotation<Stack<FieldElementTypeInfo>>();
-                            var stackElement = s.FirstOrDefault(z => z.Id == id);
-                            if (stackElement.FieldElementType == FieldElementTypeEnum.InstrText &&
-                                e.Name == w + "instrText")
-                                return e.Value;
-                            return "";
-                        })
+                            {
+                                var s = e.Annotation<Stack<FieldElementTypeInfo>>();
+                                var stackElement = s.FirstOrDefault(z => z.Id == id);
+                                if (
+                                    stackElement.FieldElementType == FieldElementTypeEnum.InstrText
+                                    && e.Name == w + "instrText"
+                                )
+                                    return e.Value;
+                                return "";
+                            })
                             .StringConcatenate();
                     }
                     else
@@ -85,11 +86,7 @@ namespace Clippit
             var root = part.GetXDocument().Root;
             var r = root.DescendantsAndSelf()
                 .Rollup(
-                    new FieldElementTypeStack
-                    {
-                        Id = 0,
-                        FiStack = null,
-                    },
+                    new FieldElementTypeStack { Id = 0, FiStack = null },
                     (e, s) =>
                     {
                         if (e.Name == w + "fldChar")
@@ -106,13 +103,11 @@ namespace Clippit
                                     {
                                         Id = s.Id + 1,
                                         FieldElementType = FieldElementTypeEnum.Begin,
-                                    });
-                                return new FieldElementTypeStack
-                                {
-                                    Id = s.Id + 1,
-                                    FiStack = fis,
-                                };
-                            };
+                                    }
+                                );
+                                return new FieldElementTypeStack { Id = s.Id + 1, FiStack = fis };
+                            }
+                            ;
                             if (e.Attribute(w + "fldCharType").Value == "separate")
                             {
                                 var fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
@@ -122,22 +117,15 @@ namespace Clippit
                                     {
                                         Id = wfi.Id,
                                         FieldElementType = FieldElementTypeEnum.Separate,
-                                    });
-                                return new FieldElementTypeStack
-                                {
-                                    Id = s.Id,
-                                    FiStack = fis,
-                                };
+                                    }
+                                );
+                                return new FieldElementTypeStack { Id = s.Id, FiStack = fis };
                             }
                             if (e.Attribute(w + "fldCharType").Value == "end")
                             {
                                 var fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
                                 var wfi = fis.Pop();
-                                return new FieldElementTypeStack
-                                {
-                                    Id = s.Id,
-                                    FiStack = fis,
-                                };
+                                return new FieldElementTypeStack { Id = s.Id, FiStack = fis };
                             }
                         }
                         if (s.FiStack == null || s.FiStack.Count == 0)
@@ -152,12 +140,9 @@ namespace Clippit
                                 {
                                     Id = wfi2.Id,
                                     FieldElementType = FieldElementTypeEnum.InstrText,
-                                });
-                            return new FieldElementTypeStack
-                            {
-                                Id = s.Id,
-                                FiStack = fis,
-                            };
+                                }
+                            );
+                            return new FieldElementTypeStack { Id = s.Id, FiStack = fis };
                         }
                         if (wfi3.FieldElementType == FieldElementTypeEnum.Separate)
                         {
@@ -168,12 +153,9 @@ namespace Clippit
                                 {
                                     Id = wfi2.Id,
                                     FieldElementType = FieldElementTypeEnum.Result,
-                                });
-                            return new FieldElementTypeStack
-                            {
-                                Id = s.Id,
-                                FiStack = fis,
-                            };
+                                }
+                            );
+                            return new FieldElementTypeStack { Id = s.Id, FiStack = fis };
                         }
                         if (wfi3.FieldElementType == FieldElementTypeEnum.End)
                         {
@@ -181,23 +163,24 @@ namespace Clippit
                             fis.Pop();
                             if (!fis.Any())
                                 fis = null;
-                            return new FieldElementTypeStack
-                            {
-                                Id = s.Id,
-                                FiStack = fis,
-                            };
+                            return new FieldElementTypeStack { Id = s.Id, FiStack = fis };
                         }
                         return s;
-                    });
-            var elementPlusInfo = root.DescendantsAndSelf().PtZip(r, (t1, t2) =>
-            {
-                return new
-                {
-                    Element = t1,
-                    Id = t2.Id,
-                    WmlFieldInfoStack = t2.FiStack,
-                };
-            });
+                    }
+                );
+            var elementPlusInfo = root.DescendantsAndSelf()
+                .PtZip(
+                    r,
+                    (t1, t2) =>
+                    {
+                        return new
+                        {
+                            Element = t1,
+                            Id = t2.Id,
+                            WmlFieldInfoStack = t2.FiStack,
+                        };
+                    }
+                );
             foreach (var item in elementPlusInfo)
             {
                 if (item.WmlFieldInfoStack != null)
@@ -225,7 +208,7 @@ namespace Clippit
             {
                 var s = desc.Annotation<Stack<FieldElementTypeInfo>>();
 
-                if (s != null )
+                if (s != null)
                 {
                     foreach (var item in s)
                     {
@@ -237,7 +220,10 @@ namespace Clippit
                             }
                             else
                             {
-                                cachedAnnotationInformation.Add(item.Id, new List<XElement>() { desc });
+                                cachedAnnotationInformation.Add(
+                                    item.Id,
+                                    new List<XElement>() { desc }
+                                );
                             }
                         }
                     }
@@ -362,10 +348,12 @@ namespace Clippit
             var fieldType = field.TrimStart().Split(' ').FirstOrDefault();
             if (fieldType == null)
                 return emptyField;
-            if (fieldType.ToUpper() != "HYPERLINK" &&
-                fieldType.ToUpper() != "REF" &&
-                fieldType.ToUpper() != "SEQ" &&
-                fieldType.ToUpper() != "STYLEREF")
+            if (
+                fieldType.ToUpper() != "HYPERLINK"
+                && fieldType.ToUpper() != "REF"
+                && fieldType.ToUpper() != "SEQ"
+                && fieldType.ToUpper() != "STYLEREF"
+            )
                 return emptyField;
             var tokens = GetTokens(field);
             if (tokens.Length == 0)

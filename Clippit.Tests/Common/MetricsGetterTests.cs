@@ -15,10 +15,9 @@ namespace Clippit.Tests.Common
 {
     public class MetricsGetterTests : TestsBase
     {
-        public MetricsGetterTests(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public MetricsGetterTests(ITestOutputHelper log)
+            : base(log) { }
+
         [Theory]
         [InlineData("Presentation.pptx")]
         [InlineData("Spreadsheet.xlsx")]
@@ -61,7 +60,6 @@ namespace Clippit.Tests.Common
 
             Assert.NotNull(metrics);
         }
-        
     }
 }
 

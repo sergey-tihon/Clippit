@@ -5,35 +5,101 @@ namespace Clippit.Word
 {
     public class ListItemTextGetter_fr_FR
     {
-        private static readonly string[] OneThroughNineteen = {
-            "", "un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit",
-            "neuf", "dix", "onze", "douze", "treize", "quatorze",
-            "quinze", "seize", "dix-sept", "dix-huit", "dix-neuf"
+        private static readonly string[] OneThroughNineteen =
+        {
+            "",
+            "un",
+            "deux",
+            "trois",
+            "quatre",
+            "cinq",
+            "six",
+            "sept",
+            "huit",
+            "neuf",
+            "dix",
+            "onze",
+            "douze",
+            "treize",
+            "quatorze",
+            "quinze",
+            "seize",
+            "dix-sept",
+            "dix-huit",
+            "dix-neuf",
         };
 
-        private static readonly string[] Tens = {
-            "", "dix", "vingt", "trente", "quarante", "cinquante", "soixante", "soixante-dix",
-            "quatre-vingt", "quatre-vingt-dix"
+        private static readonly string[] Tens =
+        {
+            "",
+            "dix",
+            "vingt",
+            "trente",
+            "quarante",
+            "cinquante",
+            "soixante",
+            "soixante-dix",
+            "quatre-vingt",
+            "quatre-vingt-dix",
         };
 
-        private static readonly string[] OrdinalOneThroughNineteen = {
-            "", "unième", "deuxième", "troisième", "quatrième", "cinquième", "sixième",
-            "septième", "huitième", "neuvième", "dixième", "onzième", "douzième",
-            "treizième", "quatorzième", "quinzième", "seizième",
-            "dix-septième", "dix-huitième", "dix-neuvième"
+        private static readonly string[] OrdinalOneThroughNineteen =
+        {
+            "",
+            "unième",
+            "deuxième",
+            "troisième",
+            "quatrième",
+            "cinquième",
+            "sixième",
+            "septième",
+            "huitième",
+            "neuvième",
+            "dixième",
+            "onzième",
+            "douzième",
+            "treizième",
+            "quatorzième",
+            "quinzième",
+            "seizième",
+            "dix-septième",
+            "dix-huitième",
+            "dix-neuvième",
         };
 
-        private static readonly string[] OrdinalTenths = {
-            "", "dixième", "vingtième", "trentième", "quarantième", "cinquantième",
-            "soixantième", "soixante-dixième", "quatre-vingtième", "quatre-vingt-dixième"
+        private static readonly string[] OrdinalTenths =
+        {
+            "",
+            "dixième",
+            "vingtième",
+            "trentième",
+            "quarantième",
+            "cinquantième",
+            "soixantième",
+            "soixante-dixième",
+            "quatre-vingtième",
+            "quatre-vingt-dixième",
         };
 
-        private static readonly string[] OrdinalTenthsPlus = {
-            "", "", "vingt", "trente", "quarante", "cinquante",
-            "soixante", "", "quatre-vingt", ""
+        private static readonly string[] OrdinalTenthsPlus =
+        {
+            "",
+            "",
+            "vingt",
+            "trente",
+            "quarante",
+            "cinquante",
+            "soixante",
+            "",
+            "quatre-vingt",
+            "",
         };
 
-        public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
+        public static string GetListItemText(
+            string languageCultureName,
+            int levelNumber,
+            string numFmt
+        )
         {
             if (numFmt == "cardinalText")
             {
@@ -191,7 +257,8 @@ namespace Clippit.Word
                 if (tens == 7)
                 {
                     if (ones == 1)
-                        result += OrdinalTenthsPlus[6] + " et " + OrdinalOneThroughNineteen[ones + 10];
+                        result +=
+                            OrdinalTenthsPlus[6] + " et " + OrdinalOneThroughNineteen[ones + 10];
                     else
                         result += OrdinalTenthsPlus[6] + "-" + OrdinalOneThroughNineteen[ones + 10];
                     return result.Substring(0, 1).ToUpper() + result.Substring(1);

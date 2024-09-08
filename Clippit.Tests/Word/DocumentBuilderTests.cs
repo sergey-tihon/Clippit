@@ -16,13 +16,14 @@ namespace Clippit.Tests.Word
 {
     public class DocumentBuilderTests : TestsBase
     {
-        public DocumentBuilderTests(ITestOutputHelper log) : base(log)
+        public DocumentBuilderTests(ITestOutputHelper log)
+            : base(log)
         {
             _sourceDir = new DirectoryInfo("../../../../TestFiles/");
         }
 
         private readonly DirectoryInfo _sourceDir;
-        
+
         [Fact]
         public void DB001_DocumentBuilderKeepSections()
         {
@@ -33,70 +34,113 @@ namespace Clippit.Tests.Word
             {
                 new Source(new WmlDocument(sourceDocx.FullName), true),
             };
-            var processedDestDocx = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-processed-by-DocumentBuilder.docx")));
+            var processedDestDocx = new FileInfo(
+                Path.Combine(
+                    TempDir,
+                    sourceDocx.Name.Replace(".docx", "-processed-by-DocumentBuilder.docx")
+                )
+            );
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
         }
 
         [Fact]
         public void DB002_DocumentBuilderKeepSectionsDiscardHeaders()
         {
-            var source1Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB002-Sections-With-Headers.docx"));
-            var source2Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx"));
+            var source1Docx = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB002-Sections-With-Headers.docx")
+            );
+            var source2Docx = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx")
+            );
 
             var sources = new List<ISource>
             {
                 new Source(new WmlDocument(source1Docx.FullName)) { KeepSections = true },
-                new Source(new WmlDocument(source2Docx.FullName)) { KeepSections = true, DiscardHeadersAndFootersInKeptSections = true },
+                new Source(new WmlDocument(source2Docx.FullName))
+                {
+                    KeepSections = true,
+                    DiscardHeadersAndFootersInKeptSections = true,
+                },
                 new Source(new WmlDocument(source1Docx.FullName)) { KeepSections = true },
             };
-            var processedDestDocx = new FileInfo(Path.Combine(TempDir, "DB002-Keep-Sections-Discard-Headers-And-Footers.docx"));
+            var processedDestDocx = new FileInfo(
+                Path.Combine(TempDir, "DB002-Keep-Sections-Discard-Headers-And-Footers.docx")
+            );
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
         }
 
         [Fact]
         public void DB003_DocumentBuilderOnlyDefaultHeader()
         {
-            var source1Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB003-Only-Default-Header.docx"));
-            var source2Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx"));
+            var source1Docx = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB003-Only-Default-Header.docx")
+            );
+            var source2Docx = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx")
+            );
 
             List<ISource> sources = null;
             sources = new List<ISource>
             {
                 new Source(new WmlDocument(source1Docx.FullName)) { KeepSections = true },
-                new Source(new WmlDocument(source2Docx.FullName)) { KeepSections = true, DiscardHeadersAndFootersInKeptSections = true },
+                new Source(new WmlDocument(source2Docx.FullName))
+                {
+                    KeepSections = true,
+                    DiscardHeadersAndFootersInKeptSections = true,
+                },
                 new Source(new WmlDocument(source1Docx.FullName)) { KeepSections = true },
             };
-            var processedDestDocx = new FileInfo(Path.Combine(TempDir, "DB003-Only-Default-Header.docx"));
+            var processedDestDocx = new FileInfo(
+                Path.Combine(TempDir, "DB003-Only-Default-Header.docx")
+            );
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
         }
 
         [Fact]
         public void DB004_DocumentBuilderNoHeaders()
         {
-            var source1Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB004-No-Headers.docx"));
-            var source2Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx"));
+            var source1Docx = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB004-No-Headers.docx")
+            );
+            var source2Docx = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx")
+            );
 
             var sources = new List<ISource>
             {
                 new Source(new WmlDocument(source1Docx.FullName)) { KeepSections = true },
-                new Source(new WmlDocument(source2Docx.FullName)) { KeepSections = true, DiscardHeadersAndFootersInKeptSections = true },
+                new Source(new WmlDocument(source2Docx.FullName))
+                {
+                    KeepSections = true,
+                    DiscardHeadersAndFootersInKeptSections = true,
+                },
                 new Source(new WmlDocument(source1Docx.FullName)) { KeepSections = true },
             };
-            
-            var processedDestDocx = new FileInfo(Path.Combine(TempDir, "DB003-Only-Default-Header.docx"));
+
+            var processedDestDocx = new FileInfo(
+                Path.Combine(TempDir, "DB003-Only-Default-Header.docx")
+            );
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
         }
 
         [Fact]
         public void DB005_HeadersWithRefsToImages()
         {
-            var source1Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB005-Headers-With-Images.docx"));
-            var source2Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx"));
+            var source1Docx = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB005-Headers-With-Images.docx")
+            );
+            var source2Docx = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx")
+            );
 
             var sources = new List<ISource>
             {
                 new Source(new WmlDocument(source1Docx.FullName)) { KeepSections = true },
-                new Source(new WmlDocument(source2Docx.FullName)) { KeepSections = true, DiscardHeadersAndFootersInKeptSections = true },
+                new Source(new WmlDocument(source2Docx.FullName))
+                {
+                    KeepSections = true,
+                    DiscardHeadersAndFootersInKeptSections = true,
+                },
                 new Source(new WmlDocument(source1Docx.FullName)) { KeepSections = true },
             };
             var processedDestDocx = new FileInfo(Path.Combine(TempDir, "DB005.docx"));
@@ -163,8 +207,8 @@ namespace Clippit.Tests.Word
             var wmlOut5 = DocumentBuilder.BuildDocument(sources);
             var out5 = new FileInfo(Path.Combine(TempDir, "DB006-Out5.docx"));
 
-            wmlOut5.SaveAs(out5.FullName);  // save it to the file system, but we could just as easily done something
-                                            // else with it.
+            wmlOut5.SaveAs(out5.FullName); // save it to the file system, but we could just as easily done something
+            // else with it.
             Validate(out5);
         }
 
@@ -172,9 +216,15 @@ namespace Clippit.Tests.Word
         public void DB007_Example_DocumentBuilder02_WhitePaper()
         {
             var spec = new FileInfo(Path.Combine(_sourceDir.FullName, "DB007-Spec.docx"));
-            var whitePaper = new FileInfo(Path.Combine(_sourceDir.FullName, "DB007-WhitePaper.docx"));
-            var paperAbstract = new FileInfo(Path.Combine(_sourceDir.FullName, "DB007-Abstract.docx"));
-            var authorBio = new FileInfo(Path.Combine(_sourceDir.FullName, "DB007-AuthorBiography.docx"));
+            var whitePaper = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB007-WhitePaper.docx")
+            );
+            var paperAbstract = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB007-Abstract.docx")
+            );
+            var authorBio = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB007-AuthorBiography.docx")
+            );
 
             var sources = new List<ISource>
             {
@@ -199,25 +249,28 @@ namespace Clippit.Tests.Word
             using (var doc = WordprocessingDocument.Open(notes.FullName, false))
             {
                 sources = doc
-                    .MainDocumentPart
-                    .GetXDocument()
-                    .Root
-                    .Element(W.body)
+                    .MainDocumentPart.GetXDocument()
+                    .Root.Element(W.body)
                     .Elements()
-                    .Select((p, i) => new
-                    {
-                        Paragraph = p,
-                        Index = i,
-                    })
-                    .GroupAdjacent(pi => (string)pi.Paragraph
-                        .Elements(W.pPr)
-                        .Elements(W.pStyle)
-                        .Attributes(W.val)
-                        .FirstOrDefault() != "Note")
+                    .Select((p, i) => new { Paragraph = p, Index = i })
+                    .GroupAdjacent(pi =>
+                        (string)
+                            pi
+                                .Paragraph.Elements(W.pPr)
+                                .Elements(W.pStyle)
+                                .Attributes(W.val)
+                                .FirstOrDefault() != "Note"
+                    )
                     .Where(g => g.Key)
-                    .Select(g => (ISource) new Source(
-                        new WmlDocument(notes.FullName), g.First().Index,
-                            g.Last().Index - g.First().Index + 1, true))
+                    .Select(g =>
+                        (ISource)
+                            new Source(
+                                new WmlDocument(notes.FullName),
+                                g.First().Index,
+                                g.Last().Index - g.First().Index + 1,
+                                true
+                            )
+                    )
                     .ToList();
             }
             var newNotes = new FileInfo(Path.Combine(TempDir, "DB008-NewNotes.docx"));
@@ -226,24 +279,108 @@ namespace Clippit.Tests.Word
         }
 
         [Theory]
-        [InlineData("DB009-00010", "DB/HeadersFooters/Src/Content-Controls.docx", "DB/HeadersFooters/Dest/Fax.docx", "Templafy")]
-        [InlineData("DB009-00020", "DB/HeadersFooters/Src/Letterhead.docx", "DB/HeadersFooters/Dest/Fax.docx", "Templafy")]
-        [InlineData("DB009-00030", "DB/HeadersFooters/Src/Letterhead-with-Watermark.docx", "DB/HeadersFooters/Dest/Fax.docx", "Templafy")]
-        [InlineData("DB009-00040", "DB/HeadersFooters/Src/Logo.docx", "DB/HeadersFooters/Dest/Fax.docx", "Templafy")]
-        [InlineData("DB009-00050", "DB/HeadersFooters/Src/Watermark-1.docx", "DB/HeadersFooters/Dest/Fax.docx", "Templafy")]
-        [InlineData("DB009-00060", "DB/HeadersFooters/Src/Watermark-2.docx", "DB/HeadersFooters/Dest/Fax.docx", "Templafy")]
-        [InlineData("DB009-00070", "DB/HeadersFooters/Src/Disclaimer.docx", "DB/HeadersFooters/Dest/Fax.docx", "Templafy")]
-        [InlineData("DB009-00080", "DB/HeadersFooters/Src/Footer.docx", "DB/HeadersFooters/Dest/Fax.docx", "Templafy")]
-        [InlineData("DB009-00110", "DB/HeadersFooters/Src/Content-Controls.docx", "DB/HeadersFooters/Dest/Letter.docx", "Templafy")]
-        [InlineData("DB009-00120", "DB/HeadersFooters/Src/Letterhead.docx", "DB/HeadersFooters/Dest/Letter.docx", "Templafy")]
-        [InlineData("DB009-00130", "DB/HeadersFooters/Src/Letterhead-with-Watermark.docx", "DB/HeadersFooters/Dest/Letter.docx", "Templafy")]
-        [InlineData("DB009-00140", "DB/HeadersFooters/Src/Logo.docx", "DB/HeadersFooters/Dest/Letter.docx", "Templafy")]
-        [InlineData("DB009-00150", "DB/HeadersFooters/Src/Watermark-1.docx", "DB/HeadersFooters/Dest/Letter.docx", "Templafy")]
-        [InlineData("DB009-00160", "DB/HeadersFooters/Src/Watermark-2.docx", "DB/HeadersFooters/Dest/Letter.docx", "Templafy")]
-        [InlineData("DB009-00170", "DB/HeadersFooters/Src/Disclaimer.docx", "DB/HeadersFooters/Dest/Letter.docx", "Templafy")]
-        [InlineData("DB009-00180", "DB/HeadersFooters/Src/Footer.docx", "DB/HeadersFooters/Dest/Letter.docx", "Templafy")]
-
-        public void DB009_ImportIntoHeadersFooters(string testId, string src, string dest, string insertId)
+        [InlineData(
+            "DB009-00010",
+            "DB/HeadersFooters/Src/Content-Controls.docx",
+            "DB/HeadersFooters/Dest/Fax.docx",
+            "Templafy"
+        )]
+        [InlineData(
+            "DB009-00020",
+            "DB/HeadersFooters/Src/Letterhead.docx",
+            "DB/HeadersFooters/Dest/Fax.docx",
+            "Templafy"
+        )]
+        [InlineData(
+            "DB009-00030",
+            "DB/HeadersFooters/Src/Letterhead-with-Watermark.docx",
+            "DB/HeadersFooters/Dest/Fax.docx",
+            "Templafy"
+        )]
+        [InlineData(
+            "DB009-00040",
+            "DB/HeadersFooters/Src/Logo.docx",
+            "DB/HeadersFooters/Dest/Fax.docx",
+            "Templafy"
+        )]
+        [InlineData(
+            "DB009-00050",
+            "DB/HeadersFooters/Src/Watermark-1.docx",
+            "DB/HeadersFooters/Dest/Fax.docx",
+            "Templafy"
+        )]
+        [InlineData(
+            "DB009-00060",
+            "DB/HeadersFooters/Src/Watermark-2.docx",
+            "DB/HeadersFooters/Dest/Fax.docx",
+            "Templafy"
+        )]
+        [InlineData(
+            "DB009-00070",
+            "DB/HeadersFooters/Src/Disclaimer.docx",
+            "DB/HeadersFooters/Dest/Fax.docx",
+            "Templafy"
+        )]
+        [InlineData(
+            "DB009-00080",
+            "DB/HeadersFooters/Src/Footer.docx",
+            "DB/HeadersFooters/Dest/Fax.docx",
+            "Templafy"
+        )]
+        [InlineData(
+            "DB009-00110",
+            "DB/HeadersFooters/Src/Content-Controls.docx",
+            "DB/HeadersFooters/Dest/Letter.docx",
+            "Templafy"
+        )]
+        [InlineData(
+            "DB009-00120",
+            "DB/HeadersFooters/Src/Letterhead.docx",
+            "DB/HeadersFooters/Dest/Letter.docx",
+            "Templafy"
+        )]
+        [InlineData(
+            "DB009-00130",
+            "DB/HeadersFooters/Src/Letterhead-with-Watermark.docx",
+            "DB/HeadersFooters/Dest/Letter.docx",
+            "Templafy"
+        )]
+        [InlineData(
+            "DB009-00140",
+            "DB/HeadersFooters/Src/Logo.docx",
+            "DB/HeadersFooters/Dest/Letter.docx",
+            "Templafy"
+        )]
+        [InlineData(
+            "DB009-00150",
+            "DB/HeadersFooters/Src/Watermark-1.docx",
+            "DB/HeadersFooters/Dest/Letter.docx",
+            "Templafy"
+        )]
+        [InlineData(
+            "DB009-00160",
+            "DB/HeadersFooters/Src/Watermark-2.docx",
+            "DB/HeadersFooters/Dest/Letter.docx",
+            "Templafy"
+        )]
+        [InlineData(
+            "DB009-00170",
+            "DB/HeadersFooters/Src/Disclaimer.docx",
+            "DB/HeadersFooters/Dest/Letter.docx",
+            "Templafy"
+        )]
+        [InlineData(
+            "DB009-00180",
+            "DB/HeadersFooters/Src/Footer.docx",
+            "DB/HeadersFooters/Dest/Letter.docx",
+            "Templafy"
+        )]
+        public void DB009_ImportIntoHeadersFooters(
+            string testId,
+            string src,
+            string dest,
+            string insertId
+        )
         {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Load the source document
@@ -272,7 +409,9 @@ namespace Clippit.Tests.Word
                 try
                 {
                     ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                    var sourceDocxCopiedToDestFileName = new FileInfo(Path.Combine(tempDirFullName, sourceDocxFi.Name));
+                    var sourceDocxCopiedToDestFileName = new FileInfo(
+                        Path.Combine(tempDirFullName, sourceDocxFi.Name)
+                    );
                     if (!sourceDocxCopiedToDestFileName.Exists)
                         wmlSourceDocument.SaveAs(sourceDocxCopiedToDestFileName.FullName);
                     //////////////////////////////////////////////////
@@ -292,7 +431,9 @@ namespace Clippit.Tests.Word
                 try
                 {
                     ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                    var destDocxCopiedToDestFileName = new FileInfo(Path.Combine(tempDirFullName, destDocxFi.Name));
+                    var destDocxCopiedToDestFileName = new FileInfo(
+                        Path.Combine(tempDirFullName, destDocxFi.Name)
+                    );
                     if (!destDocxCopiedToDestFileName.Exists)
                         wmlDestDocument.SaveAs(destDocxCopiedToDestFileName.FullName);
                     //////////////////////////////////////////////////
@@ -463,33 +604,36 @@ namespace Clippit.Tests.Word
             using (var doc = WordprocessingDocument.Open(spec.FullName, false))
             {
                 var sectionCounts = doc
-                    .MainDocumentPart
-                    .GetXDocument()
-                    .Root
-                    .Element(W.body)
+                    .MainDocumentPart.GetXDocument()
+                    .Root.Element(W.body)
                     .Elements()
-                    .Rollup(0, (pi, last) => (string)pi
-                        .Elements(W.pPr)
-                        .Elements(W.pStyle)
-                        .Attributes(W.val)
-                        .FirstOrDefault() == "Heading1" ? last + 1 : last);
+                    .Rollup(
+                        0,
+                        (pi, last) =>
+                            (string)
+                                pi.Elements(W.pPr)
+                                    .Elements(W.pStyle)
+                                    .Attributes(W.val)
+                                    .FirstOrDefault() == "Heading1"
+                                ? last + 1
+                                : last
+                    );
                 var beforeZipped = doc
-                    .MainDocumentPart
-                    .GetXDocument()
-                    .Root
-                    .Element(W.body)
+                    .MainDocumentPart.GetXDocument()
+                    .Root.Element(W.body)
                     .Elements()
-                    .Select((p, i) => new
-                    {
-                        Paragraph = p,
-                        Index = i,
-                    });
-                var zipped = PtExtensions.PtZip(beforeZipped, sectionCounts, (pi, sc) => new
-                {
-                    Paragraph = pi.Paragraph,
-                    Index = pi.Index,
-                    SectionIndex = sc,
-                });
+                    .Select((p, i) => new { Paragraph = p, Index = i });
+                var zipped = PtExtensions.PtZip(
+                    beforeZipped,
+                    sectionCounts,
+                    (pi, sc) =>
+                        new
+                        {
+                            Paragraph = pi.Paragraph,
+                            Index = pi.Index,
+                            SectionIndex = sc,
+                        }
+                );
                 documentList = zipped
                     .GroupAdjacent(p => p.SectionIndex)
                     .Select(g => new DocumentInfo
@@ -504,8 +648,9 @@ namespace Clippit.Tests.Word
             {
                 var fileName = $"DB009-Section{doc.DocumentNumber:000}.docx";
                 var fiSection = new FileInfo(Path.Combine(TempDir, fileName));
-                var documentSource = new List<ISource> {
-                    new Source(new WmlDocument(spec.FullName), doc.Start, doc.Count, true)
+                var documentSource = new List<ISource>
+                {
+                    new Source(new WmlDocument(spec.FullName), doc.Start, doc.Count, true),
                 };
                 DocumentBuilder.BuildDocument(documentSource, fiSection.FullName);
                 Validate(fiSection);
@@ -521,12 +666,16 @@ namespace Clippit.Tests.Word
             DocumentBuilder.BuildDocument(sources, fiReassembled.FullName);
             using (var doc = WordprocessingDocument.Open(fiReassembled.FullName, true))
             {
-                ReferenceAdder.AddToc(doc, "/w:document/w:body/w:p[1]",
-                    @"TOC \o '1-3' \h \z \u", null, null);
+                ReferenceAdder.AddToc(
+                    doc,
+                    "/w:document/w:body/w:p[1]",
+                    @"TOC \o '1-3' \h \z \u",
+                    null,
+                    null
+                );
             }
             Validate(fiReassembled);
         }
-
 
         [Fact]
         public void DB010_InsertUsingInsertId()
@@ -543,19 +692,22 @@ namespace Clippit.Tests.Word
                 using (var doc = WordprocessingDocument.Open(mem, true))
                 {
                     var xDoc = doc.MainDocumentPart.GetXDocument();
-                    var frontMatterPara = xDoc.Root.Descendants(W.txbxContent).Elements(W.p).FirstOrDefault();
+                    var frontMatterPara = xDoc
+                        .Root.Descendants(W.txbxContent)
+                        .Elements(W.p)
+                        .FirstOrDefault();
                     frontMatterPara.ReplaceWith(
-                        new XElement(PtOpenXml.Insert,
-                            new XAttribute("Id", "Front")));
+                        new XElement(PtOpenXml.Insert, new XAttribute("Id", "Front"))
+                    );
                     var tbl = xDoc.Root.Element(W.body).Elements(W.tbl).FirstOrDefault();
                     var firstCell = tbl.Descendants(W.tr).First().Descendants(W.p).First();
                     firstCell.ReplaceWith(
-                        new XElement(PtOpenXml.Insert,
-                            new XAttribute("Id", "Liz")));
+                        new XElement(PtOpenXml.Insert, new XAttribute("Id", "Liz"))
+                    );
                     var secondCell = tbl.Descendants(W.tr).Skip(1).First().Descendants(W.p).First();
                     secondCell.ReplaceWith(
-                        new XElement(PtOpenXml.Insert,
-                            new XAttribute("Id", "Eric")));
+                        new XElement(PtOpenXml.Insert, new XAttribute("Id", "Eric"))
+                    );
                     doc.MainDocumentPart.PutXDocument();
                 }
                 doc1.DocumentByteArray = mem.ToArray();
@@ -577,8 +729,12 @@ namespace Clippit.Tests.Word
         public void DB011_BodyAndHeaderWithShapes()
         {
             // Both of theses documents have a shape with a DocProperties ID of 1.
-            var source1 = new FileInfo(Path.Combine(_sourceDir.FullName, "DB011-Header-With-Shape.docx"));
-            var source2 = new FileInfo(Path.Combine(_sourceDir.FullName, "DB011-Body-With-Shape.docx"));
+            var source1 = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB011-Header-With-Shape.docx")
+            );
+            var source2 = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB011-Body-With-Shape.docx")
+            );
             List<ISource> sources = null;
 
             sources = new List<ISource>
@@ -586,14 +742,14 @@ namespace Clippit.Tests.Word
                 new Source(new WmlDocument(source1.FullName)),
                 new Source(new WmlDocument(source2.FullName)),
             };
-            var processedDestDocx =
-                new FileInfo(Path.Combine(TempDir, "DB011-Body-And-Header-With-Shapes.docx"));
+            var processedDestDocx = new FileInfo(
+                Path.Combine(TempDir, "DB011-Body-And-Header-With-Shapes.docx")
+            );
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
             Validate(processedDestDocx);
 
             ValidateUniqueDocPrIds(processedDestDocx);
         }
-
 
         [Fact]
         public void DB012_NumberingsWithSameAbstractNumbering()
@@ -602,12 +758,13 @@ namespace Clippit.Tests.Word
             var name = "DB012-Lists-With-Different-Numberings.docx";
             var sourceDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
 
-            var sources = new List<ISource>
-            {
-                new Source(new WmlDocument(sourceDocx.FullName)),
-            };
-            var processedDestDocx = new FileInfo(Path.Combine(TempDir,
-                sourceDocx.Name.Replace(".docx", "-processed-by-DocumentBuilder.docx")));
+            var sources = new List<ISource> { new Source(new WmlDocument(sourceDocx.FullName)) };
+            var processedDestDocx = new FileInfo(
+                Path.Combine(
+                    TempDir,
+                    sourceDocx.Name.Replace(".docx", "-processed-by-DocumentBuilder.docx")
+                )
+            );
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
 
             using var wDoc = WordprocessingDocument.Open(processedDestDocx.FullName, false);
@@ -620,28 +777,39 @@ namespace Clippit.Tests.Word
         {
             // Each of these documents have changed the font color of the Heading 1 style, one to red, the other to green.
             // One of the documents were created with English as the Word display language, the other with Danish as the language.
-            var source1 =
-                new FileInfo(Path.Combine(_sourceDir.FullName, "DB013a-Red-Heading1-English.docx"));
-            var source2 = new FileInfo(Path.Combine(_sourceDir.FullName,
-                "DB013a-Green-Heading1-Danish.docx"));
+            var source1 = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB013a-Red-Heading1-English.docx")
+            );
+            var source2 = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB013a-Green-Heading1-Danish.docx")
+            );
 
             var sources = new List<ISource>
             {
                 new Source(new WmlDocument(source1.FullName)),
                 new Source(new WmlDocument(source2.FullName)),
             };
-            var processedDestDocx =
-                new FileInfo(Path.Combine(TempDir, "DB013a-Colored-Heading1.docx"));
+            var processedDestDocx = new FileInfo(
+                Path.Combine(TempDir, "DB013a-Colored-Heading1.docx")
+            );
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
 
             using var wDoc = WordprocessingDocument.Open(processedDestDocx.FullName, false);
-            var styles = wDoc.MainDocumentPart.StyleDefinitionsPart.GetXDocument().Root.Elements(W.style).ToArray();
-            Assert.Equal(1, styles.Count(s => s.Element(W.name).Attribute(W.val).Value == "heading 1"));
+            var styles = wDoc
+                .MainDocumentPart.StyleDefinitionsPart.GetXDocument()
+                .Root.Elements(W.style)
+                .ToArray();
+            Assert.Equal(
+                1,
+                styles.Count(s => s.Element(W.name).Attribute(W.val).Value == "heading 1")
+            );
 
             var styleIds = new HashSet<string>(styles.Select(s => s.Attribute(W.styleId).Value));
-            var paragraphStylesIds = new HashSet<string>(wDoc.MainDocumentPart.GetXDocument()
-                .Descendants(W.pStyle)
-                .Select(p => p.Attribute(W.val).Value));
+            var paragraphStylesIds = new HashSet<string>(
+                wDoc.MainDocumentPart.GetXDocument()
+                    .Descendants(W.pStyle)
+                    .Select(p => p.Attribute(W.val).Value)
+            );
             Assert.Subset(styleIds, paragraphStylesIds);
         }
 
@@ -650,40 +818,48 @@ namespace Clippit.Tests.Word
         {
             // Each of these documents have changed the font color of the List Paragraph style, one to orange, the other to blue.
             // One of the documents were created with English as the Word display language, the other with Danish as the language.
-            var source1 =
-                new FileInfo(Path.Combine(_sourceDir.FullName, "DB013b-Orange-List-Danish.docx"));
-            var source2 = new FileInfo(Path.Combine(_sourceDir.FullName,
-                "DB013b-Blue-List-English.docx"));
+            var source1 = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB013b-Orange-List-Danish.docx")
+            );
+            var source2 = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB013b-Blue-List-English.docx")
+            );
 
             var sources = new List<ISource>
             {
                 new Source(new WmlDocument(source1.FullName)),
                 new Source(new WmlDocument(source2.FullName)),
             };
-            var processedDestDocx =
-                new FileInfo(Path.Combine(TempDir, "DB013b-Colored-List.docx"));
+            var processedDestDocx = new FileInfo(Path.Combine(TempDir, "DB013b-Colored-List.docx"));
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
 
             using var wDoc = WordprocessingDocument.Open(processedDestDocx.FullName, false);
-            var styles = wDoc.MainDocumentPart.StyleDefinitionsPart.GetXDocument().Root.Elements(W.style).ToArray();
-            Assert.Equal(1, styles.Count(s => s.Element(W.name).Attribute(W.val).Value == "List Paragraph"));
+            var styles = wDoc
+                .MainDocumentPart.StyleDefinitionsPart.GetXDocument()
+                .Root.Elements(W.style)
+                .ToArray();
+            Assert.Equal(
+                1,
+                styles.Count(s => s.Element(W.name).Attribute(W.val).Value == "List Paragraph")
+            );
 
             var styleIds = new HashSet<string>(styles.Select(s => s.Attribute(W.styleId).Value));
-            var paragraphStylesIds = new HashSet<string>(wDoc.MainDocumentPart.GetXDocument()
-                .Descendants(W.pStyle)
-                .Select(p => p.Attribute(W.val).Value));
+            var paragraphStylesIds = new HashSet<string>(
+                wDoc.MainDocumentPart.GetXDocument()
+                    .Descendants(W.pStyle)
+                    .Select(p => p.Attribute(W.val).Value)
+            );
             Assert.Subset(styleIds, paragraphStylesIds);
         }
 
         [Fact]
         public void DB014_KeepWebExtensions()
         {
-            var source = new FileInfo(Path.Combine(_sourceDir.FullName, "DB014-WebExtensions.docx"));
+            var source = new FileInfo(
+                Path.Combine(_sourceDir.FullName, "DB014-WebExtensions.docx")
+            );
 
-            var sources = new List<ISource>
-            {
-                new Source(new WmlDocument(source.FullName)),
-            };
+            var sources = new List<ISource> { new Source(new WmlDocument(source.FullName)) };
             var processedDestDocx = new FileInfo(Path.Combine(TempDir, "DB014-WebExtensions.docx"));
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
             Validate(processedDestDocx);
@@ -699,10 +875,7 @@ namespace Clippit.Tests.Word
         {
             var source = new FileInfo(Path.Combine(_sourceDir.FullName, "DB015-LatentStyles.docx"));
 
-            var sources = new List<ISource>
-            {
-                new Source(new WmlDocument(source.FullName)),
-            };
+            var sources = new List<ISource> { new Source(new WmlDocument(source.FullName)) };
             var processedDestDocx = new FileInfo(Path.Combine(TempDir, "DB015-LatentStyles.docx"));
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
             Validate(processedDestDocx);
@@ -725,59 +898,183 @@ namespace Clippit.Tests.Word
             {
                 new Source(new WmlDocument(sourceDocx.FullName), true),
             };
-            var processedDestDocx = new FileInfo(Path.Combine(TempDir,
-                sourceDocx.Name.Replace(".docx", "-processed-by-DocumentBuilder.docx")));
+            var processedDestDocx = new FileInfo(
+                Path.Combine(
+                    TempDir,
+                    sourceDocx.Name.Replace(".docx", "-processed-by-DocumentBuilder.docx")
+                )
+            );
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
 
             using var wDoc = WordprocessingDocument.Open(processedDestDocx.FullName, true);
-            var styles = wDoc.MainDocumentPart.StyleDefinitionsPart.GetXDocument().Root.Elements(W.docDefaults).ToArray();
+            var styles = wDoc
+                .MainDocumentPart.StyleDefinitionsPart.GetXDocument()
+                .Root.Elements(W.docDefaults)
+                .ToArray();
             Assert.Single(styles);
         }
 
         [Theory]
-        [InlineData("DB100-00010", "DB/GlossaryDocuments/CellLevelContentControl-built.docx", "DB/GlossaryDocuments/BaseDocument.docx,0,4", "DB/GlossaryDocuments/CellLevelContentControl.docx", "DB/GlossaryDocuments/BaseDocument.docx,4", null, null, null)]
-        [InlineData("DB100-00020", "DB/GlossaryDocuments/InlineContentControl-built.docx", "DB/GlossaryDocuments/BaseDocument.docx,0,4", "DB/GlossaryDocuments/InlineContentControl.docx", "DB/GlossaryDocuments/BaseDocument.docx,4", null, null, null)]
-        [InlineData("DB100-00030", "DB/GlossaryDocuments/MultilineWithBulletPoints-built.docx", "DB/GlossaryDocuments/BaseDocument.docx,0,4", "DB/GlossaryDocuments/MultilineWithBulletPoints.docx", "DB/GlossaryDocuments/BaseDocument.docx,4", null, null, null)]
-        [InlineData("DB100-00040", "DB/GlossaryDocuments/NestedContentControl-built.docx", "DB/GlossaryDocuments/BaseDocument.docx,0,4", "DB/GlossaryDocuments/NestedContentControl.docx", "DB/GlossaryDocuments/BaseDocument.docx,4", null, null, null)]
-        [InlineData("DB100-00050", "DB/GlossaryDocuments/RowLevelContentControl-built.docx", "DB/GlossaryDocuments/BaseDocument.docx,0,4", "DB/GlossaryDocuments/RowLevelContentControl.docx", "DB/GlossaryDocuments/BaseDocument.docx,4", null, null, null)]
-        [InlineData("DB100-00060", "DB/GlossaryDocuments/ContentControlDanishProofingLanguage-built.docx", "DB/GlossaryDocuments/BaseDocument.docx,0,4", "DB/GlossaryDocuments/ContentControlDanishProofingLanguage.docx", "DB/GlossaryDocuments/BaseDocument.docx,4", null, null, null)]
-        [InlineData("DB100-00070", "DB/GlossaryDocuments/ContentControlEnglishProofingLanguage-built.docx", "DB/GlossaryDocuments/BaseDocument.docx,0,4", "DB/GlossaryDocuments/ContentControlEnglishProofingLanguage.docx", "DB/GlossaryDocuments/BaseDocument.docx,4", null, null, null)]
-        [InlineData("DB100-00080", "DB/GlossaryDocuments/ContentControlMixedProofingLanguage-built.docx", "DB/GlossaryDocuments/BaseDocument.docx,0,4", "DB/GlossaryDocuments/ContentControlMixedProofingLanguage.docx", "DB/GlossaryDocuments/BaseDocument.docx,4", null, null, null)]
-        [InlineData("DB100-00090", "DB/GlossaryDocuments/ContentControlWithContent-built.docx", "DB/GlossaryDocuments/BaseDocument.docx,0,4", "DB/GlossaryDocuments/ContentControlWithContent.docx", "DB/GlossaryDocuments/BaseDocument.docx,4", null, null, null)]
-        [InlineData("DB100-00100", "DB/GlossaryDocuments/FooterContent-built.docx", "DB/GlossaryDocuments/BaseDocument.docx,0,4", "DB/GlossaryDocuments/FooterContent.docx", "DB/GlossaryDocuments/BaseDocument.docx,4", null, null, null)]
-        [InlineData("DB100-00110", "DB/GlossaryDocuments/HeaderContent-built.docx", "DB/GlossaryDocuments/BaseDocument.docx,0,4", "DB/GlossaryDocuments/HeaderContent.docx", "DB/GlossaryDocuments/BaseDocument.docx,4", null, null, null)]
-        [InlineData("DB100-00200", null, "DB/GlossaryDocuments/BaseDocument.docx", "DB/GlossaryDocuments/CellLevelContentControl.docx", "DB/GlossaryDocuments/NestedContentControl.docx", null, null, null)]
-
-        public void WithGlossaryDocuments(string testId, string baseline, string src1, string src2, string src3, string src4, string src5, string src6)
+        [InlineData(
+            "DB100-00010",
+            "DB/GlossaryDocuments/CellLevelContentControl-built.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,0,4",
+            "DB/GlossaryDocuments/CellLevelContentControl.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,4",
+            null,
+            null,
+            null
+        )]
+        [InlineData(
+            "DB100-00020",
+            "DB/GlossaryDocuments/InlineContentControl-built.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,0,4",
+            "DB/GlossaryDocuments/InlineContentControl.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,4",
+            null,
+            null,
+            null
+        )]
+        [InlineData(
+            "DB100-00030",
+            "DB/GlossaryDocuments/MultilineWithBulletPoints-built.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,0,4",
+            "DB/GlossaryDocuments/MultilineWithBulletPoints.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,4",
+            null,
+            null,
+            null
+        )]
+        [InlineData(
+            "DB100-00040",
+            "DB/GlossaryDocuments/NestedContentControl-built.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,0,4",
+            "DB/GlossaryDocuments/NestedContentControl.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,4",
+            null,
+            null,
+            null
+        )]
+        [InlineData(
+            "DB100-00050",
+            "DB/GlossaryDocuments/RowLevelContentControl-built.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,0,4",
+            "DB/GlossaryDocuments/RowLevelContentControl.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,4",
+            null,
+            null,
+            null
+        )]
+        [InlineData(
+            "DB100-00060",
+            "DB/GlossaryDocuments/ContentControlDanishProofingLanguage-built.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,0,4",
+            "DB/GlossaryDocuments/ContentControlDanishProofingLanguage.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,4",
+            null,
+            null,
+            null
+        )]
+        [InlineData(
+            "DB100-00070",
+            "DB/GlossaryDocuments/ContentControlEnglishProofingLanguage-built.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,0,4",
+            "DB/GlossaryDocuments/ContentControlEnglishProofingLanguage.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,4",
+            null,
+            null,
+            null
+        )]
+        [InlineData(
+            "DB100-00080",
+            "DB/GlossaryDocuments/ContentControlMixedProofingLanguage-built.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,0,4",
+            "DB/GlossaryDocuments/ContentControlMixedProofingLanguage.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,4",
+            null,
+            null,
+            null
+        )]
+        [InlineData(
+            "DB100-00090",
+            "DB/GlossaryDocuments/ContentControlWithContent-built.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,0,4",
+            "DB/GlossaryDocuments/ContentControlWithContent.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,4",
+            null,
+            null,
+            null
+        )]
+        [InlineData(
+            "DB100-00100",
+            "DB/GlossaryDocuments/FooterContent-built.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,0,4",
+            "DB/GlossaryDocuments/FooterContent.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,4",
+            null,
+            null,
+            null
+        )]
+        [InlineData(
+            "DB100-00110",
+            "DB/GlossaryDocuments/HeaderContent-built.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,0,4",
+            "DB/GlossaryDocuments/HeaderContent.docx",
+            "DB/GlossaryDocuments/BaseDocument.docx,4",
+            null,
+            null,
+            null
+        )]
+        [InlineData(
+            "DB100-00200",
+            null,
+            "DB/GlossaryDocuments/BaseDocument.docx",
+            "DB/GlossaryDocuments/CellLevelContentControl.docx",
+            "DB/GlossaryDocuments/NestedContentControl.docx",
+            null,
+            null,
+            null
+        )]
+        public void WithGlossaryDocuments(
+            string testId,
+            string baseline,
+            string src1,
+            string src2,
+            string src3,
+            string src4,
+            string src5,
+            string src6
+        )
         {
-            var rawSources = new[] { src1, src2, src3, src4, src5, src6, };
+            var rawSources = new[] { src1, src2, src3, src4, src5, src6 };
             var sourcesStr = rawSources.Where(s => s != null).ToArray();
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Load the source documents
-            var sources = sourcesStr.Select(s =>
-            {
-                var spl = s.Split(',');
-                if (spl.Length == 1)
+            var sources = sourcesStr
+                .Select(s =>
                 {
-                    var sourceFi = new FileInfo(Path.Combine(_sourceDir.FullName, s));
-                    var wmlSource = new WmlDocument(sourceFi.FullName);
-                    return new Source(wmlSource);
-                }
-                else if (spl.Length == 2)
-                {
-                    var start = int.Parse(spl[1]);
-                    var sourceFi = new FileInfo(Path.Combine(_sourceDir.FullName, spl[0]));
-                    return new Source(sourceFi.FullName, start, true);
-                }
-                else
-                {
-                    var start = int.Parse(spl[1]);
-                    var count = int.Parse(spl[2]);
-                    var sourceFi = new FileInfo(Path.Combine(_sourceDir.FullName, spl[0]));
-                    return new Source(sourceFi.FullName, start, count, true);
-                }
-            })
+                    var spl = s.Split(',');
+                    if (spl.Length == 1)
+                    {
+                        var sourceFi = new FileInfo(Path.Combine(_sourceDir.FullName, s));
+                        var wmlSource = new WmlDocument(sourceFi.FullName);
+                        return new Source(wmlSource);
+                    }
+                    else if (spl.Length == 2)
+                    {
+                        var start = int.Parse(spl[1]);
+                        var sourceFi = new FileInfo(Path.Combine(_sourceDir.FullName, spl[0]));
+                        return new Source(sourceFi.FullName, start, true);
+                    }
+                    else
+                    {
+                        var start = int.Parse(spl[1]);
+                        var count = int.Parse(spl[2]);
+                        var sourceFi = new FileInfo(Path.Combine(_sourceDir.FullName, spl[0]));
+                        return new Source(sourceFi.FullName, start, count, true);
+                    }
+                })
                 .Cast<ISource>()
                 .ToList();
 
@@ -804,7 +1101,9 @@ namespace Clippit.Tests.Word
             if (baseline != null)
             {
                 var baselineFi = new FileInfo(Path.Combine(_sourceDir.FullName, baseline));
-                var baselineCopiedToDestFileName = new FileInfo(Path.Combine(tempDirFullName, baselineFi.Name));
+                var baselineCopiedToDestFileName = new FileInfo(
+                    Path.Combine(tempDirFullName, baselineFi.Name)
+                );
                 File.Copy(baselineFi.FullName, baselineCopiedToDestFileName.FullName);
             }
 
@@ -822,37 +1121,38 @@ namespace Clippit.Tests.Word
             using var wDoc = WordprocessingDocument.Open(fi.FullName, false);
             Validate(wDoc, s_expectedErrors);
         }
-        
-        private static readonly List<string> s_expectedErrors = new()
-        {
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenHBand' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenVBand' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstColumn' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRow' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRowFirstColumn' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRowLastColumn' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastColumn' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRow' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRowFirstColumn' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRowLastColumn' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noHBand' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noVBand' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddHBand' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddVBand' attribute is not declared.",
-            "The element has unexpected child element 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:updateFields'.",
-            "The attribute 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:name' has invalid value 'useWord2013TrackBottomHyphenation'. The Enumeration constraint failed.",
-            "The 'http://schemas.microsoft.com/office/word/2012/wordml:restartNumberingAfterBreak' attribute is not declared.",
-            "Attribute 'id' should have unique value. Its current value '",
-            "The 'urn:schemas-microsoft-com:mac:vml:blur' attribute is not declared.",
-            "Attribute 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:id' should have unique value. Its current value '",
-            "The element has unexpected child element 'http://schemas.microsoft.com/office/word/2012/wordml:",
-            "The element has invalid child element 'http://schemas.microsoft.com/office/word/2012/wordml:",
-            "The 'urn:schemas-microsoft-com:mac:vml:complextextbox' attribute is not declared.",
-            "http://schemas.microsoft.com/office/word/2010/wordml:",
-            "http://schemas.microsoft.com/office/word/2008/9/12/wordml:",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:allStyles' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:customStyles' attribute is not declared.",
-        };
+
+        private static readonly List<string> s_expectedErrors =
+            new()
+            {
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenHBand' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenVBand' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstColumn' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRow' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRowFirstColumn' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRowLastColumn' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastColumn' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRow' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRowFirstColumn' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRowLastColumn' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noHBand' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noVBand' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddHBand' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddVBand' attribute is not declared.",
+                "The element has unexpected child element 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:updateFields'.",
+                "The attribute 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:name' has invalid value 'useWord2013TrackBottomHyphenation'. The Enumeration constraint failed.",
+                "The 'http://schemas.microsoft.com/office/word/2012/wordml:restartNumberingAfterBreak' attribute is not declared.",
+                "Attribute 'id' should have unique value. Its current value '",
+                "The 'urn:schemas-microsoft-com:mac:vml:blur' attribute is not declared.",
+                "Attribute 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:id' should have unique value. Its current value '",
+                "The element has unexpected child element 'http://schemas.microsoft.com/office/word/2012/wordml:",
+                "The element has invalid child element 'http://schemas.microsoft.com/office/word/2012/wordml:",
+                "The 'urn:schemas-microsoft-com:mac:vml:complextextbox' attribute is not declared.",
+                "http://schemas.microsoft.com/office/word/2010/wordml:",
+                "http://schemas.microsoft.com/office/word/2008/9/12/wordml:",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:allStyles' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:customStyles' attribute is not declared.",
+            };
     }
 }
 #endif

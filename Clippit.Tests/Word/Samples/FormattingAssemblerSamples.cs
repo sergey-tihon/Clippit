@@ -8,19 +8,22 @@ namespace Clippit.Tests.Word.Samples
 {
     public class FormattingAssemblerSamples : TestsBase
     {
-        public FormattingAssemblerSamples(ITestOutputHelper log) : base(log)
-        {
-        }
+        public FormattingAssemblerSamples(ITestOutputHelper log)
+            : base(log) { }
 
         [Theory]
         [InlineData("Test01.docx")]
         [InlineData("Test02.docx")]
         public void Sample(string fileName)
         {
-            var file = new FileInfo(Path.Combine("../../../Word/Samples/FormattingAssembler/", fileName));
-            var newFile = new FileInfo(Path.Combine(TempDir, file.Name.Replace(".docx", "out.docx")));
+            var file = new FileInfo(
+                Path.Combine("../../../Word/Samples/FormattingAssembler/", fileName)
+            );
+            var newFile = new FileInfo(
+                Path.Combine(TempDir, file.Name.Replace(".docx", "out.docx"))
+            );
             File.Copy(file.FullName, newFile.FullName, true);
-            
+
             using var wDoc = WordprocessingDocument.Open(newFile.FullName, true);
             var settings = new FormattingAssemblerSettings()
             {

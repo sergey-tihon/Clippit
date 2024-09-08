@@ -7,7 +7,7 @@ using DocumentFormat.OpenXml.Packaging;
 namespace Clippit.Core
 {
     /// <summary>
-    /// Provides an elegant way of wrapping a set of invocations of the strongly typed 
+    /// Provides an elegant way of wrapping a set of invocations of the strongly typed
     /// classes provided by the Open XML SDK) in a using statement that demarcates those
     /// invokations as one "block" before and after which the PowerTools can be used safely.
     /// </summary>
@@ -19,12 +19,12 @@ namespace Clippit.Core
     /// </para>
     /// <code>
     ///     [Your code using the PowerTools]
-    /// 
+    ///
     ///     using (new NonPowerToolsBlock(wordprocessingDocument))
     ///     {
     ///         [Your code using the strongly typed classes]
     ///     }
-    /// 
+    ///
     ///    [Your code using the PowerTools]
     /// </code>
     /// <para>
@@ -50,7 +50,8 @@ namespace Clippit.Core
 
         public void Dispose()
         {
-            if (_package == null) return;
+            if (_package == null)
+                return;
 
             _package.BeginPowerToolsBlock();
             _package = null;

@@ -17,10 +17,9 @@ namespace Clippit.Tests.Word
 {
     public class PowerToolsBlockTests : TestsBase
     {
-        public PowerToolsBlockTests(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public PowerToolsBlockTests(ITestOutputHelper log)
+            : base(log) { }
+
         [Fact]
         public void CanUsePowerToolsBlockToDemarcateApis()
         {
@@ -46,7 +45,12 @@ namespace Clippit.Tests.Word
 
                 // Add a paragraph through the PowerTools.
                 var bodyElement = content.Descendants(W.body).First();
-                bodyElement.Add(new XElement(W.p, new XElement(W.r, new XElement(W.t, "Added through PowerTools"))));
+                bodyElement.Add(
+                    new XElement(
+                        W.p,
+                        new XElement(W.r, new XElement(W.t, "Added through PowerTools"))
+                    )
+                );
                 part.PutXDocument();
             }
 

@@ -17,7 +17,8 @@ namespace Clippit.Tests.Word
 {
     public class DocumentAssemblerTests : TestsBase
     {
-        public DocumentAssemblerTests(ITestOutputHelper log) : base(log)
+        public DocumentAssemblerTests(ITestOutputHelper log)
+            : base(log)
         {
             _sourceDir = new DirectoryInfo("../../../../TestFiles/DA/");
         }
@@ -54,16 +55,18 @@ namespace Clippit.Tests.Word
         [InlineData("DA029-NoDataForCell.docx", "DA-Data.xml", true)]
         [InlineData("DA030-TooMuchDataForCell.docx", "DA-TooMuchDataForCell.xml", false)] // Clippit support multi-value XPath in table cells
         [InlineData("DA031-CellDataInAttributes.docx", "DA-CellDataInAttributes.xml", true)]
-        [InlineData("DA032-TooMuchDataForConditional.docx", "DA-TooMuchDataForConditional.xml", true)]
+        [InlineData(
+            "DA032-TooMuchDataForConditional.docx",
+            "DA-TooMuchDataForConditional.xml",
+            true
+        )]
         [InlineData("DA033-ConditionalOnAttribute.docx", "DA-ConditionalOnAttribute.xml", false)]
         [InlineData("DA034-HeaderFooter.docx", "DA-Data.xml", false)]
         [InlineData("DA035-SchemaErrorInRepeat.docx", "DA-Data.xml", true)]
         [InlineData("DA036-SchemaErrorInConditional.docx", "DA-Data.xml", true)]
-
         [InlineData("DA100-TemplateDocument.docx", "DA-Data.xml", false)]
         [InlineData("DA101-TemplateDocument.docx", "DA-Data.xml", true)]
         [InlineData("DA102-TemplateDocument.docx", "DA-Data.xml", true)]
-
         [InlineData("DA201-TemplateDocument.docx", "DA-Data.xml", false)]
         [InlineData("DA202-TemplateDocument.docx", "DA-DataNotHighValueCust.xml", false)]
         [InlineData("DA203-Select-XPathFindsNoData.docx", "DA-Data.xml", true)]
@@ -92,7 +95,11 @@ namespace Clippit.Tests.Word
         [InlineData("DA229-NoDataForCell.docx", "DA-Data.xml", true)]
         [InlineData("DA230-TooMuchDataForCell.docx", "DA-TooMuchDataForCell.xml", false)] // Clippit support multi-value XPath in table cells
         [InlineData("DA231-CellDataInAttributes.docx", "DA-CellDataInAttributes.xml", true)]
-        [InlineData("DA232-TooMuchDataForConditional.docx", "DA-TooMuchDataForConditional.xml", true)]
+        [InlineData(
+            "DA232-TooMuchDataForConditional.docx",
+            "DA-TooMuchDataForConditional.xml",
+            true
+        )]
         [InlineData("DA233-ConditionalOnAttribute.docx", "DA-ConditionalOnAttribute.xml", false)]
         [InlineData("DA234-HeaderFooter.docx", "DA-Data.xml", false)]
         [InlineData("DA235-Crashes.docx", "DA-Content-List.xml", false)]
@@ -100,7 +107,6 @@ namespace Clippit.Tests.Word
         [InlineData("DA237-SchemaErrorInRepeat.docx", "DA-Data.xml", true)]
         [InlineData("DA238-SchemaErrorInConditional.docx", "DA-Data.xml", true)]
         [InlineData("DA239-RunLevelCC-Repeat.docx", "DA-Data.xml", false)]
-
         [InlineData("DA250-ConditionalWithRichXPath.docx", "DA250-Address.xml", false)]
         [InlineData("DA251-EnhancedTables.docx", "DA-Data.xml", false)]
         [InlineData("DA252-Table-With-Sum.docx", "DA-Data.xml", false)]
@@ -125,26 +131,86 @@ namespace Clippit.Tests.Word
         [InlineData("DA270A-ImageSelect.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA271-ImageSelectWithRepeat.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA271A-ImageSelectWithRepeat.docx", "DA-Data-WithImages.xml", false)]
-        [InlineData("DA272-ImageSelectWithRepeatHorizontalAlign.docx", "DA-Data-WithImages.xml", false)]
-        [InlineData("DA272A-ImageSelectWithRepeatHorizontalAlign.docx", "DA-Data-WithImages.xml", false)]
-        [InlineData("DA273-ImageSelectInsideTextBoxWithRepeatVerticalAlign.docx", "DA-Data-WithImages.xml", false)]
-        [InlineData("DA273A-ImageSelectInsideTextBoxWithRepeatVerticalAlign.docx", "DA-Data-WithImages.xml", false)]
-        [InlineData("DA274-ImageSelectInsideTextBoxWithRepeatHorizontalAlign.docx", "DA-Data-WithImages.xml", false)]
-        [InlineData("DA274A-ImageSelectInsideTextBoxWithRepeatHorizontalAlign.docx", "DA-Data-WithImages.xml", false)]
+        [InlineData(
+            "DA272-ImageSelectWithRepeatHorizontalAlign.docx",
+            "DA-Data-WithImages.xml",
+            false
+        )]
+        [InlineData(
+            "DA272A-ImageSelectWithRepeatHorizontalAlign.docx",
+            "DA-Data-WithImages.xml",
+            false
+        )]
+        [InlineData(
+            "DA273-ImageSelectInsideTextBoxWithRepeatVerticalAlign.docx",
+            "DA-Data-WithImages.xml",
+            false
+        )]
+        [InlineData(
+            "DA273A-ImageSelectInsideTextBoxWithRepeatVerticalAlign.docx",
+            "DA-Data-WithImages.xml",
+            false
+        )]
+        [InlineData(
+            "DA274-ImageSelectInsideTextBoxWithRepeatHorizontalAlign.docx",
+            "DA-Data-WithImages.xml",
+            false
+        )]
+        [InlineData(
+            "DA274A-ImageSelectInsideTextBoxWithRepeatHorizontalAlign.docx",
+            "DA-Data-WithImages.xml",
+            false
+        )]
         [InlineData("DA275-ImageSelectWithRepeatInvalidAlign.docx", "DA-Data-WithImages.xml", true)]
-        [InlineData("DA275A-ImageSelectWithRepeatInvalidAlign.docx", "DA-Data-WithImages.xml", true)]
+        [InlineData(
+            "DA275A-ImageSelectWithRepeatInvalidAlign.docx",
+            "DA-Data-WithImages.xml",
+            true
+        )]
         [InlineData("DA276-ImageSelectInsideTable.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA276A-ImageSelectInsideTable.docx", "DA-Data-WithImages.xml", false)]
-        [InlineData("DA277-ImageSelectMissingOrInvalidPictureContent.docx", "DA-Data-WithImages.xml", true)]
-        [InlineData("DA277A-ImageSelectMissingOrInvalidPictureContent.docx", "DA-Data-WithImages.xml", true)]
+        [InlineData(
+            "DA277-ImageSelectMissingOrInvalidPictureContent.docx",
+            "DA-Data-WithImages.xml",
+            true
+        )]
+        [InlineData(
+            "DA277A-ImageSelectMissingOrInvalidPictureContent.docx",
+            "DA-Data-WithImages.xml",
+            true
+        )]
         [InlineData("DA278-ImageSelect.docx", "DA-Data-WithImagesInvalidPath.xml", true)]
         [InlineData("DA278A-ImageSelect.docx", "DA-Data-WithImagesInvalidPath.xml", true)]
-        [InlineData("DA279-ImageSelectWithRepeat.docx", "DA-Data-WithImagesInvalidMIMEType.xml", true)]
-        [InlineData("DA279A-ImageSelectWithRepeat.docx", "DA-Data-WithImagesInvalidMIMEType.xml", true)]
-        [InlineData("DA280-ImageSelectWithRepeat.docx", "DA-Data-WithImagesInvalidImageDataFormat.xml", true)]
-        [InlineData("DA280A-ImageSelectWithRepeat.docx", "DA-Data-WithImagesInvalidImageDataFormat.xml", true)]
-        [InlineData("DA281-ImageSelectExtraWhitespaceBeforeImageContent.docx", "DA-Data-WithImages.xml", true)]
-        [InlineData("DA281A-ImageSelectExtraWhitespaceBeforeImageContent.docx", "DA-Data-WithImages.xml", true)]
+        [InlineData(
+            "DA279-ImageSelectWithRepeat.docx",
+            "DA-Data-WithImagesInvalidMIMEType.xml",
+            true
+        )]
+        [InlineData(
+            "DA279A-ImageSelectWithRepeat.docx",
+            "DA-Data-WithImagesInvalidMIMEType.xml",
+            true
+        )]
+        [InlineData(
+            "DA280-ImageSelectWithRepeat.docx",
+            "DA-Data-WithImagesInvalidImageDataFormat.xml",
+            true
+        )]
+        [InlineData(
+            "DA280A-ImageSelectWithRepeat.docx",
+            "DA-Data-WithImagesInvalidImageDataFormat.xml",
+            true
+        )]
+        [InlineData(
+            "DA281-ImageSelectExtraWhitespaceBeforeImageContent.docx",
+            "DA-Data-WithImages.xml",
+            true
+        )]
+        [InlineData(
+            "DA281A-ImageSelectExtraWhitespaceBeforeImageContent.docx",
+            "DA-Data-WithImages.xml",
+            true
+        )]
         [InlineData("DA282-ImageSelectWithHeader.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA282A-ImageSelectWithHeader.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA282-ImageSelectWithHeader.docx", "DA-Data-WithImagesInvalidPath.xml", true)]
@@ -153,9 +219,16 @@ namespace Clippit.Tests.Word
         [InlineData("DA283A-ImageSelectWithFooter.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA284-ImageSelectWithHeaderAndFooter.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA284A-ImageSelectWithHeaderAndFooter.docx", "DA-Data-WithImages.xml", false)]
-        [InlineData("DA285-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
-        [InlineData("DA285A-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
-
+        [InlineData(
+            "DA285-ImageSelectNoParagraphFollowedAfterMetadata.docx",
+            "DA-Data-WithImages.xml",
+            true
+        )]
+        [InlineData(
+            "DA285A-ImageSelectNoParagraphFollowedAfterMetadata.docx",
+            "DA-Data-WithImages.xml",
+            true
+        )]
         [InlineData("DA-I0038-TemplateWithMultipleXPathResults.docx", "DA-I0038-Data.xml", false)]
         public void DA101(string name, string data, bool err)
         {
@@ -165,8 +238,17 @@ namespace Clippit.Tests.Word
             var wmlTemplate = new WmlDocument(templateDocx.FullName);
             var xmlData = XElement.Load(dataFile.FullName);
 
-            var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var returnedTemplateError);
-            var assembledDocx = new FileInfo(Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
+            var afterAssembling = DocumentAssembler.AssembleDocument(
+                wmlTemplate,
+                xmlData,
+                out var returnedTemplateError
+            );
+            var assembledDocx = new FileInfo(
+                Path.Combine(
+                    TempDir,
+                    templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")
+                )
+            );
             afterAssembling.SaveAs(assembledDocx.FullName);
 
             Validate(assembledDocx);
@@ -178,13 +260,17 @@ namespace Clippit.Tests.Word
         public void DA259(string name, string data, bool err)
         {
             DA101(name, data, err);
-            var assembledDocx = new FileInfo(Path.Combine(TempDir, name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
+            var assembledDocx = new FileInfo(
+                Path.Combine(TempDir, name.Replace(".docx", "-processed-by-DocumentAssembler.docx"))
+            );
             var afterAssembling = new WmlDocument(assembledDocx.FullName);
-            var brCount = afterAssembling.MainDocumentPart
-                            .Element(W.body)
-                            .Elements(W.p).ElementAt(1)
-                            .Elements(W.r)
-                            .Elements(W.br).Count();
+            var brCount = afterAssembling
+                .MainDocumentPart.Element(W.body)
+                .Elements(W.p)
+                .ElementAt(1)
+                .Elements(W.r)
+                .Elements(W.br)
+                .Count();
             Assert.Equal(4, brCount);
         }
 
@@ -200,9 +286,13 @@ namespace Clippit.Tests.Word
 
             WmlDocument afterAssembling;
             Assert.Throws<OpenXmlPowerToolsException>(() =>
-                {
-                    afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmldata, out var returnedTemplateError);
-                });
+            {
+                afterAssembling = DocumentAssembler.AssembleDocument(
+                    wmlTemplate,
+                    xmldata,
+                    out var returnedTemplateError
+                );
+            });
         }
 
         [Theory]
@@ -210,7 +300,9 @@ namespace Clippit.Tests.Word
         public void DATemplateMaior(string name, string data, bool err)
         {
             DA101(name, data, err);
-            var assembledDocx = new FileInfo(Path.Combine(TempDir, name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
+            var assembledDocx = new FileInfo(
+                Path.Combine(TempDir, name.Replace(".docx", "-processed-by-DocumentAssembler.docx"))
+            );
             var afterAssembling = new WmlDocument(assembledDocx.FullName);
 
             var descendants = afterAssembling.MainDocumentPart.Value;
@@ -222,18 +314,25 @@ namespace Clippit.Tests.Word
         [InlineData("DA-xmlerror.docx", "DA-xmlerror.xml")]
         public void DAXmlError(string name, string data)
         {
-
             var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
             var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
 
             var wmlTemplate = new WmlDocument(templateDocx.FullName);
             var xmlData = XElement.Load(dataFile.FullName);
 
-            var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var returnedTemplateError);
-            var assembledDocx = new FileInfo(Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
+            var afterAssembling = DocumentAssembler.AssembleDocument(
+                wmlTemplate,
+                xmlData,
+                out var returnedTemplateError
+            );
+            var assembledDocx = new FileInfo(
+                Path.Combine(
+                    TempDir,
+                    templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")
+                )
+            );
             afterAssembling.SaveAs(assembledDocx.FullName);
         }
-
 
         [Theory]
         [InlineData("DA025-TemplateDocument.docx", "DA-Data.xml", false)]
@@ -246,8 +345,17 @@ namespace Clippit.Tests.Word
             var xmlData = new XmlDocument();
             xmlData.Load(dataFile.FullName);
 
-            var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var returnedTemplateError);
-            var assembledDocx = new FileInfo(Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
+            var afterAssembling = DocumentAssembler.AssembleDocument(
+                wmlTemplate,
+                xmlData,
+                out var returnedTemplateError
+            );
+            var assembledDocx = new FileInfo(
+                Path.Combine(
+                    TempDir,
+                    templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")
+                )
+            );
             afterAssembling.SaveAs(assembledDocx.FullName);
 
             Validate(assembledDocx);
@@ -260,23 +368,24 @@ namespace Clippit.Tests.Word
             Validate(wDoc, s_expectedErrors);
         }
 
-        private static readonly List<string> s_expectedErrors = new()
-        {
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenHBand' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenVBand' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstColumn' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRow' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRowFirstColumn' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRowLastColumn' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastColumn' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRow' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRowFirstColumn' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRowLastColumn' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noHBand' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noVBand' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddHBand' attribute is not declared.",
-            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddVBand' attribute is not declared.",
-        };
+        private static readonly List<string> s_expectedErrors =
+            new()
+            {
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenHBand' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenVBand' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstColumn' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRow' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRowFirstColumn' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRowLastColumn' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastColumn' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRow' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRowFirstColumn' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRowLastColumn' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noHBand' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noVBand' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddHBand' attribute is not declared.",
+                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddVBand' attribute is not declared.",
+            };
     }
 }
 

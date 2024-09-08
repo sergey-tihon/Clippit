@@ -45,7 +45,11 @@ namespace Clippit.Excel
     {
         // ***********************************************************************************************************************************
         #region PublicApis
-        public static XElement ConvertTableToHtml(SmlDocument smlDoc, SmlToHtmlConverterSettings settings, string tableName)
+        public static XElement ConvertTableToHtml(
+            SmlDocument smlDoc,
+            SmlToHtmlConverterSettings settings,
+            string tableName
+        )
         {
             using var ms = new MemoryStream();
             ms.Write(smlDoc.DocumentByteArray, 0, smlDoc.DocumentByteArray.Length);
@@ -55,7 +59,11 @@ namespace Clippit.Excel
             return xhtml;
         }
 
-        public static XElement ConvertTableToHtml(SpreadsheetDocument sDoc, SmlToHtmlConverterSettings settings, string tableName)
+        public static XElement ConvertTableToHtml(
+            SpreadsheetDocument sDoc,
+            SmlToHtmlConverterSettings settings,
+            string tableName
+        )
         {
             var rangeXml = SmlDataRetriever.RetrieveTable(sDoc, tableName);
             var xhtml = ConvertToHtmlInternal(sDoc, settings, rangeXml);
@@ -64,7 +72,11 @@ namespace Clippit.Excel
         #endregion
         // ***********************************************************************************************************************************
 
-        private static XElement ConvertToHtmlInternal(SpreadsheetDocument sDoc, SmlToHtmlConverterSettings htmlConverterSettings, XElement rangeXml)
+        private static XElement ConvertToHtmlInternal(
+            SpreadsheetDocument sDoc,
+            SmlToHtmlConverterSettings htmlConverterSettings,
+            XElement rangeXml
+        )
         {
             var xhtml = (XElement)ConvertToHtmlTransform(sDoc, htmlConverterSettings, rangeXml);
 
@@ -81,19 +93,30 @@ namespace Clippit.Excel
             return xhtml;
         }
 
-        private static XNode ConvertToHtmlTransform(SpreadsheetDocument sDoc, SmlToHtmlConverterSettings htmlConverterSettings, XNode node)
+        private static XNode ConvertToHtmlTransform(
+            SpreadsheetDocument sDoc,
+            SmlToHtmlConverterSettings htmlConverterSettings,
+            XNode node
+        )
         {
             var element = node as XElement;
             if (element != null)
             {
-                return new XElement(element.Name,
+                return new XElement(
+                    element.Name,
                     element.Attributes(),
-                    element.Nodes().Select(n => ConvertToHtmlTransform(sDoc, htmlConverterSettings, n)));
+                    element
+                        .Nodes()
+                        .Select(n => ConvertToHtmlTransform(sDoc, htmlConverterSettings, n))
+                );
             }
             return node;
         }
 
-        private static void ReifyStylesAndClasses(SmlToHtmlConverterSettings htmlConverterSettings, XElement xhtml)
+        private static void ReifyStylesAndClasses(
+            SmlToHtmlConverterSettings htmlConverterSettings,
+            XElement xhtml
+        )
         {
             if (htmlConverterSettings.FabricateCssClasses)
             {
@@ -111,8 +134,11 @@ namespace Clippit.Excel
                     {
                         p.Element,
                         p.Styles,
-                        StylesString = p.Element.Name.LocalName + "|" + p.Styles.OrderBy(k => k.Key).Select(s =>
-                            $"{s.Key}: {s.Value};").StringConcatenate(),
+                        StylesString = p.Element.Name.LocalName
+                            + "|"
+                            + p.Styles.OrderBy(k => k.Key)
+                                .Select(s => $"{s.Key}: {s.Value};")
+                                .StringConcatenate(),
                     })
                     .GroupBy(p => p.StylesString)
                     .ToList();
@@ -126,23 +152,33 @@ namespace Clippit.Excel
                     var styles = firstOne.Styles;
                     if (styles.ContainsKey("PtStyleName"))
                     {
-                        classNameToUse = htmlConverterSettings.CssClassPrefix + styles["PtStyleName"];
+                        classNameToUse =
+                            htmlConverterSettings.CssClassPrefix + styles["PtStyleName"];
                         if (usedCssClassNames.Contains(classNameToUse))
                         {
-                            classNameToUse = htmlConverterSettings.CssClassPrefix +
-                                styles["PtStyleName"] + "-" +
-                                classCounter.ToString().Substring(1);
+                            classNameToUse =
+                                htmlConverterSettings.CssClassPrefix
+                                + styles["PtStyleName"]
+                                + "-"
+                                + classCounter.ToString().Substring(1);
                             classCounter++;
                         }
                     }
                     else
                     {
-                        classNameToUse = htmlConverterSettings.CssClassPrefix +
-                            classCounter.ToString().Substring(1);
+                        classNameToUse =
+                            htmlConverterSettings.CssClassPrefix
+                            + classCounter.ToString().Substring(1);
                         classCounter++;
                     }
                     usedCssClassNames.Add(classNameToUse);
-                    sb.Append(firstOne.Element.Name.LocalName + "." + classNameToUse + " {" + Environment.NewLine);
+                    sb.Append(
+                        firstOne.Element.Name.LocalName
+                            + "."
+                            + classNameToUse
+                            + " {"
+                            + Environment.NewLine
+                    );
                     foreach (var st in firstOne.Styles.Where(s => s.Key != "PtStyleName"))
                     {
                         var s = "    " + st.Key + ": " + st.Value + ";" + Environment.NewLine;
@@ -153,7 +189,8 @@ namespace Clippit.Excel
                     foreach (var gc in grp)
                         gc.Element.Add(classAtt);
                 }
-                var styleValue = htmlConverterSettings.GeneralCss + sb + htmlConverterSettings.AdditionalCss;
+                var styleValue =
+                    htmlConverterSettings.GeneralCss + sb + htmlConverterSettings.AdditionalCss;
 
                 SetStyleElementValue(xhtml, styleValue);
             }
@@ -161,15 +198,17 @@ namespace Clippit.Excel
             {
                 // Previously, the h:style element was not added at this point. However,
                 // at least the General CSS will contain important settings.
-                SetStyleElementValue(xhtml, htmlConverterSettings.GeneralCss + htmlConverterSettings.AdditionalCss);
+                SetStyleElementValue(
+                    xhtml,
+                    htmlConverterSettings.GeneralCss + htmlConverterSettings.AdditionalCss
+                );
 
                 foreach (var d in xhtml.DescendantsAndSelf())
                 {
                     var style = d.Annotation<Dictionary<string, string>>();
                     if (style == null)
                         continue;
-                    var styleValue =
-                        style
+                    var styleValue = style
                         .Where(p => p.Key != "PtStyleName")
                         .OrderBy(p => p.Key)
                         .Select(e => $"{e.Key}: {e.Value};")
@@ -185,9 +224,7 @@ namespace Clippit.Excel
 
         private static void SetStyleElementValue(XElement xhtml, string styleValue)
         {
-            var styleElement = xhtml
-                .Descendants(Xhtml.style)
-                .FirstOrDefault();
+            var styleElement = xhtml.Descendants(Xhtml.style).FirstOrDefault();
             if (styleElement != null)
                 styleElement.Value = styleValue;
             else
@@ -199,47 +236,51 @@ namespace Clippit.Excel
             }
         }
 
-        private static object ConvertToHtmlTransform(WordprocessingDocument wordDoc,
-            WmlToHtmlConverterSettings settings, XNode node)
+        private static object ConvertToHtmlTransform(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            XNode node
+        )
         {
             // Ignore element.
             return null;
         }
 
-        private static readonly Dictionary<string, string> FontFallback = new()
-        {
-            { "Arial", @"'{0}', 'sans-serif'" },
-            { "Arial Narrow", @"'{0}', 'sans-serif'" },
-            { "Arial Rounded MT Bold", @"'{0}', 'sans-serif'" },
-            { "Arial Unicode MS", @"'{0}', 'sans-serif'" },
-            { "Baskerville Old Face", @"'{0}', 'serif'" },
-            { "Berlin Sans FB", @"'{0}', 'sans-serif'" },
-            { "Berlin Sans FB Demi", @"'{0}', 'sans-serif'" },
-            { "Calibri Light", @"'{0}', 'sans-serif'" },
-            { "Gill Sans MT", @"'{0}', 'sans-serif'" },
-            { "Gill Sans MT Condensed", @"'{0}', 'sans-serif'" },
-            { "Lucida Sans", @"'{0}', 'sans-serif'" },
-            { "Lucida Sans Unicode", @"'{0}', 'sans-serif'" },
-            { "Segoe UI", @"'{0}', 'sans-serif'" },
-            { "Segoe UI Light", @"'{0}', 'sans-serif'" },
-            { "Segoe UI Semibold", @"'{0}', 'sans-serif'" },
-            { "Tahoma", @"'{0}', 'sans-serif'" },
-            { "Trebuchet MS", @"'{0}', 'sans-serif'" },
-            { "Verdana", @"'{0}', 'sans-serif'" },
-            { "Book Antiqua", @"'{0}', 'serif'" },
-            { "Bookman Old Style", @"'{0}', 'serif'" },
-            { "Californian FB", @"'{0}', 'serif'" },
-            { "Cambria", @"'{0}', 'serif'" },
-            { "Constantia", @"'{0}', 'serif'" },
-            { "Garamond", @"'{0}', 'serif'" },
-            { "Lucida Bright", @"'{0}', 'serif'" },
-            { "Lucida Fax", @"'{0}', 'serif'" },
-            { "Palatino Linotype", @"'{0}', 'serif'" },
-            { "Times New Roman", @"'{0}', 'serif'" },
-            { "Wide Latin", @"'{0}', 'serif'" },
-            { "Courier New", @"'{0}'" },
-            { "Lucida Console", @"'{0}'" },
-        };
+        private static readonly Dictionary<string, string> FontFallback =
+            new()
+            {
+                { "Arial", @"'{0}', 'sans-serif'" },
+                { "Arial Narrow", @"'{0}', 'sans-serif'" },
+                { "Arial Rounded MT Bold", @"'{0}', 'sans-serif'" },
+                { "Arial Unicode MS", @"'{0}', 'sans-serif'" },
+                { "Baskerville Old Face", @"'{0}', 'serif'" },
+                { "Berlin Sans FB", @"'{0}', 'sans-serif'" },
+                { "Berlin Sans FB Demi", @"'{0}', 'sans-serif'" },
+                { "Calibri Light", @"'{0}', 'sans-serif'" },
+                { "Gill Sans MT", @"'{0}', 'sans-serif'" },
+                { "Gill Sans MT Condensed", @"'{0}', 'sans-serif'" },
+                { "Lucida Sans", @"'{0}', 'sans-serif'" },
+                { "Lucida Sans Unicode", @"'{0}', 'sans-serif'" },
+                { "Segoe UI", @"'{0}', 'sans-serif'" },
+                { "Segoe UI Light", @"'{0}', 'sans-serif'" },
+                { "Segoe UI Semibold", @"'{0}', 'sans-serif'" },
+                { "Tahoma", @"'{0}', 'sans-serif'" },
+                { "Trebuchet MS", @"'{0}', 'sans-serif'" },
+                { "Verdana", @"'{0}', 'sans-serif'" },
+                { "Book Antiqua", @"'{0}', 'serif'" },
+                { "Bookman Old Style", @"'{0}', 'serif'" },
+                { "Californian FB", @"'{0}', 'serif'" },
+                { "Cambria", @"'{0}', 'serif'" },
+                { "Constantia", @"'{0}', 'serif'" },
+                { "Garamond", @"'{0}', 'serif'" },
+                { "Lucida Bright", @"'{0}', 'serif'" },
+                { "Lucida Fax", @"'{0}', 'serif'" },
+                { "Palatino Linotype", @"'{0}', 'serif'" },
+                { "Times New Roman", @"'{0}', 'serif'" },
+                { "Wide Latin", @"'{0}', 'serif'" },
+                { "Courier New", @"'{0}'" },
+                { "Lucida Console", @"'{0}'" },
+            };
 
         private static void CreateFontCssProperty(string font, Dictionary<string, string> style)
         {
@@ -264,7 +305,7 @@ namespace Clippit.Excel
             {
                 "0" or "false" => false,
                 "1" or "true" => true,
-                _ => false
+                _ => false,
             };
         }
     }

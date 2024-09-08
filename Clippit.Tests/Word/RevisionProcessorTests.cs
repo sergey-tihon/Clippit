@@ -14,14 +14,14 @@ namespace Clippit.Tests.Word
 {
     public class RevisionProcessorTests : TestsBase
     {
-        public RevisionProcessorTests(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public RevisionProcessorTests(ITestOutputHelper log)
+            : base(log) { }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // perf settings
         public static bool m_CopySourceFilesToTempDir = true;
         public static bool m_OpenTempDirInExplorer = false;
+
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         [Theory]
@@ -81,17 +81,25 @@ namespace Clippit.Tests.Word
         {
             var sourceDir = new DirectoryInfo("../../../../TestFiles/");
             var sourceFi = new FileInfo(Path.Combine(sourceDir.FullName, name));
-            var baselineAcceptedFi = new FileInfo(Path.Combine(sourceDir.FullName, name.Replace(".docx", "-Accepted.docx")));
-            var baselineRejectedFi = new FileInfo(Path.Combine(sourceDir.FullName, name.Replace(".docx", "-Rejected.docx")));
+            var baselineAcceptedFi = new FileInfo(
+                Path.Combine(sourceDir.FullName, name.Replace(".docx", "-Accepted.docx"))
+            );
+            var baselineRejectedFi = new FileInfo(
+                Path.Combine(sourceDir.FullName, name.Replace(".docx", "-Rejected.docx"))
+            );
 
             var sourceWml = new WmlDocument(sourceFi.FullName);
             var afterRejectingWml = RevisionProcessor.RejectRevisions(sourceWml);
             var afterAcceptingWml = RevisionProcessor.AcceptRevisions(sourceWml);
 
-            var processedAcceptedFi = new FileInfo(Path.Combine(TempDir, sourceFi.Name.Replace(".docx", "-Accepted.docx")));
+            var processedAcceptedFi = new FileInfo(
+                Path.Combine(TempDir, sourceFi.Name.Replace(".docx", "-Accepted.docx"))
+            );
             afterAcceptingWml.SaveAs(processedAcceptedFi.FullName);
 
-            var processedRejectedFi = new FileInfo(Path.Combine(TempDir, sourceFi.Name.Replace(".docx", "-Rejected.docx")));
+            var processedRejectedFi = new FileInfo(
+                Path.Combine(TempDir, sourceFi.Name.Replace(".docx", "-Rejected.docx"))
+            );
             afterRejectingWml.SaveAs(processedRejectedFi.FullName);
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,7 +111,9 @@ namespace Clippit.Tests.Word
                     try
                     {
                         ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                        var sourceDocxCopiedToDestFi = new FileInfo(Path.Combine(TempDir, sourceFi.Name));
+                        var sourceDocxCopiedToDestFi = new FileInfo(
+                            Path.Combine(TempDir, sourceFi.Name)
+                        );
                         if (!sourceDocxCopiedToDestFi.Exists)
                             sourceWml.SaveAs(sourceDocxCopiedToDestFi.FullName);
                         //////////////////////////////////////////////////
@@ -126,8 +136,18 @@ namespace Clippit.Tests.Word
                     var batchFileName = "Copy-Gen-Files-To-TestFiles.bat";
                     var batchFi = new FileInfo(Path.Combine(TempDir, batchFileName));
                     var batch = "";
-                    batch += "copy " + processedAcceptedFi.FullName + " " + baselineAcceptedFi.FullName + Environment.NewLine;
-                    batch += "copy " + processedRejectedFi.FullName + " " + baselineRejectedFi.FullName + Environment.NewLine;
+                    batch +=
+                        "copy "
+                        + processedAcceptedFi.FullName
+                        + " "
+                        + baselineAcceptedFi.FullName
+                        + Environment.NewLine;
+                    batch +=
+                        "copy "
+                        + processedRejectedFi.FullName
+                        + " "
+                        + baselineRejectedFi.FullName
+                        + Environment.NewLine;
                     if (batchFi.Exists)
                         File.AppendAllText(batchFi.FullName, batch);
                     else
@@ -150,7 +170,9 @@ namespace Clippit.Tests.Word
                     try
                     {
                         ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                        var semaphorFi = new FileInfo(Path.Combine(TempDir, "z_ExplorerOpenedSemaphore.txt"));
+                        var semaphorFi = new FileInfo(
+                            Path.Combine(TempDir, "z_ExplorerOpenedSemaphore.txt")
+                        );
                         if (!semaphorFi.Exists)
                         {
                             File.WriteAllText(semaphorFi.FullName, "");
@@ -172,11 +194,17 @@ namespace Clippit.Tests.Word
             {
                 var baselineAcceptedWml = new WmlDocument(baselineAcceptedFi.FullName);
                 var wmlComparerSettings = new WmlComparerSettings();
-                var result = WmlComparer.Compare(baselineAcceptedWml, afterAcceptingWml, wmlComparerSettings);
+                var result = WmlComparer.Compare(
+                    baselineAcceptedWml,
+                    afterAcceptingWml,
+                    wmlComparerSettings
+                );
                 var revisions = WmlComparer.GetRevisions(result, wmlComparerSettings);
                 if (revisions.Any())
                 {
-                    Assert.Fail("Regression Error: Accepted baseline document did not match processed document");
+                    Assert.Fail(
+                        "Regression Error: Accepted baseline document did not match processed document"
+                    );
                 }
             }
             else
@@ -190,11 +218,17 @@ namespace Clippit.Tests.Word
             {
                 var baselineRejectedWml = new WmlDocument(baselineRejectedFi.FullName);
                 var wmlComparerSettings = new WmlComparerSettings();
-                var result = WmlComparer.Compare(baselineRejectedWml, afterRejectingWml, wmlComparerSettings);
+                var result = WmlComparer.Compare(
+                    baselineRejectedWml,
+                    afterRejectingWml,
+                    wmlComparerSettings
+                );
                 var revisions = WmlComparer.GetRevisions(result, wmlComparerSettings);
                 if (revisions.Any())
                 {
-                    Assert.Fail("Regression Error: Rejected baseline document did not match processed document");
+                    Assert.Fail(
+                        "Regression Error: Rejected baseline document did not match processed document"
+                    );
                 }
             }
             else
@@ -202,7 +236,6 @@ namespace Clippit.Tests.Word
                 Assert.Fail("No Rejected baseline document");
             }
         }
-        
     }
 }
 

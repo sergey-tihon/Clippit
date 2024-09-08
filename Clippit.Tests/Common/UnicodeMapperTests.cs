@@ -30,7 +30,11 @@ namespace Clippit.Tests.Common
             const string TextValue = "Hello World!";
             var textElement = new XElement(W.t, TextValue);
             var runElement = new XElement(W.r, textElement);
-            var formattedRunElement = new XElement(W.r, new XElement(W.rPr, new XElement(W.b)), textElement);
+            var formattedRunElement = new XElement(
+                W.r,
+                new XElement(W.rPr, new XElement(W.b)),
+                textElement
+            );
 
             Assert.Equal(TextValue, UnicodeMapper.RunToString(textElement));
             Assert.Equal(TextValue, UnicodeMapper.RunToString(runElement));
@@ -40,27 +44,47 @@ namespace Clippit.Tests.Common
         [Fact]
         public void CanStringifySpecialElements()
         {
-            Assert.Equal(UnicodeMapper.CarriageReturn,
-                UnicodeMapper.RunToString(new XElement(W.cr)).First());
-            Assert.Equal(UnicodeMapper.CarriageReturn,
-                UnicodeMapper.RunToString(new XElement(W.br)).First());
-            Assert.Equal(UnicodeMapper.FormFeed,
-                UnicodeMapper.RunToString(new XElement(W.br, new XAttribute(W.type, "page"))).First());
-            Assert.Equal(UnicodeMapper.NonBreakingHyphen,
-                UnicodeMapper.RunToString(new XElement(W.noBreakHyphen)).First());
-            Assert.Equal(UnicodeMapper.SoftHyphen,
-                UnicodeMapper.RunToString(new XElement(W.softHyphen)).First());
-            Assert.Equal(UnicodeMapper.HorizontalTabulation,
-                UnicodeMapper.RunToString(new XElement(W.tab)).First());
+            Assert.Equal(
+                UnicodeMapper.CarriageReturn,
+                UnicodeMapper.RunToString(new XElement(W.cr)).First()
+            );
+            Assert.Equal(
+                UnicodeMapper.CarriageReturn,
+                UnicodeMapper.RunToString(new XElement(W.br)).First()
+            );
+            Assert.Equal(
+                UnicodeMapper.FormFeed,
+                UnicodeMapper
+                    .RunToString(new XElement(W.br, new XAttribute(W.type, "page")))
+                    .First()
+            );
+            Assert.Equal(
+                UnicodeMapper.NonBreakingHyphen,
+                UnicodeMapper.RunToString(new XElement(W.noBreakHyphen)).First()
+            );
+            Assert.Equal(
+                UnicodeMapper.SoftHyphen,
+                UnicodeMapper.RunToString(new XElement(W.softHyphen)).First()
+            );
+            Assert.Equal(
+                UnicodeMapper.HorizontalTabulation,
+                UnicodeMapper.RunToString(new XElement(W.tab)).First()
+            );
         }
 
         [Fact]
         public void CanCreateRunChildElementsFromSpecialCharacters()
         {
             Assert.Equal(W.br, UnicodeMapper.CharToRunChild(UnicodeMapper.CarriageReturn).Name);
-            Assert.Equal(W.noBreakHyphen, UnicodeMapper.CharToRunChild(UnicodeMapper.NonBreakingHyphen).Name);
+            Assert.Equal(
+                W.noBreakHyphen,
+                UnicodeMapper.CharToRunChild(UnicodeMapper.NonBreakingHyphen).Name
+            );
             Assert.Equal(W.softHyphen, UnicodeMapper.CharToRunChild(UnicodeMapper.SoftHyphen).Name);
-            Assert.Equal(W.tab, UnicodeMapper.CharToRunChild(UnicodeMapper.HorizontalTabulation).Name);
+            Assert.Equal(
+                W.tab,
+                UnicodeMapper.CharToRunChild(UnicodeMapper.HorizontalTabulation).Name
+            );
 
             var element = UnicodeMapper.CharToRunChild(UnicodeMapper.FormFeed);
             Assert.Equal(W.br, element.Name);
@@ -89,27 +113,35 @@ namespace Clippit.Tests.Common
         [Fact]
         public void CanMapSymbols()
         {
-            var sym1 = new XElement(W.sym,
+            var sym1 = new XElement(
+                W.sym,
                 new XAttribute(W.font, "Wingdings"),
-                new XAttribute(W._char, "F028"));
+                new XAttribute(W._char, "F028")
+            );
             var charFromSym1 = UnicodeMapper.SymToChar(sym1);
             var symFromChar1 = UnicodeMapper.CharToRunChild(charFromSym1);
 
-            var sym2 = new XElement(W.sym,
+            var sym2 = new XElement(
+                W.sym,
                 new XAttribute(W._char, "F028"),
-                new XAttribute(W.font, "Wingdings"));
+                new XAttribute(W.font, "Wingdings")
+            );
             var charFromSym2 = UnicodeMapper.SymToChar(sym2);
 
-            var sym3 = new XElement(W.sym,
+            var sym3 = new XElement(
+                W.sym,
                 new XAttribute(XNamespace.Xmlns + "w", W.w),
                 new XAttribute(W.font, "Wingdings"),
-                new XAttribute(W._char, "F028"));
+                new XAttribute(W._char, "F028")
+            );
             var charFromSym3 = UnicodeMapper.SymToChar(sym3);
 
-            var sym4 = new XElement(W.sym,
+            var sym4 = new XElement(
+                W.sym,
                 new XAttribute(XNamespace.Xmlns + "w", W.w),
                 new XAttribute(W.font, "Webdings"),
-                new XAttribute(W._char, "F028"));
+                new XAttribute(W._char, "F028")
+            );
             var charFromSym4 = UnicodeMapper.SymToChar(sym4);
             var symFromChar4 = UnicodeMapper.CharToRunChild(charFromSym4);
 
@@ -138,8 +170,14 @@ namespace Clippit.Tests.Common
             Assert.Equal(charFromSym1, charFromSym2);
             Assert.Equal(charFromSym1, charFromSym3);
 
-            Assert.Equal(symFromChar1.ToString(SaveOptions.None), symFromChar2.ToString(SaveOptions.None));
-            Assert.Equal(symFromChar1.ToString(SaveOptions.None), symFromChar3.ToString(SaveOptions.None));
+            Assert.Equal(
+                symFromChar1.ToString(SaveOptions.None),
+                symFromChar2.ToString(SaveOptions.None)
+            );
+            Assert.Equal(
+                symFromChar1.ToString(SaveOptions.None),
+                symFromChar3.ToString(SaveOptions.None)
+            );
         }
     }
 }

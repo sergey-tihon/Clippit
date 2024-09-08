@@ -11,10 +11,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.IO;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
@@ -26,7 +26,13 @@ namespace Clippit.Word
         public string StyleName;
         public Regex StyleNameRegex;
         public Regex[] RegexArray;
-        public Func<XElement, ContentTypeRule, WordprocessingDocument, WmlToXmlSettings, bool> MatchLambda;
+        public Func<
+            XElement,
+            ContentTypeRule,
+            WordprocessingDocument,
+            WmlToXmlSettings,
+            bool
+        > MatchLambda;
         public bool ApplyRunContentTypes = true;
         public string[] DocumentTypeCollection;
     }
@@ -49,7 +55,15 @@ namespace Clippit.Word
         public string[] RuleNames;
         public string[] RuleDescriptions;
         public string[] RuleTitles;
-        public Func<GlobalValidationRule, WordprocessingDocument, WordprocessingDocument, XElement, WmlToXmlSettings, List<WmlToXmlValidationError>> GlobalRuleLambda;
+        public Func<
+            GlobalValidationRule,
+            WordprocessingDocument,
+            WordprocessingDocument,
+            XElement,
+            WmlToXmlSettings,
+            List<WmlToXmlValidationError>
+        > GlobalRuleLambda;
+
         // if DocumentTypeInfo == null, then this rule runs for all document types, and with severity level of error
         public ValidationRuleDocumentTypeInfo[] DocumentTypeInfoCollection;
         public string Message;
@@ -61,7 +75,14 @@ namespace Clippit.Word
         public string[] RuleDescriptions;
         public string[] RuleTitles;
         public Regex StyleNameRegex;
-        public Func<XElement, BlockLevelContentValidationRule, WordprocessingDocument, XElement, WmlToXmlSettings, List<WmlToXmlValidationError>> BlockLevelContentRuleLambda;
+        public Func<
+            XElement,
+            BlockLevelContentValidationRule,
+            WordprocessingDocument,
+            XElement,
+            WmlToXmlSettings,
+            List<WmlToXmlValidationError>
+        > BlockLevelContentRuleLambda;
         public ValidationRuleDocumentTypeInfo[] DocumentTypeInfoCollection;
         public string Message;
     }
@@ -72,8 +93,8 @@ namespace Clippit.Word
         public ValidationErrorType ErrorType;
         public string ErrorTitle;
         public string ErrorMessage;
-        public string BlockLevelContentIdentifier;  // this string is the same as the unid that is in the source document.  This string should be sufficient to identify and find any
-                                                    // invalid paragraph, table, row, cell, or anything else in the source document.
+        public string BlockLevelContentIdentifier; // this string is the same as the unid that is in the source document.  This string should be sufficient to identify and find any
+        // invalid paragraph, table, row, cell, or anything else in the source document.
     }
 
     public class WmlToXmlProgressInfo
@@ -106,7 +127,10 @@ namespace Clippit.Word
         public bool? InjectCommentForContentTypes;
         public XElement ContentTypeHierarchyDefinition;
         public Func<XElement, WmlToXmlSettings, bool> ContentTypeHierarchyLambda;
-        public Dictionary<string, Func<string, OpenXmlPart, XElement, WmlToXmlSettings, object>> XmlGenerationLambdas;
+        public Dictionary<
+            string,
+            Func<string, OpenXmlPart, XElement, WmlToXmlSettings, object>
+        > XmlGenerationLambdas;
         public DirectoryInfo ImageBase;
         public bool WriteImageFiles = true;
         public Action<WmlToXmlProgressInfo> ProgressFunction;
@@ -126,9 +150,13 @@ namespace Clippit.Word
             List<BlockLevelContentValidationRule> blockLevelContentValidationRules,
             XElement contentTypeHierarchyDefinition,
             Func<XElement, WmlToXmlSettings, bool> contentTypeHierarchyLambda,
-            Dictionary<string, Func<string, OpenXmlPart, XElement, WmlToXmlSettings, object>> xmlGenerationLambdas,
+            Dictionary<
+                string,
+                Func<string, OpenXmlPart, XElement, WmlToXmlSettings, object>
+            > xmlGenerationLambdas,
             DirectoryInfo imageBase,
-            XDocument contentTypeRegexExtension)
+            XDocument contentTypeRegexExtension
+        )
         {
             GlobalContentTypeRules = globalContentTypeRules;
             DocumentTypeContentTypeRules = documentTypeContentTypeRules;
@@ -152,10 +180,14 @@ namespace Clippit.Word
             List<GlobalValidationRule> globalValidationRules,
             List<BlockLevelContentValidationRule> blockLevelContentValidationRules,
             Func<XElement, WmlToXmlSettings, bool> contentTypeHierarchyLambda,
-            Dictionary<string, Func<string, OpenXmlPart, XElement, WmlToXmlSettings, object>> xmlGenerationLambdas,
+            Dictionary<
+                string,
+                Func<string, OpenXmlPart, XElement, WmlToXmlSettings, object>
+            > xmlGenerationLambdas,
             ListItemRetrieverSettings listItemRetrieverSettings,
             DirectoryInfo imageBase,
-            XDocument contentTypeRegexExtension)
+            XDocument contentTypeRegexExtension
+        )
         {
             GlobalContentTypeRules = globalContentTypeRules;
             DocumentTypeContentTypeRules = documentTypeContentTypeRules;
@@ -204,13 +236,19 @@ namespace Clippit.Word
                 foreach (var ext in settings.ContentTypeRegexExtension.Root.Elements("Extension"))
                 {
                     var ct = (string)ext.Attribute("ContentType");
-                    var rules = settings.DocumentContentTypeRules.Concat(settings.DocumentTypeContentTypeRules).Concat(settings.GlobalContentTypeRules);
-                    var ruleToUpdate = rules
-                        .FirstOrDefault(r => r.ContentType == ct);
+                    var rules = settings
+                        .DocumentContentTypeRules.Concat(settings.DocumentTypeContentTypeRules)
+                        .Concat(settings.GlobalContentTypeRules);
+                    var ruleToUpdate = rules.FirstOrDefault(r => r.ContentType == ct);
                     if (ruleToUpdate == null)
-                        throw new OpenXmlPowerToolsException("ContentTypeRexexExtension refers to content type that does not exist");
+                        throw new OpenXmlPowerToolsException(
+                            "ContentTypeRexexExtension refers to content type that does not exist"
+                        );
                     var oldRegexRules = ruleToUpdate.RegexArray.ToList();
-                    var newRegexRules = ext.Elements("RegexExtension").Elements("Regex").Select(z => new Regex(z.Value)).ToArray();
+                    var newRegexRules = ext.Elements("RegexExtension")
+                        .Elements("Regex")
+                        .Select(z => new Regex(z.Value))
+                        .ToArray();
                     var regexArray = oldRegexRules.Concat(newRegexRules).ToArray();
                     ruleToUpdate.RegexArray = regexArray;
                 }
@@ -265,7 +303,7 @@ namespace Clippit.Word
             {
                 RemoveStyleNamesFromParagraphAndRunProperties = false,
                 RestrictToSupportedLanguages = false,
-                RestrictToSupportedNumberingFormats = false
+                RestrictToSupportedNumberingFormats = false,
             };
             FormattingAssembler.AssembleFormatting(wDoc, formattingAssemblerSettings);
 
@@ -273,24 +311,27 @@ namespace Clippit.Word
 
             var sXDoc = wDoc.MainDocumentPart.StyleDefinitionsPart.GetXDocument();
             var defaultParagraphStyle = sXDoc
-                .Root
-                .Elements(W.style)
-                .FirstOrDefault(st => st.Attribute(W._default).ToBoolean() == true &&
-                    (string)st.Attribute(W.type) == "paragraph");
+                .Root.Elements(W.style)
+                .FirstOrDefault(st =>
+                    st.Attribute(W._default).ToBoolean() == true
+                    && (string)st.Attribute(W.type) == "paragraph"
+                );
             if (defaultParagraphStyle != null)
                 ctai.DefaultParagraphStyleName = (string)defaultParagraphStyle.Attribute(W.styleId);
             var defaultCharacterStyle = sXDoc
-                .Root
-                .Elements(W.style)
-                .FirstOrDefault(st => st.Attribute(W._default).ToBoolean() == true &&
-                    (string)st.Attribute(W.type) == "character");
+                .Root.Elements(W.style)
+                .FirstOrDefault(st =>
+                    st.Attribute(W._default).ToBoolean() == true
+                    && (string)st.Attribute(W.type) == "character"
+                );
             if (defaultCharacterStyle != null)
                 ctai.DefaultCharacterStyleName = (string)defaultCharacterStyle.Attribute(W.styleId);
             var defaultTableStyle = sXDoc
-                .Root
-                .Elements(W.style)
-                .FirstOrDefault(st => st.Attribute(W._default).ToBoolean() == true &&
-                    (string)st.Attribute(W.type) == "table");
+                .Root.Elements(W.style)
+                .FirstOrDefault(st =>
+                    st.Attribute(W._default).ToBoolean() == true
+                    && (string)st.Attribute(W.type) == "table"
+                );
             if (defaultTableStyle != null)
                 ctai.DefaultTableStyleName = (string)defaultTableStyle.Attribute(W.styleId);
 
@@ -310,14 +351,20 @@ namespace Clippit.Word
             ApplyContentTypesForRuleSet(settings, ctai, wDoc);
         }
 
-        public static XElement ProduceContentTypeXml(WmlDocument document, WmlToXmlSettings settings)
+        public static XElement ProduceContentTypeXml(
+            WmlDocument document,
+            WmlToXmlSettings settings
+        )
         {
             using var streamDoc = new OpenXmlMemoryStreamDocument(document);
             using var doc = streamDoc.GetWordprocessingDocument();
             return ProduceContentTypeXml(doc, settings);
         }
 
-        public static XElement ProduceContentTypeXml(WordprocessingDocument wDoc, WmlToXmlSettings settings)
+        public static XElement ProduceContentTypeXml(
+            WordprocessingDocument wDoc,
+            WmlToXmlSettings settings
+        )
         {
             if (string.IsNullOrEmpty(settings.DocumentType))
                 throw new OpenXmlPowerToolsException("DocumentType must be set");
@@ -376,23 +423,27 @@ namespace Clippit.Word
                 .Where(h => (int)h.Attribute(PtOpenXml.Level) == 1)
                 .ToList();
 
-            var contentTypeXml = new XElement("ContentTypeXml",
-                rootLevelContentList
-                    .Select(h =>
-                    {
-                        var childrenHeadings = GetChildrenHeadings(mainPart, contentList, h, settings);
-                        var xml = (XElement)ProduceXmlTransform(mainPart, h, settings);
-                        if (xml != null)
-                            xml.Add(childrenHeadings);
-                        return xml;
-                    }));
+            var contentTypeXml = new XElement(
+                "ContentTypeXml",
+                rootLevelContentList.Select(h =>
+                {
+                    var childrenHeadings = GetChildrenHeadings(mainPart, contentList, h, settings);
+                    var xml = (XElement)ProduceXmlTransform(mainPart, h, settings);
+                    if (xml != null)
+                        xml.Add(childrenHeadings);
+                    return xml;
+                })
+            );
 
             contentTypeXml = HierarchyPerSettings(contentTypeXml, settings);
 
             return contentTypeXml;
         }
 
-        private static XElement HierarchyPerSettings(XElement contentTypeXml, WmlToXmlSettings settings)
+        private static XElement HierarchyPerSettings(
+            XElement contentTypeXml,
+            WmlToXmlSettings settings
+        )
         {
 #if false
 <Root>
@@ -403,21 +454,26 @@ namespace Clippit.Word
 #endif
 
             var hierarchyDefinition = settings
-                .ContentTypeHierarchyDefinition
-                .Elements("DocumentType")
+                .ContentTypeHierarchyDefinition.Elements("DocumentType")
                 .FirstOrDefault(e => (string)e.Attribute("DocumentType") == settings.DocumentType);
 
             if (hierarchyDefinition == null)
-                throw new OpenXmlPowerToolsException("Invalid content type hierarchy definition - no hierarchy definition for specified document type");
+                throw new OpenXmlPowerToolsException(
+                    "Invalid content type hierarchy definition - no hierarchy definition for specified document type"
+                );
 
-            var hierarchyElements = new HashSet<XName>(hierarchyDefinition.DescendantsAndSelf().Select(d => d.Name).Distinct());
+            var hierarchyElements = new HashSet<XName>(
+                hierarchyDefinition.DescendantsAndSelf().Select(d => d.Name).Distinct()
+            );
 
             var stack = new Stack<XElement>();
             var rootElement = hierarchyDefinition
                 .Elements()
                 .FirstOrDefault(e => (bool)e.Attribute("IsRoot"));
             if (rootElement == null)
-                throw new OpenXmlPowerToolsException("Invalid content type hierarchy definition - no root element");
+                throw new OpenXmlPowerToolsException(
+                    "Invalid content type hierarchy definition - no root element"
+                );
             stack.Push(rootElement);
 
             var currentlyLookingAt = hierarchyDefinition.Element(rootElement.Name);
@@ -425,7 +481,9 @@ namespace Clippit.Word
             foreach (var item in contentTypeXml.Elements())
             {
                 if (!hierarchyElements.Contains(item.Name))
-                    throw new OpenXmlPowerToolsException($"Invalid Content Type Hierarchy Definition - missing def for {item.Name}");
+                    throw new OpenXmlPowerToolsException(
+                        $"Invalid Content Type Hierarchy Definition - missing def for {item.Name}"
+                    );
 
                 var found = false;
                 var possibleChildItem = currentlyLookingAt.Element(item.Name);
@@ -435,17 +493,19 @@ namespace Clippit.Word
                         found = true;
                     if (!found)
                     {
-                        var anyMismatch = possibleChildItem.Attributes().Any(a =>
-                        {
-                            var val1 = a.Value;
-                            var a2 = item.Attribute(a.Name);
-                            if (a2 == null)
-                                return true;
-                            var val2 = a2.Value;
-                            if (val1 != val2)
-                                return true;
-                            return false;
-                        });
+                        var anyMismatch = possibleChildItem
+                            .Attributes()
+                            .Any(a =>
+                            {
+                                var val1 = a.Value;
+                                var a2 = item.Attribute(a.Name);
+                                if (a2 == null)
+                                    return true;
+                                var val2 = a2.Value;
+                                if (val1 != val2)
+                                    return true;
+                                return false;
+                            });
                         if (!anyMismatch)
                             found = true;
                     }
@@ -479,17 +539,19 @@ namespace Clippit.Word
                                 found2 = true;
                             if (!found2)
                             {
-                                var anyMismatch2 = possibleChildItem2.Attributes().Any(a =>
-                                {
-                                    var val1 = a.Value;
-                                    var a2 = item.Attribute(a.Name);
-                                    if (a2 == null)
-                                        return true;
-                                    var val2 = a2.Value;
-                                    if (val1 != val2)
-                                        return true;
-                                    return false;
-                                });
+                                var anyMismatch2 = possibleChildItem2
+                                    .Attributes()
+                                    .Any(a =>
+                                    {
+                                        var val1 = a.Value;
+                                        var a2 = item.Attribute(a.Name);
+                                        if (a2 == null)
+                                            return true;
+                                        var val2 = a2.Value;
+                                        if (val1 != val2)
+                                            return true;
+                                        return false;
+                                    });
                                 if (!anyMismatch2)
                                     found2 = true;
                             }
@@ -502,16 +564,23 @@ namespace Clippit.Word
                             break;
                         }
                         if (stack.Count == 0)
-                            throw new OpenXmlPowerToolsException("Internal error = reached top of hierarchy - prob not an internal error - some other error");
+                            throw new OpenXmlPowerToolsException(
+                                "Internal error = reached top of hierarchy - prob not an internal error - some other error"
+                            );
                     }
                 }
                 // otherwise continue on to next item.
             }
 
-            var hierarchicalContentTypeXml = new XElement("ContentTypeXml",
-                HierarchyPerSettingsTransform(contentTypeXml.Elements(), 1));
+            var hierarchicalContentTypeXml = new XElement(
+                "ContentTypeXml",
+                HierarchyPerSettingsTransform(contentTypeXml.Elements(), 1)
+            );
 
-            hierarchicalContentTypeXml.DescendantsAndSelf().Attributes(PtOpenXml.IndentLevel).Remove();
+            hierarchicalContentTypeXml
+                .DescendantsAndSelf()
+                .Attributes(PtOpenXml.IndentLevel)
+                .Remove();
 
             return hierarchicalContentTypeXml;
         }
@@ -522,12 +591,12 @@ namespace Clippit.Word
                 .Elements(item.Name)
                 .OrderByDescending(e => e.Attributes().Count());
 
-            var theOne = candidates
-                .FirstOrDefault(c =>
-                {
-                    if (!c.HasAttributes)
-                        return true;
-                    var anyMismatch2 = c.Attributes().Any(a =>
+            var theOne = candidates.FirstOrDefault(c =>
+            {
+                if (!c.HasAttributes)
+                    return true;
+                var anyMismatch2 = c.Attributes()
+                    .Any(a =>
                     {
                         var val1 = a.Value;
                         var a2 = item.Attribute(a.Name);
@@ -538,10 +607,10 @@ namespace Clippit.Word
                             return true;
                         return false;
                     });
-                    if (anyMismatch2)
-                        return false;
-                    return true;
-                });
+                if (anyMismatch2)
+                    return false;
+                return true;
+            });
 
             if (theOne == null)
                 throw new OpenXmlPowerToolsException("Internal error");
@@ -561,7 +630,8 @@ namespace Clippit.Word
             {
                 if (item.Attribute(PtOpenXml.IndentLevel) == null)
                     throw new OpenXmlPowerToolsException(
-                        $"Invalid Content Type Hierarchy Definition - missing def for {item.Name}");
+                        $"Invalid Content Type Hierarchy Definition - missing def for {item.Name}"
+                    );
                 if ((int)item.Attribute(PtOpenXml.IndentLevel) == level)
                 {
                     currentGroupingKey += 1;
@@ -569,12 +639,7 @@ namespace Clippit.Word
                 groupingKeys.Add(currentGroupingKey);
             }
 
-            var zipped = list
-                .Zip(groupingKeys, (item, key) => new
-                {
-                    Item = item,
-                    Key = key,
-                })
+            var zipped = list.Zip(groupingKeys, (item, key) => new { Item = item, Key = key })
                 .GroupBy(z => z.Key)
                 .ToList();
 
@@ -582,17 +647,18 @@ namespace Clippit.Word
                 .Select(z =>
                 {
                     var first = z.First().Item;
-                    var newItem = new XElement(first.Name,
+                    var newItem = new XElement(
+                        first.Name,
                         first.Attributes(),
                         first.Elements(),
-                        HierarchyPerSettingsTransform(z.Skip(1).Select(r => r.Item), level + 1));
+                        HierarchyPerSettingsTransform(z.Skip(1).Select(r => r.Item), level + 1)
+                    );
                     return newItem;
                 })
                 .ToList();
 
             return newContent;
         }
-
 
         // this is where we need to do the same type of run annotation as for complex fields, but for simple fields.
         // I think that we may need to split up the run following the simple field
@@ -643,27 +709,37 @@ namespace Clippit.Word
 
         private static void AnnotateRunsThatUseFieldsForNumbering(XDocument mainXDoc)
         {
-            var cachedAnnotationInformation = mainXDoc.Root.Annotation<Dictionary<int, List<XElement>>>();
+            var cachedAnnotationInformation = mainXDoc.Root.Annotation<
+                Dictionary<int, List<XElement>>
+            >();
             if (cachedAnnotationInformation == null)
                 return;
 
             var sb = new StringBuilder();
             foreach (var item in cachedAnnotationInformation)
             {
-                var instrText = FieldRetriever.InstrText(mainXDoc.Root, item.Key).TrimStart('{').TrimEnd('}');
+                var instrText = FieldRetriever
+                    .InstrText(mainXDoc.Root, item.Key)
+                    .TrimStart('{')
+                    .TrimEnd('}');
                 var fi = FieldRetriever.ParseField(instrText);
 
                 if (fi.FieldType.ToUpper() == "SEQ" || fi.FieldType.ToUpper() == "STYLEREF")
                 {
                     var runsForField = mainXDoc
-                        .Root
-                        .Descendants()
+                        .Root.Descendants()
                         .Where(d =>
                         {
                             var stack = d.Annotation<Stack<FieldRetriever.FieldElementTypeInfo>>();
                             if (stack == null)
                                 return false;
-                            if (stack.Any(stackItem => stackItem.Id == item.Key && stackItem.FieldElementType == FieldRetriever.FieldElementTypeEnum.Result))
+                            if (
+                                stack.Any(stackItem =>
+                                    stackItem.Id == item.Key
+                                    && stackItem.FieldElementType
+                                        == FieldRetriever.FieldElementTypeEnum.Result
+                                )
+                            )
                                 return true;
                             return false;
                         })
@@ -679,9 +755,7 @@ namespace Clippit.Word
 
                     var lastRun = runsForField.LastOrDefault();
 
-                    var para = lastRun
-                        .Ancestors(W.p)
-                        .FirstOrDefault();
+                    var para = lastRun.Ancestors(W.p).FirstOrDefault();
 
                     if (para == null)
                         throw new OpenXmlPowerToolsException("Internal error - invalid document");
@@ -690,8 +764,7 @@ namespace Clippit.Word
                     if (para.Descendants(W.r).Any(r => r.Attribute(PtOpenXml.ListItemRun) != null))
                         continue;
 
-                    var lastFldCharRun = para
-                        .Elements(W.r)
+                    var lastFldCharRun = para.Elements(W.r)
                         .LastOrDefault(r =>
                         {
                             if (r.Element(W.fldChar) == null)
@@ -700,28 +773,35 @@ namespace Clippit.Word
                             if (stack == null)
                                 return false;
 
-                            if (stack.Any(stackItem =>
-                            {
-                                var instrText2 = FieldRetriever.InstrText(mainXDoc.Root, stackItem.Id).TrimStart('{').TrimEnd('}');
-                                var fi2 = FieldRetriever.ParseField(instrText2);
-                                if (fi2.FieldType.ToUpper() == "SEQ" || fi2.FieldType.ToUpper() == "STYLEREF")
-                                    return true;
-                                return false;
-                            }))
+                            if (
+                                stack.Any(stackItem =>
+                                {
+                                    var instrText2 = FieldRetriever
+                                        .InstrText(mainXDoc.Root, stackItem.Id)
+                                        .TrimStart('{')
+                                        .TrimEnd('}');
+                                    var fi2 = FieldRetriever.ParseField(instrText2);
+                                    if (
+                                        fi2.FieldType.ToUpper() == "SEQ"
+                                        || fi2.FieldType.ToUpper() == "STYLEREF"
+                                    )
+                                        return true;
+                                    return false;
+                                })
+                            )
                                 return true;
                             return false;
                         });
 
-                    var elementAfter = lastFldCharRun
-                        .ElementsAfterSelf(W.r)
-                        .FirstOrDefault();
+                    var elementAfter = lastFldCharRun.ElementsAfterSelf(W.r).FirstOrDefault();
 
                     // elementAfter may be null - that is ok - the rest of the routine works properly in this case.
 
-                    var listItemText = para
-                        .Elements(W.r)
+                    var listItemText = para.Elements(W.r)
                         .TakeWhile(e => e != elementAfter)
-                        .Select(r1 => r1.Descendants(W.t).Select(t => (string)t).StringConcatenate())
+                        .Select(r1 =>
+                            r1.Descendants(W.t).Select(t => (string)t).StringConcatenate()
+                        )
                         .StringConcatenate()
                         .Trim();
 
@@ -738,13 +818,10 @@ namespace Clippit.Word
                     var sepCharsString = "";
                     if (nextRun != null)
                     {
-                        var nextRunTextElement = nextRun
-                            .Element(W.t);
+                        var nextRunTextElement = nextRun.Element(W.t);
 
                         var nextRunText = nextRunTextElement.Value;
-                        var sepChars = nextRunText
-                            .TakeWhile(ch => ch is '.' or ' ')
-                            .ToList();
+                        var sepChars = nextRunText.TakeWhile(ch => ch is '.' or ' ').ToList();
 
                         sepCharsString = nextRunText.Substring(0, sepChars.Count);
 
@@ -768,10 +845,13 @@ namespace Clippit.Word
                         matchedValue = matchedValue.TrimStart('.');
                         matchedValue = matchedValue.TrimEnd('.', ' ');
 
-                        foreach (var run in para.Elements(W.r).TakeWhile(e => e != elementAfter).Where(e => e.Element(W.t) != null))
+                        foreach (
+                            var run in para.Elements(W.r)
+                                .TakeWhile(e => e != elementAfter)
+                                .Where(e => e.Element(W.t) != null)
+                        )
                             run.Add(new XAttribute(PtOpenXml.ListItemRun, matchedValue));
                     }
-
                 }
 
 #if false
@@ -841,7 +921,6 @@ namespace Clippit.Word
                     }
                 }
 #endif
-
             }
         }
 
@@ -865,28 +944,47 @@ namespace Clippit.Word
             var element = node as XElement;
             if (element != null)
             {
-                if (element.Name == W.p &&
-                    element.Elements(W.fldSimple).Any(fs =>
-                    {
-                        var instrText = ((string)fs.Attribute(W.instr)).Trim();
-                        return instrText.StartsWith("SEQ");
-                    }))
+                if (
+                    element.Name == W.p
+                    && element
+                        .Elements(W.fldSimple)
+                        .Any(fs =>
+                        {
+                            var instrText = ((string)fs.Attribute(W.instr)).Trim();
+                            return instrText.StartsWith("SEQ");
+                        })
+                )
                 {
-                    var fldSimple = element.Elements(W.fldSimple).FirstOrDefault(fs =>
-                    {
-                        var instrText = ((string)fs.Attribute(W.instr)).Trim();
-                        return instrText.StartsWith("SEQ");
-                    });
+                    var fldSimple = element
+                        .Elements(W.fldSimple)
+                        .FirstOrDefault(fs =>
+                        {
+                            var instrText = ((string)fs.Attribute(W.instr)).Trim();
+                            return instrText.StartsWith("SEQ");
+                        });
                     var instr = ((string)fldSimple.Attribute(W.instr)).Trim();
 
                     // we have to do some funny business here because Word puts the ". " as part of the text following the fldSimple, and we want that text to be part of the list item.
                     var runAfter = fldSimple.ElementsAfterSelf(W.r).FirstOrDefault();
-                    var runAfterText = runAfter.Elements(W.t).Select(t => (string)t).StringConcatenate();
+                    var runAfterText = runAfter
+                        .Elements(W.t)
+                        .Select(t => (string)t)
+                        .StringConcatenate();
                     var runAfterTextTrimmed = runAfterText.TrimStart('.', ' ');
-                    var listItemNum = fldSimple.Elements(W.r).Elements(W.t).Select(t => (string)t).StringConcatenate();
+                    var listItemNum = fldSimple
+                        .Elements(W.r)
+                        .Elements(W.t)
+                        .Select(t => (string)t)
+                        .StringConcatenate();
                     var runsBefore = element
                         .Elements()
-                        .TakeWhile(fs => fs.Name != W.fldSimple || (fs.Name == W.fldSimple && !((string)fs.Attribute(W.instr)).Trim().StartsWith("SEQ")))
+                        .TakeWhile(fs =>
+                            fs.Name != W.fldSimple
+                            || (
+                                fs.Name == W.fldSimple
+                                && !((string)fs.Attribute(W.instr)).Trim().StartsWith("SEQ")
+                            )
+                        )
                         .Select(e =>
                         {
 #if false
@@ -907,48 +1005,66 @@ namespace Clippit.Word
                             return newE;
                         })
                         .ToList();
-                    var fldSimpleRuns = fldSimple.Elements().Select(e =>
-                    {
-                        var newE = new XElement(e.Name,
-                            e.Attributes(),
-                            new XAttribute(PtOpenXml.ListItemRun, listItemNum),
-                            e.Elements());
-                        return newE;
-                    });
-                    var runAfterTextTrimmedLength = runAfterText.Length - runAfterTextTrimmed.Length;
+                    var fldSimpleRuns = fldSimple
+                        .Elements()
+                        .Select(e =>
+                        {
+                            var newE = new XElement(
+                                e.Name,
+                                e.Attributes(),
+                                new XAttribute(PtOpenXml.ListItemRun, listItemNum),
+                                e.Elements()
+                            );
+                            return newE;
+                        });
+                    var runAfterTextTrimmedLength =
+                        runAfterText.Length - runAfterTextTrimmed.Length;
                     XElement runAfterListItemElement = null;
                     if (runAfterTextTrimmedLength != 0)
                     {
-                        runAfterListItemElement = new XElement(W.r,
+                        runAfterListItemElement = new XElement(
+                            W.r,
                             runAfter.Attributes(),
                             new XAttribute(PtOpenXml.ListItemRun, listItemNum),
                             runAfter.Elements(W.rPr),
-                            new XElement(W.t, runAfterText.Substring(0, runAfterTextTrimmedLength)));
+                            new XElement(W.t, runAfterText.Substring(0, runAfterTextTrimmedLength))
+                        );
                     }
-                    var runAfterRemainderElement = new XElement(W.r,
+                    var runAfterRemainderElement = new XElement(
+                        W.r,
                         runAfter.Attributes(),
                         runAfter.Elements(W.rPr),
-                        new XElement(W.t, runAfterText.Substring(runAfterTextTrimmedLength)));
-                    var newPara = new XElement(W.p,
+                        new XElement(W.t, runAfterText.Substring(runAfterTextTrimmedLength))
+                    );
+                    var newPara = new XElement(
+                        W.p,
                         element.Attributes(),
                         runsBefore,
                         fldSimpleRuns,
                         runAfterListItemElement,
                         runAfterRemainderElement,
-                        fldSimple.ElementsAfterSelf(W.r).Skip(1));
+                        fldSimple.ElementsAfterSelf(W.r).Skip(1)
+                    );
                     return newPara;
                 }
 
-                return new XElement(element.Name,
+                return new XElement(
+                    element.Name,
                     element.Attributes(),
-                    element.Nodes().Select(n => AnnotateRunsThatUseFldSimple(n)));
+                    element.Nodes().Select(n => AnnotateRunsThatUseFldSimple(n))
+                );
             }
             return node;
         }
 
         // this method produces the XML for an endnote or footnote - the blockLevelContentContainer is the w:endnote or w:footnote element, and it produces the content type XML for the
         // contents of the endnote or footnote, to be inserted en situ in the ContentTypeXml.
-        public static object ProduceContentTypeXmlForBlockLevelContentContainer(WordprocessingDocument wDoc, WmlToXmlSettings settings, OpenXmlPart part, XElement blockLevelContentContainer)
+        public static object ProduceContentTypeXmlForBlockLevelContentContainer(
+            WordprocessingDocument wDoc,
+            WmlToXmlSettings settings,
+            OpenXmlPart part,
+            XElement blockLevelContentContainer
+        )
         {
             AssignLevelsToContentForEndFootNote(blockLevelContentContainer, settings);
 
@@ -956,7 +1072,8 @@ namespace Clippit.Word
             var firstParagraph = blockLevelContentContainer.Descendants(W.p).FirstOrDefault();
             var listItem = ListItemRetriever.RetrieveListItem(wDoc, firstParagraph);
 
-            var contentList = blockLevelContentContainer.Elements()
+            var contentList = blockLevelContentContainer
+                .Elements()
                 .Where(e => e.Attribute(PtOpenXml.Level) != null)
                 .ToList();
 
@@ -964,39 +1081,49 @@ namespace Clippit.Word
                 .Where(h => (int)h.Attribute(PtOpenXml.Level) == 1)
                 .ToList();
 
-            var contentTypeXml = rootLevelContentList
-                    .Select(h =>
-                    {
-                        var childrenHeadings = GetChildrenHeadings(part, contentList, h, settings);
-                        var xml = (XElement)ProduceXmlTransform(part, h, settings);
-                        if (xml != null)
-                            xml.Add(childrenHeadings);
-                        return xml;
-                    });
+            var contentTypeXml = rootLevelContentList.Select(h =>
+            {
+                var childrenHeadings = GetChildrenHeadings(part, contentList, h, settings);
+                var xml = (XElement)ProduceXmlTransform(part, h, settings);
+                if (xml != null)
+                    xml.Add(childrenHeadings);
+                return xml;
+            });
 
             return contentTypeXml;
         }
 
-
-        private static object GetChildrenHeadings(OpenXmlPart part, List<XElement> contentList, XElement parent, WmlToXmlSettings settings)
+        private static object GetChildrenHeadings(
+            OpenXmlPart part,
+            List<XElement> contentList,
+            XElement parent,
+            WmlToXmlSettings settings
+        )
         {
             return contentList
-                    .SkipWhile(h => h != parent)
-                    .Skip(1)
-                    .TakeWhile(h => (int)h.Attribute(PtOpenXml.Level) > (int)parent.Attribute(PtOpenXml.Level))
-                    .Where(h => (int)h.Attribute(PtOpenXml.Level) == (int)parent.Attribute(PtOpenXml.Level) + 1)
-                    .Select(h =>
-                    {
-                        var childrenHeadings = GetChildrenHeadings(part, contentList, h, settings);
-                        var xml = (XElement)ProduceXmlTransform(part, h, settings);
-                        if (xml != null)
-                            xml.Add(childrenHeadings);
-                        return xml;
-                    }
-                    );
+                .SkipWhile(h => h != parent)
+                .Skip(1)
+                .TakeWhile(h =>
+                    (int)h.Attribute(PtOpenXml.Level) > (int)parent.Attribute(PtOpenXml.Level)
+                )
+                .Where(h =>
+                    (int)h.Attribute(PtOpenXml.Level) == (int)parent.Attribute(PtOpenXml.Level) + 1
+                )
+                .Select(h =>
+                {
+                    var childrenHeadings = GetChildrenHeadings(part, contentList, h, settings);
+                    var xml = (XElement)ProduceXmlTransform(part, h, settings);
+                    if (xml != null)
+                        xml.Add(childrenHeadings);
+                    return xml;
+                });
         }
 
-        public static object ProduceXmlTransform(OpenXmlPart part, XNode node, WmlToXmlSettings settings)
+        public static object ProduceXmlTransform(
+            OpenXmlPart part,
+            XNode node,
+            WmlToXmlSettings settings
+        )
         {
             var element = node as XElement;
             if (element != null)
@@ -1019,7 +1146,9 @@ namespace Clippit.Word
                     }
                     else
                     {
-                        throw new OpenXmlPowerToolsException("Entry for Run content type in XML generation lambdas is required");
+                        throw new OpenXmlPowerToolsException(
+                            "Entry for Run content type in XML generation lambdas is required"
+                        );
                     }
                 }
 
@@ -1033,13 +1162,14 @@ namespace Clippit.Word
                     }
                     else
                     {
-                        throw new OpenXmlPowerToolsException("Entry for Hyperlink content type in XML generation lambdas is required");
+                        throw new OpenXmlPowerToolsException(
+                            "Entry for Hyperlink content type in XML generation lambdas is required"
+                        );
                     }
                 }
 
                 if (contentType != null)
                 {
-
                     if (settings.XmlGenerationLambdas != null)
                     {
                         if (settings.XmlGenerationLambdas.ContainsKey(contentType))
@@ -1047,31 +1177,50 @@ namespace Clippit.Word
                             var lamda = settings.XmlGenerationLambdas[contentType];
                             var newElement = lamda(contentType, part, element, settings);
 
-                            var lang = (string)element.Elements(W.pPr).Elements(W.rPr).Elements(W.lang).Attributes(W.val).FirstOrDefault();
+                            var lang = (string)
+                                element
+                                    .Elements(W.pPr)
+                                    .Elements(W.rPr)
+                                    .Elements(W.lang)
+                                    .Attributes(W.val)
+                                    .FirstOrDefault();
                             if (lang == null)
                                 lang = settings.DefaultLang;
-                            if (lang != null && !lang.StartsWith("en"))  // TODO we are not generating lang if English, but this needs revised after analysis
+                            if (lang != null && !lang.StartsWith("en")) // TODO we are not generating lang if English, but this needs revised after analysis
                             {
                                 var n = newElement as XElement;
                                 if (n != null)
                                 {
                                     n.Add(new XAttribute("Lang", lang));
-                                    if (n.Attribute("Unid") == null && element.Attribute(PtOpenXml.Unid) != null)
-                                        n.Add(new XAttribute("Unid", element.Attribute(PtOpenXml.Unid).Value));
+                                    if (
+                                        n.Attribute("Unid") == null
+                                        && element.Attribute(PtOpenXml.Unid) != null
+                                    )
+                                        n.Add(
+                                            new XAttribute(
+                                                "Unid",
+                                                element.Attribute(PtOpenXml.Unid).Value
+                                            )
+                                        );
                                     return n;
                                 }
                             }
 
                             var n2 = newElement as XElement;
-                            if (n2 != null && n2.Attribute("Unid") == null && element.Attribute(PtOpenXml.Unid) != null)
+                            if (
+                                n2 != null
+                                && n2.Attribute("Unid") == null
+                                && element.Attribute(PtOpenXml.Unid) != null
+                            )
                             {
-                                n2.Add(new XAttribute("Unid", element.Attribute(PtOpenXml.Unid).Value));
+                                n2.Add(
+                                    new XAttribute("Unid", element.Attribute(PtOpenXml.Unid).Value)
+                                );
                                 return n2;
                             }
 
                             return newElement;
                         }
-
                     }
 
                     // if no generation rules are set, or if there is no rule for this content type, then
@@ -1080,8 +1229,15 @@ namespace Clippit.Word
                     // todo this is not ideal in my mind.  Need to think about this more.  Maybe every content type
                     // must have a generation lambda.
 
-                    return new XElement(contentType, new XElement("Content",
-                        element.Elements().Select(rce => ProduceXmlTransform(part, rce, settings))));
+                    return new XElement(
+                        contentType,
+                        new XElement(
+                            "Content",
+                            element
+                                .Elements()
+                                .Select(rce => ProduceXmlTransform(part, rce, settings))
+                        )
+                    );
                 }
 
                 // ignore any other elements
@@ -1119,8 +1275,7 @@ namespace Clippit.Word
         private static void AssignLevelsToContent(XDocument mainXDoc, WmlToXmlSettings settings)
         {
             var contentWithContentType = mainXDoc
-                .Root
-                .Descendants()
+                .Root.Descendants()
                 .Where(d => d.Name == W.p || d.Name == W.tbl || d.Name == W.tr || d.Name == W.tc)
                 .Where(d => d.Attribute(PtOpenXml.ContentType) != null)
                 .ToList();
@@ -1142,7 +1297,10 @@ namespace Clippit.Word
             }
         }
 
-        private static void AssignLevelsToContentForEndFootNote(XElement blockLevelContentContainer, WmlToXmlSettings settings)
+        private static void AssignLevelsToContentForEndFootNote(
+            XElement blockLevelContentContainer,
+            WmlToXmlSettings settings
+        )
         {
             var contentWithContentType = blockLevelContentContainer
                 .Descendants()
@@ -1162,7 +1320,11 @@ namespace Clippit.Word
         }
 
         // Apply the Document rules first, then apply the DocumentType rules, then apply the Global rules.  First one that matches, wins.
-        private static void ApplyContentTypesForRuleSet(WmlToXmlSettings settings, ContentTypeApplierInfo ctai, WordprocessingDocument wDoc)
+        private static void ApplyContentTypesForRuleSet(
+            WmlToXmlSettings settings,
+            ContentTypeApplierInfo ctai,
+            WordprocessingDocument wDoc
+        )
         {
             ApplyRulesToPart(settings, ctai, wDoc, wDoc.MainDocumentPart);
             if (wDoc.MainDocumentPart.EndnotesPart != null)
@@ -1171,18 +1333,27 @@ namespace Clippit.Word
                 ApplyRulesToPart(settings, ctai, wDoc, wDoc.MainDocumentPart.FootnotesPart);
         }
 
-        private static void ApplyRulesToPart(WmlToXmlSettings settings, ContentTypeApplierInfo ctai, WordprocessingDocument wDoc, OpenXmlPart part)
+        private static void ApplyRulesToPart(
+            WmlToXmlSettings settings,
+            ContentTypeApplierInfo ctai,
+            WordprocessingDocument wDoc,
+            OpenXmlPart part
+        )
         {
             var partXDoc = part.GetXDocument();
             var styleXDoc = wDoc.MainDocumentPart.StyleDefinitionsPart.GetXDocument();
 
             settings.ApplyContentTypesCustom?.Invoke(partXDoc, styleXDoc, settings, part); // this applies content types that are easy to find
-                                                                                           // the function should add the ContentType attribute to paragraphs, which will then cause
-                                                                                           // rules to not run for the paragraph
+            // the function should add the ContentType attribute to paragraphs, which will then cause
+            // rules to not run for the paragraph
 
             // in the following, filter for blc that does not have content type already set by ApplyContentTypesCustom
-            var blockContent = partXDoc.Descendants()
-                .Where(d => (d.Name == W.p || d.Name == W.tbl || d.Name == W.tr || d.Name == W.tc) && d.Attribute(PtOpenXml.ContentType) == null);
+            var blockContent = partXDoc
+                .Descendants()
+                .Where(d =>
+                    (d.Name == W.p || d.Name == W.tbl || d.Name == W.tr || d.Name == W.tc)
+                    && d.Attribute(PtOpenXml.ContentType) == null
+                );
 
             var totalCount = 0;
             if (settings.ProgressFunction != null)
@@ -1192,7 +1363,7 @@ namespace Clippit.Word
                 {
                     MainDocumentPart => "Apply rules to main document part",
                     EndnotesPart => "Apply rules to endnotes part",
-                    _ => "Apply rules to footnotes part"
+                    _ => "Apply rules to footnotes part",
                 };
                 var pi = new WmlToXmlProgressInfo()
                 {
@@ -1227,16 +1398,20 @@ namespace Clippit.Word
                 string styleOfBlcUC = null;
                 if (blc.Name == W.p)
                 {
-                    var styleIdOfBlc = (string)blc.Elements(W.pPr).Elements(W.pStyle).Attributes(W.val).FirstOrDefault();
+                    var styleIdOfBlc = (string)
+                        blc.Elements(W.pPr).Elements(W.pStyle).Attributes(W.val).FirstOrDefault();
                     if (styleIdOfBlc != null)
                     {
-                        styleOfBlc = (string)styleXDoc
-                            .Root
-                            .Elements(W.style)
-                            .Where(s => (string)s.Attribute(W.styleId) == styleIdOfBlc && (string)s.Attribute(W.type) == "paragraph")
-                            .Elements(W.name)
-                            .Attributes(W.val)
-                            .FirstOrDefault();
+                        styleOfBlc = (string)
+                            styleXDoc
+                                .Root.Elements(W.style)
+                                .Where(s =>
+                                    (string)s.Attribute(W.styleId) == styleIdOfBlc
+                                    && (string)s.Attribute(W.type) == "paragraph"
+                                )
+                                .Elements(W.name)
+                                .Attributes(W.val)
+                                .FirstOrDefault();
                     }
                     if (styleOfBlc == null)
                         styleOfBlc = ctai.DefaultParagraphStyleName;
@@ -1244,16 +1419,23 @@ namespace Clippit.Word
                 }
                 else if (blc.Name == W.tbl)
                 {
-                    var styleIdOfBlc = (string)blc.Elements(W.tblPr).Elements(W.tblStyle).Attributes(W.val).FirstOrDefault();
-                    if (styleIdOfBlc != null)
-                    {
-                        styleOfBlc = (string)styleXDoc
-                            .Root
-                            .Elements(W.style)
-                            .Where(s => (string)s.Attribute(W.styleId) == styleIdOfBlc && (string)s.Attribute(W.type) == "table")
-                            .Elements(W.name)
+                    var styleIdOfBlc = (string)
+                        blc.Elements(W.tblPr)
+                            .Elements(W.tblStyle)
                             .Attributes(W.val)
                             .FirstOrDefault();
+                    if (styleIdOfBlc != null)
+                    {
+                        styleOfBlc = (string)
+                            styleXDoc
+                                .Root.Elements(W.style)
+                                .Where(s =>
+                                    (string)s.Attribute(W.styleId) == styleIdOfBlc
+                                    && (string)s.Attribute(W.type) == "table"
+                                )
+                                .Elements(W.name)
+                                .Attributes(W.val)
+                                .FirstOrDefault();
                     }
                     if (styleOfBlc == null)
                         styleOfBlc = ctai.DefaultTableStyleName;
@@ -1293,7 +1475,11 @@ namespace Clippit.Word
                 //Console.WriteLine(s9);
 
                 // Apply the Document rules first, then apply the DocumentType rules, then apply the Global rules.  First one that matches, wins.
-                foreach (var rule in settings.DocumentContentTypeRules.Concat(settings.DocumentTypeContentTypeRules).Concat(settings.GlobalContentTypeRules))
+                foreach (
+                    var rule in settings
+                        .DocumentContentTypeRules.Concat(settings.DocumentTypeContentTypeRules)
+                        .Concat(settings.GlobalContentTypeRules)
+                )
                 {
                     if (rule.DocumentTypeCollection != null)
                     {
@@ -1301,12 +1487,14 @@ namespace Clippit.Word
                             continue;
                     }
 
-
                     if (settings.ContentTypeCount.ContainsKey(rule.ContentType))
-                        settings.ContentTypeCount[rule.ContentType].Tests = settings.ContentTypeCount[rule.ContentType].Tests + 1;
+                        settings.ContentTypeCount[rule.ContentType].Tests =
+                            settings.ContentTypeCount[rule.ContentType].Tests + 1;
                     else
-                        settings.ContentTypeCount.Add(rule.ContentType, new WmlToXmlContentTypeMetrics() { Count = 0, Tests = 1 });
-
+                        settings.ContentTypeCount.Add(
+                            rule.ContentType,
+                            new WmlToXmlContentTypeMetrics() { Count = 0, Tests = 1 }
+                        );
 
                     var stylePass = false;
                     var styleRegexPass = false;
@@ -1340,11 +1528,16 @@ namespace Clippit.Word
   </r>
 #endif
                             // remove list item runs so that they are not matched in the content
-                            clonedBlc.Elements(W.r).Where(r => r.Attribute(PtOpenXml.ListItemRun) != null).Remove();
+                            clonedBlc
+                                .Elements(W.r)
+                                .Where(r => r.Attribute(PtOpenXml.ListItemRun) != null)
+                                .Remove();
 
                             for (var i = 0; i < rule.RegexArray.Length; i++)
                             {
-                                if (OpenXmlRegex.Match(new[] { clonedBlc }, rule.RegexArray[i]) != 0)
+                                if (
+                                    OpenXmlRegex.Match(new[] { clonedBlc }, rule.RegexArray[i]) != 0
+                                )
                                 {
                                     regexPass = true;
                                     break;
@@ -1366,16 +1559,36 @@ namespace Clippit.Word
                     if (stylePass && styleRegexPass && regexPass && matchLambdaPass)
                     {
                         if (settings.ContentTypeCount.ContainsKey(rule.ContentType))
-                            settings.ContentTypeCount[rule.ContentType].Count = settings.ContentTypeCount[rule.ContentType].Count + 1;
+                            settings.ContentTypeCount[rule.ContentType].Count =
+                                settings.ContentTypeCount[rule.ContentType].Count + 1;
                         else
-                            settings.ContentTypeCount.Add(rule.ContentType, new WmlToXmlContentTypeMetrics() { Count = 1, Tests = 1 });
+                            settings.ContentTypeCount.Add(
+                                rule.ContentType,
+                                new WmlToXmlContentTypeMetrics() { Count = 1, Tests = 1 }
+                            );
                         AddContentTypeToBlockContent(settings, part, blc, rule.ContentType);
                         if (rule.ApplyRunContentTypes)
-                            ApplyRunContentTypes(settings, ctai, wDoc, blc, settings.RunContentTypeRules, part, partXDoc);
+                            ApplyRunContentTypes(
+                                settings,
+                                ctai,
+                                wDoc,
+                                blc,
+                                settings.RunContentTypeRules,
+                                part,
+                                partXDoc
+                            );
                         break;
                     }
                     else
-                        ApplyRunContentTypes(settings, ctai, wDoc, blc, settings.RunContentTypeRules, part, partXDoc);
+                        ApplyRunContentTypes(
+                            settings,
+                            ctai,
+                            wDoc,
+                            blc,
+                            settings.RunContentTypeRules,
+                            part,
+                            partXDoc
+                        );
                 }
             }
 
@@ -1402,7 +1615,6 @@ namespace Clippit.Word
                 root.Add(new XAttribute(MC.Ignorable, "pt"));
             }
 
-
             if (settings.ProgressFunction != null)
             {
                 var pi = new WmlToXmlProgressInfo()
@@ -1427,55 +1639,87 @@ namespace Clippit.Word
         {
             if (clonedBlc.Name != W.p)
                 return clonedBlc;
-            var cloned2 = new XElement(clonedBlc.Name,
+            var cloned2 = new XElement(
+                clonedBlc.Name,
                 clonedBlc.Attributes(),
-                clonedBlc.Elements().TakeWhile(r => r.Element(W.br) == null));
+                clonedBlc.Elements().TakeWhile(r => r.Element(W.br) == null)
+            );
             return cloned2;
         }
 
-        private static void ApplyRunContentTypes(WmlToXmlSettings settings, ContentTypeApplierInfo ctai, WordprocessingDocument wDoc,
-            XElement blockLevelContent, List<ContentTypeRule> runContentTypeRuleList, OpenXmlPart part, XDocument mainXDoc)
+        private static void ApplyRunContentTypes(
+            WmlToXmlSettings settings,
+            ContentTypeApplierInfo ctai,
+            WordprocessingDocument wDoc,
+            XElement blockLevelContent,
+            List<ContentTypeRule> runContentTypeRuleList,
+            OpenXmlPart part,
+            XDocument mainXDoc
+        )
         {
-            var runContent = blockLevelContent.Descendants()
-                .Where(d => d.Name == W.r || d.Name == W.hyperlink || d.Name == W.sdt || d.Name == W.bookmarkStart);
+            var runContent = blockLevelContent
+                .Descendants()
+                .Where(d =>
+                    d.Name == W.r
+                    || d.Name == W.hyperlink
+                    || d.Name == W.sdt
+                    || d.Name == W.bookmarkStart
+                );
             foreach (var rlc in runContent)
             {
                 if (rlc.Name == W.r || rlc.Name == W.sdt)
                 {
-                    var runStyle = (string)rlc.Elements(W.rPr).Elements(W.rStyle).Attributes(W.val).FirstOrDefault();
+                    var runStyle = (string)
+                        rlc.Elements(W.rPr).Elements(W.rStyle).Attributes(W.val).FirstOrDefault();
                     if (runStyle == null)
                         runStyle = ctai.DefaultCharacterStyleName;
                     foreach (var rule in runContentTypeRuleList)
                     {
                         if (settings.ContentTypeCount.ContainsKey(rule.ContentType))
-                            settings.ContentTypeCount[rule.ContentType].Tests = settings.ContentTypeCount[rule.ContentType].Tests + 1;
+                            settings.ContentTypeCount[rule.ContentType].Tests =
+                                settings.ContentTypeCount[rule.ContentType].Tests + 1;
                         else
-                            settings.ContentTypeCount.Add(rule.ContentType, new WmlToXmlContentTypeMetrics() { Count = 0, Tests = 1 });
+                            settings.ContentTypeCount.Add(
+                                rule.ContentType,
+                                new WmlToXmlContentTypeMetrics() { Count = 0, Tests = 1 }
+                            );
 
                         if (rule.StyleName != null && rule.StyleName != runStyle)
                             continue;
 
                         if (rule.StyleNameRegex != null)
-                            throw new OpenXmlPowerToolsException("Invalid Run ContentType Rule - StyleNameRegex not allowed");
+                            throw new OpenXmlPowerToolsException(
+                                "Invalid Run ContentType Rule - StyleNameRegex not allowed"
+                            );
                         if (rule.RegexArray != null)
-                            throw new OpenXmlPowerToolsException("Invalid Run ContentType Rule - Regex not allowed");
+                            throw new OpenXmlPowerToolsException(
+                                "Invalid Run ContentType Rule - Regex not allowed"
+                            );
                         if (rule.MatchLambda != null)
                         {
                             if (rule.MatchLambda(rlc, rule, wDoc, settings))
                             {
                                 if (settings.ContentTypeCount.ContainsKey(rule.ContentType))
-                                    settings.ContentTypeCount[rule.ContentType].Count = settings.ContentTypeCount[rule.ContentType].Count + 1;
+                                    settings.ContentTypeCount[rule.ContentType].Count =
+                                        settings.ContentTypeCount[rule.ContentType].Count + 1;
                                 else
-                                    settings.ContentTypeCount.Add(rule.ContentType, new WmlToXmlContentTypeMetrics() { Count = 1, Tests = 1 });
+                                    settings.ContentTypeCount.Add(
+                                        rule.ContentType,
+                                        new WmlToXmlContentTypeMetrics() { Count = 1, Tests = 1 }
+                                    );
                                 AddContentTypeToRunContent(settings, part, rlc, rule.ContentType);
                                 break;
                             }
                             continue;
                         }
                         if (settings.ContentTypeCount.ContainsKey(rule.ContentType))
-                            settings.ContentTypeCount[rule.ContentType].Count = settings.ContentTypeCount[rule.ContentType].Count + 1;
+                            settings.ContentTypeCount[rule.ContentType].Count =
+                                settings.ContentTypeCount[rule.ContentType].Count + 1;
                         else
-                            settings.ContentTypeCount.Add(rule.ContentType, new WmlToXmlContentTypeMetrics() { Count = 1, Tests = 1 });
+                            settings.ContentTypeCount.Add(
+                                rule.ContentType,
+                                new WmlToXmlContentTypeMetrics() { Count = 1, Tests = 1 }
+                            );
                         AddContentTypeToRunContent(settings, part, rlc, rule.ContentType);
                         break;
                     }
@@ -1515,13 +1759,21 @@ namespace Clippit.Word
             new XAttribute(MC.Ignorable, "w14 wp14 w15 w16se pt"),
         };
 
-        public static void AddContentTypeToBlockContent(WmlToXmlSettings settings, OpenXmlPart part, XElement blc, string contentType)
+        public static void AddContentTypeToBlockContent(
+            WmlToXmlSettings settings,
+            OpenXmlPart part,
+            XElement blc,
+            string contentType
+        )
         {
             // add the attribute to the block content
             blc.Add(new XAttribute(PtOpenXml.ContentType, contentType));
 
             var mainPart = part as MainDocumentPart;
-            if (settings.InjectCommentForContentTypes != null && (bool)settings.InjectCommentForContentTypes)
+            if (
+                settings.InjectCommentForContentTypes != null
+                && (bool)settings.InjectCommentForContentTypes
+            )
             {
                 if (mainPart != null)
                 {
@@ -1533,7 +1785,9 @@ namespace Clippit.Word
                         newComments = mainPart.WordprocessingCommentsPart.GetXDocument();
                         newComments.Declaration.Standalone = "yes";
                         newComments.Declaration.Encoding = "UTF-8";
-                        var ids = newComments.Root.Elements(W.comment).Select(f => (int)f.Attribute(W.id));
+                        var ids = newComments
+                            .Root.Elements(W.comment)
+                            .Select(f => (int)f.Attribute(W.id));
                         if (ids.Any())
                             commentNumber = ids.Max() + 1;
                     }
@@ -1570,20 +1824,29 @@ namespace Clippit.Word
     </w:p>
   </w:comment>
 #endif
-                    var newElement = new XElement(W.comment,
+                    var newElement = new XElement(
+                        W.comment,
                         new XAttribute(W.id, commentNumber),
-                        new XElement(W.p,
-                            new XElement(W.pPr,
-                                new XElement(W.pStyle,
-                                    new XAttribute(W.val, "CommentText"))),
-                            new XElement(W.r,
-                                new XElement(W.rPr,
-                                    new XElement(W.rStyle,
-                                        new XAttribute(W.val, "CommentReference"))),
-                                        new XElement(W.annotationRef)),
-                            new XElement(W.r,
-                                new XElement(W.t,
-                                    new XText(contentType)))));
+                        new XElement(
+                            W.p,
+                            new XElement(
+                                W.pPr,
+                                new XElement(W.pStyle, new XAttribute(W.val, "CommentText"))
+                            ),
+                            new XElement(
+                                W.r,
+                                new XElement(
+                                    W.rPr,
+                                    new XElement(
+                                        W.rStyle,
+                                        new XAttribute(W.val, "CommentReference")
+                                    )
+                                ),
+                                new XElement(W.annotationRef)
+                            ),
+                            new XElement(W.r, new XElement(W.t, new XText(contentType)))
+                        )
+                    );
                     newComments.Root.Add(newElement);
 
 #if false
@@ -1595,13 +1858,15 @@ namespace Clippit.Word
       </w:r>
 #endif
 
-                    var commentRun = new XElement(W.r,
-                        new XElement(W.rPr,
-                            new XElement(W.rStyle, new XAttribute(W.val, "CommentReference"))),
-                        new XElement(W.commentReference,
-                            new XAttribute(W.id, commentNumber)));
-                    var firstRunInParagraph = blc
-                        .DescendantsTrimmed(W.txbxContent)
+                    var commentRun = new XElement(
+                        W.r,
+                        new XElement(
+                            W.rPr,
+                            new XElement(W.rStyle, new XAttribute(W.val, "CommentReference"))
+                        ),
+                        new XElement(W.commentReference, new XAttribute(W.id, commentNumber))
+                    );
+                    var firstRunInParagraph = blc.DescendantsTrimmed(W.txbxContent)
                         .Where(r => r.Name == W.r)
                         .FirstOrDefault();
                     if (firstRunInParagraph != null)
@@ -1619,12 +1884,14 @@ namespace Clippit.Word
 
                     if (mainPart.StyleDefinitionsPart == null)
                     {
-                        throw new ContentApplierException("Document does not have styles definition part");
+                        throw new ContentApplierException(
+                            "Document does not have styles definition part"
+                        );
                     }
                     var stylesXDoc = mainPart.StyleDefinitionsPart.GetXDocument();
 
                     var style =
-@"<w:style w:type=""paragraph""
+                        @"<w:style w:type=""paragraph""
            w:styleId=""CommentText""
            xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
     <w:name w:val=""annotation text""/>
@@ -1639,7 +1906,7 @@ namespace Clippit.Word
 ";
                     AddIfMissing(stylesXDoc, style);
                     style =
-@"<w:style w:type=""paragraph""
+                        @"<w:style w:type=""paragraph""
            w:styleId=""CommentSubject""
            xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
     <w:name w:val=""annotation subject""/>
@@ -1654,7 +1921,7 @@ namespace Clippit.Word
 ";
                     AddIfMissing(stylesXDoc, style);
                     style =
-@"<w:style w:type=""character""
+                        @"<w:style w:type=""character""
            w:styleId=""CommentReference""
            xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
     <w:name w:val=""annotation reference""/>
@@ -1671,7 +1938,7 @@ namespace Clippit.Word
 ";
                     AddIfMissing(stylesXDoc, style);
                     style =
-@"<w:style w:type=""character""
+                        @"<w:style w:type=""character""
            w:customStyle=""1""
            w:styleId=""CommentTextChar""
            xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
@@ -1690,10 +1957,14 @@ namespace Clippit.Word
                     mainPart.StyleDefinitionsPart.PutXDocument();
                 }
             }
-
         }
 
-        private static void AddContentTypeToRunContent(WmlToXmlSettings settings, OpenXmlPart part, XElement rlc, string contentType)
+        private static void AddContentTypeToRunContent(
+            WmlToXmlSettings settings,
+            OpenXmlPart part,
+            XElement rlc,
+            string contentType
+        )
         {
             // if there is already a content type for this run level content, then nothing to do.  First one wins.
             if (rlc.Attribute(PtOpenXml.ContentType) != null)
@@ -1702,7 +1973,10 @@ namespace Clippit.Word
             // add the attribute to the block level content
             rlc.Add(new XAttribute(PtOpenXml.ContentType, contentType));
 
-            if (settings.InjectCommentForContentTypes != null && (bool)settings.InjectCommentForContentTypes)
+            if (
+                settings.InjectCommentForContentTypes != null
+                && (bool)settings.InjectCommentForContentTypes
+            )
             {
                 var mainPart = part as MainDocumentPart;
                 if (mainPart != null)
@@ -1715,7 +1989,9 @@ namespace Clippit.Word
                         newComments = mainPart.WordprocessingCommentsPart.GetXDocument();
                         newComments.Declaration.Standalone = "yes";
                         newComments.Declaration.Encoding = "UTF-8";
-                        var ids = newComments.Root.Elements(W.comment).Select(f => (int)f.Attribute(W.id));
+                        var ids = newComments
+                            .Root.Elements(W.comment)
+                            .Select(f => (int)f.Attribute(W.id));
                         if (ids.Any())
                             commentNumber = ids.Max() + 1;
                     }
@@ -1728,28 +2004,39 @@ namespace Clippit.Word
                         newComments.Add(new XElement(W.comments, NamespaceAttributes));
                         commentNumber = 1;
                     }
-                    var newElement = new XElement(W.comment,
+                    var newElement = new XElement(
+                        W.comment,
                         new XAttribute(W.id, commentNumber),
-                        new XElement(W.p,
-                            new XElement(W.pPr,
-                                new XElement(W.pStyle,
-                                    new XAttribute(W.val, "CommentText"))),
-                            new XElement(W.r,
-                                new XElement(W.rPr,
-                                    new XElement(W.rStyle,
-                                        new XAttribute(W.val, "CommentReference"))),
-                                        new XElement(W.annotationRef)),
-                            new XElement(W.r,
-                                new XElement(W.t,
-                                    new XText(contentType)))));
+                        new XElement(
+                            W.p,
+                            new XElement(
+                                W.pPr,
+                                new XElement(W.pStyle, new XAttribute(W.val, "CommentText"))
+                            ),
+                            new XElement(
+                                W.r,
+                                new XElement(
+                                    W.rPr,
+                                    new XElement(
+                                        W.rStyle,
+                                        new XAttribute(W.val, "CommentReference")
+                                    )
+                                ),
+                                new XElement(W.annotationRef)
+                            ),
+                            new XElement(W.r, new XElement(W.t, new XText(contentType)))
+                        )
+                    );
                     newComments.Root.Add(newElement);
-                    var commentRun = new XElement(W.r,
-                        new XElement(W.rPr,
-                            new XElement(W.rStyle, new XAttribute(W.val, "CommentReference"))),
-                        new XElement(W.commentReference,
-                            new XAttribute(W.id, commentNumber)));
-                    var firstRunInParagraph = rlc
-                        .DescendantsTrimmed(W.txbxContent)
+                    var commentRun = new XElement(
+                        W.r,
+                        new XElement(
+                            W.rPr,
+                            new XElement(W.rStyle, new XAttribute(W.val, "CommentReference"))
+                        ),
+                        new XElement(W.commentReference, new XAttribute(W.id, commentNumber))
+                    );
+                    var firstRunInParagraph = rlc.DescendantsTrimmed(W.txbxContent)
                         .Where(r => r.Name == W.r)
                         .FirstOrDefault();
 
@@ -1758,12 +2045,14 @@ namespace Clippit.Word
                         rlc.AddBeforeSelf(commentRun);
                     if (mainPart.StyleDefinitionsPart == null)
                     {
-                        throw new ContentApplierException("Document does not have styles definition part");
+                        throw new ContentApplierException(
+                            "Document does not have styles definition part"
+                        );
                     }
                     var stylesXDoc = mainPart.StyleDefinitionsPart.GetXDocument();
 
                     var style =
-@"<w:style w:type=""paragraph""
+                        @"<w:style w:type=""paragraph""
            w:styleId=""CommentText""
            xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
     <w:name w:val=""annotation text""/>
@@ -1778,7 +2067,7 @@ namespace Clippit.Word
 ";
                     AddIfMissing(stylesXDoc, style);
                     style =
-@"<w:style w:type=""paragraph""
+                        @"<w:style w:type=""paragraph""
            w:styleId=""CommentSubject""
            xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
     <w:name w:val=""annotation subject""/>
@@ -1793,7 +2082,7 @@ namespace Clippit.Word
 ";
                     AddIfMissing(stylesXDoc, style);
                     style =
-@"<w:style w:type=""character""
+                        @"<w:style w:type=""character""
            w:styleId=""CommentReference""
            xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
     <w:name w:val=""annotation reference""/>
@@ -1810,7 +2099,7 @@ namespace Clippit.Word
 ";
                     AddIfMissing(stylesXDoc, style);
                     style =
-@"<w:style w:type=""character""
+                        @"<w:style w:type=""character""
            w:customStyle=""1""
            w:styleId=""CommentTextChar""
            xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
@@ -1840,8 +2129,7 @@ namespace Clippit.Word
            w:styleId=""CommentTextChar""
 #endif
             var existingStyle = stylesXDoc
-                .Root
-                .Elements(W.style)
+                .Root.Elements(W.style)
                 .FirstOrDefault(e2 =>
                 {
                     var name = W.type;
@@ -1866,7 +2154,10 @@ namespace Clippit.Word
             stylesXDoc.Root.Add(e1);
         }
 
-        private static void AssembleListItemInformation(WordprocessingDocument wordDoc, ListItemRetrieverSettings settings)
+        private static void AssembleListItemInformation(
+            WordprocessingDocument wordDoc,
+            ListItemRetrieverSettings settings
+        )
         {
             var xDoc = wordDoc.MainDocumentPart.GetXDocument();
             foreach (var para in xDoc.Descendants(W.p))
@@ -1880,43 +2171,75 @@ namespace Clippit.Word
             public string DefaultParagraphStyleName;
             public string DefaultCharacterStyleName;
             public string DefaultTableStyleName;
-            public ContentTypeApplierInfo()
-            {
-            }
+
+            public ContentTypeApplierInfo() { }
         }
 
         public class ContentApplierException : Exception
         {
-            public ContentApplierException(string message) : base(message) { }
+            public ContentApplierException(string message)
+                : base(message) { }
         }
 
-        public static List<WmlToXmlValidationError> ValidateContentTypeXml(WmlDocument wmlRawSourceDocument, WmlDocument wmlWithContentTypeApplied, XElement contentTypeXml, WmlToXmlSettings settings)
+        public static List<WmlToXmlValidationError> ValidateContentTypeXml(
+            WmlDocument wmlRawSourceDocument,
+            WmlDocument wmlWithContentTypeApplied,
+            XElement contentTypeXml,
+            WmlToXmlSettings settings
+        )
         {
             var errorList = new List<WmlToXmlValidationError>();
 
             using (var msContentTypeApplied = new MemoryStream())
             using (var msRawSourceDocument = new MemoryStream())
             {
-                msContentTypeApplied.Write(wmlWithContentTypeApplied.DocumentByteArray, 0, wmlWithContentTypeApplied.DocumentByteArray.Length);
-                msRawSourceDocument.Write(wmlRawSourceDocument.DocumentByteArray, 0, wmlRawSourceDocument.DocumentByteArray.Length);
-                using (var wDocContentTypeApplied = WordprocessingDocument.Open(msContentTypeApplied, true))
-                using (var wDocRawSourceDocument = WordprocessingDocument.Open(msRawSourceDocument, true))
+                msContentTypeApplied.Write(
+                    wmlWithContentTypeApplied.DocumentByteArray,
+                    0,
+                    wmlWithContentTypeApplied.DocumentByteArray.Length
+                );
+                msRawSourceDocument.Write(
+                    wmlRawSourceDocument.DocumentByteArray,
+                    0,
+                    wmlRawSourceDocument.DocumentByteArray.Length
+                );
+                using (
+                    var wDocContentTypeApplied = WordprocessingDocument.Open(
+                        msContentTypeApplied,
+                        true
+                    )
+                )
+                using (
+                    var wDocRawSourceDocument = WordprocessingDocument.Open(
+                        msRawSourceDocument,
+                        true
+                    )
+                )
                 {
                     foreach (var vr in settings.GlobalValidationRules)
                     {
-                        if (settings.DocumentType != null &&
-                            vr.DocumentTypeInfoCollection != null)
+                        if (settings.DocumentType != null && vr.DocumentTypeInfoCollection != null)
                         {
-                            var thisdti = vr.DocumentTypeInfoCollection.FirstOrDefault(dti => dti.DocumentType == settings.DocumentType);
+                            var thisdti = vr.DocumentTypeInfoCollection.FirstOrDefault(dti =>
+                                dti.DocumentType == settings.DocumentType
+                            );
                             if (thisdti == null)
-                                throw new OpenXmlPowerToolsException("Incorrect setup of Validation Rules");
+                                throw new OpenXmlPowerToolsException(
+                                    "Incorrect setup of Validation Rules"
+                                );
 
                             if (thisdti.ValidationErrorType == ValidationErrorType.NotApplicable)
                                 continue;
                         }
                         if (vr.GlobalRuleLambda != null)
                         {
-                            var valErrors = vr.GlobalRuleLambda(vr, wDocRawSourceDocument, wDocContentTypeApplied, contentTypeXml, settings);
+                            var valErrors = vr.GlobalRuleLambda(
+                                vr,
+                                wDocRawSourceDocument,
+                                wDocContentTypeApplied,
+                                contentTypeXml,
+                                settings
+                            );
                             if (valErrors != null && valErrors.Any())
                             {
                                 foreach (var ve in valErrors)
@@ -1927,41 +2250,54 @@ namespace Clippit.Word
                         }
                     }
                     var mXDoc = wDocContentTypeApplied.MainDocumentPart.GetXDocument();
-                    var sXDoc = wDocContentTypeApplied.MainDocumentPart.StyleDefinitionsPart.GetXDocument();
+                    var sXDoc =
+                        wDocContentTypeApplied.MainDocumentPart.StyleDefinitionsPart.GetXDocument();
 
                     var defaultParagraphStyle = sXDoc
-                        .Root
-                        .Elements(W.style)
+                        .Root.Elements(W.style)
                         .FirstOrDefault(s => (string)s.Attribute(W._default) == "1");
 
                     string defaultParagraphStyleName = null;
                     if (defaultParagraphStyle != null)
-                        defaultParagraphStyleName = (string)defaultParagraphStyle.Attribute(W.styleId);
+                        defaultParagraphStyleName = (string)
+                            defaultParagraphStyle.Attribute(W.styleId);
 
-                    foreach (var blc in mXDoc.Root.Descendants().Where(d => d.Name == W.p || d.Name == W.tbl || d.Name == W.tr || d.Name == W.tc))
+                    foreach (
+                        var blc in mXDoc
+                            .Root.Descendants()
+                            .Where(d =>
+                                d.Name == W.p || d.Name == W.tbl || d.Name == W.tr || d.Name == W.tc
+                            )
+                    )
                     {
-                        var styleId = (string)blc
-                            .Elements(W.pPr)
-                            .Elements(W.pStyle)
-                            .Attributes(W.val)
-                            .FirstOrDefault();
-                        var styleName = (string)sXDoc
-                            .Root
-                            .Elements(W.style)
-                            .Where(s => (string)s.Attribute(W.styleId) == styleId)
-                            .Elements(W.name)
-                            .Attributes(W.val)
-                            .FirstOrDefault();
+                        var styleId = (string)
+                            blc.Elements(W.pPr)
+                                .Elements(W.pStyle)
+                                .Attributes(W.val)
+                                .FirstOrDefault();
+                        var styleName = (string)
+                            sXDoc
+                                .Root.Elements(W.style)
+                                .Where(s => (string)s.Attribute(W.styleId) == styleId)
+                                .Elements(W.name)
+                                .Attributes(W.val)
+                                .FirstOrDefault();
 
                         if (styleName == null && blc.Name == W.p)
                             styleName = defaultParagraphStyleName;
 
                         foreach (var vr in settings.BlockLevelContentValidationRules)
                         {
-                            if (settings.DocumentType != null &&
-                                vr.DocumentTypeInfoCollection != null)
+                            if (
+                                settings.DocumentType != null
+                                && vr.DocumentTypeInfoCollection != null
+                            )
                             {
-                                if (!vr.DocumentTypeInfoCollection.Any(dti => dti.DocumentType == settings.DocumentType))
+                                if (
+                                    !vr.DocumentTypeInfoCollection.Any(dti =>
+                                        dti.DocumentType == settings.DocumentType
+                                    )
+                                )
                                     continue;
                             }
 
@@ -1980,7 +2316,13 @@ namespace Clippit.Word
                             }
                             if (matchStyle && vr.BlockLevelContentRuleLambda != null)
                             {
-                                var valErrors = vr.BlockLevelContentRuleLambda(blc, vr, wDocContentTypeApplied, contentTypeXml, settings);
+                                var valErrors = vr.BlockLevelContentRuleLambda(
+                                    blc,
+                                    vr,
+                                    wDocContentTypeApplied,
+                                    contentTypeXml,
+                                    settings
+                                );
                                 if (valErrors != null && valErrors.Any())
                                 {
                                     foreach (var ve in valErrors)
@@ -2047,8 +2389,12 @@ namespace Clippit.Word
                 {
                     elementList.Add(childElement);
                 }
-                else if (childElement.Name == W.tbl || childElement.Name == W.tc || childElement.Name == W.sdt ||
-                    childElement.Name == W.sdtContent)
+                else if (
+                    childElement.Name == W.tbl
+                    || childElement.Name == W.tc
+                    || childElement.Name == W.sdt
+                    || childElement.Name == W.sdtContent
+                )
                 {
                     DetermineElementOrder(childElement, elementList);
                 }

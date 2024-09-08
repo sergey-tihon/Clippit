@@ -10,9 +10,8 @@ namespace Clippit.Tests.Word.Samples
 {
     public class FieldRetrieverSamples : TestsBase
     {
-        public FieldRetrieverSamples(ITestOutputHelper log) : base(log)
-        {
-        }
+        public FieldRetrieverSamples(ITestOutputHelper log)
+            : base(log) { }
 
         private static string GetFilePath(string path) =>
             Path.Combine("../../../Word/Samples/FieldRetriever/", path);
@@ -21,7 +20,9 @@ namespace Clippit.Tests.Word.Samples
         public void Sample1()
         {
             var docWithFooter = new FileInfo(GetFilePath("DocWithFooter1.docx"));
-            var scrubbedDocument = new FileInfo(Path.Combine(TempDir, "DocWithFooterScrubbed1.docx"));
+            var scrubbedDocument = new FileInfo(
+                Path.Combine(TempDir, "DocWithFooterScrubbed1.docx")
+            );
             File.Copy(docWithFooter.FullName, scrubbedDocument.FullName, true);
             using var wDoc = WordprocessingDocument.Open(scrubbedDocument.FullName, true);
             ScrubFooter(wDoc, new[] { "PAGE" });
@@ -31,7 +32,9 @@ namespace Clippit.Tests.Word.Samples
         public void Sample2()
         {
             var docWithFooter = new FileInfo(GetFilePath("DocWithFooter2.docx"));
-            var scrubbedDocument = new FileInfo(Path.Combine(TempDir, "DocWithFooterScrubbed2.docx"));
+            var scrubbedDocument = new FileInfo(
+                Path.Combine(TempDir, "DocWithFooterScrubbed2.docx")
+            );
             File.Copy(docWithFooter.FullName, scrubbedDocument.FullName, true);
             using var wDoc = WordprocessingDocument.Open(scrubbedDocument.FullName, true);
             ScrubFooter(wDoc, new[] { "PAGE", "DATE" });
@@ -51,31 +54,35 @@ namespace Clippit.Tests.Word.Samples
         private static void RemoveAllButSpecificFields(XElement root, string[] fieldTypesToRetain)
         {
             var cachedAnnotationInformation = root.Annotation<Dictionary<int, List<XElement>>>();
-            var runsToKeep = cachedAnnotationInformation.SelectMany(item => root.Descendants()
-                    .Where(d =>
-                    {
-                        var stack = d.Annotation<Stack<FieldRetriever.FieldElementTypeInfo>>();
-                        return stack != null && stack.Any(stackItem => stackItem.Id == item.Key);
-                    })
-                    .Select(d => d.AncestorsAndSelf(W.r).FirstOrDefault())
-                    .GroupAdjacent(o => o)
-                    .Select(g => g.First())
-                    .ToList())
+            var runsToKeep = cachedAnnotationInformation
+                .SelectMany(item =>
+                    root.Descendants()
+                        .Where(d =>
+                        {
+                            var stack = d.Annotation<Stack<FieldRetriever.FieldElementTypeInfo>>();
+                            return stack != null
+                                && stack.Any(stackItem => stackItem.Id == item.Key);
+                        })
+                        .Select(d => d.AncestorsAndSelf(W.r).FirstOrDefault())
+                        .GroupAdjacent(o => o)
+                        .Select(g => g.First())
+                        .ToList()
+                )
                 .ToList();
 
             foreach (var paragraph in root.Descendants(W.p).ToList())
             {
                 if (paragraph.Elements(W.r).Any(r => runsToKeep.Contains(r)))
                 {
-                    paragraph.Elements(W.r)
-                        .Where(r => !runsToKeep.Contains(r) &&
-                                    !r.Elements(W.tab).Any())
+                    paragraph
+                        .Elements(W.r)
+                        .Where(r => !runsToKeep.Contains(r) && !r.Elements(W.tab).Any())
                         .Remove();
-                    paragraph.Elements(W.r)
+                    paragraph
+                        .Elements(W.r)
                         .Where(r => !runsToKeep.Contains(r))
                         .Elements()
-                        .Where(rc => rc.Name != W.rPr &&
-                                     rc.Name != W.tab)
+                        .Where(rc => rc.Name != W.rPr && rc.Name != W.tab)
                         .Remove();
                 }
                 else

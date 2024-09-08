@@ -18,7 +18,7 @@ namespace Clippit.Excel
     // The classes in SpreadsheetWriter are still a work-in-progress.  While they are useful in their current state, I will be enhancing and
     // changing them in the future.  In particular, I will be augmenting the various definition classes (WorkbookDfn, WorksheetDfn,
     // RowDfn, and CellDfn.
-    
+
     // They are robust enough in their current form to be used in enterprise, mission critical.
 
     public class WorkbookDfn
@@ -48,36 +48,37 @@ namespace Clippit.Excel
     // Standard formats
     public class CellDfn
     {
-        public static readonly Dictionary<string, int> StandardFormats = new()
-        {
-            { "0",                        1   },
-            { "0.00",                     2   },
-            { "#,##0",                    3   },
-            { "#,##0.00",                 4   },
-            { "0%",                       9   },
-            { "0.00%",                    10  },
-            { "0.00E+00",                 11  },
-            { "# ?/?",                    12  },
-            { "# ??/??",                  13  },
-            { "mm-dd-yy",                 14  },
-            { "d-mmm-yy",                 15  },
-            { "d-mmm",                    16  },
-            { "mmm-yy",                   17  },
-            { "h:mm AM/PM",               18  },
-            { "h:mm:ss AM/PM",            19  },
-            { "h:mm",                     20  },
-            { "h:mm:ss",                  21  },
-            { "h/d/yy h:mm",              22  },
-            { "#,##0;(#,##0)",            37  },
-            { "#,##0;[Red](#,##0)",       38  },
-            { "#,##0.00;(#,##0.00)",      39  },
-            { "#,##0.00;[Red](#,##0.00)", 40  },
-            { "mm:ss",                    45  },
-            { "[h]:mm:ss",                46  },
-            { "mmss.0",                   47  },
-            { "##0.0E+0",                 48  },
-            { "@",                        49  },
-        };
+        public static readonly Dictionary<string, int> StandardFormats =
+            new()
+            {
+                { "0", 1 },
+                { "0.00", 2 },
+                { "#,##0", 3 },
+                { "#,##0.00", 4 },
+                { "0%", 9 },
+                { "0.00%", 10 },
+                { "0.00E+00", 11 },
+                { "# ?/?", 12 },
+                { "# ??/??", 13 },
+                { "mm-dd-yy", 14 },
+                { "d-mmm-yy", 15 },
+                { "d-mmm", 16 },
+                { "mmm-yy", 17 },
+                { "h:mm AM/PM", 18 },
+                { "h:mm:ss AM/PM", 19 },
+                { "h:mm", 20 },
+                { "h:mm:ss", 21 },
+                { "h/d/yy h:mm", 22 },
+                { "#,##0;(#,##0)", 37 },
+                { "#,##0;[Red](#,##0)", 38 },
+                { "#,##0.00;(#,##0.00)", 39 },
+                { "#,##0.00;[Red](#,##0.00)", 40 },
+                { "mm:ss", 45 },
+                { "[h]:mm:ss", 46 },
+                { "mmss.0", 47 },
+                { "##0.0E+0", 48 },
+                { "@", 49 },
+            };
         public object Value { get; set; }
         public CellDataType? CellDataType { get; set; }
         public HorizontalCellAlignment? HorizontalCellAlignment { get; set; }
@@ -108,8 +109,10 @@ namespace Clippit.Excel
         {
             try
             {
-                if (fileName is null) throw new ArgumentNullException(nameof(fileName));
-                if (workbook is null) throw new ArgumentNullException(nameof(workbook));
+                if (fileName is null)
+                    throw new ArgumentNullException(nameof(fileName));
+                if (workbook is null)
+                    throw new ArgumentNullException(nameof(workbook));
 
                 var fi = new FileInfo(fileName);
                 if (fi.Exists)
@@ -128,12 +131,14 @@ namespace Clippit.Excel
                 throw;
             }
         }
-        
+
         public static void WriteTo(this WorkbookDfn workbook, Stream stream)
         {
-            if (stream is null) throw new ArgumentNullException(nameof(stream));
-            if (workbook is null) throw new ArgumentNullException(nameof(workbook));
-            
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+            if (workbook is null)
+                throw new ArgumentNullException(nameof(workbook));
+
             // create the blank workbook
             foreach (var b in CreateBlankWorkbook())
             {
@@ -153,17 +158,20 @@ namespace Clippit.Excel
             return Convert.FromBase64CharArray(base64CharArray, 0, base64CharArray.Length);
         }
 
-        private static void SaveWorkbookToSpreadSheet(SpreadsheetDocument sDoc, WorkbookDfn workbook)
+        private static void SaveWorkbookToSpreadSheet(
+            SpreadsheetDocument sDoc,
+            WorkbookDfn workbook
+        )
         {
             var workbookPart = sDoc.WorkbookPart;
             var wXDoc = workbookPart.GetXDocument();
-            var sheetElement = wXDoc.Root
-                .Elements(S.sheets)
+            var sheetElement = wXDoc
+                .Root.Elements(S.sheets)
                 .Elements(S.sheet)
                 .FirstOrDefault(s => (string)s.Attribute(SSNoNamespace.name) == "Sheet1");
             if (sheetElement is null)
                 throw new SpreadsheetWriterInternalException();
-            
+
             var id = (string)sheetElement.Attribute(R.id);
             sheetElement.Remove();
             workbookPart.PutXDocument();
@@ -171,11 +179,9 @@ namespace Clippit.Excel
             var sPart = (WorksheetPart)workbookPart.GetPartById(id);
             workbookPart.DeletePart(sPart);
 
-            var appXDoc = sDoc
-                .ExtendedFilePropertiesPart
-                .GetXDocument();
-            var vector = appXDoc.Root
-                .Elements(EP.TitlesOfParts)
+            var appXDoc = sDoc.ExtendedFilePropertiesPart.GetXDocument();
+            var vector = appXDoc
+                .Root.Elements(EP.TitlesOfParts)
                 .Elements(VT.vector)
                 .FirstOrDefault();
             if (vector != null)
@@ -186,13 +192,10 @@ namespace Clippit.Excel
             }
 
             var vector2 = appXDoc
-                .Root
-                .Elements(EP.HeadingPairs)
+                .Root.Elements(EP.HeadingPairs)
                 .Elements(VT.vector)
                 .FirstOrDefault();
-            var variant = vector2
-                .Descendants(VT.i4)
-                .FirstOrDefault();
+            var variant = vector2.Descendants(VT.i4).FirstOrDefault();
             if (variant != null)
                 variant.Value = "1";
             sDoc.ExtendedFilePropertiesPart.PutXDocument();
@@ -215,20 +218,20 @@ namespace Clippit.Excel
             // throw WorksheetAlreadyExistsException if a sheet with the same name (case-insensitive) already exists in the workbook
             var UCName = worksheetData.Name.ToUpper();
             var wXDoc = sDoc.WorkbookPart.GetXDocument();
-            if (wXDoc.Root
-                .Elements(S.sheets)
-                .Elements(S.sheet)
-                .Attributes(SSNoNamespace.name)
-                .Select(a => ((string)a).ToUpper())
-                .Contains(UCName))
+            if (
+                wXDoc
+                    .Root.Elements(S.sheets)
+                    .Elements(S.sheet)
+                    .Attributes(SSNoNamespace.name)
+                    .Select(a => ((string)a).ToUpper())
+                    .Contains(UCName)
+            )
                 throw new WorksheetAlreadyExistsException(worksheetData.Name);
 
             // create the worksheet with the supplied name
-            var appXDoc = sDoc
-                .ExtendedFilePropertiesPart
-                .GetXDocument();
-            var vector = appXDoc.Root
-                .Elements(EP.TitlesOfParts)
+            var appXDoc = sDoc.ExtendedFilePropertiesPart.GetXDocument();
+            var vector = appXDoc
+                .Root.Elements(EP.TitlesOfParts)
                 .Elements(VT.vector)
                 .FirstOrDefault();
             if (vector != null)
@@ -237,8 +240,8 @@ namespace Clippit.Excel
                 size += 1;
                 vector.SetAttributeValue(SSNoNamespace.size, size);
                 vector.Add(new XElement(VT.lpstr, worksheetData.Name));
-                var i4 = appXDoc.Root
-                    .Elements(EP.HeadingPairs)
+                var i4 = appXDoc
+                    .Root.Elements(EP.HeadingPairs)
                     .Elements(VT.vector)
                     .Elements(VT.variant)
                     .Elements(VT.i4)
@@ -255,10 +258,13 @@ namespace Clippit.Excel
             var wbXDoc = workbook.GetXDocument();
             var sheets = wbXDoc.Descendants(S.sheets).FirstOrDefault();
             sheets.Add(
-                new XElement(S.sheet,
+                new XElement(
+                    S.sheet,
                     new XAttribute(SSNoNamespace.name, worksheetData.Name),
                     new XAttribute(SSNoNamespace.sheetId, sheets.Elements(S.sheet).Count() + 1),
-                    new XAttribute(R.id, rId)));
+                    new XAttribute(R.id, rId)
+                )
+            );
             workbook.PutXDocument();
 
             var ws = S.s.ToString();
@@ -277,10 +283,23 @@ namespace Clippit.Excel
                     if (worksheetData.ColumnHeadings != null)
                     {
                         var row = new RowDfn { Cells = worksheetData.ColumnHeadings };
-                        SerializeRows(sDoc, partXmlWriter, new[] { row }, 1, out numColumns, out numColumnHeadingRows);
+                        SerializeRows(
+                            sDoc,
+                            partXmlWriter,
+                            new[] { row },
+                            1,
+                            out numColumns,
+                            out numColumnHeadingRows
+                        );
                     }
-                    SerializeRows(sDoc, partXmlWriter, worksheetData.Rows, numColumnHeadingRows + 1, out var numColumnsInRows,
-                        out var numRows);
+                    SerializeRows(
+                        sDoc,
+                        partXmlWriter,
+                        worksheetData.Rows,
+                        numColumnHeadingRows + 1,
+                        out var numColumnsInRows,
+                        out var numRows
+                    );
                     var totalRows = numColumnHeadingRows + numRows;
                     var totalColumns = Math.Max(numColumns, numColumnsInRows);
                     if (worksheetData.ColumnHeadings != null && worksheetData.TableName != null)
@@ -298,33 +317,56 @@ namespace Clippit.Excel
                         var tXDoc = tdp.GetXDocument();
 
                         // TODO: Optimize
-                        var tableCount = sDoc.Parts
-                            .SelectMany(x => x.OpenXmlPart.Parts)
+                        var tableCount = sDoc
+                            .Parts.SelectMany(x => x.OpenXmlPart.Parts)
                             .SelectMany(x => x.OpenXmlPart.Parts)
                             .Where(x => x.OpenXmlPart is TableDefinitionPart)
                             .Select(x => x.OpenXmlPart.Uri)
-                            .Distinct().Count();
-                        
-                        var table = new XElement(S.table,
+                            .Distinct()
+                            .Count();
+
+                        var table = new XElement(
+                            S.table,
                             new XAttribute(SSNoNamespace.id, tableCount + 1),
                             new XAttribute(SSNoNamespace.name, worksheetData.TableName),
                             new XAttribute(SSNoNamespace.displayName, worksheetData.TableName),
-                            new XAttribute(SSNoNamespace._ref, "A1:" + SpreadsheetMLUtil.IntToColumnId(totalColumns - 1) + totalRows),
+                            new XAttribute(
+                                SSNoNamespace._ref,
+                                "A1:"
+                                    + SpreadsheetMLUtil.IntToColumnId(totalColumns - 1)
+                                    + totalRows
+                            ),
                             new XAttribute(SSNoNamespace.totalsRowShown, 0),
-                            new XElement(S.autoFilter,
-                                new XAttribute(SSNoNamespace._ref, "A1:" + SpreadsheetMLUtil.IntToColumnId(totalColumns - 1) + totalRows)),
-                            new XElement(S.tableColumns,
+                            new XElement(
+                                S.autoFilter,
+                                new XAttribute(
+                                    SSNoNamespace._ref,
+                                    "A1:"
+                                        + SpreadsheetMLUtil.IntToColumnId(totalColumns - 1)
+                                        + totalRows
+                                )
+                            ),
+                            new XElement(
+                                S.tableColumns,
                                 new XAttribute(SSNoNamespace.count, totalColumns),
-                                worksheetData.ColumnHeadings.Select((ch, i) =>
-                                    new XElement(S.tableColumn,
-                                        new XAttribute(SSNoNamespace.id, i + 1),
-                                        new XAttribute(SSNoNamespace.name, ch.Value)))),
-                            new XElement(S.tableStyleInfo,
+                                worksheetData.ColumnHeadings.Select(
+                                    (ch, i) =>
+                                        new XElement(
+                                            S.tableColumn,
+                                            new XAttribute(SSNoNamespace.id, i + 1),
+                                            new XAttribute(SSNoNamespace.name, ch.Value)
+                                        )
+                                )
+                            ),
+                            new XElement(
+                                S.tableStyleInfo,
                                 new XAttribute(SSNoNamespace.name, "TableStyleMedium2"),
                                 new XAttribute(SSNoNamespace.showFirstColumn, 0),
                                 new XAttribute(SSNoNamespace.showLastColumn, 0),
                                 new XAttribute(SSNoNamespace.showRowStripes, 1),
-                                new XAttribute(SSNoNamespace.showColumnStripes, 0)));
+                                new XAttribute(SSNoNamespace.showColumnStripes, 0)
+                            )
+                        );
                         tXDoc.Add(table);
                         tdp.PutXDocument();
                     }
@@ -334,8 +376,14 @@ namespace Clippit.Excel
             sDoc.WorkbookPart.WorkbookStylesPart.Stylesheet.Save();
         }
 
-        private static void SerializeRows(SpreadsheetDocument sDoc, XmlWriter xmlWriter, IEnumerable<RowDfn> rows,
-            int startingRowNumber, out int numColumns, out int numRows)
+        private static void SerializeRows(
+            SpreadsheetDocument sDoc,
+            XmlWriter xmlWriter,
+            IEnumerable<RowDfn> rows,
+            int startingRowNumber,
+            out int numColumns,
+            out int numRows
+        )
         {
             var rowCount = 0;
             var rowNumber = startingRowNumber;
@@ -362,7 +410,13 @@ namespace Clippit.Excel
             numRows = rowCount;
         }
 
-        private static void SerializeRow(SpreadsheetDocument sDoc, XmlWriter xw, int rowCount, RowDfn row, out int numColumns)
+        private static void SerializeRow(
+            SpreadsheetDocument sDoc,
+            XmlWriter xw,
+            int rowCount,
+            RowDfn row,
+            out int numColumns
+        )
         {
             var ns = S.s.NamespaceName;
 
@@ -382,10 +436,12 @@ namespace Clippit.Excel
                     xw.WriteStartAttribute("r");
                     xw.WriteValue(SpreadsheetMLUtil.IntToColumnId(cellCount) + rowCount);
                     xw.WriteEndAttribute();
-                    if (cell.Bold != null ||
-                        cell.Italic != null ||
-                        cell.FormatCode != null ||
-                        cell.HorizontalCellAlignment != null)
+                    if (
+                        cell.Bold != null
+                        || cell.Italic != null
+                        || cell.FormatCode != null
+                        || cell.HorizontalCellAlignment != null
+                    )
                     {
                         xw.WriteStartAttribute("s");
                         xw.WriteValue(GetCellStyle(sDoc, cell));
@@ -425,10 +481,12 @@ namespace Clippit.Excel
                         switch (cell.Value)
                         {
                             case DateTime dt:
-                                xw.WriteValue(dt.ToString( "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff"));
+                                xw.WriteValue(dt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff"));
                                 break;
                             case DateTimeOffset dts:
-                                xw.WriteValue(dts.ToString( "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz"));
+                                xw.WriteValue(
+                                    dts.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz")
+                                );
                                 break;
                             default:
                                 xw.WriteValue(cell.Value);
@@ -448,14 +506,9 @@ namespace Clippit.Excel
         {
             var sXDoc = sDoc.WorkbookPart.WorkbookStylesPart.GetXDocument();
             var match = sXDoc
-                .Root
-                .Element(S.cellXfs)
+                .Root.Element(S.cellXfs)
                 .Elements(S.xf)
-                .Select((e, i) => new
-                {
-                    Element = e,
-                    Index = i,
-                })
+                .Select((e, i) => new { Element = e, Index = i })
                 .FirstOrDefault(xf => CompareStyles(sXDoc, xf.Element, cell));
             if (match != null)
                 return match.Index;
@@ -479,8 +532,13 @@ namespace Clippit.Excel
             if (cell.HorizontalCellAlignment != null)
             {
                 applyAlignment = new XAttribute(SSNoNamespace.applyAlignment, 1);
-                alignment = new XElement(S.alignment,
-                    new XAttribute(SSNoNamespace.horizontal, cell.HorizontalCellAlignment.ToString().ToLower()));
+                alignment = new XElement(
+                    S.alignment,
+                    new XAttribute(
+                        SSNoNamespace.horizontal,
+                        cell.HorizontalCellAlignment.ToString().ToLower()
+                    )
+                );
             }
             XAttribute applyNumberFormat = null;
             XAttribute numFmtId = null;
@@ -489,29 +547,33 @@ namespace Clippit.Excel
                 if (CellDfn.StandardFormats.ContainsKey(cell.FormatCode))
                 {
                     applyNumberFormat = new XAttribute(SSNoNamespace.applyNumberFormat, 1);
-                    numFmtId = new XAttribute(SSNoNamespace.numFmtId, CellDfn.StandardFormats[cell.FormatCode]);
+                    numFmtId = new XAttribute(
+                        SSNoNamespace.numFmtId,
+                        CellDfn.StandardFormats[cell.FormatCode]
+                    );
                 }
                 else
                 {
                     applyNumberFormat = new XAttribute(SSNoNamespace.applyNumberFormat, 1);
-                    numFmtId = new XAttribute(SSNoNamespace.numFmtId, GetNumFmtId(sXDoc, cell.FormatCode));
+                    numFmtId = new XAttribute(
+                        SSNoNamespace.numFmtId,
+                        GetNumFmtId(sXDoc, cell.FormatCode)
+                    );
                 }
             }
-            var newXf = new XElement(S.xf,
+            var newXf = new XElement(
+                S.xf,
                 applyFont,
                 fontId,
                 applyAlignment,
                 alignment,
                 applyNumberFormat,
-                numFmtId);
-            var cellXfs = sXDoc
-                .Root
-                .Element(S.cellXfs);
+                numFmtId
+            );
+            var cellXfs = sXDoc.Root.Element(S.cellXfs);
             if (cellXfs == null)
             {
-                cellXfs = new XElement(S.cellXfs,
-                    new XAttribute(SSNoNamespace.count, 1),
-                    newXf);
+                cellXfs = new XElement(S.cellXfs, new XAttribute(SSNoNamespace.count, 1), newXf);
                 return 0;
             }
             else
@@ -528,17 +590,23 @@ namespace Clippit.Excel
             var fonts = sXDoc.Root.Element(S.fonts);
             if (fonts == null)
             {
-                fonts = new XElement(S.fonts,
+                fonts = new XElement(
+                    S.fonts,
                     new XAttribute(SSNoNamespace.count, 1),
-                    new XElement(S.font,
+                    new XElement(
+                        S.font,
                         cell.Bold == true ? new XElement(S.b) : null,
-                        cell.Italic == true ? new XElement(S.i) : null));
+                        cell.Italic == true ? new XElement(S.i) : null
+                    )
+                );
                 sXDoc.Root.Add(fonts);
                 return 0;
             }
-            var font = new XElement(S.font,
+            var font = new XElement(
+                S.font,
                 cell.Bold == true ? new XElement(S.b) : null,
-                cell.Italic == true ? new XElement(S.i) : null);
+                cell.Italic == true ? new XElement(S.i) : null
+            );
             fonts.Add(font);
             var count = (int)fonts.Attribute(SSNoNamespace.count);
             fonts.SetAttributeValue(SSNoNamespace.count, count + 1);
@@ -550,28 +618,35 @@ namespace Clippit.Excel
             var xfNumber = 81;
             while (true)
             {
-                if (!sXDoc
-                    .Root
-                    .Elements(S.numFmts)
-                    .Elements(S.numFmt)
-                    .Any(nf => (int)nf.Attribute(SSNoNamespace.numFmtId) == xfNumber))
+                if (
+                    !sXDoc
+                        .Root.Elements(S.numFmts)
+                        .Elements(S.numFmt)
+                        .Any(nf => (int)nf.Attribute(SSNoNamespace.numFmtId) == xfNumber)
+                )
                     break;
                 ++xfNumber;
             }
             var numFmts = sXDoc.Root.Element(S.numFmts);
             if (numFmts == null)
             {
-                numFmts = new XElement(S.numFmts,
+                numFmts = new XElement(
+                    S.numFmts,
                     new XAttribute(SSNoNamespace.count, 1),
-                    new XElement(S.numFmt,
+                    new XElement(
+                        S.numFmt,
                         new XAttribute(SSNoNamespace.numFmtId, xfNumber),
-                        new XAttribute(SSNoNamespace.formatCode, formatCode)));
+                        new XAttribute(SSNoNamespace.formatCode, formatCode)
+                    )
+                );
                 sXDoc.Root.AddFirst(numFmts);
                 return xfNumber;
             }
-            var numFmt = new XElement(S.numFmt,
+            var numFmt = new XElement(
+                S.numFmt,
                 new XAttribute(SSNoNamespace.numFmtId, xfNumber),
-                new XAttribute(SSNoNamespace.formatCode, formatCode));
+                new XAttribute(SSNoNamespace.formatCode, formatCode)
+            );
             numFmts.Add(numFmt);
             return xfNumber;
         }
@@ -586,37 +661,45 @@ namespace Clippit.Excel
 
         private static bool MatchFont(XDocument sXDoc, XElement xf, CellDfn cell)
         {
-            if (((int?)xf.Attribute(SSNoNamespace.applyFont) == 0 ||
-                xf.Attribute(SSNoNamespace.applyFont) == null) &&
-                cell.Bold is null or false &&
-                cell.Italic is null or false)
+            if (
+                (
+                    (int?)xf.Attribute(SSNoNamespace.applyFont) == 0
+                    || xf.Attribute(SSNoNamespace.applyFont) == null
+                )
+                && cell.Bold is null or false
+                && cell.Italic is null or false
+            )
                 return true;
-            if (((int?)xf.Attribute(SSNoNamespace.applyFont) == 0 ||
-                xf.Attribute(SSNoNamespace.applyFont) == null) &&
-                (cell.Bold == true ||
-                 cell.Italic == true))
+            if (
+                (
+                    (int?)xf.Attribute(SSNoNamespace.applyFont) == 0
+                    || xf.Attribute(SSNoNamespace.applyFont) == null
+                ) && (cell.Bold == true || cell.Italic == true)
+            )
                 return false;
             var fontId = (int)xf.Attribute(SSNoNamespace.fontId);
-            var font = sXDoc
-                .Root
-                .Element(S.fonts)
-                .Elements(S.font)
-                .ElementAt(fontId);
-            var fabFont = new XElement(S.font,
+            var font = sXDoc.Root.Element(S.fonts).Elements(S.font).ElementAt(fontId);
+            var fabFont = new XElement(
+                S.font,
                 cell.Bold == true ? new XElement(S.b) : null,
-                cell.Italic == true ? new XElement(S.i) : null);
+                cell.Italic == true ? new XElement(S.i) : null
+            );
             var match = XNode.DeepEquals(font, fabFont);
             return match;
         }
 
         private static bool MatchAlignment(XDocument sXDoc, XElement xf, CellDfn cell)
         {
-            if ((int?)xf.Attribute(SSNoNamespace.applyAlignment) == 0 ||
-                (xf.Attribute(SSNoNamespace.applyAlignment) == null) &&
-                cell.HorizontalCellAlignment == null)
+            if (
+                (int?)xf.Attribute(SSNoNamespace.applyAlignment) == 0
+                || (xf.Attribute(SSNoNamespace.applyAlignment) == null)
+                    && cell.HorizontalCellAlignment == null
+            )
                 return true;
-            if (xf.Attribute(SSNoNamespace.applyAlignment) == null &&
-                cell.HorizontalCellAlignment != null)
+            if (
+                xf.Attribute(SSNoNamespace.applyAlignment) == null
+                && cell.HorizontalCellAlignment != null
+            )
                 return false;
             var alignment = (string)xf.Element(S.alignment).Attribute(SSNoNamespace.horizontal);
             var match = alignment == cell.HorizontalCellAlignment.ToString().ToLower();
@@ -625,11 +708,9 @@ namespace Clippit.Excel
 
         private static bool MatchFormat(XDocument sXDoc, XElement xf, CellDfn cell)
         {
-            if ((int?)xf.Attribute(SSNoNamespace.applyNumberFormat) != 1 &&
-                cell.FormatCode == null)
+            if ((int?)xf.Attribute(SSNoNamespace.applyNumberFormat) != 1 && cell.FormatCode == null)
                 return true;
-            if (xf.Attribute(SSNoNamespace.applyNumberFormat) == null &&
-                cell.FormatCode != null)
+            if (xf.Attribute(SSNoNamespace.applyNumberFormat) == null && cell.FormatCode != null)
                 return false;
             var numFmtId = (int)xf.Attribute(SSNoNamespace.numFmtId);
             int? nfi = null;
@@ -640,15 +721,14 @@ namespace Clippit.Excel
                 if (nfi == numFmtId)
                     return true;
             }
-            var numFmts = sXDoc
-                .Root
-                .Element(S.numFmts);
+            var numFmts = sXDoc.Root.Element(S.numFmts);
             if (numFmts == null)
                 return false;
             var numFmt = numFmts
                 .Elements(S.numFmt)
                 .FirstOrDefault(numFmtElement =>
-                    (int)numFmtElement.Attribute(SSNoNamespace.numFmtId) == numFmtId);
+                    (int)numFmtElement.Attribute(SSNoNamespace.numFmtId) == numFmtId
+                );
             if (numFmt == null)
                 return false;
             var styleFormatCode = (string)numFmt.Attribute(SSNoNamespace.formatCode);
@@ -656,7 +736,8 @@ namespace Clippit.Excel
             return match;
         }
 
-        private static readonly string _EmptyXlsx = @"UEsDBBQABgAIAAAAIQBi7p1oYQEAAJAEAAATAAgCW0NvbnRlbnRfVHlwZXNdLnhtbCCiBAIooAAC
+        private static readonly string _EmptyXlsx =
+            @"UEsDBBQABgAIAAAAIQBi7p1oYQEAAJAEAAATAAgCW0NvbnRlbnRfVHlwZXNdLnhtbCCiBAIooAAC
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -790,22 +871,17 @@ CAAAACEA5lWo42gBAACEAgAAGAAAAAAAAAAAAAAAAABZFAAAeGwvd29ya3NoZWV0cy9zaGVldDEu
 eG1sUEsBAi0AFAAGAAgAAAAhAJtkFtU+AQAAUQIAABEAAAAAAAAAAAAAAAAA9xUAAGRvY1Byb3Bz
 L2NvcmUueG1sUEsBAi0AFAAGAAgAAAAhAHREzCiJAQAAEQMAABAAAAAAAAAAAAAAAAAAbBgAAGRv
 Y1Byb3BzL2FwcC54bWxQSwUGAAAAAAoACgCAAgAAKxsAAAAA";
-
     }
 
     public class SpreadsheetWriterInternalException : Exception
     {
         public SpreadsheetWriterInternalException()
-            : base("Internal error - unexpected content in _EmptyXlsx.")
-        {
-        }
+            : base("Internal error - unexpected content in _EmptyXlsx.") { }
     }
 
     public class InvalidSheetNameException : Exception
     {
         public InvalidSheetNameException(string name)
-            : base($"The supplied name ({name}) is not a valid XLSX worksheet name.")
-        {
-        }
+            : base($"The supplied name ({name}) is not a valid XLSX worksheet name.") { }
     }
 }

@@ -21,9 +21,11 @@ namespace Clippit.Tests.PowerPoint
             Assert.True(p.ContentType != null);
             Assert.True(p.MimeVersion != null);
             Assert.True(p.Parts.Length != 0);
-            Assert.DoesNotContain(p.Parts, part => part.ContentType == null || part.ContentLocation == null);
+            Assert.DoesNotContain(
+                p.Parts,
+                part => part.ContentType == null || part.ContentLocation == null
+            );
         }
-
     }
 }
 

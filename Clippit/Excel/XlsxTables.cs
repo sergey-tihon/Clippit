@@ -23,31 +23,37 @@ namespace Clippit.Excel
         public int BottomRow { get; set; }
         public int? HeaderRowCount { get; set; }
         public int? TotalsRowCount { get; set; }
-        public string TableType { get; set; }  // external data query, data in worksheet, or XML data
+        public string TableType { get; set; } // external data query, data in worksheet, or XML data
         public TableDefinitionPart TableDefinitionPart { get; set; }
         public WorksheetPart Parent { get; set; }
-        public Table(WorksheetPart parent) { Parent = parent; }
+
+        public Table(WorksheetPart parent)
+        {
+            Parent = parent;
+        }
+
         public IEnumerable<TableColumn> TableColumns()
         {
             XNamespace x = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
             return TableDefinitionPart
                 .GetXDocument()
-                .Root
-                .Element(x + "tableColumns")
+                .Root.Element(x + "tableColumns")
                 .Elements(x + "tableColumn")
-                .Select((c, i) =>
-                    new TableColumn(this)
-                    {
-                        Id = (int)c.Attribute("id"),
-                        ColumnNumber = this.LeftColumn + i,
-                        Name = (string)c.Attribute("name"),
-                        DataDxfId = (int?)c.Attribute("dataDxfId"),
-                        QueryTableFieldId = (int?)c.Attribute("queryTableFieldId"),
-                        UniqueName = (string)c.Attribute("uniqueName"),
-                        ColumnIndex = i,
-                    }
+                .Select(
+                    (c, i) =>
+                        new TableColumn(this)
+                        {
+                            Id = (int)c.Attribute("id"),
+                            ColumnNumber = this.LeftColumn + i,
+                            Name = (string)c.Attribute("name"),
+                            DataDxfId = (int?)c.Attribute("dataDxfId"),
+                            QueryTableFieldId = (int?)c.Attribute("queryTableFieldId"),
+                            UniqueName = (string)c.Attribute("uniqueName"),
+                            ColumnIndex = i,
+                        }
                 );
         }
+
         public IEnumerable<TableRow> TableRows()
         {
             var refStart = Ref.Split(':').First();
@@ -64,8 +70,7 @@ namespace Clippit.Excel
                 {
                     var rowId = int.Parse(r.RowId);
                     return rowId >= rowStart && rowId <= rowEnd;
-                }
-                )
+                })
                 .Select(r => new TableRow(this) { Row = r });
         }
     }
@@ -80,14 +85,23 @@ namespace Clippit.Excel
         public int ColumnNumber { get; set; }
         public int ColumnIndex { get; set; }
         public Table Parent { get; set; }
-        public TableColumn(Table parent) { Parent = parent; }
+
+        public TableColumn(Table parent)
+        {
+            Parent = parent;
+        }
     }
 
     public class TableRow
     {
         public Row Row { get; set; }
         public Table Parent { get; set; }
-        public TableRow(Table parent) { Parent = parent; }
+
+        public TableRow(Table parent)
+        {
+            Parent = parent;
+        }
+
         public TableCell this[string columnName]
         {
             get
@@ -100,8 +114,12 @@ namespace Clippit.Excel
                     throw new Exception("Invalid column name: " + columnName);
                 var refs = Parent.Ref.Split(':');
                 var startRefs = XlsxTables.SplitAddress(refs[0]);
-                var columnAddress = XlsxTables.IndexToColumnAddress(XlsxTables.ColumnAddressToIndex(startRefs[0]) + tc.ColumnIndex);
-                var cell = Row.Cells().Where(c => c.ColumnAddress == columnAddress).FirstOrDefault();
+                var columnAddress = XlsxTables.IndexToColumnAddress(
+                    XlsxTables.ColumnAddressToIndex(startRefs[0]) + tc.ColumnIndex
+                );
+                var cell = Row.Cells()
+                    .Where(c => c.ColumnAddress == columnAddress)
+                    .FirstOrDefault();
                 if (cell != null)
                 {
                     if (cell.Type == "s")
@@ -118,129 +136,176 @@ namespace Clippit.Excel
     public class TableCell : IEquatable<TableCell>
     {
         public string Value { get; set; }
+
         public TableCell(string v)
         {
             Value = v;
         }
+
         public override string ToString()
         {
             return Value;
         }
+
         public override bool Equals(object obj)
         {
             return this.Value == ((TableCell)obj).Value;
         }
+
         bool IEquatable<TableCell>.Equals(TableCell other)
         {
             return this.Value == other.Value;
         }
+
         public override int GetHashCode()
         {
             return this.Value.GetHashCode();
         }
+
         public static bool operator ==(TableCell left, TableCell right)
         {
-            if (left != (object)right) return false;
+            if (left != (object)right)
+                return false;
             return left.Value == right.Value;
         }
+
         public static bool operator !=(TableCell left, TableCell right)
         {
-            if (left != (object)right) return false;
+            if (left != (object)right)
+                return false;
             return left.Value != right.Value;
         }
+
         public static explicit operator string(TableCell cell)
         {
-            if (cell == null) return null;
+            if (cell == null)
+                return null;
             return cell.Value;
         }
+
         public static explicit operator bool(TableCell cell)
         {
-            if (cell == null) throw new ArgumentNullException("TableCell");
+            if (cell == null)
+                throw new ArgumentNullException("TableCell");
             return cell.Value == "1";
         }
+
         public static explicit operator bool?(TableCell cell)
         {
-            if (cell == null) return null;
+            if (cell == null)
+                return null;
             return cell.Value == "1";
         }
+
         public static explicit operator int(TableCell cell)
         {
-            if (cell == null) throw new ArgumentNullException("TableCell");
+            if (cell == null)
+                throw new ArgumentNullException("TableCell");
             return int.Parse(cell.Value);
         }
+
         public static explicit operator int?(TableCell cell)
         {
-            if (cell == null) return null;
+            if (cell == null)
+                return null;
             return int.Parse(cell.Value);
         }
+
         public static explicit operator uint(TableCell cell)
         {
-            if (cell == null) throw new ArgumentNullException("TableCell");
+            if (cell == null)
+                throw new ArgumentNullException("TableCell");
             return uint.Parse(cell.Value);
         }
+
         public static explicit operator uint?(TableCell cell)
         {
-            if (cell == null) return null;
+            if (cell == null)
+                return null;
             return uint.Parse(cell.Value);
         }
+
         public static explicit operator long(TableCell cell)
         {
-            if (cell == null) throw new ArgumentNullException("TableCell");
+            if (cell == null)
+                throw new ArgumentNullException("TableCell");
             return long.Parse(cell.Value);
         }
+
         public static explicit operator long?(TableCell cell)
         {
-            if (cell == null) return null;
+            if (cell == null)
+                return null;
             return long.Parse(cell.Value);
         }
+
         public static explicit operator ulong(TableCell cell)
         {
-            if (cell == null) throw new ArgumentNullException("TableCell");
+            if (cell == null)
+                throw new ArgumentNullException("TableCell");
             return ulong.Parse(cell.Value);
         }
+
         public static explicit operator ulong?(TableCell cell)
         {
-            if (cell == null) return null;
+            if (cell == null)
+                return null;
             return ulong.Parse(cell.Value);
         }
+
         public static explicit operator float(TableCell cell)
         {
-            if (cell == null) throw new ArgumentNullException("TableCell");
+            if (cell == null)
+                throw new ArgumentNullException("TableCell");
             return float.Parse(cell.Value);
         }
+
         public static explicit operator float?(TableCell cell)
         {
-            if (cell == null) return null;
+            if (cell == null)
+                return null;
             return float.Parse(cell.Value);
         }
+
         public static explicit operator double(TableCell cell)
         {
-            if (cell == null) throw new ArgumentNullException("TableCell");
+            if (cell == null)
+                throw new ArgumentNullException("TableCell");
             return double.Parse(cell.Value);
         }
+
         public static explicit operator double?(TableCell cell)
         {
-            if (cell == null) return null;
+            if (cell == null)
+                return null;
             return double.Parse(cell.Value);
         }
+
         public static explicit operator decimal(TableCell cell)
         {
-            if (cell == null) throw new ArgumentNullException("TableCell");
+            if (cell == null)
+                throw new ArgumentNullException("TableCell");
             return decimal.Parse(cell.Value);
         }
+
         public static explicit operator decimal?(TableCell cell)
         {
-            if (cell == null) return null;
+            if (cell == null)
+                return null;
             return decimal.Parse(cell.Value);
         }
+
         public static implicit operator DateTime(TableCell cell)
         {
-            if (cell == null) throw new ArgumentNullException("TableCell");
+            if (cell == null)
+                throw new ArgumentNullException("TableCell");
             return new DateTime(1900, 1, 1).AddDays(int.Parse(cell.Value) - 2);
         }
+
         public static implicit operator DateTime?(TableCell cell)
         {
-            if (cell == null) return null;
+            if (cell == null)
+                return null;
             return new DateTime(1900, 1, 1).AddDays(int.Parse(cell.Value) - 2);
         }
     }
@@ -250,48 +315,56 @@ namespace Clippit.Excel
         public XElement RowElement { get; set; }
         public string RowId { get; set; }
         public string Spans { get; set; }
+
         public List<Cell> Cells()
         {
             XNamespace s = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
             var doc = (SpreadsheetDocument)Parent.OpenXmlPackage;
             var sharedStringTable = doc.WorkbookPart.SharedStringTablePart;
             var cells = this.RowElement.Elements(S.c);
-            var r = cells
-                .Select(cell => {
-                    var cellType = (string)cell.Attribute("t");
-                    var sharedString = cellType == "s" ?
-                        sharedStringTable
-                        .GetXDocument()
-                        .Root
-                        .Elements(s + "si")
-                        .Skip((int)cell.Element(s + "v"))
-                        .First()
-                        .Descendants(s + "t")
-                        .StringConcatenate(e => (string)e)
+            var r = cells.Select(cell =>
+            {
+                var cellType = (string)cell.Attribute("t");
+                var sharedString =
+                    cellType == "s"
+                        ? sharedStringTable
+                            .GetXDocument()
+                            .Root.Elements(s + "si")
+                            .Skip((int)cell.Element(s + "v"))
+                            .First()
+                            .Descendants(s + "t")
+                            .StringConcatenate(e => (string)e)
                         : null;
-                    var column = (string)cell.Attribute("r");
-                    var columnAddress = column.Split('0', '1', '2', '3', '4', '5', '6', '7', '8', '9').First();
-                    var columnIndex = XlsxTables.ColumnAddressToIndex(columnAddress);
-                    var newCell = new Cell(this)
-                    {
-                        CellElement = cell,
-                        Row = (string)RowElement.Attribute("r"),
-                        Column = column,
-                        ColumnAddress = columnAddress,
-                        ColumnIndex = columnIndex,
-                        Type = cellType,
-                        Formula = (string)cell.Element(S.f),
-                        Style = (int?)cell.Attribute("s"),
-                        Value = (string)cell.Element(S.v),
-                        SharedString = sharedString
-                    };
-                    return newCell;
-                });
+                var column = (string)cell.Attribute("r");
+                var columnAddress = column
+                    .Split('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+                    .First();
+                var columnIndex = XlsxTables.ColumnAddressToIndex(columnAddress);
+                var newCell = new Cell(this)
+                {
+                    CellElement = cell,
+                    Row = (string)RowElement.Attribute("r"),
+                    Column = column,
+                    ColumnAddress = columnAddress,
+                    ColumnIndex = columnIndex,
+                    Type = cellType,
+                    Formula = (string)cell.Element(S.f),
+                    Style = (int?)cell.Attribute("s"),
+                    Value = (string)cell.Element(S.v),
+                    SharedString = sharedString,
+                };
+                return newCell;
+            });
             var ra = r.ToList();
             return ra;
         }
+
         public WorksheetPart Parent { get; set; }
-        public Row(WorksheetPart parent) { Parent = parent; }
+
+        public Row(WorksheetPart parent)
+        {
+            Parent = parent;
+        }
     }
 
     public class Cell
@@ -307,7 +380,11 @@ namespace Clippit.Excel
         public int? Style { get; set; }
         public string SharedString { get; set; }
         public Row Parent { get; set; }
-        public Cell(Row parent) { Parent = parent; }
+
+        public Cell(Row parent)
+        {
+            Parent = parent;
+        }
     }
 
     public static class XlsxTables
@@ -315,33 +392,45 @@ namespace Clippit.Excel
         public static IEnumerable<Table> Tables(this SpreadsheetDocument spreadsheet)
         {
             foreach (var worksheetPart in spreadsheet.WorkbookPart.WorksheetParts)
-                foreach (var table in worksheetPart.TableDefinitionParts)
-                {
-                    var tableDefDoc = table.GetXDocument();
+            foreach (var table in worksheetPart.TableDefinitionParts)
+            {
+                var tableDefDoc = table.GetXDocument();
 
-                    var t = new Table(worksheetPart)
-                    {
-                        Id = (int)tableDefDoc.Root.Attribute("id"),
-                        TableName = (string)tableDefDoc.Root.Attribute("name"),
-                        DisplayName = (string)tableDefDoc.Root.Attribute("displayName"),
-                        TableStyleInfo = tableDefDoc.Root.Element(S.tableStyleInfo),
-                        Ref = (string)tableDefDoc.Root.Attribute("ref"),
-                        TotalsRowCount = (int?)tableDefDoc.Root.Attribute("totalsRowCount"),
-                        //HeaderRowCount = (int?)tableDefDoc.Root.Attribute("headerRowCount"),
-                        HeaderRowCount = 1,  // currently there always is a header row
-                        TableType = (string)tableDefDoc.Root.Attribute("tableType"),
-                        TableDefinitionPart = table
-                    };
-                    ParseRange(t.Ref, out var leftColumn, out var topRow, out var rightColumn, out var bottomRow);
-                    t.LeftColumn = leftColumn;
-                    t.TopRow = topRow;
-                    t.RightColumn = rightColumn;
-                    t.BottomRow = bottomRow;
-                    yield return t;
-                }
+                var t = new Table(worksheetPart)
+                {
+                    Id = (int)tableDefDoc.Root.Attribute("id"),
+                    TableName = (string)tableDefDoc.Root.Attribute("name"),
+                    DisplayName = (string)tableDefDoc.Root.Attribute("displayName"),
+                    TableStyleInfo = tableDefDoc.Root.Element(S.tableStyleInfo),
+                    Ref = (string)tableDefDoc.Root.Attribute("ref"),
+                    TotalsRowCount = (int?)tableDefDoc.Root.Attribute("totalsRowCount"),
+                    //HeaderRowCount = (int?)tableDefDoc.Root.Attribute("headerRowCount"),
+                    HeaderRowCount = 1, // currently there always is a header row
+                    TableType = (string)tableDefDoc.Root.Attribute("tableType"),
+                    TableDefinitionPart = table,
+                };
+                ParseRange(
+                    t.Ref,
+                    out var leftColumn,
+                    out var topRow,
+                    out var rightColumn,
+                    out var bottomRow
+                );
+                t.LeftColumn = leftColumn;
+                t.TopRow = topRow;
+                t.RightColumn = rightColumn;
+                t.BottomRow = bottomRow;
+                yield return t;
+            }
         }
 
-        public static void ParseRange(string theRef, out int leftColumn, out int topRow, out int rightColumn, out int bottomRow)
+        public static void ParseRange(
+            string theRef,
+            out int leftColumn,
+            out int topRow,
+            out int rightColumn,
+            out int bottomRow
+        )
         {
             // C5:E7
             var spl = theRef.Split(':');
@@ -356,10 +445,11 @@ namespace Clippit.Excel
             bottomRow = int.Parse(refEndSplit[1]);
         }
 
-        public static Table Table(this SpreadsheetDocument spreadsheet,
-            string tableName)
+        public static Table Table(this SpreadsheetDocument spreadsheet, string tableName)
         {
-            return spreadsheet.Tables().FirstOrDefault(t => t.TableName.ToLower() == tableName.ToLower());
+            return spreadsheet
+                .Tables()
+                .FirstOrDefault(t => t.TableName.ToLower() == tableName.ToLower());
         }
 
         public static IEnumerable<Row> Rows(this WorksheetPart worksheetPart)
@@ -367,8 +457,7 @@ namespace Clippit.Excel
             XNamespace s = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
             var rows = worksheetPart
                 .GetXDocument()
-                .Root
-                .Elements(S.sheetData)
+                .Root.Elements(S.sheetData)
                 .Elements(S.row)
                 .Select(r =>
                 {
@@ -376,7 +465,7 @@ namespace Clippit.Excel
                     {
                         RowElement = r,
                         RowId = (string)r.Attribute("r"),
-                        Spans = (string)r.Attribute("spans")
+                        Spans = (string)r.Attribute("spans"),
                     };
                     return row;
                 });
@@ -391,10 +480,7 @@ namespace Clippit.Excel
                     break;
             if (i == address.Length)
                 throw new FileFormatException("Invalid spreadsheet.  Bad cell address.");
-            return new[] {
-                address.Substring(0, i),
-                address.Substring(i)
-            };
+            return new[] { address.Substring(0, i), address.Substring(i) };
         }
 
         public static string IndexToColumnAddress(int index)
@@ -410,8 +496,7 @@ namespace Clippit.Excel
                 var i = index - 26;
                 var i1 = i / 26;
                 var i2 = i % 26;
-                var s = new string((char)('A' + i1), 1) +
-                        new string((char)('A' + i2), 1);
+                var s = new string((char)('A' + i1), 1) + new string((char)('A' + i2), 1);
                 return s;
             }
             if (index < 18278)
@@ -421,9 +506,10 @@ namespace Clippit.Excel
                 i = i - i1 * 676;
                 var i2 = i / 26;
                 var i3 = i % 26;
-                var s = new string((char)('A' + i1), 1) +
-                        new string((char)('A' + i2), 1) +
-                        new string((char)('A' + i3), 1);
+                var s =
+                    new string((char)('A' + i1), 1)
+                    + new string((char)('A' + i2), 1)
+                    + new string((char)('A' + i3), 1);
                 return s;
             }
             throw new Exception("Invalid column address");

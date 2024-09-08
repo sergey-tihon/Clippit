@@ -15,12 +15,16 @@ namespace Clippit
             XElement contentElement,
             XElement[] ancestorElements,
             OpenXmlPart part,
-            WmlComparerSettings settings)
+            WmlComparerSettings settings
+        )
         {
             ContentElement = contentElement;
             AncestorElements = ancestorElements;
             Part = part;
-            RevTrackElement = GetRevisionTrackingElementFromAncestors(contentElement, AncestorElements);
+            RevTrackElement = GetRevisionTrackingElementFromAncestors(
+                contentElement,
+                AncestorElements
+            );
 
             if (RevTrackElement == null)
             {
@@ -38,7 +42,7 @@ namespace Clippit
                 }
             }
 
-            var sha1Hash = (string) contentElement.Attribute(PtOpenXml.SHA1Hash);
+            var sha1Hash = (string)contentElement.Attribute(PtOpenXml.SHA1Hash);
             if (sha1Hash != null)
             {
                 SHA1Hash = sha1Hash;
@@ -68,7 +72,10 @@ namespace Clippit
 
         public OpenXmlPart Part { get; }
 
-        private static string GetSha1HashStringForElement(XElement contentElement, WmlComparerSettings settings)
+        private static string GetSha1HashStringForElement(
+            XElement contentElement,
+            WmlComparerSettings settings
+        )
         {
             var text = contentElement.Value;
             if (settings.CaseInsensitive)
@@ -81,10 +88,14 @@ namespace Clippit
 
         private static XElement GetRevisionTrackingElementFromAncestors(
             XElement contentElement,
-            IEnumerable<XElement> ancestors)
+            IEnumerable<XElement> ancestors
+        )
         {
             return contentElement.Name == W.pPr
-                ? contentElement.Elements(W.rPr).Elements().FirstOrDefault(e => e.Name == W.del || e.Name == W.ins)
+                ? contentElement
+                    .Elements(W.rPr)
+                    .Elements()
+                    .FirstOrDefault(e => e.Name == W.del || e.Name == W.ins)
                 : ancestors.FirstOrDefault(a => a.Name == W.del || a.Name == W.ins);
         }
 
@@ -110,13 +121,15 @@ namespace Clippit
             if (ContentElement.Name == W.t || ContentElement.Name == W.delText)
             {
                 sb.Append(
-                    $"Atom {PadLocalName(XNamePad, this)}: {ContentElement.Value} {correlationStatus} SHA1:{SHA1Hash.Substring(0, 8)} ");
+                    $"Atom {PadLocalName(XNamePad, this)}: {ContentElement.Value} {correlationStatus} SHA1:{SHA1Hash.Substring(0, 8)} "
+                );
                 AppendAncestorsDump(sb, this);
             }
             else
             {
                 sb.Append(
-                    $"Atom {PadLocalName(XNamePad, this)}:   {correlationStatus} SHA1:{SHA1Hash.Substring(0, 8)} ");
+                    $"Atom {PadLocalName(XNamePad, this)}:   {correlationStatus} SHA1:{SHA1Hash.Substring(0, 8)} "
+                );
 
                 AppendAncestorsDump(sb, this);
             }
@@ -146,14 +159,16 @@ namespace Clippit
             if (ContentElement.Name == W.t || ContentElement.Name == W.delText)
             {
                 sb.Append(
-                    $"Atom {PadLocalName(xNamePad, this)}: {ContentElement.Value} {correlationStatus} SHA1:{SHA1Hash.Substring(0, 8)} ");
+                    $"Atom {PadLocalName(xNamePad, this)}: {ContentElement.Value} {correlationStatus} SHA1:{SHA1Hash.Substring(0, 8)} "
+                );
 
                 AppendAncestorsUnidsDump(sb, this);
             }
             else
             {
                 sb.Append(
-                    $"Atom {PadLocalName(xNamePad, this)}:   {correlationStatus} SHA1:{SHA1Hash.Substring(0, 8)} ");
+                    $"Atom {PadLocalName(xNamePad, this)}:   {correlationStatus} SHA1:{SHA1Hash.Substring(0, 8)} "
+                );
 
                 AppendAncestorsUnidsDump(sb, this);
             }
@@ -178,22 +193,24 @@ namespace Clippit
 
         private static void AppendAncestorsUnidsDump(StringBuilder sb, ComparisonUnitAtom sr)
         {
-            var zipped = sr.AncestorElements.Zip(sr.AncestorUnids, (a, u) => new
-            {
-                AncestorElement = a,
-                AncestorUnid = u
-            });
+            var zipped = sr.AncestorElements.Zip(
+                sr.AncestorUnids,
+                (a, u) => new { AncestorElement = a, AncestorUnid = u }
+            );
 
             var s = zipped
-                .Select(p => p.AncestorElement.Name.LocalName + "[" + p.AncestorUnid.Substring(0, 8) + "]/")
-                .StringConcatenate().TrimEnd('/');
+                .Select(p =>
+                    p.AncestorElement.Name.LocalName + "[" + p.AncestorUnid.Substring(0, 8) + "]/"
+                )
+                .StringConcatenate()
+                .TrimEnd('/');
 
             sb.Append("Ancestors:" + s);
         }
 
         private static string GetUnid(XElement p)
         {
-            var unid = (string) p.Attribute(PtOpenXml.Unid);
+            var unid = (string)p.Attribute(PtOpenXml.Unid);
             return unid == null ? "" : "[" + unid.Substring(0, 8) + "]";
         }
     }

@@ -11,10 +11,9 @@ namespace Clippit.Tests.PowerPoint.Samples
 {
     public class PresentationBuilderSamples : TestsBase
     {
-        public PresentationBuilderSamples(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public PresentationBuilderSamples(ITestOutputHelper log)
+            : base(log) { }
+
         private static string GetFilePath(string path) =>
             Path.Combine("../../../PowerPoint/Samples/PresentationBuilder/", path);
 
@@ -34,20 +33,24 @@ namespace Clippit.Tests.PowerPoint.Samples
             var sourceDoc = new PmlDocument(source1);
             var sources = new List<SlideSource>
             {
-                new(sourceDoc, 0, 1, false),  // Title
-                new(sourceDoc, 1, 1, false),  // First intro (of 3)
-                new(sourceDoc, 4, 2, false),  // Sales bios
-                new(sourceDoc, 9, 3, false),  // Content slides
-                new(sourceDoc, 13, 1, false),  // Closing summary
+                new(sourceDoc, 0, 1, false), // Title
+                new(sourceDoc, 1, 1, false), // First intro (of 3)
+                new(sourceDoc, 4, 2, false), // Sales bios
+                new(sourceDoc, 9, 3, false), // Content slides
+                new(sourceDoc, 13, 1, false), // Closing summary
             };
-            PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(TempDir, "Out1.pptx"));
+            PresentationBuilder
+                .BuildPresentation(sources)
+                .SaveAs(Path.Combine(TempDir, "Out1.pptx"));
 
             sources = new List<SlideSource>
             {
-                new(new PmlDocument(source2), 2, 1, true),  // Choose company
-                new(new PmlDocument(source3), false),       // Content
+                new(new PmlDocument(source2), 2, 1, true), // Choose company
+                new(new PmlDocument(source3), false), // Content
             };
-            PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(TempDir, "Out2.pptx"));
+            PresentationBuilder
+                .BuildPresentation(sources)
+                .SaveAs(Path.Combine(TempDir, "Out2.pptx"));
 
             sources = new List<SlideSource>
             {
@@ -55,7 +58,9 @@ namespace Clippit.Tests.PowerPoint.Samples
                 new(new PmlDocument(source5), true),
                 new(new PmlDocument(source6), true),
             };
-            PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(TempDir, "Out3.pptx"));
+            PresentationBuilder
+                .BuildPresentation(sources)
+                .SaveAs(Path.Combine(TempDir, "Out3.pptx"));
 
             sources = new List<SlideSource>
             {
@@ -63,7 +68,9 @@ namespace Clippit.Tests.PowerPoint.Samples
                 new(new PmlDocument(contoso2), true),
                 new(new PmlDocument(contoso3), true),
             };
-            PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(TempDir, "Out4.pptx"));
+            PresentationBuilder
+                .BuildPresentation(sources)
+                .SaveAs(Path.Combine(TempDir, "Out4.pptx"));
         }
 
         [Fact]
@@ -114,13 +121,24 @@ namespace Clippit.Tests.PowerPoint.Samples
                 using (var document = streamDoc.GetPresentationDocument())
                 {
                     var pXDoc = document.PresentationPart.GetXDocument();
-                    foreach (var slideId in pXDoc.Root.Elements(P.sldIdLst).Elements(P.sldId).Skip(1).Take(1))
+                    foreach (
+                        var slideId in pXDoc
+                            .Root.Elements(P.sldIdLst)
+                            .Elements(P.sldId)
+                            .Skip(1)
+                            .Take(1)
+                    )
                     {
                         var slideRelId = (string)slideId.Attribute(R.id);
                         var slidePart = document.PresentationPart.GetPartById(slideRelId);
                         var slideXDoc = slidePart.GetXDocument();
                         var paragraphs = slideXDoc.Descendants(A.p).ToList();
-                        OpenXmlRegex.Replace(paragraphs, new Regex("<# TRADEMARK #>"), "AdventureWorks (c)", null);
+                        OpenXmlRegex.Replace(
+                            paragraphs,
+                            new Regex("<# TRADEMARK #>"),
+                            "AdventureWorks (c)",
+                            null
+                        );
                         slidePart.PutXDocument();
                     }
                 }
@@ -128,7 +146,9 @@ namespace Clippit.Tests.PowerPoint.Samples
             }
 
             // we now have a PmlDocument (which is essentially a byte array) that can be saved as necessary.
-            modifiedCombinedPresentation.SaveAs(Path.Combine(TempDir, "ModifiedCombinedPresentation.pptx"));
+            modifiedCombinedPresentation.SaveAs(
+                Path.Combine(TempDir, "ModifiedCombinedPresentation.pptx")
+            );
         }
     }
 }

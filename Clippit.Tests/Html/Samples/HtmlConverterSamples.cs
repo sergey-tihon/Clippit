@@ -9,24 +9,23 @@ using Xunit.Abstractions;
 
 namespace Clippit.Tests.Html.Samples
 {
-     /***************************************************************************
-     * IMPORTANT NOTE:
-     * 
-     * With versions 4.1 and later, the name of the HtmlConverter class has been
-     * changed to WmlToHtmlConverter, to make it orthogonal with HtmlToWmlConverter.
-     * 
-     * There are thin wrapper classes, HtmlConverter, and HtmlConverterSettings,
-     * which maintain backwards compat for code that uses the old name.
-     * 
-     * Other than the name change of the classes themselves, the functionality
-     * in WmlToHtmlConverter is identical to the old HtmlConverter class.
-    ***************************************************************************/
+    /***************************************************************************
+    * IMPORTANT NOTE:
+    *
+    * With versions 4.1 and later, the name of the HtmlConverter class has been
+    * changed to WmlToHtmlConverter, to make it orthogonal with HtmlToWmlConverter.
+    *
+    * There are thin wrapper classes, HtmlConverter, and HtmlConverterSettings,
+    * which maintain backwards compat for code that uses the old name.
+    *
+    * Other than the name change of the classes themselves, the functionality
+    * in WmlToHtmlConverter is identical to the old HtmlConverter class.
+   ***************************************************************************/
 
     public class HtmlConverterSamples : TestsBase
     {
-        public HtmlConverterSamples(ITestOutputHelper log) : base(log)
-        {
-        }
+        public HtmlConverterSamples(ITestOutputHelper log)
+            : base(log) { }
 
         [Theory]
         [InlineData("5DayTourPlanTemplate.docx")]
@@ -63,7 +62,9 @@ namespace Clippit.Tests.Html.Samples
             var part = wDoc.CoreFilePropertiesPart;
             if (part != null)
             {
-                pageTitle = (string)part.GetXDocument().Descendants(DC.title).FirstOrDefault() ?? fi.FullName;
+                pageTitle =
+                    (string)part.GetXDocument().Descendants(DC.title).FirstOrDefault()
+                    ?? fi.FullName;
             }
 
             // TODO: Determine max-width from size of content area.
@@ -78,16 +79,18 @@ namespace Clippit.Tests.Html.Samples
                 ImageHandler = imageInfo =>
                 {
                     ++imageCounter;
-                    return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
-                }
+                    return ImageHelper.DefaultImageHandler(
+                        imageInfo,
+                        imageDirectoryName,
+                        imageCounter
+                    );
+                },
             };
             var htmlElement = HtmlConverter.ConvertToHtml(wDoc, settings);
 
             // Produce HTML document with <!DOCTYPE html > declaration to tell the browser
             // we are using HTML5.
-            var html = new XDocument(
-                new XDocumentType("html", null, null, null),
-                htmlElement);
+            var html = new XDocument(new XDocumentType("html", null, null, null), htmlElement);
 
             // Note: the xhtml returned by ConvertToHtmlTransform contains objects of type
             // XEntity.  PtOpenXmlUtil.cs define the XEntity class.  See

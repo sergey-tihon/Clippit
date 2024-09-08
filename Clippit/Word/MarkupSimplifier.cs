@@ -52,7 +52,10 @@ namespace Clippit.Word
             return streamDoc.GetModifiedWmlDocument();
         }
 
-        public static void SimplifyMarkup(WordprocessingDocument doc, SimplifyMarkupSettings settings)
+        public static void SimplifyMarkup(
+            WordprocessingDocument doc,
+            SimplifyMarkupSettings settings
+        )
         {
             if (settings.RemoveMarkupForDocumentComparison)
             {
@@ -74,17 +77,20 @@ namespace Clippit.Word
             if (settings.RemoveComments)
             {
                 var commentsPart = doc.MainDocumentPart.WordprocessingCommentsPart;
-                if (commentsPart != null) doc.MainDocumentPart.DeletePart(commentsPart);
+                if (commentsPart != null)
+                    doc.MainDocumentPart.DeletePart(commentsPart);
 
                 var commentsExPart = doc.MainDocumentPart.WordprocessingCommentsExPart;
-                if (commentsExPart != null) doc.MainDocumentPart.DeletePart(commentsExPart);
+                if (commentsExPart != null)
+                    doc.MainDocumentPart.DeletePart(commentsExPart);
             }
         }
 
         private static void RemoveRsidInfoInSettings(WordprocessingDocument doc)
         {
             var part = doc.MainDocumentPart.DocumentSettingsPart;
-            if (part == null) return;
+            if (part == null)
+                return;
 
             var settingsXDoc = part.GetXDocument();
             settingsXDoc.Descendants(W.rsids).Remove();
@@ -114,13 +120,13 @@ namespace Clippit.Word
             var mainXDoc = doc.MainDocumentPart.GetXDocument();
             var bookmarkStart = mainXDoc
                 .Descendants(W.bookmarkStart)
-                .Where(b => (string) b.Attribute(W.name) == "_GoBack")
+                .Where(b => (string)b.Attribute(W.name) == "_GoBack")
                 .ToList();
             foreach (var item in bookmarkStart)
             {
                 var bookmarkEnd = mainXDoc
                     .Descendants(W.bookmarkEnd)
-                    .Where(be => (int) be.Attribute(W.id) == (int) item.Attribute(W.id));
+                    .Where(be => (int)be.Attribute(W.id) == (int)item.Attribute(W.id));
                 bookmarkEnd.Remove();
             }
 
@@ -130,12 +136,12 @@ namespace Clippit.Word
 
         public static XElement MergeAdjacentSuperfluousRuns(XElement element)
         {
-            return (XElement) MergeAdjacentRunsTransform(element);
+            return (XElement)MergeAdjacentRunsTransform(element);
         }
 
         public static XElement TransformElementToSingleCharacterRuns(XElement element)
         {
-            return (XElement) SingleCharacterRunTransform(element);
+            return (XElement)SingleCharacterRunTransform(element);
         }
 
         public static void TransformPartToSingleCharacterRuns(OpenXmlPart part)
@@ -143,8 +149,8 @@ namespace Clippit.Word
             // After transforming to single character runs, Rsid info will be invalid, so
             // remove from the part.
             var xDoc = part.GetXDocument();
-            var newRoot = (XElement) RemoveRsidTransform(xDoc.Root);
-            newRoot = (XElement) SingleCharacterRunTransform(newRoot);
+            var newRoot = (XElement)RemoveRsidTransform(xDoc.Root);
+            newRoot = (XElement)SingleCharacterRunTransform(newRoot);
             xDoc.Elements().First().ReplaceWith(newRoot);
             part.PutXDocument();
         }
@@ -153,39 +159,46 @@ namespace Clippit.Word
         {
             if (RevisionAccepter.HasTrackedRevisions(doc))
                 throw new OpenXmlPowerToolsException(
-                    "Transforming a document to single character runs is not supported for " +
-                    "a document with tracked revisions.");
+                    "Transforming a document to single character runs is not supported for "
+                        + "a document with tracked revisions."
+                );
 
             foreach (var part in doc.ContentParts())
                 TransformPartToSingleCharacterRuns(part);
         }
 
         private static object RemoveCustomXmlAndContentControlsTransform(
-            XNode node, SimplifyMarkupSettings simplifyMarkupSettings)
+            XNode node,
+            SimplifyMarkupSettings simplifyMarkupSettings
+        )
         {
             var element = node as XElement;
             if (element != null)
             {
-                if (simplifyMarkupSettings.RemoveSmartTags &&
-                    element.Name == W.smartTag)
+                if (simplifyMarkupSettings.RemoveSmartTags && element.Name == W.smartTag)
                     return element
                         .Elements()
                         .Select(e =>
-                            RemoveCustomXmlAndContentControlsTransform(e,
-                                simplifyMarkupSettings));
+                            RemoveCustomXmlAndContentControlsTransform(e, simplifyMarkupSettings)
+                        );
 
-                if (simplifyMarkupSettings.RemoveContentControls &&
-                    element.Name == W.sdt)
+                if (simplifyMarkupSettings.RemoveContentControls && element.Name == W.sdt)
                     return element
                         .Elements(W.sdtContent)
                         .Elements()
                         .Select(e =>
-                            RemoveCustomXmlAndContentControlsTransform(e,
-                                simplifyMarkupSettings));
+                            RemoveCustomXmlAndContentControlsTransform(e, simplifyMarkupSettings)
+                        );
 
-                return new XElement(element.Name,
+                return new XElement(
+                    element.Name,
                     element.Attributes(),
-                    element.Nodes().Select(n => RemoveCustomXmlAndContentControlsTransform(n, simplifyMarkupSettings)));
+                    element
+                        .Nodes()
+                        .Select(n =>
+                            RemoveCustomXmlAndContentControlsTransform(n, simplifyMarkupSettings)
+                        )
+                );
             }
 
             return node;
@@ -194,90 +207,106 @@ namespace Clippit.Word
         private static object RemoveRsidTransform(XNode node)
         {
             var element = node as XElement;
-            if (element == null) return node;
+            if (element == null)
+                return node;
 
             if (element.Name == W.rsid)
                 return null;
 
-            return new XElement(element.Name,
+            return new XElement(
+                element.Name,
                 element
                     .Attributes()
-                    .Where(a => (a.Name != W.rsid) &&
-                                (a.Name != W.rsidDel) &&
-                                (a.Name != W.rsidP) &&
-                                (a.Name != W.rsidR) &&
-                                (a.Name != W.rsidRDefault) &&
-                                (a.Name != W.rsidRPr) &&
-                                (a.Name != W.rsidSect) &&
-                                (a.Name != W.rsidTr)),
-                element.Nodes().Select(n => RemoveRsidTransform(n)));
+                    .Where(a =>
+                        (a.Name != W.rsid)
+                        && (a.Name != W.rsidDel)
+                        && (a.Name != W.rsidP)
+                        && (a.Name != W.rsidR)
+                        && (a.Name != W.rsidRDefault)
+                        && (a.Name != W.rsidRPr)
+                        && (a.Name != W.rsidSect)
+                        && (a.Name != W.rsidTr)
+                    ),
+                element.Nodes().Select(n => RemoveRsidTransform(n))
+            );
         }
 
         private static object MergeAdjacentRunsTransform(XNode node)
         {
             var element = node as XElement;
-            if (element == null) return node;
+            if (element == null)
+                return node;
 
             if (element.Name == W.p)
                 return WordprocessingMLUtil.CoalesceAdjacentRunsWithIdenticalFormatting(element);
 
-            return new XElement(element.Name,
+            return new XElement(
+                element.Name,
                 element.Attributes(),
-                element.Nodes().Select(n => MergeAdjacentRunsTransform(n)));
+                element.Nodes().Select(n => MergeAdjacentRunsTransform(n))
+            );
         }
 
-        private static object RemoveEmptyRunsAndRunPropertiesTransform(
-            XNode node)
+        private static object RemoveEmptyRunsAndRunPropertiesTransform(XNode node)
         {
             var element = node as XElement;
             if (element != null)
             {
-                if (((element.Name == W.r) || (element.Name == W.rPr) || (element.Name == W.pPr)) &&
-                    !element.Elements().Any())
+                if (
+                    ((element.Name == W.r) || (element.Name == W.rPr) || (element.Name == W.pPr))
+                    && !element.Elements().Any()
+                )
                     return null;
 
-                return new XElement(element.Name,
+                return new XElement(
+                    element.Name,
                     element.Attributes(),
-                    element.Nodes().Select(n => RemoveEmptyRunsAndRunPropertiesTransform(n)));
+                    element.Nodes().Select(n => RemoveEmptyRunsAndRunPropertiesTransform(n))
+                );
             }
 
             return node;
         }
 
-        private static object MergeAdjacentInstrText(
-            XNode node)
+        private static object MergeAdjacentInstrText(XNode node)
         {
             var element = node as XElement;
             if (element != null)
             {
                 if ((element.Name == W.r) && element.Elements(W.instrText).Any())
                 {
-                    var grouped =
-                        element.Elements().GroupAdjacent(e => e.Name == W.instrText);
-                    return new XElement(W.r,
+                    var grouped = element.Elements().GroupAdjacent(e => e.Name == W.instrText);
+                    return new XElement(
+                        W.r,
                         grouped.Select(g =>
                         {
                             if (g.Key == false)
-                                return (object) g;
+                                return (object)g;
 
                             // If .doc files are converted to .docx by the Binary to Open XML Translator,
                             // the w:instrText elements might be empty, in which case newInstrText would
                             // be an empty string.
-                            var newInstrText = g.Select(i => (string) i).StringConcatenate();
+                            var newInstrText = g.Select(i => (string)i).StringConcatenate();
                             if (string.IsNullOrEmpty(newInstrText))
                                 return new XElement(W.instrText);
 
-                            return new XElement(W.instrText,
-                                (newInstrText[0] == ' ') || (newInstrText[newInstrText.Length - 1] == ' ')
+                            return new XElement(
+                                W.instrText,
+                                (newInstrText[0] == ' ')
+                                || (newInstrText[newInstrText.Length - 1] == ' ')
                                     ? new XAttribute(XNamespace.Xml + "space", "preserve")
                                     : null,
-                                newInstrText);
-                        }));
+                                newInstrText
+                            );
+                        })
+                    );
                 }
 
-                return new XElement(element.Name,
+                return new XElement(
+                    element.Name,
                     element.Attributes(),
-                    element.Nodes().Select(n => MergeAdjacentInstrText(n)));
+                    element.Nodes().Select(n => MergeAdjacentInstrText(n))
+                );
             }
 
             return node;
@@ -295,83 +324,109 @@ namespace Clippit.Word
         private static object SimplifyMarkupTransform(
             XNode node,
             SimplifyMarkupSettings settings,
-            SimplifyMarkupParameters parameters)
+            SimplifyMarkupParameters parameters
+        )
         {
             var element = node as XElement;
-            if (element == null) return node;
+            if (element == null)
+                return node;
 
-            if (settings.RemovePermissions &&
-                ((element.Name == W.permEnd) ||
-                 (element.Name == W.permStart)))
+            if (
+                settings.RemovePermissions
+                && ((element.Name == W.permEnd) || (element.Name == W.permStart))
+            )
                 return null;
 
-            if (settings.RemoveProof &&
-                ((element.Name == W.proofErr) ||
-                 (element.Name == W.noProof)))
+            if (
+                settings.RemoveProof
+                && ((element.Name == W.proofErr) || (element.Name == W.noProof))
+            )
                 return null;
 
-            if (settings.RemoveSoftHyphens &&
-                (element.Name == W.softHyphen))
+            if (settings.RemoveSoftHyphens && (element.Name == W.softHyphen))
                 return null;
 
-            if (settings.RemoveLastRenderedPageBreak &&
-                (element.Name == W.lastRenderedPageBreak))
+            if (settings.RemoveLastRenderedPageBreak && (element.Name == W.lastRenderedPageBreak))
                 return null;
 
-            if (settings.RemoveBookmarks &&
-                ((element.Name == W.bookmarkStart) ||
-                 (element.Name == W.bookmarkEnd)))
+            if (
+                settings.RemoveBookmarks
+                && ((element.Name == W.bookmarkStart) || (element.Name == W.bookmarkEnd))
+            )
                 return null;
 
-            if (settings.RemoveGoBackBookmark &&
-                (((element.Name == W.bookmarkStart) && ((int) element.Attribute(W.id) == parameters.GoBackId)) ||
-                 ((element.Name == W.bookmarkEnd) && ((int) element.Attribute(W.id) == parameters.GoBackId))))
+            if (
+                settings.RemoveGoBackBookmark
+                && (
+                    (
+                        (element.Name == W.bookmarkStart)
+                        && ((int)element.Attribute(W.id) == parameters.GoBackId)
+                    )
+                    || (
+                        (element.Name == W.bookmarkEnd)
+                        && ((int)element.Attribute(W.id) == parameters.GoBackId)
+                    )
+                )
+            )
                 return null;
 
-            if (settings.RemoveWebHidden &&
-                (element.Name == W.webHidden))
+            if (settings.RemoveWebHidden && (element.Name == W.webHidden))
                 return null;
 
-            if (settings.ReplaceTabsWithSpaces &&
-                (element.Name == W.tab) && 
-                (element.Parent != null && element.Parent.Name == W.r))
+            if (
+                settings.ReplaceTabsWithSpaces
+                && (element.Name == W.tab)
+                && (element.Parent != null && element.Parent.Name == W.r)
+            )
                 return new XElement(W.t, new XAttribute(XNamespace.Xml + "space", "preserve"), " ");
 
-            if (settings.RemoveComments &&
-                ((element.Name == W.commentRangeStart) ||
-                 (element.Name == W.commentRangeEnd) ||
-                 (element.Name == W.commentReference) ||
-                 (element.Name == W.annotationRef)))
+            if (
+                settings.RemoveComments
+                && (
+                    (element.Name == W.commentRangeStart)
+                    || (element.Name == W.commentRangeEnd)
+                    || (element.Name == W.commentReference)
+                    || (element.Name == W.annotationRef)
+                )
+            )
                 return null;
 
-            if (settings.RemoveComments &&
-                (element.Name == W.rStyle) &&
-                (element.Attribute(W.val).Value == "CommentReference"))
+            if (
+                settings.RemoveComments
+                && (element.Name == W.rStyle)
+                && (element.Attribute(W.val).Value == "CommentReference")
+            )
                 return null;
 
-            if (settings.RemoveEndAndFootNotes &&
-                ((element.Name == W.endnoteReference) ||
-                 (element.Name == W.footnoteReference)))
+            if (
+                settings.RemoveEndAndFootNotes
+                && ((element.Name == W.endnoteReference) || (element.Name == W.footnoteReference))
+            )
                 return null;
 
             if (settings.RemoveFieldCodes)
             {
                 if (element.Name == W.fldSimple)
-                    return element.Elements().Select(e => SimplifyMarkupTransform(e, settings, parameters));
+                    return element
+                        .Elements()
+                        .Select(e => SimplifyMarkupTransform(e, settings, parameters));
 
-                if ((element.Name == W.fldData) ||
-                    (element.Name == W.fldChar) ||
-                    (element.Name == W.instrText))
+                if (
+                    (element.Name == W.fldData)
+                    || (element.Name == W.fldChar)
+                    || (element.Name == W.instrText)
+                )
                     return null;
             }
 
-            if (settings.RemoveHyperlinks &&
-                (element.Name == W.hyperlink))
+            if (settings.RemoveHyperlinks && (element.Name == W.hyperlink))
                 return element.Elements();
 
-            return new XElement(element.Name,
+            return new XElement(
+                element.Name,
                 element.Attributes(),
-                element.Nodes().Select(n => SimplifyMarkupTransform(n, settings, parameters)));
+                element.Nodes().Select(n => SimplifyMarkupTransform(n, settings, parameters))
+            );
         }
 
         private static XDocument Normalize(XDocument source, XmlSchemaSet schema)
@@ -386,17 +441,20 @@ namespace Clippit.Word
             }
             return new XDocument(
                 source.Declaration,
-                source.Nodes().Select(n =>
-                {
-                    // Remove comments, processing instructions, and text nodes that are
-                    // children of XDocument.  Only white space text nodes are allowed as
-                    // children of a document, so we can remove all text nodes.
-                    if (n is XComment or XProcessingInstruction or XText)
-                        return null;
+                source
+                    .Nodes()
+                    .Select(n =>
+                    {
+                        // Remove comments, processing instructions, and text nodes that are
+                        // children of XDocument.  Only white space text nodes are allowed as
+                        // children of a document, so we can remove all text nodes.
+                        if (n is XComment or XProcessingInstruction or XText)
+                            return null;
 
-                    var e = n as XElement;
-                    return e != null ? NormalizeElement(e, havePsvi) : n;
-                }));
+                        var e = n as XElement;
+                        return e != null ? NormalizeElement(e, havePsvi) : n;
+                    })
+            );
         }
 
         // TODO: Check whether this can be removed.
@@ -409,10 +467,13 @@ namespace Clippit.Word
 
         private static IEnumerable<XAttribute> NormalizeAttributes(XElement element, bool havePsvi)
         {
-            return element.Attributes()
-                .Where(a => !a.IsNamespaceDeclaration &&
-                            (a.Name != Xsi.schemaLocation) &&
-                            (a.Name != Xsi.noNamespaceSchemaLocation))
+            return element
+                .Attributes()
+                .Where(a =>
+                    !a.IsNamespaceDeclaration
+                    && (a.Name != Xsi.schemaLocation)
+                    && (a.Name != Xsi.noNamespaceSchemaLocation)
+                )
                 .OrderBy(a => a.Name.NamespaceName)
                 .ThenBy(a => a.Name.LocalName)
                 .Select(a =>
@@ -421,24 +482,24 @@ namespace Clippit.Word
                     {
                         var schemaInfo = a.GetSchemaInfo();
                         var schemaType = schemaInfo != null ? schemaInfo.SchemaType : null;
-                        var typeCode = schemaType != null ? schemaType.TypeCode : (XmlTypeCode?) null;
+                        var typeCode =
+                            schemaType != null ? schemaType.TypeCode : (XmlTypeCode?)null;
 
                         switch (typeCode)
                         {
                             case XmlTypeCode.Boolean:
-                                return new XAttribute(a.Name, (bool) a);
+                                return new XAttribute(a.Name, (bool)a);
                             case XmlTypeCode.DateTime:
-                                return new XAttribute(a.Name, (DateTime) a);
+                                return new XAttribute(a.Name, (DateTime)a);
                             case XmlTypeCode.Decimal:
-                                return new XAttribute(a.Name, (decimal) a);
+                                return new XAttribute(a.Name, (decimal)a);
                             case XmlTypeCode.Double:
-                                return new XAttribute(a.Name, (double) a);
+                                return new XAttribute(a.Name, (double)a);
                             case XmlTypeCode.Float:
-                                return new XAttribute(a.Name, (float) a);
+                                return new XAttribute(a.Name, (float)a);
                             case XmlTypeCode.HexBinary:
                             case XmlTypeCode.Language:
-                                return new XAttribute(a.Name,
-                                    ((string) a).ToLower());
+                                return new XAttribute(a.Name, ((string)a).ToLower());
                         }
                     }
 
@@ -453,7 +514,7 @@ namespace Clippit.Word
                 // trim comments and processing instructions from normalized tree
                 XComment or XProcessingInstruction => null,
                 XElement e => NormalizeElement(e, havePsvi),
-                _ => node
+                _ => node,
             };
 
             // Only thing left is XCData and XText, so clone them
@@ -465,62 +526,80 @@ namespace Clippit.Word
             {
                 var schemaInfo = element.GetSchemaInfo();
                 var schemaType = schemaInfo != null ? schemaInfo.SchemaType : null;
-                var typeCode = schemaType != null ? schemaType.TypeCode : (XmlTypeCode?) null;
+                var typeCode = schemaType != null ? schemaType.TypeCode : (XmlTypeCode?)null;
 
                 switch (typeCode)
                 {
                     case XmlTypeCode.Boolean:
-                        return new XElement(element.Name,
+                        return new XElement(
+                            element.Name,
                             NormalizeAttributes(element, true),
-                            (bool) element);
+                            (bool)element
+                        );
                     case XmlTypeCode.DateTime:
-                        return new XElement(element.Name,
+                        return new XElement(
+                            element.Name,
                             NormalizeAttributes(element, true),
-                            (DateTime) element);
+                            (DateTime)element
+                        );
                     case XmlTypeCode.Decimal:
-                        return new XElement(element.Name,
+                        return new XElement(
+                            element.Name,
                             NormalizeAttributes(element, true),
-                            (decimal) element);
+                            (decimal)element
+                        );
                     case XmlTypeCode.Double:
-                        return new XElement(element.Name,
+                        return new XElement(
+                            element.Name,
                             NormalizeAttributes(element, true),
-                            (double) element);
+                            (double)element
+                        );
                     case XmlTypeCode.Float:
-                        return new XElement(element.Name,
+                        return new XElement(
+                            element.Name,
                             NormalizeAttributes(element, true),
-                            (float) element);
+                            (float)element
+                        );
                     case XmlTypeCode.HexBinary:
                     case XmlTypeCode.Language:
-                        return new XElement(element.Name,
+                        return new XElement(
+                            element.Name,
                             NormalizeAttributes(element, true),
-                            ((string) element).ToLower());
+                            ((string)element).ToLower()
+                        );
                     default:
-                        return new XElement(element.Name,
+                        return new XElement(
+                            element.Name,
                             NormalizeAttributes(element, true),
-                            element.Nodes().Select(n => NormalizeNode(n, true)));
+                            element.Nodes().Select(n => NormalizeNode(n, true))
+                        );
                 }
             }
 
-            return new XElement(element.Name,
+            return new XElement(
+                element.Name,
                 NormalizeAttributes(element, false),
-                element.Nodes().Select(n => NormalizeNode(n, false)));
+                element.Nodes().Select(n => NormalizeNode(n, false))
+            );
         }
 
         private static void SimplifyMarkupForPart(OpenXmlPart part, SimplifyMarkupSettings settings)
         {
             var parameters = new SimplifyMarkupParameters();
-            if (part.ContentType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml")
+            if (
+                part.ContentType
+                == "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"
+            )
             {
-                var doc = (WordprocessingDocument) part.OpenXmlPackage;
+                var doc = (WordprocessingDocument)part.OpenXmlPackage;
                 if (settings.RemoveGoBackBookmark)
                 {
                     var goBackBookmark = doc
-                        .MainDocumentPart
-                        .GetXDocument()
+                        .MainDocumentPart.GetXDocument()
                         .Descendants(W.bookmarkStart)
-                        .FirstOrDefault(bm => (string) bm.Attribute(W.name) == "_GoBack");
+                        .FirstOrDefault(bm => (string)bm.Attribute(W.name) == "_GoBack");
                     if (goBackBookmark != null)
-                        parameters.GoBackId = (int) goBackBookmark.Attribute(W.id);
+                        parameters.GoBackId = (int)goBackBookmark.Attribute(W.id);
                 }
             }
 
@@ -529,38 +608,40 @@ namespace Clippit.Word
 
             // Need to do this first to enable simplifying hyperlinks.
             if (settings.RemoveContentControls || settings.RemoveSmartTags)
-                newRoot = (XElement) RemoveCustomXmlAndContentControlsTransform(newRoot, settings);
+                newRoot = (XElement)RemoveCustomXmlAndContentControlsTransform(newRoot, settings);
 
             // This may touch many elements, so needs to be its own transform.
             if (settings.RemoveRsidInfo)
-                newRoot = (XElement) RemoveRsidTransform(newRoot);
+                newRoot = (XElement)RemoveRsidTransform(newRoot);
 
             var prevNewRoot = new XDocument(newRoot);
             while (true)
             {
-                if (settings.RemoveComments ||
-                    settings.RemoveEndAndFootNotes ||
-                    settings.ReplaceTabsWithSpaces ||
-                    settings.RemoveFieldCodes ||
-                    settings.RemovePermissions ||
-                    settings.RemoveProof ||
-                    settings.RemoveBookmarks ||
-                    settings.RemoveWebHidden ||
-                    settings.RemoveGoBackBookmark ||
-                    settings.RemoveHyperlinks)
-                    newRoot = (XElement) SimplifyMarkupTransform(newRoot, settings, parameters);
+                if (
+                    settings.RemoveComments
+                    || settings.RemoveEndAndFootNotes
+                    || settings.ReplaceTabsWithSpaces
+                    || settings.RemoveFieldCodes
+                    || settings.RemovePermissions
+                    || settings.RemoveProof
+                    || settings.RemoveBookmarks
+                    || settings.RemoveWebHidden
+                    || settings.RemoveGoBackBookmark
+                    || settings.RemoveHyperlinks
+                )
+                    newRoot = (XElement)SimplifyMarkupTransform(newRoot, settings, parameters);
 
                 // Remove runs and run properties that have become empty due to previous transforms.
-                newRoot = (XElement) RemoveEmptyRunsAndRunPropertiesTransform(newRoot);
+                newRoot = (XElement)RemoveEmptyRunsAndRunPropertiesTransform(newRoot);
 
                 // Merge adjacent runs that have identical run properties.
-                newRoot = (XElement) MergeAdjacentRunsTransform(newRoot);
+                newRoot = (XElement)MergeAdjacentRunsTransform(newRoot);
 
                 // Merge adjacent instrText elements.
-                newRoot = (XElement) MergeAdjacentInstrText(newRoot);
+                newRoot = (XElement)MergeAdjacentInstrText(newRoot);
 
                 // Separate run children into separate runs
-                newRoot = (XElement) SeparateRunChildrenIntoSeparateRuns(newRoot);
+                newRoot = (XElement)SeparateRunChildrenIntoSeparateRuns(newRoot);
 
                 if (XNode.DeepEquals(prevNewRoot.Root, newRoot))
                     break;
@@ -610,7 +691,8 @@ namespace Clippit.Word
         private static object SeparateRunChildrenIntoSeparateRuns(XNode node)
         {
             var element = node as XElement;
-            if (element == null) return node;
+            if (element == null)
+                return node;
 
             if (element.Name == W.r)
             {
@@ -619,44 +701,58 @@ namespace Clippit.Word
                 return runChildren.Select(rc => new XElement(W.r, rPr, rc));
             }
 
-            return new XElement(element.Name,
+            return new XElement(
+                element.Name,
                 element.Attributes(),
-                element.Nodes().Select(n => SeparateRunChildrenIntoSeparateRuns(n)));
+                element.Nodes().Select(n => SeparateRunChildrenIntoSeparateRuns(n))
+            );
         }
 
         private static object SingleCharacterRunTransform(XNode node)
         {
             var element = node as XElement;
-            if (element == null) return node;
+            if (element == null)
+                return node;
 
             if (element.Name == W.r)
-                return element.Elements()
+                return element
+                    .Elements()
                     .Where(e => e.Name != W.rPr)
                     .GroupAdjacent(sr => sr.Name == W.t)
                     .Select(g =>
                     {
                         if (g.Key)
                         {
-                            var s = g.Select(t => (string) t).StringConcatenate();
-                            return s.Select(c =>
-                                new XElement(W.r,
-                                    element.Elements(W.rPr),
-                                    new XElement(W.t,
-                                        c == ' ' ? new XAttribute(XNamespace.Xml + "space", "preserve") : null,
-                                        c)));
+                            var s = g.Select(t => (string)t).StringConcatenate();
+                            return s.Select(c => new XElement(
+                                W.r,
+                                element.Elements(W.rPr),
+                                new XElement(
+                                    W.t,
+                                    c == ' '
+                                        ? new XAttribute(XNamespace.Xml + "space", "preserve")
+                                        : null,
+                                    c
+                                )
+                            ));
                         }
 
-                        return g.Select(sr =>
-                            new XElement(W.r,
-                                element.Elements(W.rPr),
-                                new XElement(sr.Name,
-                                    sr.Attributes(),
-                                    sr.Nodes().Select(n => SingleCharacterRunTransform(n)))));
+                        return g.Select(sr => new XElement(
+                            W.r,
+                            element.Elements(W.rPr),
+                            new XElement(
+                                sr.Name,
+                                sr.Attributes(),
+                                sr.Nodes().Select(n => SingleCharacterRunTransform(n))
+                            )
+                        ));
                     });
 
-            return new XElement(element.Name,
+            return new XElement(
+                element.Name,
                 element.Attributes(),
-                element.Nodes().Select(n => SingleCharacterRunTransform(n)));
+                element.Nodes().Select(n => SingleCharacterRunTransform(n))
+            );
         }
 
         private static class Xsi
@@ -664,21 +760,20 @@ namespace Clippit.Word
             private static readonly XNamespace xsi = "http://www.w3.org/2001/XMLSchema-instance";
 
             public static readonly XName schemaLocation = xsi + "schemaLocation";
-            public static readonly XName noNamespaceSchemaLocation = xsi + "noNamespaceSchemaLocation";
+            public static readonly XName noNamespaceSchemaLocation =
+                xsi + "noNamespaceSchemaLocation";
         }
 
         public class InternalException : Exception
         {
-            public InternalException(string message) : base(message)
-            {
-            }
+            public InternalException(string message)
+                : base(message) { }
         }
 
         public class InvalidSettingsException : Exception
         {
-            public InvalidSettingsException(string message) : base(message)
-            {
-            }
+            public InvalidSettingsException(string message)
+                : base(message) { }
         }
 
         private class SimplifyMarkupParameters

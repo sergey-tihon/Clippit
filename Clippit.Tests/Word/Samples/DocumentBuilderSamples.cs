@@ -12,9 +12,8 @@ namespace Clippit.Tests.Word.Samples
 {
     public class DocumentBuilderSamples : TestsBase
     {
-        public DocumentBuilderSamples(ITestOutputHelper log) : base(log)
-        {
-        }
+        public DocumentBuilderSamples(ITestOutputHelper log)
+            : base(log) { }
 
         private static string GetFilePath(string path) =>
             Path.Combine("../../../Word/Samples/DocumentBuilder/", path);
@@ -27,10 +26,7 @@ namespace Clippit.Tests.Word.Samples
             var source3 = GetFilePath("Sample1/Source3.docx");
 
             // Create new document from 10 paragraphs starting at paragraph 5 of Source1.docx
-            var sources = new List<ISource>
-            {
-                new Source(new WmlDocument(source1), 5, 10, true),
-            };
+            var sources = new List<ISource> { new Source(new WmlDocument(source1), 5, 10, true) };
             DocumentBuilder.BuildDocument(sources, Path.Combine(TempDir, "Out1.docx"));
 
             // Create new document from paragraph 1, and paragraphs 5 through end of Source3.docx.
@@ -69,8 +65,8 @@ namespace Clippit.Tests.Word.Samples
                 new Source(new WmlDocument(source2), 0, 5, true),
             };
             var out5 = DocumentBuilder.BuildDocument(sources);
-            out5.SaveAs(Path.Combine(TempDir, "Out5.docx"));  // save it to the file system, but we could just as easily done something
-                                                                      // else with it.
+            out5.SaveAs(Path.Combine(TempDir, "Out5.docx")); // save it to the file system, but we could just as easily done something
+            // else with it.
         }
 
         private class DocumentInfo
@@ -97,21 +93,25 @@ namespace Clippit.Tests.Word.Samples
             using (var doc = WordprocessingDocument.Open(GetFilePath("Sample2/Notes.docx"), false))
             {
                 sources = doc
-                    .MainDocumentPart
-                    .GetXDocument()
-                    .Root
-                    .Element(W.body)
+                    .MainDocumentPart.GetXDocument()
+                    .Root.Element(W.body)
                     .Elements()
-                    .Select((p, i) => new { Paragraph = p, Index = i, })
-                    .GroupAdjacent(pi => (string)pi.Paragraph
-                        .Elements(W.pPr)
-                        .Elements(W.pStyle)
-                        .Attributes(W.val)
-                        .FirstOrDefault() != "Note")
+                    .Select((p, i) => new { Paragraph = p, Index = i })
+                    .GroupAdjacent(pi =>
+                        (string)
+                            pi
+                                .Paragraph.Elements(W.pPr)
+                                .Elements(W.pStyle)
+                                .Attributes(W.val)
+                                .FirstOrDefault() != "Note"
+                    )
                     .Where(g => g.Key)
                     .Select(g => new Source(
-                        new WmlDocument(GetFilePath("Sample2/Notes.docx")), g.First().Index,
-                        g.Last().Index - g.First().Index + 1, true))
+                        new WmlDocument(GetFilePath("Sample2/Notes.docx")),
+                        g.First().Index,
+                        g.Last().Index - g.First().Index + 1,
+                        true
+                    ))
                     .Cast<ISource>()
                     .ToList();
             }
@@ -123,27 +123,36 @@ namespace Clippit.Tests.Word.Samples
             using (var doc = WordprocessingDocument.Open(GetFilePath("Sample2/Spec.docx"), false))
             {
                 var sectionCounts = doc
-                    .MainDocumentPart
-                    .GetXDocument()
-                    .Root
-                    .Element(W.body)
+                    .MainDocumentPart.GetXDocument()
+                    .Root.Element(W.body)
                     .Elements()
-                    .Rollup(0, (pi, last) => (string)pi
-                        .Elements(W.pPr)
-                        .Elements(W.pStyle)
-                        .Attributes(W.val)
-                        .FirstOrDefault() == "Heading1"
-                        ? last + 1
-                        : last);
+                    .Rollup(
+                        0,
+                        (pi, last) =>
+                            (string)
+                                pi.Elements(W.pPr)
+                                    .Elements(W.pStyle)
+                                    .Attributes(W.val)
+                                    .FirstOrDefault() == "Heading1"
+                                ? last + 1
+                                : last
+                    );
                 var beforeZipped = doc
-                    .MainDocumentPart
-                    .GetXDocument()
-                    .Root
-                    .Element(W.body)
+                    .MainDocumentPart.GetXDocument()
+                    .Root.Element(W.body)
                     .Elements()
-                    .Select((p, i) => new { Paragraph = p, Index = i, });
-                var zipped = PtExtensions.PtZip(beforeZipped, sectionCounts,
-                    (pi, sc) => new { Paragraph = pi.Paragraph, Index = pi.Index, SectionIndex = sc, });
+                    .Select((p, i) => new { Paragraph = p, Index = i });
+                var zipped = PtExtensions.PtZip(
+                    beforeZipped,
+                    sectionCounts,
+                    (pi, sc) =>
+                        new
+                        {
+                            Paragraph = pi.Paragraph,
+                            Index = pi.Index,
+                            SectionIndex = sc,
+                        }
+                );
                 documentList = zipped
                     .GroupAdjacent(p => p.SectionIndex)
                     .Select(g => new DocumentInfo
@@ -160,7 +169,12 @@ namespace Clippit.Tests.Word.Samples
                 var fileName = $"Section{doc.DocumentNumber:000}.docx";
                 var documentSource = new List<ISource>
                 {
-                    new Source(new WmlDocument(GetFilePath("Sample2/Spec.docx")), doc.Start, doc.Count, true)
+                    new Source(
+                        new WmlDocument(GetFilePath("Sample2/Spec.docx")),
+                        doc.Start,
+                        doc.Count,
+                        true
+                    ),
                 };
                 DocumentBuilder.BuildDocument(documentSource, Path.Combine(TempDir, fileName));
             }
@@ -184,19 +198,22 @@ namespace Clippit.Tests.Word.Samples
                 using (var doc = WordprocessingDocument.Open(mem, true))
                 {
                     var xDoc = doc.MainDocumentPart.GetXDocument();
-                    var frontMatterPara = xDoc.Root.Descendants(W.txbxContent).Elements(W.p).FirstOrDefault();
+                    var frontMatterPara = xDoc
+                        .Root.Descendants(W.txbxContent)
+                        .Elements(W.p)
+                        .FirstOrDefault();
                     frontMatterPara.ReplaceWith(
-                        new XElement(PtOpenXml.Insert,
-                            new XAttribute("Id", "Front")));
+                        new XElement(PtOpenXml.Insert, new XAttribute("Id", "Front"))
+                    );
                     var tbl = xDoc.Root.Element(W.body).Elements(W.tbl).FirstOrDefault();
                     var firstCell = tbl.Descendants(W.tr).First().Descendants(W.p).First();
                     firstCell.ReplaceWith(
-                        new XElement(PtOpenXml.Insert,
-                            new XAttribute("Id", "Liz")));
+                        new XElement(PtOpenXml.Insert, new XAttribute("Id", "Liz"))
+                    );
                     var secondCell = tbl.Descendants(W.tr).Skip(1).First().Descendants(W.p).First();
                     secondCell.ReplaceWith(
-                        new XElement(PtOpenXml.Insert,
-                            new XAttribute("Id", "Eric")));
+                        new XElement(PtOpenXml.Insert, new XAttribute("Id", "Eric"))
+                    );
                     doc.MainDocumentPart.PutXDocument();
                 }
                 doc1.DocumentByteArray = mem.ToArray();
@@ -204,12 +221,12 @@ namespace Clippit.Tests.Word.Samples
 
             var outFileName = Path.Combine(TempDir, "Out.docx");
             var sources = new List<ISource>()
-                {
-                    new Source(doc1, true),
-                    new Source(new WmlDocument(GetFilePath("Sample3/Insert-01.docx")), "Liz"),
-                    new Source(new WmlDocument(GetFilePath("Sample3/Insert-02.docx")), "Eric"),
-                    new Source(new WmlDocument(GetFilePath("Sample3/FrontMatter.docx")), "Front"),
-                };
+            {
+                new Source(doc1, true),
+                new Source(new WmlDocument(GetFilePath("Sample3/Insert-01.docx")), "Liz"),
+                new Source(new WmlDocument(GetFilePath("Sample3/Insert-02.docx")), "Eric"),
+                new Source(new WmlDocument(GetFilePath("Sample3/FrontMatter.docx")), "Front"),
+            };
             DocumentBuilder.BuildDocument(sources, outFileName);
         }
 
@@ -220,33 +237,22 @@ namespace Clippit.Tests.Word.Samples
             using var streamDoc = new OpenXmlMemoryStreamDocument(solarSystemDoc);
             using var solarSystem = streamDoc.GetWordprocessingDocument();
             // get children elements of the <w:body> element
-            var q1 = solarSystem
-                .MainDocumentPart
-                .GetXDocument()
-                .Root
-                .Element(W.body)
-                .Elements();
+            var q1 = solarSystem.MainDocumentPart.GetXDocument().Root.Element(W.body).Elements();
 
             // project collection of tuples containing element and type
-            var q2 = q1
-                .Select(
-                    e =>
-                    {
-                        var keyForGroupAdjacent = ".NonContentControl";
-                        if (e.Name == W.sdt)
-                            keyForGroupAdjacent = e.Element(W.sdtPr)
-                                .Element(W.tag)
-                                .Attribute(W.val)
-                                .Value;
-                        if (e.Name == W.sectPr)
-                            keyForGroupAdjacent = null;
-                        return new
-                        {
-                            Element = e,
-                            KeyForGroupAdjacent = keyForGroupAdjacent
-                        };
-                    }
-                ).Where(e => e.KeyForGroupAdjacent != null);
+            var q2 = q1.Select(e =>
+                {
+                    var keyForGroupAdjacent = ".NonContentControl";
+                    if (e.Name == W.sdt)
+                        keyForGroupAdjacent = e.Element(W.sdtPr)
+                            .Element(W.tag)
+                            .Attribute(W.val)
+                            .Value;
+                    if (e.Name == W.sectPr)
+                        keyForGroupAdjacent = null;
+                    return new { Element = e, KeyForGroupAdjacent = keyForGroupAdjacent };
+                })
+                .Where(e => e.KeyForGroupAdjacent != null);
 
             // group by type
             var q3 = q2.GroupAdjacent(e => e.KeyForGroupAdjacent);
@@ -270,35 +276,29 @@ namespace Clippit.Tests.Word.Samples
             }
 
             // project collection with opened WordProcessingDocument
-            var q4 = q3
-                .Select(g => new
-                {
-                    Group = g,
-                    Document = g.Key != ".NonContentControl" ?
-                        new WmlDocument(GetFilePath("Sample4/" + g.Key + ".docx")) :
-                        solarSystemDoc
-                });
+            var q4 = q3.Select(g => new
+            {
+                Group = g,
+                Document = g.Key != ".NonContentControl"
+                    ? new WmlDocument(GetFilePath("Sample4/" + g.Key + ".docx"))
+                    : solarSystemDoc,
+            });
 
             // project collection of OpenXml.PowerTools.Source
-            var sources = q4
-                .Select(
-                    g =>
-                    {
-                        if (g.Group.Key == ".NonContentControl")
-                            return new Source(
-                                g.Document,
-                                g.Group
-                                    .First()
-                                    .Element
-                                    .ElementsBeforeSelf()
-                                    .Count(),
-                                g.Group
-                                    .Count(),
-                                false);
-                        else
-                            return new Source(g.Document, false);
-                    }
-                ).Cast<ISource>().ToList();
+            var sources = q4.Select(g =>
+                {
+                    if (g.Group.Key == ".NonContentControl")
+                        return new Source(
+                            g.Document,
+                            g.Group.First().Element.ElementsBeforeSelf().Count(),
+                            g.Group.Count(),
+                            false
+                        );
+                    else
+                        return new Source(g.Document, false);
+                })
+                .Cast<ISource>()
+                .ToList();
 
             DocumentBuilder.BuildDocument(sources, Path.Combine(TempDir, "solar-system-new.docx"));
         }

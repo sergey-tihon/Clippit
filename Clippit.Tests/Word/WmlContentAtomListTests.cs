@@ -15,10 +15,9 @@ namespace Clippit.Tests.Word
 {
     public class WmlContentAtomListTests : TestsBase
     {
-        public WmlContentAtomListTests(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public WmlContentAtomListTests(ITestOutputHelper log)
+            : base(log) { }
+
         /*
          * This test was removed because it depends on the Coalesce method, which is only ever used
          * by this test.
@@ -92,18 +91,26 @@ namespace Clippit.Tests.Word
             var sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
 #if COPY_FILES_FOR_DEBUGGING
-            var sourceCopiedToDestDocx = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-1-Source.docx")));
+            var sourceCopiedToDestDocx = new FileInfo(
+                Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-1-Source.docx"))
+            );
             if (!sourceCopiedToDestDocx.Exists)
                 File.Copy(sourceDocx.FullName, sourceCopiedToDestDocx.FullName);
 
-            var annotatedDocx = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-2-Annotated.docx")));
+            var annotatedDocx = new FileInfo(
+                Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-2-Annotated.docx"))
+            );
             if (!annotatedDocx.Exists)
                 File.Copy(sourceDocx.FullName, annotatedDocx.FullName);
 
             using var wDoc = WordprocessingDocument.Open(annotatedDocx.FullName, true);
             var contentParent = wDoc.MainDocumentPart.GetXDocument().Root.Element(W.body);
             var settings = new WmlComparerSettings();
-            WmlComparer.CreateComparisonUnitAtomList(wDoc.MainDocumentPart, contentParent, settings);
+            WmlComparer.CreateComparisonUnitAtomList(
+                wDoc.MainDocumentPart,
+                contentParent,
+                settings
+            );
 #endif
         }
 
@@ -118,28 +125,43 @@ namespace Clippit.Tests.Word
             var sourceDir = new DirectoryInfo("../../../../TestFiles/");
             var sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
             var thisGuid = Guid.NewGuid().ToString().Replace("-", "");
-            var sourceCopiedToDestDocx = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx",
-                $"-{thisGuid}-1-Source.docx")));
+            var sourceCopiedToDestDocx = new FileInfo(
+                Path.Combine(
+                    TempDir,
+                    sourceDocx.Name.Replace(".docx", $"-{thisGuid}-1-Source.docx")
+                )
+            );
             if (!sourceCopiedToDestDocx.Exists)
                 File.Copy(sourceDocx.FullName, sourceCopiedToDestDocx.FullName);
 
-            var coalescedDocx = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx",
-                $"-{thisGuid}-2-Coalesced.docx")));
+            var coalescedDocx = new FileInfo(
+                Path.Combine(
+                    TempDir,
+                    sourceDocx.Name.Replace(".docx", $"-{thisGuid}-2-Coalesced.docx")
+                )
+            );
             if (!coalescedDocx.Exists)
                 File.Copy(sourceDocx.FullName, coalescedDocx.FullName);
 
-            var contentAtomDataFi = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx",
-                $"-{thisGuid}-3-ContentAtomData.txt")));
+            var contentAtomDataFi = new FileInfo(
+                Path.Combine(
+                    TempDir,
+                    sourceDocx.Name.Replace(".docx", $"-{thisGuid}-3-ContentAtomData.txt")
+                )
+            );
 
             using var wDoc = WordprocessingDocument.Open(coalescedDocx.FullName, true);
             Assert.Throws<NotSupportedException>(() =>
             {
                 var contentParent = wDoc.MainDocumentPart.GetXDocument().Root.Element(W.body);
                 var settings = new WmlComparerSettings();
-                WmlComparer.CreateComparisonUnitAtomList(wDoc.MainDocumentPart, contentParent, settings);
+                WmlComparer.CreateComparisonUnitAtomList(
+                    wDoc.MainDocumentPart,
+                    contentParent,
+                    settings
+                );
             });
         }
-        
     }
 }
 

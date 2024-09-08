@@ -16,11 +16,15 @@ namespace Clippit
         private static XElement MoveRelatedPartsToDestination(
             IPackagePart partOfDeletedContent,
             IPackagePart partInNewDocument,
-            XElement contentElement)
+            XElement contentElement
+        )
         {
             var elementsToUpdate = contentElement
                 .Descendants()
-                .Where(d => d.Attributes().Any(a => ComparisonUnitWord.RelationshipAttributeNames.Contains(a.Name)))
+                .Where(d =>
+                    d.Attributes()
+                        .Any(a => ComparisonUnitWord.RelationshipAttributeNames.Contains(a.Name))
+                )
                 .ToList();
 
             foreach (var element in elementsToUpdate)
@@ -32,14 +36,14 @@ namespace Clippit
 
                 foreach (var att in attributesToUpdate)
                 {
-                    var rId = (string) att;
+                    var rId = (string)att;
 
                     var relationshipForDeletedPart = partOfDeletedContent.Relationships[rId];
 
-                    var targetUri = PackUriHelper
-                        .ResolvePartUri(
-                            new Uri(partOfDeletedContent.Uri.ToString(), UriKind.Relative),
-                            relationshipForDeletedPart.TargetUri);
+                    var targetUri = PackUriHelper.ResolvePartUri(
+                        new Uri(partOfDeletedContent.Uri.ToString(), UriKind.Relative),
+                        relationshipForDeletedPart.TargetUri
+                    );
 
                     var relatedPackagePart = partOfDeletedContent.Package.GetPart(targetUri);
                     var uriSplit = relatedPackagePart.Uri.ToString().Split('/');
@@ -47,31 +51,50 @@ namespace Clippit
                     string uriString;
                     if (last.Length == 2)
                     {
-                        uriString = uriSplit.SkipLast(1).Select(p => p + "/").StringConcatenate() +
-                                    "P" + Guid.NewGuid().ToString().Replace("-", "") + "." + last[1];
+                        uriString =
+                            uriSplit.SkipLast(1).Select(p => p + "/").StringConcatenate()
+                            + "P"
+                            + Guid.NewGuid().ToString().Replace("-", "")
+                            + "."
+                            + last[1];
                     }
                     else
                     {
-                        uriString = uriSplit.SkipLast(1).Select(p => p + "/").StringConcatenate() +
-                                    "P" + Guid.NewGuid().ToString().Replace("-", "");
+                        uriString =
+                            uriSplit.SkipLast(1).Select(p => p + "/").StringConcatenate()
+                            + "P"
+                            + Guid.NewGuid().ToString().Replace("-", "");
                     }
 
                     var uri = relatedPackagePart.Uri.IsAbsoluteUri
                         ? new Uri(uriString, UriKind.Absolute)
                         : new Uri(uriString, UriKind.Relative);
 
-                    var newPart = partInNewDocument.Package.CreatePart(uri, relatedPackagePart.ContentType, CompressionOption.Normal);
+                    var newPart = partInNewDocument.Package.CreatePart(
+                        uri,
+                        relatedPackagePart.ContentType,
+                        CompressionOption.Normal
+                    );
 
                     // ReSharper disable once PossibleNullReferenceException
-                    using (var oldPartStream = relatedPackagePart.GetStream(FileMode.Open, FileAccess.Read))
+                    using (
+                        var oldPartStream = relatedPackagePart.GetStream(
+                            FileMode.Open,
+                            FileAccess.Read
+                        )
+                    )
                     using (var newPartStream = newPart.GetStream(FileMode.Create, FileAccess.Write))
                     {
                         oldPartStream.CopyTo(newPartStream);
                     }
 
                     var newRid = Relationships.GetNewRelationshipId();
-                    partInNewDocument.Relationships.Create(newPart.Uri, TargetMode.Internal,
-                        relationshipForDeletedPart.RelationshipType, newRid);
+                    partInNewDocument.Relationships.Create(
+                        newPart.Uri,
+                        TargetMode.Internal,
+                        relationshipForDeletedPart.RelationshipType,
+                        newRid
+                    );
                     att.Value = newRid;
 
                     if (newPart.ContentType.EndsWith("xml"))
@@ -80,7 +103,11 @@ namespace Clippit
                         using (var stream = newPart.GetStream(FileMode.Open, FileAccess.Read))
                         {
                             newPartXDoc = XDocument.Load(stream);
-                            MoveRelatedPartsToDestination(relatedPackagePart, newPart, newPartXDoc.Root);
+                            MoveRelatedPartsToDestination(
+                                relatedPackagePart,
+                                newPart,
+                                newPartXDoc.Root
+                            );
                         }
 
                         using (var stream = newPart.GetStream(FileMode.Create, FileAccess.Write))
@@ -94,8 +121,10 @@ namespace Clippit
 
         private static XAttribute GetXmlSpaceAttribute(string textOfTextElement)
         {
-            if (char.IsWhiteSpace(textOfTextElement[0]) ||
-                char.IsWhiteSpace(textOfTextElement[textOfTextElement.Length - 1]))
+            if (
+                char.IsWhiteSpace(textOfTextElement[0])
+                || char.IsWhiteSpace(textOfTextElement[textOfTextElement.Length - 1])
+            )
                 return new XAttribute(XNamespace.Xml + "space", "preserve");
 
             return null;
