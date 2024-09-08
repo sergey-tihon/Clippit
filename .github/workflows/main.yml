@@ -3,14 +3,13 @@ name: Build and Test
 on:
   push:
     branches:
-    - master
+      - master
   pull_request:
     branches:
-    - master
+      - master
 
 jobs:
   build:
-
     strategy:
       fail-fast: false
       matrix:
@@ -18,45 +17,46 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Setup .NET 8.0 SDK
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
-    - name: Build and Test
-      run: dotnet fsi build.fsx -- -p build
-    - name: Upload Artifacts
-      uses: actions/upload-artifact@v2
-      with: 
-        name: bin
-        path: bin/*.nupkg
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup .NET 8.0 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      - name: Build and Test
+        run: dotnet fsi build.fsx -- -p build
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: bin
+          path: bin/*.nupkg
 
   generate-docs:
     runs-on: windows-latest
     needs: build
-    
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Setup .NET 8.0 SDK
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
-    - name: Build and Test
-      run: dotnet fsi build.fsx -- -p build
-    - name: Setup DocFX
-      uses: crazy-max/ghaction-chocolatey@v1
-      with:
-        args: install docfx
-    - name: DocFX Build
-      working-directory: docs
-      run: docfx docfx.json
-      continue-on-error: false
-    - name: Publish
-      if: github.event_name == 'push'
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: docs/_site
-        force_orphan: true
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup .NET 8.0 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      - name: Build and Test
+        run: dotnet fsi build.fsx -- -p build
+      - name: Setup DocFX
+        uses: crazy-max/ghaction-chocolatey@v1
+        with:
+          args: install docfx
+      - name: DocFX Build
+        working-directory: docs
+        run: docfx docfx.json
+        continue-on-error: false
+      - name: Publish
+        if: github.event_name == 'push'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/_site
+          force_orphan: true
+
