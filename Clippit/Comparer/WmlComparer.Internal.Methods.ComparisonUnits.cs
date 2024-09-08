@@ -39,9 +39,7 @@ namespace Clippit
 
         private static void VerifyNoInvalidContent(XElement contentParent)
         {
-            var invalidElement = contentParent
-                .Descendants()
-                .FirstOrDefault(d => InvalidElements.Contains(d.Name));
+            var invalidElement = contentParent.Descendants().FirstOrDefault(d => InvalidElements.Contains(d.Name));
             if (invalidElement == null)
                 return;
 
@@ -80,12 +78,7 @@ namespace Clippit
         )
         {
             var comparisonUnitAtomList = new List<ComparisonUnitAtom>();
-            CreateComparisonUnitAtomListRecurse(
-                part,
-                contentParent,
-                comparisonUnitAtomList,
-                settings
-            );
+            CreateComparisonUnitAtomListRecurse(part, contentParent, comparisonUnitAtomList, settings);
             return comparisonUnitAtomList;
         }
 
@@ -99,12 +92,7 @@ namespace Clippit
             if (element.Name == W.body || element.Name == W.footnote || element.Name == W.endnote)
             {
                 foreach (var item in element.Elements())
-                    CreateComparisonUnitAtomListRecurse(
-                        part,
-                        item,
-                        comparisonUnitAtomList,
-                        settings
-                    );
+                    CreateComparisonUnitAtomListRecurse(part, item, comparisonUnitAtomList, settings);
                 return;
             }
 
@@ -112,12 +100,7 @@ namespace Clippit
             {
                 var paraChildrenToProcess = element.Elements().Where(e => e.Name != W.pPr);
                 foreach (var item in paraChildrenToProcess)
-                    CreateComparisonUnitAtomListRecurse(
-                        part,
-                        item,
-                        comparisonUnitAtomList,
-                        settings
-                    );
+                    CreateComparisonUnitAtomListRecurse(part, item, comparisonUnitAtomList, settings);
                 var paraProps = element.Element(W.pPr);
                 if (paraProps == null)
                 {
@@ -125,9 +108,7 @@ namespace Clippit
                         new XElement(W.pPr),
                         element
                             .AncestorsAndSelf()
-                            .TakeWhile(a =>
-                                a.Name != W.body && a.Name != W.footnotes && a.Name != W.endnotes
-                            )
+                            .TakeWhile(a => a.Name != W.body && a.Name != W.footnotes && a.Name != W.endnotes)
                             .Reverse()
                             .ToArray(),
                         part,
@@ -141,9 +122,7 @@ namespace Clippit
                         paraProps,
                         element
                             .AncestorsAndSelf()
-                            .TakeWhile(a =>
-                                a.Name != W.body && a.Name != W.footnotes && a.Name != W.endnotes
-                            )
+                            .TakeWhile(a => a.Name != W.body && a.Name != W.footnotes && a.Name != W.endnotes)
                             .Reverse()
                             .ToArray(),
                         part,
@@ -159,12 +138,7 @@ namespace Clippit
             {
                 var runChildrenToProcess = element.Elements().Where(e => e.Name != W.rPr);
                 foreach (var item in runChildrenToProcess)
-                    CreateComparisonUnitAtomListRecurse(
-                        part,
-                        item,
-                        comparisonUnitAtomList,
-                        settings
-                    );
+                    CreateComparisonUnitAtomListRecurse(part, item, comparisonUnitAtomList, settings);
                 return;
             }
 
@@ -177,9 +151,7 @@ namespace Clippit
                         new XElement(element.Name, ch),
                         element
                             .AncestorsAndSelf()
-                            .TakeWhile(a =>
-                                a.Name != W.body && a.Name != W.footnotes && a.Name != W.endnotes
-                            )
+                            .TakeWhile(a => a.Name != W.body && a.Name != W.footnotes && a.Name != W.endnotes)
                             .Reverse()
                             .ToArray(),
                         part,
@@ -197,9 +169,7 @@ namespace Clippit
                     element,
                     element
                         .AncestorsAndSelf()
-                        .TakeWhile(a =>
-                            a.Name != W.body && a.Name != W.footnotes && a.Name != W.endnotes
-                        )
+                        .TakeWhile(a => a.Name != W.body && a.Name != W.footnotes && a.Name != W.endnotes)
                         .Reverse()
                         .ToArray(),
                     part,
@@ -212,13 +182,7 @@ namespace Clippit
             var re = RecursionElements.FirstOrDefault(z => z.ElementName == element.Name);
             if (re != null)
             {
-                AnnotateElementWithProps(
-                    part,
-                    element,
-                    comparisonUnitAtomList,
-                    re.ChildElementPropertyNames,
-                    settings
-                );
+                AnnotateElementWithProps(part, element, comparisonUnitAtomList, re.ChildElementPropertyNames, settings);
                 return;
             }
 
@@ -240,9 +204,7 @@ namespace Clippit
             if (childElementPropertyNames == null)
                 runChildrenToProcess = element.Elements();
             else
-                runChildrenToProcess = element
-                    .Elements()
-                    .Where(e => !childElementPropertyNames.Contains(e.Name));
+                runChildrenToProcess = element.Elements().Where(e => !childElementPropertyNames.Contains(e.Name));
 
             foreach (var item in runChildrenToProcess)
                 CreateComparisonUnitAtomListRecurse(part, item, comparisonUnitAtomList, settings);
@@ -283,10 +245,7 @@ namespace Clippit
                                 if (i > 0)
                                 {
                                     var prev = comparisonUnitAtomList[i - 1];
-                                    if (
-                                        prev.ContentElement.Name == W.t
-                                        && char.IsDigit(prev.ContentElement.Value[0])
-                                    )
+                                    if (prev.ContentElement.Name == W.t && char.IsDigit(prev.ContentElement.Value[0]))
                                         beforeIsDigit = true;
                                 }
 
@@ -294,10 +253,7 @@ namespace Clippit
                                 if (i < comparisonUnitAtomList.Length - 1)
                                 {
                                     var next = comparisonUnitAtomList[i + 1];
-                                    if (
-                                        next.ContentElement.Name == W.t
-                                        && char.IsDigit(next.ContentElement.Value[0])
-                                    )
+                                    if (next.ContentElement.Name == W.t && char.IsDigit(next.ContentElement.Value[0]))
                                         afterIsDigit = true;
                                 }
 
@@ -350,18 +306,14 @@ namespace Clippit
                 foreach (var item in groupingKey)
                 {
                     sb.Append(item.Key + Environment.NewLine);
-                    sb.Append(
-                        "    " + item.ComparisonUnitAtomMember.ToString(0) + Environment.NewLine
-                    );
+                    sb.Append("    " + item.ComparisonUnitAtomMember.ToString(0) + Environment.NewLine);
                 }
 
                 var sbs = sb.ToString();
                 TestUtil.NotePad(sbs);
             }
 
-            IEnumerable<IGrouping<int?, Atgbw>> groupedByWords = groupingKey
-                .GroupAdjacent(gc => gc.Key)
-                .ToArray();
+            IEnumerable<IGrouping<int?, Atgbw>> groupedByWords = groupingKey.GroupAdjacent(gc => gc.Key).ToArray();
 
             if (False)
             {
@@ -371,9 +323,7 @@ namespace Clippit
                     sb.Append("Group ===== " + @group.Key + Environment.NewLine);
                     foreach (var gc in @group)
                     {
-                        sb.Append(
-                            "    " + gc.ComparisonUnitAtomMember.ToString(0) + Environment.NewLine
-                        );
+                        sb.Append("    " + gc.ComparisonUnitAtomMember.ToString(0) + Environment.NewLine);
                     }
                 }
 
@@ -393,9 +343,7 @@ namespace Clippit
 
                     return new WithHierarchicalGroupingKey
                     {
-                        ComparisonUnitWord = new ComparisonUnitWord(
-                            g.Select(gc => gc.ComparisonUnitAtomMember)
-                        ),
+                        ComparisonUnitWord = new ComparisonUnitWord(g.Select(gc => gc.ComparisonUnitAtomMember)),
                         HierarchicalGroupingArray = hierarchicalGroupingArray,
                     };
                 })
@@ -408,9 +356,7 @@ namespace Clippit
                 {
                     sb.Append(
                         "Grouping Array: "
-                            + @group
-                                .HierarchicalGroupingArray.Select(gam => gam + " - ")
-                                .StringConcatenate()
+                            + @group.HierarchicalGroupingArray.Select(gam => gam + " - ").StringConcatenate()
                             + Environment.NewLine
                     );
                     foreach (var gc in @group.ComparisonUnitWord.Contents)
@@ -440,9 +386,7 @@ namespace Clippit
         )
         {
             var grouped = input.GroupAdjacent(whgk =>
-                level >= whgk.HierarchicalGroupingArray.Length
-                    ? ""
-                    : whgk.HierarchicalGroupingArray[level]
+                level >= whgk.HierarchicalGroupingArray.Length ? "" : whgk.HierarchicalGroupingArray[level]
             );
 
             var retList = grouped
@@ -450,21 +394,13 @@ namespace Clippit
                 {
                     if (gc.Key == "")
                     {
-                        return (IEnumerable<ComparisonUnit>)
-                            gc.Select(whgk => whgk.ComparisonUnitWord).ToList();
+                        return (IEnumerable<ComparisonUnit>)gc.Select(whgk => whgk.ComparisonUnitWord).ToList();
                     }
 
                     var spl = gc.Key.Split(':');
                     var groupType = WmlComparerUtil.ComparisonUnitGroupTypeFromLocalName(spl[0]);
-                    var childHierarchicalComparisonUnits = GetHierarchicalComparisonUnits(
-                        gc,
-                        level + 1
-                    );
-                    var newCompUnitGroup = new ComparisonUnitGroup(
-                        childHierarchicalComparisonUnits,
-                        groupType,
-                        level
-                    );
+                    var childHierarchicalComparisonUnits = GetHierarchicalComparisonUnits(gc, level + 1);
+                    var newCompUnitGroup = new ComparisonUnitGroup(childHierarchicalComparisonUnits, groupType, level);
 
                     return new[] { newCompUnitGroup };
                 })

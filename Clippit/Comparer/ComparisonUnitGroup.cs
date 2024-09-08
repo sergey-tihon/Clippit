@@ -23,11 +23,7 @@ namespace Clippit
 
             var ancestorsToLookAt = comparisonUnitAtom
                 .AncestorElements.Where(e =>
-                    e.Name == W.tbl
-                    || e.Name == W.tr
-                    || e.Name == W.tc
-                    || e.Name == W.p
-                    || e.Name == W.txbxContent
+                    e.Name == W.tbl || e.Name == W.tr || e.Name == W.tc || e.Name == W.p || e.Name == W.txbxContent
                 )
                 .ToArray();
 
@@ -59,9 +55,7 @@ namespace Clippit
 
                 if (!(thisGroup is ComparisonUnitWord tw))
                 {
-                    throw new OpenXmlPowerToolsException(
-                        "Internal error: GetFirstComparisonUnitAtomOfGroup"
-                    );
+                    throw new OpenXmlPowerToolsException("Internal error: GetFirstComparisonUnitAtomOfGroup");
                 }
 
                 var ca = (ComparisonUnitAtom)tw.Contents.First();

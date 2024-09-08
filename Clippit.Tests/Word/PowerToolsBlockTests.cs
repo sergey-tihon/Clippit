@@ -45,12 +45,7 @@ namespace Clippit.Tests.Word
 
                 // Add a paragraph through the PowerTools.
                 var bodyElement = content.Descendants(W.body).First();
-                bodyElement.Add(
-                    new XElement(
-                        W.p,
-                        new XElement(W.r, new XElement(W.t, "Added through PowerTools"))
-                    )
-                );
+                bodyElement.Add(new XElement(W.p, new XElement(W.r, new XElement(W.t, "Added through PowerTools"))));
                 part.PutXDocument();
             }
 

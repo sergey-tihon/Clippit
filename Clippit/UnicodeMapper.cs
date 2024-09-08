@@ -96,10 +96,7 @@ namespace Clippit
 
             if (element.Name == W.fldChar)
             {
-                var fldCharType = element
-                    .Attributes(W.fldCharType)
-                    .Select(a => a.Value)
-                    .FirstOrDefault();
+                var fldCharType = element.Attributes(W.fldCharType).Select(a => a.Value).FirstOrDefault();
                 return fldCharType switch
                 {
                     "begin" => "{",
@@ -165,8 +162,7 @@ namespace Clippit
         /// <returns>The Unicode character used to represent the symbol.</returns>
         public static char SymToChar(string fontAttributeValue, int unicodeValue)
         {
-            var effectiveUnicodeValue =
-                unicodeValue < 0x1000 ? 0xF000 + unicodeValue : unicodeValue;
+            var effectiveUnicodeValue = unicodeValue < 0x1000 ? 0xF000 + unicodeValue : unicodeValue;
             return SymToChar(fontAttributeValue, effectiveUnicodeValue.ToString("X4"));
         }
 
@@ -189,15 +185,9 @@ namespace Clippit
         public static char SymToChar(string fontAttributeValue, string charAttributeValue)
         {
             if (string.IsNullOrEmpty(fontAttributeValue))
-                throw new ArgumentException(
-                    "Argument is null or empty.",
-                    nameof(fontAttributeValue)
-                );
+                throw new ArgumentException("Argument is null or empty.", nameof(fontAttributeValue));
             if (string.IsNullOrEmpty(charAttributeValue))
-                throw new ArgumentException(
-                    "Argument is null or empty.",
-                    nameof(charAttributeValue)
-                );
+                throw new ArgumentException("Argument is null or empty.", nameof(charAttributeValue));
 
             return SymToChar(
                 new XElement(
@@ -264,20 +254,14 @@ namespace Clippit
         /// <param name="textValue">The text value to transform.</param>
         /// <param name="runProperties">The run properties to apply.</param>
         /// <returns>A list of runs representing the text value.</returns>
-        public static List<XElement> StringToCoalescedRunList(
-            string textValue,
-            XElement runProperties
-        )
+        public static List<XElement> StringToCoalescedRunList(string textValue, XElement runProperties)
         {
             return textValue
                 .Select(CharToRunChild)
                 .GroupAdjacent(e => e.Name == W.t)
                 .SelectMany(grouping =>
                     grouping.Key
-                        ? StringToSingleRunList(
-                            grouping.Select(t => (string)t).StringConcatenate(),
-                            runProperties
-                        )
+                        ? StringToSingleRunList(grouping.Select(t => (string)t).StringConcatenate(), runProperties)
                         : grouping.Select(e => new XElement(W.r, runProperties, e))
                 )
                 .ToList();
@@ -290,10 +274,7 @@ namespace Clippit
         /// <param name="textValue">The text value to transform.</param>
         /// <param name="runProperties">The run properties to apply.</param>
         /// <returns>A list with a single run.</returns>
-        public static IEnumerable<XElement> StringToSingleRunList(
-            string textValue,
-            XElement runProperties
-        )
+        public static IEnumerable<XElement> StringToSingleRunList(string textValue, XElement runProperties)
         {
             var run = new XElement(
                 W.r,

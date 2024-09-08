@@ -14,10 +14,7 @@ namespace Clippit
 {
     public static partial class WmlComparer
     {
-        private static WmlDocument PreProcessMarkup(
-            WmlDocument source,
-            int startingIdForFootnotesEndnotes
-        )
+        private static WmlDocument PreProcessMarkup(WmlDocument source, int startingIdForFootnotesEndnotes)
         {
             // open and close to get rid of MC content
             using (var ms = new MemoryStream())
@@ -90,10 +87,7 @@ namespace Clippit
                         RemoveHyperlinks = true,
                     };
                     MarkupSimplifier.SimplifyMarkup(wDoc, msSettings);
-                    ChangeFootnoteEndnoteReferencesToUniqueRange(
-                        wDoc,
-                        startingIdForFootnotesEndnotes
-                    );
+                    ChangeFootnoteEndnoteReferencesToUniqueRange(wDoc, startingIdForFootnotesEndnotes);
                     AddUnidsToMarkupInContentParts(wDoc);
                     AddFootnotesEndnotesParts(wDoc);
                     FillInEmptyFootnotesEndnotes(wDoc);
@@ -109,15 +103,11 @@ namespace Clippit
             {
                 var xDoc = part.GetXDocument();
                 if (xDoc.Descendants(W.altChunk).Any())
-                    throw new OpenXmlPowerToolsException(
-                        "Unsupported document, contains w:altChunk"
-                    );
+                    throw new OpenXmlPowerToolsException("Unsupported document, contains w:altChunk");
                 if (xDoc.Descendants(W.subDoc).Any())
                     throw new OpenXmlPowerToolsException("Unsupported document, contains w:subDoc");
                 if (xDoc.Descendants(W.contentPart).Any())
-                    throw new OpenXmlPowerToolsException(
-                        "Unsupported document, contains w:contentPart"
-                    );
+                    throw new OpenXmlPowerToolsException("Unsupported document, contains w:contentPart");
             }
         }
 
@@ -170,9 +160,7 @@ namespace Clippit
             var footnotesPart = wDoc.MainDocumentPart.FootnotesPart;
             var endnotesPart = wDoc.MainDocumentPart.EndnotesPart;
 
-            var document =
-                mainDocPart.GetXDocument().Root
-                ?? throw new OpenXmlPowerToolsException("Invalid document.");
+            var document = mainDocPart.GetXDocument().Root ?? throw new OpenXmlPowerToolsException("Invalid document.");
 
             var footnotes = footnotesPart?.GetXDocument().Root;
             var endnotes = endnotesPart?.GetXDocument().Root;
@@ -189,9 +177,7 @@ namespace Clippit
                 r.SetAttributeValue(W.id, newId);
                 if (r.Name == W.footnoteReference)
                 {
-                    var fn = footnotes
-                        ?.Elements()
-                        .FirstOrDefault(e => (string)e.Attribute(W.id) == oldId);
+                    var fn = footnotes?.Elements().FirstOrDefault(e => (string)e.Attribute(W.id) == oldId);
 
                     if (fn == null)
                     {
@@ -202,9 +188,7 @@ namespace Clippit
                 }
                 else
                 {
-                    var en = endnotes
-                        ?.Elements()
-                        .FirstOrDefault(e => (string)e.Attribute(W.id) == oldId);
+                    var en = endnotes?.Elements().FirstOrDefault(e => (string)e.Attribute(W.id) == oldId);
 
                     if (en == null)
                     {

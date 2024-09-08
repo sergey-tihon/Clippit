@@ -70,10 +70,7 @@ namespace Clippit
             return partXDocument;
         }
 
-        public static XDocument GetXDocument(
-            this OpenXmlPart part,
-            out XmlNamespaceManager namespaceManager
-        )
+        public static XDocument GetXDocument(this OpenXmlPart part, out XmlNamespaceManager namespaceManager)
         {
             if (part is null)
                 throw new ArgumentNullException(nameof(part));
@@ -197,9 +194,7 @@ namespace Clippit
 
             if (element.Name == W.p)
                 return element
-                    .DescendantsTrimmed(e =>
-                        e.Name == W.r || e.Name == W.pict || e.Name == W.drawing
-                    )
+                    .DescendantsTrimmed(e => e.Name == W.r || e.Name == W.pict || e.Name == W.drawing)
                     .Where(e => e.Name == W.r || e.Name == W.pict || e.Name == W.drawing);
 
             if (element.Name == W.r)
@@ -209,40 +204,28 @@ namespace Clippit
 
             if (element.Name == MC.AlternateContent)
                 return element
-                    .DescendantsTrimmed(e =>
-                        e.Name == W.pict || e.Name == W.drawing || e.Name == MC.Fallback
-                    )
+                    .DescendantsTrimmed(e => e.Name == W.pict || e.Name == W.drawing || e.Name == MC.Fallback)
                     .Where(e => e.Name == W.pict || e.Name == W.drawing);
 
             if (element.Name == W.pict || element.Name == W.drawing)
-                return element
-                    .DescendantsTrimmed(W.txbxContent)
-                    .Where(e => e.Name == W.txbxContent);
+                return element.DescendantsTrimmed(W.txbxContent).Where(e => e.Name == W.txbxContent);
 
             return XElement.EmptySequence;
         }
 
-        public static IEnumerable<XElement> LogicalChildrenContent(
-            this IEnumerable<XElement> source
-        )
+        public static IEnumerable<XElement> LogicalChildrenContent(this IEnumerable<XElement> source)
         {
             foreach (var e1 in source)
             foreach (XElement e2 in e1.LogicalChildrenContent())
                 yield return e2;
         }
 
-        public static IEnumerable<XElement> LogicalChildrenContent(
-            this XElement element,
-            XName name
-        )
+        public static IEnumerable<XElement> LogicalChildrenContent(this XElement element, XName name)
         {
             return element.LogicalChildrenContent().Where(e => e.Name == name);
         }
 
-        public static IEnumerable<XElement> LogicalChildrenContent(
-            this IEnumerable<XElement> source,
-            XName name
-        )
+        public static IEnumerable<XElement> LogicalChildrenContent(this IEnumerable<XElement> source, XName name)
         {
             foreach (var e1 in source)
             foreach (XElement e2 in e1.LogicalChildrenContent(name))
@@ -493,14 +476,8 @@ namespace Clippit
                     using var str = part.GetStream(FileMode.Create);
                     using var binaryWriter = new BinaryWriter(str);
                     var base64StringInChunks = (string)xmlPart.Element(pkg + "binaryData");
-                    var base64CharArray = base64StringInChunks
-                        .Where(c => c != '\r' && c != '\n')
-                        .ToArray();
-                    var byteArray = Convert.FromBase64CharArray(
-                        base64CharArray,
-                        0,
-                        base64CharArray.Length
-                    );
+                    var base64CharArray = base64StringInChunks.Where(c => c != '\r' && c != '\n').ToArray();
+                    var byteArray = Convert.FromBase64CharArray(base64CharArray, 0, base64CharArray.Length);
                     binaryWriter.Write(byteArray);
                 }
             }
@@ -542,9 +519,7 @@ namespace Clippit
                         var directory = name.Substring(0, name.IndexOf("/_rels"));
                         var relsFilename = name.Substring(name.LastIndexOf('/'));
                         var filename = relsFilename.Substring(0, relsFilename.IndexOf(".rels"));
-                        var fromPart = package.GetPart(
-                            new Uri(directory + filename, UriKind.Relative)
-                        );
+                        var fromPart = package.GetPart(new Uri(directory + filename, UriKind.Relative));
                         foreach (var xmlRel in xmlPart.Descendants(rel + "Relationship"))
                         {
                             var id = (string)xmlRel.Attribute("Id");
@@ -646,18 +621,13 @@ namespace Clippit
             var fontName =
                 (string)r.Attribute(PtOpenXml.pt + "FontName")
                 ?? (string)r.Ancestors(W.p).First().Attribute(PtOpenXml.pt + "FontName")
-                ?? throw new OpenXmlPowerToolsException(
-                    "Internal Error, should have FontName attribute"
-                );
+                ?? throw new OpenXmlPowerToolsException("Internal Error, should have FontName attribute");
 
             if (UnknownFonts.Contains(fontName))
                 return (0, tabLength);
 
             var rPr =
-                r.Element(W.rPr)
-                ?? throw new OpenXmlPowerToolsException(
-                    "Internal Error, should have run properties"
-                );
+                r.Element(W.rPr) ?? throw new OpenXmlPowerToolsException("Internal Error, should have run properties");
 
             var sz = GetFontSize(r) ?? 22m;
 
@@ -688,10 +658,8 @@ namespace Clippit
             // must be revisited.
             // TODO: Revisit.
             var runText =
-                r.DescendantsTrimmed(W.txbxContent)
-                    .Where(e => e.Name == W.t)
-                    .Select(t => (string)t)
-                    .StringConcatenate() + " ";
+                r.DescendantsTrimmed(W.txbxContent).Where(e => e.Name == W.t).Select(t => (string)t).StringConcatenate()
+                + " ";
 
             if (runText.Length == 0 && tabLength == 0)
                 return (0, tabLength);
@@ -713,8 +681,7 @@ namespace Clippit
                 runText = sb.ToString();
             }
 
-            var width =
-                (double)MetricsGetter.GetTextWidth(ff, fs, sz, runText) / (double)multiplier;
+            var width = (double)MetricsGetter.GetTextWidth(ff, fs, sz, runText) / (double)multiplier;
             return (width, tabLength);
         }
 
@@ -735,10 +702,7 @@ namespace Clippit
             var languageType = (string)e.Attribute(PtOpenXml.LanguageType);
             if (e.Name == W.p)
             {
-                return GetFontSize(
-                    languageType,
-                    e.Elements(W.pPr).Elements(W.rPr).FirstOrDefault()
-                );
+                return GetFontSize(languageType, e.Elements(W.pPr).Elements(W.rPr).FirstOrDefault());
             }
             if (e.Name == W.r)
             {
@@ -857,8 +821,7 @@ namespace Clippit
                         var dateIns2 = ce.Attribute(W.date);
 
                         var authorIns2 = (string)ce.Attribute(W.author) ?? string.Empty;
-                        var dateInsString2 =
-                            dateIns2 != null ? ((DateTime)dateIns2).ToString("s") : string.Empty;
+                        var dateInsString2 = dateIns2 != null ? ((DateTime)dateIns2).ToString("s") : string.Empty;
 
                         var idIns2 = (string)ce.Attribute(W.id);
 
@@ -883,8 +846,7 @@ namespace Clippit
                         var dateDel2 = ce.Attribute(W.date);
 
                         var authorDel2 = (string)ce.Attribute(W.author) ?? string.Empty;
-                        var dateDelString2 =
-                            dateDel2 != null ? ((DateTime)dateDel2).ToString("s") : string.Empty;
+                        var dateDelString2 = dateDel2 != null ? ((DateTime)dateDel2).ToString("s") : string.Empty;
 
                         return "Wdel"
                             + authorDel2
@@ -908,11 +870,7 @@ namespace Clippit
 
                     var textValue = g.Select(r =>
                             r.Descendants()
-                                .Where(d =>
-                                    (d.Name == W.t)
-                                    || (d.Name == W.delText)
-                                    || (d.Name == W.instrText)
-                                )
+                                .Where(d => (d.Name == W.t) || (d.Name == W.delText) || (d.Name == W.instrText))
                                 .Select(d => d.Value)
                                 .StringConcatenate()
                         )
@@ -923,9 +881,7 @@ namespace Clippit
                     {
                         if (g.First().Element(W.t) != null)
                         {
-                            var statusAtt = g.Select(r =>
-                                r.Descendants(W.t).Take(1).Attributes(PtOpenXml.Status)
-                            );
+                            var statusAtt = g.Select(r => r.Descendants(W.t).Take(1).Attributes(PtOpenXml.Status));
                             return new XElement(
                                 W.r,
                                 g.First().Elements(W.rPr),
@@ -956,11 +912,7 @@ namespace Clippit
                         return new XElement(
                             W.ins,
                             g.First().Attributes(),
-                            new XElement(
-                                W.r,
-                                g.First().Elements(W.r).Elements(W.rPr),
-                                new XElement(W.t, xs, textValue)
-                            )
+                            new XElement(W.r, g.First().Elements(W.r).Elements(W.rPr), new XElement(W.t, xs, textValue))
                         );
                     }
 
@@ -981,9 +933,7 @@ namespace Clippit
 
             // Process w:txbxContent//w:p
             foreach (var txbx in runContainerWithConsolidatedRuns.Descendants(W.txbxContent))
-            foreach (
-                var txbxPara in txbx.DescendantsTrimmed(W.txbxContent).Where(d => d.Name == W.p)
-            )
+            foreach (var txbxPara in txbx.DescendantsTrimmed(W.txbxContent).Where(d => d.Name == W.p))
             {
                 var newPara = CoalesceAdjacentRunsWithIdenticalFormatting(txbxPara);
                 txbxPara.ReplaceWith(newPara);
@@ -1484,9 +1434,7 @@ listSeparator
                     var newP = new XElement(
                         element.Name,
                         element.Attributes(),
-                        element
-                            .Elements(W.pPr)
-                            .Select(e => (XElement)WmlOrderElementsPerStandard(e)),
+                        element.Elements(W.pPr).Select(e => (XElement)WmlOrderElementsPerStandard(e)),
                         element
                             .Elements()
                             .Where(e => e.Name != W.pPr)
@@ -1499,9 +1447,7 @@ listSeparator
                     return new XElement(
                         element.Name,
                         element.Attributes(),
-                        element
-                            .Elements(W.rPr)
-                            .Select(e => (XElement)WmlOrderElementsPerStandard(e)),
+                        element.Elements(W.rPr).Select(e => (XElement)WmlOrderElementsPerStandard(e)),
                         element
                             .Elements()
                             .Where(e => e.Name != W.rPr)
@@ -1659,9 +1605,7 @@ listSeparator
                 var r = v % 676;
                 var m = r / 26;
                 var l = r % 26;
-                return ((char)(((int)'A') + h))
-                    + ((char)(((int)'A') + m)).ToString()
-                    + ((char)(((int)'A') + l));
+                return ((char)(((int)'A') + h)) + ((char)(((int)'A') + m)).ToString() + ((char)(((int)'A') + l));
             }
             throw new ColumnReferenceOutOfRange(i.ToString());
         }
@@ -1697,36 +1641,21 @@ listSeparator
 
         public static string ColumnIdOf(string cellReference)
         {
-            var columnIdOf = cellReference
-                .Split('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
-                .First();
+            var columnIdOf = cellReference.Split('0', '1', '2', '3', '4', '5', '6', '7', '8', '9').First();
             return columnIdOf;
         }
     }
 
     public class Util
     {
-        public static string[] WordprocessingExtensions = new[]
-        {
-            ".docx",
-            ".docm",
-            ".dotx",
-            ".dotm",
-        };
+        public static string[] WordprocessingExtensions = new[] { ".docx", ".docm", ".dotx", ".dotm" };
 
         public static bool IsWordprocessingML(string ext)
         {
             return WordprocessingExtensions.Contains(ext.ToLower());
         }
 
-        public static string[] SpreadsheetExtensions = new[]
-        {
-            ".xlsx",
-            ".xlsm",
-            ".xltx",
-            ".xltm",
-            ".xlam",
-        };
+        public static string[] SpreadsheetExtensions = new[] { ".xlsx", ".xlsm", ".xltx", ".xltm", ".xlam" };
 
         public static bool IsSpreadsheetML(string ext)
         {
@@ -1896,11 +1825,7 @@ listSeparator
             if (field.Length == 0)
                 return emptyField;
             var fieldType = field.TrimStart().Split(' ').FirstOrDefault();
-            if (
-                fieldType == null
-                || fieldType.ToUpper() != "HYPERLINK"
-                || fieldType.ToUpper() != "REF"
-            )
+            if (fieldType == null || fieldType.ToUpper() != "HYPERLINK" || fieldType.ToUpper() != "REF")
                 return emptyField;
             var tokens = GetTokens(field);
             if (tokens.Length == 0)
@@ -2003,8 +1928,7 @@ listSeparator
                             var urisToCheck = entryXDoc
                                 .Descendants(relNs + "Relationship")
                                 .Where(r =>
-                                    r.Attribute("TargetMode") != null
-                                    && (string)r.Attribute("TargetMode") == "External"
+                                    r.Attribute("TargetMode") != null && (string)r.Attribute("TargetMode") == "External"
                                 );
                             foreach (var rel in urisToCheck)
                             {
@@ -2045,8 +1969,7 @@ listSeparator
 
     public static class ACTIVEX
     {
-        public static readonly XNamespace activex =
-            "http://schemas.microsoft.com/office/2006/activeX";
+        public static readonly XNamespace activex = "http://schemas.microsoft.com/office/2006/activeX";
         public static readonly XName classid = activex + "classid";
         public static readonly XName font = activex + "font";
         public static readonly XName license = activex + "license";
@@ -2059,8 +1982,7 @@ listSeparator
 
     public static class BIBLIO
     {
-        public static readonly XNamespace biblio =
-            "http://schemas.microsoft.com/office/word/2004/10/bibliography";
+        public static readonly XNamespace biblio = "http://schemas.microsoft.com/office/word/2004/10/bibliography";
         public static readonly XName AlbumTitle = biblio + "AlbumTitle";
         public static readonly XName Artist = biblio + "Artist";
         public static readonly XName Author = biblio + "Author";
@@ -2186,8 +2108,7 @@ listSeparator
 
     public static class WNE
     {
-        public static readonly XNamespace wne =
-            "http://schemas.microsoft.com/office/word/2006/wordml";
+        public static readonly XNamespace wne = "http://schemas.microsoft.com/office/word/2006/wordml";
         public static readonly XName acd = wne + "acd";
         public static readonly XName acdEntry = wne + "acdEntry";
         public static readonly XName acdManifest = wne + "acdManifest";
@@ -2219,26 +2140,22 @@ listSeparator
 
     public static class WPC
     {
-        public static readonly XNamespace wpc =
-            "http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas";
+        public static readonly XNamespace wpc = "http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas";
     }
 
     public static class WPG
     {
-        public static readonly XNamespace wpg =
-            "http://schemas.microsoft.com/office/word/2010/wordprocessingGroup";
+        public static readonly XNamespace wpg = "http://schemas.microsoft.com/office/word/2010/wordprocessingGroup";
     }
 
     public static class WPI
     {
-        public static readonly XNamespace wpi =
-            "http://schemas.microsoft.com/office/word/2010/wordprocessingInk";
+        public static readonly XNamespace wpi = "http://schemas.microsoft.com/office/word/2010/wordprocessingInk";
     }
 
     public static class A
     {
-        public static readonly XNamespace a =
-            "http://schemas.openxmlformats.org/drawingml/2006/main";
+        public static readonly XNamespace a = "http://schemas.openxmlformats.org/drawingml/2006/main";
         public static readonly XName accent1 = a + "accent1";
         public static readonly XName accent2 = a + "accent2";
         public static readonly XName accent3 = a + "accent3";
@@ -2558,8 +2475,7 @@ listSeparator
 
     public static class A14
     {
-        public static readonly XNamespace a14 =
-            "http://schemas.microsoft.com/office/drawing/2010/main";
+        public static readonly XNamespace a14 = "http://schemas.microsoft.com/office/drawing/2010/main";
         public static readonly XName artisticChalkSketch = a14 + "artisticChalkSketch";
         public static readonly XName artisticGlass = a14 + "artisticGlass";
         public static readonly XName artisticGlowEdges = a14 + "artisticGlowEdges";
@@ -2583,8 +2499,7 @@ listSeparator
         public static readonly XName imgEffect = a14 + "imgEffect";
         public static readonly XName imgLayer = a14 + "imgLayer";
         public static readonly XName imgProps = a14 + "imgProps";
-        public static readonly XName legacySpreadsheetColorIndex =
-            a14 + "legacySpreadsheetColorIndex";
+        public static readonly XName legacySpreadsheetColorIndex = a14 + "legacySpreadsheetColorIndex";
         public static readonly XName m = a14 + "m";
         public static readonly XName saturation = a14 + "saturation";
         public static readonly XName shadowObscured = a14 + "shadowObscured";
@@ -2594,8 +2509,7 @@ listSeparator
 
     public static class C
     {
-        public static readonly XNamespace c =
-            "http://schemas.openxmlformats.org/drawingml/2006/chart";
+        public static readonly XNamespace c = "http://schemas.openxmlformats.org/drawingml/2006/chart";
         public static readonly XName applyToEnd = c + "applyToEnd";
         public static readonly XName applyToFront = c + "applyToFront";
         public static readonly XName applyToSides = c + "applyToSides";
@@ -2816,16 +2730,14 @@ listSeparator
 
     public static class Cx
     {
-        public static readonly XNamespace c =
-            "http://schemas.microsoft.com/office/drawing/2014/chartex";
+        public static readonly XNamespace c = "http://schemas.microsoft.com/office/drawing/2014/chartex";
         public static readonly XName chart = c + "chart";
         public static readonly XName externalData = c + "externalData";
     }
 
     public static class CDR
     {
-        public static readonly XNamespace cdr =
-            "http://schemas.openxmlformats.org/drawingml/2006/chartDrawing";
+        public static readonly XNamespace cdr = "http://schemas.openxmlformats.org/drawingml/2006/chartDrawing";
         public static readonly XName absSizeAnchor = cdr + "absSizeAnchor";
         public static readonly XName blipFill = cdr + "blipFill";
         public static readonly XName cNvCxnSpPr = cdr + "cNvCxnSpPr";
@@ -2859,8 +2771,7 @@ listSeparator
 
     public static class COM
     {
-        public static readonly XNamespace com =
-            "http://schemas.openxmlformats.org/drawingml/2006/compatibility";
+        public static readonly XNamespace com = "http://schemas.openxmlformats.org/drawingml/2006/compatibility";
         public static readonly XName legacyDrawing = com + "legacyDrawing";
     }
 
@@ -2904,8 +2815,7 @@ listSeparator
 
     public static class DGM
     {
-        public static readonly XNamespace dgm =
-            "http://schemas.openxmlformats.org/drawingml/2006/diagram";
+        public static readonly XNamespace dgm = "http://schemas.openxmlformats.org/drawingml/2006/diagram";
         public static readonly XName adj = dgm + "adj";
         public static readonly XName adjLst = dgm + "adjLst";
         public static readonly XName alg = dgm + "alg";
@@ -2969,16 +2879,14 @@ listSeparator
 
     public static class DGM14
     {
-        public static readonly XNamespace dgm14 =
-            "http://schemas.microsoft.com/office/drawing/2010/diagram";
+        public static readonly XNamespace dgm14 = "http://schemas.microsoft.com/office/drawing/2010/diagram";
         public static readonly XName cNvPr = dgm14 + "cNvPr";
         public static readonly XName recolorImg = dgm14 + "recolorImg";
     }
 
     public static class DIGSIG
     {
-        public static readonly XNamespace digsig =
-            "http://schemas.microsoft.com/office/2006/digsig";
+        public static readonly XNamespace digsig = "http://schemas.microsoft.com/office/2006/digsig";
         public static readonly XName ApplicationVersion = digsig + "ApplicationVersion";
         public static readonly XName ColorDepth = digsig + "ColorDepth";
         public static readonly XName HorizontalResolution = digsig + "HorizontalResolution";
@@ -3000,8 +2908,7 @@ listSeparator
 
     public static class DS
     {
-        public static readonly XNamespace ds =
-            "http://schemas.openxmlformats.org/officeDocument/2006/customXml";
+        public static readonly XNamespace ds = "http://schemas.openxmlformats.org/officeDocument/2006/customXml";
         public static readonly XName datastoreItem = ds + "datastoreItem";
         public static readonly XName itemID = ds + "itemID";
         public static readonly XName schemaRef = ds + "schemaRef";
@@ -3011,8 +2918,7 @@ listSeparator
 
     public static class DSP
     {
-        public static readonly XNamespace dsp =
-            "http://schemas.microsoft.com/office/drawing/2008/diagram";
+        public static readonly XNamespace dsp = "http://schemas.microsoft.com/office/drawing/2008/diagram";
         public static readonly XName dataModelExt = dsp + "dataModelExt";
     }
 
@@ -3051,15 +2957,13 @@ listSeparator
 
     public static class LC
     {
-        public static readonly XNamespace lc =
-            "http://schemas.openxmlformats.org/drawingml/2006/lockedCanvas";
+        public static readonly XNamespace lc = "http://schemas.openxmlformats.org/drawingml/2006/lockedCanvas";
         public static readonly XName lockedCanvas = lc + "lockedCanvas";
     }
 
     public static class M
     {
-        public static readonly XNamespace m =
-            "http://schemas.openxmlformats.org/officeDocument/2006/math";
+        public static readonly XNamespace m = "http://schemas.openxmlformats.org/officeDocument/2006/math";
         public static readonly XName acc = m + "acc";
         public static readonly XName accPr = m + "accPr";
         public static readonly XName aln = m + "aln";
@@ -3190,8 +3094,7 @@ listSeparator
 
     public static class MC
     {
-        public static readonly XNamespace mc =
-            "http://schemas.openxmlformats.org/markup-compatibility/2006";
+        public static readonly XNamespace mc = "http://schemas.openxmlformats.org/markup-compatibility/2006";
         public static readonly XName AlternateContent = mc + "AlternateContent";
         public static readonly XName Choice = mc + "Choice";
         public static readonly XName Fallback = mc + "Fallback";
@@ -3201,8 +3104,7 @@ listSeparator
 
     public static class MDSSI
     {
-        public static readonly XNamespace mdssi =
-            "http://schemas.openxmlformats.org/package/2006/digital-signature";
+        public static readonly XNamespace mdssi = "http://schemas.openxmlformats.org/package/2006/digital-signature";
         public static readonly XName Format = mdssi + "Format";
         public static readonly XName RelationshipReference = mdssi + "RelationshipReference";
         public static readonly XName SignatureTime = mdssi + "SignatureTime";
@@ -3211,8 +3113,7 @@ listSeparator
 
     public static class MP
     {
-        public static readonly XNamespace mp =
-            "http://schemas.microsoft.com/office/mac/powerpoint/2008/main";
+        public static readonly XNamespace mp = "http://schemas.microsoft.com/office/mac/powerpoint/2008/main";
         public static readonly XName cube = mp + "cube";
         public static readonly XName flip = mp + "flip";
         public static readonly XName transition = mp + "transition";
@@ -3966,8 +3867,7 @@ listSeparator
 
     public static class P
     {
-        public static readonly XNamespace p =
-            "http://schemas.openxmlformats.org/presentationml/2006/main";
+        public static readonly XNamespace p = "http://schemas.openxmlformats.org/presentationml/2006/main";
         public static readonly XName anim = p + "anim";
         public static readonly XName animClr = p + "animClr";
         public static readonly XName animEffect = p + "animEffect";
@@ -4170,8 +4070,7 @@ listSeparator
 
     public static class P14
     {
-        public static readonly XNamespace p14 =
-            "http://schemas.microsoft.com/office/powerpoint/2010/main";
+        public static readonly XNamespace p14 = "http://schemas.microsoft.com/office/powerpoint/2010/main";
         public static readonly XName bmk = p14 + "bmk";
         public static readonly XName bmkLst = p14 + "bmkLst";
         public static readonly XName bmkTgt = p14 + "bmkTgt";
@@ -4233,8 +4132,7 @@ listSeparator
 
     public static class PAV
     {
-        public static readonly XNamespace pav =
-            "http://schemas.microsoft.com/office/2007/6/19/audiovideo";
+        public static readonly XNamespace pav = "http://schemas.microsoft.com/office/2007/6/19/audiovideo";
         public static readonly XName media = pav + "media";
         public static readonly XName srcMedia = pav + "srcMedia";
         public static readonly XName bmkLst = pav + "bmkLst";
@@ -4242,8 +4140,7 @@ listSeparator
 
     public static class Pic
     {
-        public static readonly XNamespace pic =
-            "http://schemas.openxmlformats.org/drawingml/2006/picture";
+        public static readonly XNamespace pic = "http://schemas.openxmlformats.org/drawingml/2006/picture";
         public static readonly XName blipFill = pic + "blipFill";
         public static readonly XName cNvPicPr = pic + "cNvPicPr";
         public static readonly XName cNvPr = pic + "cNvPr";
@@ -4254,8 +4151,7 @@ listSeparator
 
     public static class SVG
     {
-        public static readonly XNamespace svg =
-            "http://schemas.microsoft.com/office/drawing/2016/SVG/main";
+        public static readonly XNamespace svg = "http://schemas.microsoft.com/office/drawing/2016/SVG/main";
         public static readonly XName svgBlip = svg + "svgBlip";
     }
 
@@ -4267,8 +4163,7 @@ listSeparator
 
     public static class R
     {
-        public static readonly XNamespace r =
-            "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+        public static readonly XNamespace r = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
         public static readonly XName blip = r + "blip";
         public static readonly XName cs = r + "cs";
         public static readonly XName dm = r + "dm";
@@ -4284,8 +4179,7 @@ listSeparator
 
     public static class S
     {
-        public static readonly XNamespace s =
-            "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+        public static readonly XNamespace s = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
         public static readonly XName alignment = s + "alignment";
         public static readonly XName anchor = s + "anchor";
         public static readonly XName author = s + "author";
@@ -4653,8 +4547,7 @@ listSeparator
 
     public static class SL
     {
-        public static readonly XNamespace sl =
-            "http://schemas.openxmlformats.org/schemaLibrary/2006/main";
+        public static readonly XNamespace sl = "http://schemas.openxmlformats.org/schemaLibrary/2006/main";
         public static readonly XName manifestLocation = sl + "manifestLocation";
         public static readonly XName schema = sl + "schema";
         public static readonly XName schemaLibrary = sl + "schemaLibrary";
@@ -4663,8 +4556,7 @@ listSeparator
 
     public static class SLE
     {
-        public static readonly XNamespace sle =
-            "http://schemas.microsoft.com/office/drawing/2010/slicer";
+        public static readonly XNamespace sle = "http://schemas.microsoft.com/office/drawing/2010/slicer";
         public static readonly XName slicer = sle + "slicer";
     }
 
@@ -4699,8 +4591,7 @@ listSeparator
 
     public static class VT
     {
-        public static readonly XNamespace vt =
-            "http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes";
+        public static readonly XNamespace vt = "http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes";
         public static readonly XName _bool = vt + "bool";
         public static readonly XName filetime = vt + "filetime";
         public static readonly XName i4 = vt + "i4";
@@ -4713,8 +4604,7 @@ listSeparator
 
     public static class W
     {
-        public static readonly XNamespace w =
-            "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+        public static readonly XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
         public static readonly XName abstractNum = w + "abstractNum";
         public static readonly XName abstractNumId = w + "abstractNumId";
         public static readonly XName accent1 = w + "accent1";
@@ -4740,8 +4630,7 @@ listSeparator
         public static readonly XName alignment = w + "alignment";
         public static readonly XName alignTablesRowByRow = w + "alignTablesRowByRow";
         public static readonly XName allowPNG = w + "allowPNG";
-        public static readonly XName allowSpaceOfSameStyleInTable =
-            w + "allowSpaceOfSameStyleInTable";
+        public static readonly XName allowSpaceOfSameStyleInTable = w + "allowSpaceOfSameStyleInTable";
         public static readonly XName altChunk = w + "altChunk";
         public static readonly XName altChunkPr = w + "altChunkPr";
         public static readonly XName altName = w + "altName";
@@ -4758,8 +4647,7 @@ listSeparator
         public static readonly XName attachedTemplate = w + "attachedTemplate";
         public static readonly XName attr = w + "attr";
         public static readonly XName author = w + "author";
-        public static readonly XName autofitToFirstFixedWidthCell =
-            w + "autofitToFirstFixedWidthCell";
+        public static readonly XName autofitToFirstFixedWidthCell = w + "autofitToFirstFixedWidthCell";
         public static readonly XName autoFormatOverride = w + "autoFormatOverride";
         public static readonly XName autoHyphenation = w + "autoHyphenation";
         public static readonly XName autoRedefine = w + "autoRedefine";
@@ -4768,8 +4656,7 @@ listSeparator
         public static readonly XName autoSpaceLikeWord95 = w + "autoSpaceLikeWord95";
         public static readonly XName b = w + "b";
         public static readonly XName background = w + "background";
-        public static readonly XName balanceSingleByteDoubleByteWidth =
-            w + "balanceSingleByteDoubleByteWidth";
+        public static readonly XName balanceSingleByteDoubleByteWidth = w + "balanceSingleByteDoubleByteWidth";
         public static readonly XName bar = w + "bar";
         public static readonly XName basedOn = w + "basedOn";
         public static readonly XName bCs = w + "bCs";
@@ -4870,8 +4757,7 @@ listSeparator
         public static readonly XName customXmlInsRangeEnd = w + "customXmlInsRangeEnd";
         public static readonly XName customXmlInsRangeStart = w + "customXmlInsRangeStart";
         public static readonly XName customXmlMoveFromRangeEnd = w + "customXmlMoveFromRangeEnd";
-        public static readonly XName customXmlMoveFromRangeStart =
-            w + "customXmlMoveFromRangeStart";
+        public static readonly XName customXmlMoveFromRangeStart = w + "customXmlMoveFromRangeStart";
         public static readonly XName customXmlMoveToRangeEnd = w + "customXmlMoveToRangeEnd";
         public static readonly XName customXmlMoveToRangeStart = w + "customXmlMoveToRangeStart";
         public static readonly XName customXmlPr = w + "customXmlPr";
@@ -4903,11 +4789,9 @@ listSeparator
         public static readonly XName display = w + "display";
         public static readonly XName displayBackgroundShape = w + "displayBackgroundShape";
         public static readonly XName displayHangulFixedWidth = w + "displayHangulFixedWidth";
-        public static readonly XName displayHorizontalDrawingGridEvery =
-            w + "displayHorizontalDrawingGridEvery";
+        public static readonly XName displayHorizontalDrawingGridEvery = w + "displayHorizontalDrawingGridEvery";
         public static readonly XName displayText = w + "displayText";
-        public static readonly XName displayVerticalDrawingGridEvery =
-            w + "displayVerticalDrawingGridEvery";
+        public static readonly XName displayVerticalDrawingGridEvery = w + "displayVerticalDrawingGridEvery";
         public static readonly XName distance = w + "distance";
         public static readonly XName div = w + "div";
         public static readonly XName divBdr = w + "divBdr";
@@ -4933,10 +4817,8 @@ listSeparator
         public static readonly XName docVar = w + "docVar";
         public static readonly XName docVars = w + "docVars";
         public static readonly XName doNotAutoCompressPictures = w + "doNotAutoCompressPictures";
-        public static readonly XName doNotAutofitConstrainedTables =
-            w + "doNotAutofitConstrainedTables";
-        public static readonly XName doNotBreakConstrainedForcedTable =
-            w + "doNotBreakConstrainedForcedTable";
+        public static readonly XName doNotAutofitConstrainedTables = w + "doNotAutofitConstrainedTables";
+        public static readonly XName doNotBreakConstrainedForcedTable = w + "doNotBreakConstrainedForcedTable";
         public static readonly XName doNotBreakWrappedTables = w + "doNotBreakWrappedTables";
         public static readonly XName doNotDemarcateInvalidXml = w + "doNotDemarcateInvalidXml";
         public static readonly XName doNotDisplayPageBoundaries = w + "doNotDisplayPageBoundaries";
@@ -4952,28 +4834,21 @@ listSeparator
         public static readonly XName doNotSnapToGridInCell = w + "doNotSnapToGridInCell";
         public static readonly XName doNotSuppressBlankLines = w + "doNotSuppressBlankLines";
         public static readonly XName doNotSuppressIndentation = w + "doNotSuppressIndentation";
-        public static readonly XName doNotSuppressParagraphBorders =
-            w + "doNotSuppressParagraphBorders";
+        public static readonly XName doNotSuppressParagraphBorders = w + "doNotSuppressParagraphBorders";
         public static readonly XName doNotTrackFormatting = w + "doNotTrackFormatting";
         public static readonly XName doNotTrackMoves = w + "doNotTrackMoves";
-        public static readonly XName doNotUseEastAsianBreakRules =
-            w + "doNotUseEastAsianBreakRules";
-        public static readonly XName doNotUseHTMLParagraphAutoSpacing =
-            w + "doNotUseHTMLParagraphAutoSpacing";
-        public static readonly XName doNotUseIndentAsNumberingTabStop =
-            w + "doNotUseIndentAsNumberingTabStop";
+        public static readonly XName doNotUseEastAsianBreakRules = w + "doNotUseEastAsianBreakRules";
+        public static readonly XName doNotUseHTMLParagraphAutoSpacing = w + "doNotUseHTMLParagraphAutoSpacing";
+        public static readonly XName doNotUseIndentAsNumberingTabStop = w + "doNotUseIndentAsNumberingTabStop";
         public static readonly XName doNotUseLongFileNames = w + "doNotUseLongFileNames";
-        public static readonly XName doNotUseMarginsForDrawingGridOrigin =
-            w + "doNotUseMarginsForDrawingGridOrigin";
+        public static readonly XName doNotUseMarginsForDrawingGridOrigin = w + "doNotUseMarginsForDrawingGridOrigin";
         public static readonly XName doNotValidateAgainstSchema = w + "doNotValidateAgainstSchema";
         public static readonly XName doNotVertAlignCellWithSp = w + "doNotVertAlignCellWithSp";
         public static readonly XName doNotVertAlignInTxbx = w + "doNotVertAlignInTxbx";
         public static readonly XName doNotWrapTextWithPunct = w + "doNotWrapTextWithPunct";
         public static readonly XName drawing = w + "drawing";
-        public static readonly XName drawingGridHorizontalOrigin =
-            w + "drawingGridHorizontalOrigin";
-        public static readonly XName drawingGridHorizontalSpacing =
-            w + "drawingGridHorizontalSpacing";
+        public static readonly XName drawingGridHorizontalOrigin = w + "drawingGridHorizontalOrigin";
+        public static readonly XName drawingGridHorizontalSpacing = w + "drawingGridHorizontalSpacing";
         public static readonly XName drawingGridVerticalOrigin = w + "drawingGridVerticalOrigin";
         public static readonly XName drawingGridVerticalSpacing = w + "drawingGridVerticalSpacing";
         public static readonly XName dropCap = w + "dropCap";
@@ -5259,8 +5134,7 @@ listSeparator
         public static readonly XName printColBlack = w + "printColBlack";
         public static readonly XName printerSettings = w + "printerSettings";
         public static readonly XName printFormsData = w + "printFormsData";
-        public static readonly XName printFractionalCharacterWidth =
-            w + "printFractionalCharacterWidth";
+        public static readonly XName printFractionalCharacterWidth = w + "printFractionalCharacterWidth";
         public static readonly XName printPostScriptOverText = w + "printPostScriptOverText";
         public static readonly XName printTwoOnOne = w + "printTwoOnOne";
         public static readonly XName proofErr = w + "proofErr";
@@ -5321,8 +5195,7 @@ listSeparator
         public static readonly XName sdtPr = w + "sdtPr";
         public static readonly XName sectPr = w + "sectPr";
         public static readonly XName sectPrChange = w + "sectPrChange";
-        public static readonly XName selectFldWithFirstOrLastChar =
-            w + "selectFldWithFirstOrLastChar";
+        public static readonly XName selectFldWithFirstOrLastChar = w + "selectFldWithFirstOrLastChar";
         public static readonly XName semiHidden = w + "semiHidden";
         public static readonly XName sep = w + "sep";
         public static readonly XName separator = w + "separator";
@@ -5474,14 +5347,12 @@ listSeparator
         public static readonly XName usb1 = w + "usb1";
         public static readonly XName usb2 = w + "usb2";
         public static readonly XName usb3 = w + "usb3";
-        public static readonly XName useAltKinsokuLineBreakRules =
-            w + "useAltKinsokuLineBreakRules";
+        public static readonly XName useAltKinsokuLineBreakRules = w + "useAltKinsokuLineBreakRules";
         public static readonly XName useAnsiKerningPairs = w + "useAnsiKerningPairs";
         public static readonly XName useFELayout = w + "useFELayout";
         public static readonly XName useNormalStyleForList = w + "useNormalStyleForList";
         public static readonly XName usePrinterMetrics = w + "usePrinterMetrics";
-        public static readonly XName useSingleBorderforContiguousCells =
-            w + "useSingleBorderforContiguousCells";
+        public static readonly XName useSingleBorderforContiguousCells = w + "useSingleBorderforContiguousCells";
         public static readonly XName useWord2002TableStyleRules = w + "useWord2002TableStyleRules";
         public static readonly XName useWord97LineBreakRules = w + "useWord97LineBreakRules";
         public static readonly XName useXSLTWhenSaving = w + "useXSLTWhenSaving";
@@ -5584,8 +5455,7 @@ listSeparator
 
     public static class W14
     {
-        public static readonly XNamespace w14 =
-            "http://schemas.microsoft.com/office/word/2010/wordml";
+        public static readonly XNamespace w14 = "http://schemas.microsoft.com/office/word/2010/wordml";
         public static readonly XName algn = w14 + "algn";
         public static readonly XName alpha = w14 + "alpha";
         public static readonly XName ang = w14 + "ang";
@@ -5697,14 +5567,12 @@ listSeparator
 
     public static class W16SE
     {
-        public static XNamespace w16se =
-            "http://schemas.microsoft.com/office/word/2015/wordml/symex";
+        public static XNamespace w16se = "http://schemas.microsoft.com/office/word/2015/wordml/symex";
     }
 
     public static class WE
     {
-        public static readonly XNamespace we =
-            "http://schemas.microsoft.com/office/webextensions/webextension/2010/11";
+        public static readonly XNamespace we = "http://schemas.microsoft.com/office/webextensions/webextension/2010/11";
         public static readonly XName alternateReferences = we + "alternateReferences";
         public static readonly XName binding = we + "binding";
         public static readonly XName bindings = we + "bindings";
@@ -5720,8 +5588,7 @@ listSeparator
 
     public static class WETP
     {
-        public static readonly XNamespace wetp =
-            "http://schemas.microsoft.com/office/webextensions/taskpanes/2010/11";
+        public static readonly XNamespace wetp = "http://schemas.microsoft.com/office/webextensions/taskpanes/2010/11";
         public static readonly XName extLst = wetp + "extLst";
         public static readonly XName taskpane = wetp + "taskpane";
         public static readonly XName taskpanes = wetp + "taskpanes";
@@ -5759,8 +5626,7 @@ listSeparator
 
     public static class WP
     {
-        public static readonly XNamespace wp =
-            "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
+        public static readonly XNamespace wp = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
         public static readonly XName align = wp + "align";
         public static readonly XName anchor = wp + "anchor";
         public static readonly XName cNvGraphicFramePr = wp + "cNvGraphicFramePr";
@@ -5784,8 +5650,7 @@ listSeparator
 
     public static class WP14
     {
-        public static readonly XNamespace wp14 =
-            "http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing";
+        public static readonly XNamespace wp14 = "http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing";
         public static readonly XName anchorId = wp14 + "anchorId";
         public static readonly XName editId = wp14 + "editId";
         public static readonly XName pctHeight = wp14 + "pctHeight";
@@ -5797,8 +5662,7 @@ listSeparator
 
     public static class WPS
     {
-        public static readonly XNamespace wps =
-            "http://schemas.microsoft.com/office/word/2010/wordprocessingShape";
+        public static readonly XNamespace wps = "http://schemas.microsoft.com/office/word/2010/wordprocessingShape";
         public static readonly XName altTxbx = wps + "altTxbx";
         public static readonly XName bodyPr = wps + "bodyPr";
         public static readonly XName cNvSpPr = wps + "cNvSpPr";
@@ -5823,8 +5687,7 @@ listSeparator
 
     public static class XDR
     {
-        public static readonly XNamespace xdr =
-            "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing";
+        public static readonly XNamespace xdr = "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing";
         public static readonly XName absoluteAnchor = xdr + "absoluteAnchor";
         public static readonly XName blipFill = xdr + "blipFill";
         public static readonly XName clientData = xdr + "clientData";
@@ -5865,8 +5728,7 @@ listSeparator
 
     public static class XDR14
     {
-        public static readonly XNamespace xdr14 =
-            "http://schemas.microsoft.com/office/excel/2010/spreadsheetDrawing";
+        public static readonly XNamespace xdr14 = "http://schemas.microsoft.com/office/excel/2010/spreadsheetDrawing";
         public static readonly XName cNvContentPartPr = xdr14 + "cNvContentPartPr";
         public static readonly XName cNvPr = xdr14 + "cNvPr";
         public static readonly XName nvContentPartPr = xdr14 + "nvContentPartPr";
@@ -5876,8 +5738,7 @@ listSeparator
 
     public static class XM
     {
-        public static readonly XNamespace xm =
-            "http://schemas.microsoft.com/office/excel/2006/main";
+        public static readonly XNamespace xm = "http://schemas.microsoft.com/office/excel/2006/main";
         public static readonly XName f = xm + "f";
         public static readonly XName _ref = xm + "ref";
         public static readonly XName sqref = xm + "sqref";
@@ -5893,8 +5754,7 @@ listSeparator
 
     public static class PtOpenXml
     {
-        public static XNamespace ptOpenXml =
-            "http://powertools.codeplex.com/documentbuilder/2011/insert";
+        public static XNamespace ptOpenXml = "http://powertools.codeplex.com/documentbuilder/2011/insert";
         public static XName Insert = ptOpenXml + "Insert";
         public static XName Id = "Id";
 

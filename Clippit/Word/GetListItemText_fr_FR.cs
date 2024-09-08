@@ -95,11 +95,7 @@ namespace Clippit.Word
             "",
         };
 
-        public static string GetListItemText(
-            string languageCultureName,
-            int levelNumber,
-            string numFmt
-        )
+        public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
         {
             if (numFmt == "cardinalText")
             {
@@ -257,8 +253,7 @@ namespace Clippit.Word
                 if (tens == 7)
                 {
                     if (ones == 1)
-                        result +=
-                            OrdinalTenthsPlus[6] + " et " + OrdinalOneThroughNineteen[ones + 10];
+                        result += OrdinalTenthsPlus[6] + " et " + OrdinalOneThroughNineteen[ones + 10];
                     else
                         result += OrdinalTenthsPlus[6] + "-" + OrdinalOneThroughNineteen[ones + 10];
                     return result.Substring(0, 1).ToUpper() + result.Substring(1);

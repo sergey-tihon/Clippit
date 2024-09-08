@@ -236,9 +236,7 @@ namespace Clippit.Tests.Common
             part.PutXDocument(partDocument);
 
             var content = partDocument.Descendants(W.p);
-            var regex = new Regex(
-                $"{LeftDoubleQuotationMarks}(?<words>{Words}){RightDoubleQuotationMarks}"
-            );
+            var regex = new Regex($"{LeftDoubleQuotationMarks}(?<words>{Words}){RightDoubleQuotationMarks}");
             var count = OpenXmlRegex.Replace(content, regex, "‘changed ${words}’", null);
 
             p = partDocument.Descendants(W.p).First();
@@ -269,17 +267,8 @@ namespace Clippit.Tests.Common
             part.PutXDocument(partDocument);
 
             var content = partDocument.Descendants(W.p);
-            var regex = new Regex(
-                $"{LeftDoubleQuotationMarks}(?<words>{Words}){RightDoubleQuotationMarks}"
-            );
-            var count = OpenXmlRegex.Replace(
-                content,
-                regex,
-                "‘changed ${words}’",
-                null,
-                true,
-                "John Doe"
-            );
+            var regex = new Regex($"{LeftDoubleQuotationMarks}(?<words>{Words}){RightDoubleQuotationMarks}");
+            var count = OpenXmlRegex.Replace(content, regex, "‘changed ${words}’", null, true, "John Doe");
 
             p = partDocument.Descendants(W.p).First();
             innerText = InnerText(p);
@@ -290,20 +279,11 @@ namespace Clippit.Tests.Common
                 innerText
             );
 
-            Assert.Contains(
-                p.Elements(W.ins),
-                e => InnerText(e) == "‘changed normal double quotes’"
-            );
-            Assert.Contains(
-                p.Elements(W.ins),
-                e => InnerText(e) == "‘changed double angle quotation marks’"
-            );
+            Assert.Contains(p.Elements(W.ins), e => InnerText(e) == "‘changed normal double quotes’");
+            Assert.Contains(p.Elements(W.ins), e => InnerText(e) == "‘changed double angle quotation marks’");
 
             Assert.Contains(p.Elements(W.del), e => InnerDelText(e) == "“normal double quotes”");
-            Assert.Contains(
-                p.Elements(W.del),
-                e => InnerDelText(e) == "«double angle quotation marks»"
-            );
+            Assert.Contains(p.Elements(W.del), e => InnerDelText(e) == "«double angle quotation marks»");
         }
 
         [Fact]
@@ -324,17 +304,8 @@ namespace Clippit.Tests.Common
             part.PutXDocument(partDocument);
 
             var content = partDocument.Descendants(W.p);
-            var regex = new Regex(
-                $"{LeftDoubleQuotationMarks}(?<words>{Words}){RightDoubleQuotationMarks}"
-            );
-            var count = OpenXmlRegex.Replace(
-                content,
-                regex,
-                "‘changed ${words}’",
-                null,
-                true,
-                "John Doe"
-            );
+            var regex = new Regex($"{LeftDoubleQuotationMarks}(?<words>{Words}){RightDoubleQuotationMarks}");
+            var count = OpenXmlRegex.Replace(content, regex, "‘changed ${words}’", null, true, "John Doe");
 
             p = partDocument.Descendants(W.p).First();
             innerText = InnerText(p);
@@ -345,14 +316,8 @@ namespace Clippit.Tests.Common
                 innerText
             );
 
-            Assert.Contains(
-                p.Elements(W.ins),
-                e => InnerText(e) == "‘changed normal double quotes’"
-            );
-            Assert.Contains(
-                p.Elements(W.ins),
-                e => InnerText(e) == "‘changed double angle quotation marks’"
-            );
+            Assert.Contains(p.Elements(W.ins), e => InnerText(e) == "‘changed normal double quotes’");
+            Assert.Contains(p.Elements(W.ins), e => InnerText(e) == "‘changed double angle quotation marks’");
         }
 
         [Fact]
@@ -384,8 +349,7 @@ namespace Clippit.Tests.Common
                 ins =>
                     ins.Descendants(W.sym)
                         .Any(sym =>
-                            sym.Attribute(W.font).Value == "Wingdings"
-                            && sym.Attribute(W._char).Value == "F028"
+                            sym.Attribute(W.font).Value == "Wingdings" && sym.Attribute(W._char).Value == "F028"
                         )
             );
         }

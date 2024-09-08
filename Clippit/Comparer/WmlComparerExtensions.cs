@@ -17,8 +17,7 @@ namespace Clippit
 
         public static XElement GetMainDocumentRoot(this WordprocessingDocument wordDocument)
         {
-            return wordDocument.MainDocumentPart?.GetXElement()
-                ?? throw new ArgumentException("Invalid document.");
+            return wordDocument.MainDocumentPart?.GetXElement() ?? throw new ArgumentException("Invalid document.");
         }
 
         public static XElement GetXElement(this OpenXmlPart part)

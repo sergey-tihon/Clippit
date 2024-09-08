@@ -49,10 +49,7 @@ namespace Clippit.Tests.Common
                 var wmlTemplate = new WmlDocument(templateFile.FullName);
 
                 var afterUpdatingDocx = new FileInfo(
-                    Path.Combine(
-                        TempDir,
-                        templateFile.Name.Replace(".docx", "-processed-by-ChartUpdater.docx")
-                    )
+                    Path.Combine(TempDir, templateFile.Name.Replace(".docx", "-processed-by-ChartUpdater.docx"))
                 );
                 wmlTemplate.SaveAs(afterUpdatingDocx.FullName);
 
@@ -130,29 +127,7 @@ namespace Clippit.Tests.Common
                     Values = new[]
                     {
                         new double[] { 1, 2, 3, 2, 3, 4, 5, 4, 5, 6, 5, 4, 5, 6, 7, 8, 7, 8, 8, 9 },
-                        new double[]
-                        {
-                            2,
-                            3,
-                            3,
-                            4,
-                            4,
-                            5,
-                            6,
-                            7,
-                            8,
-                            7,
-                            8,
-                            9,
-                            9,
-                            9,
-                            7,
-                            8,
-                            9,
-                            9,
-                            10,
-                            11,
-                        },
+                        new double[] { 2, 3, 3, 4, 4, 5, 6, 7, 8, 7, 8, 9, 9, 9, 7, 8, 9, 9, 10, 11 },
                         new double[] { 2, 3, 3, 3, 3, 2, 2, 2, 3, 2, 3, 3, 4, 4, 4, 3, 4, 5, 5, 4 },
                     },
                 };
@@ -163,10 +138,7 @@ namespace Clippit.Tests.Common
                 var pmlTemplate = new PmlDocument(templateFile.FullName);
 
                 var afterUpdatingPptx = new FileInfo(
-                    Path.Combine(
-                        TempDir,
-                        templateFile.Name.Replace(".pptx", "-processed-by-ChartUpdater.pptx")
-                    )
+                    Path.Combine(TempDir, templateFile.Name.Replace(".pptx", "-processed-by-ChartUpdater.pptx"))
                 );
                 pmlTemplate.SaveAs(afterUpdatingPptx.FullName);
 

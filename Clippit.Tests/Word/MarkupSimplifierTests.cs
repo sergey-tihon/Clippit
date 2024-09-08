@@ -17,8 +17,7 @@ namespace Clippit.Tests.Word
     {
         private const WordprocessingDocumentType DocumentType = WordprocessingDocumentType.Document;
 
-        private const string SmartTagDocumentTextValue =
-            "The countries include Algeria, Botswana, and Sri Lanka.";
+        private const string SmartTagDocumentTextValue = "The countries include Algeria, Botswana, and Sri Lanka.";
         private const string SmartTagDocumentXmlString =
             @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
   <w:body>
@@ -135,10 +134,7 @@ namespace Clippit.Tests.Word
                 partDocument.Descendants(W.bookmarkStart),
                 e => e.Attribute(W.name).Value == "_GoBack" && e.Attribute(W.id).Value == "0"
             );
-            Assert.Contains(
-                partDocument.Descendants(W.bookmarkEnd),
-                e => e.Attribute(W.id).Value == "0"
-            );
+            Assert.Contains(partDocument.Descendants(W.bookmarkEnd), e => e.Attribute(W.id).Value == "0");
 
             using var stream = new MemoryStream();
             using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);

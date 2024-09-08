@@ -42,10 +42,7 @@ namespace Clippit
             return Descendants().OfType<ComparisonUnitAtom>();
         }
 
-        private static void DescendantsInternal(
-            ComparisonUnit comparisonUnit,
-            List<ComparisonUnit> comparisonUnitList
-        )
+        private static void DescendantsInternal(ComparisonUnit comparisonUnit, List<ComparisonUnit> comparisonUnitList)
         {
             foreach (var cu in comparisonUnit.Contents)
             {

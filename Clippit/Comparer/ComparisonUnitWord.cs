@@ -70,9 +70,7 @@ namespace Clippit
         public override string ToString(int indent)
         {
             var sb = new StringBuilder();
-            sb.Append(
-                "".PadRight(indent) + "Word SHA1:" + SHA1Hash.Substring(0, 8) + Environment.NewLine
-            );
+            sb.Append("".PadRight(indent) + "Word SHA1:" + SHA1Hash.Substring(0, 8) + Environment.NewLine);
 
             foreach (var comparisonUnitAtom in Contents)
             {

@@ -43,10 +43,7 @@ namespace Clippit.Tests.PowerPoint
             var sourceDir = new DirectoryInfo("../../../../TestFiles/");
             var source2Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
-            var sources = new List<SlideSource>
-            {
-                new(new PmlDocument(source2Pptx.FullName), 0, true),
-            };
+            var sources = new List<SlideSource> { new(new PmlDocument(source2Pptx.FullName), 0, true) };
             var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB002-Formatting.pptx"));
             PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
         }

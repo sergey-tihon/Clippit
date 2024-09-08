@@ -36,9 +36,7 @@ namespace Clippit
             return sb.ToString();
         }
 
-        public static ComparisonUnitGroupType ComparisonUnitGroupTypeFromLocalName(
-            string localName
-        ) =>
+        public static ComparisonUnitGroupType ComparisonUnitGroupTypeFromLocalName(string localName) =>
             localName switch
             {
                 "p" => ComparisonUnitGroupType.Paragraph,

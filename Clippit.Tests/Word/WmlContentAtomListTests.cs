@@ -106,11 +106,7 @@ namespace Clippit.Tests.Word
             using var wDoc = WordprocessingDocument.Open(annotatedDocx.FullName, true);
             var contentParent = wDoc.MainDocumentPart.GetXDocument().Root.Element(W.body);
             var settings = new WmlComparerSettings();
-            WmlComparer.CreateComparisonUnitAtomList(
-                wDoc.MainDocumentPart,
-                contentParent,
-                settings
-            );
+            WmlComparer.CreateComparisonUnitAtomList(wDoc.MainDocumentPart, contentParent, settings);
 #endif
         }
 
@@ -126,28 +122,19 @@ namespace Clippit.Tests.Word
             var sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
             var thisGuid = Guid.NewGuid().ToString().Replace("-", "");
             var sourceCopiedToDestDocx = new FileInfo(
-                Path.Combine(
-                    TempDir,
-                    sourceDocx.Name.Replace(".docx", $"-{thisGuid}-1-Source.docx")
-                )
+                Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", $"-{thisGuid}-1-Source.docx"))
             );
             if (!sourceCopiedToDestDocx.Exists)
                 File.Copy(sourceDocx.FullName, sourceCopiedToDestDocx.FullName);
 
             var coalescedDocx = new FileInfo(
-                Path.Combine(
-                    TempDir,
-                    sourceDocx.Name.Replace(".docx", $"-{thisGuid}-2-Coalesced.docx")
-                )
+                Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", $"-{thisGuid}-2-Coalesced.docx"))
             );
             if (!coalescedDocx.Exists)
                 File.Copy(sourceDocx.FullName, coalescedDocx.FullName);
 
             var contentAtomDataFi = new FileInfo(
-                Path.Combine(
-                    TempDir,
-                    sourceDocx.Name.Replace(".docx", $"-{thisGuid}-3-ContentAtomData.txt")
-                )
+                Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", $"-{thisGuid}-3-ContentAtomData.txt"))
             );
 
             using var wDoc = WordprocessingDocument.Open(coalescedDocx.FullName, true);
@@ -155,11 +142,7 @@ namespace Clippit.Tests.Word
             {
                 var contentParent = wDoc.MainDocumentPart.GetXDocument().Root.Element(W.body);
                 var settings = new WmlComparerSettings();
-                WmlComparer.CreateComparisonUnitAtomList(
-                    wDoc.MainDocumentPart,
-                    contentParent,
-                    settings
-                );
+                WmlComparer.CreateComparisonUnitAtomList(wDoc.MainDocumentPart, contentParent, settings);
             });
         }
     }

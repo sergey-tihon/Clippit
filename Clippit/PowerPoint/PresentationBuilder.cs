@@ -70,11 +70,7 @@ namespace Clippit.PowerPoint
         public static PmlDocument BuildPresentation(List<SlideSource> sources)
         {
             using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument();
-            using (
-                var output = streamDoc.GetPresentationDocument(
-                    new OpenSettings { AutoSave = false }
-                )
-            )
+            using (var output = streamDoc.GetPresentationDocument(new OpenSettings { AutoSave = false }))
             {
                 BuildPresentation(sources, output);
                 output.PackageProperties.Modified = DateTime.Now;
@@ -85,26 +81,17 @@ namespace Clippit.PowerPoint
         public static IList<PmlDocument> PublishSlides(PmlDocument src)
         {
             using var streamSrcDoc = new OpenXmlMemoryStreamDocument(src);
-            using var srcDoc = streamSrcDoc.GetPresentationDocument(
-                new OpenSettings { AutoSave = false }
-            );
+            using var srcDoc = streamSrcDoc.GetPresentationDocument(new OpenSettings { AutoSave = false });
             return PublishSlides(srcDoc, src.FileName).ToList();
         }
 
-        public static IEnumerable<PmlDocument> PublishSlides(
-            PresentationDocument srcDoc,
-            string fileName
-        )
+        public static IEnumerable<PmlDocument> PublishSlides(PresentationDocument srcDoc, string fileName)
         {
             var slidesCount = srcDoc.PresentationPart.GetXElement().Descendants(P.sldId).Count();
             for (var slideNumber = 0; slideNumber < slidesCount; slideNumber++)
             {
                 using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument();
-                using (
-                    var output = streamDoc.GetPresentationDocument(
-                        new OpenSettings { AutoSave = false }
-                    )
-                )
+                using (var output = streamDoc.GetPresentationDocument(new OpenSettings { AutoSave = false }))
                 {
                     ExtractSlide(srcDoc, slideNumber, output);
 
@@ -131,11 +118,7 @@ namespace Clippit.PowerPoint
             }
         }
 
-        private static void ExtractSlide(
-            PresentationDocument srcDoc,
-            int slideNumber,
-            PresentationDocument output
-        )
+        private static void ExtractSlide(PresentationDocument srcDoc, int slideNumber, PresentationDocument output)
         {
             using var fluentBuilder = new FluentPresentationBuilder(output);
             try
@@ -145,17 +128,12 @@ namespace Clippit.PowerPoint
             catch (PresentationBuilderInternalException dbie)
             {
                 if (dbie.Message.Contains("{0}"))
-                    throw new PresentationBuilderException(
-                        string.Format(dbie.Message, slideNumber)
-                    );
+                    throw new PresentationBuilderException(string.Format(dbie.Message, slideNumber));
                 throw;
             }
         }
 
-        private static void BuildPresentation(
-            List<SlideSource> sources,
-            PresentationDocument output
-        )
+        private static void BuildPresentation(List<SlideSource> sources, PresentationDocument output)
         {
             using var fluentBuilder = new FluentPresentationBuilder(output);
 
@@ -179,9 +157,7 @@ namespace Clippit.PowerPoint
                 catch (PresentationBuilderInternalException dbie)
                 {
                     if (dbie.Message.Contains("{0}"))
-                        throw new PresentationBuilderException(
-                            string.Format(dbie.Message, sourceNum)
-                        );
+                        throw new PresentationBuilderException(string.Format(dbie.Message, sourceNum));
                     throw;
                 }
 

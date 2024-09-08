@@ -79,11 +79,7 @@ namespace Clippit.Word
 
         // TODO this is not correct for values above 99
 
-        public static string GetListItemText(
-            string languageCultureName,
-            int levelNumber,
-            string numFmt
-        )
+        public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
         {
             if (numFmt == "cardinalText")
             {

@@ -367,9 +367,7 @@ namespace Clippit.Word
             return node;
         }
 
-        private static void RejectRevisionsForStylesDefinitionPart(
-            StyleDefinitionsPart stylesDefinitionsPart
-        )
+        private static void RejectRevisionsForStylesDefinitionPart(StyleDefinitionsPart stylesDefinitionsPart)
         {
             var xDoc = stylesDefinitionsPart.GetXDocument();
             var newRoot = RejectRevisionsForStylesTransform(xDoc.Root);
@@ -467,9 +465,7 @@ namespace Clippit.Word
                         {
                             if (e.Name != W.tbl)
                                 return "";
-                            var bidiVisual = e.Elements(W.tblPr)
-                                .Elements(W.bidiVisual)
-                                .FirstOrDefault();
+                            var bidiVisual = e.Elements(W.tblPr).Elements(W.bidiVisual).FirstOrDefault();
                             var bidiVisString = bidiVisual == null ? "" : "|bidiVisual";
                             var key = "tbl" + bidiVisString;
                             return key;
@@ -541,14 +537,8 @@ namespace Clippit.Word
                                                             .Attributes(W._w)
                                                             .Select(wi => (int)wi)
                                                             .Sum();
-                                                    var rolledPairs = new[]
-                                                    {
-                                                        new { GridValue = 0, Index = 0 },
-                                                    }.Concat(
-                                                        rolled.Select(
-                                                            (r, i) =>
-                                                                new { GridValue = r, Index = i + 1 }
-                                                        )
+                                                    var rolledPairs = new[] { new { GridValue = 0, Index = 0 } }.Concat(
+                                                        rolled.Select((r, i) => new { GridValue = r, Index = i + 1 })
                                                     );
                                                     var start = rolledPairs.FirstOrDefault(t =>
                                                         t.GridValue >= widthToLeft
@@ -557,9 +547,7 @@ namespace Clippit.Word
                                                     {
                                                         var gridsRequired = rolledPairs
                                                             .Skip(start.Index)
-                                                            .TakeWhile(rp =>
-                                                                rp.GridValue - start.GridValue < w
-                                                            )
+                                                            .TakeWhile(rp => rp.GridValue - start.GridValue < w)
                                                             .Count();
                                                         var tcPr = new XElement(
                                                             W.tcPr,
@@ -569,10 +557,7 @@ namespace Clippit.Word
                                                             gridsRequired != 1
                                                                 ? new XElement(
                                                                     W.gridSpan,
-                                                                    new XAttribute(
-                                                                        W.val,
-                                                                        gridsRequired
-                                                                    )
+                                                                    new XAttribute(W.val, gridsRequired)
                                                                 )
                                                                 : null
                                                         );
@@ -581,11 +566,7 @@ namespace Clippit.Word
                                                             tcPr.Elements()
                                                                 .OrderBy(e =>
                                                                 {
-                                                                    if (
-                                                                        Order_tcPr.ContainsKey(
-                                                                            e.Name
-                                                                        )
-                                                                    )
+                                                                    if (Order_tcPr.ContainsKey(e.Name))
                                                                         return Order_tcPr[e.Name];
                                                                     return 999;
                                                                 })
@@ -593,8 +574,7 @@ namespace Clippit.Word
                                                         var newCell = new XElement(
                                                             W.tc,
                                                             orderedTcPr,
-                                                            tc.Elements()
-                                                                .Where(e => e.Name != W.tcPr)
+                                                            tc.Elements().Where(e => e.Name != W.tcPr)
                                                         );
                                                         return newCell;
                                                     }
@@ -649,10 +629,7 @@ namespace Clippit.Word
 #endif
                 if (element.Name == W.del && parent.Name == W.p)
                 {
-                    return new XElement(
-                        W.ins,
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
+                    return new XElement(W.ins, element.Nodes().Select(n => ReverseRevisionsTransform(n, rri)));
                 }
 
                 ////////////////////////////////////////////////////////////////////////////////////
@@ -726,10 +703,7 @@ namespace Clippit.Word
                 if (element.Name == W.ins && parent.Name == W.p)
                 {
                     var newRri = new ReverseRevisionsInfo() { InInsert = true };
-                    return new XElement(
-                        W.del,
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
+                    return new XElement(W.del, element.Nodes().Select(n => ReverseRevisionsTransform(n, rri)));
                 }
 
                 ////////////////////////////////////////////////////////////////////////////////////
@@ -857,10 +831,7 @@ namespace Clippit.Word
 #endif
                 if (element.Name == W.del && parent.Name == M.r)
                 {
-                    return new XElement(
-                        W.ins,
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
+                    return new XElement(W.ins, element.Nodes().Select(n => ReverseRevisionsTransform(n, rri)));
                 }
 
                 ////////////////////////////////////////////////////////////////////////////////////
@@ -892,10 +863,7 @@ namespace Clippit.Word
 #endif
                 if (element.Name == W.ins && parent.Name == M.r)
                 {
-                    return new XElement(
-                        W.del,
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
+                    return new XElement(W.del, element.Nodes().Select(n => ReverseRevisionsTransform(n, rri)));
                 }
 
                 ////////////////////////////////////////////////////////////////////////////////////
@@ -1334,9 +1302,7 @@ namespace Clippit.Word
                 AcceptRevisionsForStylesDefinitionPart(doc.MainDocumentPart.StyleDefinitionsPart);
         }
 
-        private static void AcceptRevisionsForStylesDefinitionPart(
-            StyleDefinitionsPart stylesDefinitionsPart
-        )
+        private static void AcceptRevisionsForStylesDefinitionPart(StyleDefinitionsPart stylesDefinitionsPart)
         {
             var xDoc = stylesDefinitionsPart.GetXDocument();
             var newRoot = AcceptRevisionsForStylesTransform(xDoc.Root);
@@ -1399,11 +1365,7 @@ namespace Clippit.Word
             var containsMoveFromMoveTo = rElement.Descendants(W.moveFrom).Any();
             rElement = (XElement)AcceptMoveFromMoveToTransform(rElement);
             rElement = (XElement)AcceptAllOtherRevisionsTransform(rElement);
-            rElement
-                .Descendants()
-                .Attributes()
-                .Where(a => a.Name == PT.UniqueId || a.Name == PT.RunIds)
-                .Remove();
+            rElement.Descendants().Attributes().Where(a => a.Name == PT.UniqueId || a.Name == PT.RunIds).Remove();
             rElement.Descendants(W.numPr).Where(np => !np.HasElements).Remove();
             return rElement;
         }
@@ -1436,9 +1398,7 @@ namespace Clippit.Word
                             return 1;
                         });
 
-                    var zipped = element
-                        .Elements()
-                        .Zip(groupedParaContentsKey, (e, k) => new { Ele = e, Key = k });
+                    var zipped = element.Elements().Zip(groupedParaContentsKey, (e, k) => new { Ele = e, Key = k });
 
                     var grouped = zipped.GroupAdjacent(z => z.Key).ToArray();
 
@@ -1453,27 +1413,19 @@ namespace Clippit.Word
                             return g.Key switch
                             {
                                 1 or 2 or 3 => (object)
-                                    g.Select(gc =>
-                                        FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele)
-                                    ),
+                                    g.Select(gc => FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele)),
                                 4 when i == 0 || i == gLen - 1 => g.Select(gc =>
                                     FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele)
                                 ),
-                                4 when grouped[i - 1].Key == 2 && grouped[i + 1].Key == 2 =>
-                                    new XElement(
-                                        W.del,
-                                        g.Select(gc => TransformInstrTextToDelInstrText(gc.Ele))
-                                    ),
-                                4 when grouped[i - 1].Key == 3 && grouped[i + 1].Key == 3 =>
-                                    new XElement(
-                                        W.ins,
-                                        g.Select(gc =>
-                                            FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele)
-                                        )
-                                    ),
-                                4 => g.Select(gc =>
-                                    FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele)
+                                4 when grouped[i - 1].Key == 2 && grouped[i + 1].Key == 2 => new XElement(
+                                    W.del,
+                                    g.Select(gc => TransformInstrTextToDelInstrText(gc.Ele))
                                 ),
+                                4 when grouped[i - 1].Key == 3 && grouped[i + 1].Key == 3 => new XElement(
+                                    W.ins,
+                                    g.Select(gc => FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele))
+                                ),
+                                4 => g.Select(gc => FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele)),
                                 _ => throw new OpenXmlPowerToolsException("Internal error"),
                             };
                         }
@@ -1515,12 +1467,7 @@ namespace Clippit.Word
             if (element != null)
             {
                 if (element.Name == W.tc && !element.Elements().Where(e => e.Name != W.tcPr).Any())
-                    return new XElement(
-                        W.tc,
-                        element.Attributes(),
-                        element.Elements(),
-                        new XElement(W.p)
-                    );
+                    return new XElement(W.tc, element.Attributes(), element.Elements(), new XElement(W.p));
 
                 return new XElement(
                     element.Name,
@@ -1553,11 +1500,7 @@ namespace Clippit.Word
         private static XElement FixWidths(XElement tbl)
         {
             var newTbl = new XElement(tbl);
-            var gridLines = tbl.Elements(W.tblGrid)
-                .Elements(W.gridCol)
-                .Attributes(W._w)
-                .Select(w => (int)w)
-                .ToArray();
+            var gridLines = tbl.Elements(W.tblGrid).Elements(W.gridCol).Attributes(W._w).Select(w => (int)w).ToArray();
             foreach (var tr in newTbl.Elements(W.tr))
             {
                 var used = 0;
@@ -1568,10 +1511,7 @@ namespace Clippit.Word
                     if (tcW != null)
                     {
                         var gridSpan = (int?)
-                            tc.Elements(W.tcPr)
-                                .Elements(W.gridSpan)
-                                .Attributes(W.val)
-                                .FirstOrDefault();
+                            tc.Elements(W.tcPr).Elements(W.gridSpan).Attributes(W.val).FirstOrDefault();
 
                         if (gridSpan == null)
                             gridSpan = 1;
@@ -1645,10 +1585,7 @@ namespace Clippit.Word
                 {
                     if (
                         tag.TagType == TagTypeEnum.Element
-                        && (
-                            tag.Element.Name != W.moveFromRangeStart
-                            && tag.Element.Name != W.moveFromRangeEnd
-                        )
+                        && (tag.Element.Name != W.moveFromRangeStart && tag.Element.Name != W.moveFromRangeEnd)
                     )
                     {
                         foreach (var id in potentialDeletedElements)
@@ -1657,10 +1594,7 @@ namespace Clippit.Word
                     }
                     if (
                         tag.TagType == TagTypeEnum.EmptyElement
-                        && (
-                            tag.Element.Name != W.moveFromRangeStart
-                            && tag.Element.Name != W.moveFromRangeEnd
-                        )
+                        && (tag.Element.Name != W.moveFromRangeStart && tag.Element.Name != W.moveFromRangeEnd)
                     )
                     {
                         foreach (var id in potentialDeletedElements)
@@ -1672,10 +1606,7 @@ namespace Clippit.Word
                     }
                     if (
                         tag.TagType == TagTypeEnum.EndElement
-                        && (
-                            tag.Element.Name != W.moveFromRangeStart
-                            && tag.Element.Name != W.moveFromRangeEnd
-                        )
+                        && (tag.Element.Name != W.moveFromRangeStart && tag.Element.Name != W.moveFromRangeEnd)
                     )
                     {
                         foreach (var id in potentialDeletedElements)
@@ -1713,9 +1644,7 @@ namespace Clippit.Word
                             {
                                 var paragraphMarkIsInMoveFromRange =
                                     pi.ThisBlockContentElement.Elements(W.moveFromRangeStart).Any()
-                                    && !pi
-                                        .ThisBlockContentElement.Elements(W.moveFromRangeEnd)
-                                        .Any();
+                                    && !pi.ThisBlockContentElement.Elements(W.moveFromRangeEnd).Any();
                                 if (paragraphMarkIsInMoveFromRange)
                                     return MoveFromCollectionType.ParagraphEndTagInMoveFromRange;
                             }
@@ -1727,11 +1656,8 @@ namespace Clippit.Word
                                 BlockContentInfo pi2 = previousContentElement.GetParagraphInfo();
                                 if (
                                     c.Name == W.p
-                                    && pi2.ThisBlockContentElement.Elements(W.moveFromRangeStart)
-                                        .Any()
-                                    && !pi2
-                                        .ThisBlockContentElement.Elements(W.moveFromRangeEnd)
-                                        .Any()
+                                    && pi2.ThisBlockContentElement.Elements(W.moveFromRangeStart).Any()
+                                    && !pi2.ThisBlockContentElement.Elements(W.moveFromRangeEnd).Any()
                                 )
                                     return MoveFromCollectionType.ParagraphEndTagInMoveFromRange;
                             }
@@ -1769,9 +1695,7 @@ namespace Clippit.Word
                         return new XElement(
                             element.Name,
                             element.Attributes(),
-                            element
-                                .Nodes()
-                                .Select(n => AcceptParagraphEndTagsInMoveFromTransform(n))
+                            element.Nodes().Select(n => AcceptParagraphEndTagsInMoveFromTransform(n))
                         );
                 }
                 return new XElement(
@@ -1849,10 +1773,7 @@ namespace Clippit.Word
                 // Accept revisions for deleted math control character.
                 // Match m:f/m:fPr/m:ctrlPr/w:del, remove m:f.
 
-                if (
-                    element.Name == M.f
-                    && element.Elements(M.fPr).Elements(M.ctrlPr).Elements(W.del).Any()
-                )
+                if (element.Name == M.f && element.Elements(M.fPr).Elements(M.ctrlPr).Elements(W.del).Any())
                     return null;
 
                 // Accept revisions for deleted rows in tables.
@@ -2007,8 +1928,7 @@ namespace Clippit.Word
 
         public static class PT
         {
-            public static XNamespace pt =
-                "http://www.codeplex.com/PowerTools/2009/RevisionAccepter";
+            public static XNamespace pt = "http://www.codeplex.com/PowerTools/2009/RevisionAccepter";
             public static XName UniqueId = pt + "UniqueId";
             public static XName RunIds = pt + "RunIds";
         }
@@ -2046,10 +1966,7 @@ namespace Clippit.Word
             }
         }
 
-        private static XElement AddBlockLevelContentControls(
-            XElement newDocument,
-            XElement original
-        )
+        private static XElement AddBlockLevelContentControls(XElement newDocument, XElement original)
         {
             var originalContentControls = original.Descendants(W.sdt).ToList();
             var existingContentControls = newDocument.Descendants(W.sdt).ToList();
@@ -2069,17 +1986,13 @@ namespace Clippit.Word
 
                 // find list of runs to surround
                 var runIds = contentControl.Attribute(PT.RunIds).Value.Split(',');
-                var runs = contentControl
-                    .Descendants(W.r)
-                    .Where(r => runIds.Contains(r.Attribute(PT.UniqueId).Value));
+                var runs = contentControl.Descendants(W.r).Where(r => runIds.Contains(r.Attribute(PT.UniqueId).Value));
                 // find the runs in the new document
 
                 var runsInNewDocument = runs.Select(r =>
                         newDocument
                             .Descendants(W.r)
-                            .First(z =>
-                                z.Attribute(PT.UniqueId).Value == r.Attribute(PT.UniqueId).Value
-                            )
+                            .First(z => z.Attribute(PT.UniqueId).Value == r.Attribute(PT.UniqueId).Value)
                     )
                     .ToList();
 
@@ -2090,9 +2003,7 @@ namespace Clippit.Word
                     if (runAncestorIntersection == null)
                         runAncestorIntersection = run.Ancestors().ToList();
                     else
-                        runAncestorIntersection = run.Ancestors()
-                            .Intersect(runAncestorIntersection)
-                            .ToList();
+                        runAncestorIntersection = run.Ancestors().Intersect(runAncestorIntersection).ToList();
                 }
                 if (runAncestorIntersection == null)
                     continue;
@@ -2131,19 +2042,11 @@ namespace Clippit.Word
                     commonAncestor.Name == W.p
                     && commonAncestor
                         .Elements()
-                        .Where(e =>
-                            e.Name != W.pPr
-                            && e.Name != W.commentRangeStart
-                            && e.Name != W.commentRangeEnd
-                        )
+                        .Where(e => e.Name != W.pPr && e.Name != W.commentRangeStart && e.Name != W.commentRangeEnd)
                         .FirstOrDefault() == firstRunChild
                     && commonAncestor
                         .Elements()
-                        .Where(e =>
-                            e.Name != W.pPr
-                            && e.Name != W.commentRangeStart
-                            && e.Name != W.commentRangeEnd
-                        )
+                        .Where(e => e.Name != W.pPr && e.Name != W.commentRangeStart && e.Name != W.commentRangeEnd)
                         .LastOrDefault() == lastRunChild
                 )
                 {
@@ -2172,10 +2075,7 @@ namespace Clippit.Word
                     continue;
                 }
 
-                var elementsBeforeRange = commonAncestor
-                    .Elements()
-                    .TakeWhile(e => e != firstRunChild)
-                    .ToList();
+                var elementsBeforeRange = commonAncestor.Elements().TakeWhile(e => e != firstRunChild).ToList();
                 var elementsInRange = commonAncestor
                     .Elements()
                     .SkipWhile(e => e != firstRunChild)
@@ -2209,11 +2109,7 @@ namespace Clippit.Word
                         })
                 );
 
-                commonAncestor.Add(
-                    elementsBeforeRange,
-                    newContentControlOrdered2,
-                    elementsAfterRange
-                );
+                commonAncestor.Add(elementsBeforeRange, newContentControlOrdered2, elementsAfterRange);
             }
             return newDocument;
         }
@@ -2323,11 +2219,7 @@ namespace Clippit.Word
                             {
                                 currentKey += 1;
                                 deletedParagraphGroupingInfo.Add(
-                                    new GroupingInfo()
-                                    {
-                                        GroupingType = GroupingType.Other,
-                                        GroupingKey = currentKey,
-                                    }
+                                    new GroupingInfo() { GroupingType = GroupingType.Other, GroupingKey = currentKey }
                                 );
                             }
                             else if (state == 1)
@@ -2346,11 +2238,7 @@ namespace Clippit.Word
                                 state = 0;
                                 currentKey += 1;
                                 deletedParagraphGroupingInfo.Add(
-                                    new GroupingInfo()
-                                    {
-                                        GroupingType = GroupingType.Other,
-                                        GroupingKey = currentKey,
-                                    }
+                                    new GroupingInfo() { GroupingType = GroupingType.Other, GroupingKey = currentKey }
                                 );
                             }
                         }
@@ -2361,11 +2249,7 @@ namespace Clippit.Word
                         {
                             currentKey += 1;
                             deletedParagraphGroupingInfo.Add(
-                                new GroupingInfo()
-                                {
-                                    GroupingType = GroupingType.Other,
-                                    GroupingKey = currentKey,
-                                }
+                                new GroupingInfo() { GroupingType = GroupingType.Other, GroupingKey = currentKey }
                             );
                             state = 0;
                         }
@@ -2373,11 +2257,7 @@ namespace Clippit.Word
                         {
                             // otherwise keep the same state, put in the same group, and continue
                             deletedParagraphGroupingInfo.Add(
-                                new GroupingInfo()
-                                {
-                                    GroupingType = GroupingType.Other,
-                                    GroupingKey = currentKey,
-                                }
+                                new GroupingInfo() { GroupingType = GroupingType.Other, GroupingKey = currentKey }
                             );
                         }
                     }
@@ -2398,9 +2278,7 @@ namespace Clippit.Word
                         groupedParagraphs.Select(
                             (g, i) =>
                             {
-                                if (
-                                    g.First().GroupingInfo.GroupingType == GroupingType.DeletedRange
-                                )
+                                if (g.First().GroupingInfo.GroupingType == GroupingType.DeletedRange)
                                 {
                                     var newParagraph = new XElement(
                                         W.p,
@@ -2411,14 +2289,9 @@ namespace Clippit.Word
                                     // in the sequence of coalesced paragraph.  It is possible that we should take Last when accepting revisions, but First when rejecting revisions.
                                     g.First().BlockLevelContent.ThisBlockContentElement.Elements(W.pPr),
 #endif
-                                        g.Last()
-                                            .BlockLevelContent.ThisBlockContentElement.Elements(
-                                                W.pPr
-                                            ),
+                                        g.Last().BlockLevelContent.ThisBlockContentElement.Elements(W.pPr),
                                         g.Select(z =>
-                                            CollapseParagraphTransform(
-                                                z.BlockLevelContent.ThisBlockContentElement
-                                            )
+                                            CollapseParagraphTransform(z.BlockLevelContent.ThisBlockContentElement)
                                         )
                                     );
 
@@ -2428,17 +2301,13 @@ namespace Clippit.Word
                                     if (
                                         allIsDeleted
                                         && g.Last()
-                                            .BlockLevelContent.ThisBlockContentElement.Elements(
-                                                W.pPr
-                                            )
+                                            .BlockLevelContent.ThisBlockContentElement.Elements(W.pPr)
                                             .Elements(W.rPr)
                                             .Elements(W.del)
                                             .Any()
                                         && (
-                                            g.Last().BlockLevelContent.NextBlockContentElement
-                                                == null
-                                            || g.Last().BlockLevelContent.NextBlockContentElement.Name
-                                                == W.tbl
+                                            g.Last().BlockLevelContent.NextBlockContentElement == null
+                                            || g.Last().BlockLevelContent.NextBlockContentElement.Name == W.tbl
                                         )
                                     )
                                         return null;
@@ -2453,11 +2322,7 @@ namespace Clippit.Word
                                             z.BlockLevelContent.ThisBlockContentElement.Name,
                                             z.BlockLevelContent.ThisBlockContentElement.Attributes(),
                                             z.BlockLevelContent.ThisBlockContentElement.Nodes()
-                                                .Select(n =>
-                                                    AcceptDeletedAndMoveFromParagraphMarksTransform(
-                                                        n
-                                                    )
-                                                )
+                                                .Select(n => AcceptDeletedAndMoveFromParagraphMarksTransform(n))
                                         );
                                         return newEle;
                                     });
@@ -2587,28 +2452,16 @@ namespace Clippit.Word
                     var currentXElement = iteratorStack.Peek().Current;
                     if (!currentXElement.Nodes().Any())
                     {
-                        yield return new Tag()
-                        {
-                            Element = currentXElement,
-                            TagType = TagTypeEnum.EmptyElement,
-                        };
+                        yield return new Tag() { Element = currentXElement, TagType = TagTypeEnum.EmptyElement };
                         continue;
                     }
-                    yield return new Tag()
-                    {
-                        Element = currentXElement,
-                        TagType = TagTypeEnum.Element,
-                    };
+                    yield return new Tag() { Element = currentXElement, TagType = TagTypeEnum.Element };
                     iteratorStack.Push(currentXElement.Elements().GetEnumerator());
                     continue;
                 }
                 iteratorStack.Pop();
                 if (iteratorStack.Count > 0)
-                    yield return new Tag()
-                    {
-                        Element = iteratorStack.Peek().Current,
-                        TagType = TagTypeEnum.EndElement,
-                    };
+                    yield return new Tag() { Element = iteratorStack.Peek().Current, TagType = TagTypeEnum.EndElement };
             }
             yield return new Tag { Element = element, TagType = TagTypeEnum.EndElement };
         }
@@ -2677,9 +2530,7 @@ namespace Clippit.Word
             return node;
         }
 
-        private static XElement AcceptDeletedAndMovedFromContentControls(
-            XElement documentRootElement
-        )
+        private static XElement AcceptDeletedAndMovedFromContentControls(XElement documentRootElement)
         {
             var wordProcessingNamespacePrefix = documentRootElement.GetPrefixOfNamespace(W.w);
 
@@ -2809,10 +2660,7 @@ namespace Clippit.Word
             var elementsToDeleteBecauseMovedFrom = startElementTagsInMoveFromRange
                 .Intersect(endElementTagsInMoveFromRange)
                 .ToArray();
-            if (
-                contentControlElementsToCollapse.Length > 0
-                || elementsToDeleteBecauseMovedFrom.Length > 0
-            )
+            if (contentControlElementsToCollapse.Length > 0 || elementsToDeleteBecauseMovedFrom.Length > 0)
             {
                 var newDoc = AcceptDeletedAndMovedFromContentControlsTransform(
                     documentRootElement,
@@ -2860,9 +2708,7 @@ namespace Clippit.Word
                     return new XElement(
                         element.Name,
                         element.Attributes(),
-                        element
-                            .Nodes()
-                            .Select(n => CoalesqueParagraphEndTagsInMoveFromTransform(n, g))
+                        element.Nodes().Select(n => CoalesqueParagraphEndTagsInMoveFromTransform(n, g))
                     );
             }
             return node;
@@ -2889,30 +2735,20 @@ namespace Clippit.Word
                         .GroupAdjacent(e =>
                         {
                             var cellAfter = e.ElementsAfterSelf(W.tc).FirstOrDefault();
-                            var cellAfterIsDeleted =
-                                cellAfter != null && cellAfter.Descendants(W.cellDel).Any();
-                            if (
-                                e.Name == W.tc
-                                && (cellAfterIsDeleted || e.Descendants(W.cellDel).Any())
-                            )
+                            var cellAfterIsDeleted = cellAfter != null && cellAfter.Descendants(W.cellDel).Any();
+                            if (e.Name == W.tc && (cellAfterIsDeleted || e.Descendants(W.cellDel).Any()))
                             {
                                 var a = new
                                 {
                                     CollectionType = DeletedCellCollectionType.DeletedCell,
                                     Disambiguator = new[] { e }
                                         .Concat(e.SiblingsBeforeSelfReverseDocumentOrder())
-                                        .Where(z =>
-                                            z.Name == W.tc && !z.Descendants(W.cellDel).Any()
-                                        )
+                                        .Where(z => z.Name == W.tc && !z.Descendants(W.cellDel).Any())
                                         .FirstOrDefault(),
                                 };
                                 return a;
                             }
-                            var a2 = new
-                            {
-                                CollectionType = DeletedCellCollectionType.Other,
-                                Disambiguator = e,
-                            };
+                            var a2 = new { CollectionType = DeletedCellCollectionType.Other, Disambiguator = e };
                             return a2;
                         });
                     var tr = new XElement(
@@ -2927,12 +2763,8 @@ namespace Clippit.Word
                                 return null;
                             if (g.Key.CollectionType == DeletedCellCollectionType.Other)
                                 return g;
-                            var gridSpanElement = g.First()
-                                .Elements(W.tcPr)
-                                .Elements(W.gridSpan)
-                                .FirstOrDefault();
-                            var gridSpan =
-                                gridSpanElement != null ? (int)gridSpanElement.Attribute(W.val) : 1;
+                            var gridSpanElement = g.First().Elements(W.tcPr).Elements(W.gridSpan).FirstOrDefault();
+                            var gridSpan = gridSpanElement != null ? (int)gridSpanElement.Attribute(W.val) : 1;
                             var newGridSpan = gridSpan + g.Count() - 1;
                             var currentTcPr = g.First().Elements(W.tcPr).FirstOrDefault();
                             var newTcPr = new XElement(
@@ -3057,9 +2889,7 @@ namespace Clippit.Word
 
         public static bool PartHasTrackedRevisions(OpenXmlPart part)
         {
-            return part.GetXDocument()
-                .Descendants()
-                .Any(e => TrackedRevisionsElements.Contains(e.Name));
+            return part.GetXDocument().Descendants().Any(e => TrackedRevisionsElements.Contains(e.Name));
         }
 
         public static bool HasTrackedRevisions(WmlDocument document)
@@ -3126,10 +2956,7 @@ namespace Clippit.Word
                     .DescendantsAndSelf()
                     .Where(e => e.Name == W.p || e.Name == W.tc || e.Name == W.txbxContent)
                     .FirstOrDefault();
-                if (
-                    paragraph != null
-                    && (paragraph.Name == W.tc || paragraph.Name == W.txbxContent)
-                )
+                if (paragraph != null && (paragraph.Name == W.tc || paragraph.Name == W.txbxContent))
                     paragraph = null;
                 var pi = new BlockContentInfo()
                 {

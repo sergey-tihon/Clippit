@@ -62,41 +62,23 @@ namespace Clippit.Tests.Word.Samples
                             .LevelNumbersArray.Select(l => l + ".")
                             .StringConcatenate()
                             .TrimEnd('.');
-                        var newCurrentElement = new XElement(
-                            "Indent",
-                            new XAttribute("Level", levelText)
-                        );
+                        var newCurrentElement = new XElement("Indent", new XAttribute("Level", levelText));
                         current.Peek().Element.Add(newCurrentElement);
                         current.Push(
-                            new XmlStackItem()
-                            {
-                                Element = newCurrentElement,
-                                LevelNumbers = levelNumsForThisIndent,
-                            }
+                            new XmlStackItem() { Element = newCurrentElement, LevelNumbers = levelNumsForThisIndent }
                         );
                         current.Peek().Element.Add(new XElement("Heading", text));
                     }
-                    else if (
-                        levelNums.LevelNumbersArray.Length > current.Peek().LevelNumbers.Length
-                    )
+                    else if (levelNums.LevelNumbersArray.Length > current.Peek().LevelNumbers.Length)
                     {
-                        for (
-                            var i = current.Peek().LevelNumbers.Length;
-                            i < levelNums.LevelNumbersArray.Length;
-                            i++
-                        )
+                        for (var i = current.Peek().LevelNumbers.Length; i < levelNums.LevelNumbersArray.Length; i++)
                         {
-                            var levelNumsForThisIndent = levelNums
-                                .LevelNumbersArray.Take(i + 1)
-                                .ToArray();
+                            var levelNumsForThisIndent = levelNums.LevelNumbersArray.Take(i + 1).ToArray();
                             var levelText = levelNums
                                 .LevelNumbersArray.Select(l => l + ".")
                                 .StringConcatenate()
                                 .TrimEnd('.');
-                            var newCurrentElement = new XElement(
-                                "Indent",
-                                new XAttribute("Level", levelText)
-                            );
+                            var newCurrentElement = new XElement("Indent", new XAttribute("Level", levelText));
                             current.Peek().Element.Add(newCurrentElement);
                             current.Push(
                                 new XmlStackItem()
@@ -108,15 +90,9 @@ namespace Clippit.Tests.Word.Samples
                             current.Peek().Element.Add(new XElement("Heading", text));
                         }
                     }
-                    else if (
-                        levelNums.LevelNumbersArray.Length < current.Peek().LevelNumbers.Length
-                    )
+                    else if (levelNums.LevelNumbersArray.Length < current.Peek().LevelNumbers.Length)
                     {
-                        for (
-                            var i = current.Peek().LevelNumbers.Length;
-                            i > levelNums.LevelNumbersArray.Length;
-                            i--
-                        )
+                        for (var i = current.Peek().LevelNumbers.Length; i > levelNums.LevelNumbersArray.Length; i--)
                             current.Pop();
                         current.Pop();
                         var levelNumsForThisIndent = levelNums.LevelNumbersArray;
@@ -124,17 +100,10 @@ namespace Clippit.Tests.Word.Samples
                             .LevelNumbersArray.Select(l => l + ".")
                             .StringConcatenate()
                             .TrimEnd('.');
-                        var newCurrentElement = new XElement(
-                            "Indent",
-                            new XAttribute("Level", levelText)
-                        );
+                        var newCurrentElement = new XElement("Indent", new XAttribute("Level", levelText));
                         current.Peek().Element.Add(newCurrentElement);
                         current.Push(
-                            new XmlStackItem()
-                            {
-                                Element = newCurrentElement,
-                                LevelNumbers = levelNumsForThisIndent,
-                            }
+                            new XmlStackItem() { Element = newCurrentElement, LevelNumbers = levelNumsForThisIndent }
                         );
                         current.Peek().Element.Add(new XElement("Heading", text));
                     }

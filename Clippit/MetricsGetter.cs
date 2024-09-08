@@ -82,16 +82,12 @@ namespace Clippit
                         ms.Write(wmlDoc.DocumentByteArray, 0, wmlDoc.DocumentByteArray.Length);
                         using (var document = WordprocessingDocument.Open(ms, true))
                         {
-                            var hasTrackedRevisions = RevisionAccepter.HasTrackedRevisions(
-                                document
-                            );
+                            var hasTrackedRevisions = RevisionAccepter.HasTrackedRevisions(document);
                             if (hasTrackedRevisions)
                                 RevisionAccepter.AcceptRevisions(document);
                             var metrics2 = GetWmlMetrics(wmlDoc.FileName, true, document, settings);
                             if (hasTrackedRevisions)
-                                metrics2.Add(
-                                    new XElement(H.RevisionTracking, new XAttribute(H.Val, true))
-                                );
+                                metrics2.Add(new XElement(H.RevisionTracking, new XAttribute(H.Val, true)));
                             return metrics2;
                         }
                     }
@@ -171,10 +167,7 @@ namespace Clippit
             MetricsGetterSettings settings
         )
         {
-            var parts = new XElement(
-                H.Parts,
-                wDoc.GetAllParts().Select(part => GetMetricsForWmlPart(part, settings))
-            );
+            var parts = new XElement(H.Parts, wDoc.GetAllParts().Select(part => GetMetricsForWmlPart(part, settings)));
             if (!parts.HasElements)
                 parts = null;
             var metrics = new XElement(
@@ -195,13 +188,8 @@ namespace Clippit
             var pkg = oxPkg.GetPackage();
 
             var nonRelationshipParts = pkg.GetParts()
-                .Where(p =>
-                    p.ContentType != "application/vnd.openxmlformats-package.relationships+xml"
-                );
-            var contentTypes = nonRelationshipParts
-                .Select(p => p.ContentType)
-                .OrderBy(t => t)
-                .Distinct();
+                .Where(p => p.ContentType != "application/vnd.openxmlformats-package.relationships+xml");
+            var contentTypes = nonRelationshipParts.Select(p => p.ContentType).OrderBy(t => t).Distinct();
             var xe = new XElement(
                 H.ContentTypes,
                 contentTypes.Select(ct => new XElement(H.ContentType, new XAttribute(H.Val, ct)))
@@ -214,9 +202,7 @@ namespace Clippit
             var pkg = oxPkg.GetPackage();
 
             var nonRelationshipParts = pkg.GetParts()
-                .Where(p =>
-                    p.ContentType != "application/vnd.openxmlformats-package.relationships+xml"
-                );
+                .Where(p => p.ContentType != "application/vnd.openxmlformats-package.relationships+xml");
             var xmlParts = nonRelationshipParts.Where(p => p.ContentType.ToLower().EndsWith("xml"));
 
             var uniqueNamespaces = new HashSet<string>();
@@ -257,26 +243,16 @@ namespace Clippit
             return xe;
         }
 
-        private static List<XElement> GetMiscWmlMetrics(
-            WordprocessingDocument document,
-            bool invalidHyperlink
-        )
+        private static List<XElement> GetMiscWmlMetrics(WordprocessingDocument document, bool invalidHyperlink)
         {
             var metrics = new List<XElement>();
             var notes = new List<string>();
             var elementCountDictionary = new Dictionary<XName, int>();
 
             if (invalidHyperlink)
-                metrics.Add(
-                    new XElement(H.InvalidHyperlink, new XAttribute(H.Val, invalidHyperlink))
-                );
+                metrics.Add(new XElement(H.InvalidHyperlink, new XAttribute(H.Val, invalidHyperlink)));
 
-            var valid = ValidateWordprocessingDocument(
-                document,
-                metrics,
-                notes,
-                elementCountDictionary
-            );
+            var valid = ValidateWordprocessingDocument(document, metrics, notes, elementCountDictionary);
             if (invalidHyperlink)
                 valid = false;
 
@@ -337,12 +313,7 @@ namespace Clippit
                         IncrementMetric(metricCountDictionary, H.ActiveX);
                     else if (e.Name == W.subDoc)
                         IncrementMetric(metricCountDictionary, H.SubDocument);
-                    else if (
-                        e.Name == VML.imagedata
-                        || e.Name == VML.fill
-                        || e.Name == VML.stroke
-                        || e.Name == A.blip
-                    )
+                    else if (e.Name == VML.imagedata || e.Name == VML.fill || e.Name == VML.stroke || e.Name == A.blip)
                     {
                         var relId = (string)e.Attribute(R.embed);
                         if (relId != null)
@@ -373,17 +344,13 @@ namespace Clippit
 
             metrics.Add(new XElement(H.ElementCount, new XAttribute(H.Val, elementCount)));
             metrics.Add(
-                new XElement(
-                    H.AverageParagraphLength,
-                    new XAttribute(H.Val, (int)(textCount / (double)paragraphCount))
-                )
+                new XElement(H.AverageParagraphLength, new XAttribute(H.Val, (int)(textCount / (double)paragraphCount)))
             );
 
             if (
                 wDoc.GetAllParts()
                     .Any(part =>
-                        part.ContentType
-                        == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        part.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
             )
                 metrics.Add(new XElement(H.EmbeddedXlsx, new XAttribute(H.Val, true)));
@@ -398,13 +365,11 @@ namespace Clippit
                 {
                     var rid = (string)d.Attribute(R.id);
                     var tempExternalRelationship =
-                        wDoc.MainDocumentPart.DocumentSettingsPart.ExternalRelationships.FirstOrDefault(
-                            h => h.Id == rid
+                        wDoc.MainDocumentPart.DocumentSettingsPart.ExternalRelationships.FirstOrDefault(h =>
+                            h.Id == rid
                         );
                     if (tempExternalRelationship == null)
-                        metrics.Add(
-                            new XElement(H.InvalidSaveThroughXslt, new XAttribute(H.Val, true))
-                        );
+                        metrics.Add(new XElement(H.InvalidSaveThroughXslt, new XAttribute(H.Val, true)));
                     valid = false;
                 }
                 else if (d.Name == W.trackRevisions)
@@ -443,24 +408,15 @@ namespace Clippit
                                 var sb = new StringBuilder();
                                 if (err.Description.Length > 300)
                                     sb.Append(
-                                        PtUtils.MakeValidXml(
-                                            err.Description.Substring(0, 300) + " ... elided ..."
-                                        ) + Environment.NewLine
+                                        PtUtils.MakeValidXml(err.Description.Substring(0, 300) + " ... elided ...")
+                                            + Environment.NewLine
                                     );
                                 else
-                                    sb.Append(
-                                        PtUtils.MakeValidXml(err.Description) + Environment.NewLine
-                                    );
+                                    sb.Append(PtUtils.MakeValidXml(err.Description) + Environment.NewLine);
                                 sb.Append(
-                                    "  in part "
-                                        + PtUtils.MakeValidXml(err.Part.Uri.ToString())
-                                        + Environment.NewLine
+                                    "  in part " + PtUtils.MakeValidXml(err.Part.Uri.ToString()) + Environment.NewLine
                                 );
-                                sb.Append(
-                                    "  at "
-                                        + PtUtils.MakeValidXml(err.Path.XPath)
-                                        + Environment.NewLine
-                                );
+                                sb.Append("  at " + PtUtils.MakeValidXml(err.Path.XPath) + Environment.NewLine);
                                 return sb.ToString();
                             })
                     )
@@ -494,24 +450,15 @@ namespace Clippit
                                 var sb = new StringBuilder();
                                 if (err.Description.Length > 300)
                                     sb.Append(
-                                        PtUtils.MakeValidXml(
-                                            err.Description.Substring(0, 300) + " ... elided ..."
-                                        ) + Environment.NewLine
+                                        PtUtils.MakeValidXml(err.Description.Substring(0, 300) + " ... elided ...")
+                                            + Environment.NewLine
                                     );
                                 else
-                                    sb.Append(
-                                        PtUtils.MakeValidXml(err.Description) + Environment.NewLine
-                                    );
+                                    sb.Append(PtUtils.MakeValidXml(err.Description) + Environment.NewLine);
                                 sb.Append(
-                                    "  in part "
-                                        + PtUtils.MakeValidXml(err.Part.Uri.ToString())
-                                        + Environment.NewLine
+                                    "  in part " + PtUtils.MakeValidXml(err.Part.Uri.ToString()) + Environment.NewLine
                                 );
-                                sb.Append(
-                                    "  at "
-                                        + PtUtils.MakeValidXml(err.Path.XPath)
-                                        + Environment.NewLine
-                                );
+                                sb.Append("  at " + PtUtils.MakeValidXml(err.Path.XPath) + Environment.NewLine);
                                 return sb.ToString();
                             })
                     )
@@ -545,24 +492,15 @@ namespace Clippit
                                 var sb = new StringBuilder();
                                 if (err.Description.Length > 300)
                                     sb.Append(
-                                        PtUtils.MakeValidXml(
-                                            err.Description.Substring(0, 300) + " ... elided ..."
-                                        ) + Environment.NewLine
+                                        PtUtils.MakeValidXml(err.Description.Substring(0, 300) + " ... elided ...")
+                                            + Environment.NewLine
                                     );
                                 else
-                                    sb.Append(
-                                        PtUtils.MakeValidXml(err.Description) + Environment.NewLine
-                                    );
+                                    sb.Append(PtUtils.MakeValidXml(err.Description) + Environment.NewLine);
                                 sb.Append(
-                                    "  in part "
-                                        + PtUtils.MakeValidXml(err.Part.Uri.ToString())
-                                        + Environment.NewLine
+                                    "  in part " + PtUtils.MakeValidXml(err.Part.Uri.ToString()) + Environment.NewLine
                                 );
-                                sb.Append(
-                                    "  at "
-                                        + PtUtils.MakeValidXml(err.Path.XPath)
-                                        + Environment.NewLine
-                                );
+                                sb.Append("  at " + PtUtils.MakeValidXml(err.Path.XPath) + Environment.NewLine);
                                 return sb.ToString();
                             })
                     )
@@ -571,10 +509,7 @@ namespace Clippit
             return valid;
         }
 
-        private static void IncrementMetric(
-            Dictionary<XName, int> metricCountDictionary,
-            XName xName
-        )
+        private static void IncrementMetric(Dictionary<XName, int> metricCountDictionary, XName xName)
         {
             if (metricCountDictionary.ContainsKey(xName))
                 metricCountDictionary[xName] = metricCountDictionary[xName] + 1;
@@ -582,21 +517,14 @@ namespace Clippit
                 metricCountDictionary.Add(xName, 1);
         }
 
-        private static void ValidateImageExists(
-            OpenXmlPart part,
-            string relId,
-            Dictionary<XName, int> metrics
-        )
+        private static void ValidateImageExists(OpenXmlPart part, string relId, Dictionary<XName, int> metrics)
         {
             var imagePart = part.Parts.FirstOrDefault(ipp => ipp.RelationshipId == relId);
             if (imagePart == default)
                 IncrementMetric(metrics, H.ReferenceToNullImage);
         }
 
-        private static void NumberingFormatListAssembly(
-            WordprocessingDocument wDoc,
-            List<XElement> metrics
-        )
+        private static void NumberingFormatListAssembly(WordprocessingDocument wDoc, List<XElement> metrics)
         {
             var numFmtList = new List<string>();
             foreach (var part in wDoc.ContentParts())
@@ -622,19 +550,13 @@ namespace Clippit
                                             .FirstOrDefault();
                                     if (numFmtForLevel == null)
                                     {
-                                        var numFmtElement = lif.Lvl(
-                                                ListItemRetriever.GetParagraphLevel(p)
-                                            )
+                                        var numFmtElement = lif.Lvl(ListItemRetriever.GetParagraphLevel(p))
                                             .Elements(MC.AlternateContent)
                                             .Elements(MC.Choice)
                                             .Elements(W.numFmt)
                                             .FirstOrDefault();
-                                        if (
-                                            numFmtElement != null
-                                            && (string)numFmtElement.Attribute(W.val) == "custom"
-                                        )
-                                            numFmtForLevel = (string)
-                                                numFmtElement.Attribute(W.format);
+                                        if (numFmtElement != null && (string)numFmtElement.Attribute(W.val) == "custom")
+                                            numFmtForLevel = (string)numFmtElement.Attribute(W.format);
                                     }
                                     return numFmtForLevel;
                                 }
@@ -648,12 +570,7 @@ namespace Clippit
             if (numFmtList.Any())
             {
                 var nfls = numFmtList.StringConcatenate(s => s + ",").TrimEnd(',');
-                metrics.Add(
-                    new XElement(
-                        H.NumberingFormatList,
-                        new XAttribute(H.Val, PtUtils.MakeValidXml(nfls))
-                    )
-                );
+                metrics.Add(new XElement(H.NumberingFormatList, new XAttribute(H.Val, PtUtils.MakeValidXml(nfls))));
             }
         }
 
@@ -708,90 +625,40 @@ namespace Clippit
                 }
             }
 
-            metrics.Add(
-                new XElement(H.RunCount, new XAttribute(H.Val, formattingMetrics.RunCount))
-            );
+            metrics.Add(new XElement(H.RunCount, new XAttribute(H.Val, formattingMetrics.RunCount)));
             if (formattingMetrics.RunWithoutRprCount > 0)
                 metrics.Add(
-                    new XElement(
-                        H.RunWithoutRprCount,
-                        new XAttribute(H.Val, formattingMetrics.RunWithoutRprCount)
-                    )
+                    new XElement(H.RunWithoutRprCount, new XAttribute(H.Val, formattingMetrics.RunWithoutRprCount))
                 );
             if (formattingMetrics.ZeroLengthText > 0)
-                metrics.Add(
-                    new XElement(
-                        H.ZeroLengthText,
-                        new XAttribute(H.Val, formattingMetrics.ZeroLengthText)
-                    )
-                );
+                metrics.Add(new XElement(H.ZeroLengthText, new XAttribute(H.Val, formattingMetrics.ZeroLengthText)));
             if (formattingMetrics.MultiFontRun > 0)
-                metrics.Add(
-                    new XElement(
-                        H.MultiFontRun,
-                        new XAttribute(H.Val, formattingMetrics.MultiFontRun)
-                    )
-                );
+                metrics.Add(new XElement(H.MultiFontRun, new XAttribute(H.Val, formattingMetrics.MultiFontRun)));
             if (formattingMetrics.AsciiCharCount > 0)
-                metrics.Add(
-                    new XElement(
-                        H.AsciiCharCount,
-                        new XAttribute(H.Val, formattingMetrics.AsciiCharCount)
-                    )
-                );
+                metrics.Add(new XElement(H.AsciiCharCount, new XAttribute(H.Val, formattingMetrics.AsciiCharCount)));
             if (formattingMetrics.CSCharCount > 0)
-                metrics.Add(
-                    new XElement(
-                        H.CSCharCount,
-                        new XAttribute(H.Val, formattingMetrics.CSCharCount)
-                    )
-                );
+                metrics.Add(new XElement(H.CSCharCount, new XAttribute(H.Val, formattingMetrics.CSCharCount)));
             if (formattingMetrics.EastAsiaCharCount > 0)
                 metrics.Add(
-                    new XElement(
-                        H.EastAsiaCharCount,
-                        new XAttribute(H.Val, formattingMetrics.EastAsiaCharCount)
-                    )
+                    new XElement(H.EastAsiaCharCount, new XAttribute(H.Val, formattingMetrics.EastAsiaCharCount))
                 );
             if (formattingMetrics.HAnsiCharCount > 0)
-                metrics.Add(
-                    new XElement(
-                        H.HAnsiCharCount,
-                        new XAttribute(H.Val, formattingMetrics.HAnsiCharCount)
-                    )
-                );
+                metrics.Add(new XElement(H.HAnsiCharCount, new XAttribute(H.Val, formattingMetrics.HAnsiCharCount)));
             if (formattingMetrics.AsciiRunCount > 0)
-                metrics.Add(
-                    new XElement(
-                        H.AsciiRunCount,
-                        new XAttribute(H.Val, formattingMetrics.AsciiRunCount)
-                    )
-                );
+                metrics.Add(new XElement(H.AsciiRunCount, new XAttribute(H.Val, formattingMetrics.AsciiRunCount)));
             if (formattingMetrics.CSRunCount > 0)
-                metrics.Add(
-                    new XElement(H.CSRunCount, new XAttribute(H.Val, formattingMetrics.CSRunCount))
-                );
+                metrics.Add(new XElement(H.CSRunCount, new XAttribute(H.Val, formattingMetrics.CSRunCount)));
             if (formattingMetrics.EastAsiaRunCount > 0)
                 metrics.Add(
-                    new XElement(
-                        H.EastAsiaRunCount,
-                        new XAttribute(H.Val, formattingMetrics.EastAsiaRunCount)
-                    )
+                    new XElement(H.EastAsiaRunCount, new XAttribute(H.Val, formattingMetrics.EastAsiaRunCount))
                 );
             if (formattingMetrics.HAnsiRunCount > 0)
-                metrics.Add(
-                    new XElement(
-                        H.HAnsiRunCount,
-                        new XAttribute(H.Val, formattingMetrics.HAnsiRunCount)
-                    )
-                );
+                metrics.Add(new XElement(H.HAnsiRunCount, new XAttribute(H.Val, formattingMetrics.HAnsiRunCount)));
 
             if (formattingMetrics.Languages.Any())
             {
                 var uls = formattingMetrics.Languages.StringConcatenate(s => s + ",").TrimEnd(',');
-                metrics.Add(
-                    new XElement(H.Languages, new XAttribute(H.Val, PtUtils.MakeValidXml(uls)))
-                );
+                metrics.Add(new XElement(H.Languages, new XAttribute(H.Val, PtUtils.MakeValidXml(uls))));
             }
         }
 
@@ -816,11 +683,7 @@ namespace Clippit
             if (rPr == null)
             {
                 formattingMetrics.RunWithoutRprCount++;
-                notes.Add(
-                    PtUtils.MakeValidXml(
-                        $"Error in part {uri}: run without rPr at {run.GetXPath()}"
-                    )
-                );
+                notes.Add(PtUtils.MakeValidXml($"Error in part {uri}: run without rPr at {run.GetXPath()}"));
                 rPr = new XElement(W.rPr);
             }
             var csa = new FormattingAssembler.CharStyleAttributes(null, rPr);
@@ -856,10 +719,7 @@ namespace Clippit
                 //.Where(l => l != null && l != "")
                 .Distinct();
             if (languages.Any(l => !formattingMetrics.Languages.Contains(l)))
-                formattingMetrics.Languages = formattingMetrics
-                    .Languages.Concat(languages)
-                    .Distinct()
-                    .ToList();
+                formattingMetrics.Languages = formattingMetrics.Languages.Concat(languages).Distinct().ToList();
             var multiFontRun = distinctFonts.Count() > 1;
             if (multiFontRun)
             {
@@ -940,10 +800,7 @@ namespace Clippit
             );
         }
 
-        private static XElement GetTableInfoForWorkbook(
-            SpreadsheetDocument spreadsheet,
-            MetricsGetterSettings settings
-        )
+        private static XElement GetTableInfoForWorkbook(SpreadsheetDocument spreadsheet, MetricsGetterSettings settings)
         {
             var workbookPart = spreadsheet.WorkbookPart;
             var xd = workbookPart.GetXDocument();
@@ -956,12 +813,7 @@ namespace Clippit
                         var rid = (string)sh.Attribute(R.id);
                         var sheetName = (string)sh.Attribute("name");
                         var worksheetPart = (WorksheetPart)workbookPart.GetPartById(rid);
-                        return GetTableInfoForSheet(
-                            spreadsheet,
-                            worksheetPart,
-                            sheetName,
-                            settings
-                        );
+                        return GetTableInfoForSheet(spreadsheet, worksheetPart, sheetName, settings);
                     })
             );
             return partInformation;
@@ -1073,8 +925,7 @@ namespace Clippit
                     var thisStyle = s;
                     while (true)
                     {
-                        var baseStyle = (string)
-                            thisStyle.Elements(W.basedOn).Attributes(W.val).FirstOrDefault();
+                        var baseStyle = (string)thisStyle.Elements(W.basedOn).Attributes(W.val).FirstOrDefault();
                         if (baseStyle == null)
                             break;
                         styleString = baseStyle + "/" + styleString;
@@ -1116,20 +967,10 @@ namespace Clippit
             return styleHierarchy;
         }
 
-        private static XElement GetMetricsForWmlPart(
-            OpenXmlPart part,
-            MetricsGetterSettings settings
-        )
+        private static XElement GetMetricsForWmlPart(OpenXmlPart part, MetricsGetterSettings settings)
         {
             XElement contentControls = null;
-            if (
-                part
-                is MainDocumentPart
-                    or HeaderPart
-                    or FooterPart
-                    or FootnotesPart
-                    or EndnotesPart
-            )
+            if (part is MainDocumentPart or HeaderPart or FooterPart or FootnotesPart or EndnotesPart)
             {
                 var xd = part.GetXDocument();
                 contentControls = (XElement)GetContentControlsTransform(xd.Root, settings);
@@ -1147,10 +988,7 @@ namespace Clippit
             return null;
         }
 
-        private static object GetContentControlsTransform(
-            XNode node,
-            MetricsGetterSettings settings
-        )
+        private static object GetContentControlsTransform(XNode node, MetricsGetterSettings settings)
         {
             var element = node as XElement;
             if (element != null)
@@ -1163,20 +1001,10 @@ namespace Clippit
 
                 if (element.Name == W.sdt)
                 {
-                    var tag = (string)
-                        element
-                            .Elements(W.sdtPr)
-                            .Elements(W.tag)
-                            .Attributes(W.val)
-                            .FirstOrDefault();
+                    var tag = (string)element.Elements(W.sdtPr).Elements(W.tag).Attributes(W.val).FirstOrDefault();
                     var tagAttr = tag != null ? new XAttribute(H.Tag, tag) : null;
 
-                    var alias = (string)
-                        element
-                            .Elements(W.sdtPr)
-                            .Elements(W.alias)
-                            .Attributes(W.val)
-                            .FirstOrDefault();
+                    var alias = (string)element.Elements(W.sdtPr).Elements(W.alias).Attributes(W.val).FirstOrDefault();
                     var aliasAttr = alias != null ? new XAttribute(H.Alias, alias) : null;
 
                     var xPathAttr = new XAttribute(H.XPath, element.GetXPath());

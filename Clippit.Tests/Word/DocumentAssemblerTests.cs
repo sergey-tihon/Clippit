@@ -55,11 +55,7 @@ namespace Clippit.Tests.Word
         [InlineData("DA029-NoDataForCell.docx", "DA-Data.xml", true)]
         [InlineData("DA030-TooMuchDataForCell.docx", "DA-TooMuchDataForCell.xml", false)] // Clippit support multi-value XPath in table cells
         [InlineData("DA031-CellDataInAttributes.docx", "DA-CellDataInAttributes.xml", true)]
-        [InlineData(
-            "DA032-TooMuchDataForConditional.docx",
-            "DA-TooMuchDataForConditional.xml",
-            true
-        )]
+        [InlineData("DA032-TooMuchDataForConditional.docx", "DA-TooMuchDataForConditional.xml", true)]
         [InlineData("DA033-ConditionalOnAttribute.docx", "DA-ConditionalOnAttribute.xml", false)]
         [InlineData("DA034-HeaderFooter.docx", "DA-Data.xml", false)]
         [InlineData("DA035-SchemaErrorInRepeat.docx", "DA-Data.xml", true)]
@@ -95,11 +91,7 @@ namespace Clippit.Tests.Word
         [InlineData("DA229-NoDataForCell.docx", "DA-Data.xml", true)]
         [InlineData("DA230-TooMuchDataForCell.docx", "DA-TooMuchDataForCell.xml", false)] // Clippit support multi-value XPath in table cells
         [InlineData("DA231-CellDataInAttributes.docx", "DA-CellDataInAttributes.xml", true)]
-        [InlineData(
-            "DA232-TooMuchDataForConditional.docx",
-            "DA-TooMuchDataForConditional.xml",
-            true
-        )]
+        [InlineData("DA232-TooMuchDataForConditional.docx", "DA-TooMuchDataForConditional.xml", true)]
         [InlineData("DA233-ConditionalOnAttribute.docx", "DA-ConditionalOnAttribute.xml", false)]
         [InlineData("DA234-HeaderFooter.docx", "DA-Data.xml", false)]
         [InlineData("DA235-Crashes.docx", "DA-Content-List.xml", false)]
@@ -131,86 +123,26 @@ namespace Clippit.Tests.Word
         [InlineData("DA270A-ImageSelect.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA271-ImageSelectWithRepeat.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA271A-ImageSelectWithRepeat.docx", "DA-Data-WithImages.xml", false)]
-        [InlineData(
-            "DA272-ImageSelectWithRepeatHorizontalAlign.docx",
-            "DA-Data-WithImages.xml",
-            false
-        )]
-        [InlineData(
-            "DA272A-ImageSelectWithRepeatHorizontalAlign.docx",
-            "DA-Data-WithImages.xml",
-            false
-        )]
-        [InlineData(
-            "DA273-ImageSelectInsideTextBoxWithRepeatVerticalAlign.docx",
-            "DA-Data-WithImages.xml",
-            false
-        )]
-        [InlineData(
-            "DA273A-ImageSelectInsideTextBoxWithRepeatVerticalAlign.docx",
-            "DA-Data-WithImages.xml",
-            false
-        )]
-        [InlineData(
-            "DA274-ImageSelectInsideTextBoxWithRepeatHorizontalAlign.docx",
-            "DA-Data-WithImages.xml",
-            false
-        )]
-        [InlineData(
-            "DA274A-ImageSelectInsideTextBoxWithRepeatHorizontalAlign.docx",
-            "DA-Data-WithImages.xml",
-            false
-        )]
+        [InlineData("DA272-ImageSelectWithRepeatHorizontalAlign.docx", "DA-Data-WithImages.xml", false)]
+        [InlineData("DA272A-ImageSelectWithRepeatHorizontalAlign.docx", "DA-Data-WithImages.xml", false)]
+        [InlineData("DA273-ImageSelectInsideTextBoxWithRepeatVerticalAlign.docx", "DA-Data-WithImages.xml", false)]
+        [InlineData("DA273A-ImageSelectInsideTextBoxWithRepeatVerticalAlign.docx", "DA-Data-WithImages.xml", false)]
+        [InlineData("DA274-ImageSelectInsideTextBoxWithRepeatHorizontalAlign.docx", "DA-Data-WithImages.xml", false)]
+        [InlineData("DA274A-ImageSelectInsideTextBoxWithRepeatHorizontalAlign.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA275-ImageSelectWithRepeatInvalidAlign.docx", "DA-Data-WithImages.xml", true)]
-        [InlineData(
-            "DA275A-ImageSelectWithRepeatInvalidAlign.docx",
-            "DA-Data-WithImages.xml",
-            true
-        )]
+        [InlineData("DA275A-ImageSelectWithRepeatInvalidAlign.docx", "DA-Data-WithImages.xml", true)]
         [InlineData("DA276-ImageSelectInsideTable.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA276A-ImageSelectInsideTable.docx", "DA-Data-WithImages.xml", false)]
-        [InlineData(
-            "DA277-ImageSelectMissingOrInvalidPictureContent.docx",
-            "DA-Data-WithImages.xml",
-            true
-        )]
-        [InlineData(
-            "DA277A-ImageSelectMissingOrInvalidPictureContent.docx",
-            "DA-Data-WithImages.xml",
-            true
-        )]
+        [InlineData("DA277-ImageSelectMissingOrInvalidPictureContent.docx", "DA-Data-WithImages.xml", true)]
+        [InlineData("DA277A-ImageSelectMissingOrInvalidPictureContent.docx", "DA-Data-WithImages.xml", true)]
         [InlineData("DA278-ImageSelect.docx", "DA-Data-WithImagesInvalidPath.xml", true)]
         [InlineData("DA278A-ImageSelect.docx", "DA-Data-WithImagesInvalidPath.xml", true)]
-        [InlineData(
-            "DA279-ImageSelectWithRepeat.docx",
-            "DA-Data-WithImagesInvalidMIMEType.xml",
-            true
-        )]
-        [InlineData(
-            "DA279A-ImageSelectWithRepeat.docx",
-            "DA-Data-WithImagesInvalidMIMEType.xml",
-            true
-        )]
-        [InlineData(
-            "DA280-ImageSelectWithRepeat.docx",
-            "DA-Data-WithImagesInvalidImageDataFormat.xml",
-            true
-        )]
-        [InlineData(
-            "DA280A-ImageSelectWithRepeat.docx",
-            "DA-Data-WithImagesInvalidImageDataFormat.xml",
-            true
-        )]
-        [InlineData(
-            "DA281-ImageSelectExtraWhitespaceBeforeImageContent.docx",
-            "DA-Data-WithImages.xml",
-            true
-        )]
-        [InlineData(
-            "DA281A-ImageSelectExtraWhitespaceBeforeImageContent.docx",
-            "DA-Data-WithImages.xml",
-            true
-        )]
+        [InlineData("DA279-ImageSelectWithRepeat.docx", "DA-Data-WithImagesInvalidMIMEType.xml", true)]
+        [InlineData("DA279A-ImageSelectWithRepeat.docx", "DA-Data-WithImagesInvalidMIMEType.xml", true)]
+        [InlineData("DA280-ImageSelectWithRepeat.docx", "DA-Data-WithImagesInvalidImageDataFormat.xml", true)]
+        [InlineData("DA280A-ImageSelectWithRepeat.docx", "DA-Data-WithImagesInvalidImageDataFormat.xml", true)]
+        [InlineData("DA281-ImageSelectExtraWhitespaceBeforeImageContent.docx", "DA-Data-WithImages.xml", true)]
+        [InlineData("DA281A-ImageSelectExtraWhitespaceBeforeImageContent.docx", "DA-Data-WithImages.xml", true)]
         [InlineData("DA282-ImageSelectWithHeader.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA282A-ImageSelectWithHeader.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA282-ImageSelectWithHeader.docx", "DA-Data-WithImagesInvalidPath.xml", true)]
@@ -219,16 +151,8 @@ namespace Clippit.Tests.Word
         [InlineData("DA283A-ImageSelectWithFooter.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA284-ImageSelectWithHeaderAndFooter.docx", "DA-Data-WithImages.xml", false)]
         [InlineData("DA284A-ImageSelectWithHeaderAndFooter.docx", "DA-Data-WithImages.xml", false)]
-        [InlineData(
-            "DA285-ImageSelectNoParagraphFollowedAfterMetadata.docx",
-            "DA-Data-WithImages.xml",
-            true
-        )]
-        [InlineData(
-            "DA285A-ImageSelectNoParagraphFollowedAfterMetadata.docx",
-            "DA-Data-WithImages.xml",
-            true
-        )]
+        [InlineData("DA285-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
+        [InlineData("DA285A-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
         [InlineData("DA-I0038-TemplateWithMultipleXPathResults.docx", "DA-I0038-Data.xml", false)]
         public void DA101(string name, string data, bool err)
         {
@@ -244,10 +168,7 @@ namespace Clippit.Tests.Word
                 out var returnedTemplateError
             );
             var assembledDocx = new FileInfo(
-                Path.Combine(
-                    TempDir,
-                    templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")
-                )
+                Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx"))
             );
             afterAssembling.SaveAs(assembledDocx.FullName);
 
@@ -326,10 +247,7 @@ namespace Clippit.Tests.Word
                 out var returnedTemplateError
             );
             var assembledDocx = new FileInfo(
-                Path.Combine(
-                    TempDir,
-                    templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")
-                )
+                Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx"))
             );
             afterAssembling.SaveAs(assembledDocx.FullName);
         }
@@ -351,10 +269,7 @@ namespace Clippit.Tests.Word
                 out var returnedTemplateError
             );
             var assembledDocx = new FileInfo(
-                Path.Combine(
-                    TempDir,
-                    templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")
-                )
+                Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx"))
             );
             afterAssembling.SaveAs(assembledDocx.FullName);
 

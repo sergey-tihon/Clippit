@@ -58,15 +58,7 @@ namespace Clippit.Html
             HtmlToWmlConverterSettings settings
         )
         {
-            return HtmlToWmlConverterCore.ConvertHtmlToWml(
-                defaultCss,
-                authorCss,
-                userCss,
-                xhtml,
-                settings,
-                null,
-                null
-            );
+            return HtmlToWmlConverterCore.ConvertHtmlToWml(defaultCss, authorCss, userCss, xhtml, settings, null, null);
         }
 
         public static WmlDocument ConvertHtmlToWml(
@@ -358,12 +350,7 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
             using var ms = new MemoryStream();
             ms.Write(wmlDocument.DocumentByteArray, 0, wmlDocument.DocumentByteArray.Length);
             using var wDoc = WordprocessingDocument.Open(ms, false);
-            GetDefaultFontInfo(
-                wDoc,
-                out var majorLatinFont,
-                out var minorLatinFont,
-                out var defaultFontSize
-            );
+            GetDefaultFontInfo(wDoc, out var majorLatinFont, out var minorLatinFont, out var defaultFontSize);
             settings.MajorLatinFont = majorLatinFont;
             settings.MinorLatinFont = minorLatinFont;
             settings.DefaultFontSize = defaultFontSize;
@@ -392,11 +379,7 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
 
             var mXDoc = wDoc.MainDocumentPart.GetXDocument();
             var existingSectPr = mXDoc.Root.Descendants(W.sectPr).FirstOrDefault();
-            settings.SectPr = new XElement(
-                W.sectPr,
-                existingSectPr.Elements(W.pgSz),
-                existingSectPr.Elements(W.pgMar)
-            );
+            settings.SectPr = new XElement(W.sectPr, existingSectPr.Elements(W.pgSz), existingSectPr.Elements(W.pgMar));
 
             return settings;
         }
@@ -514,9 +497,7 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
 
         public override string ToString()
         {
-            throw new OpenXmlPowerToolsException(
-                "Can't convert directly to string, must cast to long"
-            );
+            throw new OpenXmlPowerToolsException("Can't convert directly to string, must cast to long");
         }
     }
 
@@ -541,9 +522,7 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
 
         public override string ToString()
         {
-            throw new OpenXmlPowerToolsException(
-                "Can't convert directly to string, must cast to double"
-            );
+            throw new OpenXmlPowerToolsException("Can't convert directly to string, must cast to double");
         }
     }
 
@@ -573,9 +552,7 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
 
         public override string ToString()
         {
-            throw new OpenXmlPowerToolsException(
-                "Can't convert directly to string, must cast to long"
-            );
+            throw new OpenXmlPowerToolsException("Can't convert directly to string, must cast to long");
         }
     }
 

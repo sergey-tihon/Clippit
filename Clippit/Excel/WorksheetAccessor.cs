@@ -159,8 +159,7 @@ namespace Clippit.Excel
     // Static methods to modify worksheets in SpreadsheetML
     public class WorksheetAccessor
     {
-        private static readonly XNamespace ns =
-            "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+        private static readonly XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
         private static readonly XNamespace relationshipsns =
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 
@@ -173,11 +172,7 @@ namespace Clippit.Excel
                     workbook
                         .Root.Element(S.sheets)
                         .Elements(S.sheet)
-                        .Where(s =>
-                            s.Attribute(NoNamespace.name)
-                                .Value.ToLower()
-                                .Equals(worksheetName.ToLower())
-                        )
+                        .Where(s => s.Attribute(NoNamespace.name).Value.ToLower().Equals(worksheetName.ToLower()))
                         .FirstOrDefault()
                         .Attribute(R.id)
                         .Value
@@ -253,12 +248,7 @@ namespace Clippit.Excel
 
         // Gets the value of the specified cell
         // Returned object can be double/Double, int/Int32, bool/Boolean or string/String types
-        public static object GetCellValue(
-            SpreadsheetDocument document,
-            WorksheetPart worksheet,
-            int column,
-            int row
-        )
+        public static object GetCellValue(SpreadsheetDocument document, WorksheetPart worksheet, int column, int row)
         {
             var worksheetXDocument = worksheet.GetXDocument();
             var cellValue = GetCell(worksheetXDocument, column, row);
@@ -277,10 +267,7 @@ namespace Clippit.Excel
                     case "b":
                         return (cellValue.Element(S.v).Value == "1");
                     case "s":
-                        return GetSharedString(
-                            document,
-                            Convert.ToInt32(cellValue.Element(S.v).Value)
-                        );
+                        return GetSharedString(document, Convert.ToInt32(cellValue.Element(S.v).Value));
                     case "inlineStr":
                         return cellValue.Element(S._is).Element(S.t).Value;
                 }
@@ -384,11 +371,7 @@ namespace Clippit.Excel
                     }
                     else
                     { //this row is going to be the one with the highest index (add it as the last element for sheetData)
-                        worksheetXDocument
-                            .Root.Element(S.sheetData)
-                            .Elements(S.row)
-                            .Last()
-                            .AddAfterSelf(rowElement);
+                        worksheetXDocument.Root.Element(S.sheetData).Elements(S.row).Last().AddAfterSelf(rowElement);
                     }
                 }
                 else
@@ -451,8 +434,7 @@ namespace Clippit.Excel
                 .FirstOrDefault(r => Convert.ToInt32(r.Attribute(NoNamespace.r).Value) == row)
                 .Elements(S.c)
                 .FirstOrDefault(c =>
-                    GetColumnNumber(c.Attribute(NoNamespace.r).Value)
-                    > GetColumnNumber(GetColumnId(column) + row)
+                    GetColumnNumber(c.Attribute(NoNamespace.r).Value) > GetColumnNumber(GetColumnId(column) + row)
                 );
         }
 
@@ -463,8 +445,7 @@ namespace Clippit.Excel
             foreach (var c in cellReference)
             {
                 if (char.IsLetter(c))
-                    columnNumber =
-                        columnNumber * 26 + Convert.ToInt32(c) - Convert.ToInt32('A') + 1;
+                    columnNumber = columnNumber * 26 + Convert.ToInt32(c) - Convert.ToInt32('A') + 1;
             }
             return columnNumber;
         }
@@ -536,9 +517,7 @@ namespace Clippit.Excel
                 element = new XElement(S.definedName, new XAttribute(NoNamespace.name, rangeName));
                 book.Root.Element(S.definedNames).Add(element);
             }
-            element.SetValue(
-                $"{sheetName}!${GetColumnId(startColumn)}${startRow}:${GetColumnId(endColumn)}${endRow}"
-            );
+            element.SetValue($"{sheetName}!${GetColumnId(startColumn)}${startRow}:${GetColumnId(endColumn)}${endRow}");
             doc.WorkbookPart.PutXDocument();
         }
 
@@ -578,11 +557,7 @@ namespace Clippit.Excel
             document.WorkbookPart.PutXDocument();
         }
 
-        public static void FormulaReplaceSheetName(
-            SpreadsheetDocument document,
-            string oldName,
-            string newName
-        )
+        public static void FormulaReplaceSheetName(SpreadsheetDocument document, string oldName, string newName)
         {
             foreach (var sheetPart in document.WorkbookPart.WorksheetParts)
             {
@@ -628,10 +603,7 @@ namespace Clippit.Excel
                 if (oldCell != null)
                 {
                     var newCell = new XElement(oldCell);
-                    newCell.SetAttributeValue(
-                        NoNamespace.r,
-                        GetColumnId(column + columnOffset) + (row + rowOffset)
-                    );
+                    newCell.SetAttributeValue(NoNamespace.r, GetColumnId(column + columnOffset) + (row + rowOffset));
                     var formula = newCell.Element(S.f);
                     if (formula != null)
                     {
@@ -674,9 +646,7 @@ namespace Clippit.Excel
             );
             for (var column = startColumn; column <= endColumn; column++)
             {
-                pivotFields.Add(
-                    new XElement(S.pivotField, new XAttribute(NoNamespace.showAll, "0"))
-                );
+                pivotFields.Add(new XElement(S.pivotField, new XAttribute(NoNamespace.showAll, "0")));
                 var sharedItems = new XElement(S.sharedItems);
                 // Determine numeric sharedItems values, if any
                 var value = GetCellValue(document, sourceSheet, column, startRow + 1);
@@ -763,10 +733,7 @@ namespace Clippit.Excel
                         new XElement(
                             S.cacheSource,
                             new XAttribute(NoNamespace.type, "worksheet"),
-                            new XElement(
-                                S.worksheetSource,
-                                new XAttribute(NoNamespace.name, rangeName)
-                            )
+                            new XElement(S.worksheetSource, new XAttribute(NoNamespace.name, rangeName))
                         ),
                         cacheFields
                     )
@@ -836,9 +803,7 @@ namespace Clippit.Excel
         {
             // Create indexed items in cache and definition
             var pivotTablePart = sheet.GetPartsOfType<PivotTablePart>().First();
-            var cacheDefPart = pivotTablePart
-                .GetPartsOfType<PivotTableCacheDefinitionPart>()
-                .First();
+            var cacheDefPart = pivotTablePart.GetPartsOfType<PivotTableCacheDefinitionPart>().First();
             var recordsPart = cacheDefPart.GetPartsOfType<PivotTableCacheRecordsPart>().First();
             var cacheDef = cacheDefPart.GetXDocument();
             var index = Array.FindIndex(
@@ -858,11 +823,7 @@ namespace Clippit.Excel
                 }
                 val.ReplaceWith(new XElement(S.x, new XAttribute(NoNamespace.v, x)));
             }
-            var sharedItems = cacheDef
-                .Descendants(S.cacheField)
-                .Skip(index)
-                .First()
-                .Element(S.sharedItems);
+            var sharedItems = cacheDef.Descendants(S.cacheField).Skip(index).First().Element(S.sharedItems);
             sharedItems.Add(new XAttribute(NoNamespace.count, values.Count), values);
             recordsPart.PutXDocument();
             cacheDefPart.PutXDocument();
@@ -881,9 +842,7 @@ namespace Clippit.Excel
                             NoNamespace.x,
                             Array.FindIndex(
                                 values.ToArray(),
-                                a =>
-                                    a.Attribute(NoNamespace.v).Value
-                                    == z.Attribute(NoNamespace.v).Value
+                                a => a.Attribute(NoNamespace.v).Value == z.Attribute(NoNamespace.v).Value
                             )
                         )
                     ))
@@ -896,31 +855,18 @@ namespace Clippit.Excel
 
                     // Add to colFields
                     {
-                        var fields = pivotTable
-                            .Element(S.pivotTableDefinition)
-                            .Element(S.colFields);
+                        var fields = pivotTable.Element(S.pivotTableDefinition).Element(S.colFields);
                         if (fields == null)
                         {
-                            fields = new XElement(
-                                S.colFields,
-                                new XAttribute(NoNamespace.count, 0)
-                            );
-                            var rowFields = pivotTable
-                                .Element(S.pivotTableDefinition)
-                                .Element(S.rowFields);
+                            fields = new XElement(S.colFields, new XAttribute(NoNamespace.count, 0));
+                            var rowFields = pivotTable.Element(S.pivotTableDefinition).Element(S.rowFields);
                             if (rowFields == null)
-                                pivotTable
-                                    .Element(S.pivotTableDefinition)
-                                    .Element(S.pivotFields)
-                                    .AddAfterSelf(fields);
+                                pivotTable.Element(S.pivotTableDefinition).Element(S.pivotFields).AddAfterSelf(fields);
                             else
                                 rowFields.AddAfterSelf(fields);
                         }
                         fields.Add(new XElement(S.field, new XAttribute(NoNamespace.x, index)));
-                        fields.Attribute(NoNamespace.count).Value = fields
-                            .Elements(S.field)
-                            .Count()
-                            .ToString();
+                        fields.Attribute(NoNamespace.count).Value = fields.Elements(S.field).Count().ToString();
                     }
                     break;
                 case PivotAxis.Row:
@@ -928,25 +874,14 @@ namespace Clippit.Excel
 
                     // Add to rowFields
                     {
-                        var fields = pivotTable
-                            .Element(S.pivotTableDefinition)
-                            .Element(S.rowFields);
+                        var fields = pivotTable.Element(S.pivotTableDefinition).Element(S.rowFields);
                         if (fields == null)
                         {
-                            fields = new XElement(
-                                S.rowFields,
-                                new XAttribute(NoNamespace.count, 0)
-                            );
-                            pivotTable
-                                .Element(S.pivotTableDefinition)
-                                .Element(S.pivotFields)
-                                .AddAfterSelf(fields);
+                            fields = new XElement(S.rowFields, new XAttribute(NoNamespace.count, 0));
+                            pivotTable.Element(S.pivotTableDefinition).Element(S.pivotFields).AddAfterSelf(fields);
                         }
                         fields.Add(new XElement(S.field, new XAttribute(NoNamespace.x, index)));
-                        fields.Attribute(NoNamespace.count).Value = fields
-                            .Elements(S.field)
-                            .Count()
-                            .ToString();
+                        fields.Attribute(NoNamespace.count).Value = fields.Elements(S.field).Count().ToString();
                     }
                     break;
                 case PivotAxis.Page:
@@ -954,37 +889,20 @@ namespace Clippit.Excel
 
                     // Add to pageFields
                     {
-                        var fields = pivotTable
-                            .Element(S.pivotTableDefinition)
-                            .Element(S.pageFields);
+                        var fields = pivotTable.Element(S.pivotTableDefinition).Element(S.pageFields);
                         if (fields == null)
                         {
-                            fields = new XElement(
-                                S.pageFields,
-                                new XAttribute(NoNamespace.count, 0)
-                            );
-                            var prev = pivotTable
-                                .Element(S.pivotTableDefinition)
-                                .Element(S.colFields);
+                            fields = new XElement(S.pageFields, new XAttribute(NoNamespace.count, 0));
+                            var prev = pivotTable.Element(S.pivotTableDefinition).Element(S.colFields);
                             if (prev == null)
-                                prev = pivotTable
-                                    .Element(S.pivotTableDefinition)
-                                    .Element(S.rowFields);
+                                prev = pivotTable.Element(S.pivotTableDefinition).Element(S.rowFields);
                             if (prev == null)
-                                pivotTable
-                                    .Element(S.pivotTableDefinition)
-                                    .Element(S.pivotFields)
-                                    .AddAfterSelf(fields);
+                                pivotTable.Element(S.pivotTableDefinition).Element(S.pivotFields).AddAfterSelf(fields);
                             else
                                 prev.AddAfterSelf(fields);
                         }
-                        fields.Add(
-                            new XElement(S.pageField, new XAttribute(NoNamespace.fld, index))
-                        );
-                        fields.Attribute(NoNamespace.count).Value = fields
-                            .Elements(S.field)
-                            .Count()
-                            .ToString();
+                        fields.Add(new XElement(S.pageField, new XAttribute(NoNamespace.fld, index)));
+                        fields.Attribute(NoNamespace.count).Value = fields.Elements(S.field).Count().ToString();
                     }
                     break;
             }
@@ -992,11 +910,7 @@ namespace Clippit.Excel
             ForcePivotRefresh(cacheDefPart);
         }
 
-        public static void AddDataValueLabel(
-            SpreadsheetDocument document,
-            WorksheetPart sheet,
-            PivotAxis axis
-        )
+        public static void AddDataValueLabel(SpreadsheetDocument document, WorksheetPart sheet, PivotAxis axis)
         {
             var pivotTablePart = sheet.GetPartsOfType<PivotTablePart>().First();
             var pivotTable = pivotTablePart.GetXDocument();
@@ -1005,109 +919,62 @@ namespace Clippit.Excel
                 case PivotAxis.Column:
                     // Add to colFields
                     {
-                        var fields = pivotTable
-                            .Element(S.pivotTableDefinition)
-                            .Element(S.colFields);
+                        var fields = pivotTable.Element(S.pivotTableDefinition).Element(S.colFields);
                         if (fields == null)
                         {
-                            fields = new XElement(
-                                S.colFields,
-                                new XAttribute(NoNamespace.count, 0)
-                            );
-                            var rowFields = pivotTable
-                                .Element(S.pivotTableDefinition)
-                                .Element(S.rowFields);
+                            fields = new XElement(S.colFields, new XAttribute(NoNamespace.count, 0));
+                            var rowFields = pivotTable.Element(S.pivotTableDefinition).Element(S.rowFields);
                             if (rowFields == null)
-                                pivotTable
-                                    .Element(S.pivotTableDefinition)
-                                    .Element(S.pivotFields)
-                                    .AddAfterSelf(fields);
+                                pivotTable.Element(S.pivotTableDefinition).Element(S.pivotFields).AddAfterSelf(fields);
                             else
                                 rowFields.AddAfterSelf(fields);
                         }
                         fields.Add(new XElement(S.field, new XAttribute(NoNamespace.x, -2)));
-                        fields.Attribute(NoNamespace.count).Value = fields
-                            .Elements(S.field)
-                            .Count()
-                            .ToString();
+                        fields.Attribute(NoNamespace.count).Value = fields.Elements(S.field).Count().ToString();
                     }
                     break;
                 case PivotAxis.Row:
                     // Add to rowFields
                     {
-                        var fields = pivotTable
-                            .Element(S.pivotTableDefinition)
-                            .Element(S.rowFields);
+                        var fields = pivotTable.Element(S.pivotTableDefinition).Element(S.rowFields);
                         if (fields == null)
                         {
-                            fields = new XElement(
-                                S.rowFields,
-                                new XAttribute(NoNamespace.count, 0)
-                            );
-                            pivotTable
-                                .Element(S.pivotTableDefinition)
-                                .Element(S.pivotFields)
-                                .AddAfterSelf(fields);
+                            fields = new XElement(S.rowFields, new XAttribute(NoNamespace.count, 0));
+                            pivotTable.Element(S.pivotTableDefinition).Element(S.pivotFields).AddAfterSelf(fields);
                         }
                         fields.Add(new XElement(S.field, new XAttribute(NoNamespace.x, -2)));
-                        fields.Attribute(NoNamespace.count).Value = fields
-                            .Elements(S.field)
-                            .Count()
-                            .ToString();
+                        fields.Attribute(NoNamespace.count).Value = fields.Elements(S.field).Count().ToString();
                     }
                     break;
                 case PivotAxis.Page:
                     // Add to pageFields
                     {
-                        var fields = pivotTable
-                            .Element(S.pivotTableDefinition)
-                            .Element(S.pageFields);
+                        var fields = pivotTable.Element(S.pivotTableDefinition).Element(S.pageFields);
                         if (fields == null)
                         {
-                            fields = new XElement(
-                                S.pageFields,
-                                new XAttribute(NoNamespace.count, 0)
-                            );
-                            var prev = pivotTable
-                                .Element(S.pivotTableDefinition)
-                                .Element(S.colFields);
+                            fields = new XElement(S.pageFields, new XAttribute(NoNamespace.count, 0));
+                            var prev = pivotTable.Element(S.pivotTableDefinition).Element(S.colFields);
                             if (prev == null)
-                                prev = pivotTable
-                                    .Element(S.pivotTableDefinition)
-                                    .Element(S.rowFields);
+                                prev = pivotTable.Element(S.pivotTableDefinition).Element(S.rowFields);
                             if (prev == null)
-                                pivotTable
-                                    .Element(S.pivotTableDefinition)
-                                    .Element(S.pivotFields)
-                                    .AddAfterSelf(fields);
+                                pivotTable.Element(S.pivotTableDefinition).Element(S.pivotFields).AddAfterSelf(fields);
                             else
                                 prev.AddAfterSelf(fields);
                         }
                         fields.Add(new XElement(S.pageField, new XAttribute(NoNamespace.fld, -2)));
-                        fields.Attribute(NoNamespace.count).Value = fields
-                            .Elements(S.field)
-                            .Count()
-                            .ToString();
+                        fields.Attribute(NoNamespace.count).Value = fields.Elements(S.field).Count().ToString();
                     }
                     break;
             }
             pivotTablePart.PutXDocument();
-            var cacheDefPart = pivotTablePart
-                .GetPartsOfType<PivotTableCacheDefinitionPart>()
-                .First();
+            var cacheDefPart = pivotTablePart.GetPartsOfType<PivotTableCacheDefinitionPart>().First();
             ForcePivotRefresh(cacheDefPart);
         }
 
-        public static void AddDataValue(
-            SpreadsheetDocument document,
-            WorksheetPart sheet,
-            string fieldName
-        )
+        public static void AddDataValue(SpreadsheetDocument document, WorksheetPart sheet, string fieldName)
         {
             var pivotTablePart = sheet.GetPartsOfType<PivotTablePart>().First();
-            var cacheDefPart = pivotTablePart
-                .GetPartsOfType<PivotTableCacheDefinitionPart>()
-                .First();
+            var cacheDefPart = pivotTablePart.GetPartsOfType<PivotTableCacheDefinitionPart>().First();
             var cacheDef = cacheDefPart.GetXDocument();
             var index = Array.FindIndex(
                 cacheDef.Descendants(S.cacheField).ToArray(),
@@ -1159,11 +1026,7 @@ namespace Clippit.Excel
             cacheDef.PutXDocument();
         }
 
-        public static void CheckNumberFormat(
-            SpreadsheetDocument document,
-            int fmtID,
-            string formatCode
-        )
+        public static void CheckNumberFormat(SpreadsheetDocument document, int fmtID, string formatCode)
         {
             var numFmt = new XElement(
                 S.numFmt,
@@ -1179,17 +1042,11 @@ namespace Clippit.Excel
                     .AddBeforeSelf(new XElement(S.numFmts, new XAttribute(NoNamespace.count, "0")));
                 numFmts = styles.Root.Element(S.numFmts);
             }
-            var index = Array.FindIndex(
-                numFmts.Elements(S.numFmt).ToArray(),
-                z => XNode.DeepEquals(z, numFmt)
-            );
+            var index = Array.FindIndex(numFmts.Elements(S.numFmt).ToArray(), z => XNode.DeepEquals(z, numFmt));
             if (index == -1)
             {
                 numFmts.Add(numFmt);
-                numFmts.Attribute(NoNamespace.count).Value = numFmts
-                    .Elements(S.numFmt)
-                    .Count()
-                    .ToString();
+                numFmts.Attribute(NoNamespace.count).Value = numFmts.Elements(S.numFmt).Count().ToString();
                 document.WorkbookPart.WorkbookStylesPart.PutXDocument();
             }
         }
@@ -1298,9 +1155,7 @@ namespace Clippit.Excel
                 if (Name != null)
                     font.Add(new XElement(S.name, new XAttribute(NoNamespace.val, Name)));
                 if (Family != 0)
-                    font.Add(
-                        new XElement(S.family, new XAttribute(NoNamespace.val, Family.ToString()))
-                    );
+                    font.Add(new XElement(S.family, new XAttribute(NoNamespace.val, Family.ToString())));
                 switch (Scheme)
                 {
                     case SchemeType.Major:
@@ -1319,10 +1174,7 @@ namespace Clippit.Excel
             var font = f.GetXElement();
             var styles = document.WorkbookPart.WorkbookStylesPart.GetXDocument();
             var fonts = styles.Root.Element(S.fonts);
-            var index = Array.FindIndex(
-                fonts.Elements(S.font).ToArray(),
-                z => XNode.DeepEquals(z, font)
-            );
+            var index = Array.FindIndex(fonts.Elements(S.font).ToArray(), z => XNode.DeepEquals(z, font));
             if (index != -1)
                 return index;
             fonts.Add(font);
@@ -1451,11 +1303,7 @@ namespace Clippit.Excel
 
             public XElement GetXElement()
             {
-                return new XElement(
-                    S.stop,
-                    new XAttribute(NoNamespace.position, Position),
-                    Color.GetXElement(S.color)
-                );
+                return new XElement(S.stop, new XAttribute(NoNamespace.position, Position), Color.GetXElement(S.color));
             }
         }
 
@@ -1528,10 +1376,7 @@ namespace Clippit.Excel
         {
             var styles = document.WorkbookPart.WorkbookStylesPart.GetXDocument();
             var fills = styles.Root.Element(S.fills);
-            var index = Array.FindIndex(
-                fills.Elements(S.fill).ToArray(),
-                z => XNode.DeepEquals(z, fill)
-            );
+            var index = Array.FindIndex(fills.Elements(S.fill).ToArray(), z => XNode.DeepEquals(z, fill));
             if (index != -1)
                 return index;
             fills.Add(fill);
@@ -1674,17 +1519,11 @@ namespace Clippit.Excel
             var border = b.GetXElement();
             var styles = document.WorkbookPart.WorkbookStylesPart.GetXDocument();
             var borders = styles.Root.Element(S.borders);
-            var index = Array.FindIndex(
-                borders.Elements(S.border).ToArray(),
-                z => XNode.DeepEquals(z, border)
-            );
+            var index = Array.FindIndex(borders.Elements(S.border).ToArray(), z => XNode.DeepEquals(z, border));
             if (index != -1)
                 return index;
             borders.Add(border);
-            borders.Attribute(NoNamespace.count).Value = borders
-                .Elements(S.border)
-                .Count()
-                .ToString();
+            borders.Attribute(NoNamespace.count).Value = borders.Elements(S.border).Count().ToString();
             document.WorkbookPart.WorkbookStylesPart.PutXDocument();
             return borders.Elements(S.border).Count() - 1;
         }
@@ -1706,37 +1545,20 @@ namespace Clippit.Excel
             );
             if (index != -1)
                 return index;
-            var cellStyleXf = styles.Root.Element(S.cellStyleXfs).Elements(S.xf).ToArray()[
-                Convert.ToInt32(xfId)
-            ];
+            var cellStyleXf = styles.Root.Element(S.cellStyleXfs).Elements(S.xf).ToArray()[Convert.ToInt32(xfId)];
             if (cellStyleXf != null)
             { // Create new xf element under cellXfs
                 cellXfs.Add(
                     new XElement(
                         S.xf,
-                        new XAttribute(
-                            NoNamespace.numFmtId,
-                            cellStyleXf.Attribute(NoNamespace.numFmtId).Value
-                        ),
-                        new XAttribute(
-                            NoNamespace.fontId,
-                            cellStyleXf.Attribute(NoNamespace.fontId).Value
-                        ),
-                        new XAttribute(
-                            NoNamespace.fillId,
-                            cellStyleXf.Attribute(NoNamespace.fillId).Value
-                        ),
-                        new XAttribute(
-                            NoNamespace.borderId,
-                            cellStyleXf.Attribute(NoNamespace.borderId).Value
-                        ),
+                        new XAttribute(NoNamespace.numFmtId, cellStyleXf.Attribute(NoNamespace.numFmtId).Value),
+                        new XAttribute(NoNamespace.fontId, cellStyleXf.Attribute(NoNamespace.fontId).Value),
+                        new XAttribute(NoNamespace.fillId, cellStyleXf.Attribute(NoNamespace.fillId).Value),
+                        new XAttribute(NoNamespace.borderId, cellStyleXf.Attribute(NoNamespace.borderId).Value),
                         new XAttribute(NoNamespace.xfId, xfId)
                     )
                 );
-                cellXfs.Attribute(NoNamespace.count).Value = cellXfs
-                    .Elements(S.xf)
-                    .Count()
-                    .ToString();
+                cellXfs.Attribute(NoNamespace.count).Value = cellXfs.Elements(S.xf).Count().ToString();
                 document.WorkbookPart.WorkbookStylesPart.PutXDocument();
                 return cellXfs.Elements(S.xf).Count() - 1;
             }
@@ -1891,10 +1713,7 @@ namespace Clippit.Excel
 
             var styles = document.WorkbookPart.WorkbookStylesPart.GetXDocument();
             var cellXfs = styles.Root.Element(S.cellXfs);
-            var index = Array.FindIndex(
-                cellXfs.Elements(S.xf).ToArray(),
-                z => XNode.DeepEquals(z, xf)
-            );
+            var index = Array.FindIndex(cellXfs.Elements(S.xf).ToArray(), z => XNode.DeepEquals(z, xf));
             if (index != -1)
                 return index;
             cellXfs.Add(xf);
@@ -2512,11 +2331,7 @@ namespace Clippit.Excel
 
             //Creating the new cell element (markup)
             var newCellXElement = valueIsNumeric
-                ? new XElement(
-                    ns + "c",
-                    new XAttribute("r", cellReference),
-                    new XElement(ns + "v", numericValue)
-                )
+                ? new XElement(ns + "c", new XAttribute("r", cellReference), new XElement(ns + "v", numericValue))
                 : new XElement(
                     ns + "c",
                     new XAttribute("r", cellReference),
@@ -2551,11 +2366,7 @@ namespace Clippit.Excel
                     }
                     else
                     { //this row is going to be the one with the highest index (add it as the last element for sheetData)
-                        worksheet
-                            .Root.Element(ns + "sheetData")
-                            .Elements(ns + "row")
-                            .Last()
-                            .AddAfterSelf(rowElement);
+                        worksheet.Root.Element(ns + "sheetData").Elements(ns + "row").Last().AddAfterSelf(rowElement);
                     }
                 }
                 else
@@ -2624,10 +2435,7 @@ namespace Clippit.Excel
                 document
                     .Root.Element(ns + "sheets")
                     .Elements(ns + "sheet")
-                    .Where(t =>
-                        t.Attribute("name")
-                            .Value.StartsWith("sheet", StringComparison.OrdinalIgnoreCase)
-                    )
+                    .Where(t => t.Attribute("name").Value.StartsWith("sheet", StringComparison.OrdinalIgnoreCase))
                     .Count() + 1;
 
             // Adds content to workbook document to reference worksheet document

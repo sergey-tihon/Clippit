@@ -20,21 +20,13 @@ namespace Clippit.Word
 {
     public static class DocumentAssembler
     {
-        public static WmlDocument AssembleDocument(
-            WmlDocument templateDoc,
-            XmlDocument data,
-            out bool templateError
-        )
+        public static WmlDocument AssembleDocument(WmlDocument templateDoc, XmlDocument data, out bool templateError)
         {
             var xDoc = data.GetXDocument();
             return AssembleDocument(templateDoc, xDoc.Root, out templateError);
         }
 
-        public static WmlDocument AssembleDocument(
-            WmlDocument templateDoc,
-            XElement data,
-            out bool templateError
-        )
+        public static WmlDocument AssembleDocument(WmlDocument templateDoc, XElement data, out bool templateError)
         {
             var byteArray = templateDoc.DocumentByteArray;
             using var mem = new MemoryStream();
@@ -85,12 +77,7 @@ namespace Clippit.Word
                     {
                         dataPartRoot = (XElement)TransformToMetadata(dataPartRoot, te);
                         // do the actual content replacement
-                        dataPartRoot = (XElement)ContentReplacementTransform(
-                            dataPartRoot,
-                            data,
-                            te,
-                            part
-                        );
+                        dataPartRoot = (XElement)ContentReplacementTransform(dataPartRoot, data, te, part);
                         diagramDoc.Elements().First().ReplaceWith(dataPartRoot);
                         diagramPart.PutXDocument();
                     }
@@ -137,10 +124,7 @@ namespace Clippit.Word
 
             if (element.Name == W.p)
             {
-                var childMeta = element
-                    .Elements()
-                    .Where(n => s_metaToForceToBlock.Contains(n.Name))
-                    .ToList();
+                var childMeta = element.Elements().Where(n => s_metaToForceToBlock.Contains(n.Name)).ToList();
                 if (childMeta.Count == 1)
                 {
                     var child = childMeta.First();
@@ -153,36 +137,23 @@ namespace Clippit.Word
                     if (otherTextInParagraph != "")
                     {
                         var newPara = new XElement(element);
-                        var newMeta = newPara
-                            .Elements()
-                            .First(n => s_metaToForceToBlock.Contains(n.Name));
+                        var newMeta = newPara.Elements().First(n => s_metaToForceToBlock.Contains(n.Name));
                         newMeta.ReplaceWith(
-                            CreateRunErrorMessage(
-                                "Error: Unmatched metadata can't be in paragraph with other text",
-                                te
-                            )
+                            CreateRunErrorMessage("Error: Unmatched metadata can't be in paragraph with other text", te)
                         );
                         return newPara;
                     }
                     var meta = new XElement(
                         child.Name,
                         child.Attributes(),
-                        new XElement(
-                            W.p,
-                            element.Attributes(),
-                            element.Elements(W.pPr),
-                            child.Elements()
-                        )
+                        new XElement(W.p, element.Attributes(), element.Elements(W.pPr), child.Elements())
                     );
                     return meta;
                 }
                 var count = childMeta.Count;
                 if (count % 2 == 0)
                 {
-                    if (
-                        childMeta.Count(c => c.Name == PA.Repeat)
-                        != childMeta.Count(c => c.Name == PA.EndRepeat)
-                    )
+                    if (childMeta.Count(c => c.Name == PA.Repeat) != childMeta.Count(c => c.Name == PA.EndRepeat))
                         return CreateContextErrorMessage(
                             element,
                             "Error: Mismatch Repeat / EndRepeat at run level",
@@ -205,11 +176,7 @@ namespace Clippit.Word
                 }
                 else
                 {
-                    return CreateContextErrorMessage(
-                        element,
-                        "Error: Invalid metadata at run level",
-                        te
-                    );
+                    return CreateContextErrorMessage(element, "Error: Invalid metadata at run level", te);
                 }
             }
             return new XElement(
@@ -219,18 +186,11 @@ namespace Clippit.Word
             );
         }
 
-        private static void ProcessOrphanEndRepeatEndConditional(
-            XElement xDocRoot,
-            TemplateError te
-        )
+        private static void ProcessOrphanEndRepeatEndConditional(XElement xDocRoot, TemplateError te)
         {
             foreach (var element in xDocRoot.Descendants(PA.EndRepeat).ToList())
             {
-                var error = CreateContextErrorMessage(
-                    element,
-                    "Error: EndRepeat without matching Repeat",
-                    te
-                );
+                var error = CreateContextErrorMessage(element, "Error: EndRepeat without matching Repeat", te);
                 element.ReplaceWith(error);
             }
             foreach (var element in xDocRoot.Descendants(PA.EndConditional).ToList())
@@ -282,11 +242,7 @@ namespace Clippit.Word
                         element.Elements(W.sdtEndPr),
                         new XElement(
                             W.sdtContent,
-                            element
-                                .Elements(W.sdtContent)
-                                .Elements(W.tc)
-                                .Elements()
-                                .Where(e => e.Name != W.tcPr)
+                            element.Elements(W.sdtContent).Elements(W.tc).Elements().Where(e => e.Name != W.tcPr)
                         )
                     )
                 );
@@ -308,16 +264,11 @@ namespace Clippit.Word
             var tables = xDoc.Descendants(PA.Table).ToList();
             foreach (var table in tables)
             {
-                var followingElement = table
-                    .ElementsAfterSelf()
-                    .FirstOrDefault(e => e.Name == W.tbl || e.Name == W.p);
+                var followingElement = table.ElementsAfterSelf().FirstOrDefault(e => e.Name == W.tbl || e.Name == W.p);
                 if (followingElement == null || followingElement.Name != W.tbl)
                 {
                     table.ReplaceWith(
-                        CreateParaErrorMessage(
-                            "Table metadata is not immediately followed by a table",
-                            te
-                        )
+                        CreateParaErrorMessage("Table metadata is not immediately followed by a table", te)
                     );
                     continue;
                 }
@@ -331,17 +282,12 @@ namespace Clippit.Word
             var images = xDoc.Descendants(PA.Image).ToList();
             foreach (var image in images)
             {
-                var followingElement = image
-                    .ElementsAfterSelf()
-                    .FirstOrDefault(e => e.Name == W.sdt || e.Name == W.p);
+                var followingElement = image.ElementsAfterSelf().FirstOrDefault(e => e.Name == W.sdt || e.Name == W.p);
 
                 if (followingElement == null)
                 {
                     image.ReplaceWith(
-                        CreateParaErrorMessage(
-                            "Image metadata is not immediately followed by an image",
-                            te
-                        )
+                        CreateParaErrorMessage("Image metadata is not immediately followed by an image", te)
                     );
                     continue;
                 }
@@ -363,10 +309,7 @@ namespace Clippit.Word
                         if (picture == null)
                         {
                             image.ReplaceWith(
-                                CreateParaErrorMessage(
-                                    "Image metadata does not contain picture element",
-                                    te
-                                )
+                                CreateParaErrorMessage("Image metadata does not contain picture element", te)
                             );
                             continue;
                         }
@@ -456,10 +399,7 @@ namespace Clippit.Word
                         continue;
                     }
                     metadata.RemoveNodes();
-                    var contentBetween = metadata
-                        .ElementsAfterSelf()
-                        .TakeWhile(after => after != matchingEnd)
-                        .ToList();
+                    var contentBetween = metadata.ElementsAfterSelf().TakeWhile(after => after != matchingEnd).ToList();
                     foreach (var item in contentBetween)
                         item.Remove();
                     contentBetween = contentBetween
@@ -477,16 +417,7 @@ namespace Clippit.Word
         }
 
         private static readonly List<string> s_aliasList =
-            new()
-            {
-                "Image",
-                "Content",
-                "Table",
-                "Repeat",
-                "EndRepeat",
-                "Conditional",
-                "EndConditional",
-            };
+            new() { "Image", "Content", "Table", "Repeat", "EndRepeat", "Conditional", "EndConditional" };
 
         private static object TransformToMetadata(XNode node, TemplateError te)
         {
@@ -495,8 +426,7 @@ namespace Clippit.Word
 
             if (element.Name == W.sdt)
             {
-                var alias = (string)
-                    element.Elements(W.sdtPr).Elements(W.alias).Attributes(W.val).FirstOrDefault();
+                var alias = (string)element.Elements(W.sdtPr).Elements(W.alias).Attributes(W.val).FirstOrDefault();
                 if (string.IsNullOrEmpty(alias) || s_aliasList.Contains(alias))
                 {
                     var ccContents = element
@@ -554,11 +484,7 @@ namespace Clippit.Word
                 var occurrences = paraContents
                     .Select((_, i) => paraContents.Substring(i))
                     .Count(sub => sub.StartsWith("<#"));
-                if (
-                    paraContents.StartsWith("<#")
-                    && paraContents.EndsWith("#>")
-                    && occurrences == 1
-                )
+                if (paraContents.StartsWith("<#") && paraContents.EndsWith("#>") && occurrences == 1)
                 {
                     var xmlText = paraContents.Substring(2, paraContents.Length - 4).Trim();
                     var xml = TransformXmlTextToMetadata(te, xmlText);
@@ -607,8 +533,7 @@ namespace Clippit.Word
                                 {
                                     Xml = null,
                                     XmlExceptionMessage = null,
-                                    SchemaValidationMessage =
-                                        "Schema Validation Error: " + schemaError,
+                                    SchemaValidationMessage = "Schema Validation Error: " + schemaError,
                                 };
                                 runReplacementInfo.Add(rri);
                                 return true;
@@ -630,19 +555,13 @@ namespace Clippit.Word
                     {
                         var runToReplace = newPara
                             .Descendants(W.r)
-                            .FirstOrDefault(rn =>
-                                rn.Value == thisGuid && rn.Parent.Name != PA.Content
-                            );
+                            .FirstOrDefault(rn => rn.Value == thisGuid && rn.Parent.Name != PA.Content);
                         if (runToReplace == null)
                             throw new OpenXmlPowerToolsException("Internal error");
                         if (rri.XmlExceptionMessage != null)
-                            runToReplace.ReplaceWith(
-                                CreateRunErrorMessage(rri.XmlExceptionMessage, te)
-                            );
+                            runToReplace.ReplaceWith(CreateRunErrorMessage(rri.XmlExceptionMessage, te));
                         else if (rri.SchemaValidationMessage != null)
-                            runToReplace.ReplaceWith(
-                                CreateRunErrorMessage(rri.SchemaValidationMessage, te)
-                            );
+                            runToReplace.ReplaceWith(CreateRunErrorMessage(rri.SchemaValidationMessage, te));
                         else
                         {
                             var newXml = new XElement(rri.Xml);
@@ -650,8 +569,7 @@ namespace Clippit.Word
                             runToReplace.ReplaceWith(newXml);
                         }
                     }
-                    var coalescedParagraph =
-                        WordprocessingMLUtil.CoalesceAdjacentRunsWithIdenticalFormatting(newPara);
+                    var coalescedParagraph = WordprocessingMLUtil.CoalesceAdjacentRunsWithIdenticalFormatting(newPara);
                     return coalescedParagraph;
                 }
             }
@@ -666,11 +584,7 @@ namespace Clippit.Word
                 var occurrences = paraContents
                     .Select((_, i) => paraContents.Substring(i))
                     .Count(sub => sub.StartsWith("<#"));
-                if (
-                    paraContents.StartsWith("<#")
-                    && paraContents.EndsWith("#>")
-                    && occurrences == 1
-                )
+                if (paraContents.StartsWith("<#") && paraContents.EndsWith("#>") && occurrences == 1)
                 {
                     var xmlText = paraContents.Substring(2, paraContents.Length - 4).Trim();
                     var xml = TransformXmlTextToMetadata(te, xmlText);
@@ -720,8 +634,7 @@ namespace Clippit.Word
                                 {
                                     Xml = null,
                                     XmlExceptionMessage = null,
-                                    SchemaValidationMessage =
-                                        "Schema Validation Error: " + schemaError,
+                                    SchemaValidationMessage = "Schema Validation Error: " + schemaError,
                                 };
                                 runReplacementInfo.Add(rri);
                                 return true;
@@ -743,19 +656,13 @@ namespace Clippit.Word
                     {
                         var runToReplace = newPara
                             .Descendants(W.r)
-                            .FirstOrDefault(rn =>
-                                rn.Value == thisGuid && rn.Parent.Name != PA.Content
-                            );
+                            .FirstOrDefault(rn => rn.Value == thisGuid && rn.Parent.Name != PA.Content);
                         if (runToReplace == null)
                             throw new OpenXmlPowerToolsException("Internal error");
                         if (rri.XmlExceptionMessage != null)
-                            runToReplace.ReplaceWith(
-                                CreateRunErrorMessage(rri.XmlExceptionMessage, te)
-                            );
+                            runToReplace.ReplaceWith(CreateRunErrorMessage(rri.XmlExceptionMessage, te));
                         else if (rri.SchemaValidationMessage != null)
-                            runToReplace.ReplaceWith(
-                                CreateRunErrorMessage(rri.SchemaValidationMessage, te)
-                            );
+                            runToReplace.ReplaceWith(CreateRunErrorMessage(rri.SchemaValidationMessage, te));
                         else
                         {
                             var newXml = new XElement(rri.Xml);
@@ -763,8 +670,7 @@ namespace Clippit.Word
                             runToReplace.ReplaceWith(newXml);
                         }
                     }
-                    var coalescedParagraph =
-                        WordprocessingMLUtil.CoalesceAdjacentRunsWithIdenticalFormatting(newPara);
+                    var coalescedParagraph = WordprocessingMLUtil.CoalesceAdjacentRunsWithIdenticalFormatting(newPara);
                     return coalescedParagraph;
                 }
             }
@@ -976,9 +882,7 @@ namespace Clippit.Word
                 case MainDocumentPart mainDocumentPart:
                 {
                     var imageId = mainDocumentPart
-                        .Parts.Select(p =>
-                            Regex.Match(p.RelationshipId, @"rId(?<rId>\d+)").Groups["rId"].Value
-                        )
+                        .Parts.Select(p => Regex.Match(p.RelationshipId, @"rId(?<rId>\d+)").Groups["rId"].Value)
                         .Max(Convert.ToDecimal);
 
                     return $"rId{++imageId}";
@@ -986,9 +890,7 @@ namespace Clippit.Word
                 case HeaderPart headerPart:
                 {
                     var imageId = headerPart
-                        .Parts.Select(p =>
-                            Regex.Match(p.RelationshipId, @"rId(?<rId>\d+)").Groups["rId"].Value
-                        )
+                        .Parts.Select(p => Regex.Match(p.RelationshipId, @"rId(?<rId>\d+)").Groups["rId"].Value)
                         .Max(Convert.ToDecimal);
 
                     return $"rId{++imageId}";
@@ -996,9 +898,7 @@ namespace Clippit.Word
                 case FooterPart footerPart:
                 {
                     var imageId = footerPart
-                        .Parts.Select(p =>
-                            Regex.Match(p.RelationshipId, @"rId(?<rId>\d+)").Groups["rId"].Value
-                        )
+                        .Parts.Select(p => Regex.Match(p.RelationshipId, @"rId(?<rId>\d+)").Groups["rId"].Value)
                         .Max(Convert.ToDecimal);
 
                     return $"rId{++imageId}";
@@ -1078,17 +978,10 @@ namespace Clippit.Word
         /// <param name="imagePartType">Type of the image part.</param>
         /// <param name="relationshipId">The relationship identifier.</param>
         /// <returns>ImagePart.</returns>
-        private static ImagePart GetImagePart(
-            OpenXmlPart part,
-            PartTypeInfo imagePartType,
-            string relationshipId
-        ) =>
+        private static ImagePart GetImagePart(OpenXmlPart part, PartTypeInfo imagePartType, string relationshipId) =>
             part switch
             {
-                MainDocumentPart mainDocumentPart => mainDocumentPart.AddImagePart(
-                    imagePartType,
-                    relationshipId
-                ),
+                MainDocumentPart mainDocumentPart => mainDocumentPart.AddImagePart(imagePartType, relationshipId),
                 HeaderPart headerPart => headerPart.AddImagePart(imagePartType, relationshipId),
                 FooterPart footerPart => footerPart.AddImagePart(imagePartType, relationshipId),
                 _ => null,
@@ -1112,16 +1005,10 @@ namespace Clippit.Word
             // check for misplaced sdt content, should contain the paragraph and not vice versa
             var sdt = element.Descendants(W.sdt).FirstOrDefault();
             // get the original element with all the formatting
-            var orig =
-                sdt == null
-                    ? element.Descendants(W.p).FirstOrDefault()
-                    : sdt.Descendants(W.p).FirstOrDefault();
+            var orig = sdt == null ? element.Descendants(W.p).FirstOrDefault() : sdt.Descendants(W.p).FirstOrDefault();
 
             // check for first run having image element in it
-            if (
-                orig == null
-                || !orig.Descendants(W.r).FirstOrDefault().Descendants(W.drawing).Any()
-            )
+            if (orig == null || !orig.Descendants(W.r).FirstOrDefault().Descendants(W.drawing).Any())
             {
                 return CreateContextErrorMessage(
                     element,
@@ -1146,11 +1033,7 @@ namespace Clippit.Word
             var inline = para.Descendants(W.drawing).Descendants(WP.inline).FirstOrDefault();
             if (inline == null)
             {
-                return CreateContextErrorMessage(
-                    element,
-                    "Image: invalid picture control",
-                    templateError
-                );
+                return CreateContextErrorMessage(element, "Image: invalid picture control", templateError);
             }
 
             // get aspect ratio option
@@ -1226,11 +1109,7 @@ namespace Clippit.Word
                     if (ip is null)
                     {
                         error = "Failed to get image part";
-                        return CreateContextErrorMessage(
-                            element,
-                            string.Concat("Image: ", error),
-                            templateError
-                        );
+                        return CreateContextErrorMessage(element, string.Concat("Image: ", error), templateError);
                     }
 
                     ip.FeedData(stream);
@@ -1250,11 +1129,7 @@ namespace Clippit.Word
                         var ratio = height / (width * 1.0);
                         if (!int.TryParse(extent.Attribute(NoNamespace.cx).Value, out width))
                         {
-                            return CreateContextErrorMessage(
-                                element,
-                                "Image: Invalid image attributes",
-                                templateError
-                            );
+                            return CreateContextErrorMessage(element, "Image: Invalid image attributes", templateError);
                         }
 
                         height = (int)(width * ratio);
@@ -1279,11 +1154,7 @@ namespace Clippit.Word
                 }
                 else
                 {
-                    return CreateContextErrorMessage(
-                        element,
-                        string.Concat("Image: ", error),
-                        templateError
-                    );
+                    return CreateContextErrorMessage(element, string.Concat("Image: ", error), templateError);
                 }
             }
 
@@ -1301,11 +1172,7 @@ namespace Clippit.Word
         /// <param name="imagePartType">Image Part Type to be embedded in the document and to be
         /// referenced by image control</param>
         /// <param name="error">Error message</param>
-        private static Stream Image2Stream(
-            string inputImage,
-            out PartTypeInfo imagePartType,
-            out string error
-        )
+        private static Stream Image2Stream(string inputImage, out PartTypeInfo imagePartType, out string error)
         {
             string imageType;
             Stream stream;
@@ -1314,14 +1181,8 @@ namespace Clippit.Word
                 // assume the image is base64 encoded format. See https://en.wikipedia.org/wiki/Data_URI_scheme
 
                 // get the image type and data
-                imageType = Regex
-                    .Match(inputImage, @"data:image/(?<type>.+?);")
-                    .Groups["type"]
-                    .Value;
-                var base64Data = Regex
-                    .Match(inputImage, @"data:image/(?<type>.+?),(?<data>.+)")
-                    .Groups["data"]
-                    .Value;
+                imageType = Regex.Match(inputImage, @"data:image/(?<type>.+?);").Groups["type"].Value;
+                var base64Data = Regex.Match(inputImage, @"data:image/(?<type>.+?),(?<data>.+)").Groups["data"].Value;
 
                 try
                 {
@@ -1386,11 +1247,7 @@ namespace Clippit.Word
         /// <param name="data">Data element with content</param>
         /// <param name="templateError">Error indicator</param>
         /// <returns>Processed element</returns>
-        private static object ProcessAParagraph(
-            XElement element,
-            XElement data,
-            TemplateError templateError
-        )
+        private static object ProcessAParagraph(XElement element, XElement data, TemplateError templateError)
         {
             var xPath = (string)element.Attribute(PA.Select);
             var optionalString = (string)element.Attribute(PA.Optional);
@@ -1403,11 +1260,7 @@ namespace Clippit.Word
             }
             catch (XPathException e)
             {
-                return CreateContextErrorMessage(
-                    element,
-                    "XPathException: " + e.Message,
-                    templateError
-                );
+                return CreateContextErrorMessage(element, "XPathException: " + e.Message, templateError);
             }
 
             var para = element.Descendants(A.r).FirstOrDefault();
@@ -1439,10 +1292,7 @@ namespace Clippit.Word
             if (element.Name == MC.AlternateContent)
             {
                 // assign new DrawingML object id (for repeated content)
-                var docProperties = element
-                    .Descendants(W.drawing)
-                    .Descendants(WP.docPr)
-                    .FirstOrDefault();
+                var docProperties = element.Descendants(W.drawing).Descendants(WP.docPr).FirstOrDefault();
                 docProperties?.SetAttributeValue(NoNamespace.id, InvalidImageId);
 
                 // get the fallback picture element
@@ -1499,11 +1349,7 @@ namespace Clippit.Word
                 }
                 catch (XPathException e)
                 {
-                    return CreateContextErrorMessage(
-                        element,
-                        "XPathException: " + e.Message,
-                        templateError
-                    );
+                    return CreateContextErrorMessage(element, "XPathException: " + e.Message, templateError);
                 }
 
                 var lines = newValues.SelectMany(x => x.Split('\n'));
@@ -1556,11 +1402,7 @@ namespace Clippit.Word
                 }
                 catch (XPathException e)
                 {
-                    return CreateContextErrorMessage(
-                        element,
-                        "XPathException: " + e.Message,
-                        templateError
-                    );
+                    return CreateContextErrorMessage(element, "XPathException: " + e.Message, templateError);
                 }
                 if (!repeatingData.Any())
                 {
@@ -1573,11 +1415,7 @@ namespace Clippit.Word
                         //else
                         //    return new XElement(W.r);
                     }
-                    return CreateContextErrorMessage(
-                        element,
-                        "Repeat: Select returned no data",
-                        templateError
-                    );
+                    return CreateContextErrorMessage(element, "Repeat: Select returned no data", templateError);
                 }
                 var newContent = repeatingData
                     .Select(d =>
@@ -1608,11 +1446,7 @@ namespace Clippit.Word
                     case "vertical":
                         return newContent;
                     default:
-                        return CreateContextErrorMessage(
-                            element,
-                            "Repeat: Invalid Align option",
-                            templateError
-                        );
+                        return CreateContextErrorMessage(element, "Repeat: Invalid Align option", templateError);
                 }
             }
             if (element.Name == PA.Table)
@@ -1620,23 +1454,14 @@ namespace Clippit.Word
                 IList<XElement> tableData;
                 try
                 {
-                    tableData = data.XPathSelectElements((string)element.Attribute(PA.Select))
-                        .ToList();
+                    tableData = data.XPathSelectElements((string)element.Attribute(PA.Select)).ToList();
                 }
                 catch (XPathException e)
                 {
-                    return CreateContextErrorMessage(
-                        element,
-                        "XPathException: " + e.Message,
-                        templateError
-                    );
+                    return CreateContextErrorMessage(element, "XPathException: " + e.Message, templateError);
                 }
                 if (!tableData.Any())
-                    return CreateContextErrorMessage(
-                        element,
-                        "Table Select returned no data",
-                        templateError
-                    );
+                    return CreateContextErrorMessage(element, "Table Select returned no data", templateError);
                 var table = element.Element(W.tbl);
                 var protoRow = table.Elements(W.tr).Skip(1).FirstOrDefault();
                 var footerRowsBeforeTransform = table.Elements(W.tr).Skip(2).ToList();
@@ -1644,11 +1469,7 @@ namespace Clippit.Word
                     .Select(x => ContentReplacementTransform(x, data, templateError, part))
                     .ToList();
                 if (protoRow == null)
-                    return CreateContextErrorMessage(
-                        element,
-                        "Table does not contain a prototype row",
-                        templateError
-                    );
+                    return CreateContextErrorMessage(element, "Table does not contain a prototype row", templateError);
                 protoRow.Descendants(W.bookmarkStart).Remove();
                 protoRow.Descendants(W.bookmarkEnd).Remove();
                 var newTable = new XElement(
@@ -1673,10 +1494,7 @@ namespace Clippit.Word
                                     if (image != null)
                                     {
                                         // has to be wrapped as table cell element, since we are re-formatting the table
-                                        return new XElement(
-                                            W.tc,
-                                            ProcessImageContent(image, d, templateError, part)
-                                        );
+                                        return new XElement(W.tc, ProcessImageContent(image, d, templateError, part));
                                     }
                                 }
 
@@ -1702,8 +1520,7 @@ namespace Clippit.Word
                                 }
 
                                 var pPr = paragraph.Element(W.pPr);
-                                var rPr =
-                                    cellRun != null ? cellRun.Element(W.rPr) : new XElement(W.rPr); //if the cell was empty there is no cellRun
+                                var rPr = cellRun != null ? cellRun.Element(W.rPr) : new XElement(W.rPr); //if the cell was empty there is no cellRun
                                 var newCell = new XElement(
                                     W.tc,
                                     tc.Elements().Where(z => z.Name != W.p),
@@ -1749,10 +1566,7 @@ namespace Clippit.Word
                     return CreateContextErrorMessage(element, e.Message, templateError);
                 }
 
-                if (
-                    (match != null && testValue == match)
-                    || (notMatch != null && testValue != notMatch)
-                )
+                if ((match != null && testValue == match) || (notMatch != null && testValue != notMatch))
                 {
                     var content = element
                         .Elements()
@@ -1764,9 +1578,7 @@ namespace Clippit.Word
             return new XElement(
                 element.Name,
                 element.Attributes(),
-                element
-                    .Nodes()
-                    .Select(n => ContentReplacementTransform(n, data, templateError, part))
+                element.Nodes().Select(n => ContentReplacementTransform(n, data, templateError, part))
             );
         }
 
@@ -1782,10 +1594,7 @@ namespace Clippit.Word
             return para != null ? new XElement(W.p, errorRun) : errorRun;
         }
 
-        private static XElement CreateRunErrorMessage(
-            string errorMessage,
-            TemplateError templateError
-        )
+        private static XElement CreateRunErrorMessage(string errorMessage, TemplateError templateError)
         {
             templateError.HasError = true;
             var errorRun = new XElement(
@@ -1800,10 +1609,7 @@ namespace Clippit.Word
             return errorRun;
         }
 
-        private static XElement CreateParaErrorMessage(
-            string errorMessage,
-            TemplateError templateError
-        )
+        private static XElement CreateParaErrorMessage(string errorMessage, TemplateError templateError)
         {
             templateError.HasError = true;
             var errorPara = new XElement(
@@ -1846,9 +1652,7 @@ namespace Clippit.Word
                         {
                             XElement xElement => xElement.Value,
                             XAttribute attribute => attribute.Value,
-                            _ => throw new ArgumentException(
-                                $"Unknown element type: {x.GetType().Name}"
-                            ),
+                            _ => throw new ArgumentException($"Unknown element type: {x.GetType().Name}"),
                         }
                     )
                     .ToArray();
@@ -1869,9 +1673,7 @@ namespace Clippit.Word
             {
                 0 when optional => string.Empty,
                 0 => throw new XPathException($"XPath expression ({xPath}) returned no results"),
-                > 1 => throw new XPathException(
-                    $"XPath expression ({xPath}) returned more than one node"
-                ),
+                > 1 => throw new XPathException($"XPath expression ({xPath}) returned more than one node"),
                 _ => selectedData.First(),
             };
         }

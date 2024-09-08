@@ -13,8 +13,7 @@ namespace Clippit.Tests.Common.Samples
         public ChartUpdaterSamples(ITestOutputHelper log)
             : base(log) { }
 
-        private static string GetFilePath(string path) =>
-            Path.Combine("../../../Common/Samples/ChartUpdater/", path);
+        private static string GetFilePath(string path) => Path.Combine("../../../Common/Samples/ChartUpdater/", path);
 
         [Theory]
         [InlineData("Chart-Cached-Data-01.docx")]

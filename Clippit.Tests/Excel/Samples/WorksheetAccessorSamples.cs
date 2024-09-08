@@ -18,36 +18,24 @@ namespace Clippit.Tests.Excel.Samples
         {
             var sourceFile = GetFilePath("Formulas1/Formulas.xlsx");
             // Change sheet name in formulas
-            using (
-                var streamDoc = new OpenXmlMemoryStreamDocument(
-                    OpenXmlPowerToolsDocument.FromFileName(sourceFile)
-                )
-            )
+            using (var streamDoc = new OpenXmlMemoryStreamDocument(OpenXmlPowerToolsDocument.FromFileName(sourceFile)))
             {
                 using (var doc = streamDoc.GetSpreadsheetDocument())
                 {
                     WorksheetAccessor.FormulaReplaceSheetName(doc, "Source", "'Source 2'");
                 }
-                streamDoc
-                    .GetModifiedSmlDocument()
-                    .SaveAs(Path.Combine(TempDir, "FormulasUpdated.xlsx"));
+                streamDoc.GetModifiedSmlDocument().SaveAs(Path.Combine(TempDir, "FormulasUpdated.xlsx"));
             }
 
             // Change sheet name in formulas
-            using (
-                var streamDoc = new OpenXmlMemoryStreamDocument(
-                    OpenXmlPowerToolsDocument.FromFileName(sourceFile)
-                )
-            )
+            using (var streamDoc = new OpenXmlMemoryStreamDocument(OpenXmlPowerToolsDocument.FromFileName(sourceFile)))
             {
                 using (var doc = streamDoc.GetSpreadsheetDocument())
                 {
                     var sheet = WorksheetAccessor.GetWorksheet(doc, "References");
                     WorksheetAccessor.CopyCellRange(doc, sheet, 1, 1, 7, 5, 4, 8);
                 }
-                streamDoc
-                    .GetModifiedSmlDocument()
-                    .SaveAs(Path.Combine(TempDir, "FormulasCopied.xlsx"));
+                streamDoc.GetModifiedSmlDocument().SaveAs(Path.Combine(TempDir, "FormulasCopied.xlsx"));
             }
         }
 
@@ -59,11 +47,7 @@ namespace Clippit.Tests.Excel.Samples
             var qsu = new FileInfo(Path.Combine(TempDir, "QuarterlyPivot.xlsx"));
 
             var row = 1;
-            using (
-                var streamDoc = new OpenXmlMemoryStreamDocument(
-                    OpenXmlPowerToolsDocument.FromFileName(qs.FullName)
-                )
-            )
+            using (var streamDoc = new OpenXmlMemoryStreamDocument(OpenXmlPowerToolsDocument.FromFileName(qs.FullName)))
             {
                 using (var doc = streamDoc.GetSpreadsheetDocument())
                 {
@@ -80,21 +64,9 @@ namespace Clippit.Tests.Excel.Samples
                                 foreach (var item in fields)
                                 {
                                     if (double.TryParse(item, out var num))
-                                        WorksheetAccessor.SetCellValue(
-                                            doc,
-                                            sheet,
-                                            row,
-                                            column++,
-                                            num
-                                        );
+                                        WorksheetAccessor.SetCellValue(doc, sheet, row, column++, num);
                                     else
-                                        WorksheetAccessor.SetCellValue(
-                                            doc,
-                                            sheet,
-                                            row,
-                                            column++,
-                                            item
-                                        );
+                                        WorksheetAccessor.SetCellValue(doc, sheet, row, column++, item);
                                 }
                             }
 
@@ -472,16 +444,10 @@ namespace Clippit.Tests.Excel.Samples
                     );
                     var gradient = new WorksheetAccessor.GradientFill(90);
                     gradient.AddStop(
-                        new WorksheetAccessor.GradientStop(
-                            0,
-                            new WorksheetAccessor.ColorInfo("FF92D050")
-                        )
+                        new WorksheetAccessor.GradientStop(0, new WorksheetAccessor.ColorInfo("FF92D050"))
                     );
                     gradient.AddStop(
-                        new WorksheetAccessor.GradientStop(
-                            1,
-                            new WorksheetAccessor.ColorInfo("FF0070C0")
-                        )
+                        new WorksheetAccessor.GradientStop(1, new WorksheetAccessor.ColorInfo("FF0070C0"))
                     );
                     var northIndex = WorksheetAccessor.GetStyleIndex(
                         doc,
@@ -492,10 +458,7 @@ namespace Clippit.Tests.Excel.Samples
                             {
                                 Italic = true,
                                 Size = 8,
-                                Color = new WorksheetAccessor.ColorInfo(
-                                    WorksheetAccessor.ColorInfo.ColorType.Theme,
-                                    1
-                                ),
+                                Color = new WorksheetAccessor.ColorInfo(WorksheetAccessor.ColorInfo.ColorType.Theme, 1),
                                 Name = "Times New Roman",
                                 Family = 1,
                             }
@@ -521,16 +484,7 @@ namespace Clippit.Tests.Excel.Samples
                         100,
                         "_(\"$\"* #,##0.00_);_(\"$\"* \\(#,##0.00\\);_(\"$\"* \"-\"??_);_(@_)"
                     );
-                    var amountIndex = WorksheetAccessor.GetStyleIndex(
-                        doc,
-                        100,
-                        0,
-                        0,
-                        0,
-                        null,
-                        false,
-                        false
-                    );
+                    var amountIndex = WorksheetAccessor.GetStyleIndex(doc, 100, 0, 0, 0, null, false, false);
 
                     using (var source = new StreamReader(GetFilePath("PivotTables1/PivotData.txt")))
                     {
@@ -578,37 +532,12 @@ namespace Clippit.Tests.Excel.Samples
                     WorksheetAccessor.CreatePivotTable(doc, "Sales", pivot);
 
                     // Configure pivot table rows, columns, data and filters
-                    WorksheetAccessor.AddPivotAxis(
-                        doc,
-                        pivot,
-                        "Year",
-                        WorksheetAccessor.PivotAxis.Column
-                    );
-                    WorksheetAccessor.AddPivotAxis(
-                        doc,
-                        pivot,
-                        "Quarter",
-                        WorksheetAccessor.PivotAxis.Column
-                    );
-                    WorksheetAccessor.AddPivotAxis(
-                        doc,
-                        pivot,
-                        "Category",
-                        WorksheetAccessor.PivotAxis.Row
-                    );
-                    WorksheetAccessor.AddPivotAxis(
-                        doc,
-                        pivot,
-                        "Product",
-                        WorksheetAccessor.PivotAxis.Row
-                    );
+                    WorksheetAccessor.AddPivotAxis(doc, pivot, "Year", WorksheetAccessor.PivotAxis.Column);
+                    WorksheetAccessor.AddPivotAxis(doc, pivot, "Quarter", WorksheetAccessor.PivotAxis.Column);
+                    WorksheetAccessor.AddPivotAxis(doc, pivot, "Category", WorksheetAccessor.PivotAxis.Row);
+                    WorksheetAccessor.AddPivotAxis(doc, pivot, "Product", WorksheetAccessor.PivotAxis.Row);
                     WorksheetAccessor.AddDataValue(doc, pivot, "Amount");
-                    WorksheetAccessor.AddPivotAxis(
-                        doc,
-                        pivot,
-                        "Region",
-                        WorksheetAccessor.PivotAxis.Page
-                    );
+                    WorksheetAccessor.AddPivotAxis(doc, pivot, "Region", WorksheetAccessor.PivotAxis.Page);
                 }
 
                 streamDoc.GetModifiedSmlDocument().SaveAs(Path.Combine(TempDir, "NewPivot.xlsx"));
@@ -618,9 +547,7 @@ namespace Clippit.Tests.Excel.Samples
             // Demonstrate multiple data fields
             using (
                 var streamDoc = new OpenXmlMemoryStreamDocument(
-                    OpenXmlPowerToolsDocument.FromFileName(
-                        GetFilePath("PivotTables1/QuarterlyUnitSales.xlsx")
-                    )
+                    OpenXmlPowerToolsDocument.FromFileName(GetFilePath("PivotTables1/QuarterlyUnitSales.xlsx"))
                 )
             )
             {
@@ -630,44 +557,17 @@ namespace Clippit.Tests.Excel.Samples
                     WorksheetAccessor.CreatePivotTable(doc, "Sales", pivot);
 
                     // Configure pivot table rows, columns, data and filters
-                    WorksheetAccessor.AddPivotAxis(
-                        doc,
-                        pivot,
-                        "Year",
-                        WorksheetAccessor.PivotAxis.Column
-                    );
-                    WorksheetAccessor.AddPivotAxis(
-                        doc,
-                        pivot,
-                        "Quarter",
-                        WorksheetAccessor.PivotAxis.Column
-                    );
-                    WorksheetAccessor.AddPivotAxis(
-                        doc,
-                        pivot,
-                        "Category",
-                        WorksheetAccessor.PivotAxis.Row
-                    );
-                    WorksheetAccessor.AddPivotAxis(
-                        doc,
-                        pivot,
-                        "Product",
-                        WorksheetAccessor.PivotAxis.Row
-                    );
+                    WorksheetAccessor.AddPivotAxis(doc, pivot, "Year", WorksheetAccessor.PivotAxis.Column);
+                    WorksheetAccessor.AddPivotAxis(doc, pivot, "Quarter", WorksheetAccessor.PivotAxis.Column);
+                    WorksheetAccessor.AddPivotAxis(doc, pivot, "Category", WorksheetAccessor.PivotAxis.Row);
+                    WorksheetAccessor.AddPivotAxis(doc, pivot, "Product", WorksheetAccessor.PivotAxis.Row);
                     WorksheetAccessor.AddDataValue(doc, pivot, "Total");
                     WorksheetAccessor.AddDataValue(doc, pivot, "Quantity");
                     WorksheetAccessor.AddDataValue(doc, pivot, "Unit Price");
-                    WorksheetAccessor.AddPivotAxis(
-                        doc,
-                        pivot,
-                        "Region",
-                        WorksheetAccessor.PivotAxis.Page
-                    );
+                    WorksheetAccessor.AddPivotAxis(doc, pivot, "Region", WorksheetAccessor.PivotAxis.Page);
                 }
 
-                streamDoc
-                    .GetModifiedSmlDocument()
-                    .SaveAs(Path.Combine(TempDir, "QuarterlyUnitSalesWithPivot.xlsx"));
+                streamDoc.GetModifiedSmlDocument().SaveAs(Path.Combine(TempDir, "QuarterlyUnitSalesWithPivot.xlsx"));
             }
         }
     }

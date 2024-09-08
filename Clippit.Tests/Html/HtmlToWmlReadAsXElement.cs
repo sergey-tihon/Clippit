@@ -47,9 +47,7 @@ namespace Clippit.Tests.Html
                 hdoc.Load(sourceHtmlFi.FullName, Encoding.Default);
                 hdoc.OptionOutputAsXml = true;
                 hdoc.Save(sourceHtmlFi.FullName, Encoding.Default);
-                StringBuilder sb = new StringBuilder(
-                    File.ReadAllText(sourceHtmlFi.FullName, Encoding.Default)
-                );
+                StringBuilder sb = new StringBuilder(File.ReadAllText(sourceHtmlFi.FullName, Encoding.Default));
                 sb.Replace("&amp;", "&");
                 sb.Replace("&nbsp;", "\xA0");
                 sb.Replace("&quot;", "\"");

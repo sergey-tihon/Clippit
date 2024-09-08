@@ -40,9 +40,7 @@ namespace Clippit
             sb.Append(indentString + "Created at Line: " + SourceLine + Environment.NewLine);
 #endif
             sb.Append(indentString + "CorrelatedItem =====" + Environment.NewLine);
-            sb.Append(
-                indentString4 + "CorrelationStatus: " + CorrelationStatus + Environment.NewLine
-            );
+            sb.Append(indentString4 + "CorrelationStatus: " + CorrelationStatus + Environment.NewLine);
             if (CorrelationStatus == CorrelationStatus.Equal)
             {
                 sb.Append(indentString4 + "ComparisonUnitList =====" + Environment.NewLine);

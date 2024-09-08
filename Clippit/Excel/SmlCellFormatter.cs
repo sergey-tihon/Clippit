@@ -24,10 +24,7 @@ namespace Clippit.Excel
             public string FormatCode;
         }
 
-        private static readonly Dictionary<
-            string,
-            FormatConfig
-        > ExcelFormatCodeToNetFormatCodeExceptionMap =
+        private static readonly Dictionary<string, FormatConfig> ExcelFormatCodeToNetFormatCodeExceptionMap =
             new()
             {
                 {
@@ -55,14 +52,7 @@ namespace Clippit.Excel
             var splitFormatCode = formatCode.Split(';');
             if (splitFormatCode.Length == 1)
             {
-                if (
-                    double.TryParse(
-                        value,
-                        NumberStyles.Float,
-                        CultureInfo.InvariantCulture,
-                        out var dv
-                    )
-                )
+                if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var dv))
                 {
                     return FormatDouble(formatCode, dv, out color);
                 }
@@ -70,14 +60,7 @@ namespace Clippit.Excel
             }
             if (splitFormatCode.Length == 2)
             {
-                if (
-                    double.TryParse(
-                        value,
-                        NumberStyles.Float,
-                        CultureInfo.InvariantCulture,
-                        out var dv
-                    )
-                )
+                if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var dv))
                 {
                     if (dv > 0)
                     {
@@ -94,14 +77,7 @@ namespace Clippit.Excel
             // _("$"* #,##0.00_);_("$"* \(#,##0.00\);_("$"* "-"??_);_(@_)
             if (splitFormatCode.Length == 4)
             {
-                if (
-                    double.TryParse(
-                        value,
-                        NumberStyles.Float,
-                        CultureInfo.InvariantCulture,
-                        out var dv
-                    )
-                )
+                if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var dv))
                 {
                     if (dv > 0)
                     {

@@ -5,33 +5,9 @@ namespace Clippit.Word
 {
     public class ListItemTextGetter_tr_TR
     {
-        private static readonly string[] RomanOnes =
-        {
-            "",
-            "I",
-            "II",
-            "III",
-            "IV",
-            "V",
-            "VI",
-            "VII",
-            "VIII",
-            "IX",
-        };
+        private static readonly string[] RomanOnes = { "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" };
 
-        private static readonly string[] RomanTens =
-        {
-            "",
-            "X",
-            "XX",
-            "XXX",
-            "XL",
-            "L",
-            "LX",
-            "LXX",
-            "LXXX",
-            "XC",
-        };
+        private static readonly string[] RomanTens = { "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC" };
 
         private static readonly string[] RomanHundreds =
         {
@@ -158,11 +134,7 @@ namespace Clippit.Word
             "doksanıncı",
         };
 
-        public static string GetListItemText(
-            string languageCultureName,
-            int levelNumber,
-            string numFmt
-        )
+        public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
         {
             #region
             if (numFmt == "decimal")
@@ -182,10 +154,7 @@ namespace Clippit.Word
                 var tens = (levelNumber % 100) / 10;
                 var hundreds = (levelNumber % 1000) / 100;
                 var thousands = levelNumber / 1000;
-                return RomanThousands[thousands]
-                    + RomanHundreds[hundreds]
-                    + RomanTens[tens]
-                    + RomanOnes[ones];
+                return RomanThousands[thousands] + RomanHundreds[hundreds] + RomanTens[tens] + RomanOnes[ones];
             }
             if (numFmt == "lowerRoman")
             {
@@ -194,10 +163,7 @@ namespace Clippit.Word
                 var hundreds = (levelNumber % 1000) / 100;
                 var thousands = levelNumber / 1000;
                 return (
-                    RomanThousands[thousands]
-                    + RomanHundreds[hundreds]
-                    + RomanTens[tens]
-                    + RomanOnes[ones]
+                    RomanThousands[thousands] + RomanHundreds[hundreds] + RomanTens[tens] + RomanOnes[ones]
                 ).ToLower();
             }
             if (numFmt == "upperLetter")

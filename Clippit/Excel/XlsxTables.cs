@@ -106,10 +106,7 @@ namespace Clippit.Excel
         {
             get
             {
-                var tc = Parent
-                    .TableColumns()
-                    .Where(x => x.Name.ToLower() == columnName.ToLower())
-                    .FirstOrDefault();
+                var tc = Parent.TableColumns().Where(x => x.Name.ToLower() == columnName.ToLower()).FirstOrDefault();
                 if (tc == null)
                     throw new Exception("Invalid column name: " + columnName);
                 var refs = Parent.Ref.Split(':');
@@ -117,9 +114,7 @@ namespace Clippit.Excel
                 var columnAddress = XlsxTables.IndexToColumnAddress(
                     XlsxTables.ColumnAddressToIndex(startRefs[0]) + tc.ColumnIndex
                 );
-                var cell = Row.Cells()
-                    .Where(c => c.ColumnAddress == columnAddress)
-                    .FirstOrDefault();
+                var cell = Row.Cells().Where(c => c.ColumnAddress == columnAddress).FirstOrDefault();
                 if (cell != null)
                 {
                     if (cell.Type == "s")
@@ -336,9 +331,7 @@ namespace Clippit.Excel
                             .StringConcatenate(e => (string)e)
                         : null;
                 var column = (string)cell.Attribute("r");
-                var columnAddress = column
-                    .Split('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
-                    .First();
+                var columnAddress = column.Split('0', '1', '2', '3', '4', '5', '6', '7', '8', '9').First();
                 var columnIndex = XlsxTables.ColumnAddressToIndex(columnAddress);
                 var newCell = new Cell(this)
                 {
@@ -409,13 +402,7 @@ namespace Clippit.Excel
                     TableType = (string)tableDefDoc.Root.Attribute("tableType"),
                     TableDefinitionPart = table,
                 };
-                ParseRange(
-                    t.Ref,
-                    out var leftColumn,
-                    out var topRow,
-                    out var rightColumn,
-                    out var bottomRow
-                );
+                ParseRange(t.Ref, out var leftColumn, out var topRow, out var rightColumn, out var bottomRow);
                 t.LeftColumn = leftColumn;
                 t.TopRow = topRow;
                 t.RightColumn = rightColumn;
@@ -447,9 +434,7 @@ namespace Clippit.Excel
 
         public static Table Table(this SpreadsheetDocument spreadsheet, string tableName)
         {
-            return spreadsheet
-                .Tables()
-                .FirstOrDefault(t => t.TableName.ToLower() == tableName.ToLower());
+            return spreadsheet.Tables().FirstOrDefault(t => t.TableName.ToLower() == tableName.ToLower());
         }
 
         public static IEnumerable<Row> Rows(this WorksheetPart worksheetPart)
@@ -507,9 +492,7 @@ namespace Clippit.Excel
                 var i2 = i / 26;
                 var i3 = i % 26;
                 var s =
-                    new string((char)('A' + i1), 1)
-                    + new string((char)('A' + i2), 1)
-                    + new string((char)('A' + i3), 1);
+                    new string((char)('A' + i1), 1) + new string((char)('A' + i2), 1) + new string((char)('A' + i3), 1);
                 return s;
             }
             throw new Exception("Invalid column address");

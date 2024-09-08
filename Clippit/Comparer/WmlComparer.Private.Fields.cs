@@ -146,21 +146,9 @@ namespace Clippit
             {
                 new() { ElementName = W.del, ChildElementPropertyNames = null },
                 new() { ElementName = W.ins, ChildElementPropertyNames = null },
-                new()
-                {
-                    ElementName = W.tbl,
-                    ChildElementPropertyNames = new[] { W.tblPr, W.tblGrid, W.tblPrEx },
-                },
-                new()
-                {
-                    ElementName = W.tr,
-                    ChildElementPropertyNames = new[] { W.trPr, W.tblPrEx },
-                },
-                new()
-                {
-                    ElementName = W.tc,
-                    ChildElementPropertyNames = new[] { W.tcPr, W.tblPrEx },
-                },
+                new() { ElementName = W.tbl, ChildElementPropertyNames = new[] { W.tblPr, W.tblGrid, W.tblPrEx } },
+                new() { ElementName = W.tr, ChildElementPropertyNames = new[] { W.trPr, W.tblPrEx } },
+                new() { ElementName = W.tc, ChildElementPropertyNames = new[] { W.tcPr, W.tblPrEx } },
                 new() { ElementName = W.pict, ChildElementPropertyNames = new[] { VML.shapetype } },
                 new() { ElementName = VML.group, ChildElementPropertyNames = null },
                 new() { ElementName = VML.shape, ChildElementPropertyNames = null },
@@ -169,24 +157,15 @@ namespace Clippit
                 new() { ElementName = O._lock, ChildElementPropertyNames = null },
                 new() { ElementName = W.txbxContent, ChildElementPropertyNames = null },
                 new() { ElementName = W10.wrap, ChildElementPropertyNames = null },
-                new()
-                {
-                    ElementName = W.sdt,
-                    ChildElementPropertyNames = new[] { W.sdtPr, W.sdtEndPr },
-                },
+                new() { ElementName = W.sdt, ChildElementPropertyNames = new[] { W.sdtPr, W.sdtEndPr } },
                 new() { ElementName = W.sdtContent, ChildElementPropertyNames = null },
                 new() { ElementName = W.hyperlink, ChildElementPropertyNames = null },
                 new() { ElementName = W.fldSimple, ChildElementPropertyNames = null },
                 new() { ElementName = VML.shapetype, ChildElementPropertyNames = null },
-                new()
-                {
-                    ElementName = W.smartTag,
-                    ChildElementPropertyNames = new[] { W.smartTagPr },
-                },
+                new() { ElementName = W.smartTag, ChildElementPropertyNames = new[] { W.smartTagPr } },
                 new() { ElementName = W.ruby, ChildElementPropertyNames = new[] { W.rubyPr } },
             };
 
-        private static XName[] ComparisonGroupingElements =>
-            new[] { W.p, W.tbl, W.tr, W.tc, W.txbxContent };
+        private static XName[] ComparisonGroupingElements => new[] { W.p, W.tbl, W.tr, W.tc, W.txbxContent };
     }
 }

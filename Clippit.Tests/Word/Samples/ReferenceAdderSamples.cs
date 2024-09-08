@@ -21,9 +21,7 @@ namespace Clippit.Tests.Word.Samples
         [InlineData("RaTest07.docx", "/w:document/w:body/w:p[2]", @"TOA \h \c ""1"" \p")] // Inserts a table of figures
         public void Sample(string fileName, string xPath, string switches)
         {
-            var srcFile = new FileInfo(
-                Path.Combine("../../../Word/Samples/ReferenceAdder/", fileName)
-            );
+            var srcFile = new FileInfo(Path.Combine("../../../Word/Samples/ReferenceAdder/", fileName));
             var file = Path.Combine(TempDir, srcFile.Name);
             srcFile.CopyTo(file, true);
 

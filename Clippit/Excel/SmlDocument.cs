@@ -7,8 +7,7 @@ namespace Clippit.Excel;
 
 public class SmlDocument : OpenXmlPowerToolsDocument
 {
-    private const string NotSpreadsheetExceptionMessage =
-        "The document is not a SpreadsheetML document.";
+    private const string NotSpreadsheetExceptionMessage = "The document is not a SpreadsheetML document.";
 
     public SmlDocument(OpenXmlPowerToolsDocument original)
         : base(original)
@@ -61,10 +60,8 @@ public class SmlDocument : OpenXmlPowerToolsDocument
         : base(fileName, memStream, convertToTransitional) { }
 
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public XElement ConvertToHtml(
-        SmlToHtmlConverterSettings htmlConverterSettings,
-        string tableName
-    ) => SmlToHtmlConverter.ConvertTableToHtml(this, htmlConverterSettings, tableName);
+    public XElement ConvertToHtml(SmlToHtmlConverterSettings htmlConverterSettings, string tableName) =>
+        SmlToHtmlConverter.ConvertTableToHtml(this, htmlConverterSettings, tableName);
 
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public XElement ConvertTableToHtml(string tableName) =>

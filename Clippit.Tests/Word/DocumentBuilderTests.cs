@@ -30,15 +30,9 @@ namespace Clippit.Tests.Word
             var name = "DB001-Sections.docx";
             var sourceDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
 
-            var sources = new List<ISource>
-            {
-                new Source(new WmlDocument(sourceDocx.FullName), true),
-            };
+            var sources = new List<ISource> { new Source(new WmlDocument(sourceDocx.FullName), true) };
             var processedDestDocx = new FileInfo(
-                Path.Combine(
-                    TempDir,
-                    sourceDocx.Name.Replace(".docx", "-processed-by-DocumentBuilder.docx")
-                )
+                Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-processed-by-DocumentBuilder.docx"))
             );
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
         }
@@ -46,12 +40,8 @@ namespace Clippit.Tests.Word
         [Fact]
         public void DB002_DocumentBuilderKeepSectionsDiscardHeaders()
         {
-            var source1Docx = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB002-Sections-With-Headers.docx")
-            );
-            var source2Docx = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx")
-            );
+            var source1Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB002-Sections-With-Headers.docx"));
+            var source2Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx"));
 
             var sources = new List<ISource>
             {
@@ -72,12 +62,8 @@ namespace Clippit.Tests.Word
         [Fact]
         public void DB003_DocumentBuilderOnlyDefaultHeader()
         {
-            var source1Docx = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB003-Only-Default-Header.docx")
-            );
-            var source2Docx = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx")
-            );
+            var source1Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB003-Only-Default-Header.docx"));
+            var source2Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx"));
 
             List<ISource> sources = null;
             sources = new List<ISource>
@@ -90,21 +76,15 @@ namespace Clippit.Tests.Word
                 },
                 new Source(new WmlDocument(source1Docx.FullName)) { KeepSections = true },
             };
-            var processedDestDocx = new FileInfo(
-                Path.Combine(TempDir, "DB003-Only-Default-Header.docx")
-            );
+            var processedDestDocx = new FileInfo(Path.Combine(TempDir, "DB003-Only-Default-Header.docx"));
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
         }
 
         [Fact]
         public void DB004_DocumentBuilderNoHeaders()
         {
-            var source1Docx = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB004-No-Headers.docx")
-            );
-            var source2Docx = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx")
-            );
+            var source1Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB004-No-Headers.docx"));
+            var source2Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx"));
 
             var sources = new List<ISource>
             {
@@ -117,21 +97,15 @@ namespace Clippit.Tests.Word
                 new Source(new WmlDocument(source1Docx.FullName)) { KeepSections = true },
             };
 
-            var processedDestDocx = new FileInfo(
-                Path.Combine(TempDir, "DB003-Only-Default-Header.docx")
-            );
+            var processedDestDocx = new FileInfo(Path.Combine(TempDir, "DB003-Only-Default-Header.docx"));
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
         }
 
         [Fact]
         public void DB005_HeadersWithRefsToImages()
         {
-            var source1Docx = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB005-Headers-With-Images.docx")
-            );
-            var source2Docx = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx")
-            );
+            var source1Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB005-Headers-With-Images.docx"));
+            var source2Docx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx"));
 
             var sources = new List<ISource>
             {
@@ -155,10 +129,7 @@ namespace Clippit.Tests.Word
             var source3 = new FileInfo(Path.Combine(_sourceDir.FullName, "DB006-Source3.docx"));
 
             // Create new document from 10 paragraphs starting at paragraph 5 of Source1.docx
-            var sources = new List<ISource>
-            {
-                new Source(new WmlDocument(source1.FullName), 5, 10, true),
-            };
+            var sources = new List<ISource> { new Source(new WmlDocument(source1.FullName), 5, 10, true) };
             var out1 = new FileInfo(Path.Combine(TempDir, "DB006-Out1.docx"));
             DocumentBuilder.BuildDocument(sources, out1.FullName);
             Validate(out1);
@@ -216,15 +187,9 @@ namespace Clippit.Tests.Word
         public void DB007_Example_DocumentBuilder02_WhitePaper()
         {
             var spec = new FileInfo(Path.Combine(_sourceDir.FullName, "DB007-Spec.docx"));
-            var whitePaper = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB007-WhitePaper.docx")
-            );
-            var paperAbstract = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB007-Abstract.docx")
-            );
-            var authorBio = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB007-AuthorBiography.docx")
-            );
+            var whitePaper = new FileInfo(Path.Combine(_sourceDir.FullName, "DB007-WhitePaper.docx"));
+            var paperAbstract = new FileInfo(Path.Combine(_sourceDir.FullName, "DB007-Abstract.docx"));
+            var authorBio = new FileInfo(Path.Combine(_sourceDir.FullName, "DB007-AuthorBiography.docx"));
 
             var sources = new List<ISource>
             {
@@ -254,12 +219,8 @@ namespace Clippit.Tests.Word
                     .Elements()
                     .Select((p, i) => new { Paragraph = p, Index = i })
                     .GroupAdjacent(pi =>
-                        (string)
-                            pi
-                                .Paragraph.Elements(W.pPr)
-                                .Elements(W.pStyle)
-                                .Attributes(W.val)
-                                .FirstOrDefault() != "Note"
+                        (string)pi.Paragraph.Elements(W.pPr).Elements(W.pStyle).Attributes(W.val).FirstOrDefault()
+                        != "Note"
                     )
                     .Where(g => g.Key)
                     .Select(g =>
@@ -297,12 +258,7 @@ namespace Clippit.Tests.Word
             "DB/HeadersFooters/Dest/Fax.docx",
             "Templafy"
         )]
-        [InlineData(
-            "DB009-00040",
-            "DB/HeadersFooters/Src/Logo.docx",
-            "DB/HeadersFooters/Dest/Fax.docx",
-            "Templafy"
-        )]
+        [InlineData("DB009-00040", "DB/HeadersFooters/Src/Logo.docx", "DB/HeadersFooters/Dest/Fax.docx", "Templafy")]
         [InlineData(
             "DB009-00050",
             "DB/HeadersFooters/Src/Watermark-1.docx",
@@ -321,12 +277,7 @@ namespace Clippit.Tests.Word
             "DB/HeadersFooters/Dest/Fax.docx",
             "Templafy"
         )]
-        [InlineData(
-            "DB009-00080",
-            "DB/HeadersFooters/Src/Footer.docx",
-            "DB/HeadersFooters/Dest/Fax.docx",
-            "Templafy"
-        )]
+        [InlineData("DB009-00080", "DB/HeadersFooters/Src/Footer.docx", "DB/HeadersFooters/Dest/Fax.docx", "Templafy")]
         [InlineData(
             "DB009-00110",
             "DB/HeadersFooters/Src/Content-Controls.docx",
@@ -345,12 +296,7 @@ namespace Clippit.Tests.Word
             "DB/HeadersFooters/Dest/Letter.docx",
             "Templafy"
         )]
-        [InlineData(
-            "DB009-00140",
-            "DB/HeadersFooters/Src/Logo.docx",
-            "DB/HeadersFooters/Dest/Letter.docx",
-            "Templafy"
-        )]
+        [InlineData("DB009-00140", "DB/HeadersFooters/Src/Logo.docx", "DB/HeadersFooters/Dest/Letter.docx", "Templafy")]
         [InlineData(
             "DB009-00150",
             "DB/HeadersFooters/Src/Watermark-1.docx",
@@ -375,12 +321,7 @@ namespace Clippit.Tests.Word
             "DB/HeadersFooters/Dest/Letter.docx",
             "Templafy"
         )]
-        public void DB009_ImportIntoHeadersFooters(
-            string testId,
-            string src,
-            string dest,
-            string insertId
-        )
+        public void DB009_ImportIntoHeadersFooters(string testId, string src, string dest, string insertId)
         {
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Load the source document
@@ -409,9 +350,7 @@ namespace Clippit.Tests.Word
                 try
                 {
                     ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                    var sourceDocxCopiedToDestFileName = new FileInfo(
-                        Path.Combine(tempDirFullName, sourceDocxFi.Name)
-                    );
+                    var sourceDocxCopiedToDestFileName = new FileInfo(Path.Combine(tempDirFullName, sourceDocxFi.Name));
                     if (!sourceDocxCopiedToDestFileName.Exists)
                         wmlSourceDocument.SaveAs(sourceDocxCopiedToDestFileName.FullName);
                     //////////////////////////////////////////////////
@@ -431,9 +370,7 @@ namespace Clippit.Tests.Word
                 try
                 {
                     ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                    var destDocxCopiedToDestFileName = new FileInfo(
-                        Path.Combine(tempDirFullName, destDocxFi.Name)
-                    );
+                    var destDocxCopiedToDestFileName = new FileInfo(Path.Combine(tempDirFullName, destDocxFi.Name));
                     if (!destDocxCopiedToDestFileName.Exists)
                         wmlDestDocument.SaveAs(destDocxCopiedToDestFileName.FullName);
                     //////////////////////////////////////////////////
@@ -445,11 +382,7 @@ namespace Clippit.Tests.Word
                 }
             }
 
-            var sources = new List<ISource>
-            {
-                new Source(wmlDestDocument),
-                new Source(wmlSourceDocument, insertId),
-            };
+            var sources = new List<ISource> { new Source(wmlDestDocument), new Source(wmlSourceDocument, insertId) };
 
             var outFi = new FileInfo(Path.Combine(tempDirFullName, "Output.docx"));
             DocumentBuilder.BuildDocument(sources, outFi.FullName);
@@ -610,11 +543,8 @@ namespace Clippit.Tests.Word
                     .Rollup(
                         0,
                         (pi, last) =>
-                            (string)
-                                pi.Elements(W.pPr)
-                                    .Elements(W.pStyle)
-                                    .Attributes(W.val)
-                                    .FirstOrDefault() == "Heading1"
+                            (string)pi.Elements(W.pPr).Elements(W.pStyle).Attributes(W.val).FirstOrDefault()
+                            == "Heading1"
                                 ? last + 1
                                 : last
                     );
@@ -666,13 +596,7 @@ namespace Clippit.Tests.Word
             DocumentBuilder.BuildDocument(sources, fiReassembled.FullName);
             using (var doc = WordprocessingDocument.Open(fiReassembled.FullName, true))
             {
-                ReferenceAdder.AddToc(
-                    doc,
-                    "/w:document/w:body/w:p[1]",
-                    @"TOC \o '1-3' \h \z \u",
-                    null,
-                    null
-                );
+                ReferenceAdder.AddToc(doc, "/w:document/w:body/w:p[1]", @"TOC \o '1-3' \h \z \u", null, null);
             }
             Validate(fiReassembled);
         }
@@ -692,22 +616,13 @@ namespace Clippit.Tests.Word
                 using (var doc = WordprocessingDocument.Open(mem, true))
                 {
                     var xDoc = doc.MainDocumentPart.GetXDocument();
-                    var frontMatterPara = xDoc
-                        .Root.Descendants(W.txbxContent)
-                        .Elements(W.p)
-                        .FirstOrDefault();
-                    frontMatterPara.ReplaceWith(
-                        new XElement(PtOpenXml.Insert, new XAttribute("Id", "Front"))
-                    );
+                    var frontMatterPara = xDoc.Root.Descendants(W.txbxContent).Elements(W.p).FirstOrDefault();
+                    frontMatterPara.ReplaceWith(new XElement(PtOpenXml.Insert, new XAttribute("Id", "Front")));
                     var tbl = xDoc.Root.Element(W.body).Elements(W.tbl).FirstOrDefault();
                     var firstCell = tbl.Descendants(W.tr).First().Descendants(W.p).First();
-                    firstCell.ReplaceWith(
-                        new XElement(PtOpenXml.Insert, new XAttribute("Id", "Liz"))
-                    );
+                    firstCell.ReplaceWith(new XElement(PtOpenXml.Insert, new XAttribute("Id", "Liz")));
                     var secondCell = tbl.Descendants(W.tr).Skip(1).First().Descendants(W.p).First();
-                    secondCell.ReplaceWith(
-                        new XElement(PtOpenXml.Insert, new XAttribute("Id", "Eric"))
-                    );
+                    secondCell.ReplaceWith(new XElement(PtOpenXml.Insert, new XAttribute("Id", "Eric")));
                     doc.MainDocumentPart.PutXDocument();
                 }
                 doc1.DocumentByteArray = mem.ToArray();
@@ -729,12 +644,8 @@ namespace Clippit.Tests.Word
         public void DB011_BodyAndHeaderWithShapes()
         {
             // Both of theses documents have a shape with a DocProperties ID of 1.
-            var source1 = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB011-Header-With-Shape.docx")
-            );
-            var source2 = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB011-Body-With-Shape.docx")
-            );
+            var source1 = new FileInfo(Path.Combine(_sourceDir.FullName, "DB011-Header-With-Shape.docx"));
+            var source2 = new FileInfo(Path.Combine(_sourceDir.FullName, "DB011-Body-With-Shape.docx"));
             List<ISource> sources = null;
 
             sources = new List<ISource>
@@ -742,9 +653,7 @@ namespace Clippit.Tests.Word
                 new Source(new WmlDocument(source1.FullName)),
                 new Source(new WmlDocument(source2.FullName)),
             };
-            var processedDestDocx = new FileInfo(
-                Path.Combine(TempDir, "DB011-Body-And-Header-With-Shapes.docx")
-            );
+            var processedDestDocx = new FileInfo(Path.Combine(TempDir, "DB011-Body-And-Header-With-Shapes.docx"));
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
             Validate(processedDestDocx);
 
@@ -760,10 +669,7 @@ namespace Clippit.Tests.Word
 
             var sources = new List<ISource> { new Source(new WmlDocument(sourceDocx.FullName)) };
             var processedDestDocx = new FileInfo(
-                Path.Combine(
-                    TempDir,
-                    sourceDocx.Name.Replace(".docx", "-processed-by-DocumentBuilder.docx")
-                )
+                Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-processed-by-DocumentBuilder.docx"))
             );
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
 
@@ -777,38 +683,24 @@ namespace Clippit.Tests.Word
         {
             // Each of these documents have changed the font color of the Heading 1 style, one to red, the other to green.
             // One of the documents were created with English as the Word display language, the other with Danish as the language.
-            var source1 = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB013a-Red-Heading1-English.docx")
-            );
-            var source2 = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB013a-Green-Heading1-Danish.docx")
-            );
+            var source1 = new FileInfo(Path.Combine(_sourceDir.FullName, "DB013a-Red-Heading1-English.docx"));
+            var source2 = new FileInfo(Path.Combine(_sourceDir.FullName, "DB013a-Green-Heading1-Danish.docx"));
 
             var sources = new List<ISource>
             {
                 new Source(new WmlDocument(source1.FullName)),
                 new Source(new WmlDocument(source2.FullName)),
             };
-            var processedDestDocx = new FileInfo(
-                Path.Combine(TempDir, "DB013a-Colored-Heading1.docx")
-            );
+            var processedDestDocx = new FileInfo(Path.Combine(TempDir, "DB013a-Colored-Heading1.docx"));
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
 
             using var wDoc = WordprocessingDocument.Open(processedDestDocx.FullName, false);
-            var styles = wDoc
-                .MainDocumentPart.StyleDefinitionsPart.GetXDocument()
-                .Root.Elements(W.style)
-                .ToArray();
-            Assert.Equal(
-                1,
-                styles.Count(s => s.Element(W.name).Attribute(W.val).Value == "heading 1")
-            );
+            var styles = wDoc.MainDocumentPart.StyleDefinitionsPart.GetXDocument().Root.Elements(W.style).ToArray();
+            Assert.Equal(1, styles.Count(s => s.Element(W.name).Attribute(W.val).Value == "heading 1"));
 
             var styleIds = new HashSet<string>(styles.Select(s => s.Attribute(W.styleId).Value));
             var paragraphStylesIds = new HashSet<string>(
-                wDoc.MainDocumentPart.GetXDocument()
-                    .Descendants(W.pStyle)
-                    .Select(p => p.Attribute(W.val).Value)
+                wDoc.MainDocumentPart.GetXDocument().Descendants(W.pStyle).Select(p => p.Attribute(W.val).Value)
             );
             Assert.Subset(styleIds, paragraphStylesIds);
         }
@@ -818,12 +710,8 @@ namespace Clippit.Tests.Word
         {
             // Each of these documents have changed the font color of the List Paragraph style, one to orange, the other to blue.
             // One of the documents were created with English as the Word display language, the other with Danish as the language.
-            var source1 = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB013b-Orange-List-Danish.docx")
-            );
-            var source2 = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB013b-Blue-List-English.docx")
-            );
+            var source1 = new FileInfo(Path.Combine(_sourceDir.FullName, "DB013b-Orange-List-Danish.docx"));
+            var source2 = new FileInfo(Path.Combine(_sourceDir.FullName, "DB013b-Blue-List-English.docx"));
 
             var sources = new List<ISource>
             {
@@ -834,20 +722,12 @@ namespace Clippit.Tests.Word
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
 
             using var wDoc = WordprocessingDocument.Open(processedDestDocx.FullName, false);
-            var styles = wDoc
-                .MainDocumentPart.StyleDefinitionsPart.GetXDocument()
-                .Root.Elements(W.style)
-                .ToArray();
-            Assert.Equal(
-                1,
-                styles.Count(s => s.Element(W.name).Attribute(W.val).Value == "List Paragraph")
-            );
+            var styles = wDoc.MainDocumentPart.StyleDefinitionsPart.GetXDocument().Root.Elements(W.style).ToArray();
+            Assert.Equal(1, styles.Count(s => s.Element(W.name).Attribute(W.val).Value == "List Paragraph"));
 
             var styleIds = new HashSet<string>(styles.Select(s => s.Attribute(W.styleId).Value));
             var paragraphStylesIds = new HashSet<string>(
-                wDoc.MainDocumentPart.GetXDocument()
-                    .Descendants(W.pStyle)
-                    .Select(p => p.Attribute(W.val).Value)
+                wDoc.MainDocumentPart.GetXDocument().Descendants(W.pStyle).Select(p => p.Attribute(W.val).Value)
             );
             Assert.Subset(styleIds, paragraphStylesIds);
         }
@@ -855,9 +735,7 @@ namespace Clippit.Tests.Word
         [Fact]
         public void DB014_KeepWebExtensions()
         {
-            var source = new FileInfo(
-                Path.Combine(_sourceDir.FullName, "DB014-WebExtensions.docx")
-            );
+            var source = new FileInfo(Path.Combine(_sourceDir.FullName, "DB014-WebExtensions.docx"));
 
             var sources = new List<ISource> { new Source(new WmlDocument(source.FullName)) };
             var processedDestDocx = new FileInfo(Path.Combine(TempDir, "DB014-WebExtensions.docx"));
@@ -894,15 +772,9 @@ namespace Clippit.Tests.Word
             var name = "DB0016-DocDefaultStyles.docx";
             var sourceDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
 
-            var sources = new List<ISource>
-            {
-                new Source(new WmlDocument(sourceDocx.FullName), true),
-            };
+            var sources = new List<ISource> { new Source(new WmlDocument(sourceDocx.FullName), true) };
             var processedDestDocx = new FileInfo(
-                Path.Combine(
-                    TempDir,
-                    sourceDocx.Name.Replace(".docx", "-processed-by-DocumentBuilder.docx")
-                )
+                Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-processed-by-DocumentBuilder.docx"))
             );
             DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
 
@@ -1101,9 +973,7 @@ namespace Clippit.Tests.Word
             if (baseline != null)
             {
                 var baselineFi = new FileInfo(Path.Combine(_sourceDir.FullName, baseline));
-                var baselineCopiedToDestFileName = new FileInfo(
-                    Path.Combine(tempDirFullName, baselineFi.Name)
-                );
+                var baselineCopiedToDestFileName = new FileInfo(Path.Combine(tempDirFullName, baselineFi.Name));
                 File.Copy(baselineFi.FullName, baselineCopiedToDestFileName.FullName);
             }
 

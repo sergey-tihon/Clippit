@@ -10,8 +10,7 @@ namespace Clippit.Word;
 
 public partial class WmlDocument : OpenXmlPowerToolsDocument
 {
-    private const string NotWordprocessingExceptionMessage =
-        "The document is not a WordprocessingML document.";
+    private const string NotWordprocessingExceptionMessage = "The document is not a WordprocessingML document.";
 
     public WmlDocument(OpenXmlPowerToolsDocument original)
         : base(original)
@@ -93,9 +92,7 @@ public partial class WmlDocument : OpenXmlPowerToolsDocument
             {
                 var uriAttribute = replacementPart.Attribute(PtOpenXml.Uri);
                 if (uriAttribute == null)
-                    throw new OpenXmlPowerToolsException(
-                        "Replacement part does not contain a Uri as an attribute"
-                    );
+                    throw new OpenXmlPowerToolsException("Replacement part does not contain a Uri as an attribute");
                 var uri = uriAttribute.Value;
                 var part = package.GetParts().FirstOrDefault(p => p.Uri.ToString() == uri);
                 using var partStream = part.GetStream(FileMode.Create, FileAccess.Write);
@@ -143,10 +140,7 @@ public class PtMainDocumentPart : XElement
         : base(name, values)
     {
         ParentWmlDocument = wmlDocument;
-        this.Add(
-            new XAttribute(PtOpenXml.Uri, uri),
-            new XAttribute(XNamespace.Xmlns + "pt", PtOpenXml.pt)
-        );
+        this.Add(new XAttribute(PtOpenXml.Uri, uri), new XAttribute(XNamespace.Xmlns + "pt", PtOpenXml.pt));
     }
 }
 
@@ -154,18 +148,10 @@ public class PtWordprocessingCommentsPart : XElement
 {
     private WmlDocument ParentWmlDocument;
 
-    public PtWordprocessingCommentsPart(
-        WmlDocument wmlDocument,
-        Uri uri,
-        XName name,
-        params object[] values
-    )
+    public PtWordprocessingCommentsPart(WmlDocument wmlDocument, Uri uri, XName name, params object[] values)
         : base(name, values)
     {
         ParentWmlDocument = wmlDocument;
-        this.Add(
-            new XAttribute(PtOpenXml.Uri, uri),
-            new XAttribute(XNamespace.Xmlns + "pt", PtOpenXml.pt)
-        );
+        this.Add(new XAttribute(PtOpenXml.Uri, uri), new XAttribute(XNamespace.Xmlns + "pt", PtOpenXml.pt));
     }
 }

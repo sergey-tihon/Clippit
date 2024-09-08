@@ -22,11 +22,7 @@ namespace Clippit.Tests.Word.Samples
             var wmlDoc = new WmlDocument(TemplateDocumentFilePath);
             var data = XElement.Load(TemplateDataFilePath);
 
-            var wmlAssembledDoc = DocumentAssembler.AssembleDocument(
-                wmlDoc,
-                data,
-                out var templateError
-            );
+            var wmlAssembledDoc = DocumentAssembler.AssembleDocument(wmlDoc, data, out var templateError);
             Assert.False(templateError, "Errors in template");
 
             var assembledDoc = new FileInfo(Path.Combine(TempDir, "AssembledDoc.docx"));
@@ -47,21 +43,13 @@ namespace Clippit.Tests.Word.Samples
             var count = 1;
             foreach (var customer in data.Elements("Customer"))
             {
-                var assembledDoc = new FileInfo(
-                    Path.Combine(TempDir, $"Letter-{count++:0000}.docx")
-                );
+                var assembledDoc = new FileInfo(Path.Combine(TempDir, $"Letter-{count++:0000}.docx"));
                 Log.WriteLine(assembledDoc.Name);
-                var wmlAssembledDoc = DocumentAssembler.AssembleDocument(
-                    wmlDoc,
-                    customer,
-                    out var templateError
-                );
+                var wmlAssembledDoc = DocumentAssembler.AssembleDocument(wmlDoc, customer, out var templateError);
                 if (templateError)
                 {
                     Log.WriteLine("Errors in template.");
-                    Log.WriteLine(
-                        "See {assembledDoc.Name} to determine the errors in the template."
-                    );
+                    Log.WriteLine("See {assembledDoc.Name} to determine the errors in the template.");
                 }
                 wmlAssembledDoc.SaveAs(assembledDoc.FullName);
             }
@@ -98,10 +86,7 @@ namespace Clippit.Tests.Word.Samples
                     var order = new XElement(
                         "Order",
                         new XAttribute("Number", j + 1),
-                        new XElement(
-                            "ProductDescription",
-                            s_productNames[r.Next(s_productNames.Length)]
-                        ),
+                        new XElement("ProductDescription", s_productNames[r.Next(s_productNames.Length)]),
                         new XElement("Quantity", r.Next(10)),
                         new XElement("OrderDate", "September 26, 2015")
                     );

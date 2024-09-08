@@ -115,18 +115,11 @@ namespace Clippit
         public OpenXmlPowerToolsDocument(OpenXmlPowerToolsDocument original)
         {
             DocumentByteArray = new byte[original.DocumentByteArray.Length];
-            Array.Copy(
-                original.DocumentByteArray,
-                DocumentByteArray,
-                original.DocumentByteArray.Length
-            );
+            Array.Copy(original.DocumentByteArray, DocumentByteArray, original.DocumentByteArray.Length);
             FileName = original.FileName;
         }
 
-        public OpenXmlPowerToolsDocument(
-            OpenXmlPowerToolsDocument original,
-            bool convertToTransitional
-        )
+        public OpenXmlPowerToolsDocument(OpenXmlPowerToolsDocument original, bool convertToTransitional)
         {
             if (convertToTransitional)
             {
@@ -135,11 +128,7 @@ namespace Clippit
             else
             {
                 DocumentByteArray = new byte[original.DocumentByteArray.Length];
-                Array.Copy(
-                    original.DocumentByteArray,
-                    DocumentByteArray,
-                    original.DocumentByteArray.Length
-                );
+                Array.Copy(original.DocumentByteArray, DocumentByteArray, original.DocumentByteArray.Length);
                 FileName = original.FileName;
             }
         }
@@ -250,11 +239,7 @@ namespace Clippit
             DocumentByteArray = memStream.ToArray();
         }
 
-        public OpenXmlPowerToolsDocument(
-            string fileName,
-            MemoryStream memStream,
-            bool convertToTransitional
-        )
+        public OpenXmlPowerToolsDocument(string fileName, MemoryStream memStream, bool convertToTransitional)
         {
             if (convertToTransitional)
             {
@@ -311,16 +296,12 @@ namespace Clippit
                     )
                     .FirstOrDefault()
                 ?? package
-                    .GetRelationshipsByType(
-                        "http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument"
-                    )
+                    .GetRelationshipsByType("http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument")
                     .FirstOrDefault();
             if (relationship is null)
                 return null;
 
-            var part = package.GetPart(
-                PackUriHelper.ResolvePartUri(relationship.SourceUri, relationship.TargetUri)
-            );
+            var part = package.GetPart(PackUriHelper.ResolvePartUri(relationship.SourceUri, relationship.TargetUri));
             switch (part.ContentType)
             {
                 case "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml":
@@ -424,16 +405,12 @@ namespace Clippit
         {
             var stream = new MemoryStream();
             using (
-                var doc = SpreadsheetDocument.Create(
-                    stream,
-                    DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook
-                )
+                var doc = SpreadsheetDocument.Create(stream, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook)
             )
             {
                 doc.AddWorkbookPart();
                 XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
-                XNamespace relationshipsns =
-                    "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+                XNamespace relationshipsns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
                 doc.WorkbookPart.PutXDocument(
                     new XDocument(
                         new XElement(
@@ -461,8 +438,7 @@ namespace Clippit
             {
                 doc.AddPresentationPart();
                 XNamespace ns = "http://schemas.openxmlformats.org/presentationml/2006/main";
-                XNamespace relationshipsns =
-                    "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+                XNamespace relationshipsns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
                 XNamespace drawingns = "http://schemas.openxmlformats.org/drawingml/2006/main";
                 doc.PresentationPart.PutXDocument(
                     new XDocument(
@@ -556,9 +532,7 @@ namespace Clippit
                     )
                     .FirstOrDefault()
                 ?? _docPackage
-                    .GetRelationshipsByType(
-                        "http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument"
-                    )
+                    .GetRelationshipsByType("http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument")
                     .FirstOrDefault();
             if (relationship == null)
                 throw new PowerToolsDocumentException("Not an Open XML Document.");

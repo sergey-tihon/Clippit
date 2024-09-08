@@ -86,9 +86,7 @@ namespace Clippit.Excel
             {
                 if (Encoding == FileEncoding.utf16be) //UTF16BE
                 {
-                    using var brdr = new BinaryReader(
-                        File.Open(_path, FileMode.Open, FileAccess.Read)
-                    );
+                    using var brdr = new BinaryReader(File.Open(_path, FileMode.Open, FileAccess.Read));
                     var bytes = brdr.ReadBytes((int)brdr.BaseStream.Length);
                     var s = new StringBuilder();
                     for (var i = 0; i < bytes.Length; i += 2)
@@ -153,11 +151,7 @@ namespace Clippit.Excel
             return FileEncoding.utf8;
         }
 
-        private FileEncoding GetEncoding(
-            EncodingClass encodingClass,
-            UnicodeDetection detection,
-            string path
-        )
+        private FileEncoding GetEncoding(EncodingClass encodingClass, UnicodeDetection detection, string path)
         {
             return encodingClass switch
             {
@@ -353,34 +347,14 @@ namespace Clippit.Excel
             return false;
         }
 
-        public abstract void PrintNodeBeg(
-            PegNode p,
-            bool bAlignVertical,
-            ref int nOffsetLineBeg,
-            int nLevel
-        );
-        public abstract void PrintNodeEnd(
-            PegNode p,
-            bool bAlignVertical,
-            ref int nOffsetLineBeg,
-            int nLevel
-        );
+        public abstract void PrintNodeBeg(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel);
+        public abstract void PrintNodeEnd(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel);
         public abstract int LenNodeBeg(PegNode p);
         public abstract int LenNodeEnd(PegNode p);
         public abstract void PrintLeaf(PegNode p, ref int nOffsetLineBeg, bool bAlignVertical);
         public abstract int LenLeaf(PegNode p);
-        public abstract int LenDistNext(
-            PegNode p,
-            bool bAlignVertical,
-            ref int nOffsetLineBeg,
-            int nLevel
-        );
-        public abstract void PrintDistNext(
-            PegNode p,
-            bool bAlignVertical,
-            ref int nOffsetLineBeg,
-            int nLevel
-        );
+        public abstract int LenDistNext(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel);
+        public abstract void PrintDistNext(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel);
     }
 
     public class TreePrint : PrintNode
@@ -395,13 +369,7 @@ namespace Clippit.Excel
         private readonly GetNodeName _getNodeName;
         #endregion Data Members
         #region Methods
-        public TreePrint(
-            TextWriter treeOut,
-            string src,
-            int nMaxLineLen,
-            GetNodeName GetNodeName,
-            bool bVerbose
-        )
+        public TreePrint(TextWriter treeOut, string src, int nMaxLineLen, GetNodeName GetNodeName, bool bVerbose)
         {
             _treeOut = treeOut;
             _nMaxLineLen = nMaxLineLen;
@@ -480,12 +448,7 @@ namespace Clippit.Excel
             return _nMaxLineLen;
         }
 
-        public override void PrintNodeBeg(
-            PegNode p,
-            bool bAlignVertical,
-            ref int nOffsetLineBeg,
-            int nLevel
-        )
+        public override void PrintNodeBeg(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel)
         {
             PrintIdAsName(p);
             _treeOut.Write("<");
@@ -500,12 +463,7 @@ namespace Clippit.Excel
             }
         }
 
-        public override void PrintNodeEnd(
-            PegNode p,
-            bool bAlignVertical,
-            ref int nOffsetLineBeg,
-            int nLevel
-        )
+        public override void PrintNodeEnd(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel)
         {
             if (bAlignVertical)
             {
@@ -540,9 +498,7 @@ namespace Clippit.Excel
             _treeOut.Write("'");
             if (len > 0)
             {
-                _treeOut.Write(
-                    _src.Substring(p.match_._posBeg, p.match_._posEnd - p.match_._posBeg)
-                );
+                _treeOut.Write(_src.Substring(p.match_._posBeg, p.match_._posEnd - p.match_._posBeg));
             }
             _treeOut.Write("'");
             if (_bVerbose)
@@ -562,12 +518,7 @@ namespace Clippit.Excel
             return p.child_ == null;
         }
 
-        public override void PrintDistNext(
-            PegNode p,
-            bool bAlignVertical,
-            ref int nOffsetLineBeg,
-            int nLevel
-        )
+        public override void PrintDistNext(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel)
         {
             if (bAlignVertical)
             {
@@ -581,12 +532,7 @@ namespace Clippit.Excel
             }
         }
 
-        public override int LenDistNext(
-            PegNode p,
-            bool bAlignVertical,
-            ref int nOffsetLineBeg,
-            int nLevel
-        )
+        public override int LenDistNext(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel)
         {
             return 1;
         }
@@ -629,10 +575,7 @@ namespace Clippit.Excel
             };
         }
 
-        public virtual void GetProperties(
-            out EncodingClass encoding,
-            out UnicodeDetection detection
-        )
+        public virtual void GetProperties(out EncodingClass encoding, out UnicodeDetection detection)
         {
             encoding = EncodingClass.ascii;
             detection = UnicodeDetection.notApplicable;
@@ -695,12 +638,7 @@ namespace Clippit.Excel
             _tree._addPolicy = PegTree.AddPolicy.eAddAsChild;
         }
 
-        private void AddTreeNode(
-            int nId,
-            PegTree.AddPolicy newAddPolicy,
-            Creator createNode,
-            ECreatorPhase ePhase
-        )
+        private void AddTreeNode(int nId, PegTree.AddPolicy newAddPolicy, Creator createNode, ECreatorPhase ePhase)
         {
             if (_bMute)
                 return;
@@ -761,12 +699,7 @@ namespace Clippit.Excel
             {
                 if (!_bMute)
                 {
-                    AddTreeNode(
-                        nId,
-                        PegTree.AddPolicy.eAddAsSibling,
-                        nodeCreator,
-                        ECreatorPhase.eCreateAndComplete
-                    );
+                    AddTreeNode(nId, PegTree.AddPolicy.eAddAsSibling, nodeCreator, ECreatorPhase.eCreateAndComplete);
                     _tree._cur.match_._posBeg = pos;
                     _tree._cur.match_._posEnd = _pos;
                 }
@@ -815,11 +748,7 @@ namespace Clippit.Excel
             var bMatches = TreeNT(nodeCreator, nRuleId, toMatch);
             if (bMatches)
             {
-                if (
-                    _tree._cur.child_ != null
-                    && _tree._cur.child_.next_ == null
-                    && _tree._cur.parent_ != null
-                )
+                if (_tree._cur.child_ != null && _tree._cur.child_.next_ == null && _tree._cur.parent_ != null)
                 {
                     if (_tree._cur.parent_.child_ == _tree._cur)
                     {
@@ -1264,10 +1193,7 @@ namespace Clippit.Excel
         #region PEG Bit level equivalents for PEG e1 ; &e1 ; !e1; e1:into ;
         public bool Bits(int lowBitNo, int highBitNo, byte toMatch)
         {
-            if (
-                _pos < _srcLen
-                && ((_src[_pos] >> (lowBitNo - 1)) & ((1 << highBitNo) - 1)) == toMatch
-            )
+            if (_pos < _srcLen && ((_src[_pos] >> (lowBitNo - 1)) & ((1 << highBitNo) - 1)) == toMatch)
             {
                 ++_pos;
                 return true;
@@ -1288,16 +1214,12 @@ namespace Clippit.Excel
 
         public bool PeekBits(int lowBitNo, int highBitNo, byte toMatch)
         {
-            return _pos < _srcLen
-                && ((_src[_pos] >> (lowBitNo - 1)) & ((1 << highBitNo) - 1)) == toMatch;
+            return _pos < _srcLen && ((_src[_pos] >> (lowBitNo - 1)) & ((1 << highBitNo) - 1)) == toMatch;
         }
 
         public bool NotBits(int lowBitNo, int highBitNo, byte toMatch)
         {
-            return !(
-                _pos < _srcLen
-                && ((_src[_pos] >> (lowBitNo - 1)) & ((1 << highBitNo) - 1)) == toMatch
-            );
+            return !(_pos < _srcLen && ((_src[_pos] >> (lowBitNo - 1)) & ((1 << highBitNo) - 1)) == toMatch);
         }
 
         public bool IntoBits(int lowBitNo, int highBitNo, out int val)
@@ -1353,12 +1275,7 @@ namespace Clippit.Excel
 
         public bool Char(byte c1, byte c2, byte c3)
         {
-            if (
-                _pos + 2 < _srcLen
-                && _src[_pos] == c1
-                && _src[_pos + 1] == c2
-                && _src[_pos + 2] == c3
-            )
+            if (_pos + 2 < _srcLen && _src[_pos] == c1 && _src[_pos + 1] == c2 && _src[_pos + 2] == c3)
             {
                 _pos += 3;
                 return true;
@@ -1490,11 +1407,7 @@ namespace Clippit.Excel
 
         public bool IChar(byte c1, byte c2)
         {
-            if (
-                _pos + 1 < _srcLen
-                && ToUpper(_src[_pos]) == ToUpper(c1)
-                && ToUpper(_src[_pos + 1]) == ToUpper(c2)
-            )
+            if (_pos + 1 < _srcLen && ToUpper(_src[_pos]) == ToUpper(c1) && ToUpper(_src[_pos + 1]) == ToUpper(c2))
             {
                 _pos += 2;
                 return true;
@@ -1644,12 +1557,7 @@ namespace Clippit.Excel
             if (_pos < _srcLen)
             {
                 var c = _src[_pos];
-                if (
-                    c >= c0 && c <= c1
-                    || c >= c2 && c <= c3
-                    || c >= c4 && c <= c5
-                    || c >= c6 && c <= c7
-                )
+                if (c >= c0 && c <= c1 || c >= c2 && c <= c3 || c >= c4 && c <= c5 || c >= c6 && c <= c7)
                 {
                     ++_pos;
                     return true;
@@ -1776,16 +1684,7 @@ namespace Clippit.Excel
             if (_pos < _srcLen)
             {
                 var c = _src[_pos];
-                if (
-                    c == c0
-                    || c == c1
-                    || c == c2
-                    || c == c3
-                    || c == c4
-                    || c == c5
-                    || c == c6
-                    || c == c7
-                )
+                if (c == c0 || c == c1 || c == c2 || c == c3 || c == c4 || c == c5 || c == c6 || c == c7)
                 {
                     ++_pos;
                     return true;
@@ -2140,12 +2039,7 @@ namespace Clippit.Excel
 
         public bool Char(char c1, char c2, char c3)
         {
-            if (
-                _pos + 2 < _srcLen
-                && _src[_pos] == c1
-                && _src[_pos + 1] == c2
-                && _src[_pos + 2] == c3
-            )
+            if (_pos + 2 < _srcLen && _src[_pos] == c1 && _src[_pos + 1] == c2 && _src[_pos + 2] == c3)
             {
                 _pos += 3;
                 return true;
@@ -2423,12 +2317,7 @@ namespace Clippit.Excel
             if (_pos < _srcLen)
             {
                 var c = _src[_pos];
-                if (
-                    c >= c0 && c <= c1
-                    || c >= c2 && c <= c3
-                    || c >= c4 && c <= c5
-                    || c >= c6 && c <= c7
-                )
+                if (c >= c0 && c <= c1 || c >= c2 && c <= c3 || c >= c4 && c <= c5 || c >= c6 && c <= c7)
                 {
                     ++_pos;
                     return true;
@@ -2554,16 +2443,7 @@ namespace Clippit.Excel
             if (_pos < _srcLen)
             {
                 var c = _src[_pos];
-                if (
-                    c == c0
-                    || c == c1
-                    || c == c2
-                    || c == c3
-                    || c == c4
-                    || c == c5
-                    || c == c6
-                    || c == c7
-                )
+                if (c == c0 || c == c1 || c == c2 || c == c3 || c == c4 || c == c5 || c == c6 || c == c7)
                 {
                     ++_pos;
                     return true;

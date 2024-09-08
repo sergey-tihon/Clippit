@@ -70,11 +70,7 @@ namespace Clippit.Word
             "nittonde",
         };
 
-        public static string GetListItemText(
-            string languageCultureName,
-            int levelNumber,
-            string numFmt
-        )
+        public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
         {
             return numFmt switch
             {
@@ -85,11 +81,7 @@ namespace Clippit.Word
             };
         }
 
-        private static string NumberAsCardinalText(
-            string languageCultureName,
-            int levelNumber,
-            string numFmt
-        )
+        private static string NumberAsCardinalText(string languageCultureName, int levelNumber, string numFmt)
         {
             var result = "";
 
@@ -173,11 +165,7 @@ namespace Clippit.Word
             }
         }
 
-        private static string NumberAsOrdinalText(
-            string languageCultureName,
-            int levelNumber,
-            string numFmt
-        )
+        private static string NumberAsOrdinalText(string languageCultureName, int levelNumber, string numFmt)
         {
             var result = "";
 
@@ -258,11 +246,7 @@ namespace Clippit.Word
             }
         }
 
-        private static string NumberAsOrdinal(
-            string languageCultureName,
-            int levelNumber,
-            string numFmt
-        )
+        private static string NumberAsOrdinal(string languageCultureName, int levelNumber, string numFmt)
         {
             var levelAsString = levelNumber.ToString();
 

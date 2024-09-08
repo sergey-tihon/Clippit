@@ -21,10 +21,7 @@ namespace Clippit
             ContentElement = contentElement;
             AncestorElements = ancestorElements;
             Part = part;
-            RevTrackElement = GetRevisionTrackingElementFromAncestors(
-                contentElement,
-                AncestorElements
-            );
+            RevTrackElement = GetRevisionTrackingElementFromAncestors(contentElement, AncestorElements);
 
             if (RevTrackElement == null)
             {
@@ -72,10 +69,7 @@ namespace Clippit
 
         public OpenXmlPart Part { get; }
 
-        private static string GetSha1HashStringForElement(
-            XElement contentElement,
-            WmlComparerSettings settings
-        )
+        private static string GetSha1HashStringForElement(XElement contentElement, WmlComparerSettings settings)
         {
             var text = contentElement.Value;
             if (settings.CaseInsensitive)
@@ -92,10 +86,7 @@ namespace Clippit
         )
         {
             return contentElement.Name == W.pPr
-                ? contentElement
-                    .Elements(W.rPr)
-                    .Elements()
-                    .FirstOrDefault(e => e.Name == W.del || e.Name == W.ins)
+                ? contentElement.Elements(W.rPr).Elements().FirstOrDefault(e => e.Name == W.del || e.Name == W.ins)
                 : ancestors.FirstOrDefault(a => a.Name == W.del || a.Name == W.ins);
         }
 
@@ -199,9 +190,7 @@ namespace Clippit
             );
 
             var s = zipped
-                .Select(p =>
-                    p.AncestorElement.Name.LocalName + "[" + p.AncestorUnid.Substring(0, 8) + "]/"
-                )
+                .Select(p => p.AncestorElement.Name.LocalName + "[" + p.AncestorUnid.Substring(0, 8) + "]/")
                 .StringConcatenate()
                 .TrimEnd('/');
 

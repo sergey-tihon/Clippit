@@ -52,10 +52,7 @@ namespace Clippit.Word
             return streamDoc.GetModifiedWmlDocument();
         }
 
-        public static void SimplifyMarkup(
-            WordprocessingDocument doc,
-            SimplifyMarkupSettings settings
-        )
+        public static void SimplifyMarkup(WordprocessingDocument doc, SimplifyMarkupSettings settings)
         {
             if (settings.RemoveMarkupForDocumentComparison)
             {
@@ -178,26 +175,18 @@ namespace Clippit.Word
                 if (simplifyMarkupSettings.RemoveSmartTags && element.Name == W.smartTag)
                     return element
                         .Elements()
-                        .Select(e =>
-                            RemoveCustomXmlAndContentControlsTransform(e, simplifyMarkupSettings)
-                        );
+                        .Select(e => RemoveCustomXmlAndContentControlsTransform(e, simplifyMarkupSettings));
 
                 if (simplifyMarkupSettings.RemoveContentControls && element.Name == W.sdt)
                     return element
                         .Elements(W.sdtContent)
                         .Elements()
-                        .Select(e =>
-                            RemoveCustomXmlAndContentControlsTransform(e, simplifyMarkupSettings)
-                        );
+                        .Select(e => RemoveCustomXmlAndContentControlsTransform(e, simplifyMarkupSettings));
 
                 return new XElement(
                     element.Name,
                     element.Attributes(),
-                    element
-                        .Nodes()
-                        .Select(n =>
-                            RemoveCustomXmlAndContentControlsTransform(n, simplifyMarkupSettings)
-                        )
+                    element.Nodes().Select(n => RemoveCustomXmlAndContentControlsTransform(n, simplifyMarkupSettings))
                 );
             }
 
@@ -292,8 +281,7 @@ namespace Clippit.Word
 
                             return new XElement(
                                 W.instrText,
-                                (newInstrText[0] == ' ')
-                                || (newInstrText[newInstrText.Length - 1] == ' ')
+                                (newInstrText[0] == ' ') || (newInstrText[newInstrText.Length - 1] == ' ')
                                     ? new XAttribute(XNamespace.Xml + "space", "preserve")
                                     : null,
                                 newInstrText
@@ -331,16 +319,10 @@ namespace Clippit.Word
             if (element == null)
                 return node;
 
-            if (
-                settings.RemovePermissions
-                && ((element.Name == W.permEnd) || (element.Name == W.permStart))
-            )
+            if (settings.RemovePermissions && ((element.Name == W.permEnd) || (element.Name == W.permStart)))
                 return null;
 
-            if (
-                settings.RemoveProof
-                && ((element.Name == W.proofErr) || (element.Name == W.noProof))
-            )
+            if (settings.RemoveProof && ((element.Name == W.proofErr) || (element.Name == W.noProof)))
                 return null;
 
             if (settings.RemoveSoftHyphens && (element.Name == W.softHyphen))
@@ -349,23 +331,14 @@ namespace Clippit.Word
             if (settings.RemoveLastRenderedPageBreak && (element.Name == W.lastRenderedPageBreak))
                 return null;
 
-            if (
-                settings.RemoveBookmarks
-                && ((element.Name == W.bookmarkStart) || (element.Name == W.bookmarkEnd))
-            )
+            if (settings.RemoveBookmarks && ((element.Name == W.bookmarkStart) || (element.Name == W.bookmarkEnd)))
                 return null;
 
             if (
                 settings.RemoveGoBackBookmark
                 && (
-                    (
-                        (element.Name == W.bookmarkStart)
-                        && ((int)element.Attribute(W.id) == parameters.GoBackId)
-                    )
-                    || (
-                        (element.Name == W.bookmarkEnd)
-                        && ((int)element.Attribute(W.id) == parameters.GoBackId)
-                    )
+                    ((element.Name == W.bookmarkStart) && ((int)element.Attribute(W.id) == parameters.GoBackId))
+                    || ((element.Name == W.bookmarkEnd) && ((int)element.Attribute(W.id) == parameters.GoBackId))
                 )
             )
                 return null;
@@ -407,15 +380,9 @@ namespace Clippit.Word
             if (settings.RemoveFieldCodes)
             {
                 if (element.Name == W.fldSimple)
-                    return element
-                        .Elements()
-                        .Select(e => SimplifyMarkupTransform(e, settings, parameters));
+                    return element.Elements().Select(e => SimplifyMarkupTransform(e, settings, parameters));
 
-                if (
-                    (element.Name == W.fldData)
-                    || (element.Name == W.fldChar)
-                    || (element.Name == W.instrText)
-                )
+                if ((element.Name == W.fldData) || (element.Name == W.fldChar) || (element.Name == W.instrText))
                     return null;
             }
 
@@ -482,8 +449,7 @@ namespace Clippit.Word
                     {
                         var schemaInfo = a.GetSchemaInfo();
                         var schemaType = schemaInfo != null ? schemaInfo.SchemaType : null;
-                        var typeCode =
-                            schemaType != null ? schemaType.TypeCode : (XmlTypeCode?)null;
+                        var typeCode = schemaType != null ? schemaType.TypeCode : (XmlTypeCode?)null;
 
                         switch (typeCode)
                         {
@@ -531,35 +497,15 @@ namespace Clippit.Word
                 switch (typeCode)
                 {
                     case XmlTypeCode.Boolean:
-                        return new XElement(
-                            element.Name,
-                            NormalizeAttributes(element, true),
-                            (bool)element
-                        );
+                        return new XElement(element.Name, NormalizeAttributes(element, true), (bool)element);
                     case XmlTypeCode.DateTime:
-                        return new XElement(
-                            element.Name,
-                            NormalizeAttributes(element, true),
-                            (DateTime)element
-                        );
+                        return new XElement(element.Name, NormalizeAttributes(element, true), (DateTime)element);
                     case XmlTypeCode.Decimal:
-                        return new XElement(
-                            element.Name,
-                            NormalizeAttributes(element, true),
-                            (decimal)element
-                        );
+                        return new XElement(element.Name, NormalizeAttributes(element, true), (decimal)element);
                     case XmlTypeCode.Double:
-                        return new XElement(
-                            element.Name,
-                            NormalizeAttributes(element, true),
-                            (double)element
-                        );
+                        return new XElement(element.Name, NormalizeAttributes(element, true), (double)element);
                     case XmlTypeCode.Float:
-                        return new XElement(
-                            element.Name,
-                            NormalizeAttributes(element, true),
-                            (float)element
-                        );
+                        return new XElement(element.Name, NormalizeAttributes(element, true), (float)element);
                     case XmlTypeCode.HexBinary:
                     case XmlTypeCode.Language:
                         return new XElement(
@@ -586,10 +532,7 @@ namespace Clippit.Word
         private static void SimplifyMarkupForPart(OpenXmlPart part, SimplifyMarkupSettings settings)
         {
             var parameters = new SimplifyMarkupParameters();
-            if (
-                part.ContentType
-                == "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"
-            )
+            if (part.ContentType == "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml")
             {
                 var doc = (WordprocessingDocument)part.OpenXmlPackage;
                 if (settings.RemoveGoBackBookmark)
@@ -729,9 +672,7 @@ namespace Clippit.Word
                                 element.Elements(W.rPr),
                                 new XElement(
                                     W.t,
-                                    c == ' '
-                                        ? new XAttribute(XNamespace.Xml + "space", "preserve")
-                                        : null,
+                                    c == ' ' ? new XAttribute(XNamespace.Xml + "space", "preserve") : null,
                                     c
                                 )
                             ));
@@ -760,8 +701,7 @@ namespace Clippit.Word
             private static readonly XNamespace xsi = "http://www.w3.org/2001/XMLSchema-instance";
 
             public static readonly XName schemaLocation = xsi + "schemaLocation";
-            public static readonly XName noNamespaceSchemaLocation =
-                xsi + "noNamespaceSchemaLocation";
+            public static readonly XName noNamespaceSchemaLocation = xsi + "noNamespaceSchemaLocation";
         }
 
         public class InternalException : Exception

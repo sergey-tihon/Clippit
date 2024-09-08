@@ -45,17 +45,14 @@ namespace Clippit.Tests.Word.Samples
                 }
                 destFileName = new FileInfo(Path.Combine(di.FullName, destFileName.Name));
             }
-            var imageDirectoryName =
-                destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
+            var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
             var imageCounter = 0;
 
             var pageTitle = fi.FullName;
             var part = wDoc.CoreFilePropertiesPart;
             if (part is not null)
             {
-                pageTitle =
-                    (string)part.GetXDocument().Descendants(DC.title).FirstOrDefault()
-                    ?? fi.FullName;
+                pageTitle = (string)part.GetXDocument().Descendants(DC.title).FirstOrDefault() ?? fi.FullName;
             }
 
             // TODO: Determine max-width from size of content area.
@@ -70,11 +67,7 @@ namespace Clippit.Tests.Word.Samples
                 ImageHandler = imageInfo =>
                 {
                     ++imageCounter;
-                    return ImageHelper.DefaultImageHandler(
-                        imageInfo,
-                        imageDirectoryName,
-                        imageCounter
-                    );
+                    return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
                 },
             };
             var htmlElement = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
@@ -132,9 +125,7 @@ namespace Clippit.Tests.Word.Samples
             var part = wDoc.CoreFilePropertiesPart;
             if (part != null)
             {
-                pageTitle =
-                    (string)part.GetXDocument().Descendants(DC.title).FirstOrDefault()
-                    ?? fi.FullName;
+                pageTitle = (string)part.GetXDocument().Descendants(DC.title).FirstOrDefault() ?? fi.FullName;
             }
 
             // TODO: Determine max-width from size of content area.
@@ -177,9 +168,7 @@ namespace Clippit.Tests.Word.Samples
                         Xhtml.img,
                         new XAttribute(NoNamespace.src, imageSource),
                         imageInfo.ImgStyleAttribute,
-                        imageInfo.AltText != null
-                            ? new XAttribute(NoNamespace.alt, imageInfo.AltText)
-                            : null
+                        imageInfo.AltText != null ? new XAttribute(NoNamespace.alt, imageInfo.AltText) : null
                     );
                     return img;
                 },

@@ -81,19 +81,13 @@ namespace Clippit
 
                     var ColorShadeHex = $"{colorShade:x6}";
                     runProperties.AppendChild(
-                        new Shading()
-                        {
-                            Fill = ColorShadeHex.Substring(2),
-                            Val = ShadingPatternValues.Clear,
-                        }
+                        new Shading() { Fill = ColorShadeHex.Substring(2), Val = ShadingPatternValues.Clear }
                     );
                 }
 
                 if (!string.IsNullOrEmpty(styleName))
                 {
-                    var style = part
-                        .Styles.Elements<Style>()
-                        .FirstOrDefault(s => s.StyleId == styleName);
+                    var style = part.Styles.Elements<Style>().FirstOrDefault(s => s.StyleId == styleName);
                     //if the specified style is not present in word document add it
                     if (style == null)
                     {
@@ -317,11 +311,7 @@ AAsACwDBAgAAbCwAAAAA";
                         #endregion
 
                         var base64CharArray = base64.Where(c => c != '\r' && c != '\n').ToArray();
-                        var byteArray = Convert.FromBase64CharArray(
-                            base64CharArray,
-                            0,
-                            base64CharArray.Length
-                        );
+                        var byteArray = Convert.FromBase64CharArray(base64CharArray, 0, base64CharArray.Length);
                         memoryStream.Write(byteArray, 0, byteArray.Length);
 
                         using var defaultDotx = WordprocessingDocument.Open(memoryStream, true);
@@ -340,9 +330,7 @@ AAsACwDBAgAAbCwAAAAA";
                             part.Styles.Append((templateStyle.CloneNode(true)));
                     }
 
-                    paragraph.ParagraphProperties = new ParagraphProperties(
-                        new ParagraphStyleId() { Val = styleName }
-                    );
+                    paragraph.ParagraphProperties = new ParagraphProperties(new ParagraphStyleId() { Val = styleName });
                 }
 
                 run.AppendChild(runProperties);
@@ -386,11 +374,7 @@ AAsACwDBAgAAbCwAAAAA";
             return null;
         }
 
-        public static XElement DefaultImageHandler(
-            ImageInfo imageInfo,
-            string imageDirectoryName,
-            int imageCounter
-        )
+        public static XElement DefaultImageHandler(ImageInfo imageInfo, string imageDirectoryName, int imageCounter)
         {
             var localDirInfo = new DirectoryInfo(imageDirectoryName);
             if (!localDirInfo.Exists)
@@ -418,9 +402,7 @@ AAsACwDBAgAAbCwAAAAA";
                 Xhtml.img,
                 new XAttribute(NoNamespace.src, imageFileName),
                 imageInfo.ImgStyleAttribute,
-                imageInfo.AltText != null
-                    ? new XAttribute(NoNamespace.alt, imageInfo.AltText)
-                    : null
+                imageInfo.AltText != null ? new XAttribute(NoNamespace.alt, imageInfo.AltText) : null
             );
             return img;
         }
@@ -445,15 +427,11 @@ AAsACwDBAgAAbCwAAAAA";
                 }
                 destFileName = new FileInfo(Path.Combine(di.FullName, destFileName.Name));
             }
-            var imageDirectoryName =
-                destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
+            var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
             var imageCounter = 0;
             var pageTitle =
-                (string)
-                    wDoc
-                        .CoreFilePropertiesPart.GetXDocument()
-                        .Descendants(DC.title)
-                        .FirstOrDefault() ?? fi.FullName;
+                (string)wDoc.CoreFilePropertiesPart.GetXDocument().Descendants(DC.title).FirstOrDefault()
+                ?? fi.FullName;
 
             var settings = new WmlToHtmlConverterSettings
             {
@@ -465,11 +443,7 @@ AAsACwDBAgAAbCwAAAAA";
                 ImageHandler = imageInfo =>
                 {
                     ++imageCounter;
-                    return ImageHelper.DefaultImageHandler(
-                        imageInfo,
-                        imageDirectoryName,
-                        imageCounter
-                    );
+                    return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
                 },
             };
             var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
@@ -494,8 +468,7 @@ AAsACwDBAgAAbCwAAAAA";
             var fileFormatVersion = FileFormatVersions.Office2013;
             try
             {
-                fileFormatVersion = (FileFormatVersions)
-                    Enum.Parse(fileFormatVersion.GetType(), officeVersion);
+                fileFormatVersion = (FileFormatVersions)Enum.Parse(fileFormatVersion.GetType(), officeVersion);
             }
             catch (Exception)
             {
@@ -527,16 +500,12 @@ AAsACwDBAgAAbCwAAAAA";
             return false;
         }
 
-        public static IEnumerable<ValidationErrorInfo> GetOpenXmlValidationErrors(
-            string fileName,
-            string officeVersion
-        )
+        public static IEnumerable<ValidationErrorInfo> GetOpenXmlValidationErrors(string fileName, string officeVersion)
         {
             var fileFormatVersion = FileFormatVersions.Office2013;
             try
             {
-                fileFormatVersion = (FileFormatVersions)
-                    Enum.Parse(fileFormatVersion.GetType(), officeVersion);
+                fileFormatVersion = (FileFormatVersions)Enum.Parse(fileFormatVersion.GetType(), officeVersion);
             }
             catch (Exception)
             {
@@ -655,10 +624,7 @@ AAsACwDBAgAAbCwAAAAA";
             metrics.HAnsiRunCount = GetIntForMetrics(metricsXml, H.HAnsiRunCount);
             metrics.RevisionTracking = GetBoolForMetrics(metricsXml, H.RevisionTracking);
             metrics.EmbeddedXlsx = GetBoolForMetrics(metricsXml, H.EmbeddedXlsx);
-            metrics.InvalidSaveThroughXslt = GetBoolForMetrics(
-                metricsXml,
-                H.InvalidSaveThroughXslt
-            );
+            metrics.InvalidSaveThroughXslt = GetBoolForMetrics(metricsXml, H.InvalidSaveThroughXslt);
             metrics.TrackRevisionsEnabled = GetBoolForMetrics(metricsXml, H.TrackRevisionsEnabled);
             metrics.DocumentProtection = GetBoolForMetrics(metricsXml, H.DocumentProtection);
             metrics.Valid = GetBoolForMetrics(metricsXml, H.Valid);

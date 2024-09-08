@@ -45,11 +45,7 @@ namespace Clippit
 {
     public static partial class WmlComparer
     {
-        public static WmlDocument Compare(
-            WmlDocument source1,
-            WmlDocument source2,
-            WmlComparerSettings settings
-        )
+        public static WmlDocument Compare(WmlDocument source1, WmlDocument source2, WmlComparerSettings settings)
         {
             return CompareInternal(source1, source2, settings, true);
         }
@@ -114,16 +110,8 @@ namespace Clippit
             var source1AfterAccepting = RevisionProcessor.AcceptRevisions(source1);
             var source2AfterRejecting = RevisionProcessor.RejectRevisions(source2);
 
-            SaveDocumentIfDesired(
-                source1AfterAccepting,
-                "Source1-Step2-AfterAccepting.docx",
-                settings
-            );
-            SaveDocumentIfDesired(
-                source2AfterRejecting,
-                "Source2-Step2-AfterRejecting.docx",
-                settings
-            );
+            SaveDocumentIfDesired(source1AfterAccepting, "Source1-Step2-AfterAccepting.docx", settings);
+            SaveDocumentIfDesired(source2AfterRejecting, "Source2-Step2-AfterRejecting.docx", settings);
 
             // this creates the correlated hash codes that enable us to match up ranges of paragraphs based on
             // accepting in source1, rejecting in source2
@@ -164,12 +152,7 @@ namespace Clippit
                 using (var wDoc1 = WordprocessingDocument.Open(ms1, true))
                 using (var wDoc2 = WordprocessingDocument.Open(ms2, true))
                 {
-                    producedDocument = ProduceDocumentWithTrackedRevisions(
-                        settings,
-                        wmlResult,
-                        wDoc1,
-                        wDoc2
-                    );
+                    producedDocument = ProduceDocumentWithTrackedRevisions(settings, wmlResult, wDoc1, wDoc2);
                 }
 
                 SaveDocumentsAfterProducingDocument(ms1, ms2, settings);
@@ -179,11 +162,7 @@ namespace Clippit
             }
         }
 
-        private static void SaveDocumentIfDesired(
-            WmlDocument source,
-            string name,
-            WmlComparerSettings settings
-        )
+        private static void SaveDocumentIfDesired(WmlDocument source, string name, WmlComparerSettings settings)
         {
             if (SaveIntermediateFilesForDebugging && settings.DebugTempFileDi != null)
             {
@@ -232,11 +211,7 @@ namespace Clippit
         private static WmlDocument CleanPowerToolsAndRsid(WmlDocument producedDocument)
         {
             using var ms = new MemoryStream();
-            ms.Write(
-                producedDocument.DocumentByteArray,
-                0,
-                producedDocument.DocumentByteArray.Length
-            );
+            ms.Write(producedDocument.DocumentByteArray, 0, producedDocument.DocumentByteArray.Length);
             using (var wDoc = WordprocessingDocument.Open(ms, true))
             {
                 foreach (var cp in wDoc.ContentParts())
@@ -260,10 +235,7 @@ namespace Clippit
                     element.Name,
                     element
                         .Attributes()
-                        .Where(a =>
-                            a.Name.Namespace != PtOpenXml.pt
-                            && !a.Name.LocalName.ToLower().Contains("rsid")
-                        ),
+                        .Where(a => a.Name.Namespace != PtOpenXml.pt && !a.Name.LocalName.ToLower().Contains("rsid")),
                     element.Nodes().Select(CleanPartTransform)
                 );
             }

@@ -15,8 +15,7 @@ namespace Clippit.Tests.Word.Samples
         public DocumentBuilderSamples(ITestOutputHelper log)
             : base(log) { }
 
-        private static string GetFilePath(string path) =>
-            Path.Combine("../../../Word/Samples/DocumentBuilder/", path);
+        private static string GetFilePath(string path) => Path.Combine("../../../Word/Samples/DocumentBuilder/", path);
 
         [Fact]
         public void Sample1()
@@ -98,12 +97,8 @@ namespace Clippit.Tests.Word.Samples
                     .Elements()
                     .Select((p, i) => new { Paragraph = p, Index = i })
                     .GroupAdjacent(pi =>
-                        (string)
-                            pi
-                                .Paragraph.Elements(W.pPr)
-                                .Elements(W.pStyle)
-                                .Attributes(W.val)
-                                .FirstOrDefault() != "Note"
+                        (string)pi.Paragraph.Elements(W.pPr).Elements(W.pStyle).Attributes(W.val).FirstOrDefault()
+                        != "Note"
                     )
                     .Where(g => g.Key)
                     .Select(g => new Source(
@@ -129,11 +124,8 @@ namespace Clippit.Tests.Word.Samples
                     .Rollup(
                         0,
                         (pi, last) =>
-                            (string)
-                                pi.Elements(W.pPr)
-                                    .Elements(W.pStyle)
-                                    .Attributes(W.val)
-                                    .FirstOrDefault() == "Heading1"
+                            (string)pi.Elements(W.pPr).Elements(W.pStyle).Attributes(W.val).FirstOrDefault()
+                            == "Heading1"
                                 ? last + 1
                                 : last
                     );
@@ -169,12 +161,7 @@ namespace Clippit.Tests.Word.Samples
                 var fileName = $"Section{doc.DocumentNumber:000}.docx";
                 var documentSource = new List<ISource>
                 {
-                    new Source(
-                        new WmlDocument(GetFilePath("Sample2/Spec.docx")),
-                        doc.Start,
-                        doc.Count,
-                        true
-                    ),
+                    new Source(new WmlDocument(GetFilePath("Sample2/Spec.docx")), doc.Start, doc.Count, true),
                 };
                 DocumentBuilder.BuildDocument(documentSource, Path.Combine(TempDir, fileName));
             }
@@ -198,22 +185,13 @@ namespace Clippit.Tests.Word.Samples
                 using (var doc = WordprocessingDocument.Open(mem, true))
                 {
                     var xDoc = doc.MainDocumentPart.GetXDocument();
-                    var frontMatterPara = xDoc
-                        .Root.Descendants(W.txbxContent)
-                        .Elements(W.p)
-                        .FirstOrDefault();
-                    frontMatterPara.ReplaceWith(
-                        new XElement(PtOpenXml.Insert, new XAttribute("Id", "Front"))
-                    );
+                    var frontMatterPara = xDoc.Root.Descendants(W.txbxContent).Elements(W.p).FirstOrDefault();
+                    frontMatterPara.ReplaceWith(new XElement(PtOpenXml.Insert, new XAttribute("Id", "Front")));
                     var tbl = xDoc.Root.Element(W.body).Elements(W.tbl).FirstOrDefault();
                     var firstCell = tbl.Descendants(W.tr).First().Descendants(W.p).First();
-                    firstCell.ReplaceWith(
-                        new XElement(PtOpenXml.Insert, new XAttribute("Id", "Liz"))
-                    );
+                    firstCell.ReplaceWith(new XElement(PtOpenXml.Insert, new XAttribute("Id", "Liz")));
                     var secondCell = tbl.Descendants(W.tr).Skip(1).First().Descendants(W.p).First();
-                    secondCell.ReplaceWith(
-                        new XElement(PtOpenXml.Insert, new XAttribute("Id", "Eric"))
-                    );
+                    secondCell.ReplaceWith(new XElement(PtOpenXml.Insert, new XAttribute("Id", "Eric")));
                     doc.MainDocumentPart.PutXDocument();
                 }
                 doc1.DocumentByteArray = mem.ToArray();
@@ -244,10 +222,7 @@ namespace Clippit.Tests.Word.Samples
                 {
                     var keyForGroupAdjacent = ".NonContentControl";
                     if (e.Name == W.sdt)
-                        keyForGroupAdjacent = e.Element(W.sdtPr)
-                            .Element(W.tag)
-                            .Attribute(W.val)
-                            .Value;
+                        keyForGroupAdjacent = e.Element(W.sdtPr).Element(W.tag).Attribute(W.val).Value;
                     if (e.Name == W.sectPr)
                         keyForGroupAdjacent = null;
                     return new { Element = e, KeyForGroupAdjacent = keyForGroupAdjacent };

@@ -312,14 +312,9 @@ namespace Clippit.Tests.Html
             var sourceCopiedToDestHtmlFi = new FileInfo(
                 Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-1-Source.html"))
             );
-            var destCssFi = new FileInfo(
-                Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-2.css"))
-            );
+            var destCssFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-2.css")));
             var destDocxFi = new FileInfo(
-                Path.Combine(
-                    TempDir,
-                    sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx")
-                )
+                Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx"))
             );
             var annotatedHtmlFi = new FileInfo(
                 Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt"))
@@ -352,8 +347,7 @@ namespace Clippit.Tests.Html
             }
 
             var usedAuthorCss = HtmlToWmlConverter.CleanUpCss(
-                (string)
-                    html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style")
+                (string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style")
             );
             File.WriteAllText(destCssFi.FullName, usedAuthorCss);
 
@@ -405,22 +399,12 @@ namespace Clippit.Tests.Html
 
 #if DO_CONVERSION_VIA_WORD
             var newAltChunkBeforeFi = new FileInfo(
-                Path.Combine(
-                    TestUtil.TempDir.FullName,
-                    name.Replace(".html", "-5-AltChunkBefore.docx")
-                )
+                Path.Combine(TestUtil.TempDir.FullName, name.Replace(".html", "-5-AltChunkBefore.docx"))
             );
             var newAltChunkAfterFi = new FileInfo(
-                Path.Combine(
-                    TestUtil.TempDir.FullName,
-                    name.Replace(".html", "-6-ConvertedViaWord.docx")
-                )
+                Path.Combine(TestUtil.TempDir.FullName, name.Replace(".html", "-6-ConvertedViaWord.docx"))
             );
-            WordAutomationUtilities.DoConversionViaWord(
-                newAltChunkBeforeFi,
-                newAltChunkAfterFi,
-                html
-            );
+            WordAutomationUtilities.DoConversionViaWord(newAltChunkBeforeFi, newAltChunkAfterFi, html);
 #endif
         }
 
@@ -439,14 +423,9 @@ namespace Clippit.Tests.Html
             var sourceCopiedToDestHtmlFi = new FileInfo(
                 Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-1-Source.html"))
             );
-            var destCssFi = new FileInfo(
-                Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-2.css"))
-            );
+            var destCssFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-2.css")));
             var destDocxFi = new FileInfo(
-                Path.Combine(
-                    TempDir,
-                    sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx")
-                )
+                Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx"))
             );
             var annotatedHtmlFi = new FileInfo(
                 Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt"))
@@ -456,8 +435,7 @@ namespace Clippit.Tests.Html
             var html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceCopiedToDestHtmlFi);
 
             var usedAuthorCss = HtmlToWmlConverter.CleanUpCss(
-                (string)
-                    html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style")
+                (string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style")
             );
             File.WriteAllText(destCssFi.FullName, usedAuthorCss);
 
@@ -492,14 +470,9 @@ namespace Clippit.Tests.Html
             var sourceCopiedToDestHtmlFi = new FileInfo(
                 Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-1-Source.html"))
             );
-            var destCssFi = new FileInfo(
-                Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-2.css"))
-            );
+            var destCssFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-2.css")));
             var destDocxFi = new FileInfo(
-                Path.Combine(
-                    TempDir,
-                    sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx")
-                )
+                Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx"))
             );
             var annotatedHtmlFi = new FileInfo(
                 Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt"))
@@ -509,8 +482,7 @@ namespace Clippit.Tests.Html
             var html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceCopiedToDestHtmlFi);
 
             var usedAuthorCss = HtmlToWmlConverter.CleanUpCss(
-                (string)
-                    html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style")
+                (string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style")
             );
             File.WriteAllText(destCssFi.FullName, usedAuthorCss);
 
@@ -546,9 +518,7 @@ namespace Clippit.Tests.Html
                     document.MainDocumentPart.PutXDocumentWithFormatting();
                     var validator = new OpenXmlValidator();
                     var errors = validator.Validate(document);
-                    var errorsString = errors
-                        .Select(e => e.Description + Environment.NewLine)
-                        .StringConcatenate();
+                    var errorsString = errors.Select(e => e.Description + Environment.NewLine).StringConcatenate();
 
                     // Assert that there were no errors in the generated document.
                     Assert.Equal("", errorsString);

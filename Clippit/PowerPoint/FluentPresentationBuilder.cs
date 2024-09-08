@@ -25,9 +25,7 @@ namespace Clippit.PowerPoint
 
         internal FluentPresentationBuilder(PresentationDocument presentationDocument)
         {
-            _newDocument =
-                presentationDocument
-                ?? throw new NullReferenceException(nameof(presentationDocument));
+            _newDocument = presentationDocument ?? throw new NullReferenceException(nameof(presentationDocument));
 
             var mainPart = _newDocument.PresentationPart.GetXDocument();
             mainPart.Declaration.Standalone = "yes";
@@ -146,26 +144,18 @@ namespace Clippit.PowerPoint
             if (oldPresentationDoc.Root.Element(P.embeddedFontLst) is not null)
             {
                 var newFontLst = new XElement(P.embeddedFontLst);
-                foreach (
-                    var font in oldPresentationDoc
-                        .Root.Element(P.embeddedFontLst)
-                        .Elements(P.embeddedFont)
-                )
+                foreach (var font in oldPresentationDoc.Root.Element(P.embeddedFontLst).Elements(P.embeddedFont))
                 {
                     var newEmbeddedFont = new XElement(P.embeddedFont, font.Elements(P.font));
 
                     if (font.Element(P.regular) is not null)
-                        newEmbeddedFont.Add(
-                            CreateEmbeddedFontPart(sourceDocument, font, P.regular)
-                        );
+                        newEmbeddedFont.Add(CreateEmbeddedFontPart(sourceDocument, font, P.regular));
                     if (font.Element(P.bold) is not null)
                         newEmbeddedFont.Add(CreateEmbeddedFontPart(sourceDocument, font, P.bold));
                     if (font.Element(P.italic) is not null)
                         newEmbeddedFont.Add(CreateEmbeddedFontPart(sourceDocument, font, P.italic));
                     if (font.Element(P.boldItalic) is not null)
-                        newEmbeddedFont.Add(
-                            CreateEmbeddedFontPart(sourceDocument, font, P.boldItalic)
-                        );
+                        newEmbeddedFont.Add(CreateEmbeddedFontPart(sourceDocument, font, P.boldItalic));
 
                     newFontLst.Add(newEmbeddedFont);
                 }
@@ -201,21 +191,14 @@ namespace Clippit.PowerPoint
                 // Copy master
                 newMaster.PutXDocument(new XDocument(oldMaster.GetXDocument()));
                 PBT.AddRelationships(oldMaster, newMaster, new[] { newMaster.GetXDocument().Root });
-                CopyRelatedPartsForContentParts(
-                    oldMaster,
-                    newMaster,
-                    new[] { newMaster.GetXDocument().Root }
-                );
+                CopyRelatedPartsForContentParts(oldMaster, newMaster, new[] { newMaster.GetXDocument().Root });
 
                 newPresentation.Root.Add(
                     new XElement(
                         P.handoutMasterIdLst,
                         new XElement(
                             P.handoutMasterId,
-                            new XAttribute(
-                                R.id,
-                                _newDocument.PresentationPart.GetIdOfPart(newMaster)
-                            )
+                            new XAttribute(R.id, _newDocument.PresentationPart.GetIdOfPart(newMaster))
                         )
                     )
                 );
@@ -225,13 +208,9 @@ namespace Clippit.PowerPoint
             CopyNotesMaster(sourceDocument);
 
             // Copy Presentation Properties
-            if (
-                sourceDocument.PresentationPart.PresentationPropertiesPart is
-                { } presentationPropertiesPart
-            )
+            if (sourceDocument.PresentationPart.PresentationPropertiesPart is { } presentationPropertiesPart)
             {
-                var newPart =
-                    _newDocument.PresentationPart.AddNewPart<PresentationPropertiesPart>();
+                var newPart = _newDocument.PresentationPart.AddNewPart<PresentationPropertiesPart>();
                 var xd1 = presentationPropertiesPart.GetXDocument();
                 xd1.Descendants(P.custShow).Remove();
                 newPart.PutXDocument(xd1);
@@ -289,8 +268,7 @@ namespace Clippit.PowerPoint
                 // Sanitize all p:ext elements with r:Id attributes on any child element
                 foreach (var ext in extLst.Elements(P.ext).ToList())
                 {
-                    var hasRid = ext.Descendants()
-                        .Any(e => e.Attributes().Any(a => a.Name == R.id));
+                    var hasRid = ext.Descendants().Any(e => e.Attributes().Any(a => a.Name == R.id));
                     if (hasRid)
                         ext.Remove();
                 }
@@ -299,11 +277,7 @@ namespace Clippit.PowerPoint
             }
         }
 
-        private XElement CreateEmbeddedFontPart(
-            PresentationDocument sourceDocument,
-            XElement font,
-            XName fontXName
-        )
+        private XElement CreateEmbeddedFontPart(PresentationDocument sourceDocument, XElement font, XName fontXName)
         {
             var oldFontPartId = (string)font.Element(fontXName).Attributes(R.id).FirstOrDefault();
             if (!sourceDocument.PresentationPart.TryGetPartById(oldFontPartId, out var oldFontPart))
@@ -319,19 +293,13 @@ namespace Clippit.PowerPoint
             };
 
             var newFontPartId = Relationships.GetNewRelationshipId();
-            var newFontPart = _newDocument.PresentationPart.AddFontPart(
-                fontPartType,
-                newFontPartId
-            );
+            var newFontPart = _newDocument.PresentationPart.AddFontPart(fontPartType, newFontPartId);
             using (var stream = oldFontPart.GetStream())
                 newFontPart.FeedData(stream);
             return new XElement(fontXName, new XAttribute(R.id, newFontPartId));
         }
 
-        public void AppendMaster(
-            PresentationDocument sourceDocument,
-            SlideMasterPart slideMasterPart
-        )
+        public void AppendMaster(PresentationDocument sourceDocument, SlideMasterPart slideMasterPart)
         {
             EnsureDocumentInitialized(sourceDocument);
 
@@ -350,8 +318,7 @@ namespace Clippit.PowerPoint
             CopyStartingParts(sourceDocument);
             CopyPresentationParts(sourceDocument);
 
-            _slideSize =
-                sourceDocument.PresentationPart.Presentation.SlideSize.CloneNode(true) as SlideSize;
+            _slideSize = sourceDocument.PresentationPart.Presentation.SlideSize.CloneNode(true) as SlideSize;
 
             var newPresentation = _newDocument.PresentationPart.GetXDocument();
             if (newPresentation.Root.Element(P.sldIdLst) is null)
@@ -365,12 +332,7 @@ namespace Clippit.PowerPoint
         public void AppendSlides(PresentationDocument sourceDocument, int start, int count) =>
             AppendSlides(sourceDocument, start, count, false);
 
-        internal void AppendSlides(
-            PresentationDocument sourceDocument,
-            int start,
-            int count,
-            bool unHideSlides
-        )
+        internal void AppendSlides(PresentationDocument sourceDocument, int start, int count, bool unHideSlides)
         {
             EnsureDocumentInitialized(sourceDocument);
 
@@ -378,23 +340,15 @@ namespace Clippit.PowerPoint
             var scaleFactor = GetScaleFactor(sourceDocument);
 
             uint newId = 256;
-            var ids = newPresentation
-                .Root.Descendants(P.sldId)
-                .Select(f => (uint)f.Attribute(NoNamespace.id))
-                .ToList();
+            var ids = newPresentation.Root.Descendants(P.sldId).Select(f => (uint)f.Attribute(NoNamespace.id)).ToList();
             if (ids.Any())
                 newId = ids.Max() + 1;
 
-            var slideList = sourceDocument
-                .PresentationPart.GetXDocument()
-                .Root.Descendants(P.sldId)
-                .ToList();
+            var slideList = sourceDocument.PresentationPart.GetXDocument().Root.Descendants(P.sldId).ToList();
             while (count > 0 && start < slideList.Count)
             {
                 var slide = (SlidePart)
-                    sourceDocument.PresentationPart.GetPartById(
-                        slideList.ElementAt(start).Attribute(R.id).Value
-                    );
+                    sourceDocument.PresentationPart.GetPartById(slideList.ElementAt(start).Attribute(R.id).Value);
                 var newSlide = _newDocument.PresentationPart.AddNewPart<SlidePart>();
 
                 using (var sourceStream = slide.GetStream())
@@ -411,11 +365,7 @@ namespace Clippit.PowerPoint
                 SlideLayoutData.ScaleShapes(slideDocument, scaleFactor);
 
                 PBT.AddRelationships(slide, newSlide, new[] { newSlide.GetXDocument().Root });
-                CopyRelatedPartsForContentParts(
-                    slide,
-                    newSlide,
-                    new[] { newSlide.GetXDocument().Root }
-                );
+                CopyRelatedPartsForContentParts(slide, newSlide, new[] { newSlide.GetXDocument().Root });
                 CopyTableStyles(sourceDocument, newSlide);
 
                 if (slide.NotesSlidePart is { } notesSlide)
@@ -427,11 +377,7 @@ namespace Clippit.PowerPoint
                     newPart.AddPart(newSlide);
                     if (_newDocument.PresentationPart.NotesMasterPart is not null)
                         newPart.AddPart(_newDocument.PresentationPart.NotesMasterPart);
-                    PBT.AddRelationships(
-                        notesSlide,
-                        newPart,
-                        new[] { newPart.GetXDocument().Root }
-                    );
+                    PBT.AddRelationships(notesSlide, newPart, new[] { newPart.GetXDocument().Root });
                     CopyRelatedPartsForContentParts(
                         slide.NotesSlidePart,
                         newPart,
@@ -439,11 +385,7 @@ namespace Clippit.PowerPoint
                     );
                 }
 
-                var slideLayoutData = ManageSlideLayoutPart(
-                    sourceDocument,
-                    slide.SlideLayoutPart,
-                    scaleFactor
-                );
+                var slideLayoutData = ManageSlideLayoutPart(sourceDocument, slide.SlideLayoutPart, scaleFactor);
                 newSlide.AddPart(slideLayoutData.Part);
 
                 if (slide.SlideCommentsPart is not null)
@@ -456,10 +398,7 @@ namespace Clippit.PowerPoint
                         new XElement(
                             P.sldId,
                             new XAttribute(NoNamespace.id, newId.ToString()),
-                            new XAttribute(
-                                R.id,
-                                _newDocument.PresentationPart.GetIdOfPart(newSlide)
-                            )
+                            new XAttribute(R.id, _newDocument.PresentationPart.GetIdOfPart(newSlide))
                         )
                     );
 
@@ -506,46 +445,31 @@ namespace Clippit.PowerPoint
                 // Copy master
                 newMaster.PutXDocument(new XDocument(oldMaster.GetXDocument()));
                 PBT.AddRelationships(oldMaster, newMaster, new[] { newMaster.GetXDocument().Root });
-                CopyRelatedPartsForContentParts(
-                    oldMaster,
-                    newMaster,
-                    new[] { newMaster.GetXDocument().Root }
-                );
+                CopyRelatedPartsForContentParts(oldMaster, newMaster, new[] { newMaster.GetXDocument().Root });
 
                 newPresentation.Root.Add(
                     new XElement(
                         P.notesMasterIdLst,
                         new XElement(
                             P.notesMasterId,
-                            new XAttribute(
-                                R.id,
-                                _newDocument.PresentationPart.GetIdOfPart(newMaster)
-                            )
+                            new XAttribute(R.id, _newDocument.PresentationPart.GetIdOfPart(newMaster))
                         )
                     )
                 );
             }
         }
 
-        private void CopyComments(
-            PresentationDocument oldDocument,
-            SlidePart oldSlide,
-            SlidePart newSlide
-        )
+        private void CopyComments(PresentationDocument oldDocument, SlidePart oldSlide, SlidePart newSlide)
         {
             newSlide.AddNewPart<SlideCommentsPart>();
-            newSlide.SlideCommentsPart.PutXDocument(
-                new XDocument(oldSlide.SlideCommentsPart.GetXDocument())
-            );
+            newSlide.SlideCommentsPart.PutXDocument(new XDocument(oldSlide.SlideCommentsPart.GetXDocument()));
             var newSlideComments = newSlide.SlideCommentsPart.GetXDocument();
             var oldAuthors = oldDocument.PresentationPart.CommentAuthorsPart.GetXDocument();
             foreach (var comment in newSlideComments.Root.Elements(P.cm))
             {
                 var newAuthor = FindCommentsAuthor(comment, oldAuthors);
                 // Update last index value for new comment
-                comment
-                    .Attribute(NoNamespace.authorId)
-                    .SetValue(newAuthor.Attribute(NoNamespace.id).Value);
+                comment.Attribute(NoNamespace.authorId).SetValue(newAuthor.Attribute(NoNamespace.id).Value);
                 var lastIndex = Convert.ToUInt32(newAuthor.Attribute(NoNamespace.lastIdx).Value);
                 comment.Attribute(NoNamespace.idx).SetValue(lastIndex.ToString());
                 newAuthor.Attribute(NoNamespace.lastIdx).SetValue(Convert.ToString(lastIndex + 1));
@@ -557,8 +481,7 @@ namespace Clippit.PowerPoint
             var oldAuthor = oldAuthors
                 .Root.Elements(P.cmAuthor)
                 .FirstOrDefault(f =>
-                    f.Attribute(NoNamespace.id).Value
-                    == comment.Attribute(NoNamespace.authorId).Value
+                    f.Attribute(NoNamespace.id).Value == comment.Attribute(NoNamespace.authorId).Value
                 );
             XElement newAuthor = null;
             if (_newDocument.PresentationPart.CommentAuthorsPart is null)
@@ -579,16 +502,12 @@ namespace Clippit.PowerPoint
             newAuthor = authors
                 .Root.Elements(P.cmAuthor)
                 .FirstOrDefault(f =>
-                    f.Attribute(NoNamespace.initials).Value
-                    == oldAuthor.Attribute(NoNamespace.initials).Value
+                    f.Attribute(NoNamespace.initials).Value == oldAuthor.Attribute(NoNamespace.initials).Value
                 );
             if (newAuthor is null)
             {
                 uint newId = 0;
-                var ids = authors
-                    .Root.Descendants(P.cmAuthor)
-                    .Select(f => (uint)f.Attribute(NoNamespace.id))
-                    .ToList();
+                var ids = authors.Root.Descendants(P.cmAuthor).Select(f => (uint)f.Attribute(NoNamespace.id)).ToList();
                 if (ids.Any())
                     newId = ids.Max() + 1;
 
@@ -596,10 +515,7 @@ namespace Clippit.PowerPoint
                     P.cmAuthor,
                     new XAttribute(NoNamespace.id, newId.ToString()),
                     new XAttribute(NoNamespace.name, oldAuthor.Attribute(NoNamespace.name).Value),
-                    new XAttribute(
-                        NoNamespace.initials,
-                        oldAuthor.Attribute(NoNamespace.initials).Value
-                    ),
+                    new XAttribute(NoNamespace.initials, oldAuthor.Attribute(NoNamespace.initials).Value),
                     new XAttribute(NoNamespace.lastIdx, "1"),
                     new XAttribute(NoNamespace.clrIdx, newId.ToString())
                 );
@@ -614,8 +530,7 @@ namespace Clippit.PowerPoint
             if (oldDocument.PresentationPart.TableStylesPart is null)
                 return;
 
-            var oldTableStylesDocument =
-                oldDocument.PresentationPart.TableStylesPart.GetXDocument();
+            var oldTableStylesDocument = oldDocument.PresentationPart.TableStylesPart.GetXDocument();
             var oldTableStyles = oldTableStylesDocument.Root.Elements(A.tblStyle).ToList();
 
             foreach (var table in newContentPart.GetXDocument().Descendants(A.tableStyleId))
@@ -625,9 +540,7 @@ namespace Clippit.PowerPoint
                     continue;
 
                 // Find old style
-                var oldStyle = oldTableStyles.FirstOrDefault(f =>
-                    f.Attribute(NoNamespace.styleId).Value == styleId
-                );
+                var oldStyle = oldTableStyles.FirstOrDefault(f => f.Attribute(NoNamespace.styleId).Value == styleId);
                 if (oldStyle is null)
                     continue;
 
@@ -702,12 +615,7 @@ namespace Clippit.PowerPoint
             foreach (var imageReference in relevantElements)
             {
                 CopyRelatedMedia(oldContentPart, newContentPart, imageReference, R.embed, "media");
-                PBT.CopyRelatedMediaExternalRelationship(
-                    oldContentPart,
-                    newContentPart,
-                    imageReference,
-                    R.link
-                );
+                PBT.CopyRelatedMediaExternalRelationship(oldContentPart, newContentPart, imageReference, R.link);
             }
 
             foreach (var extendedReference in newContent.DescendantsAndSelf(A14.imgLayer))
@@ -727,12 +635,7 @@ namespace Clippit.PowerPoint
 
             foreach (var contentPartReference in newContent.DescendantsAndSelf(Plegacy.textdata))
             {
-                PBT.CopyLegacyDiagramText(
-                    oldContentPart,
-                    newContentPart,
-                    contentPartReference,
-                    "id"
-                );
+                PBT.CopyLegacyDiagramText(oldContentPart, newContentPart, contentPartReference, "id");
             }
 
             foreach (
@@ -751,11 +654,7 @@ namespace Clippit.PowerPoint
                 newPart.GetXDocument().Add(oldPart.GetXDocument().Root);
                 diagramReference.Attribute(R.dm).Value = newContentPart.GetIdOfPart(newPart);
                 PBT.AddRelationships(oldPart, newPart, new[] { newPart.GetXDocument().Root });
-                CopyRelatedPartsForContentParts(
-                    oldPart,
-                    newPart,
-                    new[] { newPart.GetXDocument().Root }
-                );
+                CopyRelatedPartsForContentParts(oldPart, newPart, new[] { newPart.GetXDocument().Root });
 
                 // lo attribute
                 relId = diagramReference.Attribute(R.lo).Value;
@@ -767,11 +666,7 @@ namespace Clippit.PowerPoint
                 newPart.GetXDocument().Add(oldPart.GetXDocument().Root);
                 diagramReference.Attribute(R.lo).Value = newContentPart.GetIdOfPart(newPart);
                 PBT.AddRelationships(oldPart, newPart, new[] { newPart.GetXDocument().Root });
-                CopyRelatedPartsForContentParts(
-                    oldPart,
-                    newPart,
-                    new[] { newPart.GetXDocument().Root }
-                );
+                CopyRelatedPartsForContentParts(oldPart, newPart, new[] { newPart.GetXDocument().Root });
 
                 // qs attribute
                 relId = diagramReference.Attribute(R.qs).Value;
@@ -783,11 +678,7 @@ namespace Clippit.PowerPoint
                 newPart.GetXDocument().Add(oldPart.GetXDocument().Root);
                 diagramReference.Attribute(R.qs).Value = newContentPart.GetIdOfPart(newPart);
                 PBT.AddRelationships(oldPart, newPart, new[] { newPart.GetXDocument().Root });
-                CopyRelatedPartsForContentParts(
-                    oldPart,
-                    newPart,
-                    new[] { newPart.GetXDocument().Root }
-                );
+                CopyRelatedPartsForContentParts(oldPart, newPart, new[] { newPart.GetXDocument().Root });
 
                 // cs attribute
                 relId = diagramReference.Attribute(R.cs).Value;
@@ -799,11 +690,7 @@ namespace Clippit.PowerPoint
                 newPart.GetXDocument().Add(oldPart.GetXDocument().Root);
                 diagramReference.Attribute(R.cs).Value = newContentPart.GetIdOfPart(newPart);
                 PBT.AddRelationships(oldPart, newPart, new[] { newPart.GetXDocument().Root });
-                CopyRelatedPartsForContentParts(
-                    oldPart,
-                    newPart,
-                    new[] { newPart.GetXDocument().Root }
-                );
+                CopyRelatedPartsForContentParts(oldPart, newPart, new[] { newPart.GetXDocument().Root });
             }
 
             foreach (
@@ -821,9 +708,7 @@ namespace Clippit.PowerPoint
                 if (newContentPart.HasRelationship(relId))
                     continue;
 
-                var oldPartIdPair = oldContentPart.Parts.FirstOrDefault(p =>
-                    p.RelationshipId == relId
-                );
+                var oldPartIdPair = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
                 if (oldPartIdPair != default)
                 {
                     var oldPart = oldPartIdPair.OpenXmlPart;
@@ -833,9 +718,7 @@ namespace Clippit.PowerPoint
                         EmbeddedObjectPart => newContentPart switch
                         {
                             DialogsheetPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
-                            HandoutMasterPart part => part.AddEmbeddedObjectPart(
-                                oldPart.ContentType
-                            ),
+                            HandoutMasterPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
                             NotesMasterPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
                             NotesSlidePart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
                             SlideLayoutPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
@@ -846,19 +729,11 @@ namespace Clippit.PowerPoint
                         EmbeddedPackagePart => newContentPart switch
                         {
                             ChartPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
-                            HandoutMasterPart part => part.AddEmbeddedPackagePart(
-                                oldPart.ContentType
-                            ),
-                            NotesMasterPart part => part.AddEmbeddedPackagePart(
-                                oldPart.ContentType
-                            ),
+                            HandoutMasterPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
+                            NotesMasterPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
                             NotesSlidePart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
-                            SlideLayoutPart part => part.AddEmbeddedPackagePart(
-                                oldPart.ContentType
-                            ),
-                            SlideMasterPart part => part.AddEmbeddedPackagePart(
-                                oldPart.ContentType
-                            ),
+                            SlideLayoutPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
+                            SlideMasterPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
                             SlidePart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
                             _ => newPart,
                         },
@@ -884,9 +759,7 @@ namespace Clippit.PowerPoint
                 if (newContentPart.HasRelationship(relId))
                     continue;
 
-                var oldPartIdPair2 = oldContentPart.Parts.FirstOrDefault(p =>
-                    p.RelationshipId == relId
-                );
+                var oldPartIdPair2 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
                 if (oldPartIdPair2.OpenXmlPart is ChartPart oldPart)
                 {
                     var oldChart = oldPart.GetXDocument();
@@ -905,9 +778,7 @@ namespace Clippit.PowerPoint
                 if (newContentPart.HasRelationship(relId))
                     continue;
 
-                var oldPartIdPair2 = oldContentPart.Parts.FirstOrDefault(p =>
-                    p.RelationshipId == relId
-                );
+                var oldPartIdPair2 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
                 if (oldPartIdPair2.OpenXmlPart is ExtendedChartPart oldPart)
                 {
                     var oldChart = oldPart.GetXDocument();
@@ -926,9 +797,7 @@ namespace Clippit.PowerPoint
                 if (newContentPart.HasRelationship(relId))
                     continue;
 
-                var oldPartIdPair3 = oldContentPart.Parts.FirstOrDefault(p =>
-                    p.RelationshipId == relId
-                );
+                var oldPartIdPair3 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
                 if (oldPartIdPair3.OpenXmlPart is ChartDrawingPart oldPart)
                 {
                     var oldXDoc = oldPart.GetXDocument();
@@ -947,9 +816,7 @@ namespace Clippit.PowerPoint
                 if (newContentPart.HasRelationship(relId))
                     continue;
 
-                var oldPartIdPair4 = oldContentPart.Parts.FirstOrDefault(p =>
-                    p.RelationshipId == relId
-                );
+                var oldPartIdPair4 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
                 if (oldPartIdPair4.OpenXmlPart is UserDefinedTagsPart oldPart)
                 {
                     var oldXDoc = oldPart.GetXDocument();
@@ -963,20 +830,13 @@ namespace Clippit.PowerPoint
             foreach (var custData in newContent.DescendantsAndSelf(P.custData))
             {
                 var relId = (string)custData.Attribute(R.id);
-                if (
-                    string.IsNullOrEmpty(relId)
-                    || newContentPart.Parts.Any(p => p.RelationshipId == relId)
-                )
+                if (string.IsNullOrEmpty(relId) || newContentPart.Parts.Any(p => p.RelationshipId == relId))
                     continue;
 
-                var oldPartIdPair9 = oldContentPart.Parts.FirstOrDefault(p =>
-                    p.RelationshipId == relId
-                );
+                var oldPartIdPair9 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
                 if (oldPartIdPair9 != default)
                 {
-                    var newPart = _newDocument.PresentationPart.AddCustomXmlPart(
-                        CustomXmlPartType.CustomXml
-                    );
+                    var newPart = _newDocument.PresentationPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
                     using (var stream = oldPartIdPair9.OpenXmlPart.GetStream())
                         newPart.FeedData(stream);
                     foreach (
@@ -1000,11 +860,7 @@ namespace Clippit.PowerPoint
                 }
             }
 
-            foreach (
-                var soundReference in newContent
-                    .DescendantsAndSelf()
-                    .Where(d => d.Name == A.audioFile)
-            )
+            foreach (var soundReference in newContent.DescendantsAndSelf().Where(d => d.Name == A.audioFile))
                 PresentationBuilderTools.CopyRelatedSound(
                     _newDocument,
                     oldContentPart,
@@ -1017,10 +873,7 @@ namespace Clippit.PowerPoint
                 (oldContentPart is ChartsheetPart && newContentPart is ChartsheetPart)
                 || (oldContentPart is DialogsheetPart && newContentPart is DialogsheetPart)
                 || (oldContentPart is HandoutMasterPart && newContentPart is HandoutMasterPart)
-                || (
-                    oldContentPart is InternationalMacroSheetPart
-                    && newContentPart is InternationalMacroSheetPart
-                )
+                || (oldContentPart is InternationalMacroSheetPart && newContentPart is InternationalMacroSheetPart)
                 || (oldContentPart is MacroSheetPart && newContentPart is MacroSheetPart)
                 || (oldContentPart is NotesMasterPart && newContentPart is NotesMasterPart)
                 || (oldContentPart is NotesSlidePart && newContentPart is NotesSlidePart)
@@ -1100,11 +953,7 @@ namespace Clippit.PowerPoint
                             }
                             newVmlPart.PutXDocument(xd);
 
-                            PBT.AddRelationships(
-                                vmlPart,
-                                newVmlPart,
-                                new[] { newVmlPart.GetXDocument().Root }
-                            );
+                            PBT.AddRelationships(vmlPart, newVmlPart, new[] { newVmlPart.GetXDocument().Root });
                             CopyRelatedPartsForContentParts(
                                 vmlPart,
                                 newVmlPart,
@@ -1114,10 +963,7 @@ namespace Clippit.PowerPoint
                         catch (XmlException)
                         {
                             using var srcStream = vmlPart.GetStream();
-                            using var dstStream = newVmlPart.GetStream(
-                                FileMode.Create,
-                                FileAccess.Write
-                            );
+                            using var dstStream = newVmlPart.GetStream(FileMode.Create, FileAccess.Write);
                             srcStream.CopyTo(dstStream);
                         }
                     }
@@ -1163,9 +1009,7 @@ namespace Clippit.PowerPoint
                         "image/svg+xml" => ".svg",
                         _ => ".image",
                     };
-                    newContentPart
-                        .Features.GetRequired<IPartExtensionFeature>()
-                        .Register(contentType, targetExtension);
+                    newContentPart.Features.GetRequired<IPartExtensionFeature>().Register(contentType, targetExtension);
 
                     var newPart = newContentPart switch
                     {
@@ -1193,11 +1037,7 @@ namespace Clippit.PowerPoint
 
                     temp.ImagePart = newPart;
                     var id = newContentPart.GetIdOfPart(newPart);
-                    temp.AddContentPartRelTypeResourceIdTupple(
-                        newContentPart,
-                        newPart.RelationshipType,
-                        id
-                    );
+                    temp.AddContentPartRelTypeResourceIdTupple(newContentPart, newPart.RelationshipType, id);
 
                     using (var stream = oldPart.GetStream())
                         newPart.FeedData(stream);
@@ -1221,9 +1061,7 @@ namespace Clippit.PowerPoint
                         return;
                     }
 
-                    var cpr2 = temp.ContentPartRelTypeIdList.FirstOrDefault(c =>
-                        c.ContentPart == newContentPart
-                    );
+                    var cpr2 = temp.ContentPartRelTypeIdList.FirstOrDefault(c => c.ContentPart == newContentPart);
                     if (cpr2 is not null)
                     {
                         imageReference.SetAttributeValue(attributeName, cpr2.RelationshipId);
@@ -1233,11 +1071,7 @@ namespace Clippit.PowerPoint
                         var imagePart = (ImagePart)temp.ImagePart;
                         var existingImagePart = newContentPart.AddPart(imagePart);
                         var newId = newContentPart.GetIdOfPart(existingImagePart);
-                        temp.AddContentPartRelTypeResourceIdTupple(
-                            newContentPart,
-                            imagePart.RelationshipType,
-                            newId
-                        );
+                        temp.AddContentPartRelTypeResourceIdTupple(newContentPart, imagePart.RelationshipType, newId);
                         imageReference.SetAttributeValue(attributeName, newId);
                     }
                 }
@@ -1279,14 +1113,11 @@ namespace Clippit.PowerPoint
         {
             var relId = (string)imageReference.Attribute(attributeName);
             if (
-                string.IsNullOrEmpty(relId)
-                || newContentPart.DataPartReferenceRelationships.Any(dpr => dpr.Id == relId)
+                string.IsNullOrEmpty(relId) || newContentPart.DataPartReferenceRelationships.Any(dpr => dpr.Id == relId)
             ) // First look to see if this relId has already been added to the new document.
                 return;
 
-            var oldRel = oldContentPart.DataPartReferenceRelationships.FirstOrDefault(dpr =>
-                dpr.Id == relId
-            );
+            var oldRel = oldContentPart.DataPartReferenceRelationships.FirstOrDefault(dpr => dpr.Id == relId);
             if (oldRel is null)
                 return;
 
@@ -1315,8 +1146,7 @@ namespace Clippit.PowerPoint
                         };
 
                         id = mrr?.Id;
-                        relationshipType =
-                            "http://schemas.microsoft.com/office/2007/relationships/media";
+                        relationshipType = "http://schemas.microsoft.com/office/2007/relationships/media";
                         break;
                     }
                     case "video":
@@ -1333,8 +1163,7 @@ namespace Clippit.PowerPoint
                         };
 
                         id = vrr?.Id;
-                        relationshipType =
-                            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/video";
+                        relationshipType = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/video";
                         break;
                     }
                 }
@@ -1347,8 +1176,7 @@ namespace Clippit.PowerPoint
                 var desiredRelType = mediaRelationshipType switch
                 {
                     "media" => "http://schemas.microsoft.com/office/2007/relationships/media",
-                    "video" =>
-                        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/video",
+                    "video" => "http://schemas.openxmlformats.org/officeDocument/2006/relationships/video",
                     _ => null,
                 };
 
@@ -1385,9 +1213,7 @@ namespace Clippit.PowerPoint
                             var vrr = newContentPart switch
                             {
                                 SlidePart part => part.AddVideoReferenceRelationship(newPart),
-                                HandoutMasterPart part => part.AddVideoReferenceRelationship(
-                                    newPart
-                                ),
+                                HandoutMasterPart part => part.AddVideoReferenceRelationship(newPart),
                                 NotesMasterPart part => part.AddVideoReferenceRelationship(newPart),
                                 NotesSlidePart part => part.AddVideoReferenceRelationship(newPart),
                                 SlideLayoutPart part => part.AddVideoReferenceRelationship(newPart),
@@ -1400,11 +1226,7 @@ namespace Clippit.PowerPoint
                             break;
                         }
                     }
-                    temp.AddContentPartRelTypeResourceIdTupple(
-                        newContentPart,
-                        relationshipType,
-                        id
-                    );
+                    temp.AddContentPartRelTypeResourceIdTupple(newContentPart, relationshipType, id);
                     imageReference.Attribute(attributeName).Set(id);
                 }
             }
@@ -1435,22 +1257,14 @@ namespace Clippit.PowerPoint
             return contentData;
         }
 
-        private ThemePart CopyThemePart(
-            SlideMasterPart slideMasterPart,
-            ThemePart oldThemePart,
-            double scaleFactor
-        )
+        private ThemePart CopyThemePart(SlideMasterPart slideMasterPart, ThemePart oldThemePart, double scaleFactor)
         {
             var newThemePart = slideMasterPart.AddNewPart<ThemePart>();
             var newThemeDoc = new XDocument(oldThemePart.GetXDocument());
             SlideLayoutData.ScaleShapes(newThemeDoc, scaleFactor);
             newThemePart.PutXDocument(newThemeDoc);
 
-            CopyRelatedPartsForContentParts(
-                oldThemePart,
-                newThemePart,
-                new[] { newThemePart.GetXDocument().Root }
-            );
+            CopyRelatedPartsForContentParts(oldThemePart, newThemePart, new[] { newThemePart.GetXDocument().Root });
 
             if (_newDocument.PresentationPart.ThemePart is null)
                 newThemePart = _newDocument.PresentationPart.AddPart(newThemePart);
@@ -1482,10 +1296,7 @@ namespace Clippit.PowerPoint
             return slideMasterData;
         }
 
-        private SlideMasterPart CopySlideMasterPart(
-            SlideMasterPart oldMasterPart,
-            double scaleFactor
-        )
+        private SlideMasterPart CopySlideMasterPart(SlideMasterPart oldMasterPart, double scaleFactor)
         {
             var newMaster = _newDocument.PresentationPart.AddNewPart<SlideMasterPart>();
 
@@ -1517,11 +1328,7 @@ namespace Clippit.PowerPoint
             newMaster.PutXDocument(newMasterDoc);
 
             PBT.AddRelationships(oldMasterPart, newMaster, new[] { newMaster.GetXDocument().Root });
-            CopyRelatedPartsForContentParts(
-                oldMasterPart,
-                newMaster,
-                new[] { newMaster.GetXDocument().Root }
-            );
+            CopyRelatedPartsForContentParts(oldMasterPart, newMaster, new[] { newMaster.GetXDocument().Root });
 
             _ = CopyThemePart(newMaster, oldMasterPart.ThemePart, scaleFactor);
 
@@ -1550,11 +1357,7 @@ namespace Clippit.PowerPoint
 
             if (!ReferenceEquals(presentationDocument, _newDocument))
             {
-                var newSlideLayoutPart = CopySlideLayoutPart(
-                    slideMasterData.Part,
-                    slideLayoutPart,
-                    scaleFactor
-                );
+                var newSlideLayoutPart = CopySlideLayoutPart(slideMasterData.Part, slideLayoutPart, scaleFactor);
                 slideLayoutData = new SlideLayoutData(newSlideLayoutPart, 1.0);
             }
 
@@ -1575,16 +1378,8 @@ namespace Clippit.PowerPoint
             SlideLayoutData.ScaleShapes(newLayoutDoc, scaleFactor);
             newLayout.PutXDocument(newLayoutDoc);
 
-            PBT.AddRelationships(
-                oldSlideLayoutPart,
-                newLayout,
-                new[] { newLayout.GetXDocument().Root }
-            );
-            CopyRelatedPartsForContentParts(
-                oldSlideLayoutPart,
-                newLayout,
-                new[] { newLayout.GetXDocument().Root }
-            );
+            PBT.AddRelationships(oldSlideLayoutPart, newLayout, new[] { newLayout.GetXDocument().Root });
+            CopyRelatedPartsForContentParts(oldSlideLayoutPart, newLayout, new[] { newLayout.GetXDocument().Root });
 
             var newMasterDoc = newSlideMasterPart.GetXDocument();
             newMasterDoc

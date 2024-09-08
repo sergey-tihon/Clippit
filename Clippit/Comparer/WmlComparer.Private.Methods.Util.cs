@@ -21,10 +21,7 @@ namespace Clippit
         {
             var elementsToUpdate = contentElement
                 .Descendants()
-                .Where(d =>
-                    d.Attributes()
-                        .Any(a => ComparisonUnitWord.RelationshipAttributeNames.Contains(a.Name))
-                )
+                .Where(d => d.Attributes().Any(a => ComparisonUnitWord.RelationshipAttributeNames.Contains(a.Name)))
                 .ToList();
 
             foreach (var element in elementsToUpdate)
@@ -77,12 +74,7 @@ namespace Clippit
                     );
 
                     // ReSharper disable once PossibleNullReferenceException
-                    using (
-                        var oldPartStream = relatedPackagePart.GetStream(
-                            FileMode.Open,
-                            FileAccess.Read
-                        )
-                    )
+                    using (var oldPartStream = relatedPackagePart.GetStream(FileMode.Open, FileAccess.Read))
                     using (var newPartStream = newPart.GetStream(FileMode.Create, FileAccess.Write))
                     {
                         oldPartStream.CopyTo(newPartStream);
@@ -103,11 +95,7 @@ namespace Clippit
                         using (var stream = newPart.GetStream(FileMode.Open, FileAccess.Read))
                         {
                             newPartXDoc = XDocument.Load(stream);
-                            MoveRelatedPartsToDestination(
-                                relatedPackagePart,
-                                newPart,
-                                newPartXDoc.Root
-                            );
+                            MoveRelatedPartsToDestination(relatedPackagePart, newPart, newPartXDoc.Root);
                         }
 
                         using (var stream = newPart.GetStream(FileMode.Create, FileAccess.Write))

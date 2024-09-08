@@ -14,8 +14,7 @@ namespace Clippit.Tests.Common.Samples
         public OpenXmlRegexSamples(ITestOutputHelper log)
             : base(log) { }
 
-        private static string GetFilePath(string path) =>
-            Path.Combine("../../../Common/Samples/OpenXmlRegex/", path);
+        private static string GetFilePath(string path) => Path.Combine("../../../Common/Samples/OpenXmlRegex/", path);
 
         [Fact]
         public void WordSample1()
@@ -138,17 +137,13 @@ namespace Clippit.Tests.Common.Samples
 
             // Replace content using replacement pattern (paragraph 16)
             content = xDoc.Descendants(W.p).Skip(15).Take(1);
-            regex = new Regex(
-                $"{LeftDoubleQuotationMarks}(?<words>{Words}){RightDoubleQuotationMarks}"
-            );
+            regex = new Regex($"{LeftDoubleQuotationMarks}(?<words>{Words}){RightDoubleQuotationMarks}");
             count = OpenXmlRegex.Replace(content, regex, "‘${words}’", null);
             Log.WriteLine("Example #18 Replaced: {0}", count);
 
             // Replace content using replacement pattern in partially inserted text (paragraph 17)
             content = xDoc.Descendants(W.p).Skip(16).Take(1);
-            regex = new Regex(
-                $"{LeftDoubleQuotationMarks}(?<words>{Words}){RightDoubleQuotationMarks}"
-            );
+            regex = new Regex($"{LeftDoubleQuotationMarks}(?<words>{Words}){RightDoubleQuotationMarks}");
             count = OpenXmlRegex.Replace(content, regex, "‘${words}’", null, true, "John Doe");
             Log.WriteLine("Example #19 Replaced: {0}", count);
 
@@ -173,12 +168,7 @@ namespace Clippit.Tests.Common.Samples
             // Recognize tabs and insert line breaks (paragraph 20).
             content = xDoc.Descendants(W.p).Skip(19).Take(1);
             regex = new Regex($@"([1-9])\.{UnicodeMapper.HorizontalTabulation}");
-            count = OpenXmlRegex.Replace(
-                content,
-                regex,
-                $"Article $1{UnicodeMapper.CarriageReturn}",
-                null
-            );
+            count = OpenXmlRegex.Replace(content, regex, $"Article $1{UnicodeMapper.CarriageReturn}", null);
             Log.WriteLine("Example #22 Replaced: {0}", count);
 
             // Recognize and remove line breaks (paragraph 21)
@@ -222,18 +212,8 @@ namespace Clippit.Tests.Common.Samples
                 $"{newPhone} (replaced with new phone)",
                 null
             );
-            count += OpenXmlRegex.Replace(
-                paras,
-                new Regex($"({pencil})"),
-                "$1 (same pencil)",
-                null
-            );
-            count += OpenXmlRegex.Replace(
-                paras,
-                new Regex($"({spider})"),
-                "$1 (same spider)",
-                null
-            );
+            count += OpenXmlRegex.Replace(paras, new Regex($"({pencil})"), "$1 (same pencil)", null);
+            count += OpenXmlRegex.Replace(paras, new Regex($"({spider})"), "$1 (same spider)", null);
             Log.WriteLine("Example #25 Replaced: {0}", count);
 
             wDoc.MainDocumentPart.PutXDocument();

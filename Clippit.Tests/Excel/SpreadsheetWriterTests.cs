@@ -251,11 +251,7 @@ namespace Clippit.Tests.Excel
                             {
                                 Cells = new CellDfn[]
                                 {
-                                    new()
-                                    {
-                                        CellDataType = CellDataType.String,
-                                        Value = "int? (is null)",
-                                    },
+                                    new() { CellDataType = CellDataType.String, Value = "int? (is null)" },
                                     new() { CellDataType = CellDataType.Number, Value = null },
                                 },
                             },
@@ -272,11 +268,7 @@ namespace Clippit.Tests.Excel
                                 Cells = new CellDfn[]
                                 {
                                     new() { CellDataType = CellDataType.String, Value = "long" },
-                                    new()
-                                    {
-                                        CellDataType = CellDataType.Number,
-                                        Value = long.MaxValue,
-                                    },
+                                    new() { CellDataType = CellDataType.Number, Value = long.MaxValue },
                                 },
                             },
                             new()
@@ -284,11 +276,7 @@ namespace Clippit.Tests.Excel
                                 Cells = new CellDfn[]
                                 {
                                     new() { CellDataType = CellDataType.String, Value = "float" },
-                                    new()
-                                    {
-                                        CellDataType = CellDataType.Number,
-                                        Value = (float)123.45,
-                                    },
+                                    new() { CellDataType = CellDataType.Number, Value = (float)123.45 },
                                 },
                             },
                             new()
@@ -304,11 +292,7 @@ namespace Clippit.Tests.Excel
                                 Cells = new CellDfn[]
                                 {
                                     new() { CellDataType = CellDataType.String, Value = "decimal" },
-                                    new()
-                                    {
-                                        CellDataType = CellDataType.Number,
-                                        Value = (decimal)123.45,
-                                    },
+                                    new() { CellDataType = CellDataType.Number, Value = (decimal)123.45 },
                                 },
                             },
                             new()
@@ -338,19 +322,13 @@ namespace Clippit.Tests.Excel
                                     new()
                                     {
                                         CellDataType = CellDataType.Date,
-                                        Value = new DateTimeOffset(
-                                            new DateTime(2012, 1, 8),
-                                            TimeSpan.Zero
-                                        ),
+                                        Value = new DateTimeOffset(new DateTime(2012, 1, 8), TimeSpan.Zero),
                                         FormatCode = "mm-dd-yy",
                                     },
                                     new()
                                     {
                                         CellDataType = CellDataType.Date,
-                                        Value = new DateTimeOffset(
-                                            new DateTime(2012, 1, 9),
-                                            TimeSpan.Zero
-                                        ),
+                                        Value = new DateTimeOffset(new DateTime(2012, 1, 9), TimeSpan.Zero),
                                         FormatCode = "mm-dd-yy",
                                         Bold = true,
                                         HorizontalCellAlignment = HorizontalCellAlignment.Center,
@@ -379,10 +357,7 @@ namespace Clippit.Tests.Excel
                 wb.WriteTo(stream);
 
             using (var sDoc = SpreadsheetDocument.Open(fileName, true))
-                SpreadsheetWriter.AddWorksheet(
-                    sDoc,
-                    GetSimpleWorksheetDfn("MySecondSheet", "MySecondTable")
-                );
+                SpreadsheetWriter.AddWorksheet(sDoc, GetSimpleWorksheetDfn("MySecondSheet", "MySecondTable"));
 
             Validate(fileName);
         }

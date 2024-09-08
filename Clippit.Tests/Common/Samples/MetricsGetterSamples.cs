@@ -9,8 +9,7 @@ namespace Clippit.Tests.Common.Samples
         public MetricsGetterSamples(ITestOutputHelper log)
             : base(log) { }
 
-        private static string GetFilePath(string path) =>
-            Path.Combine("../../../Common/Samples/MetricsGetter/", path);
+        private static string GetFilePath(string path) => Path.Combine("../../../Common/Samples/MetricsGetter/", path);
 
         [Theory]
         [InlineData("ContentControls.docx", false)] // No text from content controls
@@ -20,10 +19,7 @@ namespace Clippit.Tests.Common.Samples
         public void Word(string fileName, bool includeTextInControls)
         {
             var fi = new FileInfo(GetFilePath(fileName));
-            var settings = new MetricsGetterSettings
-            {
-                IncludeTextInContentControls = includeTextInControls,
-            };
+            var settings = new MetricsGetterSettings { IncludeTextInContentControls = includeTextInControls };
             var metrics = MetricsGetter.GetMetrics(fi.FullName, settings);
             Log.WriteLine(metrics.ToString());
         }

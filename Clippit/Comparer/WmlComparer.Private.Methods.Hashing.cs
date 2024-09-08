@@ -21,11 +21,7 @@ namespace Clippit
             using var msSource = new MemoryStream();
             using var msAfterProc = new MemoryStream();
             msSource.Write(source.DocumentByteArray, 0, source.DocumentByteArray.Length);
-            msAfterProc.Write(
-                sourceAfterProc.DocumentByteArray,
-                0,
-                sourceAfterProc.DocumentByteArray.Length
-            );
+            msAfterProc.Write(sourceAfterProc.DocumentByteArray, 0, sourceAfterProc.DocumentByteArray.Length);
 
             using (var wDocSource = WordprocessingDocument.Open(msSource, true))
             using (var wDocAfterProc = WordprocessingDocument.Open(msAfterProc, true))
@@ -46,20 +42,16 @@ namespace Clippit
 
                 foreach (var blockLevelContent in blockLevelElements)
                 {
-                    var cloneBlockLevelContentForHashing =
-                        (XElement)CloneBlockLevelContentForHashing(
-                            wDocAfterProc.MainDocumentPart,
-                            blockLevelContent,
-                            true,
-                            settings
-                        );
+                    var cloneBlockLevelContentForHashing = (XElement)CloneBlockLevelContentForHashing(
+                        wDocAfterProc.MainDocumentPart,
+                        blockLevelContent,
+                        true,
+                        settings
+                    );
 
                     var shaString = cloneBlockLevelContentForHashing
                         .ToString(SaveOptions.DisableFormatting)
-                        .Replace(
-                            " xmlns=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\"",
-                            ""
-                        );
+                        .Replace(" xmlns=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\"", "");
 
                     var sha1Hash = WmlComparerUtil.SHA1HashStringForUTF8String(shaString);
                     var thisUnid = (string)blockLevelContent.Attribute(PtOpenXml.Unid);
@@ -68,9 +60,7 @@ namespace Clippit
                         if (sourceUnidDict.ContainsKey(thisUnid))
                         {
                             var correlatedBlockLevelContent = sourceUnidDict[thisUnid];
-                            correlatedBlockLevelContent.Add(
-                                new XAttribute(PtOpenXml.CorrelatedSHA1Hash, sha1Hash)
-                            );
+                            correlatedBlockLevelContent.Add(new XAttribute(PtOpenXml.CorrelatedSHA1Hash, sha1Hash));
                         }
                     }
                 }
@@ -127,20 +117,13 @@ namespace Clippit
                         element
                             .Nodes()
                             .Select(n =>
-                                CloneBlockLevelContentForHashing(
-                                    mainDocumentPart,
-                                    n,
-                                    includeRelatedParts,
-                                    settings
-                                )
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
                             )
                     );
 
                     var groupedRuns = clonedPara
                         .Elements()
-                        .GroupAdjacent(e =>
-                            e.Name == W.r && e.Elements().Count() == 1 && e.Element(W.t) != null
-                        );
+                        .GroupAdjacent(e => e.Name == W.r && e.Elements().Count() == 1 && e.Element(W.t) != null);
 
                     var clonedParaWithGroupedRuns = new XElement(
                         element.Name,
@@ -169,12 +152,7 @@ namespace Clippit
                         .Where(e => e.Name != W.rPr)
                         .Select(rc => new XElement(
                             W.r,
-                            CloneBlockLevelContentForHashing(
-                                mainDocumentPart,
-                                rc,
-                                includeRelatedParts,
-                                settings
-                            )
+                            CloneBlockLevelContentForHashing(mainDocumentPart, rc, includeRelatedParts, settings)
                         ));
                     return clonedRuns;
                 }
@@ -186,12 +164,7 @@ namespace Clippit
                         element
                             .Elements(W.tr)
                             .Select(n =>
-                                CloneBlockLevelContentForHashing(
-                                    mainDocumentPart,
-                                    n,
-                                    includeRelatedParts,
-                                    settings
-                                )
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
                             )
                     );
                     return clonedTable;
@@ -204,12 +177,7 @@ namespace Clippit
                         element
                             .Elements(W.tc)
                             .Select(n =>
-                                CloneBlockLevelContentForHashing(
-                                    mainDocumentPart,
-                                    n,
-                                    includeRelatedParts,
-                                    settings
-                                )
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
                             )
                     );
                     return clonedRow;
@@ -222,12 +190,7 @@ namespace Clippit
                         element
                             .Elements()
                             .Select(n =>
-                                CloneBlockLevelContentForHashing(
-                                    mainDocumentPart,
-                                    n,
-                                    includeRelatedParts,
-                                    settings
-                                )
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
                             )
                     );
                     return clonedCell;
@@ -240,12 +203,7 @@ namespace Clippit
                         element
                             .Elements(W.gridSpan)
                             .Select(n =>
-                                CloneBlockLevelContentForHashing(
-                                    mainDocumentPart,
-                                    n,
-                                    includeRelatedParts,
-                                    settings
-                                )
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
                             )
                     );
                     return clonedCellProps;
@@ -267,12 +225,7 @@ namespace Clippit
                         element
                             .Elements()
                             .Select(n =>
-                                CloneBlockLevelContentForHashing(
-                                    mainDocumentPart,
-                                    n,
-                                    includeRelatedParts,
-                                    settings
-                                )
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
                             )
                     );
                     return clonedTextbox;
@@ -290,11 +243,7 @@ namespace Clippit
                                 .Where(a => !AttributesToTrimWhenCloning.Contains(a.Name))
                                 .Select(a =>
                                 {
-                                    if (
-                                        !ComparisonUnitWord.RelationshipAttributeNames.Contains(
-                                            a.Name
-                                        )
-                                    )
+                                    if (!ComparisonUnitWord.RelationshipAttributeNames.Contains(a.Name))
                                         return a;
 
                                     var rId = (string)a;
@@ -304,9 +253,7 @@ namespace Clippit
                                     {
                                         var oxp = mainDocumentPart.GetPartById(rId);
                                         if (oxp == null)
-                                            throw new FileFormatException(
-                                                "Invalid WordprocessingML Document"
-                                            );
+                                            throw new FileFormatException("Invalid WordprocessingML Document");
 
                                         var anno = oxp.Annotation<PartSHA1HashAnnotation>();
                                         if (anno != null)
@@ -321,19 +268,16 @@ namespace Clippit
                                                 ba = br.ReadBytes((int)str.Length);
                                             }
 
-                                            var sha1 = WmlComparerUtil.SHA1HashStringForByteArray(
-                                                ba
-                                            );
+                                            var sha1 = WmlComparerUtil.SHA1HashStringForByteArray(ba);
                                             oxp.AddAnnotation(new PartSHA1HashAnnotation(sha1));
                                             return new XAttribute(a.Name, sha1);
                                         }
                                     }
                                     catch (ArgumentOutOfRangeException)
                                     {
-                                        var hr =
-                                            mainDocumentPart.HyperlinkRelationships.FirstOrDefault(
-                                                z => z.Id == rId
-                                            );
+                                        var hr = mainDocumentPart.HyperlinkRelationships.FirstOrDefault(z =>
+                                            z.Id == rId
+                                        );
                                         if (hr != null)
                                         {
                                             var str = hr.Uri.ToString();
@@ -341,10 +285,9 @@ namespace Clippit
                                         }
 
                                         // could be an external relationship
-                                        var er =
-                                            mainDocumentPart.ExternalRelationships.FirstOrDefault(
-                                                z => z.Id == rId
-                                            );
+                                        var er = mainDocumentPart.ExternalRelationships.FirstOrDefault(z =>
+                                            z.Id == rId
+                                        );
                                         if (er != null)
                                         {
                                             var str = er.Uri.ToString();
@@ -359,12 +302,7 @@ namespace Clippit
                             element
                                 .Nodes()
                                 .Select(n =>
-                                    CloneBlockLevelContentForHashing(
-                                        mainDocumentPart,
-                                        n,
-                                        includeRelatedParts,
-                                        settings
-                                    )
+                                    CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
                                 )
                         );
                         return newElement;
@@ -382,12 +320,7 @@ namespace Clippit
                         element
                             .Nodes()
                             .Select(n =>
-                                CloneBlockLevelContentForHashing(
-                                    mainDocumentPart,
-                                    n,
-                                    includeRelatedParts,
-                                    settings
-                                )
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
                             )
                     );
                 }
@@ -403,12 +336,7 @@ namespace Clippit
                         element
                             .Nodes()
                             .Select(n =>
-                                CloneBlockLevelContentForHashing(
-                                    mainDocumentPart,
-                                    n,
-                                    includeRelatedParts,
-                                    settings
-                                )
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
                             )
                     );
                     return o;
@@ -422,12 +350,7 @@ namespace Clippit
                         element
                             .Nodes()
                             .Select(n =>
-                                CloneBlockLevelContentForHashing(
-                                    mainDocumentPart,
-                                    n,
-                                    includeRelatedParts,
-                                    settings
-                                )
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
                             )
                     );
                     return o;
@@ -437,18 +360,11 @@ namespace Clippit
                 {
                     return new XElement(
                         element.Name,
-                        element
-                            .Attributes()
-                            .Where(a => a.Name.Namespace != PtOpenXml.pt && a.Name != "id"),
+                        element.Attributes().Where(a => a.Name.Namespace != PtOpenXml.pt && a.Name != "id"),
                         element
                             .Nodes()
                             .Select(n =>
-                                CloneBlockLevelContentForHashing(
-                                    mainDocumentPart,
-                                    n,
-                                    includeRelatedParts,
-                                    settings
-                                )
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
                             )
                     );
                 }
@@ -462,12 +378,7 @@ namespace Clippit
                     element
                         .Nodes()
                         .Select(n =>
-                            CloneBlockLevelContentForHashing(
-                                mainDocumentPart,
-                                n,
-                                includeRelatedParts,
-                                settings
-                            )
+                            CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
                         )
                 );
             }

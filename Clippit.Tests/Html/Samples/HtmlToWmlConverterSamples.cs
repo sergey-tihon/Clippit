@@ -44,22 +44,13 @@ namespace Clippit.Tests.Html.Samples
             var count = 1;
             foreach (var customer in data.Elements("Customer"))
             {
-                var assembledDoc = new FileInfo(
-                    Path.Combine(TempDir, $"Letter-{count++:0000}.docx")
-                );
+                var assembledDoc = new FileInfo(Path.Combine(TempDir, $"Letter-{count++:0000}.docx"));
                 Log.WriteLine("Generating {0}", assembledDoc.Name);
-                var wmlAssembledDoc = DocumentAssembler.AssembleDocument(
-                    wmlDoc,
-                    customer,
-                    out var templateError
-                );
+                var wmlAssembledDoc = DocumentAssembler.AssembleDocument(wmlDoc, customer, out var templateError);
                 if (templateError)
                 {
                     Log.WriteLine("Errors in template.");
-                    Log.WriteLine(
-                        "See {0} to determine the errors in the template.",
-                        assembledDoc.Name
-                    );
+                    Log.WriteLine("See {0} to determine the errors in the template.", assembledDoc.Name);
                 }
                 wmlAssembledDoc.SaveAs(assembledDoc.FullName);
 
@@ -79,14 +70,9 @@ namespace Clippit.Tests.Html.Samples
             Log.WriteLine("Converting " + sourceHtmlFi.Name);
             var sourceImageDi = new DirectoryInfo(destinationDir);
 
-            var destCssFi = new FileInfo(
-                Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(".html", "-2.css"))
-            );
+            var destCssFi = new FileInfo(Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(".html", "-2.css")));
             var destDocxFi = new FileInfo(
-                Path.Combine(
-                    destinationDir,
-                    sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx")
-                )
+                Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx"))
             );
             var annotatedHtmlFi = new FileInfo(
                 Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt"))
@@ -95,8 +81,7 @@ namespace Clippit.Tests.Html.Samples
             var html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceHtmlFi);
 
             var usedAuthorCss = HtmlToWmlConverter.CleanUpCss(
-                (string)
-                    html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style")
+                (string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style")
             );
             File.WriteAllText(destCssFi.FullName, usedAuthorCss);
 
@@ -203,10 +188,7 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
             "Hang Glider",
         };
 
-        private static XElement GenerateDataFromDataSource(
-            FileInfo dataFi,
-            int numberOfDocumentsToGenerate
-        )
+        private static XElement GenerateDataFromDataSource(FileInfo dataFi, int numberOfDocumentsToGenerate)
         {
             var customers = new XElement("Customers");
             var r = new Random();
@@ -226,10 +208,7 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
                     var order = new XElement(
                         "Order",
                         new XAttribute("Number", j + 1),
-                        new XElement(
-                            "ProductDescription",
-                            s_productNames[r.Next(s_productNames.Length)]
-                        ),
+                        new XElement("ProductDescription", s_productNames[r.Next(s_productNames.Length)]),
                         new XElement("Quantity", r.Next(10)),
                         new XElement("OrderDate", "September 26, 2015")
                     );
@@ -251,17 +230,14 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
             var destFileName = new FileInfo(fi.Name.Replace(".docx", ".html"));
             destFileName = new FileInfo(Path.Combine(TempDir, destFileName.Name));
 
-            var imageDirectoryName =
-                destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
+            var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
             var imageCounter = 0;
 
             var pageTitle = fi.FullName;
             var part = wDoc.CoreFilePropertiesPart;
             if (part != null)
             {
-                pageTitle =
-                    (string)part.GetXDocument().Descendants(DC.title).FirstOrDefault()
-                    ?? fi.FullName;
+                pageTitle = (string)part.GetXDocument().Descendants(DC.title).FirstOrDefault() ?? fi.FullName;
             }
 
             // TODO: Determine max-width from size of content area.
@@ -276,11 +252,7 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
                 ImageHandler = imageInfo =>
                 {
                     ++imageCounter;
-                    return ImageHelper.DefaultImageHandler(
-                        imageInfo,
-                        imageDirectoryName,
-                        imageCounter
-                    );
+                    return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
                 },
             };
             var htmlElement = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);

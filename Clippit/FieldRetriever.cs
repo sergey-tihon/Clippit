@@ -220,10 +220,7 @@ namespace Clippit
                             }
                             else
                             {
-                                cachedAnnotationInformation.Add(
-                                    item.Id,
-                                    new List<XElement>() { desc }
-                                );
+                                cachedAnnotationInformation.Add(item.Id, new List<XElement>() { desc });
                             }
                         }
                     }

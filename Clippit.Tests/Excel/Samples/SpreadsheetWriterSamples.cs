@@ -44,11 +44,7 @@ namespace Clippit.Tests.Excel.Samples
                             {
                                 Cells = new[]
                                 {
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.String,
-                                        Value = "Eric",
-                                    },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "Eric" },
                                     new CellDfn { CellDataType = CellDataType.Number, Value = 50 },
                                     new CellDfn
                                     {
@@ -62,11 +58,7 @@ namespace Clippit.Tests.Excel.Samples
                             {
                                 Cells = new[]
                                 {
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.String,
-                                        Value = "Bob",
-                                    },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "Bob" },
                                     new CellDfn { CellDataType = CellDataType.Number, Value = 42 },
                                     new CellDfn
                                     {
@@ -112,43 +104,23 @@ namespace Clippit.Tests.Excel.Samples
                             {
                                 Cells = new[]
                                 {
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.String,
-                                        Value = "Boolean",
-                                    },
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.Boolean,
-                                        Value = true,
-                                    },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "Boolean" },
+                                    new CellDfn { CellDataType = CellDataType.Boolean, Value = true },
                                 },
                             },
                             new RowDfn
                             {
                                 Cells = new[]
                                 {
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.String,
-                                        Value = "Boolean",
-                                    },
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.Boolean,
-                                        Value = false,
-                                    },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "Boolean" },
+                                    new CellDfn { CellDataType = CellDataType.Boolean, Value = false },
                                 },
                             },
                             new RowDfn
                             {
                                 Cells = new[]
                                 {
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.String,
-                                        Value = "String",
-                                    },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "String" },
                                     new CellDfn
                                     {
                                         CellDataType = CellDataType.String,
@@ -161,11 +133,7 @@ namespace Clippit.Tests.Excel.Samples
                             {
                                 Cells = new[]
                                 {
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.String,
-                                        Value = "int",
-                                    },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "int" },
                                     new CellDfn { CellDataType = CellDataType.Number, Value = 100 },
                                 },
                             },
@@ -173,112 +141,56 @@ namespace Clippit.Tests.Excel.Samples
                             {
                                 Cells = new[]
                                 {
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.String,
-                                        Value = "int?",
-                                    },
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.Number,
-                                        Value = (int?)100,
-                                    },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "int?" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = (int?)100 },
                                 },
                             },
                             new RowDfn
                             {
                                 Cells = new[]
                                 {
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.String,
-                                        Value = "int? (is null)",
-                                    },
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.Number,
-                                        Value = null,
-                                    },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "int? (is null)" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = null },
                                 },
                             },
                             new RowDfn
                             {
                                 Cells = new[]
                                 {
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.String,
-                                        Value = "uint",
-                                    },
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.Number,
-                                        Value = (uint)101,
-                                    },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "uint" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = (uint)101 },
                                 },
                             },
                             new RowDfn
                             {
                                 Cells = new[]
                                 {
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.String,
-                                        Value = "long",
-                                    },
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.Number,
-                                        Value = long.MaxValue,
-                                    },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "long" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = long.MaxValue },
                                 },
                             },
                             new RowDfn
                             {
                                 Cells = new[]
                                 {
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.String,
-                                        Value = "float",
-                                    },
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.Number,
-                                        Value = (float)123.45,
-                                    },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "float" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = (float)123.45 },
                                 },
                             },
                             new RowDfn
                             {
                                 Cells = new[]
                                 {
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.String,
-                                        Value = "double",
-                                    },
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.Number,
-                                        Value = 123.45,
-                                    },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "double" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = 123.45 },
                                 },
                             },
                             new RowDfn
                             {
                                 Cells = new[]
                                 {
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.String,
-                                        Value = "decimal",
-                                    },
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.Number,
-                                        Value = (decimal)123.45,
-                                    },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "decimal" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = (decimal)123.45 },
                                 },
                             },
                             new RowDfn

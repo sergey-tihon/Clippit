@@ -17,14 +17,11 @@ namespace Clippit.Excel.Builder
                 Bold = bold,
             };
 
-        public static CellDfn Number(int value) =>
-            new() { CellDataType = CellDataType.Number, Value = value };
+        public static CellDfn Number(int value) => new() { CellDataType = CellDataType.Number, Value = value };
 
-        public static CellDfn Number(long value) =>
-            new() { CellDataType = CellDataType.Number, Value = value };
+        public static CellDfn Number(long value) => new() { CellDataType = CellDataType.Number, Value = value };
 
-        public static CellDfn Bool(bool? value) =>
-            new() { CellDataType = CellDataType.Boolean, Value = value };
+        public static CellDfn Bool(bool? value) => new() { CellDataType = CellDataType.Boolean, Value = value };
 
         public static CellDfn Date(DateTime? value)
         {

@@ -41,10 +41,7 @@ namespace Clippit.Html
         public string CssOperatorString
         {
             get { return this.m_op?.ToString(); }
-            set
-            {
-                this.m_op = (CssAttributeOperator)Enum.Parse(typeof(CssAttributeOperator), value);
-            }
+            set { this.m_op = (CssAttributeOperator)Enum.Parse(typeof(CssAttributeOperator), value); }
         }
 
         public string Value { get; set; }
@@ -199,9 +196,7 @@ namespace Clippit.Html
                 sb.Append(med.ToString());
             }
 
-            var HasBlock = (
-                this.Declarations.Count > 0 || this.Directives.Count > 0 || this.RuleSets.Count > 0
-            );
+            var HasBlock = (this.Declarations.Count > 0 || this.Directives.Count > 0 || this.RuleSets.Count > 0);
 
             if (!HasBlock)
             {
@@ -399,9 +394,7 @@ namespace Clippit.Html
                 }
                 else
                 {
-                    sb.Append(
-                        $"{(term.Separator.HasValue ? term.Separator.Value.ToString() : "")} "
-                    );
+                    sb.Append($"{(term.Separator.HasValue ? term.Separator.Value.ToString() : "")} ");
                 }
                 sb.Append(term);
             }
@@ -428,14 +421,7 @@ namespace Clippit.Html
                 var term = length.Terms.First();
                 if (term.Unit == CssUnit.PT)
                 {
-                    if (
-                        double.TryParse(
-                            term.Value,
-                            NumberStyles.Float,
-                            CultureInfo.InvariantCulture,
-                            out var ptValue
-                        )
-                    )
+                    if (double.TryParse(term.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var ptValue))
                     {
                         if (term.Sign == '-')
                             ptValue = -ptValue;
@@ -547,10 +533,8 @@ namespace Clippit.Html
             get
             {
                 if (
-                    (
-                        (Type == CssValueType.Hex)
-                        || (Type == CssValueType.String && Value.StartsWith("#"))
-                    ) && (Value.Length == 6 || (Value.Length == 7 && Value.StartsWith("#")))
+                    ((Type == CssValueType.Hex) || (Type == CssValueType.String && Value.StartsWith("#")))
+                    && (Value.Length == 6 || (Value.Length == 7 && Value.StartsWith("#")))
                 )
                 {
                     var hex = true;
@@ -1007,10 +991,7 @@ namespace Clippit.Html
             get
             {
                 if (
-                    (
-                        (Type == CssTermType.Hex)
-                        || (Type == CssTermType.String && Value.StartsWith("#"))
-                    )
+                    ((Type == CssTermType.Hex) || (Type == CssTermType.String && Value.StartsWith("#")))
                     && (Value.Length is 6 or 3 || (Value.Length is 7 or 4 && Value.StartsWith("#")))
                 )
                 {
@@ -1063,14 +1044,8 @@ namespace Clippit.Html
                 else if (Type == CssTermType.Function)
                 {
                     if (
-                        (
-                            Function.Name.ToLower().Equals("rgb")
-                            && Function.Expression.Terms.Count == 3
-                        )
-                        || (
-                            Function.Name.ToLower().Equals("rgba")
-                            && Function.Expression.Terms.Count == 4
-                        )
+                        (Function.Name.ToLower().Equals("rgb") && Function.Expression.Terms.Count == 3)
+                        || (Function.Name.ToLower().Equals("rgba") && Function.Expression.Terms.Count == 4)
                     )
                     {
                         for (var i = 0; i < Function.Expression.Terms.Count; i++)
@@ -1083,14 +1058,8 @@ namespace Clippit.Html
                         return true;
                     }
                     else if (
-                        (
-                            Function.Name.ToLower().Equals("hsl")
-                            && Function.Expression.Terms.Count == 3
-                        )
-                        || (
-                            Function.Name.ToLower().Equals("hsla")
-                            && Function.Expression.Terms.Count == 4
-                        )
+                        (Function.Name.ToLower().Equals("hsl") && Function.Expression.Terms.Count == 3)
+                        || (Function.Name.ToLower().Equals("hsla") && Function.Expression.Terms.Count == 4)
                     )
                     {
                         for (var i = 0; i < Function.Expression.Terms.Count; i++)
@@ -1147,10 +1116,7 @@ namespace Clippit.Html
             {
                 if (
                     (Function.Name.ToLower().Equals("rgb") && Function.Expression.Terms.Count == 3)
-                    || (
-                        Function.Name.ToLower().Equals("rgba")
-                        && Function.Expression.Terms.Count == 4
-                    )
+                    || (Function.Name.ToLower().Equals("rgba") && Function.Expression.Terms.Count == 4)
                 )
                 {
                     int fr = 0,
@@ -1499,11 +1465,7 @@ namespace Clippit.Html
 
         public static bool operator ==(HueSatVal left, HueSatVal right)
         {
-            return (
-                left.Hue == right.Hue
-                && left.Value == right.Value
-                && left.Saturation == right.Saturation
-            );
+            return (left.Hue == right.Hue && left.Value == right.Value && left.Saturation == right.Saturation);
         }
 
         public override bool Equals(object obj)
@@ -1638,22 +1600,14 @@ namespace Clippit.Html
         private void SyntaxErr(int n)
         {
             if (errDist >= minErrDist)
-                m_errors.SyntaxError(
-                    m_lookaheadToken.m_tokenLine,
-                    m_lookaheadToken.m_tokenColumn,
-                    n
-                );
+                m_errors.SyntaxError(m_lookaheadToken.m_tokenLine, m_lookaheadToken.m_tokenColumn, n);
             errDist = 0;
         }
 
         public void SemanticErr(string msg)
         {
             if (errDist >= minErrDist)
-                m_errors.SemanticError(
-                    m_lastRecognizedToken.m_tokenLine,
-                    m_lastRecognizedToken.m_tokenColumn,
-                    msg
-                );
+                m_errors.SemanticError(m_lastRecognizedToken.m_tokenLine, m_lastRecognizedToken.m_tokenColumn, msg);
             errDist = 0;
         }
 
@@ -2013,10 +1967,7 @@ namespace Clippit.Html
                 {
                     Get();
                     qs += m_lastRecognizedToken.m_tokenValue;
-                    if (
-                        m_lookaheadToken.m_tokenValue.Equals("'")
-                        && !m_lastRecognizedToken.m_tokenValue.Equals("\\")
-                    )
+                    if (m_lookaheadToken.m_tokenValue.Equals("'") && !m_lastRecognizedToken.m_tokenValue.Equals("\\"))
                     {
                         break;
                     }
@@ -2030,10 +1981,7 @@ namespace Clippit.Html
                 {
                     Get();
                     qs += m_lastRecognizedToken.m_tokenValue;
-                    if (
-                        m_lookaheadToken.m_tokenValue.Equals("\"")
-                        && !m_lastRecognizedToken.m_tokenValue.Equals("\\")
-                    )
+                    if (m_lookaheadToken.m_tokenValue.Equals("\"") && !m_lastRecognizedToken.m_tokenValue.Equals("\\"))
                     {
                         break;
                     }
@@ -4433,12 +4381,7 @@ namespace Clippit.Html
         {
             try
             {
-                Stream stream = new FileStream(
-                    fileName,
-                    FileMode.Open,
-                    FileAccess.Read,
-                    FileShare.Read
-                );
+                Stream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
                 m_scannerBuffer = new CssBuffer(stream, false);
                 Init();
             }
@@ -4670,11 +4613,7 @@ namespace Clippit.Html
                     else
                     {
                         m_currentToken.m_tokenKind = 1;
-                        m_currentToken.m_tokenValue = new string(
-                            m_textOfCurrentToken,
-                            0,
-                            m_lengthOfCurrentToken
-                        );
+                        m_currentToken.m_tokenValue = new string(m_textOfCurrentToken, 0, m_lengthOfCurrentToken);
                         CheckLiteral();
                         return m_currentToken;
                     }
@@ -4964,20 +4903,12 @@ namespace Clippit.Html
                     else
                     {
                         m_currentToken.m_tokenKind = 1;
-                        m_currentToken.m_tokenValue = new string(
-                            m_textOfCurrentToken,
-                            0,
-                            m_lengthOfCurrentToken
-                        );
+                        m_currentToken.m_tokenValue = new string(m_textOfCurrentToken, 0, m_lengthOfCurrentToken);
                         CheckLiteral();
                         return m_currentToken;
                     }
             }
-            m_currentToken.m_tokenValue = new string(
-                m_textOfCurrentToken,
-                0,
-                m_lengthOfCurrentToken
-            );
+            m_currentToken.m_tokenValue = new string(m_textOfCurrentToken, 0, m_lengthOfCurrentToken);
             return m_currentToken;
         }
 

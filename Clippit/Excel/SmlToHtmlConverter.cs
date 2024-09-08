@@ -105,29 +105,20 @@ namespace Clippit.Excel
                 return new XElement(
                     element.Name,
                     element.Attributes(),
-                    element
-                        .Nodes()
-                        .Select(n => ConvertToHtmlTransform(sDoc, htmlConverterSettings, n))
+                    element.Nodes().Select(n => ConvertToHtmlTransform(sDoc, htmlConverterSettings, n))
                 );
             }
             return node;
         }
 
-        private static void ReifyStylesAndClasses(
-            SmlToHtmlConverterSettings htmlConverterSettings,
-            XElement xhtml
-        )
+        private static void ReifyStylesAndClasses(SmlToHtmlConverterSettings htmlConverterSettings, XElement xhtml)
         {
             if (htmlConverterSettings.FabricateCssClasses)
             {
                 var usedCssClassNames = new HashSet<string>();
                 var elementsThatNeedClasses = xhtml
                     .DescendantsAndSelf()
-                    .Select(d => new
-                    {
-                        Element = d,
-                        Styles = d.Annotation<Dictionary<string, string>>(),
-                    })
+                    .Select(d => new { Element = d, Styles = d.Annotation<Dictionary<string, string>>() })
                     .Where(z => z.Styles != null);
                 var augmented = elementsThatNeedClasses
                     .Select(p => new
@@ -136,9 +127,7 @@ namespace Clippit.Excel
                         p.Styles,
                         StylesString = p.Element.Name.LocalName
                             + "|"
-                            + p.Styles.OrderBy(k => k.Key)
-                                .Select(s => $"{s.Key}: {s.Value};")
-                                .StringConcatenate(),
+                            + p.Styles.OrderBy(k => k.Key).Select(s => $"{s.Key}: {s.Value};").StringConcatenate(),
                     })
                     .GroupBy(p => p.StylesString)
                     .ToList();
@@ -152,8 +141,7 @@ namespace Clippit.Excel
                     var styles = firstOne.Styles;
                     if (styles.ContainsKey("PtStyleName"))
                     {
-                        classNameToUse =
-                            htmlConverterSettings.CssClassPrefix + styles["PtStyleName"];
+                        classNameToUse = htmlConverterSettings.CssClassPrefix + styles["PtStyleName"];
                         if (usedCssClassNames.Contains(classNameToUse))
                         {
                             classNameToUse =
@@ -166,19 +154,11 @@ namespace Clippit.Excel
                     }
                     else
                     {
-                        classNameToUse =
-                            htmlConverterSettings.CssClassPrefix
-                            + classCounter.ToString().Substring(1);
+                        classNameToUse = htmlConverterSettings.CssClassPrefix + classCounter.ToString().Substring(1);
                         classCounter++;
                     }
                     usedCssClassNames.Add(classNameToUse);
-                    sb.Append(
-                        firstOne.Element.Name.LocalName
-                            + "."
-                            + classNameToUse
-                            + " {"
-                            + Environment.NewLine
-                    );
+                    sb.Append(firstOne.Element.Name.LocalName + "." + classNameToUse + " {" + Environment.NewLine);
                     foreach (var st in firstOne.Styles.Where(s => s.Key != "PtStyleName"))
                     {
                         var s = "    " + st.Key + ": " + st.Value + ";" + Environment.NewLine;
@@ -189,8 +169,7 @@ namespace Clippit.Excel
                     foreach (var gc in grp)
                         gc.Element.Add(classAtt);
                 }
-                var styleValue =
-                    htmlConverterSettings.GeneralCss + sb + htmlConverterSettings.AdditionalCss;
+                var styleValue = htmlConverterSettings.GeneralCss + sb + htmlConverterSettings.AdditionalCss;
 
                 SetStyleElementValue(xhtml, styleValue);
             }
@@ -198,10 +177,7 @@ namespace Clippit.Excel
             {
                 // Previously, the h:style element was not added at this point. However,
                 // at least the General CSS will contain important settings.
-                SetStyleElementValue(
-                    xhtml,
-                    htmlConverterSettings.GeneralCss + htmlConverterSettings.AdditionalCss
-                );
+                SetStyleElementValue(xhtml, htmlConverterSettings.GeneralCss + htmlConverterSettings.AdditionalCss);
 
                 foreach (var d in xhtml.DescendantsAndSelf())
                 {

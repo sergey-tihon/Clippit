@@ -5,33 +5,9 @@ namespace Clippit.Word
 {
     internal class ListItemTextGetter_Default
     {
-        private static readonly string[] RomanOnes =
-        {
-            "",
-            "I",
-            "II",
-            "III",
-            "IV",
-            "V",
-            "VI",
-            "VII",
-            "VIII",
-            "IX",
-        };
+        private static readonly string[] RomanOnes = { "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" };
 
-        private static readonly string[] RomanTens =
-        {
-            "",
-            "X",
-            "XX",
-            "XXX",
-            "XL",
-            "L",
-            "LX",
-            "LXX",
-            "LXXX",
-            "XC",
-        };
+        private static readonly string[] RomanTens = { "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC" };
 
         private static readonly string[] RomanHundreds =
         {
@@ -135,11 +111,7 @@ namespace Clippit.Word
             "ninetieth",
         };
 
-        public static string GetListItemText(
-            string languageCultureName,
-            int levelNumber,
-            string numFmt
-        )
+        public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
         {
             switch (numFmt)
             {
@@ -157,10 +129,7 @@ namespace Clippit.Word
                     var tens = (levelNumber % 100) / 10;
                     var hundreds = (levelNumber % 1000) / 100;
                     var thousands = levelNumber / 1000;
-                    return RomanThousands[thousands]
-                        + RomanHundreds[hundreds]
-                        + RomanTens[tens]
-                        + RomanOnes[ones];
+                    return RomanThousands[thousands] + RomanHundreds[hundreds] + RomanTens[tens] + RomanOnes[ones];
                 }
                 case "lowerRoman":
                 {
@@ -169,10 +138,7 @@ namespace Clippit.Word
                     var hundreds = (levelNumber % 1000) / 100;
                     var thousands = levelNumber / 1000;
                     return (
-                        RomanThousands[thousands]
-                        + RomanHundreds[hundreds]
-                        + RomanTens[tens]
-                        + RomanOnes[ones]
+                        RomanThousands[thousands] + RomanHundreds[hundreds] + RomanTens[tens] + RomanOnes[ones]
                     ).ToLower();
                 }
                 case "upperLetter":
@@ -200,11 +166,7 @@ namespace Clippit.Word
                 case "ordinal":
                 {
                     string suffix;
-                    if (
-                        levelNumber % 100 == 11
-                        || levelNumber % 100 == 12
-                        || levelNumber % 100 == 13
-                    )
+                    if (levelNumber % 100 == 11 || levelNumber % 100 == 12 || levelNumber % 100 == 13)
                         suffix = "th";
                     else
                         suffix = (levelNumber % 10) switch

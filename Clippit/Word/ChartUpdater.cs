@@ -59,11 +59,7 @@ namespace Clippit.Word
 
     public class ChartUpdater
     {
-        public static bool UpdateChart(
-            WordprocessingDocument wDoc,
-            string contentControlTag,
-            ChartData chartData
-        )
+        public static bool UpdateChart(WordprocessingDocument wDoc, string contentControlTag, ChartData chartData)
         {
             var mainDocumentPart = wDoc.MainDocumentPart;
             var mdXDoc = mainDocumentPart.GetXDocument();
@@ -80,9 +76,7 @@ namespace Clippit.Word
                 {
                     var chartPart = (ChartPart)mainDocumentPart.GetPartById(chartRid);
                     UpdateChart(chartPart, chartData);
-                    var newContent = cc.Elements(W.sdtContent)
-                        .Elements()
-                        .Select(e => new XElement(e));
+                    var newContent = cc.Elements(W.sdtContent).Elements().Select(e => new XElement(e));
                     cc.ReplaceWith(newContent);
                     mainDocumentPart.PutXDocument();
                     return true;
@@ -168,10 +162,7 @@ namespace Clippit.Word
                     {
                         XElement newFormula = null;
                         if (sheetName != null)
-                            newFormula = new XElement(
-                                C.f,
-                                $"{sheetName}!$A$2:$A${chartData.CategoryNames.Length + 1}"
-                            );
+                            newFormula = new XElement(C.f, $"{sheetName}!$A$2:$A${chartData.CategoryNames.Length + 1}");
                         if (chartData.CategoryDataType == ChartDataType.String)
                         {
                             cat = new XElement(
@@ -181,10 +172,7 @@ namespace Clippit.Word
                                     newFormula,
                                     new XElement(
                                         C.strCache,
-                                        new XElement(
-                                            C.ptCount,
-                                            new XAttribute("val", chartData.CategoryNames.Length)
-                                        ),
+                                        new XElement(C.ptCount, new XAttribute("val", chartData.CategoryNames.Length)),
                                         chartData.CategoryNames.Select(
                                             (string cn, int ci) =>
                                             {
@@ -209,14 +197,8 @@ namespace Clippit.Word
                                     newFormula,
                                     new XElement(
                                         C.numCache,
-                                        new XElement(
-                                            C.formatCode,
-                                            FormatCodes[chartData.CategoryFormatCode]
-                                        ),
-                                        new XElement(
-                                            C.ptCount,
-                                            new XAttribute("val", chartData.CategoryNames.Length)
-                                        ),
+                                        new XElement(C.formatCode, FormatCodes[chartData.CategoryFormatCode]),
+                                        new XElement(C.ptCount, new XAttribute("val", chartData.CategoryNames.Length)),
                                         chartData.CategoryNames.Select(
                                             (string cn, int ci) =>
                                             {
@@ -241,10 +223,7 @@ namespace Clippit.Word
                                 C.cat,
                                 new XElement(
                                     C.strLit,
-                                    new XElement(
-                                        C.ptCount,
-                                        new XAttribute("val", chartData.CategoryNames.Length)
-                                    ),
+                                    new XElement(C.ptCount, new XAttribute("val", chartData.CategoryNames.Length)),
                                     chartData.CategoryNames.Select(
                                         (string cn, int ci) =>
                                         {
@@ -265,10 +244,7 @@ namespace Clippit.Word
                                 C.cat,
                                 new XElement(
                                     C.numLit,
-                                    new XElement(
-                                        C.ptCount,
-                                        new XAttribute("val", chartData.CategoryNames.Length)
-                                    ),
+                                    new XElement(C.ptCount, new XAttribute("val", chartData.CategoryNames.Length)),
                                     chartData.CategoryNames.Select(
                                         (string cn, int ci) =>
                                         {
@@ -293,10 +269,7 @@ namespace Clippit.Word
                             C.val,
                             new XElement(
                                 C.numLit,
-                                new XElement(
-                                    C.ptCount,
-                                    new XAttribute("val", chartData.CategoryNames.Length)
-                                ),
+                                new XElement(C.ptCount, new XAttribute("val", chartData.CategoryNames.Length)),
                                 chartData.CategoryNames.Select(
                                     (string cn, int ci) =>
                                     {
@@ -331,10 +304,7 @@ namespace Clippit.Word
                                 new XElement(
                                     C.numCache,
                                     sheetName != null ? numRef.Descendants(C.formatCode) : null,
-                                    new XElement(
-                                        C.ptCount,
-                                        new XAttribute("val", chartData.CategoryNames.Length)
-                                    ),
+                                    new XElement(C.ptCount, new XAttribute("val", chartData.CategoryNames.Length)),
                                     chartData.CategoryNames.Select(
                                         (string cn, int ci) =>
                                         {
@@ -357,10 +327,7 @@ namespace Clippit.Word
                     {
                         XElement newFormula = null;
                         if (sheetName != null)
-                            newFormula = new XElement(
-                                C.f,
-                                $"{sheetName}!${SpreadsheetMLUtil.IntToColumnId(si + 1)}$1"
-                            );
+                            newFormula = new XElement(C.f, $"{sheetName}!${SpreadsheetMLUtil.IntToColumnId(si + 1)}$1");
                         tx = new XElement(
                             C.tx,
                             new XElement(
@@ -427,11 +394,7 @@ namespace Clippit.Word
                             firstSeries.Elements(C.extLst)
                         );
                     }
-                    else if (
-                        chartType == C.line3DChart
-                        || chartType == C.lineChart
-                        || chartType == C.stockChart
-                    )
+                    else if (chartType == C.line3DChart || chartType == C.lineChart || chartType == C.stockChart)
                     {
                         newSer = new XElement(
                             C.ser,
@@ -514,8 +477,7 @@ namespace Clippit.Word
             if (firstFormula == null)
                 return;
             var sheet = firstFormula.Split('!')[0];
-            var embeddedSpreadsheetRid = (string)
-                root.Descendants(C.externalData).Attributes(R.id).FirstOrDefault();
+            var embeddedSpreadsheetRid = (string)root.Descendants(C.externalData).Attributes(R.id).FirstOrDefault();
             if (embeddedSpreadsheetRid == null)
                 return;
             var embeddedSpreadsheet = chartPart.GetPartById(embeddedSpreadsheetRid);
@@ -543,11 +505,7 @@ namespace Clippit.Word
 
                     var categoryStyleId = 0;
                     if (chartData.CategoryFormatCode != 0)
-                        categoryStyleId = AddDxfToDxfs(
-                            xdSheet,
-                            xdStyle,
-                            chartData.CategoryFormatCode
-                        );
+                        categoryStyleId = AddDxfToDxfs(xdSheet, xdStyle, chartData.CategoryFormatCode);
                     stylePart.PutXDocument();
 
                     var firstRow = new XElement(
@@ -560,11 +518,7 @@ namespace Clippit.Word
                                 S.c,
                                 new XAttribute("r", "A1"),
                                 new XAttribute("t", "str"),
-                                new XElement(
-                                    S.v,
-                                    new XAttribute(XNamespace.Xml + "space", "preserve"),
-                                    " "
-                                )
+                                new XElement(S.v, new XAttribute(XNamespace.Xml + "space", "preserve"), " ")
                             ),
                         }.Concat(
                             chartData.SeriesNames.Select(
@@ -590,9 +544,7 @@ namespace Clippit.Word
                                     new XElement(
                                         S.c,
                                         new XAttribute("r", RowColToString(r + 1, 0)),
-                                        categoryStyleId != 0
-                                            ? new XAttribute("s", categoryStyleId)
-                                            : null,
+                                        categoryStyleId != 0 ? new XAttribute("s", categoryStyleId) : null,
                                         chartData.CategoryDataType == ChartDataType.String
                                             ? new XAttribute("t", "str")
                                             : null,
@@ -606,10 +558,7 @@ namespace Clippit.Word
                                             {
                                                 var cell = new XElement(
                                                     S.c,
-                                                    new XAttribute(
-                                                        "r",
-                                                        RowColToString(r + 1, ci + 1)
-                                                    ),
+                                                    new XAttribute("r", RowColToString(r + 1, ci + 1)),
                                                     new XElement(S.v, chartData.Values[ci][r])
                                                 );
                                                 return cell;
@@ -626,11 +575,7 @@ namespace Clippit.Word
                     sheetPart.PutXDocument();
 
                     var tablePartRid = (string)
-                        xdSheet
-                            .Root.Elements(S.tableParts)
-                            .Elements(S.tablePart)
-                            .Attributes(R.id)
-                            .FirstOrDefault();
+                        xdSheet.Root.Elements(S.tableParts).Elements(S.tablePart).Attributes(R.id).FirstOrDefault();
                     if (tablePartRid != null)
                     {
                         var partTable = sheetPart.GetPartById(tablePartRid);
@@ -643,11 +588,7 @@ namespace Clippit.Word
                             new XAttribute("count", chartData.SeriesNames.Length + 1),
                             new[]
                             {
-                                new XElement(
-                                    S.tableColumn,
-                                    new XAttribute("id", 1),
-                                    new XAttribute("name", " ")
-                                ),
+                                new XElement(S.tableColumn, new XAttribute("id", 1), new XAttribute("name", " ")),
                             }.Concat(
                                 chartData.SeriesNames.Select(
                                     (cn, ci) =>
@@ -721,10 +662,7 @@ namespace Clippit.Word
             if (element != null)
             {
                 if (element.Name == A.schemeClr && (string)element.Attribute("val") == "accent1")
-                    return new XElement(
-                        A.schemeClr,
-                        new XAttribute("val", "accent" + accentNumber)
-                    );
+                    return new XElement(A.schemeClr, new XAttribute("val", "accent" + accentNumber));
 
                 return new XElement(
                     element.Name,
@@ -735,19 +673,11 @@ namespace Clippit.Word
             return node;
         }
 
-        public static bool UpdateChart(
-            PresentationDocument pDoc,
-            int slideNumber,
-            ChartData chartData
-        )
+        public static bool UpdateChart(PresentationDocument pDoc, int slideNumber, ChartData chartData)
         {
             var presentationPart = pDoc.PresentationPart;
             var pXDoc = presentationPart.GetXDocument();
-            var sldIdElement = pXDoc
-                .Root.Elements(P.sldIdLst)
-                .Elements(P.sldId)
-                .Skip(slideNumber - 1)
-                .FirstOrDefault();
+            var sldIdElement = pXDoc.Root.Elements(P.sldIdLst).Elements(P.sldId).Skip(slideNumber - 1).FirstOrDefault();
             if (sldIdElement != null)
             {
                 var rId = (string)sldIdElement.Attribute(R.id);

@@ -21,10 +21,7 @@ namespace Clippit.Tests
     {
         protected static void CreateEmptyWordprocessingDocument(Stream stream)
         {
-            using var wordDocument = WordprocessingDocument.Create(
-                stream,
-                WordprocessingDocumentType.Document
-            );
+            using var wordDocument = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document);
             var part = wordDocument.AddMainDocumentPart();
             part.Document = new Document(new Body());
         }
@@ -85,19 +82,11 @@ namespace Clippit.Tests
                 Assert.True(docPrIds.Add(item.Attribute(NoNamespace.id).Value));
 
             if (doc.MainDocumentPart.FootnotesPart is not null)
-                foreach (
-                    var item in doc
-                        .MainDocumentPart.FootnotesPart.GetXDocument()
-                        .Descendants(WP.docPr)
-                )
+                foreach (var item in doc.MainDocumentPart.FootnotesPart.GetXDocument().Descendants(WP.docPr))
                     Assert.True(docPrIds.Add(item.Attribute(NoNamespace.id).Value));
 
             if (doc.MainDocumentPart.EndnotesPart is not null)
-                foreach (
-                    var item in doc
-                        .MainDocumentPart.EndnotesPart.GetXDocument()
-                        .Descendants(WP.docPr)
-                )
+                foreach (var item in doc.MainDocumentPart.EndnotesPart.GetXDocument().Descendants(WP.docPr))
                     Assert.True(docPrIds.Add(item.Attribute(NoNamespace.id).Value));
         }
     }

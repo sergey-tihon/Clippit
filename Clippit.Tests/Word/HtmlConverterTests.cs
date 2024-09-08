@@ -100,10 +100,7 @@ namespace Clippit.Tests.Word
                 File.Copy(sourceDocx.FullName, sourceCopiedToDestDocx.FullName);
 
             var assembledFormattingDestDocx = new FileInfo(
-                Path.Combine(
-                    TempDir,
-                    sourceDocx.Name.Replace(".docx", "-2-FormattingAssembled.docx")
-                )
+                Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-2-FormattingAssembled.docx"))
             );
             if (!assembledFormattingDestDocx.Exists)
                 CopyFormattingAssembledDocx(sourceDocx, assembledFormattingDestDocx);
@@ -116,10 +113,7 @@ namespace Clippit.Tests.Word
 
 #if DO_CONVERSION_VIA_WORD
             var wordConvertedDocHtml = new FileInfo(
-                Path.Combine(
-                    TestUtil.TempDir.FullName,
-                    sourceDocx.Name.Replace(".docx", "-4-Word.html")
-                )
+                Path.Combine(TestUtil.TempDir.FullName, sourceDocx.Name.Replace(".docx", "-4-Word.html"))
             );
             ConvertToHtmlUsingWord(sourceDocx, wordConvertedDocHtml);
 #endif
@@ -133,10 +127,7 @@ namespace Clippit.Tests.Word
             var sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
             var oxPtConvertedDestHtml = new FileInfo(
-                Path.Combine(
-                    TempDir,
-                    sourceDocx.Name.Replace(".docx", "-5-OxPt-No-CSS-Classes.html")
-                )
+                Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-5-OxPt-No-CSS-Classes.html"))
             );
             ConvertToHtmlNoCssClasses(sourceDocx, oxPtConvertedDestHtml);
         }
@@ -176,8 +167,7 @@ namespace Clippit.Tests.Word
                     OrderElementsPerStandard = false,
                     ListItemRetrieverSettings = new ListItemRetrieverSettings()
                     {
-                        ListItemTextImplementations =
-                            ListItemRetrieverSettings.DefaultListItemTextImplementations,
+                        ListItemTextImplementations = ListItemRetrieverSettings.DefaultListItemTextImplementations,
                     },
                 };
 
@@ -195,11 +185,9 @@ namespace Clippit.Tests.Word
             using var wDoc = WordprocessingDocument.Open(memoryStream, true);
             var outputDirectory = destFileName.Directory;
             destFileName = new FileInfo(Path.Combine(outputDirectory.FullName, destFileName.Name));
-            var imageDirectoryName =
-                destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
+            var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
             var imageCounter = 0;
-            var pageTitle = (string)
-                wDoc.CoreFilePropertiesPart.GetXDocument().Descendants(DC.title).FirstOrDefault();
+            var pageTitle = (string)wDoc.CoreFilePropertiesPart.GetXDocument().Descendants(DC.title).FirstOrDefault();
             if (pageTitle == null)
                 pageTitle = sourceDocx.FullName;
 
@@ -213,11 +201,7 @@ namespace Clippit.Tests.Word
                 ImageHandler = imageInfo =>
                 {
                     ++imageCounter;
-                    return ImageHelper.DefaultImageHandler(
-                        imageInfo,
-                        imageDirectoryName,
-                        imageCounter
-                    );
+                    return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
                 },
             };
             var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
@@ -242,11 +226,9 @@ namespace Clippit.Tests.Word
             using var wDoc = WordprocessingDocument.Open(memoryStream, true);
             var outputDirectory = destFileName.Directory;
             destFileName = new FileInfo(Path.Combine(outputDirectory.FullName, destFileName.Name));
-            var imageDirectoryName =
-                destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
+            var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
             var imageCounter = 0;
-            var pageTitle = (string)
-                wDoc.CoreFilePropertiesPart.GetXDocument().Descendants(DC.title).FirstOrDefault();
+            var pageTitle = (string)wDoc.CoreFilePropertiesPart.GetXDocument().Descendants(DC.title).FirstOrDefault();
             if (pageTitle == null)
                 pageTitle = sourceDocx.FullName;
 
@@ -259,11 +241,7 @@ namespace Clippit.Tests.Word
                 ImageHandler = imageInfo =>
                 {
                     ++imageCounter;
-                    return ImageHelper.DefaultImageHandler(
-                        imageInfo,
-                        imageDirectoryName,
-                        imageCounter
-                    );
+                    return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
                 },
             };
             var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);

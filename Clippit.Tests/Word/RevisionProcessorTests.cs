@@ -111,9 +111,7 @@ namespace Clippit.Tests.Word
                     try
                     {
                         ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                        var sourceDocxCopiedToDestFi = new FileInfo(
-                            Path.Combine(TempDir, sourceFi.Name)
-                        );
+                        var sourceDocxCopiedToDestFi = new FileInfo(Path.Combine(TempDir, sourceFi.Name));
                         if (!sourceDocxCopiedToDestFi.Exists)
                             sourceWml.SaveAs(sourceDocxCopiedToDestFi.FullName);
                         //////////////////////////////////////////////////
@@ -170,9 +168,7 @@ namespace Clippit.Tests.Word
                     try
                     {
                         ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                        var semaphorFi = new FileInfo(
-                            Path.Combine(TempDir, "z_ExplorerOpenedSemaphore.txt")
-                        );
+                        var semaphorFi = new FileInfo(Path.Combine(TempDir, "z_ExplorerOpenedSemaphore.txt"));
                         if (!semaphorFi.Exists)
                         {
                             File.WriteAllText(semaphorFi.FullName, "");
@@ -194,17 +190,11 @@ namespace Clippit.Tests.Word
             {
                 var baselineAcceptedWml = new WmlDocument(baselineAcceptedFi.FullName);
                 var wmlComparerSettings = new WmlComparerSettings();
-                var result = WmlComparer.Compare(
-                    baselineAcceptedWml,
-                    afterAcceptingWml,
-                    wmlComparerSettings
-                );
+                var result = WmlComparer.Compare(baselineAcceptedWml, afterAcceptingWml, wmlComparerSettings);
                 var revisions = WmlComparer.GetRevisions(result, wmlComparerSettings);
                 if (revisions.Any())
                 {
-                    Assert.Fail(
-                        "Regression Error: Accepted baseline document did not match processed document"
-                    );
+                    Assert.Fail("Regression Error: Accepted baseline document did not match processed document");
                 }
             }
             else
@@ -218,17 +208,11 @@ namespace Clippit.Tests.Word
             {
                 var baselineRejectedWml = new WmlDocument(baselineRejectedFi.FullName);
                 var wmlComparerSettings = new WmlComparerSettings();
-                var result = WmlComparer.Compare(
-                    baselineRejectedWml,
-                    afterRejectingWml,
-                    wmlComparerSettings
-                );
+                var result = WmlComparer.Compare(baselineRejectedWml, afterRejectingWml, wmlComparerSettings);
                 var revisions = WmlComparer.GetRevisions(result, wmlComparerSettings);
                 if (revisions.Any())
                 {
-                    Assert.Fail(
-                        "Regression Error: Rejected baseline document did not match processed document"
-                    );
+                    Assert.Fail("Regression Error: Rejected baseline document did not match processed document");
                 }
             }
             else

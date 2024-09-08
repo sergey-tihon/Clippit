@@ -23,10 +23,7 @@ namespace Clippit
         )
         {
             // save away sectPr so that can set in the newly produced document.
-            var savedSectPr = wDoc1
-                .MainDocumentPart.GetXDocument()
-                .Root?.Element(W.body)
-                ?.Element(W.sectPr);
+            var savedSectPr = wDoc1.MainDocumentPart.GetXDocument().Root?.Element(W.body)?.Element(W.sectPr);
 
             var contentParent1 = wDoc1.MainDocumentPart.GetXDocument().Root?.Element(W.body);
             AddSha1HashToBlockLevelContent(wDoc1.MainDocumentPart, contentParent1, settings);
@@ -85,14 +82,10 @@ namespace Clippit
             if (False)
             {
                 var sb3 = new StringBuilder();
-                sb3.Append(
-                    "ComparisonUnitList 1 =====" + Environment.NewLine + Environment.NewLine
-                );
+                sb3.Append("ComparisonUnitList 1 =====" + Environment.NewLine + Environment.NewLine);
                 sb3.Append(ComparisonUnit.ComparisonUnitListToString(cus1));
                 sb3.Append(Environment.NewLine);
-                sb3.Append(
-                    "ComparisonUnitList 2 =====" + Environment.NewLine + Environment.NewLine
-                );
+                sb3.Append("ComparisonUnitList 2 =====" + Environment.NewLine + Environment.NewLine);
                 sb3.Append(ComparisonUnit.ComparisonUnitListToString(cus2));
                 var sbs3 = sb3.ToString();
                 TestUtil.NotePad(sbs3);
@@ -119,10 +112,7 @@ namespace Clippit
 
             // the following gets a flattened list of ComparisonUnitAtoms, with status indicated in each
             // ComparisonUnitAtom: Deleted, Inserted, or Equal
-            var listOfComparisonUnitAtoms = FlattenToComparisonUnitAtomList(
-                correlatedSequence,
-                settings
-            );
+            var listOfComparisonUnitAtoms = FlattenToComparisonUnitAtomList(correlatedSequence, settings);
 
             if (False)
             {
@@ -175,13 +165,7 @@ namespace Clippit
                 );
 
                 var newXDoc = new XDocument();
-                newXDoc.Add(
-                    new XElement(
-                        W.document,
-                        rootNamespaceAttributes,
-                        new XElement(W.body, newBodyChildren)
-                    )
-                );
+                newXDoc.Add(new XElement(W.document, rootNamespaceAttributes, new XElement(W.body, newBodyChildren)));
 
                 MarkContentAsDeletedOrInserted(newXDoc, settings);
                 CoalesceAdjacentRunsWithIdenticalFormatting(newXDoc);
@@ -209,8 +193,7 @@ namespace Clippit
 
                 // little bit of cleanup
                 MoveLastSectPrToChildOfBody(newXDoc);
-                var newXDoc2Root = (XElement)
-                    WordprocessingMLUtil.WmlOrderElementsPerStandard(newXDoc.Root);
+                var newXDoc2Root = (XElement)WordprocessingMLUtil.WmlOrderElementsPerStandard(newXDoc.Root);
                 xDoc.Root?.ReplaceWith(newXDoc2Root);
 
                 /**********************************************************************************************/
@@ -286,18 +269,13 @@ namespace Clippit
                 );
                 var shaString = cloneBlockLevelContentForHashing
                     .ToString(SaveOptions.DisableFormatting)
-                    .Replace(
-                        " xmlns=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\"",
-                        ""
-                    );
+                    .Replace(" xmlns=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\"", "");
                 var sha1Hash = WmlComparerUtil.SHA1HashStringForUTF8String(shaString);
                 blockLevelContent.Add(new XAttribute(PtOpenXml.SHA1Hash, sha1Hash));
 
                 if (blockLevelContent.Name == W.tbl || blockLevelContent.Name == W.tr)
                 {
-                    var clonedForStructureHash = (XElement)CloneForStructureHash(
-                        cloneBlockLevelContentForHashing
-                    );
+                    var clonedForStructureHash = (XElement)CloneForStructureHash(cloneBlockLevelContentForHashing);
 
                     // this is a convenient place to look at why tables are being compared as different.
 
@@ -306,10 +284,7 @@ namespace Clippit
 
                     var shaString2 = clonedForStructureHash
                         .ToString(SaveOptions.DisableFormatting)
-                        .Replace(
-                            " xmlns=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\"",
-                            ""
-                        );
+                        .Replace(" xmlns=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\"", "");
                     var sha1Hash2 = WmlComparerUtil.SHA1HashStringForUTF8String(shaString2);
                     blockLevelContent.Add(new XAttribute(PtOpenXml.StructureSHA1Hash, sha1Hash2));
                 }
@@ -342,9 +317,7 @@ namespace Clippit
                     TestUtil.NotePad(sbs);
                 }
 
-                var unknown = csList.FirstOrDefault(z =>
-                    z.CorrelationStatus == CorrelationStatus.Unknown
-                );
+                var unknown = csList.FirstOrDefault(z => z.CorrelationStatus == CorrelationStatus.Unknown);
 
                 if (unknown != null)
                 {
@@ -411,20 +384,13 @@ namespace Clippit
                     // when we have a row, it is only necessary to find the first content atom of the row, then find the row ancestor, and then tweak
                     // the w:trPr
 
-                    if (
-                        ca is ComparisonUnitGroup
-                        {
-                            ComparisonUnitGroupType: ComparisonUnitGroupType.Row
-                        } cug
-                    )
+                    if (ca is ComparisonUnitGroup { ComparisonUnitGroupType: ComparisonUnitGroupType.Row } cug)
                     {
                         var firstContentAtom = cug.DescendantContentAtoms().FirstOrDefault();
                         if (firstContentAtom == null)
                             throw new OpenXmlPowerToolsException("Internal error");
 
-                        var tr = firstContentAtom
-                            .AncestorElements.Reverse()
-                            .FirstOrDefault(a => a.Name == W.tr);
+                        var tr = firstContentAtom.AncestorElements.Reverse().FirstOrDefault(a => a.Name == W.tr);
 
                         if (tr == null)
                             throw new OpenXmlPowerToolsException("Internal error");
@@ -625,10 +591,7 @@ namespace Clippit
                         var ancestorsBefore = cuaBefore.AncestorElements;
                         if (ancestorsAfter.Length == ancestorsBefore.Length)
                         {
-                            var zipped = ancestorsBefore.Zip(
-                                ancestorsAfter,
-                                (b, a) => new { After = a, Before = b }
-                            );
+                            var zipped = ancestorsBefore.Zip(ancestorsAfter, (b, a) => new { After = a, Before = b });
 
                             foreach (var z in zipped)
                             {
@@ -651,9 +614,7 @@ namespace Clippit
                 TestUtil.NotePad(sbs);
             }
 
-            var rComparisonUnitAtomList = ((IEnumerable<ComparisonUnitAtom>)comparisonUnitAtomList)
-                .Reverse()
-                .ToList();
+            var rComparisonUnitAtomList = ((IEnumerable<ComparisonUnitAtom>)comparisonUnitAtomList).Reverse().ToList();
 
             // the following should always succeed, because there will always be at least one element in
             // rComparisonUnitAtomList, and there will always be at least one ancestor in AncestorElements
@@ -712,9 +673,7 @@ namespace Clippit
                             Guid.NewGuid().ToString().Replace("-", "");
                         return thisUnid;
                     });
-                var thisAncestorUnids = currentAncestorUnids
-                    .Concat(additionalAncestorUnids)
-                    .ToArray();
+                var thisAncestorUnids = currentAncestorUnids.Concat(additionalAncestorUnids).ToArray();
                 cua.AncestorUnids = thisAncestorUnids;
                 if (deepestAncestorUnid != null)
                     cua.AncestorUnids[0] = deepestAncestorUnid;
@@ -734,10 +693,7 @@ namespace Clippit
             var skipUntilNextPpr = false;
             foreach (var cua in rComparisonUnitAtomList)
             {
-                if (
-                    currentAncestorUnids != null
-                    && cua.AncestorElements.Length < currentAncestorUnids.Length
-                )
+                if (currentAncestorUnids != null && cua.AncestorElements.Length < currentAncestorUnids.Length)
                 {
                     skipUntilNextPpr = true;
                     currentAncestorUnids = null;
@@ -793,9 +749,7 @@ namespace Clippit
                             Guid.NewGuid().ToString().Replace("-", "");
                         return thisUnid;
                     });
-                var thisAncestorUnids = currentAncestorUnids
-                    .Concat(additionalAncestorUnids)
-                    .ToArray();
+                var thisAncestorUnids = currentAncestorUnids.Concat(additionalAncestorUnids).ToArray();
                 cua.AncestorUnids = thisAncestorUnids;
             }
 
@@ -821,19 +775,13 @@ namespace Clippit
             return newBodyChildren;
         }
 
-        private static void MarkContentAsDeletedOrInserted(
-            XDocument newXDoc,
-            WmlComparerSettings settings
-        )
+        private static void MarkContentAsDeletedOrInserted(XDocument newXDoc, WmlComparerSettings settings)
         {
             var newRoot = MarkContentAsDeletedOrInsertedTransform(newXDoc.Root, settings);
             newXDoc.Root?.ReplaceWith(newRoot);
         }
 
-        private static object MarkContentAsDeletedOrInsertedTransform(
-            XNode node,
-            WmlComparerSettings settings
-        )
+        private static object MarkContentAsDeletedOrInsertedTransform(XNode node, WmlComparerSettings settings)
         {
             if (node is XElement element)
             {
@@ -841,11 +789,7 @@ namespace Clippit
                 {
                     var statusList = element
                         .DescendantsTrimmed(W.txbxContent)
-                        .Where(d =>
-                            d.Name == W.t
-                            || d.Name == W.delText
-                            || AllowableRunChildren.Contains(d.Name)
-                        )
+                        .Where(d => d.Name == W.t || d.Name == W.delText || AllowableRunChildren.Contains(d.Name))
                         .Attributes(PtOpenXml.Status)
                         .Select(a => (string)a)
                         .Distinct()
@@ -863,9 +807,7 @@ namespace Clippit
                         return new XElement(
                             W.r,
                             element.Attributes(),
-                            element
-                                .Nodes()
-                                .Select(n => MarkContentAsDeletedOrInsertedTransform(n, settings))
+                            element.Nodes().Select(n => MarkContentAsDeletedOrInsertedTransform(n, settings))
                         );
                     }
 
@@ -879,11 +821,7 @@ namespace Clippit
                             new XElement(
                                 W.r,
                                 element.Attributes(),
-                                element
-                                    .Nodes()
-                                    .Select(n =>
-                                        MarkContentAsDeletedOrInsertedTransform(n, settings)
-                                    )
+                                element.Nodes().Select(n => MarkContentAsDeletedOrInsertedTransform(n, settings))
                             )
                         );
                     }
@@ -898,11 +836,7 @@ namespace Clippit
                             new XElement(
                                 W.r,
                                 element.Attributes(),
-                                element
-                                    .Nodes()
-                                    .Select(n =>
-                                        MarkContentAsDeletedOrInsertedTransform(n, settings)
-                                    )
+                                element.Nodes().Select(n => MarkContentAsDeletedOrInsertedTransform(n, settings))
                             )
                         );
                     }
@@ -915,9 +849,7 @@ namespace Clippit
                         return new XElement(
                             W.pPr,
                             element.Attributes(),
-                            element
-                                .Nodes()
-                                .Select(n => MarkContentAsDeletedOrInsertedTransform(n, settings))
+                            element.Nodes().Select(n => MarkContentAsDeletedOrInsertedTransform(n, settings))
                         );
 
                     var pPr = new XElement(element);
@@ -966,9 +898,7 @@ namespace Clippit
                 return new XElement(
                     element.Name,
                     element.Attributes(),
-                    element
-                        .Nodes()
-                        .Select(n => MarkContentAsDeletedOrInsertedTransform(n, settings))
+                    element.Nodes().Select(n => MarkContentAsDeletedOrInsertedTransform(n, settings))
                 );
             }
 
@@ -980,9 +910,7 @@ namespace Clippit
             var paras = xDoc.Root.DescendantsTrimmed(W.txbxContent).Where(d => d.Name == W.p);
             foreach (var para in paras)
             {
-                var newPara = WordprocessingMLUtil.CoalesceAdjacentRunsWithIdenticalFormatting(
-                    para
-                );
+                var newPara = WordprocessingMLUtil.CoalesceAdjacentRunsWithIdenticalFormatting(para);
                 para.ReplaceNodes(newPara.Nodes());
             }
         }
@@ -1038,8 +966,7 @@ namespace Clippit
 
             var possiblyModifiedFootnotesEndNotes = listOfComparisonUnitAtoms
                 .Where(cua =>
-                    cua.ContentElement.Name == W.footnoteReference
-                    || cua.ContentElement.Name == W.endnoteReference
+                    cua.ContentElement.Name == W.footnoteReference || cua.ContentElement.Name == W.endnoteReference
                 )
                 .ToList();
 
@@ -1086,25 +1013,13 @@ namespace Clippit
                         partToUseAfterXDoc = endnotesPartAfterXDoc;
                     }
 
-                    AddSha1HashToBlockLevelContent(
-                        partToUseBefore,
-                        footnoteEndnoteBefore,
-                        settings
-                    );
+                    AddSha1HashToBlockLevelContent(partToUseBefore, footnoteEndnoteBefore, settings);
                     AddSha1HashToBlockLevelContent(partToUseAfter, footnoteEndnoteAfter, settings);
 
-                    var fncal1 = CreateComparisonUnitAtomList(
-                        partToUseBefore,
-                        footnoteEndnoteBefore,
-                        settings
-                    );
+                    var fncal1 = CreateComparisonUnitAtomList(partToUseBefore, footnoteEndnoteBefore, settings);
                     var fncus1 = GetComparisonUnitList(fncal1, settings);
 
-                    var fncal2 = CreateComparisonUnitAtomList(
-                        partToUseAfter,
-                        footnoteEndnoteAfter,
-                        settings
-                    );
+                    var fncal2 = CreateComparisonUnitAtomList(partToUseAfter, footnoteEndnoteAfter, settings);
                     var fncus2 = GetComparisonUnitList(fncal2, settings);
 
                     if (!(fncus1.Length == 0 && fncus2.Length == 0))
@@ -1147,9 +1062,7 @@ namespace Clippit
                         // the table id will be hacked in the normal course of events.
                         // in the case where a row is deleted, not necessary to hack - the deleted row ID will do.
                         // in the case where a row is inserted, not necessary to hack - the inserted row ID will do as well.
-                        AssembleAncestorUnidsInOrderToRebuildXmlTreeProperly(
-                            fnListOfComparisonUnitAtoms
-                        );
+                        AssembleAncestorUnidsInOrderToRebuildXmlTreeProperly(fnListOfComparisonUnitAtoms);
 
                         var newFootnoteEndnoteChildren = ProduceNewWmlMarkupFromCorrelatedSequence(
                             partToUseAfter,
@@ -1163,11 +1076,8 @@ namespace Clippit
                             {
                                 var b = false;
                                 if (
-                                    (string)
-                                        r.Elements(W.rPr)
-                                            .Elements(W.rStyle)
-                                            .Attributes(W.val)
-                                            .FirstOrDefault() == "FootnoteReference"
+                                    (string)r.Elements(W.rPr).Elements(W.rStyle).Attributes(W.val).FirstOrDefault()
+                                    == "FootnoteReference"
                                 )
                                     b = true;
                                 if (r.Descendants(W.footnoteRef).Any())
@@ -1188,10 +1098,7 @@ namespace Clippit
                                                 W.r,
                                                 new XElement(
                                                     W.rPr,
-                                                    new XElement(
-                                                        W.rStyle,
-                                                        new XAttribute(W.val, "FootnoteReference")
-                                                    )
+                                                    new XElement(W.rStyle, new XAttribute(W.val, "FootnoteReference"))
                                                 ),
                                                 new XElement(W.footnoteRef)
                                             )
@@ -1202,10 +1109,7 @@ namespace Clippit
                                                 W.r,
                                                 new XElement(
                                                     W.rPr,
-                                                    new XElement(
-                                                        W.rStyle,
-                                                        new XAttribute(W.val, "EndnoteReference")
-                                                    )
+                                                    new XElement(W.rStyle, new XAttribute(W.val, "EndnoteReference"))
                                                 ),
                                                 new XElement(W.endnoteRef)
                                             )
@@ -1214,8 +1118,7 @@ namespace Clippit
                             }
                         }
 
-                        var newTempElement = (XElement)
-                            WordprocessingMLUtil.WmlOrderElementsPerStandard(tempElement);
+                        var newTempElement = (XElement)WordprocessingMLUtil.WmlOrderElementsPerStandard(tempElement);
                         var newContentElement = newTempElement
                             .Descendants()
                             .FirstOrDefault(d => d.Name == W.footnote || d.Name == W.endnote);
@@ -1246,11 +1149,7 @@ namespace Clippit
 
                     AddSha1HashToBlockLevelContent(partToUseAfter, footnoteEndnoteAfter, settings);
 
-                    var fncal2 = CreateComparisonUnitAtomList(
-                        partToUseAfter,
-                        footnoteEndnoteAfter,
-                        settings
-                    );
+                    var fncal2 = CreateComparisonUnitAtomList(partToUseAfter, footnoteEndnoteAfter, settings);
                     var fncus2 = GetComparisonUnitList(fncal2, settings);
 
                     var insertedCorrSequ = new List<CorrelatedSequence>
@@ -1274,14 +1173,9 @@ namespace Clippit
 
                     MarkRowsAsDeletedOrInserted(settings, insertedCorrSequ);
 
-                    var fnListOfComparisonUnitAtoms = FlattenToComparisonUnitAtomList(
-                        insertedCorrSequ,
-                        settings
-                    );
+                    var fnListOfComparisonUnitAtoms = FlattenToComparisonUnitAtomList(insertedCorrSequ, settings);
 
-                    AssembleAncestorUnidsInOrderToRebuildXmlTreeProperly(
-                        fnListOfComparisonUnitAtoms
-                    );
+                    AssembleAncestorUnidsInOrderToRebuildXmlTreeProperly(fnListOfComparisonUnitAtoms);
 
                     var newFootnoteEndnoteChildren = ProduceNewWmlMarkupFromCorrelatedSequence(
                         partToUseAfter,
@@ -1295,11 +1189,8 @@ namespace Clippit
                         {
                             var b = false;
                             if (
-                                (string)
-                                    r.Elements(W.rPr)
-                                        .Elements(W.rStyle)
-                                        .Attributes(W.val)
-                                        .FirstOrDefault() == "FootnoteReference"
+                                (string)r.Elements(W.rPr).Elements(W.rStyle).Attributes(W.val).FirstOrDefault()
+                                == "FootnoteReference"
                             )
                                 b = true;
                             if (r.Descendants(W.footnoteRef).Any())
@@ -1320,10 +1211,7 @@ namespace Clippit
                                             W.r,
                                             new XElement(
                                                 W.rPr,
-                                                new XElement(
-                                                    W.rStyle,
-                                                    new XAttribute(W.val, "FootnoteReference")
-                                                )
+                                                new XElement(W.rStyle, new XAttribute(W.val, "FootnoteReference"))
                                             ),
                                             new XElement(W.footnoteRef)
                                         )
@@ -1334,10 +1222,7 @@ namespace Clippit
                                             W.r,
                                             new XElement(
                                                 W.rPr,
-                                                new XElement(
-                                                    W.rStyle,
-                                                    new XAttribute(W.val, "EndnoteReference")
-                                                )
+                                                new XElement(W.rStyle, new XAttribute(W.val, "EndnoteReference"))
                                             ),
                                             new XElement(W.endnoteRef)
                                         )
@@ -1346,8 +1231,7 @@ namespace Clippit
                         }
                     }
 
-                    var newTempElement = (XElement)
-                        WordprocessingMLUtil.WmlOrderElementsPerStandard(tempElement);
+                    var newTempElement = (XElement)WordprocessingMLUtil.WmlOrderElementsPerStandard(tempElement);
                     var newContentElement = newTempElement
                         .Descendants()
                         .FirstOrDefault(d => d.Name == W.footnote || d.Name == W.endnote);
@@ -1375,17 +1259,9 @@ namespace Clippit
                         partToUseBeforeXDoc = endnotesPartBeforeXDoc;
                     }
 
-                    AddSha1HashToBlockLevelContent(
-                        partToUseBefore,
-                        footnoteEndnoteBefore,
-                        settings
-                    );
+                    AddSha1HashToBlockLevelContent(partToUseBefore, footnoteEndnoteBefore, settings);
 
-                    var fncal2 = CreateComparisonUnitAtomList(
-                        partToUseBefore,
-                        footnoteEndnoteBefore,
-                        settings
-                    );
+                    var fncal2 = CreateComparisonUnitAtomList(partToUseBefore, footnoteEndnoteBefore, settings);
                     var fncus2 = GetComparisonUnitList(fncal2, settings);
 
                     var deletedCorrSequ = new List<CorrelatedSequence>
@@ -1409,16 +1285,11 @@ namespace Clippit
 
                     MarkRowsAsDeletedOrInserted(settings, deletedCorrSequ);
 
-                    var fnListOfComparisonUnitAtoms = FlattenToComparisonUnitAtomList(
-                        deletedCorrSequ,
-                        settings
-                    );
+                    var fnListOfComparisonUnitAtoms = FlattenToComparisonUnitAtomList(deletedCorrSequ, settings);
 
                     if (fnListOfComparisonUnitAtoms.Any())
                     {
-                        AssembleAncestorUnidsInOrderToRebuildXmlTreeProperly(
-                            fnListOfComparisonUnitAtoms
-                        );
+                        AssembleAncestorUnidsInOrderToRebuildXmlTreeProperly(fnListOfComparisonUnitAtoms);
 
                         var newFootnoteEndnoteChildren = ProduceNewWmlMarkupFromCorrelatedSequence(
                             partToUseBefore,
@@ -1432,11 +1303,8 @@ namespace Clippit
                             {
                                 var b = false;
                                 if (
-                                    (string)
-                                        r.Elements(W.rPr)
-                                            .Elements(W.rStyle)
-                                            .Attributes(W.val)
-                                            .FirstOrDefault() == "FootnoteReference"
+                                    (string)r.Elements(W.rPr).Elements(W.rStyle).Attributes(W.val).FirstOrDefault()
+                                    == "FootnoteReference"
                                 )
                                     b = true;
                                 if (r.Descendants(W.footnoteRef).Any())
@@ -1457,10 +1325,7 @@ namespace Clippit
                                                 W.r,
                                                 new XElement(
                                                     W.rPr,
-                                                    new XElement(
-                                                        W.rStyle,
-                                                        new XAttribute(W.val, "FootnoteReference")
-                                                    )
+                                                    new XElement(W.rStyle, new XAttribute(W.val, "FootnoteReference"))
                                                 ),
                                                 new XElement(W.footnoteRef)
                                             )
@@ -1471,10 +1336,7 @@ namespace Clippit
                                                 W.r,
                                                 new XElement(
                                                     W.rPr,
-                                                    new XElement(
-                                                        W.rStyle,
-                                                        new XAttribute(W.val, "EndnoteReference")
-                                                    )
+                                                    new XElement(W.rStyle, new XAttribute(W.val, "EndnoteReference"))
                                                 ),
                                                 new XElement(W.endnoteRef)
                                             )
@@ -1483,8 +1345,7 @@ namespace Clippit
                             }
                         }
 
-                        var newTempElement = (XElement)
-                            WordprocessingMLUtil.WmlOrderElementsPerStandard(tempElement);
+                        var newTempElement = (XElement)WordprocessingMLUtil.WmlOrderElementsPerStandard(tempElement);
                         var newContentElement = newTempElement
                             .Descendants()
                             .FirstOrDefault(d => d.Name == W.footnote || d.Name == W.endnote);
@@ -1530,9 +1391,7 @@ namespace Clippit
                 footnotesPartWithRevisionsXDoc = footnotesPartWithRevisions.GetXDocument();
                 footnotesPartWithRevisionsXDoc
                     .Root.Elements(W.footnote)
-                    .Where(e =>
-                        (string)e.Attribute(W.id) != "-1" && (string)e.Attribute(W.id) != "0"
-                    )
+                    .Where(e => (string)e.Attribute(W.id) != "-1" && (string)e.Attribute(W.id) != "0")
                     .Remove();
             }
 
@@ -1550,9 +1409,7 @@ namespace Clippit
                 endnotesPartWithRevisionsXDoc = endnotesPartWithRevisions.GetXDocument();
                 endnotesPartWithRevisionsXDoc
                     .Root.Elements(W.endnote)
-                    .Where(e =>
-                        (string)e.Attribute(W.id) != "-1" && (string)e.Attribute(W.id) != "0"
-                    )
+                    .Where(e => (string)e.Attribute(W.id) != "-1" && (string)e.Attribute(W.id) != "0")
                     .Remove();
             }
 
@@ -1625,9 +1482,7 @@ namespace Clippit
                 MarkContentAsDeletedOrInserted(footnotesPartWithRevisionsXDoc, settings);
                 CoalesceAdjacentRunsWithIdenticalFormatting(footnotesPartWithRevisionsXDoc);
                 var newXDocRoot = (XElement)
-                    WordprocessingMLUtil.WmlOrderElementsPerStandard(
-                        footnotesPartWithRevisionsXDoc.Root
-                    );
+                    WordprocessingMLUtil.WmlOrderElementsPerStandard(footnotesPartWithRevisionsXDoc.Root);
                 footnotesPartWithRevisionsXDoc.Root.ReplaceWith(newXDocRoot);
                 IgnorePt14Namespace(footnotesPartWithRevisionsXDoc.Root);
                 footnotesPartWithRevisions.PutXDocument();
@@ -1638,19 +1493,14 @@ namespace Clippit
                 MarkContentAsDeletedOrInserted(endnotesPartWithRevisionsXDoc, settings);
                 CoalesceAdjacentRunsWithIdenticalFormatting(endnotesPartWithRevisionsXDoc);
                 var newXDocRoot = (XElement)
-                    WordprocessingMLUtil.WmlOrderElementsPerStandard(
-                        endnotesPartWithRevisionsXDoc.Root
-                    );
+                    WordprocessingMLUtil.WmlOrderElementsPerStandard(endnotesPartWithRevisionsXDoc.Root);
                 endnotesPartWithRevisionsXDoc.Root.ReplaceWith(newXDocRoot);
                 IgnorePt14Namespace(endnotesPartWithRevisionsXDoc.Root);
                 endnotesPartWithRevisions.PutXDocument();
             }
         }
 
-        private static void ConjoinDeletedInsertedParagraphMarks(
-            MainDocumentPart mainDocumentPart,
-            XDocument newXDoc
-        )
+        private static void ConjoinDeletedInsertedParagraphMarks(MainDocumentPart mainDocumentPart, XDocument newXDoc)
         {
             ConjoinMultipleParagraphMarks(newXDoc);
             if (mainDocumentPart.FootnotesPart != null)
@@ -1685,10 +1535,7 @@ namespace Clippit
                 if (element.Name == W.p && element.Elements(W.pPr).Count() >= 2)
                 {
                     var pPr = new XElement(element.Elements(W.pPr).First());
-                    pPr.Elements(W.rPr)
-                        .Elements()
-                        .Where(r => r.Name == W.ins || r.Name == W.del)
-                        .Remove();
+                    pPr.Elements(W.rPr).Elements().Where(r => r.Name == W.ins || r.Name == W.del).Remove();
                     pPr.Attributes(PtOpenXml.Status).Remove();
                     var newPara = new XElement(
                         W.p,
@@ -1699,40 +1546,29 @@ namespace Clippit
                     return newPara;
                 }
 
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(ConjoinTransform)
-                );
+                return new XElement(element.Name, element.Attributes(), element.Nodes().Select(ConjoinTransform));
             }
 
             return node;
         }
 
-        private static void FixUpRevisionIds(
-            WordprocessingDocument wDocWithRevisions,
-            XDocument newXDoc
-        )
+        private static void FixUpRevisionIds(WordprocessingDocument wDocWithRevisions, XDocument newXDoc)
         {
             var footnoteRevisions = Enumerable.Empty<XElement>();
             if (wDocWithRevisions.MainDocumentPart.FootnotesPart != null)
             {
                 var fnxd = wDocWithRevisions.MainDocumentPart.FootnotesPart.GetXDocument();
-                footnoteRevisions = fnxd.Descendants()
-                    .Where(d => d.Name == W.ins || d.Name == W.del);
+                footnoteRevisions = fnxd.Descendants().Where(d => d.Name == W.ins || d.Name == W.del);
             }
 
             var endnoteRevisions = Enumerable.Empty<XElement>();
             if (wDocWithRevisions.MainDocumentPart.EndnotesPart != null)
             {
                 var fnxd = wDocWithRevisions.MainDocumentPart.EndnotesPart.GetXDocument();
-                endnoteRevisions = fnxd.Descendants()
-                    .Where(d => d.Name == W.ins || d.Name == W.del);
+                endnoteRevisions = fnxd.Descendants().Where(d => d.Name == W.ins || d.Name == W.del);
             }
 
-            var mainRevisions = newXDoc
-                .Descendants()
-                .Where(d => d.Name == W.ins || d.Name == W.del);
+            var mainRevisions = newXDoc.Descendants().Where(d => d.Name == W.ins || d.Name == W.del);
             var allRevisions = mainRevisions
                 .Concat(footnoteRevisions)
                 .Concat(endnoteRevisions)
@@ -1758,16 +1594,12 @@ namespace Clippit
                 .LastOrDefault(p => p.Elements(W.pPr).Elements(W.sectPr).Any());
             if (lastParaWithSectPr != null)
             {
-                newXDoc
-                    .Root.Element(W.body)
-                    .Add(lastParaWithSectPr.Elements(W.pPr).Elements(W.sectPr));
+                newXDoc.Root.Element(W.body).Add(lastParaWithSectPr.Elements(W.pPr).Elements(W.sectPr));
                 lastParaWithSectPr.Elements(W.pPr).Elements(W.sectPr).Remove();
             }
         }
 
-        private static void FixUpFootnotesEndnotesWithCustomMarkers(
-            WordprocessingDocument wDocWithRevisions
-        )
+        private static void FixUpFootnotesEndnotesWithCustomMarkers(WordprocessingDocument wDocWithRevisions)
         {
 #if FALSE
 
@@ -1873,9 +1705,7 @@ namespace Clippit
                         );
                         var footnoteEndnoteReferencesToAdjust = clone
                             .Descendants()
-                            .Where(d =>
-                                d.Name == W.footnoteReference || d.Name == W.endnoteReference
-                            )
+                            .Where(d => d.Name == W.footnoteReference || d.Name == W.endnoteReference)
                             .Where(d => d.Attribute(W.customMarkFollows) != null);
                         foreach (var fnenr in footnoteEndnoteReferencesToAdjust)
                         {
@@ -2210,8 +2040,7 @@ namespace Clippit
                 var styleInRevDoc = revisionsStylesXDoc
                     .Root.Elements(W.style)
                     .FirstOrDefault(st =>
-                        (string)st.Attribute(W.type) == type
-                        && (string)st.Attribute(W.styleId) == styleId
+                        (string)st.Attribute(W.type) == type && (string)st.Attribute(W.styleId) == styleId
                     );
                 if (styleInRevDoc != null)
                     continue;
@@ -2225,18 +2054,13 @@ namespace Clippit
             wDocTo.MainDocumentPart.StyleDefinitionsPart.PutXDocument();
         }
 
-        private static void DeleteFootnotePropertiesInSettings(
-            WordprocessingDocument wDocWithRevisions
-        )
+        private static void DeleteFootnotePropertiesInSettings(WordprocessingDocument wDocWithRevisions)
         {
             var settingsPart = wDocWithRevisions.MainDocumentPart.DocumentSettingsPart;
             if (settingsPart != null)
             {
                 var sxDoc = settingsPart.GetXDocument();
-                sxDoc
-                    .Root?.Elements()
-                    .Where(e => e.Name == W.footnotePr || e.Name == W.endnotePr)
-                    .Remove();
+                sxDoc.Root?.Elements().Where(e => e.Name == W.footnotePr || e.Name == W.endnotePr).Remove();
                 settingsPart.PutXDocument();
             }
         }
@@ -2260,10 +2084,7 @@ namespace Clippit
             WmlComparerSettings settings
         )
         {
-            var lengthToCompare = Math.Min(
-                unknown.ComparisonUnitArray1.Length,
-                unknown.ComparisonUnitArray2.Length
-            );
+            var lengthToCompare = Math.Min(unknown.ComparisonUnitArray1.Length, unknown.ComparisonUnitArray2.Length);
 
             var countCommonAtBeginning = unknown
                 .ComparisonUnitArray1.Take(lengthToCompare)
@@ -2284,12 +2105,8 @@ namespace Clippit
                 var csEqual = new CorrelatedSequence
                 {
                     CorrelationStatus = CorrelationStatus.Equal,
-                    ComparisonUnitArray1 = unknown
-                        .ComparisonUnitArray1.Take(countCommonAtBeginning)
-                        .ToArray(),
-                    ComparisonUnitArray2 = unknown
-                        .ComparisonUnitArray2.Take(countCommonAtBeginning)
-                        .ToArray(),
+                    ComparisonUnitArray1 = unknown.ComparisonUnitArray1.Take(countCommonAtBeginning).ToArray(),
+                    ComparisonUnitArray2 = unknown.ComparisonUnitArray2.Take(countCommonAtBeginning).ToArray(),
                 };
                 newSequence.Add(csEqual);
 
@@ -2301,9 +2118,7 @@ namespace Clippit
                     var csDeleted = new CorrelatedSequence
                     {
                         CorrelationStatus = CorrelationStatus.Deleted,
-                        ComparisonUnitArray1 = unknown
-                            .ComparisonUnitArray1.Skip(countCommonAtBeginning)
-                            .ToArray(),
+                        ComparisonUnitArray1 = unknown.ComparisonUnitArray1.Skip(countCommonAtBeginning).ToArray(),
                         ComparisonUnitArray2 = null,
                     };
                     newSequence.Add(csDeleted);
@@ -2314,9 +2129,7 @@ namespace Clippit
                     {
                         CorrelationStatus = CorrelationStatus.Inserted,
                         ComparisonUnitArray1 = null,
-                        ComparisonUnitArray2 = unknown
-                            .ComparisonUnitArray2.Skip(countCommonAtBeginning)
-                            .ToArray(),
+                        ComparisonUnitArray2 = unknown.ComparisonUnitArray2.Skip(countCommonAtBeginning).ToArray(),
                     };
                     newSequence.Add(csInserted);
                 }
@@ -2337,13 +2150,9 @@ namespace Clippit
                         //   if the last word on the left == pPr and last word on right == pPr
                         //     then create an unknown for the rest of the unknown
 
-                        var remainingInLeft = unknown
-                            .ComparisonUnitArray1.Skip(countCommonAtBeginning)
-                            .ToArray();
+                        var remainingInLeft = unknown.ComparisonUnitArray1.Skip(countCommonAtBeginning).ToArray();
 
-                        var remainingInRight = unknown
-                            .ComparisonUnitArray2.Skip(countCommonAtBeginning)
-                            .ToArray();
+                        var remainingInRight = unknown.ComparisonUnitArray2.Skip(countCommonAtBeginning).ToArray();
 
                         var lastContentAtomLeft = unknown
                             .ComparisonUnitArray1[countCommonAtBeginning - 1]
@@ -2400,12 +2209,8 @@ namespace Clippit
                     var csUnknown = new CorrelatedSequence
                     {
                         CorrelationStatus = CorrelationStatus.Unknown,
-                        ComparisonUnitArray1 = unknown
-                            .ComparisonUnitArray1.Skip(countCommonAtBeginning)
-                            .ToArray(),
-                        ComparisonUnitArray2 = unknown
-                            .ComparisonUnitArray2.Skip(countCommonAtBeginning)
-                            .ToArray(),
+                        ComparisonUnitArray1 = unknown.ComparisonUnitArray1.Skip(countCommonAtBeginning).ToArray(),
+                        ComparisonUnitArray2 = unknown.ComparisonUnitArray2.Skip(countCommonAtBeginning).ToArray(),
                     };
                     newSequence.Add(csUnknown);
                 }
@@ -2435,10 +2240,7 @@ namespace Clippit
                 if (countCommonAtEnd <= 1)
                     break;
 
-                var firstCommon = unknown
-                    .ComparisonUnitArray1.Reverse()
-                    .Take(countCommonAtEnd)
-                    .LastOrDefault();
+                var firstCommon = unknown.ComparisonUnitArray1.Reverse().Take(countCommonAtEnd).LastOrDefault();
 
                 if (firstCommon is not ComparisonUnitWord firstCommonWord)
                     break;
@@ -2459,10 +2261,7 @@ namespace Clippit
             var isOnlyParagraphMark = false;
             if (countCommonAtEnd == 1)
             {
-                var firstCommon = unknown
-                    .ComparisonUnitArray1.Reverse()
-                    .Take(countCommonAtEnd)
-                    .LastOrDefault();
+                var firstCommon = unknown.ComparisonUnitArray1.Reverse().Take(countCommonAtEnd).LastOrDefault();
 
                 if (firstCommon is ComparisonUnitWord firstCommonWord)
                 {
@@ -2480,15 +2279,9 @@ namespace Clippit
 
             if (countCommonAtEnd == 2)
             {
-                var firstCommon = unknown
-                    .ComparisonUnitArray1.Reverse()
-                    .Take(countCommonAtEnd)
-                    .LastOrDefault();
+                var firstCommon = unknown.ComparisonUnitArray1.Reverse().Take(countCommonAtEnd).LastOrDefault();
 
-                var secondCommon = unknown
-                    .ComparisonUnitArray1.Reverse()
-                    .Take(countCommonAtEnd)
-                    .FirstOrDefault();
+                var secondCommon = unknown.ComparisonUnitArray1.Reverse().Take(countCommonAtEnd).FirstOrDefault();
 
                 if (
                     firstCommon is ComparisonUnitWord firstCommonWord
@@ -2500,8 +2293,7 @@ namespace Clippit
                     {
                         if (
                             firstCommonWord.Contents.First() is ComparisonUnitAtom firstCommonAtom
-                            && secondCommonWord.Contents.First()
-                                is ComparisonUnitAtom secondCommonAtom
+                            && secondCommonWord.Contents.First() is ComparisonUnitAtom secondCommonAtom
                         )
                         {
                             if (secondCommonAtom.ContentElement.Name == W.pPr)
@@ -2541,11 +2333,7 @@ namespace Clippit
                 var remainingInLeftParagraph = 0;
                 var remainingInRightParagraph = 0;
 
-                var commonEndSeq = unknown
-                    .ComparisonUnitArray1.Reverse()
-                    .Take(countCommonAtEnd)
-                    .Reverse()
-                    .ToList();
+                var commonEndSeq = unknown.ComparisonUnitArray1.Reverse().Take(countCommonAtEnd).Reverse().ToList();
 
                 var firstOfCommonEndSeq = commonEndSeq.First();
                 if (firstOfCommonEndSeq is ComparisonUnitWord)
@@ -2555,9 +2343,7 @@ namespace Clippit
                     if (
                         commonEndSeq.Any(cu =>
                         {
-                            var firstComparisonUnitAtom = cu
-                                .Contents.OfType<ComparisonUnitAtom>()
-                                .FirstOrDefault();
+                            var firstComparisonUnitAtom = cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
                             if (firstComparisonUnitAtom == null)
                                 return false;
 
@@ -2573,9 +2359,7 @@ namespace Clippit
                                 if (!(cu is ComparisonUnitWord))
                                     return false;
 
-                                var firstComparisonUnitAtom = cu
-                                    .Contents.OfType<ComparisonUnitAtom>()
-                                    .FirstOrDefault();
+                                var firstComparisonUnitAtom = cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
                                 if (firstComparisonUnitAtom == null)
                                     return true;
 
@@ -2590,9 +2374,7 @@ namespace Clippit
                                 if (!(cu is ComparisonUnitWord))
                                     return false;
 
-                                var firstComparisonUnitAtom = cu
-                                    .Contents.OfType<ComparisonUnitAtom>()
-                                    .FirstOrDefault();
+                                var firstComparisonUnitAtom = cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
                                 if (firstComparisonUnitAtom == null)
                                     return true;
 
@@ -2605,22 +2387,16 @@ namespace Clippit
                 var newSequence = new List<CorrelatedSequence>();
 
                 var beforeCommonParagraphLeft =
-                    unknown.ComparisonUnitArray1.Length
-                    - remainingInLeftParagraph
-                    - countCommonAtEnd;
+                    unknown.ComparisonUnitArray1.Length - remainingInLeftParagraph - countCommonAtEnd;
                 var beforeCommonParagraphRight =
-                    unknown.ComparisonUnitArray2.Length
-                    - remainingInRightParagraph
-                    - countCommonAtEnd;
+                    unknown.ComparisonUnitArray2.Length - remainingInRightParagraph - countCommonAtEnd;
 
                 if (beforeCommonParagraphLeft != 0 && beforeCommonParagraphRight == 0)
                 {
                     var csDeleted = new CorrelatedSequence
                     {
                         CorrelationStatus = CorrelationStatus.Deleted,
-                        ComparisonUnitArray1 = unknown
-                            .ComparisonUnitArray1.Take(beforeCommonParagraphLeft)
-                            .ToArray(),
+                        ComparisonUnitArray1 = unknown.ComparisonUnitArray1.Take(beforeCommonParagraphLeft).ToArray(),
                         ComparisonUnitArray2 = null,
                     };
                     newSequence.Add(csDeleted);
@@ -2631,9 +2407,7 @@ namespace Clippit
                     {
                         CorrelationStatus = CorrelationStatus.Inserted,
                         ComparisonUnitArray1 = null,
-                        ComparisonUnitArray2 = unknown
-                            .ComparisonUnitArray2.Take(beforeCommonParagraphRight)
-                            .ToArray(),
+                        ComparisonUnitArray2 = unknown.ComparisonUnitArray2.Take(beforeCommonParagraphRight).ToArray(),
                     };
                     newSequence.Add(csInserted);
                 }
@@ -2642,12 +2416,8 @@ namespace Clippit
                     var csUnknown = new CorrelatedSequence
                     {
                         CorrelationStatus = CorrelationStatus.Unknown,
-                        ComparisonUnitArray1 = unknown
-                            .ComparisonUnitArray1.Take(beforeCommonParagraphLeft)
-                            .ToArray(),
-                        ComparisonUnitArray2 = unknown
-                            .ComparisonUnitArray2.Take(beforeCommonParagraphRight)
-                            .ToArray(),
+                        ComparisonUnitArray1 = unknown.ComparisonUnitArray1.Take(beforeCommonParagraphLeft).ToArray(),
+                        ComparisonUnitArray2 = unknown.ComparisonUnitArray2.Take(beforeCommonParagraphRight).ToArray(),
                     };
                     newSequence.Add(csUnknown);
                 }
@@ -2707,14 +2477,10 @@ namespace Clippit
                 {
                     CorrelationStatus = CorrelationStatus.Equal,
                     ComparisonUnitArray1 = unknown
-                        .ComparisonUnitArray1.Skip(
-                            unknown.ComparisonUnitArray1.Length - countCommonAtEnd
-                        )
+                        .ComparisonUnitArray1.Skip(unknown.ComparisonUnitArray1.Length - countCommonAtEnd)
                         .ToArray(),
                     ComparisonUnitArray2 = unknown
-                        .ComparisonUnitArray2.Skip(
-                            unknown.ComparisonUnitArray2.Length - countCommonAtEnd
-                        )
+                        .ComparisonUnitArray2.Skip(unknown.ComparisonUnitArray2.Length - countCommonAtEnd)
                         .ToArray(),
                 };
                 newSequence.Add(csEqual);
@@ -2851,9 +2617,7 @@ namespace Clippit
             WmlComparerSettings settings
         )
         {
-            var grouped = list.GroupBy(ca =>
-                    level >= ca.AncestorElements.Length ? "" : ca.AncestorUnids[level]
-                )
+            var grouped = list.GroupBy(ca => level >= ca.AncestorElements.Length ? "" : ca.AncestorUnids[level])
                 .Where(g => g.Key != "");
 
             // if there are no deeper children, then we're done.
@@ -2928,9 +2692,7 @@ namespace Clippit
 
                         var newPara = new XElement(
                             W.p,
-                            ancestorBeingConstructed
-                                .Attributes()
-                                .Where(a => a.Name.Namespace != PtOpenXml.pt),
+                            ancestorBeingConstructed.Attributes().Where(a => a.Name.Namespace != PtOpenXml.pt),
                             new XAttribute(PtOpenXml.Unid, g.Key),
                             newChildElements
                         );
@@ -2964,9 +2726,7 @@ namespace Clippit
                         var rPr = ancestorBeingConstructed.Element(W.rPr);
                         var newRun = new XElement(
                             W.r,
-                            ancestorBeingConstructed
-                                .Attributes()
-                                .Where(a => a.Name.Namespace != PtOpenXml.pt),
+                            ancestorBeingConstructed.Attributes().Where(a => a.Name.Namespace != PtOpenXml.pt),
                             rPr,
                             newChildElements
                         );
@@ -2978,11 +2738,9 @@ namespace Clippit
                         var newChildElements = groupedChildren
                             .Select(gc =>
                             {
-                                var textOfTextElement = gc.Select(gce => gce.ContentElement.Value)
-                                    .StringConcatenate();
+                                var textOfTextElement = gc.Select(gce => gce.ContentElement.Value).StringConcatenate();
                                 var del = gc.First().CorrelationStatus == CorrelationStatus.Deleted;
-                                var ins =
-                                    gc.First().CorrelationStatus == CorrelationStatus.Inserted;
+                                var ins = gc.First().CorrelationStatus == CorrelationStatus.Inserted;
                                 if (del)
                                     return new XElement(
                                         W.delText,
@@ -2999,11 +2757,7 @@ namespace Clippit
                                     );
 
                                 return (object)
-                                    new XElement(
-                                        W.t,
-                                        GetXmlSpaceAttribute(textOfTextElement),
-                                        textOfTextElement
-                                    );
+                                    new XElement(W.t, GetXmlSpaceAttribute(textOfTextElement), textOfTextElement);
                             })
                             .ToList();
                         return newChildElements;
@@ -3021,9 +2775,7 @@ namespace Clippit
                                         gc.Select(gcc =>
                                         {
                                             var newDrawing = new XElement(gcc.ContentElement);
-                                            newDrawing.Add(
-                                                new XAttribute(PtOpenXml.Status, "Deleted")
-                                            );
+                                            newDrawing.Add(new XAttribute(PtOpenXml.Status, "Deleted"));
 
                                             var openXmlPartOfDeletedContent = gc.First().Part;
                                             var openXmlPartInNewDocument = part;
@@ -3033,11 +2785,8 @@ namespace Clippit
                                                     openXmlPartOfDeletedContent.OpenXmlPackage.GetPackage();
                                                 var packageOfNewContent =
                                                     openXmlPartInNewDocument.OpenXmlPackage.GetPackage();
-                                                var partInDeletedDocument =
-                                                    packageOfDeletedContent.GetPart(part.Uri);
-                                                var partInNewDocument = packageOfNewContent.GetPart(
-                                                    part.Uri
-                                                );
+                                                var partInDeletedDocument = packageOfDeletedContent.GetPart(part.Uri);
+                                                var partInNewDocument = packageOfNewContent.GetPart(part.Uri);
 
                                                 return MoveRelatedPartsToDestination(
                                                     partInDeletedDocument,
@@ -3048,16 +2797,13 @@ namespace Clippit
                                         });
                                 }
 
-                                var ins =
-                                    gc.First().CorrelationStatus == CorrelationStatus.Inserted;
+                                var ins = gc.First().CorrelationStatus == CorrelationStatus.Inserted;
                                 if (ins)
                                 {
                                     return gc.Select(gcc =>
                                     {
                                         var newDrawing = new XElement(gcc.ContentElement);
-                                        newDrawing.Add(
-                                            new XAttribute(PtOpenXml.Status, "Inserted")
-                                        );
+                                        newDrawing.Add(new XAttribute(PtOpenXml.Status, "Inserted"));
 
                                         var openXmlPartOfInsertedContent = gc.First().Part;
                                         var openXmlPartInNewDocument = part;
@@ -3067,11 +2813,8 @@ namespace Clippit
                                                 openXmlPartOfInsertedContent.OpenXmlPackage.GetPackage();
                                             var packageOfNewContent =
                                                 openXmlPartInNewDocument.OpenXmlPackage.GetPackage();
-                                            var partInDeletedDocument =
-                                                packageOfSourceContent.GetPart(part.Uri);
-                                            var partInNewDocument = packageOfNewContent.GetPart(
-                                                part.Uri
-                                            );
+                                            var partInDeletedDocument = packageOfSourceContent.GetPart(part.Uri);
+                                            var partInNewDocument = packageOfNewContent.GetPart(part.Uri);
 
                                             return MoveRelatedPartsToDestination(
                                                 partInDeletedDocument,
@@ -3089,10 +2832,7 @@ namespace Clippit
                         return newChildElements;
                     }
 
-                    if (
-                        ancestorBeingConstructed.Name == M.oMath
-                        || ancestorBeingConstructed.Name == M.oMathPara
-                    )
+                    if (ancestorBeingConstructed.Name == M.oMath || ancestorBeingConstructed.Name == M.oMathPara)
                     {
                         var newChildElements = groupedChildren
                             .Select(gc =>
@@ -3109,8 +2849,7 @@ namespace Clippit
                                     ));
                                 }
 
-                                var ins =
-                                    gc.First().CorrelationStatus == CorrelationStatus.Inserted;
+                                var ins = gc.First().CorrelationStatus == CorrelationStatus.Inserted;
                                 if (ins)
                                 {
                                     return gc.Select(gcc => new XElement(
@@ -3134,8 +2873,7 @@ namespace Clippit
                             .Select(gc =>
                             {
                                 var del = gc.First().CorrelationStatus == CorrelationStatus.Deleted;
-                                var ins =
-                                    gc.First().CorrelationStatus == CorrelationStatus.Inserted;
+                                var ins = gc.First().CorrelationStatus == CorrelationStatus.Inserted;
                                 if (del)
                                 {
                                     return gc.Select(gcc =>
@@ -3315,10 +3053,7 @@ namespace Clippit
 
         private static void SetAfterUnids(CorrelatedSequence unknown)
         {
-            if (
-                unknown.ComparisonUnitArray1.Length == 1
-                && unknown.ComparisonUnitArray2.Length == 1
-            )
+            if (unknown.ComparisonUnitArray1.Length == 1 && unknown.ComparisonUnitArray2.Length == 1)
             {
                 if (
                     unknown.ComparisonUnitArray1[0] is ComparisonUnitGroup cua1
@@ -3369,10 +3104,7 @@ namespace Clippit
                     foreach (var da in da2)
                     {
                         var ancestorsToSet = da.AncestorElements.Take(unidList.Length);
-                        var zipped = ancestorsToSet.Zip(
-                            unidList,
-                            (a, u) => new { Ancestor = a, Unid = u }
-                        );
+                        var zipped = ancestorsToSet.Zip(unidList, (a, u) => new { Ancestor = a, Unid = u });
 
                         foreach (var z in zipped)
                         {
@@ -3397,10 +3129,7 @@ namespace Clippit
         )
         {
             // never attempt this optimization if there are less than 3 groups
-            var maxd = Math.Min(
-                unknown.ComparisonUnitArray1.Length,
-                unknown.ComparisonUnitArray2.Length
-            );
+            var maxd = Math.Min(unknown.ComparisonUnitArray1.Length, unknown.ComparisonUnitArray2.Length);
             if (maxd < 3)
                 return null;
 
@@ -3449,30 +3178,23 @@ namespace Clippit
                                 var match =
                                     cul1[thisI1] is ComparisonUnitGroup group1
                                     && cul2[thisI2] is ComparisonUnitGroup group2
-                                    && group1.ComparisonUnitGroupType
-                                        == group2.ComparisonUnitGroupType
+                                    && group1.ComparisonUnitGroupType == group2.ComparisonUnitGroupType
                                     && group1.CorrelatedSHA1Hash != null
                                     && group2.CorrelatedSHA1Hash != null
                                     && group1.CorrelatedSHA1Hash == group2.CorrelatedSHA1Hash;
 
                                 if (match)
                                 {
-                                    thisSequenceAtomCount += cul1[
-                                        thisI1
-                                    ].DescendantContentAtomsCount;
+                                    thisSequenceAtomCount += cul1[thisI1].DescendantContentAtomsCount;
                                     thisI1++;
                                     thisI2++;
                                     thisSequenceLength++;
                                     if (thisI1 == cul1.Length || thisI2 == cul2.Length)
                                     {
-                                        if (
-                                            thisSequenceAtomCount
-                                            > currentLongestCommonSequenceAtomCount
-                                        )
+                                        if (thisSequenceAtomCount > currentLongestCommonSequenceAtomCount)
                                         {
                                             currentLongestCommonSequenceLength = thisSequenceLength;
-                                            currentLongestCommonSequenceAtomCount =
-                                                thisSequenceAtomCount;
+                                            currentLongestCommonSequenceAtomCount = thisSequenceAtomCount;
                                             currentI1 = i1;
                                             currentI2 = i2;
                                         }
@@ -3482,14 +3204,10 @@ namespace Clippit
                                 }
                                 else
                                 {
-                                    if (
-                                        thisSequenceAtomCount
-                                        > currentLongestCommonSequenceAtomCount
-                                    )
+                                    if (thisSequenceAtomCount > currentLongestCommonSequenceAtomCount)
                                     {
                                         currentLongestCommonSequenceLength = thisSequenceLength;
-                                        currentLongestCommonSequenceAtomCount =
-                                            thisSequenceAtomCount;
+                                        currentLongestCommonSequenceAtomCount = thisSequenceAtomCount;
                                         currentI1 = i1;
                                         currentI2 = i2;
                                     }
@@ -3505,23 +3223,14 @@ namespace Clippit
                     var doCorrelation = false;
                     if (currentLongestCommonSequenceLength == 1)
                     {
-                        var numberOfAtoms1 = unknown
-                            .ComparisonUnitArray1[currentI1]
-                            .DescendantContentAtoms()
-                            .Count();
-                        var numberOfAtoms2 = unknown
-                            .ComparisonUnitArray2[currentI2]
-                            .DescendantContentAtoms()
-                            .Count();
+                        var numberOfAtoms1 = unknown.ComparisonUnitArray1[currentI1].DescendantContentAtoms().Count();
+                        var numberOfAtoms2 = unknown.ComparisonUnitArray2[currentI2].DescendantContentAtoms().Count();
                         if (numberOfAtoms1 > 16 && numberOfAtoms2 > 16)
                         {
                             doCorrelation = true;
                         }
                     }
-                    else if (
-                        currentLongestCommonSequenceLength > 1
-                        && currentLongestCommonSequenceLength <= 3
-                    )
+                    else if (currentLongestCommonSequenceLength > 1 && currentLongestCommonSequenceLength <= 3)
                     {
                         var numberOfAtoms1 = unknown
                             .ComparisonUnitArray1.Skip(currentI1)
@@ -3589,14 +3298,8 @@ namespace Clippit
                             var unknownCorrelatedSequence = new CorrelatedSequence
                             {
                                 CorrelationStatus = CorrelationStatus.Unknown,
-                                ComparisonUnitArray1 = cul1.Skip(currentI1)
-                                    .Skip(i)
-                                    .Take(1)
-                                    .ToArray(),
-                                ComparisonUnitArray2 = cul2.Skip(currentI2)
-                                    .Skip(i)
-                                    .Take(1)
-                                    .ToArray(),
+                                ComparisonUnitArray1 = cul1.Skip(currentI1).Skip(i).Take(1).ToArray(),
+                                ComparisonUnitArray2 = cul2.Skip(currentI2).Skip(i).Take(1).ToArray(),
                             };
                             newListOfCorrelatedSequence.Add(unknownCorrelatedSequence);
                         }

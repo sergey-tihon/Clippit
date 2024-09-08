@@ -6,8 +6,7 @@ namespace Clippit.PowerPoint;
 
 public partial class PmlDocument : OpenXmlPowerToolsDocument
 {
-    private const string NotPresentationExceptionMessage =
-        "The document is not a PresentationML document.";
+    private const string NotPresentationExceptionMessage = "The document is not a PresentationML document.";
 
     public PmlDocument(OpenXmlPowerToolsDocument original)
         : base(original)

@@ -19,12 +19,7 @@ namespace Clippit.PowerPoint
                 .Element(P.spTree)
                 .Descendants(P.sp)
                 .Where(shape =>
-                    shape
-                        .Element(P.nvSpPr)
-                        ?.Element(P.nvPr)
-                        ?.Element(P.ph)
-                        ?.Attribute(NoNamespace.type)
-                        ?.Value switch
+                    shape.Element(P.nvSpPr)?.Element(P.nvPr)?.Element(P.ph)?.Attribute(NoNamespace.type)?.Value switch
                     {
                         "title" => true,
                         "ctrTitle" => true,
@@ -116,9 +111,7 @@ namespace Clippit.PowerPoint
                         case EmbeddedPackagePart oldPart:
                         {
                             var newPart = newChart.AddEmbeddedPackagePart(oldPart.ContentType);
-                            using (
-                                var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read)
-                            )
+                            using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
                                 newPart.FeedData(oldObject);
                             }
@@ -127,15 +120,8 @@ namespace Clippit.PowerPoint
                         }
                         case EmbeddedObjectPart oldEmbeddedObjectPart:
                         {
-                            var newPart = newChart.AddEmbeddedPackagePart(
-                                oldEmbeddedObjectPart.ContentType
-                            );
-                            using (
-                                var oldObject = oldEmbeddedObjectPart.GetStream(
-                                    FileMode.Open,
-                                    FileAccess.Read
-                                )
-                            )
+                            var newPart = newChart.AddEmbeddedPackagePart(oldEmbeddedObjectPart.ContentType);
+                            using (var oldObject = oldEmbeddedObjectPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
                                 newPart.FeedData(oldObject);
                             }
@@ -147,8 +133,7 @@ namespace Clippit.PowerPoint
                             // a relationship from a chart with the oleObject relationship type.
 
                             var pkg = newChart.OpenXmlPackage.GetPackage();
-                            var fromPart = pkg.GetParts()
-                                .FirstOrDefault(p => p.Uri == newChart.Uri);
+                            var fromPart = pkg.GetParts().FirstOrDefault(p => p.Uri == newChart.Uri);
                             if (fromPart is not null)
                             {
                                 var rel = fromPart.Relationships.FirstOrDefault(p => p.Id == rId);
@@ -207,10 +192,7 @@ namespace Clippit.PowerPoint
             }
         }
 
-        internal static void CopyExtendedChartObjects(
-            ExtendedChartPart oldChart,
-            ExtendedChartPart newChart
-        )
+        internal static void CopyExtendedChartObjects(ExtendedChartPart oldChart, ExtendedChartPart newChart)
         {
             foreach (var dataReference in newChart.GetXDocument().Descendants(Cx.externalData))
             {
@@ -224,9 +206,7 @@ namespace Clippit.PowerPoint
                         case EmbeddedPackagePart oldPart:
                         {
                             var newPart = newChart.AddEmbeddedPackagePart(oldPart.ContentType);
-                            using (
-                                var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read)
-                            )
+                            using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
                                 newPart.FeedData(oldObject);
                             }
@@ -235,15 +215,8 @@ namespace Clippit.PowerPoint
                         }
                         case EmbeddedObjectPart oldEmbeddedObjectPart:
                         {
-                            var newPart = newChart.AddEmbeddedPackagePart(
-                                oldEmbeddedObjectPart.ContentType
-                            );
-                            using (
-                                var oldObject = oldEmbeddedObjectPart.GetStream(
-                                    FileMode.Open,
-                                    FileAccess.Read
-                                )
-                            )
+                            var newPart = newChart.AddEmbeddedPackagePart(oldEmbeddedObjectPart.ContentType);
+                            using (var oldObject = oldEmbeddedObjectPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
                                 newPart.FeedData(oldObject);
                             }
@@ -255,8 +228,7 @@ namespace Clippit.PowerPoint
                             // a relationship from a chart with the oleObject relationship type.
 
                             var pkg = newChart.OpenXmlPackage.GetPackage();
-                            var fromPart = pkg.GetParts()
-                                .FirstOrDefault(p => p.Uri == newChart.Uri);
+                            var fromPart = pkg.GetParts().FirstOrDefault(p => p.Uri == newChart.Uri);
                             if (fromPart is not null)
                             {
                                 var rel = fromPart.Relationships.FirstOrDefault(p => p.Id == rId);
@@ -333,11 +305,7 @@ namespace Clippit.PowerPoint
             }
         }
 
-        private static void RemoveContent(
-            IEnumerable<XElement> newContent,
-            XName elementToModify,
-            string oldRid
-        )
+        private static void RemoveContent(IEnumerable<XElement> newContent, XName elementToModify, string oldRid)
         {
             foreach (var attributeName in s_relationshipMarkup[elementToModify])
             {
@@ -378,26 +346,18 @@ namespace Clippit.PowerPoint
                         }
                         continue;
                     }
-                    var tempHyperlink = newPart.HyperlinkRelationships.FirstOrDefault(h =>
-                        h.Id == relId
-                    );
+                    var tempHyperlink = newPart.HyperlinkRelationships.FirstOrDefault(h => h.Id == relId);
                     if (tempHyperlink is not null)
                         continue;
                     var newRid = Relationships.GetNewRelationshipId();
-                    var oldHyperlink = oldPart.HyperlinkRelationships.FirstOrDefault(h =>
-                        h.Id == relId
-                    );
+                    var oldHyperlink = oldPart.HyperlinkRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldHyperlink is null)
                     {
                         //TODO Issue with reference to another part: var temp = oldPart.GetPartById(relId);
                         RemoveContent(newContent, e.Name, relId);
                         continue;
                     }
-                    newPart.AddHyperlinkRelationship(
-                        oldHyperlink.Uri,
-                        oldHyperlink.IsExternal,
-                        newRid
-                    );
+                    newPart.AddHyperlinkRelationship(oldHyperlink.Uri, oldHyperlink.IsExternal, newRid);
                     UpdateContent(newContent, e.Name, relId, newRid);
                 }
                 else if (e.Name == VML.imagedata)
@@ -445,15 +405,10 @@ namespace Clippit.PowerPoint
         )
         {
             var relId = (string)imageReference.Attribute(attributeName);
-            if (
-                string.IsNullOrEmpty(relId)
-                || newContentPart.ExternalRelationships.Any(er => er.Id == relId)
-            )
+            if (string.IsNullOrEmpty(relId) || newContentPart.ExternalRelationships.Any(er => er.Id == relId))
                 return;
 
-            var oldRel = oldContentPart.ExternalRelationships.FirstOrDefault(dpr =>
-                dpr.Id == relId
-            );
+            var oldRel = oldContentPart.ExternalRelationships.FirstOrDefault(dpr => dpr.Id == relId);
             if (oldRel is null)
                 return;
 
@@ -492,10 +447,7 @@ namespace Clippit.PowerPoint
         )
         {
             var relId = (string)activeXPartReference.Attribute(attributeName);
-            if (
-                string.IsNullOrEmpty(relId)
-                || newContentPart.Parts.Any(p => p.RelationshipId == relId)
-            )
+            if (string.IsNullOrEmpty(relId) || newContentPart.Parts.Any(p => p.RelationshipId == relId))
                 return;
 
             var oldPart = oldContentPart.GetPartById(relId);
@@ -518,11 +470,10 @@ namespace Clippit.PowerPoint
                     var oldPersistencePart = oldPart.GetPartById(attr.Value);
 
                     var newId2 = Relationships.GetNewRelationshipId();
-                    var newPersistencePart =
-                        newPart.AddNewPart<EmbeddedControlPersistenceBinaryDataPart>(
-                            "application/vnd.ms-office.activeX",
-                            newId2
-                        );
+                    var newPersistencePart = newPart.AddNewPart<EmbeddedControlPersistenceBinaryDataPart>(
+                        "application/vnd.ms-office.activeX",
+                        newId2
+                    );
 
                     using (var stream = oldPersistencePart.GetStream())
                         newPersistencePart.FeedData(stream);
@@ -539,10 +490,7 @@ namespace Clippit.PowerPoint
         )
         {
             var relId = (string)textDataReference.Attribute(attributeName);
-            if (
-                string.IsNullOrEmpty(relId)
-                || newContentPart.Parts.Any(p => p.RelationshipId == relId)
-            )
+            if (string.IsNullOrEmpty(relId) || newContentPart.Parts.Any(p => p.RelationshipId == relId))
                 return;
 
             var oldPart = oldContentPart.GetPartById(relId);

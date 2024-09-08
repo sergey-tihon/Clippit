@@ -19,10 +19,7 @@ namespace Clippit
         // for any deleted or inserted rows, we go into the w:trPr properties, and add the appropriate w:ins or w:del element, and therefore
         // when generating the document, the appropriate row will be marked as deleted or inserted.
 
-        public static List<WmlComparerRevision> GetRevisions(
-            WmlDocument source,
-            WmlComparerSettings settings
-        )
+        public static List<WmlComparerRevision> GetRevisions(WmlDocument source, WmlComparerSettings settings)
         {
             using var ms = new MemoryStream();
             ms.Write(source.DocumentByteArray, 0, source.DocumentByteArray.Length);
@@ -31,12 +28,7 @@ namespace Clippit
             RemoveExistingPowerToolsMarkup(wDoc);
 
             var contentParent = wDoc.MainDocumentPart.GetXDocument().Root?.Element(W.body);
-            var atomList = CreateComparisonUnitAtomList(
-                    wDoc.MainDocumentPart,
-                    contentParent,
-                    settings
-                )
-                .ToArray();
+            var atomList = CreateComparisonUnitAtomList(wDoc.MainDocumentPart, contentParent, settings).ToArray();
 
             if (False)
             {
@@ -59,8 +51,7 @@ namespace Clippit
                                 XNamespace.Xmlns + "w",
                                 "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
                             ),
-                            a.RevTrackElement.Attributes()
-                                .Where(a2 => a2.Name != W.id && a2.Name != PtOpenXml.Unid)
+                            a.RevTrackElement.Attributes().Where(a2 => a2.Name != W.id && a2.Name != PtOpenXml.Unid)
                         );
                         key += rt.ToString(SaveOptions.DisableFormatting);
                     }
@@ -107,9 +98,7 @@ namespace Clippit
                     if (!RevElementsWithNoText.Contains(rev.ContentXElement.Name))
                     {
                         rev.Text = rg.Select(rgc =>
-                                rgc.ContentElement.Name == W.pPr
-                                    ? NewLine
-                                    : rgc.ContentElement.Value
+                                rgc.ContentElement.Name == W.pPr ? NewLine : rgc.ContentElement.Value
                             )
                             .StringConcatenate();
                     }
@@ -156,8 +145,7 @@ namespace Clippit
             var revisionsForPart = new List<WmlComparerRevision>();
             foreach (var fn in footnotesEndnotes)
             {
-                var atomList = CreateComparisonUnitAtomList(footnotesEndnotesPart, fn, settings)
-                    .ToArray();
+                var atomList = CreateComparisonUnitAtomList(footnotesEndnotesPart, fn, settings).ToArray();
 
                 if (False)
                 {
@@ -183,8 +171,7 @@ namespace Clippit
                                     XNamespace.Xmlns + "w",
                                     "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
                                 ),
-                                a.RevTrackElement.Attributes()
-                                    .Where(a2 => a2.Name != W.id && a2.Name != PtOpenXml.Unid)
+                                a.RevTrackElement.Attributes().Where(a2 => a2.Name != W.id && a2.Name != PtOpenXml.Unid)
                             );
 
                             key += rt.ToString(SaveOptions.DisableFormatting);
@@ -219,9 +206,7 @@ namespace Clippit
                     if (!RevElementsWithNoText.Contains(rev.ContentXElement.Name))
                     {
                         rev.Text = rg.Select(rgc =>
-                                rgc.ContentElement.Name == W.pPr
-                                    ? NewLine
-                                    : rgc.ContentElement.Value
+                                rgc.ContentElement.Name == W.pPr ? NewLine : rgc.ContentElement.Value
                             )
                             .StringConcatenate();
                     }

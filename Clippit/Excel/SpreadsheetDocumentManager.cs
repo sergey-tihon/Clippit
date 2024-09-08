@@ -109,13 +109,7 @@ namespace Clippit.Excel
             var categoryColumn = headerList.IndexOf(headerColumn.ToUpper()) + 1;
             var numRows = valueTable.GetLength(0);
 
-            return GetRangeReference(
-                sheetName,
-                categoryColumn,
-                headerRow + 1,
-                categoryColumn,
-                numRows + headerRow
-            );
+            return GetRangeReference(sheetName, categoryColumn, headerRow + 1, categoryColumn, numRows + headerRow);
         }
 
         /// <summary>
@@ -140,11 +134,7 @@ namespace Clippit.Excel
             foreach (var column in colsToChart)
             {
                 valueReferenceList.Add(
-                    GetRangeReference(
-                        sheetName,
-                        headerList.IndexOf(column.ToUpper()) + 1,
-                        headerRow
-                    )
+                    GetRangeReference(sheetName, headerList.IndexOf(column.ToUpper()) + 1, headerRow)
                 );
             }
             return valueReferenceList;
@@ -174,13 +164,7 @@ namespace Clippit.Excel
             {
                 var dataColumn = headerList.IndexOf(column.ToUpper()) + 1;
                 valueReferenceList.Add(
-                    GetRangeReference(
-                        sheetName,
-                        dataColumn,
-                        headerRow + 1,
-                        dataColumn,
-                        numRows + headerRow
-                    )
+                    GetRangeReference(sheetName, dataColumn, headerRow + 1, dataColumn, numRows + headerRow)
                 );
             }
             return valueReferenceList;

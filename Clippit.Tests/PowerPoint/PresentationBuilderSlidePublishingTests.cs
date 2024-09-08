@@ -15,11 +15,7 @@ namespace Clippit.Tests.PowerPoint
 
         public static IEnumerable<object[]> GetData()
         {
-            var files = Directory.GetFiles(
-                SourceDirectory,
-                "*.pptx",
-                SearchOption.TopDirectoryOnly
-            );
+            var files = Directory.GetFiles(SourceDirectory, "*.pptx", SearchOption.TopDirectoryOnly);
             return files.OrderBy(x => x).Select(path => new[] { path });
         }
 
@@ -34,10 +30,7 @@ namespace Clippit.Tests.PowerPoint
         [MemberData(nameof(GetData))]
         public void PublishUsingPublishSlides(string sourcePath)
         {
-            var targetDir = Path.Combine(
-                TargetDirectory,
-                Path.GetFileNameWithoutExtension(sourcePath)
-            );
+            var targetDir = Path.Combine(TargetDirectory, Path.GetFileNameWithoutExtension(sourcePath));
             if (Directory.Exists(targetDir))
                 Directory.Delete(targetDir, true);
             Directory.CreateDirectory(targetDir);
@@ -55,9 +48,7 @@ namespace Clippit.Tests.PowerPoint
                 slide.SaveAs(Path.Combine(targetDir, Path.GetFileName(slide.FileName)));
 
                 using var streamDoc = new OpenXmlMemoryStreamDocument(slide);
-                using var slideDoc = streamDoc.GetPresentationDocument(
-                    new OpenSettings { AutoSave = false }
-                );
+                using var slideDoc = streamDoc.GetPresentationDocument(new OpenSettings { AutoSave = false });
 
                 Assert.Equal(modified, slideDoc.PackageProperties.Modified);
 
@@ -94,9 +85,7 @@ namespace Clippit.Tests.PowerPoint
                 .Count();
             Assert.Equal(1, srcEmbeddingCount);
 
-            var slide = PresentationBuilder
-                .PublishSlides(srcDoc, Path.GetFileName(sourcePath))
-                .First();
+            var slide = PresentationBuilder.PublishSlides(srcDoc, Path.GetFileName(sourcePath)).First();
             using var streamDoc = new OpenXmlMemoryStreamDocument(slide);
             using var slideDoc = streamDoc.GetPresentationDocument(openSettings);
 
@@ -137,9 +126,7 @@ namespace Clippit.Tests.PowerPoint
                 numberOfMasters = doc1.PresentationPart.SlideMasterParts.Count();
             }
 
-            var onlyMaster = PresentationBuilder.BuildPresentation(
-                new List<SlideSource> { new(source, 0, 0, true) }
-            );
+            var onlyMaster = PresentationBuilder.BuildPresentation(new List<SlideSource> { new(source, 0, 0, true) });
 
             onlyMaster.FileName = fileName.Replace(".pptx", "_masterOnly.pptx");
             onlyMaster.SaveAs(Path.Combine(TargetDirectory, onlyMaster.FileName));
