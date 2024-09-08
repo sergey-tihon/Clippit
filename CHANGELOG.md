@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.2.0 - September 8, 2024
+
+- DocumentFormat.OpenXml 3.0.2 -> 3.1.0
+- DocumentFormat.OpenXml.Framework 3.0.2 -> 3.1.0
+- SixLabors.ImageSharp 3.1.4 -> 3.1.5
+- SixLabors.ImageSharp.Drawing 2.1.3 -> 2.1.4
+
 ## [2.1.1] - April 18, 2024
 
 - fix: regression cased by migration to struct inside OpenXML v3 #75
@@ -76,7 +83,7 @@
 
 ## [1.10.0] - Feb 19, 2022
 
-- Added support of ExtendedChartPart (http://schemas.microsoft.com/office/drawing/2014/chartex) in PresentationBuilder and DocumentBuilder.
+- Added support of ExtendedChartPart (<http://schemas.microsoft.com/office/drawing/2014/chartex>) in PresentationBuilder and DocumentBuilder.
 
 ## [1.9.2] - Feb 17, 2022
 
