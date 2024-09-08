@@ -14,12 +14,8 @@ using Xunit.Abstractions;
 
 namespace Clippit.Tests.Word
 {
-    public class PowerToolsBlockExtensionsTests : TestsBase
+    public class PowerToolsBlockExtensionsTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public PowerToolsBlockExtensionsTests(ITestOutputHelper log) : base(log)
-        {
-        }
-        
         [Fact]
         public void MustBeginPowerToolsBlockToUsePowerTools()
         {
@@ -81,7 +77,7 @@ namespace Clippit.Tests.Word
             Assert.Equal("Second", paragraphElements[1].Value);
         }
 
-        [Fact]
+        [Fact(Skip = "Since v3.1 OpenXML SDK unload part root element on content stream Dispose.")]
         public void MustEndPowerToolsBlockToUseStronglyTypedClasses()
         {
             using var stream = new MemoryStream();
