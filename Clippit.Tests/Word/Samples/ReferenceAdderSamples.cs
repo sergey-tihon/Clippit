@@ -8,10 +8,9 @@ namespace Clippit.Tests.Word.Samples
 {
     public class ReferenceAdderSamples : TestsBase
     {
-        public ReferenceAdderSamples(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public ReferenceAdderSamples(ITestOutputHelper log)
+            : base(log) { }
+
         [Theory]
         [InlineData("RaTest01.docx", "/w:document/w:body/w:p[1]", @"TOC \o '1-3' \h \z \u")] // Inserts a basic TOC before the first paragraph of the document
         [InlineData("RaTest02.docx", "/w:document/w:body/w:p[2]", @"TOC \o '1-3' \h \z \u")] // Inserts a TOC after the title of the document
@@ -25,7 +24,7 @@ namespace Clippit.Tests.Word.Samples
             var srcFile = new FileInfo(Path.Combine("../../../Word/Samples/ReferenceAdder/", fileName));
             var file = Path.Combine(TempDir, srcFile.Name);
             srcFile.CopyTo(file, true);
-            
+
             using var wDoc = WordprocessingDocument.Open(file, true);
             ReferenceAdder.AddToc(wDoc, xPath, switches, null, null);
         }

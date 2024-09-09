@@ -17,10 +17,9 @@ namespace Clippit.Tests.Word
 {
     public class StronglyTypedBlockTests : TestsBase
     {
-        public StronglyTypedBlockTests(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public StronglyTypedBlockTests(ITestOutputHelper log)
+            : base(log) { }
+
         [Fact]
         public void CanUseStronglyTypedBlockToDemarcateApis()
         {
@@ -66,7 +65,6 @@ namespace Clippit.Tests.Word
                 using var _ = new StronglyTypedBlock(null);
             });
         }
-        
     }
 }
 

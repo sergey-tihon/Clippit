@@ -17,10 +17,9 @@ namespace Clippit.Tests.Word
 {
     public class PowerToolsBlockTests : TestsBase
     {
-        public PowerToolsBlockTests(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public PowerToolsBlockTests(ITestOutputHelper log)
+            : base(log) { }
+
         [Fact]
         public void CanUsePowerToolsBlockToDemarcateApis()
         {

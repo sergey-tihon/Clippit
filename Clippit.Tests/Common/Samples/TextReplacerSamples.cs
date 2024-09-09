@@ -9,12 +9,10 @@ namespace Clippit.Tests.Common.Samples
 {
     public class TextReplacerSamples : TestsBase
     {
-        public TextReplacerSamples(ITestOutputHelper log) : base(log)
-        {
-        }
-        
-        private static string GetFilePath(string path) =>
-            Path.Combine("../../../Common/Samples/TextReplacer/", path);
+        public TextReplacerSamples(ITestOutputHelper log)
+            : base(log) { }
+
+        private static string GetFilePath(string path) => Path.Combine("../../../Common/Samples/TextReplacer/", path);
 
         [Theory]
         [InlineData("PowerPoint/Test01.pptx")]
@@ -37,21 +35,21 @@ namespace Clippit.Tests.Common.Samples
 
             using (var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test01.docx"), true))
                 TextReplacer.SearchAndReplace(doc, "the", "this", false);
-            
+
             try
             {
                 using var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test02.docx"), true);
                 TextReplacer.SearchAndReplace(doc, "the", "this", false);
             }
             catch (Exception) { }
-            
+
             try
             {
                 using var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test03.docx"), true);
                 TextReplacer.SearchAndReplace(doc, "the", "this", false);
             }
             catch (Exception) { }
-            
+
             using (var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test04.docx"), true))
                 TextReplacer.SearchAndReplace(doc, "the", "this", true);
             using (var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test05.docx"), true))

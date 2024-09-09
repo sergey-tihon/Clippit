@@ -12,10 +12,9 @@ namespace Clippit.Tests.Word
 {
     public class RevisionAccepterTests : TestsBase
     {
-        public RevisionAccepterTests(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public RevisionAccepterTests(ITestOutputHelper log)
+            : base(log) { }
+
         [Theory]
         [InlineData("RA001-Tracked-Revisions-01.docx")]
         [InlineData("RA001-Tracked-Revisions-02.docx")]
@@ -26,7 +25,9 @@ namespace Clippit.Tests.Word
 
             var notAccepted = new WmlDocument(sourceDocx.FullName);
             var afterAccepting = RevisionAccepter.AcceptRevisions(notAccepted);
-            var processedDestDocx = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-processed-by-RevisionAccepter.docx")));
+            var processedDestDocx = new FileInfo(
+                Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-processed-by-RevisionAccepter.docx"))
+            );
             afterAccepting.SaveAs(processedDestDocx.FullName);
         }
     }

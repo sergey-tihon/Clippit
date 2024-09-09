@@ -17,7 +17,8 @@ namespace Clippit
         internal static ComparisonUnitAtom[] CreateComparisonUnitAtomList(
             OpenXmlPart part,
             XElement contentParent,
-            WmlComparerSettings settings)
+            WmlComparerSettings settings
+        )
         {
             VerifyNoInvalidContent(contentParent);
             AssignUnidToAllElements(contentParent); // add the Guid id to every element
@@ -73,7 +74,8 @@ namespace Clippit
         private static List<ComparisonUnitAtom> CreateComparisonUnitAtomListInternal(
             OpenXmlPart part,
             XElement contentParent,
-            WmlComparerSettings settings)
+            WmlComparerSettings settings
+        )
         {
             var comparisonUnitAtomList = new List<ComparisonUnitAtom>();
             CreateComparisonUnitAtomListRecurse(part, contentParent, comparisonUnitAtomList, settings);
@@ -84,7 +86,8 @@ namespace Clippit
             OpenXmlPart part,
             XElement element,
             List<ComparisonUnitAtom> comparisonUnitAtomList,
-            WmlComparerSettings settings)
+            WmlComparerSettings settings
+        )
         {
             if (element.Name == W.body || element.Name == W.footnote || element.Name == W.endnote)
             {
@@ -95,9 +98,7 @@ namespace Clippit
 
             if (element.Name == W.p)
             {
-                var paraChildrenToProcess = element
-                    .Elements()
-                    .Where(e => e.Name != W.pPr);
+                var paraChildrenToProcess = element.Elements().Where(e => e.Name != W.pPr);
                 foreach (var item in paraChildrenToProcess)
                     CreateComparisonUnitAtomListRecurse(part, item, comparisonUnitAtomList, settings);
                 var paraProps = element.Element(W.pPr);
@@ -105,22 +106,28 @@ namespace Clippit
                 {
                     var pPrComparisonUnitAtom = new ComparisonUnitAtom(
                         new XElement(W.pPr),
-                        element.AncestorsAndSelf()
-                            .TakeWhile(a => a.Name != W.body && a.Name != W.footnotes && a.Name != W.endnotes).Reverse()
+                        element
+                            .AncestorsAndSelf()
+                            .TakeWhile(a => a.Name != W.body && a.Name != W.footnotes && a.Name != W.endnotes)
+                            .Reverse()
                             .ToArray(),
                         part,
-                        settings);
+                        settings
+                    );
                     comparisonUnitAtomList.Add(pPrComparisonUnitAtom);
                 }
                 else
                 {
                     var pPrComparisonUnitAtom = new ComparisonUnitAtom(
                         paraProps,
-                        element.AncestorsAndSelf()
-                            .TakeWhile(a => a.Name != W.body && a.Name != W.footnotes && a.Name != W.endnotes).Reverse()
+                        element
+                            .AncestorsAndSelf()
+                            .TakeWhile(a => a.Name != W.body && a.Name != W.footnotes && a.Name != W.endnotes)
+                            .Reverse()
                             .ToArray(),
                         part,
-                        settings);
+                        settings
+                    );
                     comparisonUnitAtomList.Add(pPrComparisonUnitAtom);
                 }
 
@@ -129,9 +136,7 @@ namespace Clippit
 
             if (element.Name == W.r)
             {
-                var runChildrenToProcess = element
-                    .Elements()
-                    .Where(e => e.Name != W.rPr);
+                var runChildrenToProcess = element.Elements().Where(e => e.Name != W.rPr);
                 foreach (var item in runChildrenToProcess)
                     CreateComparisonUnitAtomListRecurse(part, item, comparisonUnitAtomList, settings);
                 return;
@@ -144,11 +149,14 @@ namespace Clippit
                 {
                     var sr = new ComparisonUnitAtom(
                         new XElement(element.Name, ch),
-                        element.AncestorsAndSelf()
-                            .TakeWhile(a => a.Name != W.body && a.Name != W.footnotes && a.Name != W.endnotes).Reverse()
+                        element
+                            .AncestorsAndSelf()
+                            .TakeWhile(a => a.Name != W.body && a.Name != W.footnotes && a.Name != W.endnotes)
+                            .Reverse()
                             .ToArray(),
                         part,
-                        settings);
+                        settings
+                    );
                     comparisonUnitAtomList.Add(sr);
                 }
 
@@ -159,10 +167,14 @@ namespace Clippit
             {
                 var sr3 = new ComparisonUnitAtom(
                     element,
-                    element.AncestorsAndSelf().TakeWhile(a => a.Name != W.body && a.Name != W.footnotes && a.Name != W.endnotes)
-                        .Reverse().ToArray(),
+                    element
+                        .AncestorsAndSelf()
+                        .TakeWhile(a => a.Name != W.body && a.Name != W.footnotes && a.Name != W.endnotes)
+                        .Reverse()
+                        .ToArray(),
                     part,
-                    settings);
+                    settings
+                );
                 comparisonUnitAtomList.Add(sr3);
                 return;
             }
@@ -185,15 +197,14 @@ namespace Clippit
             XElement element,
             List<ComparisonUnitAtom> comparisonUnitAtomList,
             XName[] childElementPropertyNames,
-            WmlComparerSettings settings)
+            WmlComparerSettings settings
+        )
         {
             IEnumerable<XElement> runChildrenToProcess;
             if (childElementPropertyNames == null)
                 runChildrenToProcess = element.Elements();
             else
-                runChildrenToProcess = element
-                    .Elements()
-                    .Where(e => !childElementPropertyNames.Contains(e.Name));
+                runChildrenToProcess = element.Elements().Where(e => !childElementPropertyNames.Contains(e.Name));
 
             foreach (var item in runChildrenToProcess)
                 CreateComparisonUnitAtomListRecurse(part, item, comparisonUnitAtomList, settings);
@@ -207,54 +218,68 @@ namespace Clippit
         // into its own class.
         private static ComparisonUnit[] GetComparisonUnitList(
             ComparisonUnitAtom[] comparisonUnitAtomList,
-            WmlComparerSettings settings)
+            WmlComparerSettings settings
+        )
         {
             var seed = new Atgbw
             {
                 Key = null,
                 ComparisonUnitAtomMember = null,
-                NextIndex = 0
+                NextIndex = 0,
             };
 
             IEnumerable<Atgbw> groupingKey = comparisonUnitAtomList
-                .Rollup(seed, (sr, prevAtgbw, i) =>
-                {
-                    int? key;
-                    var nextIndex = prevAtgbw.NextIndex;
-                    if (sr.ContentElement.Name == W.t)
+                .Rollup(
+                    seed,
+                    (sr, prevAtgbw, i) =>
                     {
-                        var chr = sr.ContentElement.Value;
-                        var ch = chr[0];
-                        if (ch is '.' or ',')
+                        int? key;
+                        var nextIndex = prevAtgbw.NextIndex;
+                        if (sr.ContentElement.Name == W.t)
                         {
-                            var beforeIsDigit = false;
-                            if (i > 0)
+                            var chr = sr.ContentElement.Value;
+                            var ch = chr[0];
+                            if (ch is '.' or ',')
                             {
-                                var prev = comparisonUnitAtomList[i - 1];
-                                if (prev.ContentElement.Name == W.t && char.IsDigit(prev.ContentElement.Value[0]))
-                                    beforeIsDigit = true;
-                            }
+                                var beforeIsDigit = false;
+                                if (i > 0)
+                                {
+                                    var prev = comparisonUnitAtomList[i - 1];
+                                    if (prev.ContentElement.Name == W.t && char.IsDigit(prev.ContentElement.Value[0]))
+                                        beforeIsDigit = true;
+                                }
 
-                            var afterIsDigit = false;
-                            if (i < comparisonUnitAtomList.Length - 1)
-                            {
-                                var next = comparisonUnitAtomList[i + 1];
-                                if (next.ContentElement.Name == W.t && char.IsDigit(next.ContentElement.Value[0]))
-                                    afterIsDigit = true;
-                            }
+                                var afterIsDigit = false;
+                                if (i < comparisonUnitAtomList.Length - 1)
+                                {
+                                    var next = comparisonUnitAtomList[i + 1];
+                                    if (next.ContentElement.Name == W.t && char.IsDigit(next.ContentElement.Value[0]))
+                                        afterIsDigit = true;
+                                }
 
-                            if (beforeIsDigit || afterIsDigit)
+                                if (beforeIsDigit || afterIsDigit)
+                                {
+                                    key = nextIndex;
+                                }
+                                else
+                                {
+                                    nextIndex++;
+                                    key = nextIndex;
+                                    nextIndex++;
+                                }
+                            }
+                            else if (settings.WordSeparators.Contains(ch))
                             {
+                                nextIndex++;
                                 key = nextIndex;
+                                nextIndex++;
                             }
                             else
                             {
-                                nextIndex++;
                                 key = nextIndex;
-                                nextIndex++;
                             }
                         }
-                        else if (settings.WordSeparators.Contains(ch))
+                        else if (WordBreakElements.Contains(sr.ContentElement.Name))
                         {
                             nextIndex++;
                             key = nextIndex;
@@ -264,25 +289,15 @@ namespace Clippit
                         {
                             key = nextIndex;
                         }
-                    }
-                    else if (WordBreakElements.Contains(sr.ContentElement.Name))
-                    {
-                        nextIndex++;
-                        key = nextIndex;
-                        nextIndex++;
-                    }
-                    else
-                    {
-                        key = nextIndex;
-                    }
 
-                    return new Atgbw
-                    {
-                        Key = key,
-                        ComparisonUnitAtomMember = sr,
-                        NextIndex = nextIndex
-                    };
-                })
+                        return new Atgbw
+                        {
+                            Key = key,
+                            ComparisonUnitAtomMember = sr,
+                            NextIndex = nextIndex,
+                        };
+                    }
+                )
                 .ToArray();
 
             if (False)
@@ -298,9 +313,7 @@ namespace Clippit
                 TestUtil.NotePad(sbs);
             }
 
-            IEnumerable<IGrouping<int?, Atgbw>> groupedByWords = groupingKey
-                .GroupAdjacent(gc => gc.Key)
-                .ToArray();
+            IEnumerable<IGrouping<int?, Atgbw>> groupedByWords = groupingKey.GroupAdjacent(gc => gc.Key).ToArray();
 
             if (False)
             {
@@ -320,22 +333,20 @@ namespace Clippit
 
             var withHierarchicalGroupingKey = groupedByWords
                 .Select(g =>
-                    {
-                        var hierarchicalGroupingArray = g
-                            .First()
-                            .ComparisonUnitAtomMember
-                            .AncestorElements
-                            .Where(a => ComparisonGroupingElements.Contains(a.Name))
-                            .Select(a => a.Name.LocalName + ":" + (string) a.Attribute(PtOpenXml.Unid))
-                            .ToArray();
+                {
+                    var hierarchicalGroupingArray = g.First()
+                        .ComparisonUnitAtomMember.AncestorElements.Where(a =>
+                            ComparisonGroupingElements.Contains(a.Name)
+                        )
+                        .Select(a => a.Name.LocalName + ":" + (string)a.Attribute(PtOpenXml.Unid))
+                        .ToArray();
 
-                        return new WithHierarchicalGroupingKey
-                        {
-                            ComparisonUnitWord = new ComparisonUnitWord(g.Select(gc => gc.ComparisonUnitAtomMember)),
-                            HierarchicalGroupingArray = hierarchicalGroupingArray
-                        };
-                    }
-                )
+                    return new WithHierarchicalGroupingKey
+                    {
+                        ComparisonUnitWord = new ComparisonUnitWord(g.Select(gc => gc.ComparisonUnitAtomMember)),
+                        HierarchicalGroupingArray = hierarchicalGroupingArray,
+                    };
+                })
                 .ToArray();
 
             if (False)
@@ -343,9 +354,11 @@ namespace Clippit
                 var sb = new StringBuilder();
                 foreach (var group in withHierarchicalGroupingKey)
                 {
-                    sb.Append("Grouping Array: " +
-                              @group.HierarchicalGroupingArray.Select(gam => gam + " - ").StringConcatenate() +
-                              Environment.NewLine);
+                    sb.Append(
+                        "Grouping Array: "
+                            + @group.HierarchicalGroupingArray.Select(gam => gam + " - ").StringConcatenate()
+                            + Environment.NewLine
+                    );
                     foreach (var gc in @group.ComparisonUnitWord.Contents)
                     {
                         sb.Append("    " + gc.ToString(0) + Environment.NewLine);
@@ -369,18 +382,19 @@ namespace Clippit
 
         private static IEnumerable<ComparisonUnit> GetHierarchicalComparisonUnits(
             IEnumerable<WithHierarchicalGroupingKey> input,
-            int level)
+            int level
+        )
         {
-            var grouped = input
-                .GroupAdjacent(
-                    whgk => level >= whgk.HierarchicalGroupingArray.Length ? "" : whgk.HierarchicalGroupingArray[level]);
+            var grouped = input.GroupAdjacent(whgk =>
+                level >= whgk.HierarchicalGroupingArray.Length ? "" : whgk.HierarchicalGroupingArray[level]
+            );
 
             var retList = grouped
                 .Select(gc =>
                 {
                     if (gc.Key == "")
                     {
-                        return (IEnumerable<ComparisonUnit>) gc.Select(whgk => whgk.ComparisonUnitWord).ToList();
+                        return (IEnumerable<ComparisonUnit>)gc.Select(whgk => whgk.ComparisonUnitWord).ToList();
                     }
 
                     var spl = gc.Key.Split(':');

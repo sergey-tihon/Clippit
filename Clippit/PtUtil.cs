@@ -40,7 +40,8 @@ namespace Clippit
 
             var newXElement = XElement.Parse(newElement);
             newXElement.Attributes().Where(a => a.IsNamespaceDeclaration).Remove();
-            if (partXDoc.Root != null) partXDoc.Root.Add(newXElement);
+            if (partXDoc.Root != null)
+                partXDoc.Root.Add(newXElement);
         }
     }
 
@@ -68,18 +69,15 @@ namespace Clippit
 
             var lines = src.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
+            var priambleKeyWords = new[] { "MIME-VERSION:", "CONTENT-TYPE:" };
 
-            var priambleKeyWords = new[]
-            {
-                "MIME-VERSION:",
-                "CONTENT-TYPE:",
-            };
-
-            var priamble = lines.TakeWhile(l =>
-            {
-                var s = l.ToUpper();
-                return priambleKeyWords.Any(pk => s.StartsWith(pk));
-            }).ToArray();
+            var priamble = lines
+                .TakeWhile(l =>
+                {
+                    var s = l.ToUpper();
+                    return priambleKeyWords.Any(pk => s.StartsWith(pk));
+                })
+                .ToArray();
 
             foreach (var item in priamble)
             {
@@ -118,7 +116,8 @@ namespace Clippit
                 .Where(g => g.Key == false)
                 .ToArray();
 
-            var parts = grouped.Select(rp =>
+            var parts = grouped
+                .Select(rp =>
                 {
                     var partPriambleKeyWords = new[]
                     {
@@ -128,10 +127,11 @@ namespace Clippit
                     };
 
                     var partPriamble = rp.TakeWhile(l =>
-                    {
-                        var s = l.ToUpper();
-                        return partPriambleKeyWords.Any(pk => s.StartsWith(pk));
-                    }).ToArray();
+                        {
+                            var s = l.ToUpper();
+                            return partPriambleKeyWords.Any(pk => s.StartsWith(pk));
+                        })
+                        .ToArray();
 
                     string contentLocation = null;
                     string contentTransferEncoding = null;
@@ -149,13 +149,9 @@ namespace Clippit
                             partContentType = item.Substring("CONTENT-TYPE:".Length).Trim();
                     }
 
-                    var blankLinesAtBeginning = rp
-                        .Skip(partPriamble.Length)
-                        .TakeWhile(l => l == "")
-                        .Count();
+                    var blankLinesAtBeginning = rp.Skip(partPriamble.Length).TakeWhile(l => l == "").Count();
 
-                    var partText = rp
-                        .Skip(partPriamble.Length)
+                    var partText = rp.Skip(partPriamble.Length)
                         .Skip(blankLinesAtBeginning)
                         .Select(l => l + Environment.NewLine)
                         .StringConcatenate();
@@ -223,66 +219,63 @@ namespace Clippit
             }
             return new XDocument(
                 source.Declaration,
-                source.Nodes().Select(n =>
-                {
-                    return n switch
+                source
+                    .Nodes()
+                    .Select(n =>
                     {
-                        // Remove comments, processing instructions, and text nodes that are
-                        // children of XDocument.  Only white space text nodes are allowed as
-                        // children of a document, so we can remove all text nodes.
-                        XComment or XProcessingInstruction or XText => null,
-                        XElement e => NormalizeElement(e, havePSVI),
-                        _ => n
-                    };
-                }
-                )
+                        return n switch
+                        {
+                            // Remove comments, processing instructions, and text nodes that are
+                            // children of XDocument.  Only white space text nodes are allowed as
+                            // children of a document, so we can remove all text nodes.
+                            XComment or XProcessingInstruction or XText => null,
+                            XElement e => NormalizeElement(e, havePSVI),
+                            _ => n,
+                        };
+                    })
             );
         }
 
-        public static bool DeepEqualsWithNormalization(XDocument doc1, XDocument doc2,
-            XmlSchemaSet schemaSet)
+        public static bool DeepEqualsWithNormalization(XDocument doc1, XDocument doc2, XmlSchemaSet schemaSet)
         {
             var d1 = Normalize(doc1, schemaSet);
             var d2 = Normalize(doc2, schemaSet);
             return XNode.DeepEquals(d1, d2);
         }
 
-        private static IEnumerable<XAttribute> NormalizeAttributes(XElement element,
-            bool havePSVI)
+        private static IEnumerable<XAttribute> NormalizeAttributes(XElement element, bool havePSVI)
         {
-            return element.Attributes()
-                    .Where(a => !a.IsNamespaceDeclaration &&
-                        a.Name != Xsi.schemaLocation &&
-                        a.Name != Xsi.noNamespaceSchemaLocation)
-                    .OrderBy(a => a.Name.NamespaceName)
-                    .ThenBy(a => a.Name.LocalName)
-                    .Select(
-                        a =>
+            return element
+                .Attributes()
+                .Where(a =>
+                    !a.IsNamespaceDeclaration && a.Name != Xsi.schemaLocation && a.Name != Xsi.noNamespaceSchemaLocation
+                )
+                .OrderBy(a => a.Name.NamespaceName)
+                .ThenBy(a => a.Name.LocalName)
+                .Select(a =>
+                {
+                    if (havePSVI)
+                    {
+                        var dt = a.GetSchemaInfo().SchemaType.TypeCode;
+                        switch (dt)
                         {
-                            if (havePSVI)
-                            {
-                                var dt = a.GetSchemaInfo().SchemaType.TypeCode;
-                                switch (dt)
-                                {
-                                    case XmlTypeCode.Boolean:
-                                        return new XAttribute(a.Name, (bool)a);
-                                    case XmlTypeCode.DateTime:
-                                        return new XAttribute(a.Name, (DateTime)a);
-                                    case XmlTypeCode.Decimal:
-                                        return new XAttribute(a.Name, (decimal)a);
-                                    case XmlTypeCode.Double:
-                                        return new XAttribute(a.Name, (double)a);
-                                    case XmlTypeCode.Float:
-                                        return new XAttribute(a.Name, (float)a);
-                                    case XmlTypeCode.HexBinary:
-                                    case XmlTypeCode.Language:
-                                        return new XAttribute(a.Name,
-                                            ((string)a).ToLower());
-                                }
-                            }
-                            return a;
+                            case XmlTypeCode.Boolean:
+                                return new XAttribute(a.Name, (bool)a);
+                            case XmlTypeCode.DateTime:
+                                return new XAttribute(a.Name, (DateTime)a);
+                            case XmlTypeCode.Decimal:
+                                return new XAttribute(a.Name, (decimal)a);
+                            case XmlTypeCode.Double:
+                                return new XAttribute(a.Name, (double)a);
+                            case XmlTypeCode.Float:
+                                return new XAttribute(a.Name, (float)a);
+                            case XmlTypeCode.HexBinary:
+                            case XmlTypeCode.Language:
+                                return new XAttribute(a.Name, ((string)a).ToLower());
                         }
-                    );
+                    }
+                    return a;
+                });
         }
 
         private static XNode NormalizeNode(XNode node, bool havePSVI)
@@ -292,7 +285,7 @@ namespace Clippit
                 // trim comments and processing instructions from normalized tree
                 XComment or XProcessingInstruction => null,
                 XElement e => NormalizeElement(e, havePSVI),
-                _ => node
+                _ => node,
             };
             // Only thing left is XCData and XText, so clone them
         }
@@ -305,32 +298,25 @@ namespace Clippit
                 switch (dt.SchemaType.TypeCode)
                 {
                     case XmlTypeCode.Boolean:
-                        return new XElement(element.Name,
-                            NormalizeAttributes(element, havePSVI),
-                            (bool)element);
+                        return new XElement(element.Name, NormalizeAttributes(element, havePSVI), (bool)element);
                     case XmlTypeCode.DateTime:
-                        return new XElement(element.Name,
-                            NormalizeAttributes(element, havePSVI),
-                            (DateTime)element);
+                        return new XElement(element.Name, NormalizeAttributes(element, havePSVI), (DateTime)element);
                     case XmlTypeCode.Decimal:
-                        return new XElement(element.Name,
-                            NormalizeAttributes(element, havePSVI),
-                            (decimal)element);
+                        return new XElement(element.Name, NormalizeAttributes(element, havePSVI), (decimal)element);
                     case XmlTypeCode.Double:
-                        return new XElement(element.Name,
-                            NormalizeAttributes(element, havePSVI),
-                            (double)element);
+                        return new XElement(element.Name, NormalizeAttributes(element, havePSVI), (double)element);
                     case XmlTypeCode.Float:
-                        return new XElement(element.Name,
-                            NormalizeAttributes(element, havePSVI),
-                            (float)element);
+                        return new XElement(element.Name, NormalizeAttributes(element, havePSVI), (float)element);
                     case XmlTypeCode.HexBinary:
                     case XmlTypeCode.Language:
-                        return new XElement(element.Name,
+                        return new XElement(
+                            element.Name,
                             NormalizeAttributes(element, havePSVI),
-                            ((string)element).ToLower());
+                            ((string)element).ToLower()
+                        );
                     default:
-                        return new XElement(element.Name,
+                        return new XElement(
+                            element.Name,
                             NormalizeAttributes(element, havePSVI),
                             element.Nodes().Select(n => NormalizeNode(n, havePSVI))
                         );
@@ -338,7 +324,8 @@ namespace Clippit
             }
             else
             {
-                return new XElement(element.Name,
+                return new XElement(
+                    element.Name,
                     NormalizeAttributes(element, havePSVI),
                     element.Nodes().Select(n => NormalizeNode(n, havePSVI))
                 );
@@ -352,8 +339,8 @@ namespace Clippit
         {
             var now = DateTime.Now;
             var dirName =
-                prefix +
-                $"-{now.Year - 2000:00}-{now.Month:00}-{now.Day:00}-{now.Hour:00}{now.Minute:00}{now.Second:00}";
+                prefix
+                + $"-{now.Year - 2000:00}-{now.Month:00}-{now.Day:00}-{now.Hour:00}{now.Minute:00}{now.Second:00}";
             return new DirectoryInfo(dirName);
         }
 
@@ -361,9 +348,9 @@ namespace Clippit
         {
             var now = DateTime.Now;
             var fileName =
-                prefix +
-                $"-{now.Year - 2000:00}-{now.Month:00}-{now.Day:00}-{now.Hour:00}{now.Minute:00}{now.Second:00}" +
-                suffix;
+                prefix
+                + $"-{now.Year - 2000:00}-{now.Month:00}-{now.Day:00}-{now.Hour:00}{now.Minute:00}{now.Second:00}"
+                + suffix;
             return new FileInfo(fileName);
         }
 
@@ -507,8 +494,11 @@ namespace Clippit
             xmlDoc.Load(xmlReader);
             if (document.Declaration != null)
             {
-                var dec = xmlDoc.CreateXmlDeclaration(document.Declaration.Version,
-                    document.Declaration.Encoding, document.Declaration.Standalone);
+                var dec = xmlDoc.CreateXmlDeclaration(
+                    document.Declaration.Version,
+                    document.Declaration.Encoding,
+                    document.Declaration.Standalone
+                );
                 xmlDoc.InsertBefore(dec, xmlDoc.FirstChild);
             }
 
@@ -517,24 +507,19 @@ namespace Clippit
 
         public static string StringConcatenate(this IEnumerable<string> source)
         {
-            return source.Aggregate(
-                new StringBuilder(),
-                (sb, s) => sb.Append(s),
-                sb => sb.ToString());
+            return source.Aggregate(new StringBuilder(), (sb, s) => sb.Append(s), sb => sb.ToString());
         }
 
         public static string StringConcatenate<T>(this IEnumerable<T> source, Func<T, string> projectionFunc)
         {
-            return source.Aggregate(
-                new StringBuilder(),
-                (sb, i) => sb.Append(projectionFunc(i)),
-                sb => sb.ToString());
+            return source.Aggregate(new StringBuilder(), (sb, i) => sb.Append(projectionFunc(i)), sb => sb.ToString());
         }
 
         public static IEnumerable<TResult> PtZip<TFirst, TSecond, TResult>(
             this IEnumerable<TFirst> first,
             IEnumerable<TSecond> second,
-            Func<TFirst, TSecond, TResult> func)
+            Func<TFirst, TSecond, TResult> func
+        )
         {
             using var ie1 = first.GetEnumerator();
             using var ie2 = second.GetEnumerator();
@@ -544,7 +529,8 @@ namespace Clippit
 
         public static IEnumerable<IGrouping<TKey, TSource>> GroupAdjacent<TSource, TKey>(
             this IEnumerable<TSource> source,
-            Func<TSource, TKey> keySelector)
+            Func<TSource, TKey> keySelector
+        )
         {
             var last = default(TKey);
             var haveLast = false;
@@ -590,17 +576,14 @@ namespace Clippit
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-        public static IEnumerable<XElement> SiblingsBeforeSelfReverseDocumentOrder(
-            this XElement element)
+        public static IEnumerable<XElement> SiblingsBeforeSelfReverseDocumentOrder(this XElement element)
         {
             if (element.Annotation<SiblingsReverseDocumentOrderInfo>() == null)
                 InitializeSiblingsReverseDocumentOrder(element.Parent);
             var current = element;
             while (true)
             {
-                var previousElement = current
-                    .Annotation<SiblingsReverseDocumentOrderInfo>()
-                    .PreviousSibling;
+                var previousElement = current.Annotation<SiblingsReverseDocumentOrderInfo>().PreviousSibling;
                 if (previousElement == null)
                     yield break;
 
@@ -621,17 +604,14 @@ namespace Clippit
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-        public static IEnumerable<XElement> DescendantsBeforeSelfReverseDocumentOrder(
-            this XElement element)
+        public static IEnumerable<XElement> DescendantsBeforeSelfReverseDocumentOrder(this XElement element)
         {
             if (element.Annotation<DescendantsReverseDocumentOrderInfo>() == null)
                 InitializeDescendantsReverseDocumentOrder(element.AncestorsAndSelf().Last());
             var current = element;
             while (true)
             {
-                var previousElement = current
-                    .Annotation<DescendantsReverseDocumentOrderInfo>()
-                    .PreviousElement;
+                var previousElement = current.Annotation<DescendantsReverseDocumentOrderInfo>().PreviousElement;
                 if (previousElement == null)
                     yield break;
 
@@ -653,21 +633,21 @@ namespace Clippit
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public static IEnumerable<XElement> DescendantsTrimmedBeforeSelfReverseDocumentOrder(
-            this XElement element, XName trimName)
+            this XElement element,
+            XName trimName
+        )
         {
             if (element.Annotation<DescendantsTrimmedReverseDocumentOrderInfo>() == null)
             {
-                var ances = element.AncestorsAndSelf(W.txbxContent).FirstOrDefault() ??
-                            element.AncestorsAndSelf().Last();
+                var ances =
+                    element.AncestorsAndSelf(W.txbxContent).FirstOrDefault() ?? element.AncestorsAndSelf().Last();
                 InitializeDescendantsTrimmedReverseDocumentOrder(ances, trimName);
             }
 
             var current = element;
             while (true)
             {
-                var previousElement = current
-                    .Annotation<DescendantsTrimmedReverseDocumentOrderInfo>()
-                    .PreviousElement;
+                var previousElement = current.Annotation<DescendantsTrimmedReverseDocumentOrderInfo>().PreviousElement;
                 if (previousElement == null)
                     yield break;
 
@@ -683,7 +663,7 @@ namespace Clippit
             {
                 Indent = true,
                 OmitXmlDeclaration = true,
-                NewLineOnAttributes = true
+                NewLineOnAttributes = true,
             };
             var stringBuilder = new StringBuilder();
             using (var stringWriter = new StringWriter(stringBuilder))
@@ -692,14 +672,12 @@ namespace Clippit
             return stringBuilder.ToString();
         }
 
-        public static IEnumerable<XElement> DescendantsTrimmed(this XElement element,
-            XName trimName)
+        public static IEnumerable<XElement> DescendantsTrimmed(this XElement element, XName trimName)
         {
             return DescendantsTrimmed(element, e => e.Name == trimName);
         }
 
-        public static IEnumerable<XElement> DescendantsTrimmed(this XElement element,
-            Func<XElement, bool> predicate)
+        public static IEnumerable<XElement> DescendantsTrimmed(this XElement element, Func<XElement, bool> predicate)
         {
             var iteratorStack = new Stack<IEnumerator<XElement>>();
             iteratorStack.Push(element.Elements().GetEnumerator());
@@ -723,7 +701,8 @@ namespace Clippit
         public static IEnumerable<TResult> Rollup<TSource, TResult>(
             this IEnumerable<TSource> source,
             TResult seed,
-            Func<TSource, TResult, TResult> projection)
+            Func<TSource, TResult, TResult> projection
+        )
         {
             var nextSeed = seed;
             foreach (var src in source)
@@ -737,7 +716,8 @@ namespace Clippit
         public static IEnumerable<TResult> Rollup<TSource, TResult>(
             this IEnumerable<TSource> source,
             TResult seed,
-            Func<TSource, TResult, int, TResult> projection)
+            Func<TSource, TResult, int, TResult> projection
+        )
         {
             var nextSeed = seed;
             var index = 0;
@@ -779,7 +759,7 @@ namespace Clippit
             if (a == null)
                 return null;
 
-            var s = ((string) a).ToLower();
+            var s = ((string)a).ToLower();
             return s switch
             {
                 "1" => true,
@@ -788,7 +768,7 @@ namespace Clippit
                 "false" => false,
                 "on" => true,
                 "off" => false,
-                _ => (bool)a
+                _ => (bool)a,
             };
         }
 
@@ -813,20 +793,14 @@ namespace Clippit
         private static string NameWithPredicate(XElement el)
         {
             if (el.Parent != null && el.Parent.Elements(el.Name).Count() != 1)
-                return GetQName(el) + "[" +
-                    (el.ElementsBeforeSelf(el.Name).Count() + 1) + "]";
+                return GetQName(el) + "[" + (el.ElementsBeforeSelf(el.Name).Count() + 1) + "]";
             else
                 return GetQName(el);
         }
 
-        public static string StrCat<T>(this IEnumerable<T> source,
-            string separator)
+        public static string StrCat<T>(this IEnumerable<T> source, string separator)
         {
-            return source.Aggregate(new StringBuilder(),
-                       (sb, i) => sb
-                           .Append(i)
-                           .Append(separator),
-                       s => s.ToString());
+            return source.Aggregate(new StringBuilder(), (sb, i) => sb.Append(i).Append(separator), s => s.ToString());
         }
 
         public static string GetXPath(this XObject xobj)
@@ -859,77 +833,65 @@ namespace Clippit
                     //        "text()"
                     //    );
                     //
-                    XComment com when com.Document != null => "/" +
-                                                              (com.Document.Nodes().OfType<XComment>().Count() != 1
-                                                                  ? "comment()[" +
-                                                                    (com.NodesBeforeSelf().OfType<XComment>().Count() +
-                                                                     1) + "]"
-                                                                  : "comment()"),
-                    XProcessingInstruction pi => "/" +
-                                                 (pi.Document != null && pi.Document.Nodes()
-                                                     .OfType<XProcessingInstruction>()
-                                                     .Count() != 1
-                                                     ? "processing-instruction()[" +
-                                                       (pi.NodesBeforeSelf().OfType<XProcessingInstruction>().Count() +
-                                                        1) + "]"
-                                                     : "processing-instruction()"),
-                    _ => null
+                    XComment com when com.Document != null => "/"
+                        + (
+                            com.Document.Nodes().OfType<XComment>().Count() != 1
+                                ? "comment()[" + (com.NodesBeforeSelf().OfType<XComment>().Count() + 1) + "]"
+                                : "comment()"
+                        ),
+                    XProcessingInstruction pi => "/"
+                        + (
+                            pi.Document != null && pi.Document.Nodes().OfType<XProcessingInstruction>().Count() != 1
+                                ? "processing-instruction()["
+                                    + (pi.NodesBeforeSelf().OfType<XProcessingInstruction>().Count() + 1)
+                                    + "]"
+                                : "processing-instruction()"
+                        ),
+                    _ => null,
                 };
             }
             else
             {
                 return xobj switch
                 {
-                    XElement el => "/" +
-                                   el.Ancestors().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/") +
-                                   NameWithPredicate(el),
-                    XAttribute at when at.Parent != null => "/" +
-                                                            at.Parent.AncestorsAndSelf()
-                                                                .InDocumentOrder()
-                                                                .Select(e => NameWithPredicate(e))
-                                                                .StrCat("/") + "@" + GetQName(at),
-                    XComment com when com.Parent != null => "/" +
-                                                            com.Parent.AncestorsAndSelf()
-                                                                .InDocumentOrder()
-                                                                .Select(e => NameWithPredicate(e))
-                                                                .StrCat("/") +
-                                                            (com.Parent.Nodes().OfType<XComment>().Count() != 1
-                                                                ? "comment()[" +
-                                                                  (com.NodesBeforeSelf().OfType<XComment>().Count() +
-                                                                   1) + "]"
-                                                                : "comment()"),
-                    XCData cd when cd.Parent != null => "/" +
-                                                        cd.Parent.AncestorsAndSelf()
-                                                            .InDocumentOrder()
-                                                            .Select(e => NameWithPredicate(e))
-                                                            .StrCat("/") +
-                                                        (cd.Parent.Nodes().OfType<XText>().Count() != 1
-                                                            ? "text()[" +
-                                                              (cd.NodesBeforeSelf().OfType<XText>().Count() + 1) + "]"
-                                                            : "text()"),
-                    XText tx when tx.Parent != null => "/" +
-                                                       tx.Parent.AncestorsAndSelf()
-                                                           .InDocumentOrder()
-                                                           .Select(e => NameWithPredicate(e))
-                                                           .StrCat("/") +
-                                                       (tx.Parent.Nodes().OfType<XText>().Count() != 1
-                                                           ? "text()[" + (tx.NodesBeforeSelf().OfType<XText>().Count() +
-                                                                          1) + "]"
-                                                           : "text()"),
-                    XProcessingInstruction pi when pi.Parent != null => "/" +
-                                                                        pi.Parent.AncestorsAndSelf()
-                                                                            .InDocumentOrder()
-                                                                            .Select(e => NameWithPredicate(e))
-                                                                            .StrCat("/") +
-                                                                        (pi.Parent.Nodes()
-                                                                            .OfType<XProcessingInstruction>()
-                                                                            .Count() != 1
-                                                                            ? "processing-instruction()[" +
-                                                                              (pi.NodesBeforeSelf()
-                                                                                  .OfType<XProcessingInstruction>()
-                                                                                  .Count() + 1) + "]"
-                                                                            : "processing-instruction()"),
-                    _ => null
+                    XElement el => "/"
+                        + el.Ancestors().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/")
+                        + NameWithPredicate(el),
+                    XAttribute at when at.Parent != null => "/"
+                        + at.Parent.AncestorsAndSelf().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/")
+                        + "@"
+                        + GetQName(at),
+                    XComment com when com.Parent != null => "/"
+                        + com.Parent.AncestorsAndSelf().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/")
+                        + (
+                            com.Parent.Nodes().OfType<XComment>().Count() != 1
+                                ? "comment()[" + (com.NodesBeforeSelf().OfType<XComment>().Count() + 1) + "]"
+                                : "comment()"
+                        ),
+                    XCData cd when cd.Parent != null => "/"
+                        + cd.Parent.AncestorsAndSelf().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/")
+                        + (
+                            cd.Parent.Nodes().OfType<XText>().Count() != 1
+                                ? "text()[" + (cd.NodesBeforeSelf().OfType<XText>().Count() + 1) + "]"
+                                : "text()"
+                        ),
+                    XText tx when tx.Parent != null => "/"
+                        + tx.Parent.AncestorsAndSelf().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/")
+                        + (
+                            tx.Parent.Nodes().OfType<XText>().Count() != 1
+                                ? "text()[" + (tx.NodesBeforeSelf().OfType<XText>().Count() + 1) + "]"
+                                : "text()"
+                        ),
+                    XProcessingInstruction pi when pi.Parent != null => "/"
+                        + pi.Parent.AncestorsAndSelf().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/")
+                        + (
+                            pi.Parent.Nodes().OfType<XProcessingInstruction>().Count() != 1
+                                ? "processing-instruction()["
+                                    + (pi.NodesBeforeSelf().OfType<XProcessingInstruction>().Count() + 1)
+                                    + "]"
+                                : "processing-instruction()"
+                        ),
+                    _ => null,
                 };
             }
         }
@@ -951,7 +913,7 @@ namespace Clippit
             {
                 Output = new StringBuilder(),
                 Error = new StringBuilder(),
-                RunException = null
+                RunException = null,
             };
             try
             {
@@ -964,10 +926,8 @@ namespace Clippit
                     proc.StartInfo.UseShellExecute = false;
                     proc.StartInfo.RedirectStandardOutput = true;
                     proc.StartInfo.RedirectStandardError = true;
-                    proc.OutputDataReceived +=
-                        (o, e) => runResults.Output.Append(e.Data).Append(Environment.NewLine);
-                    proc.ErrorDataReceived +=
-                        (o, e) => runResults.Error.Append(e.Data).Append(Environment.NewLine);
+                    proc.OutputDataReceived += (o, e) => runResults.Output.Append(e.Data).Append(Environment.NewLine);
+                    proc.ErrorDataReceived += (o, e) => runResults.Error.Append(e.Data).Append(Environment.NewLine);
                     proc.Start();
                     proc.BeginOutputReadLine();
                     proc.BeginErrorReadLine();
@@ -1015,12 +975,12 @@ namespace Clippit
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable<TSource>) this).GetEnumerator();
+            return ((IEnumerable<TSource>)this).GetEnumerator();
         }
 
         IEnumerator<TSource> IEnumerable<TSource>.GetEnumerator()
         {
-            return ((IEnumerable<TSource>) GroupList).GetEnumerator();
+            return ((IEnumerable<TSource>)GroupList).GetEnumerator();
         }
     }
 
@@ -1049,11 +1009,7 @@ namespace Clippit
                 }
                 else
                 {
-                    Buckets.Add(LastBucket, new BucketInfo()
-                    {
-                        Count = 1,
-                        Time = d,
-                    });
+                    Buckets.Add(LastBucket, new BucketInfo() { Count = 1, Time = d });
                 }
             }
             LastBucket = bucket;
@@ -1071,8 +1027,7 @@ namespace Clippit
                 var s = bucket.Key.PadRight(60, '-') + "  " + $"{bucket.Value.Count:00000000}" + "  " + ts;
                 sb.Append(s + Environment.NewLine);
             }
-            var total = Buckets
-                .Aggregate(TimeSpan.Zero, (t, b) => t + b.Value.Time);
+            var total = Buckets.Aggregate(TimeSpan.Zero, (t, b) => t + b.Value.Time);
             var tz = total.ToString();
             sb.Append($"Total: {tz.Substring(0, tz.Length - 5)}");
             return sb.ToString();
@@ -1089,8 +1044,7 @@ namespace Clippit
                 var s = bucket.Key.PadRight(60, '-') + "  " + $"{bucket.Value.Count:00000000}" + "  " + ts;
                 sb.Append(s + Environment.NewLine);
             }
-            var total = Buckets
-                .Aggregate(TimeSpan.Zero, (t, b) => t + b.Value.Time);
+            var total = Buckets.Aggregate(TimeSpan.Zero, (t, b) => t + b.Value.Time);
             var tz = total.ToString();
             sb.Append($"Total: {tz.Substring(0, tz.Length - 5)}");
             return sb.ToString();
@@ -1114,9 +1068,8 @@ namespace Clippit
                 writer.WriteEntityRef(Value);
         }
 
-        public XEntity(string value) : base(value)
-        {
-        }
+        public XEntity(string value)
+            : base(value) { }
     }
 
     public static class Xsi

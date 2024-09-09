@@ -18,17 +18,14 @@ namespace Clippit.PowerPoint
                 .Element(P.cSld)
                 .Element(P.spTree)
                 .Descendants(P.sp)
-                .Where(shape => shape
-                        .Element(P.nvSpPr)
-                        ?.Element(P.nvPr)
-                        ?.Element(P.ph)
-                        ?.Attribute(NoNamespace.type)
-                        ?.Value switch
+                .Where(shape =>
+                    shape.Element(P.nvSpPr)?.Element(P.nvPr)?.Element(P.ph)?.Attribute(NoNamespace.type)?.Value switch
                     {
                         "title" => true,
                         "ctrTitle" => true,
-                        _ => false
-                    })
+                        _ => false,
+                    }
+                )
                 .ToList();
 
             var paragraphText = new StringBuilder();
@@ -50,54 +47,54 @@ namespace Clippit.PowerPoint
         internal static readonly Dictionary<XName, int> s_orderPresentation =
             new()
             {
-                {P.sldMasterIdLst, 10},
-                {P.notesMasterIdLst, 20},
-                {P.handoutMasterIdLst, 30},
-                {P.sldIdLst, 40},
-                {P.sldSz, 50},
-                {P.notesSz, 60},
-                {P.embeddedFontLst, 70},
-                {P.custShowLst, 80},
-                {P.photoAlbum, 90},
-                {P.custDataLst, 100},
-                {P.kinsoku, 120},
-                {P.defaultTextStyle, 130},
-                {P.modifyVerifier, 150},
-                {P.extLst, 160},
+                { P.sldMasterIdLst, 10 },
+                { P.notesMasterIdLst, 20 },
+                { P.handoutMasterIdLst, 30 },
+                { P.sldIdLst, 40 },
+                { P.sldSz, 50 },
+                { P.notesSz, 60 },
+                { P.embeddedFontLst, 70 },
+                { P.custShowLst, 80 },
+                { P.photoAlbum, 90 },
+                { P.custDataLst, 100 },
+                { P.kinsoku, 120 },
+                { P.defaultTextStyle, 130 },
+                { P.modifyVerifier, 150 },
+                { P.extLst, 160 },
             };
 
         private static readonly Dictionary<XName, XName[]> s_relationshipMarkup =
             new()
             {
-                {A.audioFile, new[] {R.link}},
-                {A.videoFile, new[] {R.link}},
-                {A.quickTimeFile, new[] {R.link}},
-                {A.wavAudioFile, new[] {R.embed}},
-                {A.blip, new[] {R.embed, R.link}},
-                {A.hlinkClick, new[] {R.id}},
-                {A.hlinkMouseOver, new[] {R.id}},
-                {A.hlinkHover, new[] {R.id}},
-                {A.relIds, new[] {R.cs, R.dm, R.lo, R.qs}},
-                {C.chart, new[] {R.id}},
-                {C.externalData, new[] {R.id}},
-                {C.userShapes, new[] {R.id}},
-                {Cx.chart, new[] {R.id}},
-                {Cx.externalData, new[] {R.id}},
-                {DGM.relIds, new[] {R.cs, R.dm, R.lo, R.qs}},
-                {A14.imgLayer, new[] {R.embed}},
-                {P14.media, new[] {R.embed, R.link}},
-                {P.oleObj, new[] {R.id}},
-                {P.externalData, new[] {R.id}},
-                {P.control, new[] {R.id}},
-                {P.snd, new[] {R.embed}},
-                {P.sndTgt, new[] {R.embed}},
-                {PAV.srcMedia, new[] {R.embed, R.link}},
-                {P.contentPart, new[] {R.id}},
-                {VML.fill, new[] {R.id}},
-                {VML.imagedata, new[] {R.href, R.id, R.pict, O.relid}},
-                {VML.stroke, new[] {R.id}},
-                {WNE.toolbarData, new[] {R.id}},
-                {Plegacy.textdata, new[] {XName.Get("id")}},
+                { A.audioFile, new[] { R.link } },
+                { A.videoFile, new[] { R.link } },
+                { A.quickTimeFile, new[] { R.link } },
+                { A.wavAudioFile, new[] { R.embed } },
+                { A.blip, new[] { R.embed, R.link } },
+                { A.hlinkClick, new[] { R.id } },
+                { A.hlinkMouseOver, new[] { R.id } },
+                { A.hlinkHover, new[] { R.id } },
+                { A.relIds, new[] { R.cs, R.dm, R.lo, R.qs } },
+                { C.chart, new[] { R.id } },
+                { C.externalData, new[] { R.id } },
+                { C.userShapes, new[] { R.id } },
+                { Cx.chart, new[] { R.id } },
+                { Cx.externalData, new[] { R.id } },
+                { DGM.relIds, new[] { R.cs, R.dm, R.lo, R.qs } },
+                { A14.imgLayer, new[] { R.embed } },
+                { P14.media, new[] { R.embed, R.link } },
+                { P.oleObj, new[] { R.id } },
+                { P.externalData, new[] { R.id } },
+                { P.control, new[] { R.id } },
+                { P.snd, new[] { R.embed } },
+                { P.sndTgt, new[] { R.embed } },
+                { PAV.srcMedia, new[] { R.embed, R.link } },
+                { P.contentPart, new[] { R.id } },
+                { VML.fill, new[] { R.id } },
+                { VML.imagedata, new[] { R.href, R.id, R.pict, O.relid } },
+                { VML.stroke, new[] { R.id } },
+                { WNE.toolbarData, new[] { R.id } },
+                { Plegacy.textdata, new[] { XName.Get("id") } },
             };
 
         internal static void CopyChartObjects(ChartPart oldChart, ChartPart newChart)
@@ -143,9 +140,12 @@ namespace Clippit.PowerPoint
                                 var targetUri = rel?.TargetUri;
 
                                 fromPart.Relationships.Remove(rId);
-                                fromPart.Relationships.Create(targetUri, System.IO.Packaging.TargetMode.Internal,
+                                fromPart.Relationships.Create(
+                                    targetUri,
+                                    System.IO.Packaging.TargetMode.Internal,
                                     "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject",
-                                    rId);
+                                    rId
+                                );
                             }
 
                             continue;
@@ -158,7 +158,7 @@ namespace Clippit.PowerPoint
                     var oldRel = oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldRel is null)
                         throw new PresentationBuilderInternalException("Internal Error 0007");
-                    
+
                     var newRid = Relationships.GetNewRelationshipId();
                     newChart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     dataReference.Attribute(R.id).Set(newRid);
@@ -181,16 +181,17 @@ namespace Clippit.PowerPoint
                 }
             }
 
-            void CopyPart<T>(T oldPart) where T : OpenXmlPart
+            void CopyPart<T>(T oldPart)
+                where T : OpenXmlPart
             {
                 var newRid = Relationships.GetNewRelationshipId();
                 var newPart = newChart.AddNewPart<T>(oldPart.ContentType, newRid);
-                
+
                 using var oldStream = oldPart.GetStream(FileMode.Open, FileAccess.Read);
                 newPart.FeedData(oldStream);
             }
         }
-        
+
         internal static void CopyExtendedChartObjects(ExtendedChartPart oldChart, ExtendedChartPart newChart)
         {
             foreach (var dataReference in newChart.GetXDocument().Descendants(Cx.externalData))
@@ -234,8 +235,12 @@ namespace Clippit.PowerPoint
                                 var targetUri = rel?.TargetUri;
 
                                 fromPart.Relationships.Remove(rId);
-                                fromPart.Relationships.Create(targetUri, System.IO.Packaging.TargetMode.Internal,
-                                    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject", rId);    
+                                fromPart.Relationships.Create(
+                                    targetUri,
+                                    System.IO.Packaging.TargetMode.Internal,
+                                    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject",
+                                    rId
+                                );
                             }
 
                             continue;
@@ -248,7 +253,7 @@ namespace Clippit.PowerPoint
                     var oldRel = oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldRel is null)
                         throw new PresentationBuilderInternalException("Internal Error 0007");
-                    
+
                     var newRid = Relationships.GetNewRelationshipId();
                     newChart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     dataReference.Attribute(R.id).Set(newRid);
@@ -271,18 +276,24 @@ namespace Clippit.PowerPoint
                 }
             }
 
-            void CopyPart<T>(T oldPart) where T : OpenXmlPart
+            void CopyPart<T>(T oldPart)
+                where T : OpenXmlPart
             {
                 var newRid = Relationships.GetNewRelationshipId();
                 var newPart = newChart.AddNewPart<T>(oldPart.ContentType, newRid);
-                
+
                 using var oldStream = oldPart.GetStream(FileMode.Open, FileAccess.Read);
                 using var newStream = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite);
                 oldStream.CopyTo(newStream);
             }
         }
 
-        private static void UpdateContent(IEnumerable<XElement> newContent, XName elementToModify, string oldRid, string newRid)
+        private static void UpdateContent(
+            IEnumerable<XElement> newContent,
+            XName elementToModify,
+            string oldRid,
+            string newRid
+        )
         {
             foreach (var attributeName in s_relationshipMarkup[elementToModify])
             {
@@ -300,15 +311,23 @@ namespace Clippit.PowerPoint
             {
                 newContent
                     .Descendants(elementToModify)
-                    .Where(e => (string)e.Attribute(attributeName) == oldRid).Remove();
+                    .Where(e => (string)e.Attribute(attributeName) == oldRid)
+                    .Remove();
             }
         }
 
-        internal static void AddRelationships(OpenXmlPart oldPart, OpenXmlPart newPart, IEnumerable<XElement> newContent)
+        internal static void AddRelationships(
+            OpenXmlPart oldPart,
+            OpenXmlPart newPart,
+            IEnumerable<XElement> newContent
+        )
         {
-            var relevantElements = newContent.DescendantsAndSelf()
-                .Where(d => s_relationshipMarkup.ContainsKey(d.Name) &&
-                            d.Attributes().Any(a => s_relationshipMarkup[d.Name].Contains(a.Name)))
+            var relevantElements = newContent
+                .DescendantsAndSelf()
+                .Where(d =>
+                    s_relationshipMarkup.ContainsKey(d.Name)
+                    && d.Attributes().Any(a => s_relationshipMarkup[d.Name].Contains(a.Name))
+                )
                 .ToList();
             foreach (var e in relevantElements)
             {
@@ -320,7 +339,7 @@ namespace Clippit.PowerPoint
                         // handle the following:
                         //<a:hlinkClick r:id=""
                         //              action="ppaction://customshow?id=0" />
-                        if (e.Attribute("action") is {} attr)
+                        if (e.Attribute("action") is { } attr)
                         {
                             if (attr.Value.Contains("customshow"))
                                 attr.Remove();
@@ -332,7 +351,8 @@ namespace Clippit.PowerPoint
                         continue;
                     var newRid = Relationships.GetNewRelationshipId();
                     var oldHyperlink = oldPart.HyperlinkRelationships.FirstOrDefault(h => h.Id == relId);
-                    if (oldHyperlink is null) {
+                    if (oldHyperlink is null)
+                    {
                         //TODO Issue with reference to another part: var temp = oldPart.GetPartById(relId);
                         RemoveContent(newContent, e.Name, relId);
                         continue;
@@ -354,7 +374,13 @@ namespace Clippit.PowerPoint
                     newPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     UpdateContent(newContent, e.Name, relId, newRid);
                 }
-                else if (e.Name == A.blip || e.Name == A14.imgLayer || e.Name == A.audioFile || e.Name == A.videoFile || e.Name == A.quickTimeFile)
+                else if (
+                    e.Name == A.blip
+                    || e.Name == A14.imgLayer
+                    || e.Name == A.audioFile
+                    || e.Name == A.videoFile
+                    || e.Name == A.quickTimeFile
+                )
                 {
                     var relId = (string)e.Attribute(R.link);
                     if (string.IsNullOrEmpty(relId))
@@ -370,12 +396,16 @@ namespace Clippit.PowerPoint
                 }
             }
         }
-        
-        internal static void CopyRelatedMediaExternalRelationship(OpenXmlPart oldContentPart, OpenXmlPart newContentPart, XElement imageReference, XName attributeName)
+
+        internal static void CopyRelatedMediaExternalRelationship(
+            OpenXmlPart oldContentPart,
+            OpenXmlPart newContentPart,
+            XElement imageReference,
+            XName attributeName
+        )
         {
             var relId = (string)imageReference.Attribute(attributeName);
-            if (string.IsNullOrEmpty(relId)
-                || newContentPart.ExternalRelationships.Any(er => er.Id == relId))
+            if (string.IsNullOrEmpty(relId) || newContentPart.ExternalRelationships.Any(er => er.Id == relId))
                 return;
 
             var oldRel = oldContentPart.ExternalRelationships.FirstOrDefault(dpr => dpr.Id == relId);
@@ -387,8 +417,13 @@ namespace Clippit.PowerPoint
 
             imageReference.Attribute(attributeName).Set(newId);
         }
-        
-        internal static void CopyInkPart(OpenXmlPart oldContentPart, OpenXmlPart newContentPart, XElement contentPartReference, XName attributeName)
+
+        internal static void CopyInkPart(
+            OpenXmlPart oldContentPart,
+            OpenXmlPart newContentPart,
+            XElement contentPartReference,
+            XName attributeName
+        )
         {
             var relId = (string)contentPartReference.Attribute(attributeName);
             if (newContentPart.HasRelationship(relId))
@@ -404,31 +439,41 @@ namespace Clippit.PowerPoint
             contentPartReference.Attribute(attributeName).Set(newId);
         }
 
-        internal static void CopyActiveXPart(OpenXmlPart oldContentPart, OpenXmlPart newContentPart, XElement activeXPartReference, XName attributeName)
+        internal static void CopyActiveXPart(
+            OpenXmlPart oldContentPart,
+            OpenXmlPart newContentPart,
+            XElement activeXPartReference,
+            XName attributeName
+        )
         {
             var relId = (string)activeXPartReference.Attribute(attributeName);
-            if (string.IsNullOrEmpty(relId)
-                || newContentPart.Parts.Any(p => p.RelationshipId == relId))
+            if (string.IsNullOrEmpty(relId) || newContentPart.Parts.Any(p => p.RelationshipId == relId))
                 return;
 
             var oldPart = oldContentPart.GetPartById(relId);
 
             var newId = Relationships.GetNewRelationshipId();
-            var newPart = newContentPart.AddNewPart<EmbeddedControlPersistencePart>("application/vnd.ms-office.activeX+xml", newId);
+            var newPart = newContentPart.AddNewPart<EmbeddedControlPersistencePart>(
+                "application/vnd.ms-office.activeX+xml",
+                newId
+            );
 
-            using(var stream = oldPart.GetStream())
+            using (var stream = oldPart.GetStream())
                 newPart.FeedData(stream);
             activeXPartReference.Attribute(attributeName).Set(newId);
 
             if (newPart.ContentType == "application/vnd.ms-office.activeX+xml")
             {
                 var axc = newPart.GetXDocument();
-                if (axc.Root?.Attribute(R.id) is {} attr)
+                if (axc.Root?.Attribute(R.id) is { } attr)
                 {
                     var oldPersistencePart = oldPart.GetPartById(attr.Value);
 
                     var newId2 = Relationships.GetNewRelationshipId();
-                    var newPersistencePart = newPart.AddNewPart<EmbeddedControlPersistenceBinaryDataPart>("application/vnd.ms-office.activeX", newId2);
+                    var newPersistencePart = newPart.AddNewPart<EmbeddedControlPersistenceBinaryDataPart>(
+                        "application/vnd.ms-office.activeX",
+                        newId2
+                    );
 
                     using (var stream = oldPersistencePart.GetStream())
                         newPersistencePart.FeedData(stream);
@@ -436,12 +481,16 @@ namespace Clippit.PowerPoint
                 }
             }
         }
-        
-        internal static void CopyLegacyDiagramText(OpenXmlPart oldContentPart, OpenXmlPart newContentPart, XElement textDataReference, XName attributeName)
+
+        internal static void CopyLegacyDiagramText(
+            OpenXmlPart oldContentPart,
+            OpenXmlPart newContentPart,
+            XElement textDataReference,
+            XName attributeName
+        )
         {
             var relId = (string)textDataReference.Attribute(attributeName);
-            if (string.IsNullOrEmpty(relId)
-                || newContentPart.Parts.Any(p => p.RelationshipId == relId))
+            if (string.IsNullOrEmpty(relId) || newContentPart.Parts.Any(p => p.RelationshipId == relId))
                 return;
 
             var oldPart = oldContentPart.GetPartById(relId);
@@ -453,8 +502,13 @@ namespace Clippit.PowerPoint
                 newPart.FeedData(stream);
             textDataReference.Attribute(attributeName).Set(newId);
         }
-        
-        internal static void CopyExtendedPart(OpenXmlPart oldContentPart, OpenXmlPart newContentPart, XElement extendedReference, XName attributeName)
+
+        internal static void CopyExtendedPart(
+            OpenXmlPart oldContentPart,
+            OpenXmlPart newContentPart,
+            XElement extendedReference,
+            XName attributeName
+        )
         {
             var relId = (string)extendedReference.Attribute(attributeName);
             if (string.IsNullOrEmpty(relId))
@@ -473,71 +527,327 @@ namespace Clippit.PowerPoint
 
                 var newPart = newContentPart switch
                 {
-                    ChartColorStylePart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    ChartDrawingPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    ChartPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    ChartsheetPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    ChartStylePart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    CommentAuthorsPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    ConnectionsPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    ControlPropertiesPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    CoreFilePropertiesPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    CustomDataPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    CustomDataPropertiesPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    CustomFilePropertiesPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    CustomizationPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    CustomPropertyPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    CustomUIPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    CustomXmlMappingsPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    CustomXmlPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    CustomXmlPropertiesPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    DiagramColorsPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    DiagramDataPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    DiagramLayoutDefinitionPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    DiagramPersistLayoutPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    DiagramStylePart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    DigitalSignatureOriginPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    DrawingsPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    EmbeddedControlPersistenceBinaryDataPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    EmbeddedControlPersistencePart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    EmbeddedObjectPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    EmbeddedPackagePart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    ExtendedFilePropertiesPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    ExtendedPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    FontPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    FontTablePart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    HandoutMasterPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    InternationalMacroSheetPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    LegacyDiagramTextInfoPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    LegacyDiagramTextPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    MacroSheetPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    NotesMasterPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    NotesSlidePart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    PresentationPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    PresentationPropertiesPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    RibbonAndBackstageCustomizationsPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    SingleCellTablePart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    SlideCommentsPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    SlideLayoutPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    SlideMasterPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    SlidePart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    SlideSyncDataPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    StyleDefinitionsPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType,fileInfo.Extension),
-                    StylesPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    TableDefinitionPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    TableStylesPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    ThemeOverridePart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    ThemePart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    ThumbnailPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    TimeLineCachePart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    TimeLinePart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    UserDefinedTagsPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    VbaDataPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    VbaProjectPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    ViewPropertiesPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    VmlDrawingPart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    XmlSignaturePart part => part.AddExtendedPart(oldPart.RelationshipType, oldPart.ContentType, fileInfo.Extension),
-                    _ => null
+                    ChartColorStylePart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    ChartDrawingPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    ChartPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    ChartsheetPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    ChartStylePart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    CommentAuthorsPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    ConnectionsPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    ControlPropertiesPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    CoreFilePropertiesPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    CustomDataPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    CustomDataPropertiesPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    CustomFilePropertiesPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    CustomizationPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    CustomPropertyPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    CustomUIPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    CustomXmlMappingsPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    CustomXmlPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    CustomXmlPropertiesPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    DiagramColorsPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    DiagramDataPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    DiagramLayoutDefinitionPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    DiagramPersistLayoutPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    DiagramStylePart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    DigitalSignatureOriginPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    DrawingsPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    EmbeddedControlPersistenceBinaryDataPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    EmbeddedControlPersistencePart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    EmbeddedObjectPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    EmbeddedPackagePart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    ExtendedFilePropertiesPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    ExtendedPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    FontPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    FontTablePart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    HandoutMasterPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    InternationalMacroSheetPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    LegacyDiagramTextInfoPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    LegacyDiagramTextPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    MacroSheetPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    NotesMasterPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    NotesSlidePart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    PresentationPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    PresentationPropertiesPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    RibbonAndBackstageCustomizationsPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    SingleCellTablePart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    SlideCommentsPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    SlideLayoutPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    SlideMasterPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    SlidePart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    SlideSyncDataPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    StyleDefinitionsPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    StylesPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    TableDefinitionPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    TableStylesPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    ThemeOverridePart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    ThemePart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    ThumbnailPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    TimeLineCachePart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    TimeLinePart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    UserDefinedTagsPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    VbaDataPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    VbaProjectPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    ViewPropertiesPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    VmlDrawingPart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    XmlSignaturePart part => part.AddExtendedPart(
+                        oldPart.RelationshipType,
+                        oldPart.ContentType,
+                        fileInfo.Extension
+                    ),
+                    _ => null,
                 };
 
                 relId = newContentPart.GetIdOfPart(newPart);
@@ -555,24 +865,37 @@ namespace Clippit.PowerPoint
                 }
                 catch (KeyNotFoundException)
                 {
-                    var newPart = newContentPart.OpenXmlPackage.GetPackage().GetParts().FirstOrDefault(p => p.Uri == newContentPart.Uri);
+                    var newPart = newContentPart
+                        .OpenXmlPackage.GetPackage()
+                        .GetParts()
+                        .FirstOrDefault(p => p.Uri == newContentPart.Uri);
                     if (!newPart.Relationships.Contains(relId))
                     {
-                        newPart.Relationships.Create(new Uri("NULL", UriKind.RelativeOrAbsolute),
+                        newPart.Relationships.Create(
+                            new Uri("NULL", UriKind.RelativeOrAbsolute),
                             System.IO.Packaging.TargetMode.Internal,
-                            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image", relId);
+                            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+                            relId
+                        );
                     }
                 }
             }
         }
-        
-        internal static void CopyRelatedSound(PresentationDocument newDocument, OpenXmlPart oldContentPart, OpenXmlPart newContentPart,
-            XElement soundReference, XName attributeName)
+
+        internal static void CopyRelatedSound(
+            PresentationDocument newDocument,
+            OpenXmlPart oldContentPart,
+            OpenXmlPart newContentPart,
+            XElement soundReference,
+            XName attributeName
+        )
         {
             var relId = (string)soundReference.Attribute(attributeName);
-            if (string.IsNullOrEmpty(relId)
+            if (
+                string.IsNullOrEmpty(relId)
                 || newContentPart.ExternalRelationships.Any(er => er.Id == relId)
-                || newContentPart.DataPartReferenceRelationships.Any(er => er.Id == relId))
+                || newContentPart.DataPartReferenceRelationships.Any(er => er.Id == relId)
+            )
                 return;
 
             switch (oldContentPart.GetReferenceRelationship(relId))
@@ -591,7 +914,7 @@ namespace Clippit.PowerPoint
                         HandoutMasterPart part => part.AddAudioReferenceRelationship(newSound),
                         NotesMasterPart part => part.AddAudioReferenceRelationship(newSound),
                         NotesSlidePart part => part.AddAudioReferenceRelationship(newSound),
-                        _ => null
+                        _ => null,
                     };
                     soundReference.Attribute(attributeName).Set(newRel?.Id);
                     break;
@@ -607,33 +930,36 @@ namespace Clippit.PowerPoint
                         SlidePart part => part.AddMediaReferenceRelationship(newSound),
                         SlideLayoutPart part => part.AddMediaReferenceRelationship(newSound),
                         SlideMasterPart part => part.AddMediaReferenceRelationship(newSound),
-                        _ => null
+                        _ => null,
                     };
                     soundReference.Attribute(attributeName).Set(newRel?.Id);
                     break;
                 }
             }
         }
-        
+
         internal static void Set(this XAttribute attr, string value)
         {
-            if (attr is null) return;
+            if (attr is null)
+                return;
             attr.Value = value;
         }
-        
+
         internal static bool HasRelationship(this OpenXmlPart part, string relId) =>
             string.IsNullOrEmpty(relId)
             || part.Parts.Any(p => p.RelationshipId == relId)
             || part.ExternalRelationships.Any(er => er.Id == relId);
     }
-    
+
     public class PresentationBuilderException : Exception
     {
-        public PresentationBuilderException(string message) : base(message) { }
+        public PresentationBuilderException(string message)
+            : base(message) { }
     }
 
     public class PresentationBuilderInternalException : Exception
     {
-        public PresentationBuilderInternalException(string message) : base(message) { }
+        public PresentationBuilderInternalException(string message)
+            : base(message) { }
     }
 }

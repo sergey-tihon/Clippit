@@ -31,7 +31,12 @@ namespace Clippit.Excel
         /// <param name="valueTable">Contents of data</param>
         /// <param name="initialRow">Row to start copying data from</param>
         /// <returns></returns>
-        public static void Create(SpreadsheetDocument document, List<string> headerList, string[][] valueTable, int initialRow)
+        public static void Create(
+            SpreadsheetDocument document,
+            List<string> headerList,
+            string[][] valueTable,
+            int initialRow
+        )
         {
             headerRow = initialRow;
 
@@ -76,17 +81,16 @@ namespace Clippit.Excel
             var partId = document.WorkbookPart.GetIdOfPart(worksheet);
             var workbookDocument = document.WorkbookPart.GetXDocument();
             //Gets the name from sheet tag related to worksheet
-            var sheetName =
-                workbookDocument.Root
-                .Element(ns + "sheets")
+            var sheetName = workbookDocument
+                .Root.Element(ns + "sheets")
                 .Elements(ns + "sheet")
-                .Where(
-                    t =>
-                        t.Attribute(relationshipsns + "id").Value == partId
-                ).First()
-                .Attribute("name").Value;
+                .Where(t => t.Attribute(relationshipsns + "id").Value == partId)
+                .First()
+                .Attribute("name")
+                .Value;
             return sheetName;
         }
+
         /// <summary>
         /// Gets the range reference for category
         /// </summary>
@@ -95,18 +99,17 @@ namespace Clippit.Excel
         /// <param name="headerList">column names from data</param>
         /// <param name="valueTable">Data values</param>
         /// <returns></returns>
-        private static string GetCategoryReference(string sheetName, string headerColumn, List<string> headerList, string[][] valueTable)
+        private static string GetCategoryReference(
+            string sheetName,
+            string headerColumn,
+            List<string> headerList,
+            string[][] valueTable
+        )
         {
             var categoryColumn = headerList.IndexOf(headerColumn.ToUpper()) + 1;
             var numRows = valueTable.GetLength(0);
 
-            return GetRangeReference(
-                sheetName,
-                categoryColumn,
-                headerRow + 1,
-                categoryColumn,
-                numRows + headerRow
-            );
+            return GetRangeReference(sheetName, categoryColumn, headerRow + 1, categoryColumn, numRows + headerRow);
         }
 
         /// <summary>
@@ -118,18 +121,20 @@ namespace Clippit.Excel
         /// <param name="valueTable">Data values</param>
         /// <param name="colsToChart">Columns used as data series</param>
         /// <returns></returns>
-        private static List<string> GetHeaderReferences(string sheetName, string headerColumn, List<string> headerList, List<string> colsToChart, string[][] valueTable)
+        private static List<string> GetHeaderReferences(
+            string sheetName,
+            string headerColumn,
+            List<string> headerList,
+            List<string> colsToChart,
+            string[][] valueTable
+        )
         {
             var valueReferenceList = new List<string>();
 
             foreach (var column in colsToChart)
             {
                 valueReferenceList.Add(
-                    GetRangeReference(
-                        sheetName,
-                        headerList.IndexOf(column.ToUpper()) + 1,
-                        headerRow
-                    )
+                    GetRangeReference(sheetName, headerList.IndexOf(column.ToUpper()) + 1, headerRow)
                 );
             }
             return valueReferenceList;
@@ -144,7 +149,13 @@ namespace Clippit.Excel
         /// <param name="valueTable">Data values</param>
         /// <param name="colsToChart">Columns used as data series</param>
         /// <returns></returns>
-        private static List<string> GetValueReferences(string sheetName, string headerColumn, List<string> headerList, List<string> colsToChart, string[][] valueTable)
+        private static List<string> GetValueReferences(
+            string sheetName,
+            string headerColumn,
+            List<string> headerList,
+            List<string> colsToChart,
+            string[][] valueTable
+        )
         {
             var valueReferenceList = new List<string>();
             var numRows = valueTable.GetLength(0);
@@ -153,13 +164,7 @@ namespace Clippit.Excel
             {
                 var dataColumn = headerList.IndexOf(column.ToUpper()) + 1;
                 valueReferenceList.Add(
-                    GetRangeReference(
-                        sheetName,
-                        dataColumn,
-                        headerRow + 1,
-                        dataColumn,
-                        numRows + headerRow
-                    )
+                    GetRangeReference(sheetName, dataColumn, headerRow + 1, dataColumn, numRows + headerRow)
                 );
             }
             return valueReferenceList;
@@ -176,10 +181,15 @@ namespace Clippit.Excel
         /// <summary>
         /// Gets a formatted representation of a cell range from a worksheet
         /// </summary>
-        private static string GetRangeReference(string worksheet, int startColumn, int startRow, int endColumn, int endRow)
+        private static string GetRangeReference(
+            string worksheet,
+            int startColumn,
+            int startRow,
+            int endColumn,
+            int endRow
+        )
         {
-            return
-                $"{worksheet}!{WorksheetAccessor.GetColumnId(startColumn)}{startRow}:{WorksheetAccessor.GetColumnId(endColumn)}{endRow}";
+            return $"{worksheet}!{WorksheetAccessor.GetColumnId(startColumn)}{startRow}:{WorksheetAccessor.GetColumnId(endColumn)}{endRow}";
         }
 
         /// <summary>
@@ -188,14 +198,14 @@ namespace Clippit.Excel
         /// <returns></returns>
         private static XDocument CreateEmptyWorkbook()
         {
-            var document =
-                new XDocument(
-                    new XElement(ns + "workbook",
-                        new XAttribute("xmlns", ns),
-                        new XAttribute(XNamespace.Xmlns + "r", relationshipsns),
-                        new XElement(ns + "sheets")
-                    )
-                );
+            var document = new XDocument(
+                new XElement(
+                    ns + "workbook",
+                    new XAttribute("xmlns", ns),
+                    new XAttribute(XNamespace.Xmlns + "r", relationshipsns),
+                    new XElement(ns + "sheets")
+                )
+            );
 
             return document;
         }

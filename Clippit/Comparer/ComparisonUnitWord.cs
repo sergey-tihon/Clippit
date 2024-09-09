@@ -44,7 +44,7 @@ namespace Clippit
             W.sourceFileName,
             W.src,
             W.subDoc,
-            WNE.toolbarData
+            WNE.toolbarData,
         };
 
         public static readonly XName[] RelationshipAttributeNames =
@@ -57,7 +57,7 @@ namespace Clippit
             R.lo,
             R.qs,
             R.href,
-            R.pict
+            R.pict,
         };
 
         public ComparisonUnitWord(IEnumerable<ComparisonUnitAtom> comparisonUnitAtomList)

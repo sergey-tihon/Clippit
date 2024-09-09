@@ -19,9 +19,7 @@ namespace Clippit.Excel
             {
                 parserResult = _parser.Formula();
             }
-            catch (PegException)
-            {
-            }
+            catch (PegException) { }
             if (!parserResult)
             {
                 _parser.Warning("Error processing " + formula);
@@ -67,7 +65,10 @@ namespace Clippit.Excel
                 text.Remove(node.match_._posBeg, node.match_.Length);
                 text.Insert(node.match_._posBeg, Convert.ToString(rowNumber + rowOffset));
             }
-            else if (node.id_ == (int)EExcelFormula.A1Column && _parser.GetSource().Substring(node.match_._posBeg, 1) != "$")
+            else if (
+                node.id_ == (int)EExcelFormula.A1Column
+                && _parser.GetSource().Substring(node.match_._posBeg, 1) != "$"
+            )
             {
                 var colNumber = GetColumnNumber(_parser.GetSource().Substring(node.match_._posBeg, node.match_.Length));
                 text.Remove(node.match_._posBeg, node.match_.Length);
@@ -79,7 +80,8 @@ namespace Clippit.Excel
 
         // Converts the column reference string to a column number (e.g. A -> 1, B -> 2)
         private static int GetColumnNumber(string cellReference) =>
-            cellReference.Where(char.IsLetter)
+            cellReference
+                .Where(char.IsLetter)
                 .Aggregate(0, (current, c) => current * 26 + Convert.ToInt32(c) - Convert.ToInt32('A') + 1);
 
         // Translates the column number to the column reference string (e.g. 1 -> A, 2-> B)

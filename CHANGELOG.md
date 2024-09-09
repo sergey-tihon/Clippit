@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.2.0 - September 8, 2024
+## [2.2.0] - September 8, 2024
 
 - DocumentFormat.OpenXml 3.0.2 -> 3.1.0
 - DocumentFormat.OpenXml.Framework 3.0.2 -> 3.1.0

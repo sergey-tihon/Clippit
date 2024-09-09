@@ -10,23 +10,30 @@ namespace Clippit.Excel.Builder
             headers.Select(value => String(value, true)).ToArray();
 
         public static CellDfn String(string value, bool bold = false) =>
-            new() { CellDataType = CellDataType.String, Value = RemoveForbiddenChars(value), Bold = bold };
+            new()
+            {
+                CellDataType = CellDataType.String,
+                Value = RemoveForbiddenChars(value),
+                Bold = bold,
+            };
 
-        public static CellDfn Number(int value) =>
-            new() { CellDataType = CellDataType.Number, Value = value };
+        public static CellDfn Number(int value) => new() { CellDataType = CellDataType.Number, Value = value };
 
-        public static CellDfn Number(long value) =>
-            new() { CellDataType = CellDataType.Number, Value = value };
+        public static CellDfn Number(long value) => new() { CellDataType = CellDataType.Number, Value = value };
 
-        public static CellDfn Bool(bool? value) =>
-            new() { CellDataType = CellDataType.Boolean, Value = value };
+        public static CellDfn Bool(bool? value) => new() { CellDataType = CellDataType.Boolean, Value = value };
 
         public static CellDfn Date(DateTime? value)
         {
             if (value is null || value.Value == DateTime.MinValue)
                 return null;
 
-            return new CellDfn { CellDataType = CellDataType.Date, Value = value.Value, FormatCode = "mm-dd-yy" };
+            return new CellDfn
+            {
+                CellDataType = CellDataType.Date,
+                Value = value.Value,
+                FormatCode = "mm-dd-yy",
+            };
         }
 
         // From xml spec valid chars:
@@ -34,7 +41,7 @@ namespace Clippit.Excel.Builder
         // any Unicode character, excluding the surrogate blocks, FFFE, and FFFF.
         private static readonly Regex s_xmlInvalidSymbolsRegex =
             new(@"[^\x09\x0A\x0D\x20-\xD7FF\xE000-\xFFFD\x10000-x10FFFF]", RegexOptions.Compiled);
-        
+
         private static string RemoveForbiddenChars(string strInput)
         {
             if (string.IsNullOrWhiteSpace(strInput))

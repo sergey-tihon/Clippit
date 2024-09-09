@@ -25,7 +25,8 @@ namespace Clippit
         public static WmlDocument Consolidate(
             WmlDocument original,
             List<WmlRevisedDocumentInfo> revisedDocumentInfoList,
-            WmlComparerSettings settings)
+            WmlComparerSettings settings
+        )
         {
             var consolidateSettings = new WmlComparerConsolidateSettings();
             return Consolidate(original, revisedDocumentInfoList, settings, consolidateSettings);
@@ -35,7 +36,8 @@ namespace Clippit
             WmlDocument original,
             List<WmlRevisedDocumentInfo> revisedDocumentInfoList,
             WmlComparerSettings settings,
-            WmlComparerConsolidateSettings consolidateSettings)
+            WmlComparerConsolidateSettings consolidateSettings
+        )
         {
             // pre-process the original, so that it already has unids for all elements
             // then when comparing all documents to the original, each one will have the unid as appropriate
@@ -72,27 +74,25 @@ namespace Clippit
                 var consolidatedMainDocPartRoot = consolidatedMainDocPartXDoc.Root ?? throw new ArgumentException();
 
                 // save away last sectPr
-                var savedSectPr = consolidatedMainDocPartRoot
-                    .Elements(W.body)
-                    .Elements(W.sectPr)
-                    .LastOrDefault();
+                var savedSectPr = consolidatedMainDocPartRoot.Elements(W.body).Elements(W.sectPr).LastOrDefault();
 
-                consolidatedMainDocPartRoot
-                    .Elements(W.body)
-                    .Elements(W.sectPr)
-                    .Remove();
+                consolidatedMainDocPartRoot.Elements(W.body).Elements(W.sectPr).Remove();
 
                 var consolidatedByUnid = consolidatedMainDocPartXDoc
                     .Descendants()
                     .Where(d => (d.Name == W.p || d.Name == W.tbl) && d.Attribute(PtOpenXml.Unid) != null)
-                    .ToDictionary(d => (string) d.Attribute(PtOpenXml.Unid));
+                    .ToDictionary(d => (string)d.Attribute(PtOpenXml.Unid));
 
                 var deltaNbr = 1;
                 foreach (var revisedDocumentInfo in revisedDocumentInfoList)
                 {
                     settings.StartingIdForFootnotesEndnotes = deltaNbr * 2000 + 3000;
-                    var delta = CompareInternal(originalWithUnids, revisedDocumentInfo.RevisedDocument, settings,
-                        false);
+                    var delta = CompareInternal(
+                        originalWithUnids,
+                        revisedDocumentInfo.RevisedDocument,
+                        settings,
+                        false
+                    );
 
                     if (SaveIntermediateFilesForDebugging && settings.DebugTempFileDi != null)
                     {
@@ -106,7 +106,8 @@ namespace Clippit
                     msOriginalWithUnids.Write(
                         originalWithUnids.DocumentByteArray,
                         0,
-                        originalWithUnids.DocumentByteArray.Length);
+                        originalWithUnids.DocumentByteArray.Length
+                    );
 
                     msDelta.Write(delta.DocumentByteArray, 0, delta.DocumentByteArray.Length);
 
@@ -115,11 +116,12 @@ namespace Clippit
                     var modMainDocPart = wDocDelta.MainDocumentPart;
                     var modMainDocPartXDoc = modMainDocPart.GetXDocument();
                     var blockLevelContentToMove = modMainDocPartXDoc
-                        .Root
-                        .DescendantsTrimmed(d => d.Name == W.txbxContent || d.Name == W.tr)
+                        .Root.DescendantsTrimmed(d => d.Name == W.txbxContent || d.Name == W.tr)
                         .Where(d => d.Name == W.p || d.Name == W.tbl)
-                        .Where(d => d.Descendants().Any(z => z.Name == W.ins || z.Name == W.del) ||
-                                    ContentContainsFootnoteEndnoteReferencesThatHaveRevisions(d, wDocDelta))
+                        .Where(d =>
+                            d.Descendants().Any(z => z.Name == W.ins || z.Name == W.del)
+                            || ContentContainsFootnoteEndnoteReferencesThatHaveRevisions(d, wDocDelta)
+                        )
                         .ToList();
 
                     foreach (var revision in blockLevelContentToMove)
@@ -127,7 +129,7 @@ namespace Clippit
                         var elementLookingAt = revision;
                         while (true)
                         {
-                            var unid = (string) elementLookingAt.Attribute(PtOpenXml.Unid);
+                            var unid = (string)elementLookingAt.Attribute(PtOpenXml.Unid);
                             if (unid == null)
                                 throw new OpenXmlPowerToolsException("Internal error");
 
@@ -145,10 +147,11 @@ namespace Clippit
                                     .Descendants(W.footnoteReference)
                                     .Select(fr =>
                                     {
-                                        var id = (int) fr.Attribute(W.id);
+                                        var id = (int)fr.Attribute(W.id);
                                         var fnXDoc = wDocDelta.MainDocumentPart.FootnotesPart.GetXDocument();
-                                        var footnote = fnXDoc.Root.Elements(W.footnote)
-                                            .FirstOrDefault(fn => (int) fn.Attribute(W.id) == id);
+                                        var footnote = fnXDoc
+                                            .Root.Elements(W.footnote)
+                                            .FirstOrDefault(fn => (int)fn.Attribute(W.id) == id);
                                         if (footnote == null)
                                             throw new OpenXmlPowerToolsException("Internal Error");
 
@@ -159,22 +162,18 @@ namespace Clippit
                                     .Descendants(W.endnoteReference)
                                     .Select(er =>
                                     {
-                                        var id = (int) er.Attribute(W.id);
+                                        var id = (int)er.Attribute(W.id);
                                         var enXDoc = wDocDelta.MainDocumentPart.EndnotesPart.GetXDocument();
-                                        var endnote = enXDoc.Root.Elements(W.endnote)
-                                            .FirstOrDefault(en => (int) en.Attribute(W.id) == id);
+                                        var endnote = enXDoc
+                                            .Root.Elements(W.endnote)
+                                            .FirstOrDefault(en => (int)en.Attribute(W.id) == id);
                                         if (endnote == null)
                                             throw new OpenXmlPowerToolsException("Internal Error");
 
                                         return endnote;
                                     })
                                     .ToArray();
-                                AddToAnnotation(
-                                    wDocDelta,
-                                    consolidatedWDoc,
-                                    elementToInsertAfter,
-                                    ci,
-                                    settings);
+                                AddToAnnotation(wDocDelta, consolidatedWDoc, elementToInsertAfter, ci, settings);
                                 break;
                             }
 
@@ -185,8 +184,7 @@ namespace Clippit
                             if (elementBeforeRevision == null)
                             {
                                 var firstElement = consolidatedMainDocPartXDoc
-                                    .Root
-                                    .Element(W.body)
+                                    .Root.Element(W.body)
                                     .Elements()
                                     .FirstOrDefault(e => e.Name == W.p || e.Name == W.tbl);
 
@@ -199,10 +197,11 @@ namespace Clippit
                                     .Descendants(W.footnoteReference)
                                     .Select(fr =>
                                     {
-                                        var id = (int) fr.Attribute(W.id);
+                                        var id = (int)fr.Attribute(W.id);
                                         var fnXDoc = wDocDelta.MainDocumentPart.FootnotesPart.GetXDocument();
-                                        var footnote = fnXDoc.Root.Elements(W.footnote)
-                                            .FirstOrDefault(fn => (int) fn.Attribute(W.id) == id);
+                                        var footnote = fnXDoc
+                                            .Root.Elements(W.footnote)
+                                            .FirstOrDefault(fn => (int)fn.Attribute(W.id) == id);
                                         if (footnote == null)
                                             throw new OpenXmlPowerToolsException("Internal Error");
 
@@ -213,22 +212,18 @@ namespace Clippit
                                     .Descendants(W.endnoteReference)
                                     .Select(er =>
                                     {
-                                        var id = (int) er.Attribute(W.id);
+                                        var id = (int)er.Attribute(W.id);
                                         var enXDoc = wDocDelta.MainDocumentPart.EndnotesPart.GetXDocument();
-                                        var endnote = enXDoc.Root.Elements(W.endnote)
-                                            .FirstOrDefault(en => (int) en.Attribute(W.id) == id);
+                                        var endnote = enXDoc
+                                            .Root.Elements(W.endnote)
+                                            .FirstOrDefault(en => (int)en.Attribute(W.id) == id);
                                         if (endnote == null)
                                             throw new OpenXmlPowerToolsException("Internal Error");
 
                                         return endnote;
                                     })
                                     .ToArray();
-                                AddToAnnotation(
-                                    wDocDelta,
-                                    consolidatedWDoc,
-                                    firstElement,
-                                    ci,
-                                    settings);
+                                AddToAnnotation(wDocDelta, consolidatedWDoc, firstElement, ci, settings);
                                 break;
                             }
 
@@ -242,28 +237,40 @@ namespace Clippit
                 // at this point, everything is added as an annotation, from all documents to be merged.
                 // so now the process is to go through and add the annotations to the document
                 var elementsToProcess = consolidatedMainDocPartXDoc
-                    .Root
-                    .Descendants()
+                    .Root.Descendants()
                     .Where(d => d.Annotation<List<ConsolidationInfo>>() != null)
                     .ToList();
 
-                var emptyParagraph = new XElement(W.p,
-                    new XElement(W.pPr,
-                        new XElement(W.spacing,
+                var emptyParagraph = new XElement(
+                    W.p,
+                    new XElement(
+                        W.pPr,
+                        new XElement(
+                            W.spacing,
                             new XAttribute(W.after, "0"),
                             new XAttribute(W.line, "240"),
-                            new XAttribute(W.lineRule, "auto"))));
+                            new XAttribute(W.lineRule, "auto")
+                        )
+                    )
+                );
 
                 foreach (var ele in elementsToProcess)
                 {
                     var lci = ele.Annotation<List<ConsolidationInfo>>();
 
                     // process before
-                    var contentToAddBefore = lci
-                        .Where(ci => ci.InsertBefore)
+                    var contentToAddBefore = lci.Where(ci => ci.InsertBefore)
                         .GroupAdjacent(ci => ci.Revisor + ci.Color)
-                        .Select((groupedCi, idx) => AssembledConjoinedRevisionContent(emptyParagraph, groupedCi, idx,
-                            consolidatedWDoc, consolidateSettings));
+                        .Select(
+                            (groupedCi, idx) =>
+                                AssembledConjoinedRevisionContent(
+                                    emptyParagraph,
+                                    groupedCi,
+                                    idx,
+                                    consolidatedWDoc,
+                                    consolidateSettings
+                                )
+                        );
                     ele.AddBeforeSelf(contentToAddBefore);
 
                     // process after
@@ -278,16 +285,23 @@ namespace Clippit
                         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         // This is the code that determines if revisions should be consolidated into one.
 
-                        var uniqueRevisions = lci
-                            .Where(ci => ci.InsertBefore == false)
+                        var uniqueRevisions = lci.Where(ci => ci.InsertBefore == false)
                             .GroupBy(ci =>
                             {
                                 // Get a hash after first accepting revisions and compressing the text.
-                                var acceptedRevisionElement =
-                                    RevisionProcessor.AcceptRevisionsForElement(ci.RevisionElement);
-                                var sha1Hash = WmlComparerUtil.SHA1HashStringForUTF8String(acceptedRevisionElement.Value
-                                    .Replace(" ", "").Replace(" ", "").Replace(" ", "").Replace("\n", "").Replace(".", "")
-                                    .Replace(",", "").ToUpper());
+                                var acceptedRevisionElement = RevisionProcessor.AcceptRevisionsForElement(
+                                    ci.RevisionElement
+                                );
+                                var sha1Hash = WmlComparerUtil.SHA1HashStringForUTF8String(
+                                    acceptedRevisionElement
+                                        .Value.Replace(" ", "")
+                                        .Replace(" ", "")
+                                        .Replace(" ", "")
+                                        .Replace("\n", "")
+                                        .Replace(".", "")
+                                        .Replace(",", "")
+                                        .ToUpper()
+                                );
                                 return sha1Hash;
                             })
                             .OrderByDescending(g => g.Count())
@@ -321,15 +335,19 @@ namespace Clippit
                         {
                             var sb = new StringBuilder();
                             sb.Append(
-                                "====================================================================================================" +
-                                NewLine);
+                                "===================================================================================================="
+                                    + NewLine
+                            );
                             sb.Append("Non-Consolidated Revision" + NewLine);
                             sb.Append(
-                                "====================================================================================================" +
-                                NewLine);
+                                "===================================================================================================="
+                                    + NewLine
+                            );
                             foreach (var urList in uniqueRevisions)
                             {
-                                var revisorList = urList.Select(ur => ur.Revisor + " : ").StringConcatenate()
+                                var revisorList = urList
+                                    .Select(ur => ur.Revisor + " : ")
+                                    .StringConcatenate()
                                     .TrimEnd(' ', ':');
                                 sb.Append("Revisors: " + revisorList + NewLine);
                                 var str = RevisionToLogFormTransform(urList.First().RevisionElement, 0, false);
@@ -342,11 +360,18 @@ namespace Clippit
                         }
                     }
 
-                    var contentToAddAfter = lci
-                        .Where(ci => ci.InsertBefore == false)
+                    var contentToAddAfter = lci.Where(ci => ci.InsertBefore == false)
                         .GroupAdjacent(ci => ci.Revisor + ci.Color)
-                        .Select((groupedCi, idx) => AssembledConjoinedRevisionContent(emptyParagraph, groupedCi, idx,
-                            consolidatedWDoc, consolidateSettings));
+                        .Select(
+                            (groupedCi, idx) =>
+                                AssembledConjoinedRevisionContent(
+                                    emptyParagraph,
+                                    groupedCi,
+                                    idx,
+                                    consolidatedWDoc,
+                                    consolidateSettings
+                                )
+                        );
                     ele.AddAfterSelf(contentToAddAfter);
                 }
 
@@ -443,10 +468,7 @@ namespace Clippit
                     }
 #endif
 
-                consolidatedMainDocPartXDoc
-                    .Root?
-                    .Element(W.body)?
-                    .Add(savedSectPr);
+                consolidatedMainDocPartXDoc.Root?.Element(W.body)?.Add(savedSectPr);
 
                 AddTableGridStyleToStylesPart(consolidatedWDoc.MainDocumentPart.StyleDefinitionsPart);
                 FixUpRevisionIds(consolidatedWDoc, consolidatedMainDocPartXDoc);
@@ -466,18 +488,25 @@ namespace Clippit
 
         private static void MoveFootnotesEndnotesForConsolidatedRevisions(
             ConsolidationInfo ci,
-            WordprocessingDocument wDocConsolidated)
+            WordprocessingDocument wDocConsolidated
+        )
         {
             var consolidatedFootnoteXDoc = wDocConsolidated.MainDocumentPart.FootnotesPart.GetXDocument();
             var consolidatedEndnoteXDoc = wDocConsolidated.MainDocumentPart.EndnotesPart.GetXDocument();
 
             var maxFootnoteId = 1;
             if (consolidatedFootnoteXDoc.Root?.Elements(W.footnote).Any() == true)
-                maxFootnoteId = consolidatedFootnoteXDoc.Root.Elements(W.footnote).Select(e => (int) e.Attribute(W.id)).Max();
+                maxFootnoteId = consolidatedFootnoteXDoc
+                    .Root.Elements(W.footnote)
+                    .Select(e => (int)e.Attribute(W.id))
+                    .Max();
 
             var maxEndnoteId = 1;
             if (consolidatedEndnoteXDoc.Root?.Elements(W.endnote).Any() == true)
-                maxEndnoteId = consolidatedEndnoteXDoc.Root.Elements(W.endnote).Select(e => (int) e.Attribute(W.id)).Max();
+                maxEndnoteId = consolidatedEndnoteXDoc
+                    .Root.Elements(W.endnote)
+                    .Select(e => (int)e.Attribute(W.id))
+                    .Max();
 
             // At this point, content might contain a footnote or endnote reference.
             // Need to add the footnote / endnote into the consolidated document (with the same guid id)
@@ -488,8 +517,8 @@ namespace Clippit
                 var footnoteXDoc = wDocConsolidated.MainDocumentPart.FootnotesPart.GetXDocument();
                 foreach (var footnoteReference in ci.RevisionElement.Descendants(W.footnoteReference))
                 {
-                    var id = (int) footnoteReference.Attribute(W.id);
-                    var footnote = ci.Footnotes.FirstOrDefault(fn => (int) fn.Attribute(W.id) == id);
+                    var id = (int)footnoteReference.Attribute(W.id);
+                    var footnote = ci.Footnotes.FirstOrDefault(fn => (int)fn.Attribute(W.id) == id);
                     if (footnote != null)
                     {
                         var newId = ++maxFootnoteId;
@@ -509,8 +538,8 @@ namespace Clippit
                 var endnoteXDoc = wDocConsolidated.MainDocumentPart.EndnotesPart.GetXDocument();
                 foreach (var endnoteReference in ci.RevisionElement.Descendants(W.endnoteReference))
                 {
-                    var id = (int) endnoteReference.Attribute(W.id);
-                    var endnote = ci.Endnotes.FirstOrDefault(fn => (int) fn.Attribute(W.id) == id);
+                    var id = (int)endnoteReference.Attribute(W.id);
+                    var endnote = ci.Endnotes.FirstOrDefault(fn => (int)fn.Attribute(W.id) == id);
                     if (endnote != null)
                     {
                         var newId = ++maxEndnoteId;
@@ -529,8 +558,7 @@ namespace Clippit
         private static void FixUpGroupIds(WordprocessingDocument wDoc)
         {
             var elementToFind = VML.@group;
-            var groupIdsToChange = wDoc
-                .ContentParts()
+            var groupIdsToChange = wDoc.ContentParts()
                 .Select(cp => cp.GetXDocument())
                 .Select(xd => xd.Descendants().Where(d => d.Name == elementToFind))
                 .SelectMany(m => m);
@@ -550,7 +578,8 @@ namespace Clippit
 
         private static bool ContentContainsFootnoteEndnoteReferencesThatHaveRevisions(
             XElement element,
-            WordprocessingDocument wDocDelta)
+            WordprocessingDocument wDocDelta
+        )
         {
             IEnumerable<XElement> footnoteEndnoteReferences = element
                 .Descendants()
@@ -568,11 +597,8 @@ namespace Clippit
                 XElement fnen;
                 if (note.Name == W.footnoteReference)
                 {
-                    var id = (int) note.Attribute(W.id);
-                    fnen = footnoteXDoc
-                        .Root?
-                        .Elements(W.footnote)
-                        .FirstOrDefault(n => (int) n.Attribute(W.id) == id);
+                    var id = (int)note.Attribute(W.id);
+                    fnen = footnoteXDoc.Root?.Elements(W.footnote).FirstOrDefault(n => (int)n.Attribute(W.id) == id);
 
                     if (fnen?.Descendants().Any(d => d.Name == W.ins || d.Name == W.del) == true)
                         return true;
@@ -580,11 +606,8 @@ namespace Clippit
 
                 if (note.Name == W.endnoteReference)
                 {
-                    var id = (int) note.Attribute(W.id);
-                    fnen = endnoteXDoc
-                        .Root?
-                        .Elements(W.endnote)
-                        .FirstOrDefault(n => (int) n.Attribute(W.id) == id);
+                    var id = (int)note.Attribute(W.id);
+                    fnen = endnoteXDoc.Root?.Elements(W.endnote).FirstOrDefault(n => (int)n.Attribute(W.id) == id);
 
                     if (fnen?.Descendants().Any(d => d.Name == W.ins || d.Name == W.del) == true)
                         return true;
@@ -597,23 +620,30 @@ namespace Clippit
         private static string RevisionToLogFormTransform(XElement element, int depth, bool inserting)
         {
             if (element.Name == W.p)
-                return "Paragraph" + NewLine + element.Elements().Select(e => RevisionToLogFormTransform(e, depth + 2, false))
-                           .StringConcatenate();
+                return "Paragraph"
+                    + NewLine
+                    + element
+                        .Elements()
+                        .Select(e => RevisionToLogFormTransform(e, depth + 2, false))
+                        .StringConcatenate();
             if (element.Name == W.pPr || element.Name == W.rPr)
                 return "";
             if (element.Name == W.r)
-                return element.Elements().Select(e => RevisionToLogFormTransform(e, depth, inserting)).StringConcatenate();
+                return element
+                    .Elements()
+                    .Select(e => RevisionToLogFormTransform(e, depth, inserting))
+                    .StringConcatenate();
 
             if (element.Name == W.t)
             {
                 if (inserting)
-                    return "".PadRight(depth) + "Inserted Text:" + QuoteIt((string) element) + NewLine;
+                    return "".PadRight(depth) + "Inserted Text:" + QuoteIt((string)element) + NewLine;
 
-                return "".PadRight(depth) + "Text:" + QuoteIt((string) element) + NewLine;
+                return "".PadRight(depth) + "Text:" + QuoteIt((string)element) + NewLine;
             }
 
             if (element.Name == W.delText)
-                return "".PadRight(depth) + "Deleted Text:" + QuoteIt((string) element) + NewLine;
+                return "".PadRight(depth) + "Deleted Text:" + QuoteIt((string)element) + NewLine;
             if (element.Name == W.ins)
                 return element.Elements().Select(e => RevisionToLogFormTransform(e, depth, true)).StringConcatenate();
             if (element.Name == W.del)
@@ -659,7 +689,8 @@ namespace Clippit
             IGrouping<string, ConsolidationInfo> groupedCi,
             int idx,
             WordprocessingDocument wDocConsolidated,
-            WmlComparerConsolidateSettings consolidateSettings)
+            WmlComparerConsolidateSettings consolidateSettings
+        )
         {
             var consolidatedFootnoteXDoc = wDocConsolidated.MainDocumentPart.FootnotesPart.GetXDocument();
             var consolidatedEndnoteXDoc = wDocConsolidated.MainDocumentPart.EndnotesPart.GetXDocument();
@@ -667,28 +698,36 @@ namespace Clippit
             var maxFootnoteId = 1;
             if (consolidatedFootnoteXDoc.Root?.Elements(W.footnote).Any() == true)
             {
-                maxFootnoteId = consolidatedFootnoteXDoc.Root.Elements(W.footnote).Select(e => (int) e.Attribute(W.id)).Max();
+                maxFootnoteId = consolidatedFootnoteXDoc
+                    .Root.Elements(W.footnote)
+                    .Select(e => (int)e.Attribute(W.id))
+                    .Max();
             }
 
             var maxEndnoteId = 1;
             if (consolidatedEndnoteXDoc.Root?.Elements(W.endnote).Any() == true)
             {
-                maxEndnoteId = consolidatedEndnoteXDoc.Root.Elements(W.endnote).Select(e => (int) e.Attribute(W.id)).Max();
+                maxEndnoteId = consolidatedEndnoteXDoc
+                    .Root.Elements(W.endnote)
+                    .Select(e => (int)e.Attribute(W.id))
+                    .Max();
             }
 
             var revisor = groupedCi.First().Revisor;
 
-            var captionParagraph = new XElement(W.p,
-                new XElement(W.pPr,
+            var captionParagraph = new XElement(
+                W.p,
+                new XElement(
+                    W.pPr,
                     new XElement(W.jc, new XAttribute(W.val, "both")),
-                    new XElement(W.rPr,
-                        new XElement(W.b),
-                        new XElement(W.bCs))),
-                new XElement(W.r,
-                    new XElement(W.rPr,
-                        new XElement(W.b),
-                        new XElement(W.bCs)),
-                    new XElement(W.t, revisor)));
+                    new XElement(W.rPr, new XElement(W.b), new XElement(W.bCs))
+                ),
+                new XElement(
+                    W.r,
+                    new XElement(W.rPr, new XElement(W.b), new XElement(W.bCs)),
+                    new XElement(W.t, revisor)
+                )
+            );
 
             var colorRgb = groupedCi.First().Color.ToArgb();
             var colorString = colorRgb.ToString("X");
@@ -699,43 +738,49 @@ namespace Clippit
 
             if (consolidateSettings.ConsolidateWithTable)
             {
-                var table = new XElement(W.tbl,
-                    new XElement(W.tblPr,
+                var table = new XElement(
+                    W.tbl,
+                    new XElement(
+                        W.tblPr,
                         new XElement(W.tblStyle, new XAttribute(W.val, "TableGridForRevisions")),
-                        new XElement(W.tblW,
-                            new XAttribute(W._w, "0"),
-                            new XAttribute(W.type, "auto")),
-                        new XElement(W.shd,
+                        new XElement(W.tblW, new XAttribute(W._w, "0"), new XAttribute(W.type, "auto")),
+                        new XElement(
+                            W.shd,
                             new XAttribute(W.val, "clear"),
                             new XAttribute(W.color, "auto"),
-                            new XAttribute(W.fill, colorString)),
-                        new XElement(W.tblLook,
+                            new XAttribute(W.fill, colorString)
+                        ),
+                        new XElement(
+                            W.tblLook,
                             new XAttribute(W.firstRow, "0"),
                             new XAttribute(W.lastRow, "0"),
                             new XAttribute(W.firstColumn, "0"),
                             new XAttribute(W.lastColumn, "0"),
                             new XAttribute(W.noHBand, "0"),
-                            new XAttribute(W.noVBand, "0"))),
-                    new XElement(W.tblGrid,
-                        new XElement(W.gridCol, new XAttribute(W._w, "9576"))),
-                    new XElement(W.tr,
-                        new XElement(W.tc,
-                            new XElement(W.tcPr,
-                                new XElement(W.shd,
+                            new XAttribute(W.noVBand, "0")
+                        )
+                    ),
+                    new XElement(W.tblGrid, new XElement(W.gridCol, new XAttribute(W._w, "9576"))),
+                    new XElement(
+                        W.tr,
+                        new XElement(
+                            W.tc,
+                            new XElement(
+                                W.tcPr,
+                                new XElement(
+                                    W.shd,
                                     new XAttribute(W.val, "clear"),
                                     new XAttribute(W.color, "auto"),
-                                    new XAttribute(W.fill, colorString))),
+                                    new XAttribute(W.fill, colorString)
+                                )
+                            ),
                             captionParagraph,
                             groupedCi.Select(ci =>
                             {
                                 XElement paraAfter = null;
                                 if (ci.RevisionElement.Name == W.tbl)
                                     paraAfter = emptyParagraph;
-                                XElement[] revisionInTable =
-                                {
-                                    ci.RevisionElement,
-                                    paraAfter
-                                };
+                                XElement[] revisionInTable = { ci.RevisionElement, paraAfter };
 
                                 // At this point, content might contain a footnote or endnote reference.
                                 // Need to add the footnote / endnote into the consolidated document (with the same
@@ -746,7 +791,10 @@ namespace Clippit
                                 AddEndnotes(ci, wDocConsolidated, ref maxEndnoteId);
 
                                 return revisionInTable;
-                            }))));
+                            })
+                        )
+                    )
+                );
 
                 // if the last paragraph has a deleted paragraph mark, then remove the deletion from the paragraph mark.
                 // This is to prevent Word from misbehaving. the last paragraph in a cell must not have a deleted
@@ -756,28 +804,15 @@ namespace Clippit
 
                 if (lastPara != null)
                 {
-                    var isDeleted = lastPara
-                        .Elements(W.pPr)
-                        .Elements(W.rPr)
-                        .Elements(W.del)
-                        .Any();
+                    var isDeleted = lastPara.Elements(W.pPr).Elements(W.rPr).Elements(W.del).Any();
 
                     if (isDeleted)
                     {
-                        lastPara
-                            .Elements(W.pPr)
-                            .Elements(W.rPr)
-                            .Elements(W.del)
-                            .Remove();
+                        lastPara.Elements(W.pPr).Elements(W.rPr).Elements(W.del).Remove();
                     }
                 }
 
-                XElement[] content =
-                {
-                    idx == 0 ? emptyParagraph : null,
-                    table,
-                    emptyParagraph
-                };
+                XElement[] content = { idx == 0 ? emptyParagraph : null, table, emptyParagraph };
 
                 return content;
             }
@@ -791,11 +826,7 @@ namespace Clippit
                         paraAfter = emptyParagraph;
                     }
 
-                    XElement[] revisionInTable =
-                    {
-                        ci.RevisionElement,
-                        paraAfter
-                    };
+                    XElement[] revisionInTable = { ci.RevisionElement, paraAfter };
 
                     // At this point, content might contain a footnote or endnote reference.
                     // Need to add the footnote / endnote into the consolidated document (with the same
@@ -818,15 +849,19 @@ namespace Clippit
             }
         }
 
-        private static void AddFootnotes(ConsolidationInfo ci, WordprocessingDocument wDocConsolidated, ref int maxFootnoteId)
+        private static void AddFootnotes(
+            ConsolidationInfo ci,
+            WordprocessingDocument wDocConsolidated,
+            ref int maxFootnoteId
+        )
         {
             if (ci.RevisionElement.Descendants(W.footnoteReference).Any())
             {
                 var footnoteXDoc = wDocConsolidated.MainDocumentPart.FootnotesPart.GetXDocument();
                 foreach (var footnoteReference in ci.RevisionElement.Descendants(W.footnoteReference))
                 {
-                    var id = (int) footnoteReference.Attribute(W.id);
-                    var footnote = ci.Footnotes.FirstOrDefault(fn => (int) fn.Attribute(W.id) == id);
+                    var id = (int)footnoteReference.Attribute(W.id);
+                    var footnote = ci.Footnotes.FirstOrDefault(fn => (int)fn.Attribute(W.id) == id);
                     if (footnote != null)
                     {
                         var newId = ++maxFootnoteId;
@@ -842,15 +877,19 @@ namespace Clippit
             }
         }
 
-        private static void AddEndnotes(ConsolidationInfo ci, WordprocessingDocument wDocConsolidated, ref int maxEndnoteId)
+        private static void AddEndnotes(
+            ConsolidationInfo ci,
+            WordprocessingDocument wDocConsolidated,
+            ref int maxEndnoteId
+        )
         {
             if (ci.RevisionElement.Descendants(W.endnoteReference).Any())
             {
                 var endnoteXDoc = wDocConsolidated.MainDocumentPart.EndnotesPart.GetXDocument();
                 foreach (var endnoteReference in ci.RevisionElement.Descendants(W.endnoteReference))
                 {
-                    var id = (int) endnoteReference.Attribute(W.id);
-                    var endnote = ci.Endnotes.FirstOrDefault(fn => (int) fn.Attribute(W.id) == id);
+                    var id = (int)endnoteReference.Attribute(W.id);
+                    var endnote = ci.Endnotes.FirstOrDefault(fn => (int)fn.Attribute(W.id) == id);
                     if (endnote != null)
                     {
                         var newId = ++maxEndnoteId;
@@ -871,19 +910,28 @@ namespace Clippit
             WordprocessingDocument consolidatedWDoc,
             XElement elementToInsertAfter,
             ConsolidationInfo consolidationInfo,
-            WmlComparerSettings settings)
+            WmlComparerSettings settings
+        )
         {
             var packageOfDeletedContent = wDocDelta.MainDocumentPart.OpenXmlPackage.GetPackage();
             var packageOfNewContent = consolidatedWDoc.MainDocumentPart.OpenXmlPackage.GetPackage();
             var partInDeletedDocument = packageOfDeletedContent.GetPart(wDocDelta.MainDocumentPart.Uri);
             var partInNewDocument = packageOfNewContent.GetPart(consolidatedWDoc.MainDocumentPart.Uri);
-            consolidationInfo.RevisionElement =
-                MoveRelatedPartsToDestination(partInDeletedDocument, partInNewDocument, consolidationInfo.RevisionElement);
+            consolidationInfo.RevisionElement = MoveRelatedPartsToDestination(
+                partInDeletedDocument,
+                partInNewDocument,
+                consolidationInfo.RevisionElement
+            );
 
-            var clonedForHashing = (XElement) CloneBlockLevelContentForHashing(consolidatedWDoc.MainDocumentPart,
-                consolidationInfo.RevisionElement, false, settings);
+            var clonedForHashing = (XElement)CloneBlockLevelContentForHashing(
+                consolidatedWDoc.MainDocumentPart,
+                consolidationInfo.RevisionElement,
+                false,
+                settings
+            );
             clonedForHashing.Descendants().Where(d => d.Name == W.ins || d.Name == W.del).Attributes(W.id).Remove();
-            var shaString = clonedForHashing.ToString(SaveOptions.DisableFormatting)
+            var shaString = clonedForHashing
+                .ToString(SaveOptions.DisableFormatting)
                 .Replace(" xmlns=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\"", "");
             var sha1Hash = WmlComparerUtil.SHA1HashStringForUTF8String(shaString);
             consolidationInfo.RevisionString = shaString;
@@ -903,9 +951,8 @@ namespace Clippit
         {
             var sXDoc = styleDefinitionsPart.GetXDocument();
             var tableGridStyle = sXDoc
-                .Root?
-                .Elements(W.style)
-                .FirstOrDefault(s => (string) s.Attribute(W.styleId) == "TableGridForRevisions");
+                .Root?.Elements(W.style)
+                .FirstOrDefault(s => (string)s.Attribute(W.styleId) == "TableGridForRevisions");
 
             if (tableGridStyle == null)
             {
@@ -958,9 +1005,8 @@ namespace Clippit
             }
 
             var tableNormalStyle = sXDoc
-                .Root
-                .Elements(W.style)
-                .FirstOrDefault(s => (string) s.Attribute(W.styleId) == "TableNormal");
+                .Root.Elements(W.style)
+                .FirstOrDefault(s => (string)s.Attribute(W.styleId) == "TableNormal");
             if (tableNormalStyle == null)
             {
                 var tableNormalStyleMarkup =

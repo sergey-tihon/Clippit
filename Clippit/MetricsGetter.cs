@@ -3,18 +3,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Validation;
-using System.Globalization;
 using Clippit.Excel;
 using Clippit.PowerPoint;
 using Clippit.Word;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Experimental;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Validation;
 using SixLabors.Fonts;
 
 namespace Clippit
@@ -93,10 +93,12 @@ namespace Clippit
                     }
                 }
             }
-            var metrics = new XElement(H.Metrics,
+            var metrics = new XElement(
+                H.Metrics,
                 new XAttribute(H.FileName, wmlDoc.FileName),
                 new XAttribute(H.FileType, "WordprocessingML"),
-                new XAttribute(H.Error, "Unknown error, metrics not determined"));
+                new XAttribute(H.Error, "Unknown error, metrics not determined")
+            );
             return metrics;
         }
 
@@ -139,7 +141,7 @@ namespace Clippit
                     {
                         // if both regular and bold fail, then get metrics for Times New Roman
                         // use the original FontStyle (in fs)
-                        
+
                         //var ff2 = new FontFamily("Times New Roman");
                         SystemFonts.Collection.TryGet("Times New Roman", out var ff2); // TODO: test this
                         return _getTextWidth(ff2, fs, sz, text);
@@ -158,13 +160,18 @@ namespace Clippit
             return new Uri("http://broken-link/");
         }
 
-        private static XElement GetWmlMetrics(string fileName, bool invalidHyperlink, WordprocessingDocument wDoc, MetricsGetterSettings settings)
+        private static XElement GetWmlMetrics(
+            string fileName,
+            bool invalidHyperlink,
+            WordprocessingDocument wDoc,
+            MetricsGetterSettings settings
+        )
         {
-            var parts = new XElement(H.Parts,
-                wDoc.GetAllParts().Select(part => GetMetricsForWmlPart(part, settings)));
+            var parts = new XElement(H.Parts, wDoc.GetAllParts().Select(part => GetMetricsForWmlPart(part, settings)));
             if (!parts.HasElements)
                 parts = null;
-            var metrics = new XElement(H.Metrics,
+            var metrics = new XElement(
+                H.Metrics,
                 new XAttribute(H.FileName, fileName),
                 new XAttribute(H.FileType, "WordprocessingML"),
                 GetStyleHierarchy(wDoc),
@@ -172,7 +179,7 @@ namespace Clippit
                 parts,
                 settings.RetrieveNamespaceList ? RetrieveNamespaceList(wDoc) : null,
                 settings.RetrieveContentTypeList ? RetrieveContentTypeList(wDoc) : null
-                );
+            );
             return metrics;
         }
 
@@ -182,12 +189,11 @@ namespace Clippit
 
             var nonRelationshipParts = pkg.GetParts()
                 .Where(p => p.ContentType != "application/vnd.openxmlformats-package.relationships+xml");
-            var contentTypes = nonRelationshipParts
-                .Select(p => p.ContentType)
-                .OrderBy(t => t)
-                .Distinct();
-            var xe = new XElement(H.ContentTypes,
-                contentTypes.Select(ct => new XElement(H.ContentType, new XAttribute(H.Val, ct))));
+            var contentTypes = nonRelationshipParts.Select(p => p.ContentType).OrderBy(t => t).Distinct();
+            var xe = new XElement(
+                H.ContentTypes,
+                contentTypes.Select(ct => new XElement(H.ContentType, new XAttribute(H.Val, ct)))
+            );
             return xe;
         }
 
@@ -197,8 +203,7 @@ namespace Clippit
 
             var nonRelationshipParts = pkg.GetParts()
                 .Where(p => p.ContentType != "application/vnd.openxmlformats-package.relationships+xml");
-            var xmlParts = nonRelationshipParts
-                .Where(p => p.ContentType.ToLower().EndsWith("xml"));
+            var xmlParts = nonRelationshipParts.Where(p => p.ContentType.ToLower().EndsWith("xml"));
 
             var uniqueNamespaces = new HashSet<string>();
             foreach (var xp in xmlParts)
@@ -207,8 +212,7 @@ namespace Clippit
                 try
                 {
                     var xdoc = XDocument.Load(st);
-                    var namespaces = xdoc
-                        .Descendants()
+                    var namespaces = xdoc.Descendants()
                         .Attributes()
                         .Where(a => a.IsNamespaceDeclaration)
                         .Select(a => $"{a.Name.LocalName}|{a.Value}")
@@ -220,18 +224,22 @@ namespace Clippit
                 }
                 // if catch exception, forget about it.  Just trying to get a most complete survey possible of all namespaces in all documents.
                 // if caught exception, chances are the document is bad anyway.
-                catch (Exception)
-                {
-                }
+                catch (Exception) { }
             }
-            var xe = new XElement(H.Namespaces,
-                uniqueNamespaces.OrderBy(t => t).Select(n =>
-                {
-                    var spl = n.Split('|');
-                    return new XElement(H.Namespace,
-                        new XAttribute(H.NamespacePrefix, spl[0]),
-                        new XAttribute(H.NamespaceName, spl[1]));
-                }));
+            var xe = new XElement(
+                H.Namespaces,
+                uniqueNamespaces
+                    .OrderBy(t => t)
+                    .Select(n =>
+                    {
+                        var spl = n.Split('|');
+                        return new XElement(
+                            H.Namespace,
+                            new XAttribute(H.NamespacePrefix, spl[0]),
+                            new XAttribute(H.NamespaceName, spl[1])
+                        );
+                    })
+            );
             return xe;
         }
 
@@ -252,17 +260,22 @@ namespace Clippit
         }
 
         private static readonly (FileFormatVersions, XName)[] s_validationSchemas =
-            {
-                (FileFormatVersions.Office2007, H.SdkValidationError2007),
-                (FileFormatVersions.Office2010, H.SdkValidationError2010),
-                (FileFormatVersions.Office2013, H.SdkValidationError2013),
-                (FileFormatVersions.Office2016, H.SdkValidationError2016),
-                (FileFormatVersions.Office2019, H.SdkValidationError2019),
-                (FileFormatVersions.Office2021, H.SdkValidationError2021),
-                (FileFormatVersions.Microsoft365, H.SdkValidationErrorMicrosoft365),
-            };
-        
-        private static bool ValidateWordprocessingDocument(WordprocessingDocument wDoc, List<XElement> metrics, List<string> notes, Dictionary<XName, int> metricCountDictionary)
+        {
+            (FileFormatVersions.Office2007, H.SdkValidationError2007),
+            (FileFormatVersions.Office2010, H.SdkValidationError2010),
+            (FileFormatVersions.Office2013, H.SdkValidationError2013),
+            (FileFormatVersions.Office2016, H.SdkValidationError2016),
+            (FileFormatVersions.Office2019, H.SdkValidationError2019),
+            (FileFormatVersions.Office2021, H.SdkValidationError2021),
+            (FileFormatVersions.Microsoft365, H.SdkValidationErrorMicrosoft365),
+        };
+
+        private static bool ValidateWordprocessingDocument(
+            WordprocessingDocument wDoc,
+            List<XElement> metrics,
+            List<string> notes,
+            Dictionary<XName, int> metricCountDictionary
+        )
         {
             var valid = false;
             foreach (var (fileFormatVersion, xName) in s_validationSchemas)
@@ -326,14 +339,20 @@ namespace Clippit
 
             foreach (var item in metricCountDictionary)
             {
-                metrics.Add(
-                    new XElement(item.Key, new XAttribute(H.Val, item.Value)));
+                metrics.Add(new XElement(item.Key, new XAttribute(H.Val, item.Value)));
             }
 
             metrics.Add(new XElement(H.ElementCount, new XAttribute(H.Val, elementCount)));
-            metrics.Add(new XElement(H.AverageParagraphLength, new XAttribute(H.Val, (int)(textCount / (double)paragraphCount))));
+            metrics.Add(
+                new XElement(H.AverageParagraphLength, new XAttribute(H.Val, (int)(textCount / (double)paragraphCount)))
+            );
 
-            if (wDoc.GetAllParts().Any(part => part.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+            if (
+                wDoc.GetAllParts()
+                    .Any(part =>
+                        part.ContentType == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
+            )
                 metrics.Add(new XElement(H.EmbeddedXlsx, new XAttribute(H.Val, true)));
 
             NumberingFormatListAssembly(wDoc, metrics);
@@ -345,11 +364,10 @@ namespace Clippit
                 if (d.Name == W.saveThroughXslt)
                 {
                     var rid = (string)d.Attribute(R.id);
-                    var tempExternalRelationship = wDoc
-                        .MainDocumentPart
-                        .DocumentSettingsPart
-                        .ExternalRelationships
-                        .FirstOrDefault(h => h.Id == rid);
+                    var tempExternalRelationship =
+                        wDoc.MainDocumentPart.DocumentSettingsPart.ExternalRelationships.FirstOrDefault(h =>
+                            h.Id == rid
+                        );
                     if (tempExternalRelationship == null)
                         metrics.Add(new XElement(H.InvalidSaveThroughXslt, new XAttribute(H.Val, true)));
                     valid = false;
@@ -365,7 +383,12 @@ namespace Clippit
             return valid;
         }
 
-        private static bool ValidateAgainstSpecificVersion(WordprocessingDocument wDoc, List<XElement> metrics, FileFormatVersions versionToValidateAgainst, XName versionSpecificMetricName)
+        private static bool ValidateAgainstSpecificVersion(
+            WordprocessingDocument wDoc,
+            List<XElement> metrics,
+            FileFormatVersions versionToValidateAgainst,
+            XName versionSpecificMetricName
+        )
         {
             var validator = new OpenXmlValidator(versionToValidateAgainst);
             var errors = validator.Validate(wDoc);
@@ -374,23 +397,40 @@ namespace Clippit
             {
                 if (!metrics.Any(e => e.Name == H.SdkValidationError))
                     metrics.Add(new XElement(H.SdkValidationError, new XAttribute(H.Val, true)));
-                metrics.Add(new XElement(versionSpecificMetricName, new XAttribute(H.Val, true),
-                    errors.Take(3).Select(err =>
-                    {
-                        var sb = new StringBuilder();
-                        if (err.Description.Length > 300)
-                            sb.Append(PtUtils.MakeValidXml(err.Description.Substring(0, 300) + " ... elided ...") + Environment.NewLine);
-                        else
-                            sb.Append(PtUtils.MakeValidXml(err.Description) + Environment.NewLine);
-                        sb.Append("  in part " + PtUtils.MakeValidXml(err.Part.Uri.ToString()) + Environment.NewLine);
-                        sb.Append("  at " + PtUtils.MakeValidXml(err.Path.XPath) + Environment.NewLine);
-                        return sb.ToString();
-                    })));
+                metrics.Add(
+                    new XElement(
+                        versionSpecificMetricName,
+                        new XAttribute(H.Val, true),
+                        errors
+                            .Take(3)
+                            .Select(err =>
+                            {
+                                var sb = new StringBuilder();
+                                if (err.Description.Length > 300)
+                                    sb.Append(
+                                        PtUtils.MakeValidXml(err.Description.Substring(0, 300) + " ... elided ...")
+                                            + Environment.NewLine
+                                    );
+                                else
+                                    sb.Append(PtUtils.MakeValidXml(err.Description) + Environment.NewLine);
+                                sb.Append(
+                                    "  in part " + PtUtils.MakeValidXml(err.Part.Uri.ToString()) + Environment.NewLine
+                                );
+                                sb.Append("  at " + PtUtils.MakeValidXml(err.Path.XPath) + Environment.NewLine);
+                                return sb.ToString();
+                            })
+                    )
+                );
             }
             return valid;
         }
 
-        private static bool ValidateAgainstSpecificVersion(SpreadsheetDocument sDoc, List<XElement> metrics, FileFormatVersions versionToValidateAgainst, XName versionSpecificMetricName)
+        private static bool ValidateAgainstSpecificVersion(
+            SpreadsheetDocument sDoc,
+            List<XElement> metrics,
+            FileFormatVersions versionToValidateAgainst,
+            XName versionSpecificMetricName
+        )
         {
             var validator = new OpenXmlValidator(versionToValidateAgainst);
             var errors = validator.Validate(sDoc);
@@ -399,23 +439,40 @@ namespace Clippit
             {
                 if (!metrics.Any(e => e.Name == H.SdkValidationError))
                     metrics.Add(new XElement(H.SdkValidationError, new XAttribute(H.Val, true)));
-                metrics.Add(new XElement(versionSpecificMetricName, new XAttribute(H.Val, true),
-                    errors.Take(3).Select(err =>
-                    {
-                        var sb = new StringBuilder();
-                        if (err.Description.Length > 300)
-                            sb.Append(PtUtils.MakeValidXml(err.Description.Substring(0, 300) + " ... elided ...") + Environment.NewLine);
-                        else
-                            sb.Append(PtUtils.MakeValidXml(err.Description) + Environment.NewLine);
-                        sb.Append("  in part " + PtUtils.MakeValidXml(err.Part.Uri.ToString()) + Environment.NewLine);
-                        sb.Append("  at " + PtUtils.MakeValidXml(err.Path.XPath) + Environment.NewLine);
-                        return sb.ToString();
-                    })));
+                metrics.Add(
+                    new XElement(
+                        versionSpecificMetricName,
+                        new XAttribute(H.Val, true),
+                        errors
+                            .Take(3)
+                            .Select(err =>
+                            {
+                                var sb = new StringBuilder();
+                                if (err.Description.Length > 300)
+                                    sb.Append(
+                                        PtUtils.MakeValidXml(err.Description.Substring(0, 300) + " ... elided ...")
+                                            + Environment.NewLine
+                                    );
+                                else
+                                    sb.Append(PtUtils.MakeValidXml(err.Description) + Environment.NewLine);
+                                sb.Append(
+                                    "  in part " + PtUtils.MakeValidXml(err.Part.Uri.ToString()) + Environment.NewLine
+                                );
+                                sb.Append("  at " + PtUtils.MakeValidXml(err.Path.XPath) + Environment.NewLine);
+                                return sb.ToString();
+                            })
+                    )
+                );
             }
             return valid;
         }
 
-        private static bool ValidateAgainstSpecificVersion(PresentationDocument pDoc, List<XElement> metrics, FileFormatVersions versionToValidateAgainst, XName versionSpecificMetricName)
+        private static bool ValidateAgainstSpecificVersion(
+            PresentationDocument pDoc,
+            List<XElement> metrics,
+            FileFormatVersions versionToValidateAgainst,
+            XName versionSpecificMetricName
+        )
         {
             var validator = new OpenXmlValidator(versionToValidateAgainst);
             var errors = validator.Validate(pDoc);
@@ -424,18 +481,30 @@ namespace Clippit
             {
                 if (!metrics.Any(e => e.Name == H.SdkValidationError))
                     metrics.Add(new XElement(H.SdkValidationError, new XAttribute(H.Val, true)));
-                metrics.Add(new XElement(versionSpecificMetricName, new XAttribute(H.Val, true),
-                    errors.Take(3).Select(err =>
-                    {
-                        var sb = new StringBuilder();
-                        if (err.Description.Length > 300)
-                            sb.Append(PtUtils.MakeValidXml(err.Description.Substring(0, 300) + " ... elided ...") + Environment.NewLine);
-                        else
-                            sb.Append(PtUtils.MakeValidXml(err.Description) + Environment.NewLine);
-                        sb.Append("  in part " + PtUtils.MakeValidXml(err.Part.Uri.ToString()) + Environment.NewLine);
-                        sb.Append("  at " + PtUtils.MakeValidXml(err.Path.XPath) + Environment.NewLine);
-                        return sb.ToString();
-                    })));
+                metrics.Add(
+                    new XElement(
+                        versionSpecificMetricName,
+                        new XAttribute(H.Val, true),
+                        errors
+                            .Take(3)
+                            .Select(err =>
+                            {
+                                var sb = new StringBuilder();
+                                if (err.Description.Length > 300)
+                                    sb.Append(
+                                        PtUtils.MakeValidXml(err.Description.Substring(0, 300) + " ... elided ...")
+                                            + Environment.NewLine
+                                    );
+                                else
+                                    sb.Append(PtUtils.MakeValidXml(err.Description) + Environment.NewLine);
+                                sb.Append(
+                                    "  in part " + PtUtils.MakeValidXml(err.Part.Uri.ToString()) + Environment.NewLine
+                                );
+                                sb.Append("  at " + PtUtils.MakeValidXml(err.Path.XPath) + Environment.NewLine);
+                                return sb.ToString();
+                            })
+                    )
+                );
             }
             return valid;
         }
@@ -455,34 +524,47 @@ namespace Clippit
                 IncrementMetric(metrics, H.ReferenceToNullImage);
         }
 
-
         private static void NumberingFormatListAssembly(WordprocessingDocument wDoc, List<XElement> metrics)
         {
             var numFmtList = new List<string>();
             foreach (var part in wDoc.ContentParts())
             {
                 var xDoc = part.GetXDocument();
-                numFmtList = numFmtList.Concat(xDoc
-                    .Descendants(W.p)
-                    .Select(p =>
-                    {
-                        ListItemRetriever.RetrieveListItem(wDoc, p, null);
-                        var lif = p.Annotation<ListItemRetriever.ListItemInfo>();
-                        if (lif != null && lif.IsListItem && lif.Lvl(ListItemRetriever.GetParagraphLevel(p)) != null)
-                        {
-                            var numFmtForLevel = (string)lif.Lvl(ListItemRetriever.GetParagraphLevel(p)).Elements(W.numFmt).Attributes(W.val).FirstOrDefault();
-                            if (numFmtForLevel == null)
+                numFmtList = numFmtList
+                    .Concat(
+                        xDoc.Descendants(W.p)
+                            .Select(p =>
                             {
-                                var numFmtElement = lif.Lvl(ListItemRetriever.GetParagraphLevel(p)).Elements(MC.AlternateContent).Elements(MC.Choice).Elements(W.numFmt).FirstOrDefault();
-                                if (numFmtElement != null && (string)numFmtElement.Attribute(W.val) == "custom")
-                                    numFmtForLevel = (string)numFmtElement.Attribute(W.format);
-                            }
-                            return numFmtForLevel;
-                        }
-                        return null;
-                    })
-                    .Where(s => s != null)
-                    .Distinct())
+                                ListItemRetriever.RetrieveListItem(wDoc, p, null);
+                                var lif = p.Annotation<ListItemRetriever.ListItemInfo>();
+                                if (
+                                    lif != null
+                                    && lif.IsListItem
+                                    && lif.Lvl(ListItemRetriever.GetParagraphLevel(p)) != null
+                                )
+                                {
+                                    var numFmtForLevel = (string)
+                                        lif.Lvl(ListItemRetriever.GetParagraphLevel(p))
+                                            .Elements(W.numFmt)
+                                            .Attributes(W.val)
+                                            .FirstOrDefault();
+                                    if (numFmtForLevel == null)
+                                    {
+                                        var numFmtElement = lif.Lvl(ListItemRetriever.GetParagraphLevel(p))
+                                            .Elements(MC.AlternateContent)
+                                            .Elements(MC.Choice)
+                                            .Elements(W.numFmt)
+                                            .FirstOrDefault();
+                                        if (numFmtElement != null && (string)numFmtElement.Attribute(W.val) == "custom")
+                                            numFmtForLevel = (string)numFmtElement.Attribute(W.format);
+                                    }
+                                    return numFmtForLevel;
+                                }
+                                return null;
+                            })
+                            .Where(s => s != null)
+                            .Distinct()
+                    )
                     .ToList();
             }
             if (numFmtList.Any())
@@ -517,7 +599,11 @@ namespace Clippit
             }
         }
 
-        private static void FontAndCharSetAnalysis(WordprocessingDocument wDoc, List<XElement> metrics, List<string> notes)
+        private static void FontAndCharSetAnalysis(
+            WordprocessingDocument wDoc,
+            List<XElement> metrics,
+            List<string> notes
+        )
         {
             var settings = new FormattingAssemblerSettings
             {
@@ -541,7 +627,9 @@ namespace Clippit
 
             metrics.Add(new XElement(H.RunCount, new XAttribute(H.Val, formattingMetrics.RunCount)));
             if (formattingMetrics.RunWithoutRprCount > 0)
-                metrics.Add(new XElement(H.RunWithoutRprCount, new XAttribute(H.Val, formattingMetrics.RunWithoutRprCount)));
+                metrics.Add(
+                    new XElement(H.RunWithoutRprCount, new XAttribute(H.Val, formattingMetrics.RunWithoutRprCount))
+                );
             if (formattingMetrics.ZeroLengthText > 0)
                 metrics.Add(new XElement(H.ZeroLengthText, new XAttribute(H.Val, formattingMetrics.ZeroLengthText)));
             if (formattingMetrics.MultiFontRun > 0)
@@ -551,7 +639,9 @@ namespace Clippit
             if (formattingMetrics.CSCharCount > 0)
                 metrics.Add(new XElement(H.CSCharCount, new XAttribute(H.Val, formattingMetrics.CSCharCount)));
             if (formattingMetrics.EastAsiaCharCount > 0)
-                metrics.Add(new XElement(H.EastAsiaCharCount, new XAttribute(H.Val, formattingMetrics.EastAsiaCharCount)));
+                metrics.Add(
+                    new XElement(H.EastAsiaCharCount, new XAttribute(H.Val, formattingMetrics.EastAsiaCharCount))
+                );
             if (formattingMetrics.HAnsiCharCount > 0)
                 metrics.Add(new XElement(H.HAnsiCharCount, new XAttribute(H.Val, formattingMetrics.HAnsiCharCount)));
             if (formattingMetrics.AsciiRunCount > 0)
@@ -559,7 +649,9 @@ namespace Clippit
             if (formattingMetrics.CSRunCount > 0)
                 metrics.Add(new XElement(H.CSRunCount, new XAttribute(H.Val, formattingMetrics.CSRunCount)));
             if (formattingMetrics.EastAsiaRunCount > 0)
-                metrics.Add(new XElement(H.EastAsiaRunCount, new XAttribute(H.Val, formattingMetrics.EastAsiaRunCount)));
+                metrics.Add(
+                    new XElement(H.EastAsiaRunCount, new XAttribute(H.Val, formattingMetrics.EastAsiaRunCount))
+                );
             if (formattingMetrics.HAnsiRunCount > 0)
                 metrics.Add(new XElement(H.HAnsiRunCount, new XAttribute(H.Val, formattingMetrics.HAnsiRunCount)));
 
@@ -570,7 +662,13 @@ namespace Clippit
             }
         }
 
-        private static void AnalyzeRun(XElement run, List<XElement> attList, List<string> notes, FormattingMetrics formattingMetrics, string uri)
+        private static void AnalyzeRun(
+            XElement run,
+            List<XElement> attList,
+            List<string> notes,
+            FormattingMetrics formattingMetrics,
+            string uri
+        )
         {
             var runText = run.Elements()
                 .Where(e => e.Name == W.t || e.Name == W.delText)
@@ -592,9 +690,7 @@ namespace Clippit
             var fontTypeArray = runText
                 .Select(ch => FormattingAssembler.DetermineFontTypeFromCharacter(ch, csa))
                 .ToArray();
-            var distinctFontTypeArray = fontTypeArray
-                .Distinct()
-                .ToArray();
+            var distinctFontTypeArray = fontTypeArray.Distinct().ToArray();
             var distinctFonts = distinctFontTypeArray
                 .Select(ft =>
                 {
@@ -609,14 +705,15 @@ namespace Clippit
                         FormattingAssembler.FontType.Ascii => csa.LatinLang,
                         FormattingAssembler.FontType.CS => csa.BidiLang,
                         FormattingAssembler.FontType.EastAsia => csa.EastAsiaLang,
-                        _ => csa.LatinLang
+                        _ => csa.LatinLang,
                     };
                     //if (ft == FormattingAssembler.FontType.HAnsi)
                 })
                 .Select(l =>
                 {
                     if (l is "" or null)
-                        return /* "Dflt:" + */ CultureInfo.CurrentCulture.Name;
+                        return /* "Dflt:" + */
+                        CultureInfo.CurrentCulture.Name;
                     return l;
                 })
                 //.Where(l => l != null && l != "")
@@ -628,10 +725,18 @@ namespace Clippit
             {
                 formattingMetrics.MultiFontRun++;
 
-                formattingMetrics.AsciiCharCount += fontTypeArray.Where(ft => ft == FormattingAssembler.FontType.Ascii).Count();
-                formattingMetrics.CSCharCount += fontTypeArray.Where(ft => ft == FormattingAssembler.FontType.CS).Count();
-                formattingMetrics.EastAsiaCharCount += fontTypeArray.Where(ft => ft == FormattingAssembler.FontType.EastAsia).Count();
-                formattingMetrics.HAnsiCharCount += fontTypeArray.Where(ft => ft == FormattingAssembler.FontType.HAnsi).Count();
+                formattingMetrics.AsciiCharCount += fontTypeArray
+                    .Where(ft => ft == FormattingAssembler.FontType.Ascii)
+                    .Count();
+                formattingMetrics.CSCharCount += fontTypeArray
+                    .Where(ft => ft == FormattingAssembler.FontType.CS)
+                    .Count();
+                formattingMetrics.EastAsiaCharCount += fontTypeArray
+                    .Where(ft => ft == FormattingAssembler.FontType.EastAsia)
+                    .Count();
+                formattingMetrics.HAnsiCharCount += fontTypeArray
+                    .Where(ft => ft == FormattingAssembler.FontType.HAnsi)
+                    .Count();
             }
             else
             {
@@ -657,7 +762,10 @@ namespace Clippit
             }
         }
 
-        private static string GetFontFromFontType(FormattingAssembler.CharStyleAttributes csa, FormattingAssembler.FontType ft)
+        private static string GetFontFromFontType(
+            FormattingAssembler.CharStyleAttributes csa,
+            FormattingAssembler.FontType ft
+        )
         {
             return ft switch
             {
@@ -665,7 +773,7 @@ namespace Clippit
                 FormattingAssembler.FontType.CS => csa.CsFont,
                 FormattingAssembler.FontType.EastAsia => csa.EastAsiaFont,
                 FormattingAssembler.FontType.HAnsi => csa.HAnsiFont,
-                _ => csa.AsciiFont
+                _ => csa.AsciiFont,
             };
         }
 
@@ -681,23 +789,24 @@ namespace Clippit
                 valid |= ValidateAgainstSpecificVersion(sDoc, metrics, fileFormatVersion, xName);
             }
 
-            return new XElement(H.Metrics,
+            return new XElement(
+                H.Metrics,
                 new XAttribute(H.FileName, smlDoc.FileName),
                 new XAttribute(H.FileType, "SpreadsheetML"),
                 metrics,
                 GetTableInfoForWorkbook(sDoc, settings),
                 settings.RetrieveNamespaceList ? RetrieveNamespaceList(sDoc) : null,
-                settings.RetrieveContentTypeList ? RetrieveContentTypeList(sDoc) : null);
+                settings.RetrieveContentTypeList ? RetrieveContentTypeList(sDoc) : null
+            );
         }
 
         private static XElement GetTableInfoForWorkbook(SpreadsheetDocument spreadsheet, MetricsGetterSettings settings)
         {
             var workbookPart = spreadsheet.WorkbookPart;
             var xd = workbookPart.GetXDocument();
-            var partInformation =
-                new XElement(H.Sheets,
-                    xd.Root
-                    .Element(S.sheets)
+            var partInformation = new XElement(
+                H.Sheets,
+                xd.Root.Element(S.sheets)
                     .Elements(S.sheet)
                     .Select(sh =>
                     {
@@ -705,17 +814,25 @@ namespace Clippit
                         var sheetName = (string)sh.Attribute("name");
                         var worksheetPart = (WorksheetPart)workbookPart.GetPartById(rid);
                         return GetTableInfoForSheet(spreadsheet, worksheetPart, sheetName, settings);
-                    }));
+                    })
+            );
             return partInformation;
         }
 
-        public static XElement GetTableInfoForSheet(SpreadsheetDocument spreadsheetDocument, WorksheetPart sheetPart, string sheetName,
-            MetricsGetterSettings settings)
+        public static XElement GetTableInfoForSheet(
+            SpreadsheetDocument spreadsheetDocument,
+            WorksheetPart sheetPart,
+            string sheetName,
+            MetricsGetterSettings settings
+        )
         {
             var xd = sheetPart.GetXDocument();
-            var sheetInformation = new XElement(H.Sheet,
-                    new XAttribute(H.Name, sheetName),
-                    xd.Root.Elements(S.tableParts).Elements(S.tablePart).Select(tp =>
+            var sheetInformation = new XElement(
+                H.Sheet,
+                new XAttribute(H.Name, sheetName),
+                xd.Root.Elements(S.tableParts)
+                    .Elements(S.tablePart)
+                    .Select(tp =>
                     {
                         var rId = (string)tp.Attribute(R.id);
                         var tablePart = (TableDefinitionPart)sheetPart.GetPartById(rId);
@@ -725,33 +842,48 @@ namespace Clippit
                         if (settings.IncludeXlsxTableCellData)
                         {
                             var xlsxTable = spreadsheetDocument.Table(tableName);
-                            tableCellData = new XElement(H.TableData,
-                                xlsxTable.TableRows()
+                            tableCellData = new XElement(
+                                H.TableData,
+                                xlsxTable
+                                    .TableRows()
                                     .Select(row =>
                                     {
-                                        var rowElement = new XElement(H.Row,
-                                            xlsxTable.TableColumns().Select(col =>
-                                            {
-                                                var cellElement = new XElement(H.Cell,
-                                                    new XAttribute(H.Name, col.Name),
-                                                    new XAttribute(H.Val, (string)row[col.Name]));
-                                                return cellElement;
-                                            }));
+                                        var rowElement = new XElement(
+                                            H.Row,
+                                            xlsxTable
+                                                .TableColumns()
+                                                .Select(col =>
+                                                {
+                                                    var cellElement = new XElement(
+                                                        H.Cell,
+                                                        new XAttribute(H.Name, col.Name),
+                                                        new XAttribute(H.Val, (string)row[col.Name])
+                                                    );
+                                                    return cellElement;
+                                                })
+                                        );
                                         return rowElement;
-                                    }));
+                                    })
+                            );
                         }
-                        var table = new XElement(H.Table,
+                        var table = new XElement(
+                            H.Table,
                             new XAttribute(H.Name, (string)txd.Root.Attribute("name")),
                             new XAttribute(H.DisplayName, tableName),
-                            new XElement(H.Columns,
-                                txd.Root.Element(S.tableColumns).Elements(S.tableColumn)
-                                .Select(tc => new XElement(H.Column,
-                                    new XAttribute(H.Name, (string)tc.Attribute("name"))))),
-                                    tableCellData
-                            );
+                            new XElement(
+                                H.Columns,
+                                txd.Root.Element(S.tableColumns)
+                                    .Elements(S.tableColumn)
+                                    .Select(tc => new XElement(
+                                        H.Column,
+                                        new XAttribute(H.Name, (string)tc.Attribute("name"))
+                                    ))
+                            ),
+                            tableCellData
+                        );
                         return table;
                     })
-                );
+            );
             if (!sheetInformation.HasElements)
                 return null;
             return sheetInformation;
@@ -769,12 +901,14 @@ namespace Clippit
                 valid |= ValidateAgainstSpecificVersion(pDoc, metrics, fileFormatVersion, xName);
             }
 
-            return new XElement(H.Metrics,
+            return new XElement(
+                H.Metrics,
                 new XAttribute(H.FileName, pmlDoc.FileName),
                 new XAttribute(H.FileType, "PresentationML"),
                 metrics,
                 settings.RetrieveNamespaceList ? RetrieveNamespaceList(pDoc) : null,
-                settings.RetrieveContentTypeList ? RetrieveContentTypeList(pDoc) : null);
+                settings.RetrieveContentTypeList ? RetrieveContentTypeList(pDoc) : null
+            );
         }
 
         private static object GetStyleHierarchy(WordprocessingDocument document)
@@ -783,8 +917,8 @@ namespace Clippit
             if (stylePart == null)
                 return null;
             var xd = stylePart.GetXDocument();
-            var stylesWithPath = xd.Root
-                .Elements(W.style)
+            var stylesWithPath = xd
+                .Root.Elements(W.style)
                 .Select(s =>
                 {
                     var styleString = (string)s.Attribute(W.styleId);
@@ -795,7 +929,9 @@ namespace Clippit
                         if (baseStyle == null)
                             break;
                         styleString = baseStyle + "/" + styleString;
-                        thisStyle = xd.Root.Elements(W.style).FirstOrDefault(ts => ts.Attribute(W.styleId).Value == baseStyle);
+                        thisStyle = xd
+                            .Root.Elements(W.style)
+                            .FirstOrDefault(ts => ts.Attribute(W.styleId).Value == baseStyle);
                         if (thisStyle == null)
                             break;
                     }
@@ -809,12 +945,24 @@ namespace Clippit
                 var styleChain = item.Split('/');
                 var elementToAddTo = styleHierarchy;
                 foreach (var inChain in styleChain.SkipLast(1))
-                    elementToAddTo = elementToAddTo.Elements(H.Style).FirstOrDefault(z => z.Attribute(H.Id).Value == inChain);
+                    elementToAddTo = elementToAddTo
+                        .Elements(H.Style)
+                        .FirstOrDefault(z => z.Attribute(H.Id).Value == inChain);
                 var styleToAdd = styleChain.Last();
                 elementToAddTo.Add(
-                    new XElement(H.Style,
+                    new XElement(
+                        H.Style,
                         new XAttribute(H.Id, styleChain.Last()),
-                        new XAttribute(H.Type, (string)xd.Root.Elements(W.style).First(z => z.Attribute(W.styleId).Value == styleToAdd).Attribute(W.type))));
+                        new XAttribute(
+                            H.Type,
+                            (string)
+                                xd
+                                    .Root.Elements(W.style)
+                                    .First(z => z.Attribute(W.styleId).Value == styleToAdd)
+                                    .Attribute(W.type)
+                        )
+                    )
+                );
             }
             return styleHierarchy;
         }
@@ -829,10 +977,12 @@ namespace Clippit
                 if (!contentControls.HasElements)
                     contentControls = null;
             }
-            var partMetrics = new XElement(H.Part,
+            var partMetrics = new XElement(
+                H.Part,
                 new XAttribute(H.ContentType, part.ContentType),
                 new XAttribute(H.Uri, part.Uri.ToString()),
-                contentControls);
+                contentControls
+            );
             if (partMetrics.HasElements)
                 return partMetrics;
             return null;
@@ -844,8 +994,10 @@ namespace Clippit
             if (element != null)
             {
                 if (element == element.Document.Root)
-                    return new XElement(H.ContentControls,
-                        element.Nodes().Select(n => GetContentControlsTransform(n, settings)));
+                    return new XElement(
+                        H.ContentControls,
+                        element.Nodes().Select(n => GetContentControlsTransform(n, settings))
+                    );
 
                 if (element.Name == W.sdt)
                 {
@@ -868,39 +1020,56 @@ namespace Clippit
                     var isEquation = element.Elements(W.sdtPr).Elements(W.equation).Any();
                     var isGroup = element.Elements(W.sdtPr).Elements(W.group).Any();
                     var isPicture = element.Elements(W.sdtPr).Elements(W.picture).Any();
-                    var isRichText = element.Elements(W.sdtPr).Elements(W.richText).Any() ||
-                        (! isText && 
-                        ! isBibliography && 
-                        ! isCitation && 
-                        ! isComboBox && 
-                        ! isDate && 
-                        ! isDocPartList && 
-                        ! isDocPartObj && 
-                        ! isDropDownList && 
-                        ! isEquation && 
-                        ! isGroup && 
-                        ! isPicture);
+                    var isRichText =
+                        element.Elements(W.sdtPr).Elements(W.richText).Any()
+                        || (
+                            !isText
+                            && !isBibliography
+                            && !isCitation
+                            && !isComboBox
+                            && !isDate
+                            && !isDocPartList
+                            && !isDocPartObj
+                            && !isDropDownList
+                            && !isEquation
+                            && !isGroup
+                            && !isPicture
+                        );
                     string type = null;
-                    if (isText        ) type = "Text";
-                    if (isBibliography) type = "Bibliography";
-                    if (isCitation    ) type = "Citation";
-                    if (isComboBox    ) type = "ComboBox";
-                    if (isDate        ) type = "Date";
-                    if (isDocPartList ) type = "DocPartList";
-                    if (isDocPartObj  ) type = "DocPartObj";
-                    if (isDropDownList) type = "DropDownList";
-                    if (isEquation    ) type = "Equation";
-                    if (isGroup       ) type = "Group";
-                    if (isPicture     ) type = "Picture";
-                    if (isRichText    ) type = "RichText";
+                    if (isText)
+                        type = "Text";
+                    if (isBibliography)
+                        type = "Bibliography";
+                    if (isCitation)
+                        type = "Citation";
+                    if (isComboBox)
+                        type = "ComboBox";
+                    if (isDate)
+                        type = "Date";
+                    if (isDocPartList)
+                        type = "DocPartList";
+                    if (isDocPartObj)
+                        type = "DocPartObj";
+                    if (isDropDownList)
+                        type = "DropDownList";
+                    if (isEquation)
+                        type = "Equation";
+                    if (isGroup)
+                        type = "Group";
+                    if (isPicture)
+                        type = "Picture";
+                    if (isRichText)
+                        type = "RichText";
                     var typeAttr = new XAttribute(H.Type, type);
 
-                    return new XElement(H.ContentControl,
+                    return new XElement(
+                        H.ContentControl,
                         typeAttr,
                         tagAttr,
                         aliasAttr,
                         xPathAttr,
-                        element.Nodes().Select(n => GetContentControlsTransform(n, settings)));
+                        element.Nodes().Select(n => GetContentControlsTransform(n, settings))
+                    );
                 }
 
                 return element.Nodes().Select(n => GetContentControlsTransform(n, settings));

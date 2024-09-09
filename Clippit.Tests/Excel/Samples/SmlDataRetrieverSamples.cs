@@ -7,10 +7,9 @@ namespace Clippit.Tests.Excel.Samples
 {
     public class SmlDataRetrieverSamples : TestsBase
     {
-        public SmlDataRetrieverSamples(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public SmlDataRetrieverSamples(ITestOutputHelper log)
+            : base(log) { }
+
         private static string GetFilePath(string path) =>
             Path.Combine("../../../Excel/Samples/SmlDataRetriever/", path);
 

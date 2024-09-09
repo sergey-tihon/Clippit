@@ -67,7 +67,7 @@ namespace Clippit
 
             // For w:t elements, we obviously want the element's value.
             if (element.Name == W.t)
-                return (string) element;
+                return (string)element;
 
             // Turn elements representing special characters into their corresponding
             // unicode characters.
@@ -101,7 +101,7 @@ namespace Clippit
                 {
                     "begin" => "{",
                     "end" => "}",
-                    _ => "_"
+                    _ => "_",
                 };
             }
 
@@ -140,7 +140,7 @@ namespace Clippit
         /// <returns>The Unicode character used to represent the symbol.</returns>
         public static char SymToChar(string fontAttributeValue, char unicodeValue)
         {
-            return SymToChar(fontAttributeValue, (int) unicodeValue);
+            return SymToChar(fontAttributeValue, (int)unicodeValue);
         }
 
         /// <summary>
@@ -189,10 +189,14 @@ namespace Clippit
             if (string.IsNullOrEmpty(charAttributeValue))
                 throw new ArgumentException("Argument is null or empty.", nameof(charAttributeValue));
 
-            return SymToChar(new XElement(W.sym,
-                new XAttribute(W.font, fontAttributeValue),
-                new XAttribute(W._char, charAttributeValue),
-                new XAttribute(XNamespace.Xmlns + "w", W.w)));
+            return SymToChar(
+                new XElement(
+                    W.sym,
+                    new XAttribute(W.font, fontAttributeValue),
+                    new XAttribute(W._char, charAttributeValue),
+                    new XAttribute(XNamespace.Xmlns + "w", W.w)
+                )
+            );
         }
 
         /// <summary>
@@ -220,10 +224,12 @@ namespace Clippit
                 throw new ArgumentException("w:sym element has no w:char attribute.", nameof(sym));
 
             // Return Unicode value if it is in the dictionary.
-            var standardizedSym = new XElement(W.sym,
+            var standardizedSym = new XElement(
+                W.sym,
                 new XAttribute(W.font, fontAttributeValue),
                 new XAttribute(W._char, charAttributeValue),
-                new XAttribute(XNamespace.Xmlns + "w", W.w));
+                new XAttribute(XNamespace.Xmlns + "w", W.w)
+            );
             var standardizedSymString = standardizedSym.ToString(SaveOptions.None);
             if (SymStringToUnicodeCharDictionary.ContainsKey(standardizedSymString))
                 return SymStringToUnicodeCharDictionary[standardizedSymString];
@@ -232,7 +238,7 @@ namespace Clippit
             // Use the actual Unicode value if it has not yet been used with another font.
             // Otherwise, create a special Unicode value in the private use area to represent
             // the current w:sym element.
-            var unicodeChar = (char) Convert.ToInt32(charAttributeValue, 16);
+            var unicodeChar = (char)Convert.ToInt32(charAttributeValue, 16);
             if (UnicodeCharToSymDictionary.ContainsKey(unicodeChar))
                 unicodeChar = ++_lastUnicodeChar;
 
@@ -253,9 +259,11 @@ namespace Clippit
             return textValue
                 .Select(CharToRunChild)
                 .GroupAdjacent(e => e.Name == W.t)
-                .SelectMany(grouping => grouping.Key
-                    ? StringToSingleRunList(grouping.Select(t => (string) t).StringConcatenate(), runProperties)
-                    : grouping.Select(e => new XElement(W.r, runProperties, e)))
+                .SelectMany(grouping =>
+                    grouping.Key
+                        ? StringToSingleRunList(grouping.Select(t => (string)t).StringConcatenate(), runProperties)
+                        : grouping.Select(e => new XElement(W.r, runProperties, e))
+                )
                 .ToList();
         }
 
@@ -268,9 +276,11 @@ namespace Clippit
         /// <returns>A list with a single run.</returns>
         public static IEnumerable<XElement> StringToSingleRunList(string textValue, XElement runProperties)
         {
-            var run = new XElement(W.r,
+            var run = new XElement(
+                W.r,
                 runProperties,
-                new XElement(W.t, XmlUtil.GetXmlSpaceAttribute(textValue), textValue));
+                new XElement(W.t, XmlUtil.GetXmlSpaceAttribute(textValue), textValue)
+            );
             return new List<XElement> { run };
         }
 

@@ -63,8 +63,12 @@ namespace Clippit.Word
         {
             var mainDocumentPart = wDoc.MainDocumentPart;
             var mdXDoc = mainDocumentPart.GetXDocument();
-            var cc = mdXDoc.Descendants(W.sdt)
-                .FirstOrDefault(sdt => (string)sdt.Elements(W.sdtPr).Elements(W.tag).Attributes(W.val).FirstOrDefault() == contentControlTag);
+            var cc = mdXDoc
+                .Descendants(W.sdt)
+                .FirstOrDefault(sdt =>
+                    (string)sdt.Elements(W.sdtPr).Elements(W.tag).Attributes(W.val).FirstOrDefault()
+                    == contentControlTag
+                );
             if (cc != null)
             {
                 var chartRid = (string)cc.Descendants(C.chart).Attributes(R.id).FirstOrDefault();
@@ -94,37 +98,38 @@ namespace Clippit.Word
             UpdateSeries(chartPart, chartData);
         }
 
-        private static readonly Dictionary<int, string> FormatCodes = new()
-        {
-            { 0, "general" },
-            { 1, "0" },
-            { 2, "0.00" },
-            { 3, "#,##0" },
-            { 4, "#,##0.00" },
-            { 9, "0%" },
-            { 10, "0.00%" },
-            { 11, "0.00E+00" },
-            { 12, "# ?/?" },
-            { 13, "# ??/??" },
-            { 14, "mm-dd-yy" },
-            { 15, "d-mmm-yy" },
-            { 16, "d-mmm" },
-            { 17, "mmm-yy" },
-            { 18, "h:mm AM/PM" },
-            { 19, "h:mm:ss AM/PM" },
-            { 20, "h:mm" },
-            { 21, "h:mm:ss" },
-            { 22, "m/d/yy h:mm" },
-            { 37, "#,##0 ;(#,##0)" },
-            { 38, "#,##0 ;[Red](#,##0)" },
-            { 39, "#,##0.00;(#,##0.00)" },
-            { 40, "#,##0.00;[Red](#,##0.00)" },
-            { 45, "mm:ss" },
-            { 46, "[h]:mm:ss" },
-            { 47, "mmss.0" },
-            { 48, "##0.0E+0" },
-            { 49, "@" },
-        };
+        private static readonly Dictionary<int, string> FormatCodes =
+            new()
+            {
+                { 0, "general" },
+                { 1, "0" },
+                { 2, "0.00" },
+                { 3, "#,##0" },
+                { 4, "#,##0.00" },
+                { 9, "0%" },
+                { 10, "0.00%" },
+                { 11, "0.00E+00" },
+                { 12, "# ?/?" },
+                { 13, "# ??/??" },
+                { 14, "mm-dd-yy" },
+                { 15, "d-mmm-yy" },
+                { 16, "d-mmm" },
+                { 17, "mmm-yy" },
+                { 18, "h:mm AM/PM" },
+                { 19, "h:mm:ss AM/PM" },
+                { 20, "h:mm" },
+                { 21, "h:mm:ss" },
+                { 22, "m/d/yy h:mm" },
+                { 37, "#,##0 ;(#,##0)" },
+                { 38, "#,##0 ;[Red](#,##0)" },
+                { 39, "#,##0.00;(#,##0.00)" },
+                { 40, "#,##0.00;[Red](#,##0.00)" },
+                { 45, "mm:ss" },
+                { 46, "[h]:mm:ss" },
+                { 47, "mmss.0" },
+                { 48, "##0.0E+0" },
+                { 49, "@" },
+            };
 
         private static void UpdateSeries(ChartPart chartPart, ChartData chartData)
         {
@@ -143,8 +148,8 @@ namespace Clippit.Word
             var chartType = firstSeries.Parent.Name;
             firstSeries.Parent.Elements(C.ser).Skip(1).Remove();
 
-            var newSetOfSeries = chartData.SeriesNames
-                .Select((string sn, int si) =>
+            var newSetOfSeries = chartData.SeriesNames.Select(
+                (string sn, int si) =>
                 {
                     XElement cat = null;
 
@@ -160,63 +165,99 @@ namespace Clippit.Word
                             newFormula = new XElement(C.f, $"{sheetName}!$A$2:$A${chartData.CategoryNames.Length + 1}");
                         if (chartData.CategoryDataType == ChartDataType.String)
                         {
-                            cat = new XElement(C.cat,
-                                new XElement(C.strRef,
+                            cat = new XElement(
+                                C.cat,
+                                new XElement(
+                                    C.strRef,
                                     newFormula,
-                                    new XElement(C.strCache,
+                                    new XElement(
+                                        C.strCache,
                                         new XElement(C.ptCount, new XAttribute("val", chartData.CategoryNames.Length)),
-                                        chartData.CategoryNames.Select((string cn, int ci) =>
-                                        {
-                                            var newPt = new XElement(C.pt,
-                                                new XAttribute("idx", ci),
-                                                new XElement(C.v, chartData.CategoryNames[ci]));
-                                            return newPt;
-                                        }))));
+                                        chartData.CategoryNames.Select(
+                                            (string cn, int ci) =>
+                                            {
+                                                var newPt = new XElement(
+                                                    C.pt,
+                                                    new XAttribute("idx", ci),
+                                                    new XElement(C.v, chartData.CategoryNames[ci])
+                                                );
+                                                return newPt;
+                                            }
+                                        )
+                                    )
+                                )
+                            );
                         }
                         else
                         {
-                            cat = new XElement(C.cat,
-                                new XElement(C.numRef,
+                            cat = new XElement(
+                                C.cat,
+                                new XElement(
+                                    C.numRef,
                                     newFormula,
-                                    new XElement(C.numCache,
+                                    new XElement(
+                                        C.numCache,
                                         new XElement(C.formatCode, FormatCodes[chartData.CategoryFormatCode]),
                                         new XElement(C.ptCount, new XAttribute("val", chartData.CategoryNames.Length)),
-                                        chartData.CategoryNames.Select((string cn, int ci) =>
-                                        {
-                                            var newPt = new XElement(C.pt,
-                                                new XAttribute("idx", ci),
-                                                new XElement(C.v, chartData.CategoryNames[ci]));
-                                            return newPt;
-                                        }))));
+                                        chartData.CategoryNames.Select(
+                                            (string cn, int ci) =>
+                                            {
+                                                var newPt = new XElement(
+                                                    C.pt,
+                                                    new XAttribute("idx", ci),
+                                                    new XElement(C.v, chartData.CategoryNames[ci])
+                                                );
+                                                return newPt;
+                                            }
+                                        )
+                                    )
+                                )
+                            );
                         }
                     }
                     else
                     {
                         if (chartData.CategoryDataType == ChartDataType.String)
                         {
-                            cat = new XElement(C.cat,
-                                new XElement(C.strLit,
+                            cat = new XElement(
+                                C.cat,
+                                new XElement(
+                                    C.strLit,
                                     new XElement(C.ptCount, new XAttribute("val", chartData.CategoryNames.Length)),
-                                    chartData.CategoryNames.Select((string cn, int ci) =>
-                                    {
-                                        var newPt = new XElement(C.pt,
-                                            new XAttribute("idx", ci),
-                                            new XElement(C.v, chartData.CategoryNames[ci]));
-                                        return newPt;
-                                    })));
+                                    chartData.CategoryNames.Select(
+                                        (string cn, int ci) =>
+                                        {
+                                            var newPt = new XElement(
+                                                C.pt,
+                                                new XAttribute("idx", ci),
+                                                new XElement(C.v, chartData.CategoryNames[ci])
+                                            );
+                                            return newPt;
+                                        }
+                                    )
+                                )
+                            );
                         }
                         else
                         {
-                            cat = new XElement(C.cat,
-                                new XElement(C.numLit,
+                            cat = new XElement(
+                                C.cat,
+                                new XElement(
+                                    C.numLit,
                                     new XElement(C.ptCount, new XAttribute("val", chartData.CategoryNames.Length)),
-                                    chartData.CategoryNames.Select((string cn, int ci) =>
-                                    {
-                                        var newPt = new XElement(C.pt,
-                                            new XAttribute("idx", ci),
-                                            new XElement(C.v, chartData.CategoryNames[ci]));
-                                        return newPt;
-                                    })));
+                                    chartData.CategoryNames.Select(
+                                        (string cn, int ci) =>
+                                        {
+                                            var newPt = new XElement(
+                                                C.pt,
+                                                new XAttribute("idx", ci),
+                                                new XElement(C.v, chartData.CategoryNames[ci])
+                                            );
+                                            return newPt;
+                                        }
+                                    )
+                                )
+                            );
                         }
                     }
 
@@ -224,33 +265,60 @@ namespace Clippit.Word
 
                     if (sheetName == null)
                     {
-                        newCval = new XElement(C.val,
-                                new XElement(C.numLit,
-                                    new XElement(C.ptCount, new XAttribute("val", chartData.CategoryNames.Length)),
-                                    chartData.CategoryNames.Select((string cn, int ci) =>
+                        newCval = new XElement(
+                            C.val,
+                            new XElement(
+                                C.numLit,
+                                new XElement(C.ptCount, new XAttribute("val", chartData.CategoryNames.Length)),
+                                chartData.CategoryNames.Select(
+                                    (string cn, int ci) =>
                                     {
-                                        var newPt = new XElement(C.pt,
+                                        var newPt = new XElement(
+                                            C.pt,
                                             new XAttribute("idx", ci),
-                                            new XElement(C.v, chartData.Values[si][ci]));
+                                            new XElement(C.v, chartData.Values[si][ci])
+                                        );
                                         return newPt;
-                                    })));
+                                    }
+                                )
+                            )
+                        );
                     }
                     else
                     {
-                        newCval = new XElement(C.val,
-                                new XElement(C.numRef,
-                                    sheetName != null ?
-                                        new XElement(C.f, string.Format("{0}!${2}$2:${2}${1}", sheetName, chartData.CategoryNames.Length + 1, SpreadsheetMLUtil.IntToColumnId(si + 1))) : null,
-                                    new XElement(C.numCache,
-                                        sheetName != null ? numRef.Descendants(C.formatCode) : null,
-                                        new XElement(C.ptCount, new XAttribute("val", chartData.CategoryNames.Length)),
-                                        chartData.CategoryNames.Select((string cn, int ci) =>
+                        newCval = new XElement(
+                            C.val,
+                            new XElement(
+                                C.numRef,
+                                sheetName != null
+                                    ? new XElement(
+                                        C.f,
+                                        string.Format(
+                                            "{0}!${2}$2:${2}${1}",
+                                            sheetName,
+                                            chartData.CategoryNames.Length + 1,
+                                            SpreadsheetMLUtil.IntToColumnId(si + 1)
+                                        )
+                                    )
+                                    : null,
+                                new XElement(
+                                    C.numCache,
+                                    sheetName != null ? numRef.Descendants(C.formatCode) : null,
+                                    new XElement(C.ptCount, new XAttribute("val", chartData.CategoryNames.Length)),
+                                    chartData.CategoryNames.Select(
+                                        (string cn, int ci) =>
                                         {
-                                            var newPt = new XElement(C.pt,
+                                            var newPt = new XElement(
+                                                C.pt,
                                                 new XAttribute("idx", ci),
-                                                new XElement(C.v, chartData.Values[si][ci]));
+                                                new XElement(C.v, chartData.Values[si][ci])
+                                            );
                                             return newPt;
-                                        }))));
+                                        }
+                                    )
+                                )
+                            )
+                        );
                     }
 
                     var serHasFormula = firstSeries.Descendants(C.f).Any();
@@ -260,32 +328,39 @@ namespace Clippit.Word
                         XElement newFormula = null;
                         if (sheetName != null)
                             newFormula = new XElement(C.f, $"{sheetName}!${SpreadsheetMLUtil.IntToColumnId(si + 1)}$1");
-                        tx = new XElement(C.tx,
-                            new XElement(C.strRef,
+                        tx = new XElement(
+                            C.tx,
+                            new XElement(
+                                C.strRef,
                                 newFormula,
-                                new XElement(C.strCache,
+                                new XElement(
+                                    C.strCache,
                                     new XElement(C.ptCount, new XAttribute("val", 1)),
-                                    new XElement(C.pt,
+                                    new XElement(
+                                        C.pt,
                                         new XAttribute("idx", 0),
-                                        new XElement(C.v, chartData.SeriesNames[si])))));
+                                        new XElement(C.v, chartData.SeriesNames[si])
+                                    )
+                                )
+                            )
+                        );
                     }
                     else
                     {
-                        tx = new XElement(C.tx,
-                            new XElement(C.v, chartData.SeriesNames[si]));
+                        tx = new XElement(C.tx, new XElement(C.v, chartData.SeriesNames[si]));
                     }
 
                     XElement newSer = null;
 
                     if (chartType == C.area3DChart || chartType == C.areaChart)
                     {
-                        newSer = new XElement(C.ser,
+                        newSer = new XElement(
+                            C.ser,
                             // common
                             new XElement(C.idx, new XAttribute("val", si)),
                             new XElement(C.order, new XAttribute("val", si)),
                             tx,
                             firstSeries.Elements(C.spPr),
-
                             // CT_AreaSer
                             firstSeries.Elements(C.pictureOptions),
                             firstSeries.Elements(C.dPt),
@@ -294,17 +369,18 @@ namespace Clippit.Word
                             firstSeries.Elements(C.errBars),
                             cat,
                             newCval,
-                            firstSeries.Elements(C.extLst));
+                            firstSeries.Elements(C.extLst)
+                        );
                     }
                     else if (chartType == C.bar3DChart || chartType == C.barChart)
                     {
-                        newSer = new XElement(C.ser,
+                        newSer = new XElement(
+                            C.ser,
                             // common
                             new XElement(C.idx, new XAttribute("val", si)),
                             new XElement(C.order, new XAttribute("val", si)),
                             tx,
                             firstSeries.Elements(C.spPr),
-
                             // CT_BarSer
                             firstSeries.Elements(C.invertIfNegative),
                             firstSeries.Elements(C.pictureOptions),
@@ -315,17 +391,18 @@ namespace Clippit.Word
                             cat,
                             newCval,
                             firstSeries.Elements(C.shape),
-                            firstSeries.Elements(C.extLst));
+                            firstSeries.Elements(C.extLst)
+                        );
                     }
                     else if (chartType == C.line3DChart || chartType == C.lineChart || chartType == C.stockChart)
                     {
-                        newSer = new XElement(C.ser,
+                        newSer = new XElement(
+                            C.ser,
                             // common
                             new XElement(C.idx, new XAttribute("val", si)),
                             new XElement(C.order, new XAttribute("val", si)),
                             tx,
                             firstSeries.Elements(C.spPr),
-
                             // CT_LineSer
                             firstSeries.Elements(C.marker),
                             firstSeries.Elements(C.dPt),
@@ -335,38 +412,46 @@ namespace Clippit.Word
                             cat,
                             newCval,
                             firstSeries.Elements(C.smooth),
-                            firstSeries.Elements(C.extLst));
+                            firstSeries.Elements(C.extLst)
+                        );
                     }
-                    else if (chartType == C.doughnutChart || chartType == C.ofPieChart || chartType == C.pie3DChart || chartType == C.pieChart)
+                    else if (
+                        chartType == C.doughnutChart
+                        || chartType == C.ofPieChart
+                        || chartType == C.pie3DChart
+                        || chartType == C.pieChart
+                    )
                     {
-                        newSer = new XElement(C.ser,
+                        newSer = new XElement(
+                            C.ser,
                             // common
                             new XElement(C.idx, new XAttribute("val", si)),
                             new XElement(C.order, new XAttribute("val", si)),
                             tx,
                             firstSeries.Elements(C.spPr),
-
                             // CT_PieSer
                             firstSeries.Elements(C.explosion),
                             firstSeries.Elements(C.dPt),
                             firstSeries.Elements(C.dLbls),
                             cat,
                             newCval,
-                            firstSeries.Elements(C.extLst));
+                            firstSeries.Elements(C.extLst)
+                        );
                     }
                     else if (chartType == C.surface3DChart || chartType == C.surfaceChart)
                     {
-                        newSer = new XElement(C.ser,
+                        newSer = new XElement(
+                            C.ser,
                             // common
                             new XElement(C.idx, new XAttribute("val", si)),
                             new XElement(C.order, new XAttribute("val", si)),
                             tx,
                             firstSeries.Elements(C.spPr),
-
                             // CT_SurfaceSer
                             cat,
                             newCval,
-                            firstSeries.Elements(C.extLst));
+                            firstSeries.Elements(C.extLst)
+                        );
                     }
 
                     if (newSer == null)
@@ -375,7 +460,8 @@ namespace Clippit.Word
                     var accentNumber = (si % 6) + 1;
                     newSer = (XElement)UpdateAccentTransform(newSer, accentNumber);
                     return newSer;
-                });
+                }
+            );
             firstSeries.ReplaceWith(newSetOfSeries);
             chartPart.PutXDocument();
         }
@@ -401,12 +487,13 @@ namespace Clippit.Word
                 using var sDoc = SpreadsheetDocument.Open(stream, true);
                 var workbookPart = sDoc.WorkbookPart;
                 var wbRoot = workbookPart.GetXDocument().Root;
-                var sheetRid = (string)wbRoot
-                    .Elements(S.sheets)
-                    .Elements(S.sheet)
-                    .Where(s => (string)s.Attribute("name") == sheet)
-                    .Attributes(R.id)
-                    .FirstOrDefault();
+                var sheetRid = (string)
+                    wbRoot
+                        .Elements(S.sheets)
+                        .Elements(S.sheet)
+                        .Where(s => (string)s.Attribute("name") == sheet)
+                        .Attributes(R.id)
+                        .FirstOrDefault();
                 if (sheetRid != null)
                 {
                     var sheetPart = workbookPart.GetPartById(sheetRid);
@@ -421,59 +508,74 @@ namespace Clippit.Word
                         categoryStyleId = AddDxfToDxfs(xdSheet, xdStyle, chartData.CategoryFormatCode);
                     stylePart.PutXDocument();
 
-                    var firstRow = new XElement(S.row,
+                    var firstRow = new XElement(
+                        S.row,
                         new XAttribute("r", "1"),
                         new XAttribute("spans", $"1:{chartData.SeriesNames.Length + 1}"),
-                        new [] { new XElement(S.c,
+                        new[]
+                        {
+                            new XElement(
+                                S.c,
                                 new XAttribute("r", "A1"),
                                 new XAttribute("t", "str"),
-                                new XElement(S.v,
-                                    new XAttribute(XNamespace.Xml + "space", "preserve"),
-                                    " "))}
-                            .Concat(
-                                chartData.SeriesNames
-                                    .Select((sn, i) => new XElement(S.c,
+                                new XElement(S.v, new XAttribute(XNamespace.Xml + "space", "preserve"), " ")
+                            ),
+                        }.Concat(
+                            chartData.SeriesNames.Select(
+                                (sn, i) =>
+                                    new XElement(
+                                        S.c,
                                         new XAttribute("r", RowColToString(0, i + 1)),
                                         new XAttribute("t", "str"),
-                                        new XElement(S.v, sn)))));
-                    var otherRows = chartData
-                        .CategoryNames
-                        .Select((cn, r) =>
+                                        new XElement(S.v, sn)
+                                    )
+                            )
+                        )
+                    );
+                    var otherRows = chartData.CategoryNames.Select(
+                        (cn, r) =>
                         {
-                            var row = new XElement(S.row,
+                            var row = new XElement(
+                                S.row,
                                 new XAttribute("r", r + 2),
                                 new XAttribute("spans", $"1:{chartData.SeriesNames.Length + 1}"),
-                                new[] {
-                                    new XElement(S.c,
+                                new[]
+                                {
+                                    new XElement(
+                                        S.c,
                                         new XAttribute("r", RowColToString(r + 1, 0)),
                                         categoryStyleId != 0 ? new XAttribute("s", categoryStyleId) : null,
-                                        chartData.CategoryDataType == ChartDataType.String ? new XAttribute("t", "str") : null,
-                                        new XElement(S.v, cn))
+                                        chartData.CategoryDataType == ChartDataType.String
+                                            ? new XAttribute("t", "str")
+                                            : null,
+                                        new XElement(S.v, cn)
+                                    ),
                                 }.Concat(
-                                    Enumerable.Range(0, chartData.Values.Length)
-                                        .Select((c, ci) =>
-                                        {
-                                            var cell = new XElement(S.c,
-                                                new XAttribute("r", RowColToString(r + 1, ci + 1)),
-                                                new XElement(S.v, chartData.Values[ci][r]));
-                                            return cell;
-                                        })));
+                                    Enumerable
+                                        .Range(0, chartData.Values.Length)
+                                        .Select(
+                                            (c, ci) =>
+                                            {
+                                                var cell = new XElement(
+                                                    S.c,
+                                                    new XAttribute("r", RowColToString(r + 1, ci + 1)),
+                                                    new XElement(S.v, chartData.Values[ci][r])
+                                                );
+                                                return cell;
+                                            }
+                                        )
+                                )
+                            );
                             return row;
-                        });
-                    var allRows = new[] {
-                        firstRow
-                    }.Concat(otherRows);
-                    var newSheetData = new XElement(S.sheetData,
-                        allRows);
+                        }
+                    );
+                    var allRows = new[] { firstRow }.Concat(otherRows);
+                    var newSheetData = new XElement(S.sheetData, allRows);
                     sheetData.ReplaceWith(newSheetData);
                     sheetPart.PutXDocument();
 
-                    var tablePartRid = (string)xdSheet
-                        .Root
-                        .Elements(S.tableParts)
-                        .Elements(S.tablePart)
-                        .Attributes(R.id)
-                        .FirstOrDefault();
+                    var tablePartRid = (string)
+                        xdSheet.Root.Elements(S.tableParts).Elements(S.tablePart).Attributes(R.id).FirstOrDefault();
                     if (tablePartRid != null)
                     {
                         var partTable = sheetPart.GetPartById(tablePartRid);
@@ -481,17 +583,23 @@ namespace Clippit.Word
                         var xaRef = xdTablePart.Root.Attribute("ref");
                         xaRef.Value =
                             $"A1:{RowColToString(chartData.CategoryNames.Length - 1, chartData.SeriesNames.Length)}";
-                        var xeNewTableColumns = new XElement(S.tableColumns,
+                        var xeNewTableColumns = new XElement(
+                            S.tableColumns,
                             new XAttribute("count", chartData.SeriesNames.Length + 1),
-                            new[] {
-                                new XElement(S.tableColumn,
-                                    new XAttribute("id", 1),
-                                    new XAttribute("name", " "))
+                            new[]
+                            {
+                                new XElement(S.tableColumn, new XAttribute("id", 1), new XAttribute("name", " ")),
                             }.Concat(
-                                chartData.SeriesNames.Select((cn, ci) =>
-                                    new XElement(S.tableColumn,
-                                        new XAttribute("id", ci + 2),
-                                        new XAttribute("name", cn)))));
+                                chartData.SeriesNames.Select(
+                                    (cn, ci) =>
+                                        new XElement(
+                                            S.tableColumn,
+                                            new XAttribute("id", ci + 2),
+                                            new XAttribute("name", cn)
+                                        )
+                                )
+                            )
+                        );
                         var xeExistingTableColumns = xdTablePart.Root.Element(S.tableColumns);
                         if (xeExistingTableColumns != null)
                             xeExistingTableColumns.ReplaceWith(xeNewTableColumns);
@@ -504,37 +612,23 @@ namespace Clippit.Word
         private static int AddDxfToDxfs(XDocument xdSheet, XDocument xdStyle, int formatCodeToAdd)
         {
             // add xf to cellXfs
-            var cellXfs = xdStyle
-                .Root
-                .Element(S.cellXfs);
+            var cellXfs = xdStyle.Root.Element(S.cellXfs);
             if (cellXfs == null)
             {
-                var cellStyleXfs = xdStyle
-                    .Root
-                    .Element(S.cellStyleXfs);
+                var cellStyleXfs = xdStyle.Root.Element(S.cellStyleXfs);
                 if (cellStyleXfs != null)
                 {
-                    cellStyleXfs.AddAfterSelf(
-                        new XElement(S.cellXfs,
-                            new XAttribute("count", 0)));
-                    cellXfs = xdSheet
-                        .Root
-                        .Element(S.cellXfs);
+                    cellStyleXfs.AddAfterSelf(new XElement(S.cellXfs, new XAttribute("count", 0)));
+                    cellXfs = xdSheet.Root.Element(S.cellXfs);
                 }
             }
             if (cellXfs == null)
             {
-                var borders = xdStyle
-                    .Root
-                    .Element(S.borders);
+                var borders = xdStyle.Root.Element(S.borders);
                 if (borders != null)
                 {
-                    borders.AddAfterSelf(
-                        new XElement(S.cellXfs,
-                            new XAttribute("count", 0)));
-                    cellXfs = xdSheet
-                        .Root
-                        .Element(S.cellXfs);
+                    borders.AddAfterSelf(new XElement(S.cellXfs, new XAttribute("count", 0)));
+                    cellXfs = xdSheet.Root.Element(S.cellXfs);
                 }
             }
             if (cellXfs == null)
@@ -544,12 +638,15 @@ namespace Clippit.Word
             cnt++;
             cellXfs.Attribute("count").Value = cnt.ToString();
             cellXfs.Add(
-                new XElement(S.xf,
+                new XElement(
+                    S.xf,
                     new XAttribute("numFmtId", formatCodeToAdd),
                     new XAttribute("fontId", 0),
                     new XAttribute("fillId", 0),
                     new XAttribute("borderId", 0),
-                    new XAttribute("applyNumberFormat", 1)));
+                    new XAttribute("applyNumberFormat", 1)
+                )
+            );
             return cnt - 1;
         }
 
@@ -567,9 +664,11 @@ namespace Clippit.Word
                 if (element.Name == A.schemeClr && (string)element.Attribute("val") == "accent1")
                     return new XElement(A.schemeClr, new XAttribute("val", "accent" + accentNumber));
 
-                return new XElement(element.Name,
+                return new XElement(
+                    element.Name,
                     element.Attributes(),
-                    element.Nodes().Select(n => UpdateAccentTransform(n, accentNumber)));
+                    element.Nodes().Select(n => UpdateAccentTransform(n, accentNumber))
+                );
             }
             return node;
         }

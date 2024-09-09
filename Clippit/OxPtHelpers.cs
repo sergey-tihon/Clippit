@@ -5,17 +5,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
-using DocumentFormat.OpenXml.Validation;
-using System.Text;
 using Clippit.Excel;
 using Clippit.Internal;
 using Clippit.PowerPoint;
 using Clippit.Word;
 using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Validation;
+using DocumentFormat.OpenXml.Wordprocessing;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Gif;
@@ -34,7 +34,8 @@ namespace Clippit
             bool isUnderline,
             string foreColor,
             string backColor,
-            string styleName)
+            string styleName
+        )
         {
             using var streamDoc = new OpenXmlMemoryStreamDocument(wmlDoc);
             using (var wDoc = streamDoc.GetWordprocessingDocument())
@@ -55,13 +56,13 @@ namespace Clippit
                 if (isItalic)
                     runProperties.AppendChild(new Italic());
 
-
                 if (!string.IsNullOrEmpty(foreColor))
                 {
                     var colorValue = ColorParser.FromName(foreColor).ToArgb();
                     if (colorValue == 0)
                         throw new OpenXmlPowerToolsException(
-                            $"Add-DocxText: The specified color {foreColor} is unsupported, Please specify the valid color. Ex, Red, Green");
+                            $"Add-DocxText: The specified color {foreColor} is unsupported, Please specify the valid color. Ex, Red, Green"
+                        );
 
                     var ColorHex = $"{colorValue:x6}";
                     runProperties.AppendChild(new Color() { Val = ColorHex.Substring(2) });
@@ -75,10 +76,13 @@ namespace Clippit
                     var colorShade = ColorParser.FromName(backColor).ToArgb();
                     if (colorShade == 0)
                         throw new OpenXmlPowerToolsException(
-                            $"Add-DocxText: The specified color {foreColor} is unsupported, Please specify the valid color. Ex, Red, Green");
+                            $"Add-DocxText: The specified color {foreColor} is unsupported, Please specify the valid color. Ex, Red, Green"
+                        );
 
                     var ColorShadeHex = $"{colorShade:x6}";
-                    runProperties.AppendChild(new Shading() { Fill = ColorShadeHex.Substring(2), Val = ShadingPatternValues.Clear });
+                    runProperties.AppendChild(
+                        new Shading() { Fill = ColorShadeHex.Substring(2), Val = ShadingPatternValues.Clear }
+                    );
                 }
 
                 if (!string.IsNullOrEmpty(styleName))
@@ -312,12 +316,16 @@ AAsACwDBAgAAbCwAAAAA";
 
                         using var defaultDotx = WordprocessingDocument.Open(memoryStream, true);
                         //Get the specified style from Default.dotx template for paragraph
-                        var templateStyle = defaultDotx.MainDocumentPart.StyleDefinitionsPart.Styles.Elements<Style>().Where(s => s.StyleId == styleName && s.Type == StyleValues.Paragraph).FirstOrDefault();
+                        var templateStyle = defaultDotx
+                            .MainDocumentPart.StyleDefinitionsPart.Styles.Elements<Style>()
+                            .Where(s => s.StyleId == styleName && s.Type == StyleValues.Paragraph)
+                            .FirstOrDefault();
 
                         //Check if the style is proper style. Ex, Heading1, Heading2
                         if (templateStyle == null)
                             throw new OpenXmlPowerToolsException(
-                                $"Add-DocxText: The specified style name {styleName} is unsupported, Please specify the valid style. Ex, Heading1, Heading2, Title");
+                                $"Add-DocxText: The specified style name {styleName} is unsupported, Please specify the valid style. Ex, Heading1, Heading2, Title"
+                            );
                         else
                             part.Styles.Append((templateStyle.CloneNode(true)));
                     }
@@ -371,7 +379,7 @@ AAsACwDBAgAAbCwAAAAA";
             var localDirInfo = new DirectoryInfo(imageDirectoryName);
             if (!localDirInfo.Exists)
                 localDirInfo.Create();
-            
+
             var extension = imageInfo.ContentType.Split('/')[1].ToLower();
             var imageEncoder = GetEncoder(extension, out extension);
 
@@ -380,8 +388,7 @@ AAsACwDBAgAAbCwAAAAA";
             if (imageEncoder == null)
                 return null;
 
-            var imageFileName = imageDirectoryName + "/image" +
-                                imageCounter + "." + extension;
+            var imageFileName = imageDirectoryName + "/image" + imageCounter + "." + extension;
             try
             {
                 using var fs = File.Open(imageFileName, FileMode.OpenOrCreate, FileAccess.Write);
@@ -391,15 +398,16 @@ AAsACwDBAgAAbCwAAAAA";
             {
                 return null;
             }
-            var img = new XElement(Xhtml.img,
+            var img = new XElement(
+                Xhtml.img,
                 new XAttribute(NoNamespace.src, imageFileName),
                 imageInfo.ImgStyleAttribute,
-                imageInfo.AltText != null ?
-                    new XAttribute(NoNamespace.alt, imageInfo.AltText) : null);
+                imageInfo.AltText != null ? new XAttribute(NoNamespace.alt, imageInfo.AltText) : null
+            );
             return img;
         }
     }
-    
+
     public class HtmlConverterHelper
     {
         public static void ConvertToHtml(string file, string outputDirectory)
@@ -436,7 +444,7 @@ AAsACwDBAgAAbCwAAAAA";
                 {
                     ++imageCounter;
                     return ImageHelper.DefaultImageHandler(imageInfo, imageDirectoryName, imageCounter);
-                }
+                },
             };
             var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
 
@@ -492,8 +500,7 @@ AAsACwDBAgAAbCwAAAAA";
             return false;
         }
 
-        public static IEnumerable<ValidationErrorInfo> GetOpenXmlValidationErrors(string fileName,
-            string officeVersion)
+        public static IEnumerable<ValidationErrorInfo> GetOpenXmlValidationErrors(string fileName, string officeVersion)
         {
             var fileFormatVersion = FileFormatVersions.Office2013;
             try
@@ -541,39 +548,39 @@ AAsACwDBAgAAbCwAAAAA";
     {
         public string FileName;
 
-	    public int ActiveX;
-	    public int AltChunk;
-	    public int AsciiCharCount;
-	    public int AsciiRunCount;
-	    public int AverageParagraphLength;
-	    public int ComplexField;
-	    public int ContentControlCount;
-	    public XmlDocument ContentControls;
-	    public int CSCharCount;
-	    public int CSRunCount;
-	    public bool DocumentProtection;
-	    public int EastAsiaCharCount;
-	    public int EastAsiaRunCount;
-	    public int ElementCount;
-	    public bool EmbeddedXlsx;
-	    public int HAnsiCharCount;
-	    public int HAnsiRunCount;
-	    public int Hyperlink;
-	    public bool InvalidSaveThroughXslt;
-	    public string Languages;
-	    public int LegacyFrame;
-	    public int MultiFontRun;
-	    public string NumberingFormatList;
-	    public int ReferenceToNullImage;
-	    public bool RevisionTracking;
-	    public int RunCount;
-	    public int SimpleField;
-	    public XmlDocument StyleHierarchy;
-	    public int SubDocument;
-	    public int Table;
-	    public int TextBox;
-	    public bool TrackRevisionsEnabled;
-	    public bool Valid;
+        public int ActiveX;
+        public int AltChunk;
+        public int AsciiCharCount;
+        public int AsciiRunCount;
+        public int AverageParagraphLength;
+        public int ComplexField;
+        public int ContentControlCount;
+        public XmlDocument ContentControls;
+        public int CSCharCount;
+        public int CSRunCount;
+        public bool DocumentProtection;
+        public int EastAsiaCharCount;
+        public int EastAsiaRunCount;
+        public int ElementCount;
+        public bool EmbeddedXlsx;
+        public int HAnsiCharCount;
+        public int HAnsiRunCount;
+        public int Hyperlink;
+        public bool InvalidSaveThroughXslt;
+        public string Languages;
+        public int LegacyFrame;
+        public int MultiFontRun;
+        public string NumberingFormatList;
+        public int ReferenceToNullImage;
+        public bool RevisionTracking;
+        public int RunCount;
+        public int SimpleField;
+        public XmlDocument StyleHierarchy;
+        public int SubDocument;
+        public int Table;
+        public int TextBox;
+        public bool TrackRevisionsEnabled;
+        public bool Valid;
         public int ZeroLengthText;
     }
 
@@ -589,40 +596,40 @@ AAsACwDBAgAAbCwAAAAA";
             var metrics = new DocxMetrics();
             metrics.FileName = wmlDoc.FileName;
 
-            metrics.StyleHierarchy         = GetXmlDocumentForMetrics(metricsXml, H.StyleHierarchy);
-            metrics.ContentControls        = GetXmlDocumentForMetrics(metricsXml, H.Parts);
-            metrics.TextBox                = GetIntForMetrics(metricsXml, H.TextBox);
-            metrics.ContentControlCount    = GetIntForMetrics(metricsXml, H.ContentControl);
-            metrics.ComplexField           = GetIntForMetrics(metricsXml, H.ComplexField);
-            metrics.SimpleField            = GetIntForMetrics(metricsXml, H.SimpleField);
-            metrics.AltChunk               = GetIntForMetrics(metricsXml, H.AltChunk);
-            metrics.Table                  = GetIntForMetrics(metricsXml, H.Table);
-            metrics.Hyperlink              = GetIntForMetrics(metricsXml, H.Hyperlink);
-            metrics.LegacyFrame            = GetIntForMetrics(metricsXml, H.LegacyFrame);
-            metrics.ActiveX                = GetIntForMetrics(metricsXml, H.ActiveX);
-            metrics.SubDocument            = GetIntForMetrics(metricsXml, H.SubDocument);
-            metrics.ReferenceToNullImage   = GetIntForMetrics(metricsXml, H.ReferenceToNullImage);
-            metrics.ElementCount           = GetIntForMetrics(metricsXml, H.ElementCount);
+            metrics.StyleHierarchy = GetXmlDocumentForMetrics(metricsXml, H.StyleHierarchy);
+            metrics.ContentControls = GetXmlDocumentForMetrics(metricsXml, H.Parts);
+            metrics.TextBox = GetIntForMetrics(metricsXml, H.TextBox);
+            metrics.ContentControlCount = GetIntForMetrics(metricsXml, H.ContentControl);
+            metrics.ComplexField = GetIntForMetrics(metricsXml, H.ComplexField);
+            metrics.SimpleField = GetIntForMetrics(metricsXml, H.SimpleField);
+            metrics.AltChunk = GetIntForMetrics(metricsXml, H.AltChunk);
+            metrics.Table = GetIntForMetrics(metricsXml, H.Table);
+            metrics.Hyperlink = GetIntForMetrics(metricsXml, H.Hyperlink);
+            metrics.LegacyFrame = GetIntForMetrics(metricsXml, H.LegacyFrame);
+            metrics.ActiveX = GetIntForMetrics(metricsXml, H.ActiveX);
+            metrics.SubDocument = GetIntForMetrics(metricsXml, H.SubDocument);
+            metrics.ReferenceToNullImage = GetIntForMetrics(metricsXml, H.ReferenceToNullImage);
+            metrics.ElementCount = GetIntForMetrics(metricsXml, H.ElementCount);
             metrics.AverageParagraphLength = GetIntForMetrics(metricsXml, H.AverageParagraphLength);
-            metrics.RunCount               = GetIntForMetrics(metricsXml, H.RunCount);
-            metrics.ZeroLengthText         = GetIntForMetrics(metricsXml, H.ZeroLengthText);
-            metrics.MultiFontRun           = GetIntForMetrics(metricsXml, H.MultiFontRun);
-            metrics.AsciiCharCount         = GetIntForMetrics(metricsXml, H.AsciiCharCount);
-            metrics.CSCharCount            = GetIntForMetrics(metricsXml, H.CSCharCount);
-            metrics.EastAsiaCharCount      = GetIntForMetrics(metricsXml, H.EastAsiaCharCount);
-            metrics.HAnsiCharCount         = GetIntForMetrics(metricsXml, H.HAnsiCharCount);
-            metrics.AsciiRunCount          = GetIntForMetrics(metricsXml, H.AsciiRunCount);
-            metrics.CSRunCount             = GetIntForMetrics(metricsXml, H.CSRunCount);
-            metrics.EastAsiaRunCount       = GetIntForMetrics(metricsXml, H.EastAsiaRunCount);
-            metrics.HAnsiRunCount          = GetIntForMetrics(metricsXml, H.HAnsiRunCount);
-            metrics.RevisionTracking       = GetBoolForMetrics(metricsXml, H.RevisionTracking);
-            metrics.EmbeddedXlsx           = GetBoolForMetrics(metricsXml, H.EmbeddedXlsx);
+            metrics.RunCount = GetIntForMetrics(metricsXml, H.RunCount);
+            metrics.ZeroLengthText = GetIntForMetrics(metricsXml, H.ZeroLengthText);
+            metrics.MultiFontRun = GetIntForMetrics(metricsXml, H.MultiFontRun);
+            metrics.AsciiCharCount = GetIntForMetrics(metricsXml, H.AsciiCharCount);
+            metrics.CSCharCount = GetIntForMetrics(metricsXml, H.CSCharCount);
+            metrics.EastAsiaCharCount = GetIntForMetrics(metricsXml, H.EastAsiaCharCount);
+            metrics.HAnsiCharCount = GetIntForMetrics(metricsXml, H.HAnsiCharCount);
+            metrics.AsciiRunCount = GetIntForMetrics(metricsXml, H.AsciiRunCount);
+            metrics.CSRunCount = GetIntForMetrics(metricsXml, H.CSRunCount);
+            metrics.EastAsiaRunCount = GetIntForMetrics(metricsXml, H.EastAsiaRunCount);
+            metrics.HAnsiRunCount = GetIntForMetrics(metricsXml, H.HAnsiRunCount);
+            metrics.RevisionTracking = GetBoolForMetrics(metricsXml, H.RevisionTracking);
+            metrics.EmbeddedXlsx = GetBoolForMetrics(metricsXml, H.EmbeddedXlsx);
             metrics.InvalidSaveThroughXslt = GetBoolForMetrics(metricsXml, H.InvalidSaveThroughXslt);
-            metrics.TrackRevisionsEnabled  = GetBoolForMetrics(metricsXml, H.TrackRevisionsEnabled);
-            metrics.DocumentProtection     = GetBoolForMetrics(metricsXml, H.DocumentProtection);
-            metrics.Valid                  = GetBoolForMetrics(metricsXml, H.Valid);
-            metrics.Languages              = GetStringForMetrics(metricsXml, H.Languages);
-            metrics.NumberingFormatList    = GetStringForMetrics(metricsXml, H.NumberingFormatList);
+            metrics.TrackRevisionsEnabled = GetBoolForMetrics(metricsXml, H.TrackRevisionsEnabled);
+            metrics.DocumentProtection = GetBoolForMetrics(metricsXml, H.DocumentProtection);
+            metrics.Valid = GetBoolForMetrics(metricsXml, H.Valid);
+            metrics.Languages = GetStringForMetrics(metricsXml, H.Languages);
+            metrics.NumberingFormatList = GetStringForMetrics(metricsXml, H.NumberingFormatList);
 
             return metrics;
         }

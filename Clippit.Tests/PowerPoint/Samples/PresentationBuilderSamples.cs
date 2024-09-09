@@ -11,10 +11,9 @@ namespace Clippit.Tests.PowerPoint.Samples
 {
     public class PresentationBuilderSamples : TestsBase
     {
-        public PresentationBuilderSamples(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public PresentationBuilderSamples(ITestOutputHelper log)
+            : base(log) { }
+
         private static string GetFilePath(string path) =>
             Path.Combine("../../../PowerPoint/Samples/PresentationBuilder/", path);
 
@@ -34,18 +33,18 @@ namespace Clippit.Tests.PowerPoint.Samples
             var sourceDoc = new PmlDocument(source1);
             var sources = new List<SlideSource>
             {
-                new(sourceDoc, 0, 1, false),  // Title
-                new(sourceDoc, 1, 1, false),  // First intro (of 3)
-                new(sourceDoc, 4, 2, false),  // Sales bios
-                new(sourceDoc, 9, 3, false),  // Content slides
-                new(sourceDoc, 13, 1, false),  // Closing summary
+                new(sourceDoc, 0, 1, false), // Title
+                new(sourceDoc, 1, 1, false), // First intro (of 3)
+                new(sourceDoc, 4, 2, false), // Sales bios
+                new(sourceDoc, 9, 3, false), // Content slides
+                new(sourceDoc, 13, 1, false), // Closing summary
             };
             PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(TempDir, "Out1.pptx"));
 
             sources = new List<SlideSource>
             {
-                new(new PmlDocument(source2), 2, 1, true),  // Choose company
-                new(new PmlDocument(source3), false),       // Content
+                new(new PmlDocument(source2), 2, 1, true), // Choose company
+                new(new PmlDocument(source3), false), // Content
             };
             PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(TempDir, "Out2.pptx"));
 

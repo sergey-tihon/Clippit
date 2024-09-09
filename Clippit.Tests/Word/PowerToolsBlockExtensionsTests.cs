@@ -54,7 +54,7 @@ namespace Clippit.Tests.Word
             // Get content through the PowerTools in the exact same way as above,
             // noting that we have not used the BeginPowerToolsBlock method to
             // mark the beginning of the next PowerTools Block.
-            // What we will see in this case is that we still only get the first 
+            // What we will see in this case is that we still only get the first
             // paragraph. This is caused by the GetXDocument method using the cached
             // XDocument, i.e., the annotation, rather reading the part's stream again.
             content = part.GetXDocument();
@@ -91,7 +91,7 @@ namespace Clippit.Tests.Word
             body.AppendChild(new Paragraph(new Run(new Text("Added through SDK"))));
 
             // Begin the PowerTools Block, which saves any changes made through the strongly
-            // typed SDK classes to the parts of the WordprocessingDocument. 
+            // typed SDK classes to the parts of the WordprocessingDocument.
             // In this case, this could also be done by invoking the Save method on the
             // WordprocessingDocument, which will save all parts that had changes, or by
             // invoking part.RootElement.Save() for the one part that was changed.
@@ -123,7 +123,6 @@ namespace Clippit.Tests.Word
             Assert.Equal("Added through SDK", paragraphs[0].InnerText);
             Assert.Equal("Added through PowerTools", paragraphs[1].InnerText);
         }
-
     }
 }
 

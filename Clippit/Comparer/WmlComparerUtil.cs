@@ -44,7 +44,10 @@ namespace Clippit
                 "tr" => ComparisonUnitGroupType.Row,
                 "tc" => ComparisonUnitGroupType.Cell,
                 "txbxContent" => ComparisonUnitGroupType.Textbox,
-                _ => throw new ArgumentOutOfRangeException(nameof(localName), $@"Unsupported localName: '{localName}'.")
+                _ => throw new ArgumentOutOfRangeException(
+                    nameof(localName),
+                    $@"Unsupported localName: '{localName}'."
+                ),
             };
     }
 }

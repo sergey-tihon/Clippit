@@ -19,7 +19,7 @@ namespace Clippit.Tests.Word
 
         private const string SmartTagDocumentTextValue = "The countries include Algeria, Botswana, and Sri Lanka.";
         private const string SmartTagDocumentXmlString =
-@"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
+            @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
   <w:body>
     <w:p >
       <w:r>
@@ -57,7 +57,7 @@ namespace Clippit.Tests.Word
 ";
 
         private const string SdtDocumentXmlString =
-@"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
+            @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
   <w:body>
     <w:sdt>
       <w:sdtPr>
@@ -75,7 +75,7 @@ namespace Clippit.Tests.Word
 </w:document>";
 
         private const string GoBackBookmarkDocumentXmlString =
-@"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
+            @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
   <w:body>
     <w:p>
       <w:bookmarkStart w:id=""0"" w:name=""_GoBack""/>
@@ -120,10 +120,7 @@ namespace Clippit.Tests.Word
             MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
 
             partDocument = part.GetXDocument();
-            var element = partDocument
-                .Descendants(W.body)
-                .Descendants()
-                .First();
+            var element = partDocument.Descendants(W.body).Descendants().First();
 
             Assert.False(partDocument.Descendants(W.sdt).Any());
             Assert.Equal(W.p, element.Name);
@@ -133,12 +130,11 @@ namespace Clippit.Tests.Word
         public void CanRemoveGoBackBookmarks()
         {
             var partDocument = XDocument.Parse(GoBackBookmarkDocumentXmlString);
-            Assert.Contains(partDocument
-                .Descendants(W.bookmarkStart)
-, e => e.Attribute(W.name).Value == "_GoBack" && e.Attribute(W.id).Value == "0");
-            Assert.Contains(partDocument
-                .Descendants(W.bookmarkEnd)
-, e => e.Attribute(W.id).Value == "0");
+            Assert.Contains(
+                partDocument.Descendants(W.bookmarkStart),
+                e => e.Attribute(W.name).Value == "_GoBack" && e.Attribute(W.id).Value == "0"
+            );
+            Assert.Contains(partDocument.Descendants(W.bookmarkEnd), e => e.Attribute(W.id).Value == "0");
 
             using var stream = new MemoryStream();
             using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);

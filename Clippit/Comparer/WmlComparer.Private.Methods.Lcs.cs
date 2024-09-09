@@ -25,7 +25,7 @@ namespace Clippit
                 {
                     CorrelationStatus = CorrelationStatus.Deleted,
                     ComparisonUnitArray1 = cul1,
-                    ComparisonUnitArray2 = null
+                    ComparisonUnitArray2 = null,
                 };
                 newListOfCorrelatedSequence.Add(deletedCorrelatedSequence);
                 return newListOfCorrelatedSequence;
@@ -37,7 +37,7 @@ namespace Clippit
                 {
                     CorrelationStatus = CorrelationStatus.Inserted,
                     ComparisonUnitArray1 = null,
-                    ComparisonUnitArray2 = cul2
+                    ComparisonUnitArray2 = cul2,
                 };
                 newListOfCorrelatedSequence.Add(insertedCorrelatedSequence);
                 return newListOfCorrelatedSequence;
@@ -177,10 +177,10 @@ namespace Clippit
                         .Any(cs =>
                         {
                             var otherThanText = cs.DescendantContentAtoms().Any(dca => dca.ContentElement.Name != W.t);
-                            if (otherThanText) return true;
+                            if (otherThanText)
+                                return true;
 
-                            var otherThanWordSplit = cs
-                                .DescendantContentAtoms()
+                            var otherThanWordSplit = cs.DescendantContentAtoms()
                                 .Any(dca =>
                                 {
                                     var charValue = dca.ContentElement.Value;
@@ -209,7 +209,7 @@ namespace Clippit
                 if (!anyButWord1 && !anyButWord2)
                 {
                     var maxLen = Math.Max(cul1.Length, cul2.Length);
-                    if (currentLongestCommonSequenceLength / (double) maxLen < settings.DetailThreshold)
+                    if (currentLongestCommonSequenceLength / (double)maxLen < settings.DetailThreshold)
                     {
                         currentI1 = -1;
                         currentI2 = -1;
@@ -223,56 +223,42 @@ namespace Clippit
                 var leftLength = unknown.ComparisonUnitArray1.Length;
 
                 var leftTables = unknown
-                    .ComparisonUnitArray1
-                    .OfType<ComparisonUnitGroup>()
+                    .ComparisonUnitArray1.OfType<ComparisonUnitGroup>()
                     .Count(l => l.ComparisonUnitGroupType == ComparisonUnitGroupType.Table);
 
                 var leftRows = unknown
-                    .ComparisonUnitArray1
-                    .OfType<ComparisonUnitGroup>()
+                    .ComparisonUnitArray1.OfType<ComparisonUnitGroup>()
                     .Count(l => l.ComparisonUnitGroupType == ComparisonUnitGroupType.Row);
 
                 var leftParagraphs = unknown
-                    .ComparisonUnitArray1
-                    .OfType<ComparisonUnitGroup>()
+                    .ComparisonUnitArray1.OfType<ComparisonUnitGroup>()
                     .Count(l => l.ComparisonUnitGroupType == ComparisonUnitGroupType.Paragraph);
 
                 var leftTextboxes = unknown
-                    .ComparisonUnitArray1
-                    .OfType<ComparisonUnitGroup>()
+                    .ComparisonUnitArray1.OfType<ComparisonUnitGroup>()
                     .Count(l => l.ComparisonUnitGroupType == ComparisonUnitGroupType.Textbox);
 
-                var leftWords = unknown
-                    .ComparisonUnitArray1
-                    .OfType<ComparisonUnitWord>()
-                    .Count();
+                var leftWords = unknown.ComparisonUnitArray1.OfType<ComparisonUnitWord>().Count();
 
                 var rightLength = unknown.ComparisonUnitArray2.Length;
 
                 var rightTables = unknown
-                    .ComparisonUnitArray2
-                    .OfType<ComparisonUnitGroup>()
+                    .ComparisonUnitArray2.OfType<ComparisonUnitGroup>()
                     .Count(l => l.ComparisonUnitGroupType == ComparisonUnitGroupType.Table);
 
                 var rightRows = unknown
-                    .ComparisonUnitArray2
-                    .OfType<ComparisonUnitGroup>()
+                    .ComparisonUnitArray2.OfType<ComparisonUnitGroup>()
                     .Count(l => l.ComparisonUnitGroupType == ComparisonUnitGroupType.Row);
 
                 var rightParagraphs = unknown
-                    .ComparisonUnitArray2
-                    .OfType<ComparisonUnitGroup>()
+                    .ComparisonUnitArray2.OfType<ComparisonUnitGroup>()
                     .Count(l => l.ComparisonUnitGroupType == ComparisonUnitGroupType.Paragraph);
 
                 var rightTextboxes = unknown
-                    .ComparisonUnitArray2
-                    .OfType<ComparisonUnitGroup>()
+                    .ComparisonUnitArray2.OfType<ComparisonUnitGroup>()
                     .Count(l => l.ComparisonUnitGroupType == ComparisonUnitGroupType.Textbox);
 
-                var rightWords = unknown
-                    .ComparisonUnitArray2
-                    .OfType<ComparisonUnitWord>()
-                    .Count();
+                var rightWords = unknown.ComparisonUnitArray2.OfType<ComparisonUnitWord>().Count();
 
                 // if either side has both words, rows and text boxes, then we need to separate out into separate
                 // unknown correlated sequences
@@ -288,14 +274,15 @@ namespace Clippit
 
                 var leftOnlyWordsRowsTextboxes = leftLength == leftWords + leftRows + leftTextboxes;
                 var rightOnlyWordsRowsTextboxes = rightLength == rightWords + rightRows + rightTextboxes;
-                if ((leftWords > 0 || rightWords > 0) &&
-                    (leftRows > 0 || rightRows > 0 || leftTextboxes > 0 || rightTextboxes > 0) &&
-                    leftOnlyWordsRowsTextboxes &&
-                    rightOnlyWordsRowsTextboxes)
+                if (
+                    (leftWords > 0 || rightWords > 0)
+                    && (leftRows > 0 || rightRows > 0 || leftTextboxes > 0 || rightTextboxes > 0)
+                    && leftOnlyWordsRowsTextboxes
+                    && rightOnlyWordsRowsTextboxes
+                )
                 {
                     var leftGrouped = unknown
-                        .ComparisonUnitArray1
-                        .GroupAdjacent(cu =>
+                        .ComparisonUnitArray1.GroupAdjacent(cu =>
                         {
                             if (cu is ComparisonUnitWord)
                             {
@@ -318,8 +305,7 @@ namespace Clippit
                         .ToArray();
 
                     var rightGrouped = unknown
-                        .ComparisonUnitArray2
-                        .GroupAdjacent(cu =>
+                        .ComparisonUnitArray2.GroupAdjacent(cu =>
                         {
                             if (cu is ComparisonUnitWord)
                             {
@@ -358,71 +344,71 @@ namespace Clippit
                             {
                                 ComparisonUnitArray1 = leftGrouped[iLeft].ToArray(),
                                 ComparisonUnitArray2 = rightGrouped[iRight].ToArray(),
-                                CorrelationStatus = CorrelationStatus.Unknown
+                                CorrelationStatus = CorrelationStatus.Unknown,
                             };
                             newListOfCorrelatedSequence.Add(unknownCorrelatedSequence);
                             ++iLeft;
                             ++iRight;
                         }
-
                         // have to decide which of the following two branches to do first based on whether the left contains a paragraph mark
                         // i.e. cant insert a string of deleted text right before a table.
 
-                        else if (leftGrouped[iLeft].Key == "Word" &&
-                                 leftGrouped[iLeft]
-                                     .Select(lg => lg.DescendantContentAtoms())
-                                     .SelectMany(m => m).Last()
-                                     .ContentElement
-                                     .Name != W.pPr &&
-                                 rightGrouped[iRight].Key == "Row")
+                        else if (
+                            leftGrouped[iLeft].Key == "Word"
+                            && leftGrouped[iLeft]
+                                .Select(lg => lg.DescendantContentAtoms())
+                                .SelectMany(m => m)
+                                .Last()
+                                .ContentElement.Name != W.pPr
+                            && rightGrouped[iRight].Key == "Row"
+                        )
                         {
                             var insertedCorrelatedSequence = new CorrelatedSequence
                             {
                                 ComparisonUnitArray1 = null,
                                 ComparisonUnitArray2 = rightGrouped[iRight].ToArray(),
-                                CorrelationStatus = CorrelationStatus.Inserted
+                                CorrelationStatus = CorrelationStatus.Inserted,
                             };
                             newListOfCorrelatedSequence.Add(insertedCorrelatedSequence);
                             ++iRight;
                         }
-                        else if (rightGrouped[iRight].Key == "Word" &&
-                                 rightGrouped[iRight]
-                                     .Select(lg => lg.DescendantContentAtoms())
-                                     .SelectMany(m => m)
-                                     .Last()
-                                     .ContentElement
-                                     .Name != W.pPr &&
-                                 leftGrouped[iLeft].Key == "Row")
+                        else if (
+                            rightGrouped[iRight].Key == "Word"
+                            && rightGrouped[iRight]
+                                .Select(lg => lg.DescendantContentAtoms())
+                                .SelectMany(m => m)
+                                .Last()
+                                .ContentElement.Name != W.pPr
+                            && leftGrouped[iLeft].Key == "Row"
+                        )
                         {
                             var insertedCorrelatedSequence = new CorrelatedSequence
                             {
                                 ComparisonUnitArray1 = null,
                                 ComparisonUnitArray2 = leftGrouped[iLeft].ToArray(),
-                                CorrelationStatus = CorrelationStatus.Inserted
+                                CorrelationStatus = CorrelationStatus.Inserted,
                             };
                             newListOfCorrelatedSequence.Add(insertedCorrelatedSequence);
                             ++iLeft;
                         }
-
                         else if (leftGrouped[iLeft].Key == "Word" && rightGrouped[iRight].Key != "Word")
                         {
                             var deletedCorrelatedSequence = new CorrelatedSequence
                             {
                                 ComparisonUnitArray1 = leftGrouped[iLeft].ToArray(),
                                 ComparisonUnitArray2 = null,
-                                CorrelationStatus = CorrelationStatus.Deleted
+                                CorrelationStatus = CorrelationStatus.Deleted,
                             };
                             newListOfCorrelatedSequence.Add(deletedCorrelatedSequence);
                             ++iLeft;
                         }
-
                         else if (leftGrouped[iLeft].Key != "Word" && rightGrouped[iRight].Key == "Word")
                         {
                             var insertedCorrelatedSequence = new CorrelatedSequence
                             {
                                 ComparisonUnitArray1 = null,
                                 ComparisonUnitArray2 = rightGrouped[iRight].ToArray(),
-                                CorrelationStatus = CorrelationStatus.Inserted
+                                CorrelationStatus = CorrelationStatus.Inserted,
                             };
                             newListOfCorrelatedSequence.Add(insertedCorrelatedSequence);
                             ++iRight;
@@ -440,7 +426,7 @@ namespace Clippit
                                 {
                                     ComparisonUnitArray1 = leftGrouped[j].ToArray(),
                                     ComparisonUnitArray2 = null,
-                                    CorrelationStatus = CorrelationStatus.Deleted
+                                    CorrelationStatus = CorrelationStatus.Deleted,
                                 };
                                 newListOfCorrelatedSequence.Add(deletedCorrelatedSequence);
                             }
@@ -458,7 +444,7 @@ namespace Clippit
                                 {
                                     ComparisonUnitArray1 = null,
                                     ComparisonUnitArray2 = rightGrouped[j].ToArray(),
-                                    CorrelationStatus = CorrelationStatus.Inserted
+                                    CorrelationStatus = CorrelationStatus.Inserted,
                                 };
                                 newListOfCorrelatedSequence.Add(insertedCorrelatedSequence);
                             }
@@ -471,24 +457,26 @@ namespace Clippit
                 }
 
                 // if both sides contain tables and paragraphs, then split into multiple unknown corr sequ
-                if (leftTables > 0 && rightTables > 0 &&
-                    leftParagraphs > 0 && rightParagraphs > 0 &&
-                    (leftLength > 1 || rightLength > 1))
+                if (
+                    leftTables > 0
+                    && rightTables > 0
+                    && leftParagraphs > 0
+                    && rightParagraphs > 0
+                    && (leftLength > 1 || rightLength > 1)
+                )
                 {
                     var leftGrouped = unknown
-                        .ComparisonUnitArray1
-                        .GroupAdjacent(cu =>
+                        .ComparisonUnitArray1.GroupAdjacent(cu =>
                         {
-                            var cug = (ComparisonUnitGroup) cu;
+                            var cug = (ComparisonUnitGroup)cu;
                             return cug.ComparisonUnitGroupType == ComparisonUnitGroupType.Table ? "Table" : "Para";
                         })
                         .ToArray();
 
                     var rightGrouped = unknown
-                        .ComparisonUnitArray2
-                        .GroupAdjacent(cu =>
+                        .ComparisonUnitArray2.GroupAdjacent(cu =>
                         {
-                            var cug = (ComparisonUnitGroup) cu;
+                            var cug = (ComparisonUnitGroup)cu;
                             return cug.ComparisonUnitGroupType == ComparisonUnitGroupType.Table ? "Table" : "Para";
                         })
                         .ToArray();
@@ -504,14 +492,16 @@ namespace Clippit
 
                     while (true)
                     {
-                        if (leftGrouped[iLeft].Key == "Table" && rightGrouped[iRight].Key == "Table" ||
-                            leftGrouped[iLeft].Key == "Para" && rightGrouped[iRight].Key == "Para")
+                        if (
+                            leftGrouped[iLeft].Key == "Table" && rightGrouped[iRight].Key == "Table"
+                            || leftGrouped[iLeft].Key == "Para" && rightGrouped[iRight].Key == "Para"
+                        )
                         {
                             var unknownCorrelatedSequence = new CorrelatedSequence
                             {
                                 ComparisonUnitArray1 = leftGrouped[iLeft].ToArray(),
                                 ComparisonUnitArray2 = rightGrouped[iRight].ToArray(),
-                                CorrelationStatus = CorrelationStatus.Unknown
+                                CorrelationStatus = CorrelationStatus.Unknown,
                             };
                             newListOfCorrelatedSequence.Add(unknownCorrelatedSequence);
                             ++iLeft;
@@ -523,7 +513,7 @@ namespace Clippit
                             {
                                 ComparisonUnitArray1 = leftGrouped[iLeft].ToArray(),
                                 ComparisonUnitArray2 = null,
-                                CorrelationStatus = CorrelationStatus.Deleted
+                                CorrelationStatus = CorrelationStatus.Deleted,
                             };
                             newListOfCorrelatedSequence.Add(deletedCorrelatedSequence);
                             ++iLeft;
@@ -534,7 +524,7 @@ namespace Clippit
                             {
                                 ComparisonUnitArray1 = null,
                                 ComparisonUnitArray2 = rightGrouped[iRight].ToArray(),
-                                CorrelationStatus = CorrelationStatus.Inserted
+                                CorrelationStatus = CorrelationStatus.Inserted,
                             };
                             newListOfCorrelatedSequence.Add(insertedCorrelatedSequence);
                             ++iRight;
@@ -552,7 +542,7 @@ namespace Clippit
                                 {
                                     ComparisonUnitArray1 = leftGrouped[j].ToArray(),
                                     ComparisonUnitArray2 = null,
-                                    CorrelationStatus = CorrelationStatus.Deleted
+                                    CorrelationStatus = CorrelationStatus.Deleted,
                                 };
                                 newListOfCorrelatedSequence.Add(deletedCorrelatedSequence);
                             }
@@ -570,7 +560,7 @@ namespace Clippit
                                 {
                                     ComparisonUnitArray1 = null,
                                     ComparisonUnitArray2 = rightGrouped[j].ToArray(),
-                                    CorrelationStatus = CorrelationStatus.Inserted
+                                    CorrelationStatus = CorrelationStatus.Inserted,
                                 };
                                 newListOfCorrelatedSequence.Add(insertedCorrelatedSequence);
                             }
@@ -583,8 +573,7 @@ namespace Clippit
                 }
 
                 // If both sides consists of a single table, and if the table contains merged cells, then mark as deleted/inserted
-                if (leftTables == 1 && leftLength == 1 &&
-                    rightTables == 1 && rightLength == 1)
+                if (leftTables == 1 && leftLength == 1 && rightTables == 1 && rightLength == 1)
                 {
                     var result = DoLcsAlgorithmForTable(unknown);
                     if (result != null)
@@ -597,23 +586,15 @@ namespace Clippit
                 if (leftOnlyParasTablesTextboxes && rightOnlyParasTablesTextboxes)
                 {
                     // flatten paras and tables, and iterate
-                    var left = unknown
-                        .ComparisonUnitArray1
-                        .Select(cu => cu.Contents)
-                        .SelectMany(m => m)
-                        .ToArray();
+                    var left = unknown.ComparisonUnitArray1.Select(cu => cu.Contents).SelectMany(m => m).ToArray();
 
-                    var right = unknown
-                        .ComparisonUnitArray2
-                        .Select(cu => cu.Contents)
-                        .SelectMany(m => m)
-                        .ToArray();
+                    var right = unknown.ComparisonUnitArray2.Select(cu => cu.Contents).SelectMany(m => m).ToArray();
 
                     var unknownCorrelatedSequence = new CorrelatedSequence
                     {
                         CorrelationStatus = CorrelationStatus.Unknown,
                         ComparisonUnitArray1 = left,
-                        ComparisonUnitArray2 = right
+                        ComparisonUnitArray2 = right,
                     };
                     newListOfCorrelatedSequence.Add(unknownCorrelatedSequence);
 
@@ -623,11 +604,15 @@ namespace Clippit
                 // if first of left is a row and first of right is a row
                 // then flatten the row to cells and iterate.
 
-                if (unknown.ComparisonUnitArray1.FirstOrDefault() is ComparisonUnitGroup firstLeft &&
-                    unknown.ComparisonUnitArray2.FirstOrDefault() is ComparisonUnitGroup firstRight)
+                if (
+                    unknown.ComparisonUnitArray1.FirstOrDefault() is ComparisonUnitGroup firstLeft
+                    && unknown.ComparisonUnitArray2.FirstOrDefault() is ComparisonUnitGroup firstRight
+                )
                 {
-                    if (firstLeft.ComparisonUnitGroupType == ComparisonUnitGroupType.Row &&
-                        firstRight.ComparisonUnitGroupType == ComparisonUnitGroupType.Row)
+                    if (
+                        firstLeft.ComparisonUnitGroupType == ComparisonUnitGroupType.Row
+                        && firstRight.ComparisonUnitGroupType == ComparisonUnitGroupType.Row
+                    )
                     {
                         var leftContent = firstLeft.Contents.ToArray();
                         var rightContent = firstRight.Contents.ToArray();
@@ -648,38 +633,42 @@ namespace Clippit
                                 .ToArray();
                         }
 
-                        var newCs = leftContent.Zip(rightContent, (l, r) =>
-                            {
-                                if (l != null && r != null)
+                        var newCs = leftContent
+                            .Zip(
+                                rightContent,
+                                (l, r) =>
                                 {
-                                    var unknownCorrelatedSequence = new CorrelatedSequence
+                                    if (l != null && r != null)
                                     {
-                                        ComparisonUnitArray1 = new[] { l },
-                                        ComparisonUnitArray2 = new[] { r },
-                                        CorrelationStatus = CorrelationStatus.Unknown
-                                    };
-                                    return new[] { unknownCorrelatedSequence };
-                                }
+                                        var unknownCorrelatedSequence = new CorrelatedSequence
+                                        {
+                                            ComparisonUnitArray1 = new[] { l },
+                                            ComparisonUnitArray2 = new[] { r },
+                                            CorrelationStatus = CorrelationStatus.Unknown,
+                                        };
+                                        return new[] { unknownCorrelatedSequence };
+                                    }
 
-                                if (l == null)
-                                {
-                                    var insertedCorrelatedSequence = new CorrelatedSequence
+                                    if (l == null)
                                     {
-                                        ComparisonUnitArray1 = null,
-                                        ComparisonUnitArray2 = r.Contents.ToArray(),
-                                        CorrelationStatus = CorrelationStatus.Inserted
-                                    };
-                                    return new[] { insertedCorrelatedSequence };
-                                }
+                                        var insertedCorrelatedSequence = new CorrelatedSequence
+                                        {
+                                            ComparisonUnitArray1 = null,
+                                            ComparisonUnitArray2 = r.Contents.ToArray(),
+                                            CorrelationStatus = CorrelationStatus.Inserted,
+                                        };
+                                        return new[] { insertedCorrelatedSequence };
+                                    }
 
-                                var deletedCorrelatedSequence = new CorrelatedSequence
-                                {
-                                    ComparisonUnitArray1 = l.Contents.ToArray(),
-                                    ComparisonUnitArray2 = null,
-                                    CorrelationStatus = CorrelationStatus.Deleted
-                                };
-                                return new[] { deletedCorrelatedSequence };
-                            })
+                                    var deletedCorrelatedSequence = new CorrelatedSequence
+                                    {
+                                        ComparisonUnitArray1 = l.Contents.ToArray(),
+                                        ComparisonUnitArray2 = null,
+                                        CorrelationStatus = CorrelationStatus.Deleted,
+                                    };
+                                    return new[] { deletedCorrelatedSequence };
+                                }
+                            )
                             .SelectMany(m => m)
                             .ToList();
 
@@ -688,15 +677,9 @@ namespace Clippit
                             newListOfCorrelatedSequence.Add(cs);
                         }
 
-                        var remainderLeft = unknown
-                            .ComparisonUnitArray1
-                            .Skip(1)
-                            .ToArray();
+                        var remainderLeft = unknown.ComparisonUnitArray1.Skip(1).ToArray();
 
-                        var remainderRight = unknown
-                            .ComparisonUnitArray2
-                            .Skip(1)
-                            .ToArray();
+                        var remainderRight = unknown.ComparisonUnitArray2.Skip(1).ToArray();
 
                         if (remainderLeft.Length > 0 && remainderRight.Length == 0)
                         {
@@ -704,7 +687,7 @@ namespace Clippit
                             {
                                 CorrelationStatus = CorrelationStatus.Deleted,
                                 ComparisonUnitArray1 = remainderLeft,
-                                ComparisonUnitArray2 = null
+                                ComparisonUnitArray2 = null,
                             };
                             newListOfCorrelatedSequence.Add(deletedCorrelatedSequence);
                         }
@@ -714,7 +697,7 @@ namespace Clippit
                             {
                                 CorrelationStatus = CorrelationStatus.Inserted,
                                 ComparisonUnitArray1 = null,
-                                ComparisonUnitArray2 = remainderRight
+                                ComparisonUnitArray2 = remainderRight,
                             };
                             newListOfCorrelatedSequence.Add(insertedCorrelatedSequence);
                         }
@@ -724,7 +707,7 @@ namespace Clippit
                             {
                                 CorrelationStatus = CorrelationStatus.Unknown,
                                 ComparisonUnitArray1 = remainderLeft,
-                                ComparisonUnitArray2 = remainderRight
+                                ComparisonUnitArray2 = remainderRight,
                             };
                             newListOfCorrelatedSequence.Add(unknownCorrelatedSequence2);
                         }
@@ -744,34 +727,26 @@ namespace Clippit
                         return newListOfCorrelatedSequence;
                     }
 
-                    if (firstLeft.ComparisonUnitGroupType == ComparisonUnitGroupType.Cell &&
-                        firstRight.ComparisonUnitGroupType == ComparisonUnitGroupType.Cell)
+                    if (
+                        firstLeft.ComparisonUnitGroupType == ComparisonUnitGroupType.Cell
+                        && firstRight.ComparisonUnitGroupType == ComparisonUnitGroupType.Cell
+                    )
                     {
-                        var left = firstLeft
-                            .Contents
-                            .ToArray();
+                        var left = firstLeft.Contents.ToArray();
 
-                        var right = firstRight
-                            .Contents
-                            .ToArray();
+                        var right = firstRight.Contents.ToArray();
 
                         var unknownCorrelatedSequence = new CorrelatedSequence
                         {
                             CorrelationStatus = CorrelationStatus.Unknown,
                             ComparisonUnitArray1 = left,
-                            ComparisonUnitArray2 = right
+                            ComparisonUnitArray2 = right,
                         };
                         newListOfCorrelatedSequence.Add(unknownCorrelatedSequence);
 
-                        var remainderLeft = unknown
-                            .ComparisonUnitArray1
-                            .Skip(1)
-                            .ToArray();
+                        var remainderLeft = unknown.ComparisonUnitArray1.Skip(1).ToArray();
 
-                        var remainderRight = unknown
-                            .ComparisonUnitArray2
-                            .Skip(1)
-                            .ToArray();
+                        var remainderRight = unknown.ComparisonUnitArray2.Skip(1).ToArray();
 
                         if (remainderLeft.Length > 0 && remainderRight.Length == 0)
                         {
@@ -779,7 +754,7 @@ namespace Clippit
                             {
                                 CorrelationStatus = CorrelationStatus.Deleted,
                                 ComparisonUnitArray1 = remainderLeft,
-                                ComparisonUnitArray2 = null
+                                ComparisonUnitArray2 = null,
                             };
                             newListOfCorrelatedSequence.Add(deletedCorrelatedSequence);
                         }
@@ -789,7 +764,7 @@ namespace Clippit
                             {
                                 CorrelationStatus = CorrelationStatus.Inserted,
                                 ComparisonUnitArray1 = null,
-                                ComparisonUnitArray2 = remainderRight
+                                ComparisonUnitArray2 = remainderRight,
                             };
                             newListOfCorrelatedSequence.Add(insertedCorrelatedSequence);
                         }
@@ -799,7 +774,7 @@ namespace Clippit
                             {
                                 CorrelationStatus = CorrelationStatus.Unknown,
                                 ComparisonUnitArray1 = remainderLeft,
-                                ComparisonUnitArray2 = remainderRight
+                                ComparisonUnitArray2 = remainderRight,
                             };
                             newListOfCorrelatedSequence.Add(unknownCorrelatedSequence2);
                         }
@@ -810,15 +785,17 @@ namespace Clippit
 
                 if (unknown.ComparisonUnitArray1.Any() && unknown.ComparisonUnitArray2.Any())
                 {
-                    if (unknown.ComparisonUnitArray1.First() is ComparisonUnitWord &&
-                        unknown.ComparisonUnitArray2.First() is ComparisonUnitGroup right &&
-                        right.ComparisonUnitGroupType == ComparisonUnitGroupType.Row)
+                    if (
+                        unknown.ComparisonUnitArray1.First() is ComparisonUnitWord
+                        && unknown.ComparisonUnitArray2.First() is ComparisonUnitGroup right
+                        && right.ComparisonUnitGroupType == ComparisonUnitGroupType.Row
+                    )
                     {
                         var insertedCorrelatedSequence3 = new CorrelatedSequence
                         {
                             CorrelationStatus = CorrelationStatus.Inserted,
                             ComparisonUnitArray1 = null,
-                            ComparisonUnitArray2 = unknown.ComparisonUnitArray2
+                            ComparisonUnitArray2 = unknown.ComparisonUnitArray2,
                         };
                         newListOfCorrelatedSequence.Add(insertedCorrelatedSequence3);
 
@@ -826,22 +803,24 @@ namespace Clippit
                         {
                             CorrelationStatus = CorrelationStatus.Deleted,
                             ComparisonUnitArray1 = unknown.ComparisonUnitArray1,
-                            ComparisonUnitArray2 = null
+                            ComparisonUnitArray2 = null,
                         };
                         newListOfCorrelatedSequence.Add(deletedCorrelatedSequence3);
 
                         return newListOfCorrelatedSequence;
                     }
 
-                    if (unknown.ComparisonUnitArray2.First() is ComparisonUnitWord &&
-                        unknown.ComparisonUnitArray1.First() is ComparisonUnitGroup left2 &&
-                        left2.ComparisonUnitGroupType == ComparisonUnitGroupType.Row)
+                    if (
+                        unknown.ComparisonUnitArray2.First() is ComparisonUnitWord
+                        && unknown.ComparisonUnitArray1.First() is ComparisonUnitGroup left2
+                        && left2.ComparisonUnitGroupType == ComparisonUnitGroupType.Row
+                    )
                     {
                         var deletedCorrelatedSequence3 = new CorrelatedSequence
                         {
                             CorrelationStatus = CorrelationStatus.Deleted,
                             ComparisonUnitArray1 = unknown.ComparisonUnitArray1,
-                            ComparisonUnitArray2 = null
+                            ComparisonUnitArray2 = null,
                         };
                         newListOfCorrelatedSequence.Add(deletedCorrelatedSequence3);
 
@@ -849,7 +828,7 @@ namespace Clippit
                         {
                             CorrelationStatus = CorrelationStatus.Inserted,
                             ComparisonUnitArray1 = null,
-                            ComparisonUnitArray2 = unknown.ComparisonUnitArray2
+                            ComparisonUnitArray2 = unknown.ComparisonUnitArray2,
                         };
                         newListOfCorrelatedSequence.Add(insertedCorrelatedSequence3);
 
@@ -857,25 +836,25 @@ namespace Clippit
                     }
 
                     var lastContentAtomLeft = unknown
-                        .ComparisonUnitArray1
-                        .Select(cu => cu.DescendantContentAtoms().Last())
+                        .ComparisonUnitArray1.Select(cu => cu.DescendantContentAtoms().Last())
                         .LastOrDefault();
 
                     var lastContentAtomRight = unknown
-                        .ComparisonUnitArray2
-                        .Select(cu => cu.DescendantContentAtoms().Last())
+                        .ComparisonUnitArray2.Select(cu => cu.DescendantContentAtoms().Last())
                         .LastOrDefault();
 
                     if (lastContentAtomLeft != null && lastContentAtomRight != null)
                     {
-                        if (lastContentAtomLeft.ContentElement.Name == W.pPr &&
-                            lastContentAtomRight.ContentElement.Name != W.pPr)
+                        if (
+                            lastContentAtomLeft.ContentElement.Name == W.pPr
+                            && lastContentAtomRight.ContentElement.Name != W.pPr
+                        )
                         {
                             var insertedCorrelatedSequence5 = new CorrelatedSequence
                             {
                                 CorrelationStatus = CorrelationStatus.Inserted,
                                 ComparisonUnitArray1 = null,
-                                ComparisonUnitArray2 = unknown.ComparisonUnitArray2
+                                ComparisonUnitArray2 = unknown.ComparisonUnitArray2,
                             };
                             newListOfCorrelatedSequence.Add(insertedCorrelatedSequence5);
 
@@ -883,21 +862,23 @@ namespace Clippit
                             {
                                 CorrelationStatus = CorrelationStatus.Deleted,
                                 ComparisonUnitArray1 = unknown.ComparisonUnitArray1,
-                                ComparisonUnitArray2 = null
+                                ComparisonUnitArray2 = null,
                             };
                             newListOfCorrelatedSequence.Add(deletedCorrelatedSequence5);
 
                             return newListOfCorrelatedSequence;
                         }
 
-                        if (lastContentAtomLeft.ContentElement.Name != W.pPr &&
-                            lastContentAtomRight.ContentElement.Name == W.pPr)
+                        if (
+                            lastContentAtomLeft.ContentElement.Name != W.pPr
+                            && lastContentAtomRight.ContentElement.Name == W.pPr
+                        )
                         {
                             var deletedCorrelatedSequence5 = new CorrelatedSequence
                             {
                                 CorrelationStatus = CorrelationStatus.Deleted,
                                 ComparisonUnitArray1 = unknown.ComparisonUnitArray1,
-                                ComparisonUnitArray2 = null
+                                ComparisonUnitArray2 = null,
                             };
                             newListOfCorrelatedSequence.Add(deletedCorrelatedSequence5);
 
@@ -905,7 +886,7 @@ namespace Clippit
                             {
                                 CorrelationStatus = CorrelationStatus.Inserted,
                                 ComparisonUnitArray1 = null,
-                                ComparisonUnitArray2 = unknown.ComparisonUnitArray2
+                                ComparisonUnitArray2 = unknown.ComparisonUnitArray2,
                             };
                             newListOfCorrelatedSequence.Add(insertedCorrelatedSequence5);
 
@@ -918,7 +899,7 @@ namespace Clippit
                 {
                     CorrelationStatus = CorrelationStatus.Deleted,
                     ComparisonUnitArray1 = unknown.ComparisonUnitArray1,
-                    ComparisonUnitArray2 = null
+                    ComparisonUnitArray2 = null,
                 };
                 newListOfCorrelatedSequence.Add(deletedCorrelatedSequence4);
 
@@ -926,7 +907,7 @@ namespace Clippit
                 {
                     CorrelationStatus = CorrelationStatus.Inserted,
                     ComparisonUnitArray1 = null,
-                    ComparisonUnitArray2 = unknown.ComparisonUnitArray2
+                    ComparisonUnitArray2 = unknown.ComparisonUnitArray2,
                 };
                 newListOfCorrelatedSequence.Add(insertedCorrelatedSequence4);
 
@@ -949,8 +930,7 @@ namespace Clippit
             if (currentLongestCommonSequenceLength != 0)
             {
                 var commonSeq = unknown
-                    .ComparisonUnitArray1
-                    .Skip(currentI1)
+                    .ComparisonUnitArray1.Skip(currentI1)
                     .Take(currentLongestCommonSequenceLength)
                     .ToList();
 
@@ -958,26 +938,26 @@ namespace Clippit
                 if (firstOfCommonSeq is ComparisonUnitWord)
                 {
                     // are there any paragraph marks in the common seq at end?
-                    if (commonSeq.Any(cu =>
-                    {
-                        var firstComparisonUnitAtom = cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
-                        if (firstComparisonUnitAtom == null)
-                            return false;
+                    if (
+                        commonSeq.Any(cu =>
+                        {
+                            var firstComparisonUnitAtom = cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
+                            if (firstComparisonUnitAtom == null)
+                                return false;
 
-                        return firstComparisonUnitAtom.ContentElement.Name == W.pPr;
-                    }))
+                            return firstComparisonUnitAtom.ContentElement.Name == W.pPr;
+                        })
+                    )
                     {
                         remainingInLeftParagraph = unknown
-                            .ComparisonUnitArray1
-                            .Take(currentI1)
+                            .ComparisonUnitArray1.Take(currentI1)
                             .Reverse()
                             .TakeWhile(cu =>
                             {
                                 if (cu is not ComparisonUnitWord)
                                     return false;
 
-                                var firstComparisonUnitAtom =
-                                    cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
+                                var firstComparisonUnitAtom = cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
                                 if (firstComparisonUnitAtom == null)
                                     return true;
 
@@ -985,16 +965,14 @@ namespace Clippit
                             })
                             .Count();
                         remainingInRightParagraph = unknown
-                            .ComparisonUnitArray2
-                            .Take(currentI2)
+                            .ComparisonUnitArray2.Take(currentI2)
                             .Reverse()
                             .TakeWhile(cu =>
                             {
                                 if (cu is not ComparisonUnitWord)
                                     return false;
 
-                                var firstComparisonUnitAtom =
-                                    cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
+                                var firstComparisonUnitAtom = cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
                                 if (firstComparisonUnitAtom == null)
                                     return true;
 
@@ -1013,10 +991,8 @@ namespace Clippit
                 var deletedCorrelatedSequence = new CorrelatedSequence
                 {
                     CorrelationStatus = CorrelationStatus.Deleted,
-                    ComparisonUnitArray1 = cul1
-                        .Take(countBeforeCurrentParagraphLeft)
-                        .ToArray(),
-                    ComparisonUnitArray2 = null
+                    ComparisonUnitArray1 = cul1.Take(countBeforeCurrentParagraphLeft).ToArray(),
+                    ComparisonUnitArray2 = null,
                 };
                 newListOfCorrelatedSequence.Add(deletedCorrelatedSequence);
             }
@@ -1026,9 +1002,7 @@ namespace Clippit
                 {
                     CorrelationStatus = CorrelationStatus.Inserted,
                     ComparisonUnitArray1 = null,
-                    ComparisonUnitArray2 = cul2
-                        .Take(countBeforeCurrentParagraphRight)
-                        .ToArray()
+                    ComparisonUnitArray2 = cul2.Take(countBeforeCurrentParagraphRight).ToArray(),
                 };
                 newListOfCorrelatedSequence.Add(insertedCorrelatedSequence);
             }
@@ -1037,12 +1011,8 @@ namespace Clippit
                 var unknownCorrelatedSequence = new CorrelatedSequence
                 {
                     CorrelationStatus = CorrelationStatus.Unknown,
-                    ComparisonUnitArray1 = cul1
-                        .Take(countBeforeCurrentParagraphLeft)
-                        .ToArray(),
-                    ComparisonUnitArray2 = cul2
-                        .Take(countBeforeCurrentParagraphRight)
-                        .ToArray()
+                    ComparisonUnitArray1 = cul1.Take(countBeforeCurrentParagraphLeft).ToArray(),
+                    ComparisonUnitArray2 = cul2.Take(countBeforeCurrentParagraphRight).ToArray(),
                 };
 
                 newListOfCorrelatedSequence.Add(unknownCorrelatedSequence);
@@ -1057,11 +1027,10 @@ namespace Clippit
                 var deletedCorrelatedSequence = new CorrelatedSequence
                 {
                     CorrelationStatus = CorrelationStatus.Deleted,
-                    ComparisonUnitArray1 = cul1
-                        .Skip(countBeforeCurrentParagraphLeft)
+                    ComparisonUnitArray1 = cul1.Skip(countBeforeCurrentParagraphLeft)
                         .Take(remainingInLeftParagraph)
                         .ToArray(),
-                    ComparisonUnitArray2 = null
+                    ComparisonUnitArray2 = null,
                 };
                 newListOfCorrelatedSequence.Add(deletedCorrelatedSequence);
             }
@@ -1071,10 +1040,9 @@ namespace Clippit
                 {
                     CorrelationStatus = CorrelationStatus.Inserted,
                     ComparisonUnitArray1 = null,
-                    ComparisonUnitArray2 = cul2
-                        .Skip(countBeforeCurrentParagraphRight)
+                    ComparisonUnitArray2 = cul2.Skip(countBeforeCurrentParagraphRight)
                         .Take(remainingInRightParagraph)
-                        .ToArray()
+                        .ToArray(),
                 };
                 newListOfCorrelatedSequence.Add(insertedCorrelatedSequence);
             }
@@ -1083,14 +1051,12 @@ namespace Clippit
                 var unknownCorrelatedSequence = new CorrelatedSequence
                 {
                     CorrelationStatus = CorrelationStatus.Unknown,
-                    ComparisonUnitArray1 = cul1
-                        .Skip(countBeforeCurrentParagraphLeft)
+                    ComparisonUnitArray1 = cul1.Skip(countBeforeCurrentParagraphLeft)
                         .Take(remainingInLeftParagraph)
                         .ToArray(),
-                    ComparisonUnitArray2 = cul2
-                        .Skip(countBeforeCurrentParagraphRight)
+                    ComparisonUnitArray2 = cul2.Skip(countBeforeCurrentParagraphRight)
                         .Take(remainingInRightParagraph)
-                        .ToArray()
+                        .ToArray(),
                 };
                 newListOfCorrelatedSequence.Add(unknownCorrelatedSequence);
             }
@@ -1102,34 +1068,26 @@ namespace Clippit
             var middleEqual = new CorrelatedSequence
             {
                 CorrelationStatus = CorrelationStatus.Equal,
-                ComparisonUnitArray1 = cul1
-                    .Skip(currentI1)
-                    .Take(currentLongestCommonSequenceLength)
-                    .ToArray(),
-                ComparisonUnitArray2 = cul2
-                    .Skip(currentI2)
-                    .Take(currentLongestCommonSequenceLength)
-                    .ToArray()
+                ComparisonUnitArray1 = cul1.Skip(currentI1).Take(currentLongestCommonSequenceLength).ToArray(),
+                ComparisonUnitArray2 = cul2.Skip(currentI2).Take(currentLongestCommonSequenceLength).ToArray(),
             };
             newListOfCorrelatedSequence.Add(middleEqual);
-
 
             var endI1 = currentI1 + currentLongestCommonSequenceLength;
             var endI2 = currentI2 + currentLongestCommonSequenceLength;
 
-            var remaining1 = cul1
-                .Skip(endI1)
-                .ToArray();
+            var remaining1 = cul1.Skip(endI1).ToArray();
 
-            var remaining2 = cul2
-                .Skip(endI2)
-                .ToArray();
+            var remaining2 = cul2.Skip(endI2).ToArray();
 
             // here is the point that we want to make a new unknown from this point to the end of the paragraph that
             // contains the equal parts.
             // this will never hurt anything, and will in many cases result in a better difference.
 
-            if (middleEqual.ComparisonUnitArray1[middleEqual.ComparisonUnitArray1.Length - 1] is ComparisonUnitWord leftCuw)
+            if (
+                middleEqual.ComparisonUnitArray1[middleEqual.ComparisonUnitArray1.Length - 1]
+                is ComparisonUnitWord leftCuw
+            )
             {
                 var lastContentAtom = leftCuw.DescendantContentAtoms().LastOrDefault();
 
@@ -1143,7 +1101,7 @@ namespace Clippit
                     {
                         CorrelationStatus = CorrelationStatus.Unknown,
                         ComparisonUnitArray1 = remaining1.Take(idx1).ToArray(),
-                        ComparisonUnitArray2 = remaining2.Take(idx2).ToArray()
+                        ComparisonUnitArray2 = remaining2.Take(idx2).ToArray(),
                     };
                     newListOfCorrelatedSequence.Add(unknownCorrelatedSequenceRemaining);
 
@@ -1151,7 +1109,7 @@ namespace Clippit
                     {
                         CorrelationStatus = CorrelationStatus.Unknown,
                         ComparisonUnitArray1 = remaining1.Skip(idx1).ToArray(),
-                        ComparisonUnitArray2 = remaining2.Skip(idx2).ToArray()
+                        ComparisonUnitArray2 = remaining2.Skip(idx2).ToArray(),
                     };
                     newListOfCorrelatedSequence.Add(unknownCorrelatedSequenceAfter);
 
@@ -1163,7 +1121,7 @@ namespace Clippit
             {
                 CorrelationStatus = CorrelationStatus.Unknown,
                 ComparisonUnitArray1 = remaining1,
-                ComparisonUnitArray2 = remaining2
+                ComparisonUnitArray2 = remaining2,
             };
             newListOfCorrelatedSequence.Add(unknownCorrelatedSequence20);
 
@@ -1180,20 +1138,16 @@ namespace Clippit
             // This is true regardless of whether there are horizontally or vertically merged cells, since that
             // characteristic is incorporated into the CorrespondingSHA1Hash. This is probably not very common, but it
             // will never do any harm.
-            var tblGroup1 = (ComparisonUnitGroup) unknown.ComparisonUnitArray1.First();
-            var tblGroup2 = (ComparisonUnitGroup) unknown.ComparisonUnitArray2.First();
+            var tblGroup1 = (ComparisonUnitGroup)unknown.ComparisonUnitArray1.First();
+            var tblGroup2 = (ComparisonUnitGroup)unknown.ComparisonUnitArray2.First();
 
             if (tblGroup1.Contents.Count == tblGroup2.Contents.Count) // if there are the same number of rows
             {
                 var zipped = tblGroup1
-                    .Contents
-                    .Zip(
+                    .Contents.Zip(
                         tblGroup2.Contents,
-                        (r1, r2) => new
-                        {
-                            Row1 = r1 as ComparisonUnitGroup,
-                            Row2 = r2 as ComparisonUnitGroup
-                        })
+                        (r1, r2) => new { Row1 = r1 as ComparisonUnitGroup, Row2 = r2 as ComparisonUnitGroup }
+                    )
                     .ToList();
 
                 var canCollapse = zipped.All(z => z.Row1.CorrelatedSHA1Hash == z.Row2.CorrelatedSHA1Hash);
@@ -1207,7 +1161,7 @@ namespace Clippit
                             {
                                 ComparisonUnitArray1 = new ComparisonUnit[] { z.Row1 },
                                 ComparisonUnitArray2 = new ComparisonUnit[] { z.Row2 },
-                                CorrelationStatus = CorrelationStatus.Unknown
+                                CorrelationStatus = CorrelationStatus.Unknown,
                             };
                             return unknownCorrelatedSequence;
                         })
@@ -1222,10 +1176,7 @@ namespace Clippit
                 throw new OpenXmlPowerToolsException("Internal error");
             }
 
-            var tblElement1 = firstContentAtom1
-                .AncestorElements
-                .Reverse()
-                .First(a => a.Name == W.tbl);
+            var tblElement1 = firstContentAtom1.AncestorElements.Reverse().First(a => a.Name == W.tbl);
 
             var firstContentAtom2 = tblGroup2.DescendantContentAtoms().FirstOrDefault();
             if (firstContentAtom2 == null)
@@ -1233,32 +1184,26 @@ namespace Clippit
                 throw new OpenXmlPowerToolsException("Internal error");
             }
 
-            var tblElement2 = firstContentAtom2
-                .AncestorElements
-                .Reverse()
-                .First(a => a.Name == W.tbl);
+            var tblElement2 = firstContentAtom2.AncestorElements.Reverse().First(a => a.Name == W.tbl);
 
-            var leftContainsMerged = tblElement1
-                .Descendants()
-                .Any(d => d.Name == W.vMerge || d.Name == W.gridSpan);
+            var leftContainsMerged = tblElement1.Descendants().Any(d => d.Name == W.vMerge || d.Name == W.gridSpan);
 
-            var rightContainsMerged = tblElement2
-                .Descendants()
-                .Any(d => d.Name == W.vMerge || d.Name == W.gridSpan);
+            var rightContainsMerged = tblElement2.Descendants().Any(d => d.Name == W.vMerge || d.Name == W.gridSpan);
 
             if (leftContainsMerged || rightContainsMerged)
             {
                 // If StructureSha1Hash is the same for both tables, then we know that the structure of the tables is
                 // identical, so we can break into correlated sequences for rows.
-                if (tblGroup1.StructureSHA1Hash != null &&
-                    tblGroup2.StructureSHA1Hash != null &&
-                    tblGroup1.StructureSHA1Hash == tblGroup2.StructureSHA1Hash)
+                if (
+                    tblGroup1.StructureSHA1Hash != null
+                    && tblGroup2.StructureSHA1Hash != null
+                    && tblGroup1.StructureSHA1Hash == tblGroup2.StructureSHA1Hash
+                )
                 {
-                    var zipped = tblGroup1.Contents.Zip(tblGroup2.Contents, (r1, r2) => new
-                    {
-                        Row1 = r1 as ComparisonUnitGroup,
-                        Row2 = r2 as ComparisonUnitGroup
-                    });
+                    var zipped = tblGroup1.Contents.Zip(
+                        tblGroup2.Contents,
+                        (r1, r2) => new { Row1 = r1 as ComparisonUnitGroup, Row2 = r2 as ComparisonUnitGroup }
+                    );
                     newListOfCorrelatedSequence = zipped
                         .Select(z =>
                         {
@@ -1266,7 +1211,7 @@ namespace Clippit
                             {
                                 ComparisonUnitArray1 = new ComparisonUnit[] { z.Row1 },
                                 ComparisonUnitArray2 = new ComparisonUnit[] { z.Row2 },
-                                CorrelationStatus = CorrelationStatus.Unknown
+                                CorrelationStatus = CorrelationStatus.Unknown,
                             };
                             return unknownCorrelatedSequence;
                         })
@@ -1278,12 +1223,11 @@ namespace Clippit
                 var deletedCorrelatedSequence = new CorrelatedSequence
                 {
                     ComparisonUnitArray1 = unknown
-                        .ComparisonUnitArray1
-                        .Select(z => z.Contents)
+                        .ComparisonUnitArray1.Select(z => z.Contents)
                         .SelectMany(m => m)
                         .ToArray(),
                     ComparisonUnitArray2 = null,
-                    CorrelationStatus = CorrelationStatus.Deleted
+                    CorrelationStatus = CorrelationStatus.Deleted,
                 };
 
                 newListOfCorrelatedSequence.Add(deletedCorrelatedSequence);
@@ -1292,11 +1236,10 @@ namespace Clippit
                 {
                     ComparisonUnitArray1 = null,
                     ComparisonUnitArray2 = unknown
-                        .ComparisonUnitArray2
-                        .Select(z => z.Contents)
+                        .ComparisonUnitArray2.Select(z => z.Contents)
                         .SelectMany(m => m)
                         .ToArray(),
-                    CorrelationStatus = CorrelationStatus.Inserted
+                    CorrelationStatus = CorrelationStatus.Inserted,
                 };
 
                 newListOfCorrelatedSequence.Add(insertedCorrelatedSequence);
@@ -1311,7 +1254,7 @@ namespace Clippit
         {
             for (var i = 0; i < cul.Length; i++)
             {
-                var cuw = (ComparisonUnitWord) cul[i];
+                var cuw = (ComparisonUnitWord)cul[i];
                 var lastAtom = cuw.DescendantContentAtoms().LastOrDefault();
                 if (lastAtom?.ContentElement.Name == W.pPr)
                 {

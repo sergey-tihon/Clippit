@@ -14,13 +14,14 @@ namespace Clippit.Word
         public static Dictionary<string, Func<string, int, string, string>> DefaultListItemTextImplementations =
             new()
             {
-                {"fr-FR", ListItemTextGetter_fr_FR.GetListItemText},
-                {"tr-TR", ListItemTextGetter_tr_TR.GetListItemText},
-                {"ru-RU", ListItemTextGetter_ru_RU.GetListItemText}, 
-                {"sv-SE", ListItemTextGetter_sv_SE.GetListItemText},
-                {"zh-CN", ListItemTextGetter_zh_CN.GetListItemText},
+                { "fr-FR", ListItemTextGetter_fr_FR.GetListItemText },
+                { "tr-TR", ListItemTextGetter_tr_TR.GetListItemText },
+                { "ru-RU", ListItemTextGetter_ru_RU.GetListItemText },
+                { "sv-SE", ListItemTextGetter_sv_SE.GetListItemText },
+                { "zh-CN", ListItemTextGetter_zh_CN.GetListItemText },
             };
         public Dictionary<string, Func<string, int, string, string>> ListItemTextImplementations;
+
         public ListItemRetrieverSettings()
         {
             ListItemTextImplementations = DefaultListItemTextImplementations;
@@ -31,57 +32,41 @@ namespace Clippit.Word
     {
         public class ListItemSourceSet
         {
-            public int NumId;                          // numId from the paragraph or style
-            public XElement Num;                       // num element from the numbering part
-            public int AbstractNumId;                  // abstract numId
-            public XElement AbstractNum;               // abstractNum element
+            public int NumId; // numId from the paragraph or style
+            public XElement Num; // num element from the numbering part
+            public int AbstractNumId; // abstract numId
+            public XElement AbstractNum; // abstractNum element
 
             public ListItemSourceSet(XDocument numXDoc, XDocument styleXDoc, int numId)
             {
                 NumId = numId;
 
-                Num = numXDoc
-                    .Root
-                    .Elements(W.num)
-                    .FirstOrDefault(n => (int)n.Attribute(W.numId) == numId);
+                Num = numXDoc.Root.Elements(W.num).FirstOrDefault(n => (int)n.Attribute(W.numId) == numId);
 
-                AbstractNumId = (int)Num
-                    .Elements(W.abstractNumId)
-                    .Attributes(W.val)
-                    .FirstOrDefault();
+                AbstractNumId = (int)Num.Elements(W.abstractNumId).Attributes(W.val).FirstOrDefault();
 
                 AbstractNum = numXDoc
-                    .Root
-                    .Elements(W.abstractNum)
+                    .Root.Elements(W.abstractNum)
                     .FirstOrDefault(e => (int)e.Attribute(W.abstractNumId) == AbstractNumId);
             }
 
             public int? StartOverride(int ilvl)
             {
-                var lvlOverride = Num
-                    .Elements(W.lvlOverride)
-                    .FirstOrDefault(nlo => (int)nlo.Attribute(W.ilvl) == ilvl);
+                var lvlOverride = Num.Elements(W.lvlOverride).FirstOrDefault(nlo => (int)nlo.Attribute(W.ilvl) == ilvl);
                 if (lvlOverride != null)
-                    return (int?)lvlOverride
-                        .Elements(W.startOverride)
-                        .Attributes(W.val)
-                        .FirstOrDefault();
+                    return (int?)lvlOverride.Elements(W.startOverride).Attributes(W.val).FirstOrDefault();
                 return null;
             }
 
             public XElement OverrideLvl(int ilvl)
             {
-                var lvlOverride = Num
-                    .Elements(W.lvlOverride)
-                    .FirstOrDefault(nlo => (int)nlo.Attribute(W.ilvl) == ilvl);
+                var lvlOverride = Num.Elements(W.lvlOverride).FirstOrDefault(nlo => (int)nlo.Attribute(W.ilvl) == ilvl);
                 return lvlOverride?.Element(W.lvl);
             }
 
             public XElement AbstractLvl(int ilvl)
             {
-                return AbstractNum
-                    .Elements(W.lvl)
-                    .FirstOrDefault(al => (int)al.Attribute(W.ilvl) == ilvl);
+                return AbstractNum.Elements(W.lvl).FirstOrDefault(al => (int)al.Attribute(W.ilvl) == ilvl);
             }
 
             public XElement Lvl(int ilvl)
@@ -107,23 +92,19 @@ namespace Clippit.Word
             {
                 Main = new ListItemSourceSet(numXDoc, stylesXDoc, numId);
 
-                NumStyleLinkName = (string)Main
-                    .AbstractNum
-                    .Elements(W.numStyleLink)
-                    .Attributes(W.val)
-                    .FirstOrDefault();
+                NumStyleLinkName = (string)Main.AbstractNum.Elements(W.numStyleLink).Attributes(W.val).FirstOrDefault();
 
                 if (NumStyleLinkName != null)
                 {
-                    var numStyleLinkNumId = (int?)stylesXDoc
-                        .Root
-                        .Elements(W.style)
-                        .Where(s => (string)s.Attribute(W.styleId) == NumStyleLinkName)
-                        .Elements(W.pPr)
-                        .Elements(W.numPr)
-                        .Elements(W.numId)
-                        .Attributes(W.val)
-                        .FirstOrDefault();
+                    var numStyleLinkNumId = (int?)
+                        stylesXDoc
+                            .Root.Elements(W.style)
+                            .Where(s => (string)s.Attribute(W.styleId) == NumStyleLinkName)
+                            .Elements(W.pPr)
+                            .Elements(W.numPr)
+                            .Elements(W.numId)
+                            .Attributes(W.val)
+                            .FirstOrDefault();
 
                     if (numStyleLinkNumId != null)
                         NumStyleLink = new ListItemSourceSet(numXDoc, stylesXDoc, (int)numStyleLinkNumId);
@@ -181,10 +162,7 @@ namespace Clippit.Word
 
             public int AbstractNumId
             {
-                get
-                {
-                    return Main.AbstractNumId;
-                }
+                get { return Main.AbstractNumId; }
             }
         }
 
@@ -329,16 +307,13 @@ namespace Clippit.Word
                 IsZeroNumId = isZeroNumId;
             }
         }
-        
+
         public static void SetParagraphLevel(XElement paragraph, int ilvl)
         {
             var pi = paragraph.Annotation<ParagraphInfo>();
             if (pi == null)
             {
-                pi = new ParagraphInfo()
-                {
-                    Ilvl = ilvl,
-                };
+                pi = new ParagraphInfo() { Ilvl = ilvl };
                 paragraph.AddAnnotation(pi);
                 return;
             }
@@ -350,7 +325,9 @@ namespace Clippit.Word
             var pi = paragraph.Annotation<ParagraphInfo>();
             if (pi != null)
                 return pi.Ilvl;
-            throw new OpenXmlPowerToolsException("Internal error - should never ask for ilvl without it first being set.");
+            throw new OpenXmlPowerToolsException(
+                "Internal error - should never ask for ilvl without it first being set."
+            );
         }
 
         public static ListItemInfo GetListItemInfo(XDocument numXDoc, XDocument stylesXDoc, XElement paragraph)
@@ -376,17 +353,12 @@ namespace Clippit.Word
 
             int? paragraphNumId = null;
 
-            var paragraphNumberingProperties = paragraph
-                .Elements(W.pPr)
-                .Elements(W.numPr)
-                .FirstOrDefault();
+            var paragraphNumberingProperties = paragraph.Elements(W.pPr).Elements(W.numPr).FirstOrDefault();
 
             if (paragraphNumberingProperties != null)
             {
-                paragraphNumId = (int?)paragraphNumberingProperties
-                    .Elements(W.numId)
-                    .Attributes(W.val)
-                    .FirstOrDefault();
+                paragraphNumId = (int?)
+                    paragraphNumberingProperties.Elements(W.numId).Attributes(W.val).FirstOrDefault();
 
                 // if numPr of paragraph does not contain numId, then it is not a list item.
                 // if numId of paragraph == 0, then this is not a list item, regardless of the markup in the style.
@@ -406,16 +378,15 @@ namespace Clippit.Word
 
                 if (listItemInfo.FromParagraph != null)
                 {
-                    var para_ilvl = (int?)paragraphNumberingProperties
-                        .Elements(W.ilvl)
-                        .Attributes(W.val)
-                        .FirstOrDefault();
+                    var para_ilvl = (int?)
+                        paragraphNumberingProperties.Elements(W.ilvl).Attributes(W.val).FirstOrDefault();
 
                     if (para_ilvl == null)
                         para_ilvl = 0;
 
                     var abstractNum = listItemInfo.FromParagraph.Main.AbstractNum;
-                    var multiLevelType = (string)abstractNum.Elements(W.multiLevelType).Attributes(W.val).FirstOrDefault();
+                    var multiLevelType = (string)
+                        abstractNum.Elements(W.multiLevelType).Attributes(W.val).FirstOrDefault();
                     if (multiLevelType == "singleLevel")
                         para_ilvl = 0;
 
@@ -425,7 +396,8 @@ namespace Clippit.Word
                 {
                     var this_ilvl = listItemInfo.FromStyle.Style_ilvl;
                     var abstractNum = listItemInfo.FromStyle.Main.AbstractNum;
-                    var multiLevelType = (string)abstractNum.Elements(W.multiLevelType).Attributes(W.val).FirstOrDefault();
+                    var multiLevelType = (string)
+                        abstractNum.Elements(W.multiLevelType).Attributes(W.val).FirstOrDefault();
                     if (multiLevelType == "singleLevel")
                         this_ilvl = 0;
 
@@ -441,8 +413,14 @@ namespace Clippit.Word
 
             if (paragraphStyleName != null)
             {
-                listItemInfo.FromStyle = InitializeStyleListItemSource(numXDoc, stylesXDoc, paragraph, paragraphStyleName,
-                        out style_ilvl, out styleZeroNumId);
+                listItemInfo.FromStyle = InitializeStyleListItemSource(
+                    numXDoc,
+                    stylesXDoc,
+                    paragraph,
+                    paragraphStyleName,
+                    out style_ilvl,
+                    out styleZeroNumId
+                );
             }
 
             int? paragraph_ilvl = null;
@@ -450,11 +428,17 @@ namespace Clippit.Word
 
             if (paragraphNumberingProperties != null && paragraphNumberingProperties.Element(W.numId) != null)
             {
-                listItemInfo.FromParagraph = InitializeParagraphListItemSource(numXDoc, stylesXDoc, paragraph, paragraphNumberingProperties, out paragraph_ilvl, out paragraphZeroNumId);
+                listItemInfo.FromParagraph = InitializeParagraphListItemSource(
+                    numXDoc,
+                    stylesXDoc,
+                    paragraph,
+                    paragraphNumberingProperties,
+                    out paragraph_ilvl,
+                    out paragraphZeroNumId
+                );
             }
 
-            if (styleZeroNumId == true && paragraphZeroNumId == null ||
-                paragraphZeroNumId == true)
+            if (styleZeroNumId == true && paragraphZeroNumId == null || paragraphZeroNumId == true)
             {
                 paragraph.AddAnnotation(NotAListItem);
                 AddListItemInfoIntoCache(numXDoc, paragraphStyleName, paragraphNumId, NotAListItem);
@@ -491,11 +475,8 @@ namespace Clippit.Word
 
         private static string GetParagraphStyleName(XDocument stylesXDoc, XElement paragraph)
         {
-            var paragraphStyleName = (string)paragraph
-                 .Elements(W.pPr)
-                 .Elements(W.pStyle)
-                 .Attributes(W.val)
-                 .FirstOrDefault();
+            var paragraphStyleName = (string)
+                paragraph.Elements(W.pPr).Elements(W.pStyle).Attributes(W.val).FirstOrDefault();
 
             if (paragraphStyleName == null)
                 paragraphStyleName = GetDefaultParagraphStyleName(stylesXDoc);
@@ -505,10 +486,7 @@ namespace Clippit.Word
 
         private static bool FirstRunIsEmptySectionBreak(XElement paragraph)
         {
-            var firstRun = paragraph
-                .DescendantsTrimmed(W.txbxContent)
-                .Where(d => d.Name == W.r)
-                .FirstOrDefault();
+            var firstRun = paragraph.DescendantsTrimmed(W.txbxContent).Where(d => d.Name == W.r).FirstOrDefault();
 
             var hasTextElement = paragraph
                 .DescendantsTrimmed(W.txbxContent)
@@ -518,29 +496,27 @@ namespace Clippit.Word
 
             if (firstRun == null || !hasTextElement)
             {
-                if (paragraph
-                    .Elements(W.pPr)
-                    .Elements(W.sectPr)
-                    .Any())
+                if (paragraph.Elements(W.pPr).Elements(W.sectPr).Any())
                     return true;
             }
             return false;
         }
 
-        private static ListItemSource InitializeParagraphListItemSource(XDocument numXDoc, XDocument stylesXDoc, XElement paragraph, XElement paragraphNumberingProperties, out int? ilvl, out bool? zeroNumId)
+        private static ListItemSource InitializeParagraphListItemSource(
+            XDocument numXDoc,
+            XDocument stylesXDoc,
+            XElement paragraph,
+            XElement paragraphNumberingProperties,
+            out int? ilvl,
+            out bool? zeroNumId
+        )
         {
             zeroNumId = null;
 
             // Paragraph numbering properties must contain a numId.
-            var numId = (int?)paragraphNumberingProperties
-                .Elements(W.numId)
-                .Attributes(W.val)
-                .FirstOrDefault();
+            var numId = (int?)paragraphNumberingProperties.Elements(W.numId).Attributes(W.val).FirstOrDefault();
 
-            ilvl = (int?)paragraphNumberingProperties
-                .Elements(W.ilvl)
-                .Attributes(W.val)
-                .FirstOrDefault();
+            ilvl = (int?)paragraphNumberingProperties.Elements(W.ilvl).Attributes(W.val).FirstOrDefault();
 
             if (numId == null)
             {
@@ -548,10 +524,7 @@ namespace Clippit.Word
                 return null;
             }
 
-            var num = numXDoc
-                .Root
-                .Elements(W.num)
-                .FirstOrDefault(n => (int)n.Attribute(W.numId) == numId);
+            var num = numXDoc.Root.Elements(W.num).FirstOrDefault(n => (int)n.Attribute(W.numId) == numId);
             if (num == null)
             {
                 zeroNumId = true;
@@ -568,28 +541,30 @@ namespace Clippit.Word
             return listItemSource;
         }
 
-        private static ListItemSource InitializeStyleListItemSource(XDocument numXDoc, XDocument stylesXDoc, XElement paragraph, string paragraphStyleName, 
-            out int? ilvl, out bool? zeroNumId)
+        private static ListItemSource InitializeStyleListItemSource(
+            XDocument numXDoc,
+            XDocument stylesXDoc,
+            XElement paragraph,
+            string paragraphStyleName,
+            out int? ilvl,
+            out bool? zeroNumId
+        )
         {
             zeroNumId = null;
-            var pPr = FormattingAssembler.ParagraphStyleRollup(paragraph, stylesXDoc, GetDefaultParagraphStyleName(stylesXDoc));
+            var pPr = FormattingAssembler.ParagraphStyleRollup(
+                paragraph,
+                stylesXDoc,
+                GetDefaultParagraphStyleName(stylesXDoc)
+            );
             if (pPr != null)
             {
-                var styleNumberingProperties = pPr
-                    .Elements(W.numPr)
-                    .FirstOrDefault();
+                var styleNumberingProperties = pPr.Elements(W.numPr).FirstOrDefault();
 
                 if (styleNumberingProperties != null && styleNumberingProperties.Element(W.numId) != null)
                 {
-                    var numId = (int)styleNumberingProperties
-                        .Elements(W.numId)
-                        .Attributes(W.val)
-                        .FirstOrDefault();
+                    var numId = (int)styleNumberingProperties.Elements(W.numId).Attributes(W.val).FirstOrDefault();
 
-                    ilvl = (int?)styleNumberingProperties
-                        .Elements(W.ilvl)
-                        .Attributes(W.val)
-                        .FirstOrDefault();
+                    ilvl = (int?)styleNumberingProperties.Elements(W.ilvl).Attributes(W.val).FirstOrDefault();
 
                     if (ilvl == null)
                         ilvl = 0;
@@ -602,8 +577,7 @@ namespace Clippit.Word
 
                     // make sure that the numId is valid
                     var num = numXDoc
-                        .Root
-                        .Elements(W.num)
+                        .Root.Elements(W.num)
                         .Where(e => (int)e.Attribute(W.numId) == numId)
                         .FirstOrDefault();
 
@@ -636,26 +610,21 @@ namespace Clippit.Word
             else
             {
                 defaultParagraphStyle = stylesXDoc
-                    .Root
-                    .Elements(W.style)
+                    .Root.Elements(W.style)
                     .FirstOrDefault(s =>
                     {
                         if ((string)s.Attribute(W.type) != "paragraph")
                             return false;
                         var defaultAttribute = s.Attribute(W._default);
                         var isDefault = false;
-                        if (defaultAttribute != null &&
-                            (bool)s.Attribute(W._default).ToBoolean())
+                        if (defaultAttribute != null && (bool)s.Attribute(W._default).ToBoolean())
                             isDefault = true;
                         return isDefault;
                     });
                 defaultParagraphStyleName = null;
                 if (defaultParagraphStyle != null)
                     defaultParagraphStyleName = (string)defaultParagraphStyle.Attribute(W.styleId);
-                stylesInfo = new StylesInfo()
-                {
-                    DefaultParagraphStyleName = defaultParagraphStyleName,
-                };
+                stylesInfo = new StylesInfo() { DefaultParagraphStyleName = defaultParagraphStyleName };
                 stylesXDoc.AddAnnotation(stylesInfo);
             }
             return defaultParagraphStyleName;
@@ -663,14 +632,10 @@ namespace Clippit.Word
 
         private static ListItemInfo GetListItemInfoFromCache(XDocument numXDoc, string styleName, int? numId)
         {
-            var key =
-                (styleName == null ? "" : styleName) +
-                "|" +
-                (numId == null ? "" : numId.ToString());
+            var key = (styleName == null ? "" : styleName) + "|" + (numId == null ? "" : numId.ToString());
 
             var numXDocRoot = numXDoc.Root;
-            var listItemInfoCache =
-                numXDocRoot.Annotation<Dictionary<string, ListItemInfo>>();
+            var listItemInfoCache = numXDocRoot.Annotation<Dictionary<string, ListItemInfo>>();
             if (listItemInfoCache == null)
             {
                 listItemInfoCache = new Dictionary<string, ListItemInfo>();
@@ -681,16 +646,17 @@ namespace Clippit.Word
             return null;
         }
 
-        private static void AddListItemInfoIntoCache(XDocument numXDoc, string styleName, int? numId, ListItemInfo listItemInfo)
+        private static void AddListItemInfoIntoCache(
+            XDocument numXDoc,
+            string styleName,
+            int? numId,
+            ListItemInfo listItemInfo
+        )
         {
-            var key =
-                (styleName == null ? "" : styleName) +
-                "|" +
-                (numId == null ? "" : numId.ToString());
+            var key = (styleName == null ? "" : styleName) + "|" + (numId == null ? "" : numId.ToString());
 
             var numXDocRoot = numXDoc.Root;
-            var listItemInfoCache =
-                numXDocRoot.Annotation<Dictionary<string, ListItemInfo>>();
+            var listItemInfoCache = numXDocRoot.Annotation<Dictionary<string, ListItemInfo>>();
             if (listItemInfoCache == null)
             {
                 listItemInfoCache = new Dictionary<string, ListItemInfo>();
@@ -725,7 +691,11 @@ namespace Clippit.Word
             return RetrieveListItem(wordDoc, paragraph, null);
         }
 
-        public static string RetrieveListItem(WordprocessingDocument wordDoc, XElement paragraph, ListItemRetrieverSettings settings)
+        public static string RetrieveListItem(
+            WordprocessingDocument wordDoc,
+            XElement paragraph,
+            ListItemRetrieverSettings settings
+        )
         {
             if (wordDoc.MainDocumentPart.NumberingDefinitionsPart == null)
                 return null;
@@ -738,16 +708,12 @@ namespace Clippit.Word
             if (!listItemInfo.IsListItem)
                 return null;
 
-            var numberingDefinitionsPart = wordDoc
-                .MainDocumentPart
-                .NumberingDefinitionsPart;
+            var numberingDefinitionsPart = wordDoc.MainDocumentPart.NumberingDefinitionsPart;
 
             if (numberingDefinitionsPart == null)
                 return null;
 
-            var styleDefinitionsPart = wordDoc
-                .MainDocumentPart
-                .StyleDefinitionsPart;
+            var styleDefinitionsPart = wordDoc.MainDocumentPart.StyleDefinitionsPart;
 
             if (styleDefinitionsPart == null)
                 return null;
@@ -767,86 +733,84 @@ namespace Clippit.Word
 
             var levelNumbers = levelNumbersAnnotation.LevelNumbersArray;
             var languageIdentifier = GetLanguageIdentifier(paragraph, stylesXDoc);
-            var listItem = FormatListItem(listItemInfo, levelNumbers, GetParagraphLevel(paragraph), 
-                lvlText, stylesXDoc, languageIdentifier, settings);
+            var listItem = FormatListItem(
+                listItemInfo,
+                levelNumbers,
+                GetParagraphLevel(paragraph),
+                lvlText,
+                stylesXDoc,
+                languageIdentifier,
+                settings
+            );
             return listItem;
         }
 
         private static string GetLanguageIdentifier(XElement paragraph, XDocument stylesXDoc)
         {
-            var languageType = (string)paragraph
-                .DescendantsTrimmed(W.txbxContent)
-                .Where(d => d.Name == W.r)
-                .Attributes(PtOpenXml.LanguageType)
-                .FirstOrDefault();
+            var languageType = (string)
+                paragraph
+                    .DescendantsTrimmed(W.txbxContent)
+                    .Where(d => d.Name == W.r)
+                    .Attributes(PtOpenXml.LanguageType)
+                    .FirstOrDefault();
 
             string languageIdentifier = null;
 
             if (languageType is null or "western")
             {
-                languageIdentifier = (string)paragraph
-                    .Elements(W.r)
-                    .Elements(W.rPr)
-                    .Elements(W.lang)
-                    .Attributes(W.val)
-                    .FirstOrDefault();
+                languageIdentifier = (string)
+                    paragraph.Elements(W.r).Elements(W.rPr).Elements(W.lang).Attributes(W.val).FirstOrDefault();
 
                 if (languageIdentifier == null)
-                    languageIdentifier = (string)stylesXDoc
-                        .Root
-                        .Elements(W.docDefaults)
-                        .Elements(W.rPrDefault)
-                        .Elements(W.rPr)
-                        .Elements(W.lang)
-                        .Attributes(W.val)
-                        .FirstOrDefault();
+                    languageIdentifier = (string)
+                        stylesXDoc
+                            .Root.Elements(W.docDefaults)
+                            .Elements(W.rPrDefault)
+                            .Elements(W.rPr)
+                            .Elements(W.lang)
+                            .Attributes(W.val)
+                            .FirstOrDefault();
             }
             else if (languageType == "eastAsia")
             {
-                languageIdentifier = (string)paragraph
-                    .Elements(W.r)
-                    .Elements(W.rPr)
-                    .Elements(W.lang)
-                    .Attributes(W.eastAsia)
-                    .FirstOrDefault();
+                languageIdentifier = (string)
+                    paragraph.Elements(W.r).Elements(W.rPr).Elements(W.lang).Attributes(W.eastAsia).FirstOrDefault();
 
                 if (languageIdentifier == null)
-                    languageIdentifier = (string)stylesXDoc
-                        .Root
-                        .Elements(W.docDefaults)
-                        .Elements(W.rPrDefault)
-                        .Elements(W.rPr)
-                        .Elements(W.lang)
-                        .Attributes(W.eastAsia)
-                        .FirstOrDefault();
+                    languageIdentifier = (string)
+                        stylesXDoc
+                            .Root.Elements(W.docDefaults)
+                            .Elements(W.rPrDefault)
+                            .Elements(W.rPr)
+                            .Elements(W.lang)
+                            .Attributes(W.eastAsia)
+                            .FirstOrDefault();
             }
             else if (languageType == "bidi")
             {
-                languageIdentifier = (string)paragraph
-                    .Elements(W.r)
-                    .Elements(W.rPr)
-                    .Elements(W.lang)
-                    .Attributes(W.bidi)
-                    .FirstOrDefault();
+                languageIdentifier = (string)
+                    paragraph.Elements(W.r).Elements(W.rPr).Elements(W.lang).Attributes(W.bidi).FirstOrDefault();
 
                 if (languageIdentifier == null)
-                    languageIdentifier = (string)stylesXDoc
-                        .Root
-                        .Elements(W.docDefaults)
-                        .Elements(W.rPrDefault)
-                        .Elements(W.rPr)
-                        .Elements(W.lang)
-                        .Attributes(W.bidi)
-                        .FirstOrDefault();
+                    languageIdentifier = (string)
+                        stylesXDoc
+                            .Root.Elements(W.docDefaults)
+                            .Elements(W.rPrDefault)
+                            .Elements(W.rPr)
+                            .Elements(W.lang)
+                            .Attributes(W.bidi)
+                            .FirstOrDefault();
             }
-
 
             if (languageIdentifier == null)
                 languageIdentifier = "en-US";
             return languageIdentifier;
         }
 
-        private static void InitializeListItemRetriever(WordprocessingDocument wordDoc, ListItemRetrieverSettings settings)
+        private static void InitializeListItemRetriever(
+            WordprocessingDocument wordDoc,
+            ListItemRetrieverSettings settings
+        )
         {
             foreach (var part in wordDoc.ContentParts())
                 InitializeListItemRetrieverForPart(wordDoc, part, settings);
@@ -865,10 +829,14 @@ namespace Clippit.Word
 #endif
         }
 
-        private static void InitializeListItemRetrieverForPart(WordprocessingDocument wordDoc, OpenXmlPart part, ListItemRetrieverSettings settings)
+        private static void InitializeListItemRetrieverForPart(
+            WordprocessingDocument wordDoc,
+            OpenXmlPart part,
+            ListItemRetrieverSettings settings
+        )
         {
             var mainXDoc = part.GetXDocument();
-            
+
             var numPart = wordDoc.MainDocumentPart.NumberingDefinitionsPart;
             if (numPart == null)
                 return;
@@ -883,19 +851,19 @@ namespace Clippit.Word
 
             InitializeListItemRetrieverForStory(numXDoc, stylesXDoc, rootNode);
 
-            var textBoxes = mainXDoc
-                .Root
-                .Descendants(W.txbxContent);
+            var textBoxes = mainXDoc.Root.Descendants(W.txbxContent);
 
             foreach (var textBox in textBoxes)
                 InitializeListItemRetrieverForStory(numXDoc, stylesXDoc, textBox);
         }
 
-        private static void InitializeListItemRetrieverForStory(XDocument numXDoc, XDocument stylesXDoc, XElement rootNode)
+        private static void InitializeListItemRetrieverForStory(
+            XDocument numXDoc,
+            XDocument stylesXDoc,
+            XElement rootNode
+        )
         {
-            var paragraphs = rootNode
-                .DescendantsTrimmed(W.txbxContent)
-                .Where(p => p.Name == W.p);
+            var paragraphs = rootNode.DescendantsTrimmed(W.txbxContent).Where(p => p.Name == W.p);
 
             foreach (var paragraph in paragraphs)
                 InitListItemInfo(numXDoc, stylesXDoc, paragraph);
@@ -938,17 +906,15 @@ namespace Clippit.Word
                 XElement prevParagraph = null;
                 foreach (var paragraph in listItems)
                 {
-                    var reverse = new ReverseAxis()
-                    {
-                        PreviousParagraph = prevParagraph,
-                    };
+                    var reverse = new ReverseAxis() { PreviousParagraph = prevParagraph };
                     paragraph.AddAnnotation(reverse);
                     prevParagraph = paragraph;
                 }
 
                 var startOverrideAlreadyUsed = new List<int>();
                 List<int> previous = null;
-                var listItemInfoInEffectForStartOverride = new ListItemInfo[] {
+                var listItemInfoInEffectForStartOverride = new ListItemInfo[]
+                {
                     null,
                     null,
                     null,
@@ -995,9 +961,11 @@ namespace Clippit.Word
                             }
                         }
 
-                        if (previous == null ||
-                            level >= previous.Count ||
-                            (level == ilvl && startOverride != null && !startOverrideAlreadyUsed.Contains(numId)))
+                        if (
+                            previous == null
+                            || level >= previous.Count
+                            || (level == ilvl && startOverride != null && !startOverrideAlreadyUsed.Contains(numId))
+                        )
                         {
                             if (previous == null || level >= previous.Count)
                             {
@@ -1064,10 +1032,7 @@ namespace Clippit.Word
                             levelNumbers.Add((int)thisNumber);
                         }
                     }
-                    var levelNumbersAnno = new LevelNumbers()
-                    {
-                        LevelNumbersArray = levelNumbers.ToArray()
-                    };
+                    var levelNumbersAnno = new LevelNumbers() { LevelNumbersArray = levelNumbers.ToArray() };
                     paragraph.AddAnnotation(levelNumbersAnno);
                     previous = levelNumbers;
                 }
@@ -1090,48 +1055,66 @@ namespace Clippit.Word
             }
         }
 
-        private static string FormatListItem(ListItemInfo lii, int[] levelNumbers, int ilvl,
-            string lvlText, XDocument styles, string languageCultureName, ListItemRetrieverSettings settings)
+        private static string FormatListItem(
+            ListItemInfo lii,
+            int[] levelNumbers,
+            int ilvl,
+            string lvlText,
+            XDocument styles,
+            string languageCultureName,
+            ListItemRetrieverSettings settings
+        )
         {
             var formatTokens = GetFormatTokens(lvlText).ToArray();
             var lvl = lii.Lvl(ilvl);
             var isLgl = lvl.Elements(W.isLgl).Any();
-            var listItem = formatTokens.Select((t, l) =>
-            {
-                if (t.Substring(0, 1) != "%")
-                    return t;
-                if (!int.TryParse(t.Substring(1), out var indentationLevel))
-                    return t;
-                indentationLevel -= 1;
-                if (indentationLevel >= levelNumbers.Length)
-                    indentationLevel = levelNumbers.Length - 1;
-                var levelNumber = levelNumbers[indentationLevel];
-                string levelText = null;
-                var rlvl = lii.Lvl(indentationLevel);
-                var numFmtForLevel = (string)rlvl.Elements(W.numFmt).Attributes(W.val).FirstOrDefault();
-                if (numFmtForLevel == null)
-                {
-                    var numFmtElement = rlvl.Elements(MC.AlternateContent).Elements(MC.Choice).Elements(W.numFmt).FirstOrDefault();
-                    if (numFmtElement != null && (string)numFmtElement.Attribute(W.val) == "custom")
-                        numFmtForLevel = (string)numFmtElement.Attribute(W.format);
-                }
-                if (numFmtForLevel != "none")
-                {
-                    if (isLgl && numFmtForLevel != "decimalZero")
-                        numFmtForLevel = "decimal";
-                }
-                if (languageCultureName != null && settings != null)
-                {
-                    if (settings.ListItemTextImplementations.ContainsKey(languageCultureName))
+            var listItem = formatTokens
+                .Select(
+                    (t, l) =>
                     {
-                        var impl = settings.ListItemTextImplementations[languageCultureName];
-                        levelText = impl(languageCultureName, levelNumber, numFmtForLevel);
+                        if (t.Substring(0, 1) != "%")
+                            return t;
+                        if (!int.TryParse(t.Substring(1), out var indentationLevel))
+                            return t;
+                        indentationLevel -= 1;
+                        if (indentationLevel >= levelNumbers.Length)
+                            indentationLevel = levelNumbers.Length - 1;
+                        var levelNumber = levelNumbers[indentationLevel];
+                        string levelText = null;
+                        var rlvl = lii.Lvl(indentationLevel);
+                        var numFmtForLevel = (string)rlvl.Elements(W.numFmt).Attributes(W.val).FirstOrDefault();
+                        if (numFmtForLevel == null)
+                        {
+                            var numFmtElement = rlvl.Elements(MC.AlternateContent)
+                                .Elements(MC.Choice)
+                                .Elements(W.numFmt)
+                                .FirstOrDefault();
+                            if (numFmtElement != null && (string)numFmtElement.Attribute(W.val) == "custom")
+                                numFmtForLevel = (string)numFmtElement.Attribute(W.format);
+                        }
+                        if (numFmtForLevel != "none")
+                        {
+                            if (isLgl && numFmtForLevel != "decimalZero")
+                                numFmtForLevel = "decimal";
+                        }
+                        if (languageCultureName != null && settings != null)
+                        {
+                            if (settings.ListItemTextImplementations.ContainsKey(languageCultureName))
+                            {
+                                var impl = settings.ListItemTextImplementations[languageCultureName];
+                                levelText = impl(languageCultureName, levelNumber, numFmtForLevel);
+                            }
+                        }
+                        if (levelText == null)
+                            levelText = ListItemTextGetter_Default.GetListItemText(
+                                languageCultureName,
+                                levelNumber,
+                                numFmtForLevel
+                            );
+                        return levelText;
                     }
-                }
-                if (levelText == null)
-                    levelText = ListItemTextGetter_Default.GetListItemText(languageCultureName, levelNumber, numFmtForLevel);
-                return levelText;
-            }).StringConcatenate();
+                )
+                .StringConcatenate();
             return listItem;
         }
 
@@ -1159,6 +1142,5 @@ namespace Clippit.Word
                 i = percentIndex + 2;
             }
         }
-
     }
 }

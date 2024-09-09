@@ -54,7 +54,8 @@ namespace Clippit
             WmlDocument source1,
             WmlDocument source2,
             WmlComparerSettings settings,
-            bool preProcessMarkupInOriginal)
+            bool preProcessMarkupInOriginal
+        )
         {
             if (preProcessMarkupInOriginal)
             {
@@ -170,16 +171,32 @@ namespace Clippit
             }
         }
 
-        private static void SaveDocumentsAfterProducingDocument(MemoryStream ms1, MemoryStream ms2, WmlComparerSettings settings)
+        private static void SaveDocumentsAfterProducingDocument(
+            MemoryStream ms1,
+            MemoryStream ms2,
+            WmlComparerSettings settings
+        )
         {
             if (SaveIntermediateFilesForDebugging && settings.DebugTempFileDi != null)
             {
-                SaveDocumentIfDesired(new WmlDocument("after1.docx", ms1), "Source1-Step5-AfterProducingDocument.docx", settings);
-                SaveDocumentIfDesired(new WmlDocument("after2.docx", ms2), "Source2-Step5-AfterProducingDocument.docx", settings);
+                SaveDocumentIfDesired(
+                    new WmlDocument("after1.docx", ms1),
+                    "Source1-Step5-AfterProducingDocument.docx",
+                    settings
+                );
+                SaveDocumentIfDesired(
+                    new WmlDocument("after2.docx", ms2),
+                    "Source2-Step5-AfterProducingDocument.docx",
+                    settings
+                );
             }
         }
 
-        private static void SaveCleanedDocuments(WmlDocument source1, WmlDocument producedDocument, WmlComparerSettings settings)
+        private static void SaveCleanedDocuments(
+            WmlDocument source1,
+            WmlDocument producedDocument,
+            WmlComparerSettings settings
+        )
         {
             if (SaveIntermediateFilesForDebugging && settings.DebugTempFileDi != null)
             {
@@ -214,10 +231,13 @@ namespace Clippit
         {
             if (node is XElement element)
             {
-                return new XElement(element.Name,
-                    element.Attributes().Where(a => a.Name.Namespace != PtOpenXml.pt &&
-                                                    !a.Name.LocalName.ToLower().Contains("rsid")),
-                    element.Nodes().Select(CleanPartTransform));
+                return new XElement(
+                    element.Name,
+                    element
+                        .Attributes()
+                        .Where(a => a.Name.Namespace != PtOpenXml.pt && !a.Name.LocalName.ToLower().Contains("rsid")),
+                    element.Nodes().Select(CleanPartTransform)
+                );
             }
 
             return node;

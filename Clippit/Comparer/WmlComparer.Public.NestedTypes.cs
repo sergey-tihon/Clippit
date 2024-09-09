@@ -23,7 +23,7 @@ namespace Clippit
         public enum WmlComparerRevisionType
         {
             Inserted,
-            Deleted
+            Deleted,
         }
     }
 }

@@ -70,7 +70,7 @@ namespace Clippit.PowerPoint
         public static PmlDocument BuildPresentation(List<SlideSource> sources)
         {
             using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument();
-            using (var output = streamDoc.GetPresentationDocument(new OpenSettings { AutoSave = false}))
+            using (var output = streamDoc.GetPresentationDocument(new OpenSettings { AutoSave = false }))
             {
                 BuildPresentation(sources, output);
                 output.PackageProperties.Modified = DateTime.Now;
@@ -106,8 +106,12 @@ namespace Clippit.PowerPoint
                 var slideDoc = streamDoc.GetModifiedPmlDocument();
                 if (!string.IsNullOrWhiteSpace(fileName))
                 {
-                    slideDoc.FileName =
-                        Regex.Replace(fileName, ".pptx", $"_{slideNumber + 1:000}.pptx", RegexOptions.IgnoreCase);
+                    slideDoc.FileName = Regex.Replace(
+                        fileName,
+                        ".pptx",
+                        $"_{slideNumber + 1:000}.pptx",
+                        RegexOptions.IgnoreCase
+                    );
                 }
 
                 yield return slideDoc;
@@ -132,9 +136,9 @@ namespace Clippit.PowerPoint
         private static void BuildPresentation(List<SlideSource> sources, PresentationDocument output)
         {
             using var fluentBuilder = new FluentPresentationBuilder(output);
-            
+
             var sourceNum = 0;
-            var openSettings = new OpenSettings {AutoSave = false};
+            var openSettings = new OpenSettings { AutoSave = false };
             foreach (var source in sources)
             {
                 using var streamDoc = new OpenXmlMemoryStreamDocument(source.PmlDocument);

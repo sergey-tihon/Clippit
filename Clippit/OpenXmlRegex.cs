@@ -13,35 +13,36 @@ namespace Clippit
     {
         private const string DontConsolidate = "DontConsolidate";
 
-        private static readonly HashSet<XName> RevTrackMarkupWithId = new()
-        {
-            W.cellDel,
-            W.cellIns,
-            W.cellMerge,
-            W.customXmlDelRangeEnd,
-            W.customXmlDelRangeStart,
-            W.customXmlInsRangeEnd,
-            W.customXmlInsRangeStart,
-            W.customXmlMoveFromRangeEnd,
-            W.customXmlMoveFromRangeStart,
-            W.customXmlMoveToRangeEnd,
-            W.customXmlMoveToRangeStart,
-            W.del,
-            W.ins,
-            W.moveFrom,
-            W.moveFromRangeEnd,
-            W.moveFromRangeStart,
-            W.moveTo,
-            W.moveToRangeEnd,
-            W.moveToRangeStart,
-            W.pPrChange,
-            W.rPrChange,
-            W.sectPrChange,
-            W.tblGridChange,
-            W.tblPrChange,
-            W.tblPrExChange,
-            W.tcPrChange
-        };
+        private static readonly HashSet<XName> RevTrackMarkupWithId =
+            new()
+            {
+                W.cellDel,
+                W.cellIns,
+                W.cellMerge,
+                W.customXmlDelRangeEnd,
+                W.customXmlDelRangeStart,
+                W.customXmlInsRangeEnd,
+                W.customXmlInsRangeStart,
+                W.customXmlMoveFromRangeEnd,
+                W.customXmlMoveFromRangeStart,
+                W.customXmlMoveToRangeEnd,
+                W.customXmlMoveToRangeStart,
+                W.del,
+                W.ins,
+                W.moveFrom,
+                W.moveFromRangeEnd,
+                W.moveFromRangeStart,
+                W.moveTo,
+                W.moveToRangeEnd,
+                W.moveToRangeStart,
+                W.pPrChange,
+                W.rPrChange,
+                W.sectPrChange,
+                W.tblGridChange,
+                W.tblPrChange,
+                W.tblPrExChange,
+                W.tcPrChange,
+            };
 
         public static int Match(IEnumerable<XElement> content, Regex regex)
         {
@@ -54,13 +55,20 @@ namespace Clippit
         /// </summary>
         public static int Match(IEnumerable<XElement> content, Regex regex, Action<XElement, Match> found)
         {
-            return ReplaceInternal(content, regex, null,
+            return ReplaceInternal(
+                content,
+                regex,
+                null,
                 (x, m) =>
                 {
-                    if (found != null) found.Invoke(x, m);
+                    if (found != null)
+                        found.Invoke(x, m);
                     return true;
                 },
-                false, null, true);
+                false,
+                null,
+                true
+            );
         }
 
         /// <summary>
@@ -74,8 +82,12 @@ namespace Clippit
         /// If replacement == "" && callback != null)
         ///     Then the callback can return true / false to indicate whether to delete or not
         /// </summary>
-        public static int Replace(IEnumerable<XElement> content, Regex regex, string replacement,
-            Func<XElement, Match, bool> doReplacement)
+        public static int Replace(
+            IEnumerable<XElement> content,
+            Regex regex,
+            string replacement,
+            Func<XElement, Match, bool> doReplacement
+        )
         {
             return ReplaceInternal(content, regex, replacement, doReplacement, false, null, true);
         }
@@ -83,8 +95,13 @@ namespace Clippit
         /// <summary>
         /// This overload enables not coalescing content, which is necessary for DocumentAssembler.
         /// </summary>
-        public static int Replace(IEnumerable<XElement> content, Regex regex, string replacement,
-            Func<XElement, Match, bool> doReplacement, bool coalesceContent)
+        public static int Replace(
+            IEnumerable<XElement> content,
+            Regex regex,
+            string replacement,
+            Func<XElement, Match, bool> doReplacement,
+            bool coalesceContent
+        )
         {
             return ReplaceInternal(content, regex, replacement, doReplacement, false, null, coalesceContent);
         }
@@ -104,18 +121,32 @@ namespace Clippit
         /// If trackRevisions == true for a PPTX
         ///     Then code throws an exception
         /// </summary>
-        public static int Replace(IEnumerable<XElement> content, Regex regex, string replacement,
-            Func<XElement, Match, bool> doReplacement, bool trackRevisions, string author)
+        public static int Replace(
+            IEnumerable<XElement> content,
+            Regex regex,
+            string replacement,
+            Func<XElement, Match, bool> doReplacement,
+            bool trackRevisions,
+            string author
+        )
         {
             return ReplaceInternal(content, regex, replacement, doReplacement, trackRevisions, author, true);
         }
 
-        private static int ReplaceInternal(IEnumerable<XElement> content, Regex regex, string replacement,
-            Func<XElement, Match, bool> callback, bool trackRevisions, string revisionTrackingAuthor,
-            bool coalesceContent)
+        private static int ReplaceInternal(
+            IEnumerable<XElement> content,
+            Regex regex,
+            string replacement,
+            Func<XElement, Match, bool> callback,
+            bool trackRevisions,
+            string revisionTrackingAuthor,
+            bool coalesceContent
+        )
         {
-            if (content == null) throw new ArgumentNullException(nameof(content));
-            if (regex == null) throw new ArgumentNullException(nameof(regex));
+            if (content == null)
+                throw new ArgumentNullException(nameof(content));
+            if (regex == null)
+                throw new ArgumentNullException(nameof(regex));
 
             IEnumerable<XElement> contentList = content as IList<XElement> ?? content.ToList();
 
@@ -131,38 +162,47 @@ namespace Clippit
                 var replInfo = new ReplaceInternalInfo { Count = 0 };
                 foreach (var c in contentList)
                 {
-                    var newC = (XElement) WmlSearchAndReplaceTransform(c, regex, replacement, callback, trackRevisions,
-                        revisionTrackingAuthor, replInfo, coalesceContent);
+                    var newC = (XElement)WmlSearchAndReplaceTransform(
+                        c,
+                        regex,
+                        replacement,
+                        callback,
+                        trackRevisions,
+                        revisionTrackingAuthor,
+                        replInfo,
+                        coalesceContent
+                    );
                     c.ReplaceNodes(newC.Nodes());
                 }
 
                 var root = contentList.First().AncestorsAndSelf().Last();
-                var nextId = new[] { 0 }
-                                 .Concat(root
-                                     .Descendants()
-                                     .Where(d => RevTrackMarkupWithId.Contains(d.Name))
-                                     .Attributes(W.id)
-                                     .Select(a => (int) a))
-                                 .Max() + 1;
-                var revTrackingWithoutId = root
-                    .DescendantsAndSelf()
+                var nextId =
+                    new[] { 0 }
+                        .Concat(
+                            root.Descendants()
+                                .Where(d => RevTrackMarkupWithId.Contains(d.Name))
+                                .Attributes(W.id)
+                                .Select(a => (int)a)
+                        )
+                        .Max() + 1;
+                var revTrackingWithoutId = root.DescendantsAndSelf()
                     .Where(d => RevTrackMarkupWithId.Contains(d.Name) && (d.Attribute(W.id) == null));
                 foreach (var item in revTrackingWithoutId)
                     item.Add(new XAttribute(W.id, nextId++));
 
-                var revTrackingWithDuplicateIds = root
-                    .DescendantsAndSelf()
+                var revTrackingWithDuplicateIds = root.DescendantsAndSelf()
                     .Where(d => RevTrackMarkupWithId.Contains(d.Name))
-                    .GroupBy(d => (int) d.Attribute(W.id))
+                    .GroupBy(d => (int)d.Attribute(W.id))
                     .Where(g => g.Count() > 1)
                     .ToList();
                 foreach (var group in revTrackingWithDuplicateIds)
-                    foreach (var gc in group.Skip(1))
-                    {
-                        var xAttribute = gc.Attribute(W.id);
-                        if (xAttribute != null) xAttribute.Value = nextId.ToString();
-                        nextId++;
-                    }
+                foreach (var gc in group.Skip(1))
+                {
+                    var xAttribute = gc.Attribute(W.id);
+                    if (xAttribute != null)
+                        xAttribute.Value = nextId.ToString();
+                    nextId++;
+                }
 
                 return replInfo.Count;
             }
@@ -175,7 +215,7 @@ namespace Clippit
                 var counter = new ReplaceInternalInfo { Count = 0 };
                 foreach (var c in contentList)
                 {
-                    var newC = (XElement) PmlSearchAndReplaceTransform(c, regex, replacement, callback, counter);
+                    var newC = (XElement)PmlSearchAndReplaceTransform(c, regex, replacement, callback, counter);
                     c.ReplaceNodes(newC.Nodes());
                 }
 
@@ -185,12 +225,20 @@ namespace Clippit
             return 0;
         }
 
-        private static object WmlSearchAndReplaceTransform(XNode node, Regex regex, string replacement,
-            Func<XElement, Match, bool> callback, bool trackRevisions, string revisionTrackingAuthor,
-            ReplaceInternalInfo replInfo, bool coalesceContent)
+        private static object WmlSearchAndReplaceTransform(
+            XNode node,
+            Regex regex,
+            string replacement,
+            Func<XElement, Match, bool> callback,
+            bool trackRevisions,
+            string revisionTrackingAuthor,
+            ReplaceInternalInfo replInfo,
+            bool coalesceContent
+        )
         {
             var element = node as XElement;
-            if (element == null) return node;
+            if (element == null)
+                return node;
 
             if (element.Name == W.p)
             {
@@ -203,22 +251,34 @@ namespace Clippit
                     .StringConcatenate();
                 if (regex.IsMatch(preliminaryContent))
                 {
-                    var paragraphWithSplitRuns = new XElement(W.p,
+                    var paragraphWithSplitRuns = new XElement(
+                        W.p,
                         paragraph.Attributes(),
-                        paragraph.Nodes().Select(n => WmlSearchAndReplaceTransform(n, regex, replacement, callback,
-                            trackRevisions, revisionTrackingAuthor, replInfo, coalesceContent)));
+                        paragraph
+                            .Nodes()
+                            .Select(n =>
+                                WmlSearchAndReplaceTransform(
+                                    n,
+                                    regex,
+                                    replacement,
+                                    callback,
+                                    trackRevisions,
+                                    revisionTrackingAuthor,
+                                    replInfo,
+                                    coalesceContent
+                                )
+                            )
+                    );
 
                     var runsTrimmed = paragraphWithSplitRuns
                         .DescendantsTrimmed(W.txbxContent)
                         .Where(d => d.Name == W.r && (d.Parent == null || d.Parent.Name != W.del));
 
-                    var charsAndRuns = runsTrimmed
-                        .Select(r => new { Ch = UnicodeMapper.RunToString(r), r })
-                        .ToList();
+                    var charsAndRuns = runsTrimmed.Select(r => new { Ch = UnicodeMapper.RunToString(r), r }).ToList();
 
                     var content = charsAndRuns
                         // each run should take some space in content to be able to be covered by regex and replaced/deleted
-                        .Select(t => string.IsNullOrEmpty(t.Ch) ? " " : t.Ch) 
+                        .Select(t => string.IsNullOrEmpty(t.Ch) ? " " : t.Ch)
                         .StringConcatenate();
                     var alignedRuns = charsAndRuns.Select(t => t.r).ToArray();
 
@@ -228,7 +288,8 @@ namespace Clippit
                     // Process Match
                     if (replacement == null)
                     {
-                        if (callback == null) return paragraph;
+                        if (callback == null)
+                            return paragraph;
 
                         foreach (var match in matchCollection.Cast<Match>())
                             callback(paragraph, match);
@@ -239,13 +300,12 @@ namespace Clippit
                     // Process Replace
                     foreach (var match in matchCollection.Cast<Match>())
                     {
-                        if (match.Length == 0) continue;
-                        if ((callback != null) && !callback(paragraph, match)) continue;
+                        if (match.Length == 0)
+                            continue;
+                        if ((callback != null) && !callback(paragraph, match))
+                            continue;
 
-                        var runCollection = alignedRuns
-                            .Skip(match.Index)
-                            .Take(match.Length)
-                            .ToList();
+                        var runCollection = alignedRuns.Skip(match.Index).Take(match.Length).ToList();
 
                         // uses the Skip / Take special semantics of array to implement efficient finding of sub array
 
@@ -262,12 +322,13 @@ namespace Clippit
                                 // will try to find the replacement string even though they
                                 // set coalesceContent to false.
                                 var newTextValue = match.Result(replacement);
-                                var newRuns = UnicodeMapper.StringToCoalescedRunList(newTextValue,
-                                    firstRunProperties);
-                                var newIns = new XElement(W.ins,
+                                var newRuns = UnicodeMapper.StringToCoalescedRunList(newTextValue, firstRunProperties);
+                                var newIns = new XElement(
+                                    W.ins,
                                     new XAttribute(W.author, revisionTrackingAuthor),
                                     new XAttribute(W.date, DateTime.UtcNow.ToString("s") + "Z"),
-                                    newRuns);
+                                    newRuns
+                                );
 
                                 if (firstRun.Parent != null && firstRun.Parent.Name == W.ins)
                                     firstRun.Parent.AddBeforeSelf(newIns);
@@ -284,8 +345,10 @@ namespace Clippit
                                     var grandParentParagraph = parentIns.Parent;
                                     if (grandParentParagraph != null)
                                     {
-                                        if ((string) parentIns.Attributes(W.author).FirstOrDefault() ==
-                                            revisionTrackingAuthor)
+                                        if (
+                                            (string)parentIns.Attributes(W.author).FirstOrDefault()
+                                            == revisionTrackingAuthor
+                                        )
                                         {
                                             var parentInsSiblings = grandParentParagraph
                                                 .Elements()
@@ -297,14 +360,23 @@ namespace Clippit
                                         {
                                             var parentInsSiblings = grandParentParagraph
                                                 .Elements()
-                                                .Select(c => c == parentIns
-                                                    ? new XElement(W.ins,
-                                                        parentIns.Attributes(),
-                                                        new XElement(W.del,
-                                                            new XAttribute(W.author, revisionTrackingAuthor),
-                                                            new XAttribute(W.date, DateTime.UtcNow.ToString("s") + "Z"),
-                                                            parentIns.Elements().Select(TransformToDelText)))
-                                                    : c)
+                                                .Select(c =>
+                                                    c == parentIns
+                                                        ? new XElement(
+                                                            W.ins,
+                                                            parentIns.Attributes(),
+                                                            new XElement(
+                                                                W.del,
+                                                                new XAttribute(W.author, revisionTrackingAuthor),
+                                                                new XAttribute(
+                                                                    W.date,
+                                                                    DateTime.UtcNow.ToString("s") + "Z"
+                                                                ),
+                                                                parentIns.Elements().Select(TransformToDelText)
+                                                            )
+                                                        )
+                                                        : c
+                                                )
                                                 .ToList();
                                             grandParentParagraph.ReplaceNodes(parentInsSiblings);
                                         }
@@ -312,10 +384,12 @@ namespace Clippit
                                 }
                                 else
                                 {
-                                    var delRun = new XElement(W.del,
+                                    var delRun = new XElement(
+                                        W.del,
                                         new XAttribute(W.author, revisionTrackingAuthor),
                                         new XAttribute(W.date, DateTime.UtcNow.ToString("s") + "Z"),
-                                        TransformToDelText(run));
+                                        TransformToDelText(run)
+                                    );
                                     run.ReplaceWith(delRun);
                                 }
                             }
@@ -332,8 +406,7 @@ namespace Clippit
                             // will try to find the replacement string even though they
                             // set coalesceContent to false.
                             var newTextValue = match.Result(replacement);
-                            var newRuns = UnicodeMapper.StringToCoalescedRunList(newTextValue,
-                                firstRunProperties);
+                            var newRuns = UnicodeMapper.StringToCoalescedRunList(newTextValue, firstRunProperties);
                             if (firstRun.Parent != null && firstRun.Parent.Name == W.ins)
                                 firstRun.Parent.ReplaceWith(newRuns);
                             else
@@ -346,23 +419,36 @@ namespace Clippit
                         : paragraphWithSplitRuns;
                 }
 
-                var newParagraph = new XElement(W.p,
+                var newParagraph = new XElement(
+                    W.p,
                     paragraph.Attributes(),
-                    paragraph.Nodes().Select(n =>
-                    {
-                        var e = n as XElement;
-                        if (e == null) return n;
+                    paragraph
+                        .Nodes()
+                        .Select(n =>
+                        {
+                            var e = n as XElement;
+                            if (e == null)
+                                return n;
 
-                        if (e.Name == W.pPr)
-                            return e;
-                        if (((e.Name == W.r) && e.Elements(W.t).Any()) || e.Elements(W.tab).Any())
-                            return e;
-                        if ((e.Name == W.ins) && e.Elements(W.r).Elements(W.t).Any())
-                            return e;
+                            if (e.Name == W.pPr)
+                                return e;
+                            if (((e.Name == W.r) && e.Elements(W.t).Any()) || e.Elements(W.tab).Any())
+                                return e;
+                            if ((e.Name == W.ins) && e.Elements(W.r).Elements(W.t).Any())
+                                return e;
 
-                        return WmlSearchAndReplaceTransform(e, regex, replacement, callback,
-                            trackRevisions, revisionTrackingAuthor, replInfo, coalesceContent);
-                    }));
+                            return WmlSearchAndReplaceTransform(
+                                e,
+                                regex,
+                                replacement,
+                                callback,
+                                trackRevisions,
+                                revisionTrackingAuthor,
+                                replInfo,
+                                coalesceContent
+                            );
+                        })
+                );
                 return coalesceContent
                     ? WordprocessingMLUtil.CoalesceAdjacentRunsWithIdenticalFormatting(newParagraph) // CoalesceContent(newParagraph)
                     : newParagraph;
@@ -372,8 +458,18 @@ namespace Clippit
             {
                 var collectionOfCollections = element
                     .Elements()
-                    .Select(n => WmlSearchAndReplaceTransform(n, regex, replacement, callback, trackRevisions,
-                        revisionTrackingAuthor, replInfo, coalesceContent))
+                    .Select(n =>
+                        WmlSearchAndReplaceTransform(
+                            n,
+                            regex,
+                            replacement,
+                            callback,
+                            trackRevisions,
+                            revisionTrackingAuthor,
+                            replInfo,
+                            coalesceContent
+                        )
+                    )
                     .ToList();
                 var collectionOfIns = collectionOfCollections
                     .Select(c =>
@@ -389,66 +485,84 @@ namespace Clippit
 
             if (element.Name == W.r)
             {
-                return element.Elements()
+                return element
+                    .Elements()
                     .Where(e => e.Name != W.rPr)
-                    .Select(e => e.Name == W.t
-                        ? ((string) e).Select(c =>
-                            new XElement(W.r,
+                    .Select(e =>
+                        e.Name == W.t
+                            ? ((string)e).Select(c => new XElement(
+                                W.r,
                                 element.Elements(W.rPr),
-                                new XElement(W.t, XmlUtil.GetXmlSpaceAttribute(c), c)))
-                        : new[] { new XElement(W.r, element.Elements(W.rPr), e) })
+                                new XElement(W.t, XmlUtil.GetXmlSpaceAttribute(c), c)
+                            ))
+                            : new[] { new XElement(W.r, element.Elements(W.rPr), e) }
+                    )
                     .SelectMany(t => t);
             }
 
-            return new XElement(element.Name,
+            return new XElement(
+                element.Name,
                 element.Attributes(),
-                element.Nodes()
-                    .Select(n => WmlSearchAndReplaceTransform(n, regex, replacement, callback, trackRevisions,
-                        revisionTrackingAuthor, replInfo, coalesceContent)));
+                element
+                    .Nodes()
+                    .Select(n =>
+                        WmlSearchAndReplaceTransform(
+                            n,
+                            regex,
+                            replacement,
+                            callback,
+                            trackRevisions,
+                            revisionTrackingAuthor,
+                            replInfo,
+                            coalesceContent
+                        )
+                    )
+            );
         }
 
         private static object TransformToDelText(XNode node)
         {
             var element = node as XElement;
-            if (element == null) return node;
+            if (element == null)
+                return node;
 
             if (element.Name == W.t)
-                return new XElement(W.delText,
-                    XmlUtil.GetXmlSpaceAttribute(element.Value),
-                    element.Value);
+                return new XElement(W.delText, XmlUtil.GetXmlSpaceAttribute(element.Value), element.Value);
 
-            return new XElement(element.Name,
-                element.Attributes(),
-                element.Nodes().Select(TransformToDelText));
+            return new XElement(element.Name, element.Attributes(), element.Nodes().Select(TransformToDelText));
         }
 
-        private static object PmlSearchAndReplaceTransform(XNode node, Regex regex, string replacement,
-            Func<XElement, Match, bool> callback, ReplaceInternalInfo counter)
+        private static object PmlSearchAndReplaceTransform(
+            XNode node,
+            Regex regex,
+            string replacement,
+            Func<XElement, Match, bool> callback,
+            ReplaceInternalInfo counter
+        )
         {
             var element = node as XElement;
-            if (element == null) return node;
+            if (element == null)
+                return node;
 
             if (element.Name == A.p)
             {
                 var paragraph = element;
-                var contents = element.Descendants(A.t).Select(t => (string) t).StringConcatenate();
+                var contents = element.Descendants(A.t).Select(t => (string)t).StringConcatenate();
                 if (!regex.IsMatch(contents))
                     return new XElement(element.Name, element.Attributes(), element.Nodes());
 
-                var paragraphWithSplitRuns = new XElement(A.p,
+                var paragraphWithSplitRuns = new XElement(
+                    A.p,
                     paragraph.Attributes(),
-                    paragraph.Nodes()
-                        .Select(n => PmlSearchAndReplaceTransform(n, regex, replacement, callback, counter)));
+                    paragraph
+                        .Nodes()
+                        .Select(n => PmlSearchAndReplaceTransform(n, regex, replacement, callback, counter))
+                );
 
-                var runsTrimmed = paragraphWithSplitRuns
-                    .Descendants(A.r)
-                    .ToList();
+                var runsTrimmed = paragraphWithSplitRuns.Descendants(A.r).ToList();
 
                 var charsAndRuns = runsTrimmed
-                    .Select(r =>
-                        r.Element(A.t) != null
-                            ? new { Ch = r.Element(A.t).Value, r }
-                            : new { Ch = "\x01", r })
+                    .Select(r => r.Element(A.t) != null ? new { Ch = r.Element(A.t).Value, r } : new { Ch = "\x01", r })
                     .ToList();
 
                 var content = charsAndRuns.Select(t => t.Ch).StringConcatenate();
@@ -465,12 +579,10 @@ namespace Clippit
                 {
                     foreach (var match in matchCollection.Cast<Match>())
                     {
-                        if ((callback != null) && !callback(paragraph, match)) continue;
+                        if ((callback != null) && !callback(paragraph, match))
+                            continue;
 
-                        var runCollection = alignedRuns
-                            .Skip(match.Index)
-                            .Take(match.Length)
-                            .ToList();
+                        var runCollection = alignedRuns.Skip(match.Index).Take(match.Length).ToList();
 
                         // uses the Skip / Take special semantics of array to implement efficient finding of sub array
 
@@ -485,9 +597,7 @@ namespace Clippit
                         // in LINQ to XML that uses snapshot semantics and removes every element from
                         // its parent.
 
-                        var newFirstRun = new XElement(A.r,
-                            firstRun.Element(A.rPr),
-                            new XElement(A.t, replacement));
+                        var newFirstRun = new XElement(A.r, firstRun.Element(A.rPr), new XElement(A.t, replacement));
 
                         // creates a new run with proper run properties
 
@@ -500,31 +610,30 @@ namespace Clippit
                     }
                     var paragraphWithReplacedRuns = paragraphWithSplitRuns;
 
-                    var groupedAdjacentRunsWithIdenticalFormatting =
-                        paragraphWithReplacedRuns
-                            .Elements()
-                            .GroupAdjacent(ce =>
-                            {
-                                if (ce.Name != A.r)
-                                    return DontConsolidate;
-                                if ((ce.Elements().Count(e => e.Name != A.rPr) != 1) || (ce.Element(A.t) == null))
-                                    return DontConsolidate;
+                    var groupedAdjacentRunsWithIdenticalFormatting = paragraphWithReplacedRuns
+                        .Elements()
+                        .GroupAdjacent(ce =>
+                        {
+                            if (ce.Name != A.r)
+                                return DontConsolidate;
+                            if ((ce.Elements().Count(e => e.Name != A.rPr) != 1) || (ce.Element(A.t) == null))
+                                return DontConsolidate;
 
-                                var rPr = ce.Element(A.rPr);
-                                return rPr == null ? "" : rPr.ToString(SaveOptions.None);
-                            });
-                    var paragraphWithConsolidatedRuns = new XElement(A.p,
+                            var rPr = ce.Element(A.rPr);
+                            return rPr == null ? "" : rPr.ToString(SaveOptions.None);
+                        });
+                    var paragraphWithConsolidatedRuns = new XElement(
+                        A.p,
                         groupedAdjacentRunsWithIdenticalFormatting.Select(g =>
                         {
                             if (g.Key == DontConsolidate)
-                                return (object) g;
+                                return (object)g;
 
                             var textValue = g.Select(r => r.Element(A.t).Value).StringConcatenate();
                             var xs = XmlUtil.GetXmlSpaceAttribute(textValue);
-                            return new XElement(A.r,
-                                g.First().Elements(A.rPr),
-                                new XElement(A.t, xs, textValue));
-                        }));
+                            return new XElement(A.r, g.First().Elements(A.rPr), new XElement(A.t, xs, textValue));
+                        })
+                    );
                     paragraph = paragraphWithConsolidatedRuns;
                 }
 
@@ -533,28 +642,31 @@ namespace Clippit
 
             if ((element.Name == A.r) && element.Elements(A.t).Any())
             {
-                return element.Elements()
+                return element
+                    .Elements()
                     .Where(e => e.Name != A.rPr)
                     .Select(e =>
                     {
                         if (e.Name == A.t)
                         {
-                            var s = (string) e;
-                            var collectionOfSubRuns = s.Select(c => new XElement(A.r,
+                            var s = (string)e;
+                            var collectionOfSubRuns = s.Select(c => new XElement(
+                                A.r,
                                 element.Elements(A.rPr),
-                                new XElement(A.t, XmlUtil.GetXmlSpaceAttribute(c), c)));
-                            return (object) collectionOfSubRuns;
+                                new XElement(A.t, XmlUtil.GetXmlSpaceAttribute(c), c)
+                            ));
+                            return (object)collectionOfSubRuns;
                         }
 
-                        return new XElement(A.r,
-                            element.Elements(A.rPr),
-                            e);
+                        return new XElement(A.r, element.Elements(A.rPr), e);
                     });
             }
 
-            return new XElement(element.Name,
+            return new XElement(
+                element.Name,
                 element.Attributes(),
-                element.Nodes().Select(n => PmlSearchAndReplaceTransform(n, regex, replacement, callback, counter)));
+                element.Nodes().Select(n => PmlSearchAndReplaceTransform(n, regex, replacement, callback, counter))
+            );
         }
 
         private class ReplaceInternalInfo

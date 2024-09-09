@@ -40,18 +40,18 @@ namespace Clippit.Tests.Common
         [Fact]
         public void CanStringifySpecialElements()
         {
-            Assert.Equal(UnicodeMapper.CarriageReturn,
-                UnicodeMapper.RunToString(new XElement(W.cr)).First());
-            Assert.Equal(UnicodeMapper.CarriageReturn,
-                UnicodeMapper.RunToString(new XElement(W.br)).First());
-            Assert.Equal(UnicodeMapper.FormFeed,
-                UnicodeMapper.RunToString(new XElement(W.br, new XAttribute(W.type, "page"))).First());
-            Assert.Equal(UnicodeMapper.NonBreakingHyphen,
-                UnicodeMapper.RunToString(new XElement(W.noBreakHyphen)).First());
-            Assert.Equal(UnicodeMapper.SoftHyphen,
-                UnicodeMapper.RunToString(new XElement(W.softHyphen)).First());
-            Assert.Equal(UnicodeMapper.HorizontalTabulation,
-                UnicodeMapper.RunToString(new XElement(W.tab)).First());
+            Assert.Equal(UnicodeMapper.CarriageReturn, UnicodeMapper.RunToString(new XElement(W.cr)).First());
+            Assert.Equal(UnicodeMapper.CarriageReturn, UnicodeMapper.RunToString(new XElement(W.br)).First());
+            Assert.Equal(
+                UnicodeMapper.FormFeed,
+                UnicodeMapper.RunToString(new XElement(W.br, new XAttribute(W.type, "page"))).First()
+            );
+            Assert.Equal(
+                UnicodeMapper.NonBreakingHyphen,
+                UnicodeMapper.RunToString(new XElement(W.noBreakHyphen)).First()
+            );
+            Assert.Equal(UnicodeMapper.SoftHyphen, UnicodeMapper.RunToString(new XElement(W.softHyphen)).First());
+            Assert.Equal(UnicodeMapper.HorizontalTabulation, UnicodeMapper.RunToString(new XElement(W.tab)).First());
         }
 
         [Fact]
@@ -89,27 +89,27 @@ namespace Clippit.Tests.Common
         [Fact]
         public void CanMapSymbols()
         {
-            var sym1 = new XElement(W.sym,
-                new XAttribute(W.font, "Wingdings"),
-                new XAttribute(W._char, "F028"));
+            var sym1 = new XElement(W.sym, new XAttribute(W.font, "Wingdings"), new XAttribute(W._char, "F028"));
             var charFromSym1 = UnicodeMapper.SymToChar(sym1);
             var symFromChar1 = UnicodeMapper.CharToRunChild(charFromSym1);
 
-            var sym2 = new XElement(W.sym,
-                new XAttribute(W._char, "F028"),
-                new XAttribute(W.font, "Wingdings"));
+            var sym2 = new XElement(W.sym, new XAttribute(W._char, "F028"), new XAttribute(W.font, "Wingdings"));
             var charFromSym2 = UnicodeMapper.SymToChar(sym2);
 
-            var sym3 = new XElement(W.sym,
+            var sym3 = new XElement(
+                W.sym,
                 new XAttribute(XNamespace.Xmlns + "w", W.w),
                 new XAttribute(W.font, "Wingdings"),
-                new XAttribute(W._char, "F028"));
+                new XAttribute(W._char, "F028")
+            );
             var charFromSym3 = UnicodeMapper.SymToChar(sym3);
 
-            var sym4 = new XElement(W.sym,
+            var sym4 = new XElement(
+                W.sym,
                 new XAttribute(XNamespace.Xmlns + "w", W.w),
                 new XAttribute(W.font, "Webdings"),
-                new XAttribute(W._char, "F028"));
+                new XAttribute(W._char, "F028")
+            );
             var charFromSym4 = UnicodeMapper.SymToChar(sym4);
             var symFromChar4 = UnicodeMapper.CharToRunChild(charFromSym4);
 

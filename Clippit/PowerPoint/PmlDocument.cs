@@ -7,7 +7,7 @@ namespace Clippit.PowerPoint;
 public partial class PmlDocument : OpenXmlPowerToolsDocument
 {
     private const string NotPresentationExceptionMessage = "The document is not a PresentationML document.";
-    
+
     public PmlDocument(OpenXmlPowerToolsDocument original)
         : base(original)
     {
@@ -53,15 +53,11 @@ public partial class PmlDocument : OpenXmlPowerToolsDocument
     }
 
     public PmlDocument(string fileName, MemoryStream memStream)
-        : base(fileName, memStream)
-    {
-    }
+        : base(fileName, memStream) { }
 
     public PmlDocument(string fileName, MemoryStream memStream, bool convertToTransitional)
-        : base(fileName, memStream, convertToTransitional)
-    {
-    }
-    
+        : base(fileName, memStream, convertToTransitional) { }
+
     public PmlDocument SearchAndReplace(string search, string replace, bool matchCase)
     {
         return TextReplacer.SearchAndReplace(this, search, replace, matchCase);

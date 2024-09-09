@@ -24,7 +24,7 @@ namespace Clippit
             public string RevisionHash { get; set; }
             public XElement[] Footnotes { get; set; }
             public XElement[] Endnotes { get; set; }
-            public string RevisionString { get; set; }// for debugging purposes only
+            public string RevisionString { get; set; } // for debugging purposes only
         }
 
         private class RecursionInfo

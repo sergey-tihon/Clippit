@@ -17,20 +17,25 @@ namespace Clippit.Tests.Word
 {
     public class WmlComparerTests2 : TestsBase
     {
-        public WmlComparerTests2(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public WmlComparerTests2(ITestOutputHelper log)
+            : base(log) { }
+
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public static bool m_OpenWord = false;
         public static bool m_OpenTempDirInExplorer = false;
+
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         [Theory]
         [InlineData("CZ-1000", "CZ/CZ001-Plain.docx", "CZ/CZ001-Plain-Mod.docx", 1)]
         [InlineData("CZ-1010", "CZ/CZ002-Multi-Paragraphs.docx", "CZ/CZ002-Multi-Paragraphs-Mod.docx", 1)]
         [InlineData("CZ-1020", "CZ/CZ003-Multi-Paragraphs.docx", "CZ/CZ003-Multi-Paragraphs-Mod.docx", 1)]
-        [InlineData("CZ-1030", "CZ/CZ004-Multi-Paragraphs-in-Cell.docx", "CZ/CZ004-Multi-Paragraphs-in-Cell-Mod.docx", 1)]
+        [InlineData(
+            "CZ-1030",
+            "CZ/CZ004-Multi-Paragraphs-in-Cell.docx",
+            "CZ/CZ004-Multi-Paragraphs-in-Cell-Mod.docx",
+            1
+        )]
         public void CZ001_CompareTrackedInPrev(string testId, string name1, string name2, int revisionCount)
         {
             // TODO: Do we need to keep the revision count parameter?
@@ -57,8 +62,12 @@ namespace Clippit.Tests.Word
                 var source1DocxForWord = new FileInfo(Path.Combine(sourceDir.FullName, name1));
                 var source2DocxForWord = new FileInfo(Path.Combine(sourceDir.FullName, name2));
 
-                var source1CopiedToDestDocxForWord = new FileInfo(Path.Combine(thisTestTempDir.FullName, source1Docx.Name.Replace(".docx", "-For-Word.docx")));
-                var source2CopiedToDestDocxForWord = new FileInfo(Path.Combine(thisTestTempDir.FullName, source2Docx.Name.Replace(".docx", "-For-Word.docx")));
+                var source1CopiedToDestDocxForWord = new FileInfo(
+                    Path.Combine(thisTestTempDir.FullName, source1Docx.Name.Replace(".docx", "-For-Word.docx"))
+                );
+                var source2CopiedToDestDocxForWord = new FileInfo(
+                    Path.Combine(thisTestTempDir.FullName, source2Docx.Name.Replace(".docx", "-For-Word.docx"))
+                );
                 if (!source1CopiedToDestDocxForWord.Exists)
                     File.Copy(source1Docx.FullName, source1CopiedToDestDocxForWord.FullName);
                 if (!source2CopiedToDestDocxForWord.Exists)
@@ -73,7 +82,9 @@ namespace Clippit.Tests.Word
 
             var before = source1CopiedToDestDocx.Name.Replace(".docx", "");
             var after = source2CopiedToDestDocx.Name.Replace(".docx", "");
-            var docxWithRevisionsFi = new FileInfo(Path.Combine(thisTestTempDir.FullName, before + "-COMPARE-" + after + ".docx"));
+            var docxWithRevisionsFi = new FileInfo(
+                Path.Combine(thisTestTempDir.FullName, before + "-COMPARE-" + after + ".docx")
+            );
 
             var source1Wml = new WmlDocument(source1CopiedToDestDocx.FullName);
             var source2Wml = new WmlDocument(source2CopiedToDestDocx.FullName);
@@ -91,7 +102,6 @@ namespace Clippit.Tests.Word
                     var errors = validator.Validate(wDoc).Where(e => !ExpectedErrors.Contains(e.Description));
                     if (errors.Any())
                     {
-
                         var ind = "  ";
                         var sb = new StringBuilder();
                         foreach (var err in errors)
@@ -924,7 +934,8 @@ namespace Clippit.Tests.Word
             }
         }
 
-        public static string[] ExpectedErrors = new string[] {
+        public static string[] ExpectedErrors = new string[]
+        {
             "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRow' attribute is not declared.",
             "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRow' attribute is not declared.",
             "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstColumn' attribute is not declared.",

@@ -140,7 +140,10 @@ namespace Clippit.Word
             return ConvertToHtml(document, htmlConverterSettings);
         }
 
-        public static XElement ConvertToHtml(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings htmlConverterSettings)
+        public static XElement ConvertToHtml(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings htmlConverterSettings
+        )
         {
             RevisionAccepter.AcceptRevisions(wordDoc);
             var simplifyMarkupSettings = new SimplifyMarkupSettings
@@ -169,15 +172,15 @@ namespace Clippit.Word
                 CreateHtmlConverterAnnotationAttributes = true,
                 OrderElementsPerStandard = false,
                 ListItemRetrieverSettings =
-                    htmlConverterSettings.ListItemImplementations == null ?
-                    new ListItemRetrieverSettings()
-                    {
-                        ListItemTextImplementations = ListItemRetrieverSettings.DefaultListItemTextImplementations,
-                    } :
-                    new ListItemRetrieverSettings()
-                    {
-                        ListItemTextImplementations = htmlConverterSettings.ListItemImplementations,
-                    },
+                    htmlConverterSettings.ListItemImplementations == null
+                        ? new ListItemRetrieverSettings()
+                        {
+                            ListItemTextImplementations = ListItemRetrieverSettings.DefaultListItemTextImplementations,
+                        }
+                        : new ListItemRetrieverSettings()
+                        {
+                            ListItemTextImplementations = htmlConverterSettings.ListItemImplementations,
+                        },
             };
 
             FormattingAssembler.AssembleFormatting(wordDoc, formattingAssemblerSettings);
@@ -190,8 +193,7 @@ namespace Clippit.Word
             FieldRetriever.AnnotateWithFieldInfo(wordDoc.MainDocumentPart);
             AnnotateForSections(wordDoc);
 
-            var xhtml = (XElement)ConvertToHtmlTransform(wordDoc, htmlConverterSettings,
-                rootElement, false, 0m);
+            var xhtml = (XElement)ConvertToHtmlTransform(wordDoc, htmlConverterSettings, rootElement, false, 0m);
 
             ReifyStylesAndClasses(htmlConverterSettings, xhtml);
 
@@ -226,11 +228,13 @@ namespace Clippit.Word
                     if (right != null)
                         right = new XElement(W.left, right.Attributes());
 
-                    var newTblBorders = new XElement(W.tblBorders,
+                    var newTblBorders = new XElement(
+                        W.tblBorders,
                         tblBorders.Element(W.top),
                         left,
                         tblBorders.Element(W.bottom),
-                        right);
+                        right
+                    );
                     tblBorders.ReplaceWith(newTblBorders);
                 }
 
@@ -247,11 +251,13 @@ namespace Clippit.Word
                         if (right != null)
                             right = new XElement(W.left, right.Attributes());
 
-                        var newTcBorders = new XElement(W.tcBorders,
+                        var newTcBorders = new XElement(
+                            W.tcBorders,
                             tcBorders.Element(W.top),
                             left,
                             tcBorders.Element(W.bottom),
-                            right);
+                            right
+                        );
                         tcBorders.ReplaceWith(newTcBorders);
                     }
                 }
@@ -265,19 +271,16 @@ namespace Clippit.Word
                 var usedCssClassNames = new HashSet<string>();
                 var elementsThatNeedClasses = xhtml
                     .DescendantsAndSelf()
-                    .Select(d => new
-                    {
-                        Element = d,
-                        Styles = d.Annotation<Dictionary<string, string>>(),
-                    })
+                    .Select(d => new { Element = d, Styles = d.Annotation<Dictionary<string, string>>() })
                     .Where(z => z.Styles != null);
                 var augmented = elementsThatNeedClasses
                     .Select(p => new
                     {
                         p.Element,
                         p.Styles,
-                        StylesString = p.Element.Name.LocalName + "|" + p.Styles.OrderBy(k => k.Key).Select(s =>
-                            $"{s.Key}: {s.Value};").StringConcatenate(),
+                        StylesString = p.Element.Name.LocalName
+                            + "|"
+                            + p.Styles.OrderBy(k => k.Key).Select(s => $"{s.Key}: {s.Value};").StringConcatenate(),
                     })
                     .GroupBy(p => p.StylesString)
                     .ToList();
@@ -294,16 +297,17 @@ namespace Clippit.Word
                         classNameToUse = htmlConverterSettings.CssClassPrefix + styles["PtStyleName"];
                         if (usedCssClassNames.Contains(classNameToUse))
                         {
-                            classNameToUse = htmlConverterSettings.CssClassPrefix +
-                                styles["PtStyleName"] + "-" +
-                                classCounter.ToString().Substring(1);
+                            classNameToUse =
+                                htmlConverterSettings.CssClassPrefix
+                                + styles["PtStyleName"]
+                                + "-"
+                                + classCounter.ToString().Substring(1);
                             classCounter++;
                         }
                     }
                     else
                     {
-                        classNameToUse = htmlConverterSettings.CssClassPrefix +
-                            classCounter.ToString().Substring(1);
+                        classNameToUse = htmlConverterSettings.CssClassPrefix + classCounter.ToString().Substring(1);
                         classCounter++;
                     }
                     usedCssClassNames.Add(classNameToUse);
@@ -333,8 +337,7 @@ namespace Clippit.Word
                     var style = d.Annotation<Dictionary<string, string>>();
                     if (style == null)
                         continue;
-                    var styleValue =
-                        style
+                    var styleValue = style
                         .Where(p => p.Key != "PtStyleName")
                         .OrderBy(p => p.Key)
                         .Select(e => $"{e.Key}: {e.Value};")
@@ -350,9 +353,7 @@ namespace Clippit.Word
 
         private static void SetStyleElementValue(XElement xhtml, string styleValue)
         {
-            var styleElement = xhtml
-                .Descendants(Xhtml.style)
-                .FirstOrDefault();
+            var styleElement = xhtml.Descendants(Xhtml.style).FirstOrDefault();
             if (styleElement != null)
                 styleElement.Value = styleValue;
             else
@@ -364,13 +365,17 @@ namespace Clippit.Word
             }
         }
 
-        private static object ConvertToHtmlTransform(WordprocessingDocument wordDoc,
-            WmlToHtmlConverterSettings settings, XNode node,
+        private static object ConvertToHtmlTransform(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            XNode node,
             bool suppressTrailingWhiteSpace,
-            decimal currentMarginLeft)
+            decimal currentMarginLeft
+        )
         {
             var element = node as XElement;
-            if (element == null) return null;
+            if (element == null)
+                return null;
 
             // Transform the w:document element to the XHTML h:html element.
             // The h:head element is laid out based on the W3C's recommended layout, i.e.,
@@ -378,17 +383,24 @@ namespace Clippit.Word
             // there but possibly empty), and other meta tags.
             if (element.Name == W.document)
             {
-                return new XElement(Xhtml.html,
-                    new XElement(Xhtml.head,
+                return new XElement(
+                    Xhtml.html,
+                    new XElement(
+                        Xhtml.head,
                         new XElement(Xhtml.meta, new XAttribute("charset", "UTF-8")),
                         settings.PageTitle != null
                             ? new XElement(Xhtml.title, new XText(settings.PageTitle))
                             : new XElement(Xhtml.title, new XText(string.Empty)),
-                        new XElement(Xhtml.meta,
+                        new XElement(
+                            Xhtml.meta,
                             new XAttribute("name", "Generator"),
-                            new XAttribute("content", "PowerTools for Open XML"))),
-                    element.Elements()
-                        .Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, currentMarginLeft)));
+                            new XAttribute("content", "PowerTools for Open XML")
+                        )
+                    ),
+                    element
+                        .Elements()
+                        .Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, currentMarginLeft))
+                );
             }
 
             // Transform the w:body element to the XHTML h:body element.
@@ -409,22 +421,27 @@ namespace Clippit.Word
             {
                 try
                 {
-                    var a = new XElement(Xhtml.a,
-                        new XAttribute("href",
-                            wordDoc.MainDocumentPart
-                                .HyperlinkRelationships
-                                .First(x => x.Id == (string)element.Attribute(R.id))
+                    var a = new XElement(
+                        Xhtml.a,
+                        new XAttribute(
+                            "href",
+                            wordDoc
+                                .MainDocumentPart.HyperlinkRelationships.First(x =>
+                                    x.Id == (string)element.Attribute(R.id)
+                                )
                                 .Uri
-                            ),
+                        ),
                         element.Elements(W.r).Select(run => ConvertRun(wordDoc, settings, run))
-                        );
+                    );
                     if (!a.Nodes().Any())
                         a.Add(new XText(""));
                     return a;
                 }
                 catch (UriFormatException)
                 {
-                    return element.Elements().Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, currentMarginLeft));
+                    return element
+                        .Elements()
+                        .Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, currentMarginLeft));
                 }
             }
 
@@ -522,12 +539,18 @@ namespace Clippit.Word
             return null;
         }
 
-        private static object ProcessHyperlinkToBookmark(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings settings, XElement element)
+        private static object ProcessHyperlinkToBookmark(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            XElement element
+        )
         {
             var style = new Dictionary<string, string>();
-            var a = new XElement(Xhtml.a,
-                new XAttribute("href", "#" + (string) element.Attribute(W.anchor)),
-                element.Elements(W.r).Select(run => ConvertRun(wordDoc, settings, run)));
+            var a = new XElement(
+                Xhtml.a,
+                new XAttribute("href", "#" + (string)element.Attribute(W.anchor)),
+                element.Elements(W.r).Select(run => ConvertRun(wordDoc, settings, run))
+            );
             if (!a.Nodes().Any())
                 a.Add(new XText(""));
             style.Add("text-decoration", "none");
@@ -537,13 +560,12 @@ namespace Clippit.Word
 
         private static object ProcessBookmarkStart(XElement element)
         {
-            var name = (string) element.Attribute(W.name);
-            if (name == null) return null;
+            var name = (string)element.Attribute(W.name);
+            if (name == null)
+                return null;
 
             var style = new Dictionary<string, string>();
-            var a = new XElement(Xhtml.a,
-                new XAttribute("id", name),
-                new XText(""));
+            var a = new XElement(Xhtml.a, new XAttribute("id", name), new XText(""));
             if (!a.Nodes().Any())
                 a.Add(new XText(""));
             style.Add("text-decoration", "none");
@@ -554,10 +576,11 @@ namespace Clippit.Word
         private static object ProcessTab(XElement element)
         {
             var tabWidthAtt = element.Attribute(PtOpenXml.TabWidth);
-            if (tabWidthAtt == null) return null;
+            if (tabWidthAtt == null)
+                return null;
 
-            var leader = (string) element.Attribute(PtOpenXml.Leader);
-            var tabWidth = (decimal) tabWidthAtt;
+            var leader = (string)element.Attribute(PtOpenXml.Leader);
+            var tabWidth = (decimal)tabWidthAtt;
             var style = new Dictionary<string, string>();
             XElement span;
             if (leader != null)
@@ -567,39 +590,46 @@ namespace Clippit.Word
                     "hyphen" => "-",
                     "dot" => ".",
                     "underscore" => "_",
-                    _ => "."
+                    _ => ".",
                 };
 
                 var runContainingTabToReplace = element.Ancestors(W.r).First();
-                var fontNameAtt = runContainingTabToReplace.Attribute(PtOpenXml.pt + "FontName") ??
-                                  runContainingTabToReplace.Ancestors(W.p).First().Attribute(PtOpenXml.pt + "FontName");
+                var fontNameAtt =
+                    runContainingTabToReplace.Attribute(PtOpenXml.pt + "FontName")
+                    ?? runContainingTabToReplace.Ancestors(W.p).First().Attribute(PtOpenXml.pt + "FontName");
 
-                var dummyRun = new XElement(W.r,
+                var dummyRun = new XElement(
+                    W.r,
                     fontNameAtt,
                     runContainingTabToReplace.Elements(W.rPr),
-                    new XElement(W.t, leaderChar));
+                    new XElement(W.t, leaderChar)
+                );
 
                 var widthOfLeaderChar = WordprocessingMLUtil.CalcWidthOfRunInTwips(dummyRun);
 
                 var forceArial = false;
                 if (widthOfLeaderChar == 0)
                 {
-                    dummyRun = new XElement(W.r,
+                    dummyRun = new XElement(
+                        W.r,
                         new XAttribute(PtOpenXml.FontName, "Arial"),
                         runContainingTabToReplace.Elements(W.rPr),
-                        new XElement(W.t, leaderChar));
+                        new XElement(W.t, leaderChar)
+                    );
                     widthOfLeaderChar = WordprocessingMLUtil.CalcWidthOfRunInTwips(dummyRun);
                     forceArial = true;
                 }
 
                 if (widthOfLeaderChar != 0)
                 {
-                    var numberOfLeaderChars = (int) (Math.Floor((tabWidth*1440)/widthOfLeaderChar));
+                    var numberOfLeaderChars = (int)(Math.Floor((tabWidth * 1440) / widthOfLeaderChar));
                     if (numberOfLeaderChars < 0)
                         numberOfLeaderChars = 0;
-                    span = new XElement(Xhtml.span,
+                    span = new XElement(
+                        Xhtml.span,
                         new XAttribute(XNamespace.Xml + "space", "preserve"),
-                        " " + "".PadRight(numberOfLeaderChars, leaderChar[0]) + " ");
+                        " " + "".PadRight(numberOfLeaderChars, leaderChar[0]) + " "
+                    );
                     style.Add("margin", "0 0 0 0");
                     style.Add("padding", "0 0 0 0");
                     style.Add("width", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", tabWidth));
@@ -648,39 +678,45 @@ namespace Clippit.Word
         private static object ProcessBreak(XElement element)
         {
             XElement span = null;
-            var tabWidth = (decimal?) element.Attribute(PtOpenXml.TabWidth);
+            var tabWidth = (decimal?)element.Attribute(PtOpenXml.TabWidth);
             if (tabWidth != null)
             {
                 span = new XElement(Xhtml.span);
-                span.AddAnnotation(new Dictionary<string, string>
-                {
-                    { "margin", string.Format(NumberFormatInfo.InvariantInfo, "0 0 0 {0:0.00}in", tabWidth) },
-                    { "padding", "0 0 0 0" }
-                });
+                span.AddAnnotation(
+                    new Dictionary<string, string>
+                    {
+                        { "margin", string.Format(NumberFormatInfo.InvariantInfo, "0 0 0 {0:0.00}in", tabWidth) },
+                        { "padding", "0 0 0 0" },
+                    }
+                );
             }
 
             var paragraph = element.Ancestors(W.p).FirstOrDefault();
-            var isBidi = paragraph != null &&
-                         paragraph.Elements(W.pPr).Elements(W.bidi).Any(b => b.Attribute(W.val) == null ||
-                                                                             b.Attribute(W.val).ToBoolean() == true);
+            var isBidi =
+                paragraph != null
+                && paragraph
+                    .Elements(W.pPr)
+                    .Elements(W.bidi)
+                    .Any(b => b.Attribute(W.val) == null || b.Attribute(W.val).ToBoolean() == true);
             var zeroWidthChar = isBidi ? new XEntity("#x200f") : new XEntity("#x200e");
 
-            return new object[]
-            {
-                new XElement(Xhtml.br),
-                zeroWidthChar,
-                span,
-            };
+            return new object[] { new XElement(Xhtml.br), zeroWidthChar, span };
         }
 
-        private static object ProcessContentControl(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings settings,
-            XElement element, decimal currentMarginLeft)
+        private static object ProcessContentControl(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            XElement element,
+            decimal currentMarginLeft
+        )
         {
             var relevantAncestors = element.Ancestors().TakeWhile(a => a.Name != W.txbxContent);
             var isRunLevelContentControl = relevantAncestors.Any(a => a.Name == W.p);
             if (isRunLevelContentControl)
             {
-                return element.Elements(W.sdtContent).Elements()
+                return element
+                    .Elements(W.sdtContent)
+                    .Elements()
                     .Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, currentMarginLeft))
                     .ToList();
             }
@@ -692,18 +728,31 @@ namespace Clippit.Word
         // transformed to h:span elements rather than h:p elements and added to
         // the element (e.g., h:h2) created from the w:p element having the (first)
         // style separator (i.e., a w:specVanish element).
-        private static object ProcessParagraph(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings settings,
-            XElement element, bool suppressTrailingWhiteSpace, decimal currentMarginLeft)
+        private static object ProcessParagraph(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            XElement element,
+            bool suppressTrailingWhiteSpace,
+            decimal currentMarginLeft
+        )
         {
             // Ignore this paragraph if the previous paragraph has a style separator.
             // We have already transformed this one together with the previous one.
             var previousParagraph = element.ElementsBeforeSelf(W.p).LastOrDefault();
-            if (HasStyleSeparator(previousParagraph)) return null;
+            if (HasStyleSeparator(previousParagraph))
+                return null;
 
             var elementName = GetParagraphElementName(element, wordDoc);
             var isBidi = IsBidi(element);
-            var paragraph = (XElement) ConvertParagraph(wordDoc, settings, element, elementName,
-                suppressTrailingWhiteSpace, currentMarginLeft, isBidi);
+            var paragraph = (XElement)ConvertParagraph(
+                wordDoc,
+                settings,
+                element,
+                elementName,
+                suppressTrailingWhiteSpace,
+                currentMarginLeft,
+                isBidi
+            );
 
             // The paragraph conversion might have created empty spans.
             // These can and should be removed because empty spans are
@@ -713,21 +762,37 @@ namespace Clippit.Word
             foreach (var span in paragraph.Elements(Xhtml.span).ToList())
             {
                 var v = span.Value;
-                if (v.Length > 0 && (char.IsWhiteSpace(v[0]) || char.IsWhiteSpace(v[v.Length - 1])) && span.Attribute(XNamespace.Xml + "space") == null)
+                if (
+                    v.Length > 0
+                    && (char.IsWhiteSpace(v[0]) || char.IsWhiteSpace(v[v.Length - 1]))
+                    && span.Attribute(XNamespace.Xml + "space") == null
+                )
                     span.Add(new XAttribute(XNamespace.Xml + "space", "preserve"));
             }
 
             while (HasStyleSeparator(element))
             {
                 element = element.ElementsAfterSelf(W.p).FirstOrDefault();
-                if (element == null) break;
+                if (element == null)
+                    break;
 
                 elementName = Xhtml.span;
                 isBidi = IsBidi(element);
-                var span = (XElement)ConvertParagraph(wordDoc, settings, element, elementName,
-                    suppressTrailingWhiteSpace, currentMarginLeft, isBidi);
+                var span = (XElement)ConvertParagraph(
+                    wordDoc,
+                    settings,
+                    element,
+                    elementName,
+                    suppressTrailingWhiteSpace,
+                    currentMarginLeft,
+                    isBidi
+                );
                 var v = span.Value;
-                if (v.Length > 0 && (char.IsWhiteSpace(v[0]) || char.IsWhiteSpace(v[v.Length - 1])) && span.Attribute(XNamespace.Xml + "space") == null)
+                if (
+                    v.Length > 0
+                    && (char.IsWhiteSpace(v[0]) || char.IsWhiteSpace(v[v.Length - 1]))
+                    && span.Attribute(XNamespace.Xml + "space") == null
+                )
                     span.Add(new XAttribute(XNamespace.Xml + "space", "preserve"));
                 paragraph.Add(span);
             }
@@ -735,7 +800,12 @@ namespace Clippit.Word
             return paragraph;
         }
 
-        private static object ProcessTable(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings settings, XElement element, decimal currentMarginLeft)
+        private static object ProcessTable(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            XElement element,
+            decimal currentMarginLeft
+        )
         {
             var style = new Dictionary<string, string>();
             style.AddIfMissing("border-collapse", "collapse");
@@ -762,23 +832,25 @@ namespace Clippit.Word
                         var width = (decimal?)tblInd.Attribute(W._w);
                         if (width != null)
                         {
-                            style.AddIfMissing("margin-left",
-                                width > 0m
-                                    ? string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", width / 20m)
-                                    : "0");
+                            style.AddIfMissing(
+                                "margin-left",
+                                width > 0m ? string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", width / 20m) : "0"
+                            );
                         }
                     }
                 }
             }
             var tableDirection = bidiVisual != null ? new XAttribute("dir", "rtl") : new XAttribute("dir", "ltr");
             style.AddIfMissing("margin-bottom", ".001pt");
-            var table = new XElement(Xhtml.table,
+            var table = new XElement(
+                Xhtml.table,
                 // TODO: Revisit and make sure the omission is covered by appropriate CSS.
                 // new XAttribute("border", "1"),
                 // new XAttribute("cellspacing", 0),
                 // new XAttribute("cellpadding", 0),
                 tableDirection,
-                element.Elements().Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, currentMarginLeft)));
+                element.Elements().Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, currentMarginLeft))
+            );
             table.AddAnnotation(style);
             var jc = (string)element.Elements(W.tblPr).Elements(W.jc).Attributes(W.val).FirstOrDefault() ?? "left";
             XAttribute dir = null;
@@ -791,22 +863,23 @@ namespace Clippit.Word
                     "left" => new XAttribute("align", "right"),
                     "right" => new XAttribute("align", "left"),
                     "center" => new XAttribute("align", "center"),
-                    _ => jcToUse
+                    _ => jcToUse,
                 };
             }
             else
             {
                 jcToUse = new XAttribute("align", jc);
             }
-            var tableDiv = new XElement(Xhtml.div,
-                dir,
-                jcToUse,
-                table);
+            var tableDiv = new XElement(Xhtml.div, dir, jcToUse, table);
             return tableDiv;
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-        private static object ProcessTableCell(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings settings, XElement element)
+        private static object ProcessTableCell(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            XElement element
+        )
         {
             var style = new Dictionary<string, string>();
             XAttribute colSpan = null;
@@ -815,7 +888,7 @@ namespace Clippit.Word
             var tcPr = element.Element(W.tcPr);
             if (tcPr != null)
             {
-                if ((string) tcPr.Elements(W.vMerge).Attributes(W.val).FirstOrDefault() == "restart")
+                if ((string)tcPr.Elements(W.vMerge).Attributes(W.val).FirstOrDefault() == "restart")
                 {
                     var currentRow = element.Parent.ElementsBeforeSelf(W.tr).Count();
                     var currentCell = element.ElementsBeforeSelf(W.tc).Count();
@@ -832,7 +905,10 @@ namespace Clippit.Word
                             break;
                         if (cell2.Elements(W.tcPr).Elements(W.vMerge).FirstOrDefault() == null)
                             break;
-                        if ((string) cell2.Elements(W.tcPr).Elements(W.vMerge).Attributes(W.val).FirstOrDefault() == "restart")
+                        if (
+                            (string)cell2.Elements(W.tcPr).Elements(W.vMerge).Attributes(W.val).FirstOrDefault()
+                            == "restart"
+                        )
                             break;
                         currentRow += 1;
                         rowSpanCount += 1;
@@ -840,13 +916,15 @@ namespace Clippit.Word
                     rowSpan = new XAttribute("rowspan", rowSpanCount);
                 }
 
-                if (tcPr.Element(W.vMerge) != null &&
-                    (string) tcPr.Elements(W.vMerge).Attributes(W.val).FirstOrDefault() != "restart")
+                if (
+                    tcPr.Element(W.vMerge) != null
+                    && (string)tcPr.Elements(W.vMerge).Attributes(W.val).FirstOrDefault() != "restart"
+                )
                     return null;
 
                 if (tcPr.Element(W.vAlign) != null)
                 {
-                    var vAlignVal = (string) tcPr.Elements(W.vAlign).Attributes(W.val).FirstOrDefault();
+                    var vAlignVal = (string)tcPr.Elements(W.vAlign).Attributes(W.val).FirstOrDefault();
                     if (vAlignVal == "top")
                         style.AddIfMissing("vertical-align", "top");
                     else if (vAlignVal == "center")
@@ -858,15 +936,15 @@ namespace Clippit.Word
                 }
                 style.AddIfMissing("vertical-align", "top");
 
-                if ((string) tcPr.Elements(W.tcW).Attributes(W.type).FirstOrDefault() == "dxa")
+                if ((string)tcPr.Elements(W.tcW).Attributes(W.type).FirstOrDefault() == "dxa")
                 {
-                    decimal width = (int) tcPr.Elements(W.tcW).Attributes(W._w).FirstOrDefault();
-                    style.AddIfMissing("width", string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", width/20m));
+                    decimal width = (int)tcPr.Elements(W.tcW).Attributes(W._w).FirstOrDefault();
+                    style.AddIfMissing("width", string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", width / 20m));
                 }
-                if ((string) tcPr.Elements(W.tcW).Attributes(W.type).FirstOrDefault() == "pct")
+                if ((string)tcPr.Elements(W.tcW).Attributes(W.type).FirstOrDefault() == "pct")
                 {
-                    decimal width = (int) tcPr.Elements(W.tcW).Attributes(W._w).FirstOrDefault();
-                    style.AddIfMissing("width", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}%", width/50m));
+                    decimal width = (int)tcPr.Elements(W.tcW).Attributes(W._w).FirstOrDefault();
+                    style.AddIfMissing("width", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}%", width / 50m));
                 }
 
                 var tcBorders = tcPr.Element(W.tcBorders);
@@ -877,31 +955,41 @@ namespace Clippit.Word
 
                 CreateStyleFromShd(style, tcPr.Element(W.shd));
 
-                var gridSpan = tcPr.Elements(W.gridSpan).Attributes(W.val).Select(a => (int?) a).FirstOrDefault();
+                var gridSpan = tcPr.Elements(W.gridSpan).Attributes(W.val).Select(a => (int?)a).FirstOrDefault();
                 if (gridSpan != null)
-                    colSpan = new XAttribute("colspan", (int) gridSpan);
+                    colSpan = new XAttribute("colspan", (int)gridSpan);
             }
             style.AddIfMissing("padding-top", "0");
             style.AddIfMissing("padding-bottom", "0");
 
-            var cell = new XElement(Xhtml.td,
+            var cell = new XElement(
+                Xhtml.td,
                 rowSpan,
                 colSpan,
-                CreateBorderDivs(wordDoc, settings, element.Elements()));
+                CreateBorderDivs(wordDoc, settings, element.Elements())
+            );
             cell.AddAnnotation(style);
             return cell;
         }
 
-        private static object ProcessTableRow(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings settings, XElement element,
-            decimal currentMarginLeft)
+        private static object ProcessTableRow(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            XElement element,
+            decimal currentMarginLeft
+        )
         {
             var style = new Dictionary<string, string>();
-            var trHeight = (int?) element.Elements(W.trPr).Elements(W.trHeight).Attributes(W.val).FirstOrDefault();
+            var trHeight = (int?)element.Elements(W.trPr).Elements(W.trHeight).Attributes(W.val).FirstOrDefault();
             if (trHeight != null)
-                style.AddIfMissing("height",
-                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", (decimal) trHeight/1440m));
-            var htmlRow = new XElement(Xhtml.tr,
-                element.Elements().Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, currentMarginLeft)));
+                style.AddIfMissing(
+                    "height",
+                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", (decimal)trHeight / 1440m)
+                );
+            var htmlRow = new XElement(
+                Xhtml.tr,
+                element.Elements().Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, currentMarginLeft))
+            );
             if (style.Any())
                 htmlRow.AddAnnotation(style);
             return htmlRow;
@@ -924,14 +1012,15 @@ namespace Clippit.Word
         {
             var elementName = Xhtml.p;
 
-            var styleId = (string) element.Elements(W.pPr).Elements(W.pStyle).Attributes(W.val).FirstOrDefault();
-            if (styleId == null) return elementName;
+            var styleId = (string)element.Elements(W.pPr).Elements(W.pStyle).Attributes(W.val).FirstOrDefault();
+            if (styleId == null)
+                return elementName;
 
             var style = GetStyle(styleId, wordDoc);
-            if (style == null) return elementName;
+            if (style == null)
+                return elementName;
 
-            var outlineLevel =
-                (int?) style.Elements(W.pPr).Elements(W.outlineLvl).Attributes(W.val).FirstOrDefault();
+            var outlineLevel = (int?)style.Elements(W.pPr).Elements(W.outlineLvl).Attributes(W.val).FirstOrDefault();
             if (outlineLevel != null && outlineLevel <= 5)
             {
                 elementName = Xhtml.xhtml + $"h{outlineLevel + 1}";
@@ -943,52 +1032,58 @@ namespace Clippit.Word
         private static XElement GetStyle(string styleId, WordprocessingDocument wordDoc)
         {
             var stylesPart = wordDoc.MainDocumentPart.StyleDefinitionsPart;
-            if (stylesPart == null) return null;
+            if (stylesPart == null)
+                return null;
 
             var styles = stylesPart.GetXDocument().Root;
             return styles != null
-                ? styles.Elements(W.style).FirstOrDefault(s => (string) s.Attribute(W.styleId) == styleId)
+                ? styles.Elements(W.style).FirstOrDefault(s => (string)s.Attribute(W.styleId) == styleId)
                 : null;
         }
 
-        private static object CreateSectionDivs(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings settings, XElement element)
+        private static object CreateSectionDivs(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            XElement element
+        )
         {
             // note: when building a paging html converter, need to attend to new sections with page breaks here.
             // This code conflates adjacent sections if they have identical formatting, which is not an issue
             // for the non-paging transform.
             var groupedIntoDivs = element
                 .Elements()
-                .GroupAdjacent(e => {
+                .GroupAdjacent(e =>
+                {
                     var sectAnnotation = e.Annotation<SectionAnnotation>();
                     return sectAnnotation != null ? sectAnnotation.SectionElement.ToString() : "";
                 });
 
             // note: when creating a paging html converter, need to pay attention to w:rtlGutter element.
-            var divList = groupedIntoDivs
-                .Select(g =>
+            var divList = groupedIntoDivs.Select(g =>
+            {
+                var sectPr = g.First().Annotation<SectionAnnotation>();
+                XElement bidi = null;
+                if (sectPr != null)
                 {
-                    var sectPr = g.First().Annotation<SectionAnnotation>();
-                    XElement bidi = null;
-                    if (sectPr != null)
-                    {
-                        bidi = sectPr
-                            .SectionElement
-                            .Elements(W.bidi)
-                            .FirstOrDefault(b => b.Attribute(W.val) == null || b.Attribute(W.val).ToBoolean() == true);
-                    }
-                    if (sectPr == null || bidi == null)
-                    {
-                        var div = new XElement(Xhtml.div, CreateBorderDivs(wordDoc, settings, g));
-                        return div;
-                    }
-                    else
-                    {
-                        var div = new XElement(Xhtml.div,
-                            new XAttribute("dir", "rtl"),
-                            CreateBorderDivs(wordDoc, settings, g));
-                        return div;
-                    }
-                });
+                    bidi = sectPr
+                        .SectionElement.Elements(W.bidi)
+                        .FirstOrDefault(b => b.Attribute(W.val) == null || b.Attribute(W.val).ToBoolean() == true);
+                }
+                if (sectPr == null || bidi == null)
+                {
+                    var div = new XElement(Xhtml.div, CreateBorderDivs(wordDoc, settings, g));
+                    return div;
+                }
+                else
+                {
+                    var div = new XElement(
+                        Xhtml.div,
+                        new XAttribute("dir", "rtl"),
+                        CreateBorderDivs(wordDoc, settings, g)
+                    );
+                    return div;
+                }
+            });
             return divList;
         }
 
@@ -1048,23 +1143,38 @@ namespace Clippit.Word
          *
          */
 
-        private static object ConvertParagraph(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings settings,
-            XElement paragraph, XName elementName, bool suppressTrailingWhiteSpace, decimal currentMarginLeft, bool isBidi)
+        private static object ConvertParagraph(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            XElement paragraph,
+            XName elementName,
+            bool suppressTrailingWhiteSpace,
+            decimal currentMarginLeft,
+            bool isBidi
+        )
         {
-            var style = DefineParagraphStyle(paragraph, elementName, suppressTrailingWhiteSpace, currentMarginLeft, isBidi);
+            var style = DefineParagraphStyle(
+                paragraph,
+                elementName,
+                suppressTrailingWhiteSpace,
+                currentMarginLeft,
+                isBidi
+            );
             var rtl = isBidi ? new XAttribute("dir", "rtl") : new XAttribute("dir", "ltr");
             var firstMark = isBidi ? new XEntity("#x200f") : null;
 
             // Analyze initial runs to see whether we have a tab, in which case we will render
             // a span with a defined width and ignore the tab rather than rendering the text
             // preceding the tab and the tab as a span with a computed width.
-            var firstTabRun = paragraph
-                .Elements(W.r)
-                .FirstOrDefault(run => run.Elements(W.tab).Any());
-            var elementsPrecedingTab = firstTabRun != null
-                ? paragraph.Elements(W.r).TakeWhile(e => e != firstTabRun)
-                    .Where(e => e.Elements().Any(c => c.Attributes(PtOpenXml.TabWidth).Any())).ToList()
-                : Enumerable.Empty<XElement>().ToList();
+            var firstTabRun = paragraph.Elements(W.r).FirstOrDefault(run => run.Elements(W.tab).Any());
+            var elementsPrecedingTab =
+                firstTabRun != null
+                    ? paragraph
+                        .Elements(W.r)
+                        .TakeWhile(e => e != firstTabRun)
+                        .Where(e => e.Elements().Any(c => c.Attributes(PtOpenXml.TabWidth).Any()))
+                        .ToList()
+                    : Enumerable.Empty<XElement>().ToList();
 
             // TODO: Revisit
             // For the time being, if a hyperlink field precedes the tab, we'll render it as before.
@@ -1075,38 +1185,53 @@ namespace Clippit.Word
                 .Any(value => value != null && value.TrimStart().ToUpper().StartsWith("HYPERLINK"));
             if (hyperlinkPrecedesTab)
             {
-                var paraElement1 = new XElement(elementName,
+                var paraElement1 = new XElement(
+                    elementName,
                     rtl,
                     firstMark,
-                    ConvertContentThatCanContainFields(wordDoc, settings, paragraph.Elements()));
+                    ConvertContentThatCanContainFields(wordDoc, settings, paragraph.Elements())
+                );
                 paraElement1.AddAnnotation(style);
                 return paraElement1;
             }
 
-            var txElementsPrecedingTab = TransformElementsPrecedingTab(wordDoc, settings, elementsPrecedingTab, firstTabRun);
-            var elementsSucceedingTab = firstTabRun != null
-                ? paragraph.Elements().SkipWhile(e => e != firstTabRun).Skip(1)
-                : paragraph.Elements();
-            var paraElement = new XElement(elementName,
+            var txElementsPrecedingTab = TransformElementsPrecedingTab(
+                wordDoc,
+                settings,
+                elementsPrecedingTab,
+                firstTabRun
+            );
+            var elementsSucceedingTab =
+                firstTabRun != null
+                    ? paragraph.Elements().SkipWhile(e => e != firstTabRun).Skip(1)
+                    : paragraph.Elements();
+            var paraElement = new XElement(
+                elementName,
                 rtl,
                 firstMark,
                 txElementsPrecedingTab,
-                ConvertContentThatCanContainFields(wordDoc, settings, elementsSucceedingTab));
+                ConvertContentThatCanContainFields(wordDoc, settings, elementsSucceedingTab)
+            );
             paraElement.AddAnnotation(style);
 
             return paraElement;
         }
 
-        private static List<object> TransformElementsPrecedingTab(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings settings,
-            List<XElement> elementsPrecedingTab, XElement firstTabRun)
+        private static List<object> TransformElementsPrecedingTab(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            List<XElement> elementsPrecedingTab,
+            XElement firstTabRun
+        )
         {
-            var tabWidth = firstTabRun != null
-                ? (decimal?) firstTabRun.Elements(W.tab).Attributes(PtOpenXml.TabWidth).FirstOrDefault() ?? 0m
-                : 0m;
+            var tabWidth =
+                firstTabRun != null
+                    ? (decimal?)firstTabRun.Elements(W.tab).Attributes(PtOpenXml.TabWidth).FirstOrDefault() ?? 0m
+                    : 0m;
             var precedingElementsWidth = elementsPrecedingTab
                 .Elements()
                 .Where(c => c.Attributes(PtOpenXml.TabWidth).Any())
-                .Select(e => (decimal) e.Attribute(PtOpenXml.TabWidth))
+                .Select(e => (decimal)e.Attribute(PtOpenXml.TabWidth))
                 .Sum();
             var totalWidth = precedingElementsWidth + tabWidth;
 
@@ -1120,7 +1245,7 @@ namespace Clippit.Word
                 {
                     { "display", "inline-block" },
                     { "text-indent", "0" },
-                    { "width", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}in", totalWidth) }
+                    { "width", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}in", totalWidth) },
                 };
                 span.AddAnnotation(spanStyle);
             }
@@ -1132,23 +1257,32 @@ namespace Clippit.Word
                     var spanStyle = element.Annotation<Dictionary<string, string>>();
                     spanStyle.AddIfMissing("display", "inline-block");
                     spanStyle.AddIfMissing("text-indent", "0");
-                    spanStyle.AddIfMissing("width", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}in", totalWidth));
+                    spanStyle.AddIfMissing(
+                        "width",
+                        string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}in", totalWidth)
+                    );
                 }
             }
             return txElementsPrecedingTab;
         }
 
-        private static Dictionary<string, string> DefineParagraphStyle(XElement paragraph, XName elementName,
-            bool suppressTrailingWhiteSpace, decimal currentMarginLeft, bool isBidi)
+        private static Dictionary<string, string> DefineParagraphStyle(
+            XElement paragraph,
+            XName elementName,
+            bool suppressTrailingWhiteSpace,
+            decimal currentMarginLeft,
+            bool isBidi
+        )
         {
             var style = new Dictionary<string, string>();
 
-            var styleName = (string) paragraph.Attribute(PtOpenXml.StyleName);
+            var styleName = (string)paragraph.Attribute(PtOpenXml.StyleName);
             if (styleName != null)
                 style.Add("PtStyleName", styleName);
 
             var pPr = paragraph.Element(W.pPr);
-            if (pPr == null) return style;
+            if (pPr == null)
+                return style;
 
             CreateStyleFromSpacing(style, pPr.Element(W.spacing), elementName, suppressTrailingWhiteSpace);
             CreateStyleFromInd(style, pPr.Element(W.ind), elementName, currentMarginLeft, isBidi);
@@ -1166,7 +1300,7 @@ namespace Clippit.Word
             CreateStyleFromShd(style, pPr.Element(W.shd));
 
             // Pt.FontName
-            var font = (string) paragraph.Attributes(PtOpenXml.FontName).FirstOrDefault();
+            var font = (string)paragraph.Attributes(PtOpenXml.FontName).FirstOrDefault();
             if (font != null)
                 CreateFontCssProperty(font, style);
 
@@ -1184,45 +1318,57 @@ namespace Clippit.Word
             return style;
         }
 
-        private static void CreateStyleFromInd(Dictionary<string, string> style, XElement ind, XName elementName,
-            decimal currentMarginLeft, bool isBidi)
+        private static void CreateStyleFromInd(
+            Dictionary<string, string> style,
+            XElement ind,
+            XName elementName,
+            decimal currentMarginLeft,
+            bool isBidi
+        )
         {
-            if (ind == null) return;
+            if (ind == null)
+                return;
 
-            var left = (decimal?) ind.Attribute(W.left);
+            var left = (decimal?)ind.Attribute(W.left);
             if (left != null && elementName != Xhtml.span)
             {
-                var leftInInches = (decimal) left/1440 - currentMarginLeft;
-                style.AddIfMissing(isBidi ? "margin-right" : "margin-left",
-                    leftInInches > 0m
-                        ? string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", leftInInches)
-                        : "0");
+                var leftInInches = (decimal)left / 1440 - currentMarginLeft;
+                style.AddIfMissing(
+                    isBidi ? "margin-right" : "margin-left",
+                    leftInInches > 0m ? string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", leftInInches) : "0"
+                );
             }
 
-            var right = (decimal?) ind.Attribute(W.right);
+            var right = (decimal?)ind.Attribute(W.right);
             if (right != null)
             {
-                var rightInInches = (decimal) right/1440;
-                style.AddIfMissing(isBidi ? "margin-left" : "margin-right",
+                var rightInInches = (decimal)right / 1440;
+                style.AddIfMissing(
+                    isBidi ? "margin-left" : "margin-right",
                     rightInInches > 0m
                         ? string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", rightInInches)
-                        : "0");
+                        : "0"
+                );
             }
 
-            var firstLine = (decimal?) ind.Attribute(W.firstLine);
+            var firstLine = (decimal?)ind.Attribute(W.firstLine);
             if (firstLine != null && elementName != Xhtml.span)
             {
-                var firstLineInInches = (decimal) firstLine/1440m;
-                style.AddIfMissing("text-indent",
-                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", firstLineInInches));
+                var firstLineInInches = (decimal)firstLine / 1440m;
+                style.AddIfMissing(
+                    "text-indent",
+                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", firstLineInInches)
+                );
             }
 
-            var hanging = (decimal?) ind.Attribute(W.hanging);
+            var hanging = (decimal?)ind.Attribute(W.hanging);
             if (hanging != null && elementName != Xhtml.span)
             {
-                var hangingInInches = (decimal) -hanging/1440m;
-                style.AddIfMissing("text-indent",
-                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", hangingInInches));
+                var hangingInInches = (decimal)-hanging / 1440m;
+                style.AddIfMissing(
+                    "text-indent",
+                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", hangingInInches)
+                );
             }
         }
 
@@ -1242,56 +1388,67 @@ namespace Clippit.Word
             }
         }
 
-        private static void CreateStyleFromSpacing(Dictionary<string, string> style, XElement spacing, XName elementName,
-            bool suppressTrailingWhiteSpace)
+        private static void CreateStyleFromSpacing(
+            Dictionary<string, string> style,
+            XElement spacing,
+            XName elementName,
+            bool suppressTrailingWhiteSpace
+        )
         {
-            if (spacing == null) return;
+            if (spacing == null)
+                return;
 
-            var spacingBefore = (decimal?) spacing.Attribute(W.before);
+            var spacingBefore = (decimal?)spacing.Attribute(W.before);
             if (spacingBefore != null && elementName != Xhtml.span)
-                style.AddIfMissing("margin-top",
+                style.AddIfMissing(
+                    "margin-top",
                     spacingBefore > 0m
-                        ? string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", spacingBefore/20.0m)
-                        : "0");
+                        ? string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", spacingBefore / 20.0m)
+                        : "0"
+                );
 
-            var lineRule = (string) spacing.Attribute(W.lineRule);
+            var lineRule = (string)spacing.Attribute(W.lineRule);
             if (lineRule == "auto")
             {
-                var line = (decimal) spacing.Attribute(W.line);
+                var line = (decimal)spacing.Attribute(W.line);
                 if (line != 240m)
                 {
-                    var pct = (line/240m)*100m;
+                    var pct = (line / 240m) * 100m;
                     style.Add("line-height", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}%", pct));
                 }
             }
             if (lineRule == "exact")
             {
-                var line = (decimal) spacing.Attribute(W.line);
-                var points = line/20m;
+                var line = (decimal)spacing.Attribute(W.line);
+                var points = line / 20m;
                 style.Add("line-height", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}pt", points));
             }
             if (lineRule == "atLeast")
             {
-                var line = (decimal) spacing.Attribute(W.line);
-                var points = line/20m;
+                var line = (decimal)spacing.Attribute(W.line);
+                var points = line / 20m;
                 if (points >= 14m)
                     style.Add("line-height", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}pt", points));
             }
 
-            var spacingAfter = suppressTrailingWhiteSpace ? 0m : (decimal?) spacing.Attribute(W.after);
+            var spacingAfter = suppressTrailingWhiteSpace ? 0m : (decimal?)spacing.Attribute(W.after);
             if (spacingAfter != null)
-                style.AddIfMissing("margin-bottom",
+                style.AddIfMissing(
+                    "margin-bottom",
                     spacingAfter > 0m
-                        ? string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", spacingAfter/20.0m)
-                        : "0");
+                        ? string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", spacingAfter / 20.0m)
+                        : "0"
+                );
         }
 
         private static void CreateStyleFromTextAlignment(Dictionary<string, string> style, XElement textAlignment)
         {
-            if (textAlignment == null) return;
+            if (textAlignment == null)
+                return;
 
             var verticalTextAlignment = (string)textAlignment.Attributes(W.val).FirstOrDefault();
-            if (verticalTextAlignment is null or "auto") return;
+            if (verticalTextAlignment is null or "auto")
+                return;
 
             if (verticalTextAlignment == "top")
                 style.AddIfMissing("vertical-align", "top");
@@ -1357,7 +1514,11 @@ namespace Clippit.Word
          *
          */
 
-        private static object ConvertRun(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings settings, XElement run)
+        private static object ConvertRun(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            XElement run
+        )
         {
             var rPr = run.Element(W.rPr);
             if (rPr == null)
@@ -1379,7 +1540,7 @@ namespace Clippit.Word
                 {
                     "superscript" => new XElement(Xhtml.sup, content),
                     "subscript" => new XElement(Xhtml.sub, content),
-                    _ => newContent
+                    _ => newContent,
                 };
                 if (newContent != null && newContent.Nodes().Any())
                     content = newContent;
@@ -1393,11 +1554,7 @@ namespace Clippit.Word
             {
                 style.AddIfMissing("margin", "0");
                 style.AddIfMissing("padding", "0");
-                var xe = new XElement(Xhtml.span,
-                    langAttribute,
-                    runStartMark,
-                    content,
-                    runEndMark);
+                var xe = new XElement(Xhtml.span, langAttribute, runStartMark, content, runEndMark);
 
                 xe.AddAnnotation(style);
                 content = xe;
@@ -1412,37 +1569,38 @@ namespace Clippit.Word
 
             var rPr = run.Elements(W.rPr).First();
 
-            var styleName = (string) run.Attribute(PtOpenXml.StyleName);
+            var styleName = (string)run.Attribute(PtOpenXml.StyleName);
             if (styleName != null)
                 style.Add("PtStyleName", styleName);
 
             // W.bdr
-            if (rPr.Element(W.bdr) != null && (string) rPr.Elements(W.bdr).Attributes(W.val).FirstOrDefault() != "none")
+            if (rPr.Element(W.bdr) != null && (string)rPr.Elements(W.bdr).Attributes(W.val).FirstOrDefault() != "none")
             {
                 style.AddIfMissing("border", "solid windowtext 1.0pt");
                 style.AddIfMissing("padding", "0");
             }
 
             // W.color
-            var color = (string) rPr.Elements(W.color).Attributes(W.val).FirstOrDefault();
+            var color = (string)rPr.Elements(W.color).Attributes(W.val).FirstOrDefault();
             if (color != null)
                 CreateColorProperty("color", color, style);
 
             // W.highlight
-            var highlight = (string) rPr.Elements(W.highlight).Attributes(W.val).FirstOrDefault();
+            var highlight = (string)rPr.Elements(W.highlight).Attributes(W.val).FirstOrDefault();
             if (highlight != null)
                 CreateColorProperty("background", highlight, style);
 
             // W.shd
-            var shade = (string) rPr.Elements(W.shd).Attributes(W.fill).FirstOrDefault();
+            var shade = (string)rPr.Elements(W.shd).Attributes(W.fill).FirstOrDefault();
             if (shade != null)
                 CreateColorProperty("background", shade, style);
 
             // Pt.FontName
             var sym = run.Element(W.sym);
-            var font = sym != null
-                ? (string) sym.Attributes(W.font).FirstOrDefault()
-                : (string) run.Attributes(PtOpenXml.FontName).FirstOrDefault();
+            var font =
+                sym != null
+                    ? (string)sym.Attributes(W.font).FirstOrDefault()
+                    : (string)run.Attributes(PtOpenXml.FontName).FirstOrDefault();
             if (font != null)
                 CreateFontCssProperty(font, style);
 
@@ -1450,7 +1608,7 @@ namespace Clippit.Word
             var languageType = (string)run.Attribute(PtOpenXml.LanguageType);
             var sz = WordprocessingMLUtil.GetFontSize(languageType, rPr);
             if (sz != null)
-                style.AddIfMissing("font-size", string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", sz/2.0m));
+                style.AddIfMissing("font-size", string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", sz / 2.0m));
 
             // W.caps
             if (GetBoolProp(rPr, W.caps))
@@ -1461,19 +1619,21 @@ namespace Clippit.Word
                 style.AddIfMissing("font-variant", "small-caps");
 
             // W.spacing
-            var spacingInTwips = (decimal?) rPr.Elements(W.spacing).Attributes(W.val).FirstOrDefault();
+            var spacingInTwips = (decimal?)rPr.Elements(W.spacing).Attributes(W.val).FirstOrDefault();
             if (spacingInTwips != null)
-                style.AddIfMissing("letter-spacing",
+                style.AddIfMissing(
+                    "letter-spacing",
                     spacingInTwips > 0m
-                        ? string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", spacingInTwips/20)
-                        : "0");
+                        ? string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", spacingInTwips / 20)
+                        : "0"
+                );
 
             // W.position
-            var position = (decimal?) rPr.Elements(W.position).Attributes(W.val).FirstOrDefault();
+            var position = (decimal?)rPr.Elements(W.position).Attributes(W.val).FirstOrDefault();
             if (position != null)
             {
                 style.AddIfMissing("position", "relative");
-                style.AddIfMissing("top", string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", -(position/2)));
+                style.AddIfMissing("top", string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", -(position / 2)));
             }
 
             // W.vanish
@@ -1481,7 +1641,7 @@ namespace Clippit.Word
                 style.AddIfMissing("display", "none");
 
             // W.u
-            if (rPr.Element(W.u) != null && (string) rPr.Elements(W.u).Attributes(W.val).FirstOrDefault() != "none")
+            if (rPr.Element(W.u) != null && (string)rPr.Elements(W.u).Attributes(W.val).FirstOrDefault() != "none")
                 style.AddIfMissing("text-decoration", "underline");
 
             // W.i
@@ -1496,14 +1656,21 @@ namespace Clippit.Word
 
             return style;
         }
-        
-        private static void DetermineRunMarks(XElement run, XElement rPr, Dictionary<string, string> style, out XEntity runStartMark, out XEntity runEndMark)
+
+        private static void DetermineRunMarks(
+            XElement run,
+            XElement rPr,
+            Dictionary<string, string> style,
+            out XEntity runStartMark,
+            out XEntity runEndMark
+        )
         {
             runStartMark = null;
             runEndMark = null;
 
             // Only do the following for text runs.
-            if (run.Element(W.t) == null) return;
+            if (run.Element(W.t) == null)
+                return;
 
             // Can't add directional marks if the font-family is symbol - they are visible, and display as a ?
             var addDirectionalMarks = true;
@@ -1512,7 +1679,8 @@ namespace Clippit.Word
                 if (style["font-family"].ToLower() == "symbol")
                     addDirectionalMarks = false;
             }
-            if (!addDirectionalMarks) return;
+            if (!addDirectionalMarks)
+                return;
 
             var isRtl = rPr.Element(W.rtl) != null;
             if (isRtl)
@@ -1548,7 +1716,7 @@ namespace Clippit.Word
                 "western" => (string)rPr.Elements(W.lang).Attributes(W.val).FirstOrDefault(),
                 "bidi" => (string)rPr.Elements(W.lang).Attributes(W.bidi).FirstOrDefault(),
                 "eastAsia" => (string)rPr.Elements(W.lang).Attributes(W.eastAsia).FirstOrDefault(),
-                _ => null
+                _ => null,
             };
             if (lang == null)
                 lang = defaultLanguage;
@@ -1569,14 +1737,17 @@ namespace Clippit.Word
 
         private static void AdjustTableBorders(XElement tbl)
         {
-            var ta = tbl
-                .Elements(W.tr)
-                .Select(r => r
-                    .Elements(W.tc)
-                    .SelectMany(c =>
-                        Enumerable.Repeat(c,
-                            (int?) c.Elements(W.tcPr).Elements(W.gridSpan).Attributes(W.val).FirstOrDefault() ?? 1))
-                    .ToArray())
+            var ta = tbl.Elements(W.tr)
+                .Select(r =>
+                    r.Elements(W.tc)
+                        .SelectMany(c =>
+                            Enumerable.Repeat(
+                                c,
+                                (int?)c.Elements(W.tcPr).Elements(W.gridSpan).Attributes(W.val).FirstOrDefault() ?? 1
+                            )
+                        )
+                        .ToArray()
+                )
                 .ToArray();
 
             for (var y = 0; y < ta.Length; y++)
@@ -1600,13 +1771,16 @@ namespace Clippit.Word
                 if (x < rowAbove.Length - 1)
                 {
                     var cellAbove = ta[y - 1][x];
-                    if (cellAbove != null &&
-                        thisCell.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null &&
-                        cellAbove.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null)
+                    if (
+                        cellAbove != null
+                        && thisCell.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null
+                        && cellAbove.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null
+                    )
                     {
                         ResolveCellBorder(
                             thisCell.Elements(W.tcPr).Elements(W.tcBorders).Elements(W.top).FirstOrDefault(),
-                            cellAbove.Elements(W.tcPr).Elements(W.tcBorders).Elements(W.bottom).FirstOrDefault());
+                            cellAbove.Elements(W.tcPr).Elements(W.tcBorders).Elements(W.bottom).FirstOrDefault()
+                        );
                     }
                 }
             }
@@ -1617,13 +1791,16 @@ namespace Clippit.Word
             if (x > 0)
             {
                 var cellLeft = ta[y][x - 1];
-                if (cellLeft != null &&
-                    thisCell.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null &&
-                    cellLeft.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null)
+                if (
+                    cellLeft != null
+                    && thisCell.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null
+                    && cellLeft.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null
+                )
                 {
                     ResolveCellBorder(
                         thisCell.Elements(W.tcPr).Elements(W.tcBorders).Elements(W.left).FirstOrDefault(),
-                        cellLeft.Elements(W.tcPr).Elements(W.tcBorders).Elements(W.right).FirstOrDefault());
+                        cellLeft.Elements(W.tcPr).Elements(W.tcBorders).Elements(W.right).FirstOrDefault()
+                    );
                 }
             }
         }
@@ -1636,13 +1813,16 @@ namespace Clippit.Word
                 if (x < rowBelow.Length - 1)
                 {
                     var cellBelow = ta[y + 1][x];
-                    if (cellBelow != null &&
-                        thisCell.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null &&
-                        cellBelow.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null)
+                    if (
+                        cellBelow != null
+                        && thisCell.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null
+                        && cellBelow.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null
+                    )
                     {
                         ResolveCellBorder(
                             thisCell.Elements(W.tcPr).Elements(W.tcBorders).Elements(W.bottom).FirstOrDefault(),
-                            cellBelow.Elements(W.tcPr).Elements(W.tcBorders).Elements(W.top).FirstOrDefault());
+                            cellBelow.Elements(W.tcPr).Elements(W.tcBorders).Elements(W.top).FirstOrDefault()
+                        );
                     }
                 }
             }
@@ -1653,53 +1833,58 @@ namespace Clippit.Word
             if (x < ta[y].Length - 1)
             {
                 var cellRight = ta[y][x + 1];
-                if (cellRight != null &&
-                    thisCell.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null &&
-                    cellRight.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null)
+                if (
+                    cellRight != null
+                    && thisCell.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null
+                    && cellRight.Elements(W.tcPr).Elements(W.tcBorders).FirstOrDefault() != null
+                )
                 {
                     ResolveCellBorder(
                         thisCell.Elements(W.tcPr).Elements(W.tcBorders).Elements(W.right).FirstOrDefault(),
-                        cellRight.Elements(W.tcPr).Elements(W.tcBorders).Elements(W.left).FirstOrDefault());
+                        cellRight.Elements(W.tcPr).Elements(W.tcBorders).Elements(W.left).FirstOrDefault()
+                    );
                 }
             }
         }
 
-        private static readonly Dictionary<string, int> BorderTypePriority = new()
-        {
-            { "single", 1 },
-            { "thick", 2 },
-            { "double", 3 },
-            { "dotted", 4 },
-        };
+        private static readonly Dictionary<string, int> BorderTypePriority =
+            new()
+            {
+                { "single", 1 },
+                { "thick", 2 },
+                { "double", 3 },
+                { "dotted", 4 },
+            };
 
-        private static readonly Dictionary<string, int> BorderNumber = new()
-        {
-            {"single", 1 },
-            {"thick", 2 },
-            {"double", 3 },
-            {"dotted", 4 },
-            {"dashed", 5 },
-            {"dotDash", 5 },
-            {"dotDotDash", 5 },
-            {"triple", 6 },
-            {"thinThickSmallGap", 6 },
-            {"thickThinSmallGap", 6 },
-            {"thinThickThinSmallGap", 6 },
-            {"thinThickMediumGap", 6 },
-            {"thickThinMediumGap", 6 },
-            {"thinThickThinMediumGap", 6 },
-            {"thinThickLargeGap", 6 },
-            {"thickThinLargeGap", 6 },
-            {"thinThickThinLargeGap", 6 },
-            {"wave", 7 },
-            {"doubleWave", 7 },
-            {"dashSmallGap", 5 },
-            {"dashDotStroked", 5 },
-            {"threeDEmboss", 7 },
-            {"threeDEngrave", 7 },
-            {"outset", 7 },
-            {"inset", 7 },
-        };
+        private static readonly Dictionary<string, int> BorderNumber =
+            new()
+            {
+                { "single", 1 },
+                { "thick", 2 },
+                { "double", 3 },
+                { "dotted", 4 },
+                { "dashed", 5 },
+                { "dotDash", 5 },
+                { "dotDotDash", 5 },
+                { "triple", 6 },
+                { "thinThickSmallGap", 6 },
+                { "thickThinSmallGap", 6 },
+                { "thinThickThinSmallGap", 6 },
+                { "thinThickMediumGap", 6 },
+                { "thickThinMediumGap", 6 },
+                { "thinThickThinMediumGap", 6 },
+                { "thinThickLargeGap", 6 },
+                { "thickThinLargeGap", 6 },
+                { "thinThickThinLargeGap", 6 },
+                { "wave", 7 },
+                { "doubleWave", 7 },
+                { "dashSmallGap", 5 },
+                { "dashDotStroked", 5 },
+                { "threeDEmboss", 7 },
+                { "threeDEngrave", 7 },
+                { "outset", 7 },
+                { "inset", 7 },
+            };
 
         private static void ResolveCellBorder(XElement border1, XElement border2)
         {
@@ -1742,8 +1927,7 @@ namespace Clippit.Word
 
             var border1Type = (string)border1.Attribute(W.val);
             var border2Type = (string)border2.Attribute(W.val);
-            if (BorderTypePriority.ContainsKey(border1Type) &&
-                BorderTypePriority.ContainsKey(border2Type))
+            if (BorderTypePriority.ContainsKey(border1Type) && BorderTypePriority.ContainsKey(border2Type))
             {
                 var border1Pri = BorderTypePriority[border1Type];
                 var border2Pri = BorderTypePriority[border2Type];
@@ -1813,7 +1997,8 @@ namespace Clippit.Word
 
             var pxd = wordDoc.MainDocumentPart.GetXDocument();
             var root = pxd.Root;
-            if (root == null) return;
+            if (root == null)
+                return;
 
             var newRoot = (XElement)CalculateSpanWidthTransform(root, defaultTabStop);
             root.ReplaceWith(newRoot);
@@ -1825,17 +2010,22 @@ namespace Clippit.Word
         private static object CalculateSpanWidthTransform(XNode node, int defaultTabStop)
         {
             var element = node as XElement;
-            if (element == null) return node;
+            if (element == null)
+                return node;
 
             // if it is not a paragraph or if there are no tabs in the paragraph,
             // then no need to continue processing.
-            if (element.Name != W.p ||
-                !element.DescendantsTrimmed(W.txbxContent).Where(d => d.Name == W.r).Elements(W.tab).Any())
+            if (
+                element.Name != W.p
+                || !element.DescendantsTrimmed(W.txbxContent).Where(d => d.Name == W.r).Elements(W.tab).Any()
+            )
             {
                 // TODO: Revisit. Can we just return the node if it is a paragraph that does not have any tab?
-                return new XElement(element.Name,
+                return new XElement(
+                    element.Name,
                     element.Attributes(),
-                    element.Nodes().Select(n => CalculateSpanWidthTransform(n, defaultTabStop)));
+                    element.Nodes().Select(n => CalculateSpanWidthTransform(n, defaultTabStop))
+                );
             }
 
             var clonedPara = new XElement(element);
@@ -1865,27 +2055,29 @@ namespace Clippit.Word
             }
 
             // calculate the tab stops, in twips
-            var tabs = clonedPara
-                .Elements(W.pPr)
-                .Elements(W.tabs)
-                .FirstOrDefault();
+            var tabs = clonedPara.Elements(W.pPr).Elements(W.tabs).FirstOrDefault();
 
             if (tabs == null)
             {
                 if (leftInTwips == 0)
                 {
-                    tabs = new XElement(W.tabs,
-                        Enumerable.Range(1, 100)
-                            .Select(r => new XElement(W.tab,
+                    tabs = new XElement(
+                        W.tabs,
+                        Enumerable
+                            .Range(1, 100)
+                            .Select(r => new XElement(
+                                W.tab,
                                 new XAttribute(W.val, "left"),
-                                new XAttribute(W.pos, r * defaultTabStop))));
+                                new XAttribute(W.pos, r * defaultTabStop)
+                            ))
+                    );
                 }
                 else
                 {
-                    tabs = new XElement(W.tabs,
-                        new XElement(W.tab,
-                            new XAttribute(W.val, "left"),
-                            new XAttribute(W.pos, leftInTwips)));
+                    tabs = new XElement(
+                        W.tabs,
+                        new XElement(W.tab, new XAttribute(W.val, "left"), new XAttribute(W.pos, leftInTwips))
+                    );
                     tabs = AddDefaultTabsAfterLastTab(tabs, defaultTabStop);
                 }
             }
@@ -1893,16 +2085,15 @@ namespace Clippit.Word
             {
                 if (leftInTwips != 0)
                 {
-                    tabs.Add(
-                        new XElement(W.tab,
-                            new XAttribute(W.val, "left"),
-                            new XAttribute(W.pos, leftInTwips)));
+                    tabs.Add(new XElement(W.tab, new XAttribute(W.val, "left"), new XAttribute(W.pos, leftInTwips)));
                 }
                 tabs = AddDefaultTabsAfterLastTab(tabs, defaultTabStop);
             }
 
             var twipCounter = firstInTwips;
-            var contentToMeasure = element.DescendantsTrimmed(z => z.Name == W.txbxContent || z.Name == W.pPr || z.Name == W.rPr).ToArray();
+            var contentToMeasure = element
+                .DescendantsTrimmed(z => z.Name == W.txbxContent || z.Name == W.pPr || z.Name == W.rPr)
+                .ToArray();
             var currentElementIdx = 0;
             while (true)
             {
@@ -1912,9 +2103,12 @@ namespace Clippit.Word
                 {
                     twipCounter = leftInTwips;
 
-                    currentElement.Add(new XAttribute(PtOpenXml.TabWidth,
-                        string.Format(NumberFormatInfo.InvariantInfo,
-                            "{0:0.000}", firstInTwips / 1440m)));
+                    currentElement.Add(
+                        new XAttribute(
+                            PtOpenXml.TabWidth,
+                            string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", firstInTwips / 1440m)
+                        )
+                    );
 
                     currentElementIdx++;
                     if (currentElementIdx >= contentToMeasure.Length)
@@ -1924,36 +2118,30 @@ namespace Clippit.Word
                 if (currentElement.Name == W.tab)
                 {
                     var runContainingTabToReplace = currentElement.Parent;
-                    var fontNameAtt = runContainingTabToReplace.Attribute(PtOpenXml.pt + "FontName") ??
-                                      runContainingTabToReplace.Ancestors(W.p).First().Attribute(PtOpenXml.pt + "FontName");
+                    var fontNameAtt =
+                        runContainingTabToReplace.Attribute(PtOpenXml.pt + "FontName")
+                        ?? runContainingTabToReplace.Ancestors(W.p).First().Attribute(PtOpenXml.pt + "FontName");
 
                     var testAmount = twipCounter;
 
-                    var tabAfterText = tabs
-                        .Elements(W.tab)
-                        .FirstOrDefault(t => (int)t.Attribute(W.pos) > testAmount);
+                    var tabAfterText = tabs.Elements(W.tab).FirstOrDefault(t => (int)t.Attribute(W.pos) > testAmount);
 
                     if (tabAfterText == null)
                     {
                         // something has gone wrong, so put 1/2 inch in
                         if (currentElement.Attribute(PtOpenXml.TabWidth) == null)
-                            currentElement.Add(
-                                new XAttribute(PtOpenXml.TabWidth, 720m));
+                            currentElement.Add(new XAttribute(PtOpenXml.TabWidth, 720m));
                         break;
                     }
 
                     var tabVal = (string)tabAfterText.Attribute(W.val);
                     if (tabVal is "right" or "end")
                     {
-                        var textAfterElements = contentToMeasure
-                            .Skip(currentElementIdx + 1);
+                        var textAfterElements = contentToMeasure.Skip(currentElementIdx + 1);
 
                         // take all the content until another tab, br, or cr
                         var textElementsToMeasure = textAfterElements
-                            .TakeWhile(z =>
-                                z.Name != W.tab &&
-                                z.Name != W.br &&
-                                z.Name != W.cr)
+                            .TakeWhile(z => z.Name != W.tab && z.Name != W.br && z.Name != W.cr)
                             .ToList();
 
                         var textAfterTab = textElementsToMeasure
@@ -1961,19 +2149,24 @@ namespace Clippit.Word
                             .Select(t => (string)t)
                             .StringConcatenate();
 
-                        var dummyRun2 = new XElement(W.r,
+                        var dummyRun2 = new XElement(
+                            W.r,
                             fontNameAtt,
                             runContainingTabToReplace.Elements(W.rPr),
-                            new XElement(W.t, textAfterTab));
+                            new XElement(W.t, textAfterTab)
+                        );
 
                         var widthOfTextAfterTab = WordprocessingMLUtil.CalcWidthOfRunInTwips(dummyRun2);
                         var delta2 = (int)tabAfterText.Attribute(W.pos) - widthOfTextAfterTab - twipCounter;
                         if (delta2 < 0)
                             delta2 = 0;
                         currentElement.Add(
-                            new XAttribute(PtOpenXml.TabWidth,
-                                string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta2 / 1440m)),
-                            GetLeader(tabAfterText));
+                            new XAttribute(
+                                PtOpenXml.TabWidth,
+                                string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta2 / 1440m)
+                            ),
+                            GetLeader(tabAfterText)
+                        );
                         twipCounter = Math.Max((int)tabAfterText.Attribute(W.pos), twipCounter + widthOfTextAfterTab);
 
                         var lastElement = textElementsToMeasure.LastOrDefault();
@@ -1988,15 +2181,11 @@ namespace Clippit.Word
                     }
                     if (tabVal == "decimal")
                     {
-                        var textAfterElements = contentToMeasure
-                            .Skip(currentElementIdx + 1);
+                        var textAfterElements = contentToMeasure.Skip(currentElementIdx + 1);
 
                         // take all the content until another tab, br, or cr
                         var textElementsToMeasure = textAfterElements
-                            .TakeWhile(z =>
-                                z.Name != W.tab &&
-                                z.Name != W.br &&
-                                z.Name != W.cr)
+                            .TakeWhile(z => z.Name != W.tab && z.Name != W.br && z.Name != W.cr)
                             .ToList();
 
                         var textAfterTab = textElementsToMeasure
@@ -2008,28 +2197,38 @@ namespace Clippit.Word
                         {
                             var mantissa = textAfterTab.Split('.')[0];
 
-                            var dummyRun4 = new XElement(W.r,
+                            var dummyRun4 = new XElement(
+                                W.r,
                                 fontNameAtt,
                                 runContainingTabToReplace.Elements(W.rPr),
-                                new XElement(W.t, mantissa));
+                                new XElement(W.t, mantissa)
+                            );
 
                             var widthOfMantissa = WordprocessingMLUtil.CalcWidthOfRunInTwips(dummyRun4);
                             var delta2 = (int)tabAfterText.Attribute(W.pos) - widthOfMantissa - twipCounter;
                             if (delta2 < 0)
                                 delta2 = 0;
                             currentElement.Add(
-                                new XAttribute(PtOpenXml.TabWidth,
-                                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta2 / 1440m)),
-                                GetLeader(tabAfterText));
+                                new XAttribute(
+                                    PtOpenXml.TabWidth,
+                                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta2 / 1440m)
+                                ),
+                                GetLeader(tabAfterText)
+                            );
 
                             var decims = textAfterTab.Substring(textAfterTab.IndexOf('.'));
-                            dummyRun4 = new XElement(W.r,
+                            dummyRun4 = new XElement(
+                                W.r,
                                 fontNameAtt,
                                 runContainingTabToReplace.Elements(W.rPr),
-                                new XElement(W.t, decims));
+                                new XElement(W.t, decims)
+                            );
 
                             var widthOfDecims = WordprocessingMLUtil.CalcWidthOfRunInTwips(dummyRun4);
-                            twipCounter = Math.Max((int)tabAfterText.Attribute(W.pos) + widthOfDecims, twipCounter + widthOfMantissa + widthOfDecims);
+                            twipCounter = Math.Max(
+                                (int)tabAfterText.Attribute(W.pos) + widthOfDecims,
+                                twipCounter + widthOfMantissa + widthOfDecims
+                            );
 
                             var lastElement = textElementsToMeasure.LastOrDefault();
                             if (lastElement == null)
@@ -2043,20 +2242,28 @@ namespace Clippit.Word
                         }
                         else
                         {
-                            var dummyRun2 = new XElement(W.r,
+                            var dummyRun2 = new XElement(
+                                W.r,
                                 fontNameAtt,
                                 runContainingTabToReplace.Elements(W.rPr),
-                                new XElement(W.t, textAfterTab));
+                                new XElement(W.t, textAfterTab)
+                            );
 
                             var widthOfTextAfterTab = WordprocessingMLUtil.CalcWidthOfRunInTwips(dummyRun2);
                             var delta2 = (int)tabAfterText.Attribute(W.pos) - widthOfTextAfterTab - twipCounter;
                             if (delta2 < 0)
                                 delta2 = 0;
                             currentElement.Add(
-                                new XAttribute(PtOpenXml.TabWidth,
-                                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta2 / 1440m)),
-                                GetLeader(tabAfterText));
-                            twipCounter = Math.Max((int)tabAfterText.Attribute(W.pos), twipCounter + widthOfTextAfterTab);
+                                new XAttribute(
+                                    PtOpenXml.TabWidth,
+                                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta2 / 1440m)
+                                ),
+                                GetLeader(tabAfterText)
+                            );
+                            twipCounter = Math.Max(
+                                (int)tabAfterText.Attribute(W.pos),
+                                twipCounter + widthOfTextAfterTab
+                            );
 
                             var lastElement = textElementsToMeasure.LastOrDefault();
                             if (lastElement == null)
@@ -2071,15 +2278,11 @@ namespace Clippit.Word
                     }
                     if ((string)tabAfterText.Attribute(W.val) == "center")
                     {
-                        var textAfterElements = contentToMeasure
-                            .Skip(currentElementIdx + 1);
+                        var textAfterElements = contentToMeasure.Skip(currentElementIdx + 1);
 
                         // take all the content until another tab, br, or cr
                         var textElementsToMeasure = textAfterElements
-                            .TakeWhile(z =>
-                                z.Name != W.tab &&
-                                z.Name != W.br &&
-                                z.Name != W.cr)
+                            .TakeWhile(z => z.Name != W.tab && z.Name != W.br && z.Name != W.cr)
                             .ToList();
 
                         var textAfterTab = textElementsToMeasure
@@ -2087,20 +2290,28 @@ namespace Clippit.Word
                             .Select(t => (string)t)
                             .StringConcatenate();
 
-                        var dummyRun4 = new XElement(W.r,
+                        var dummyRun4 = new XElement(
+                            W.r,
                             fontNameAtt,
                             runContainingTabToReplace.Elements(W.rPr),
-                            new XElement(W.t, textAfterTab));
+                            new XElement(W.t, textAfterTab)
+                        );
 
                         var widthOfText = WordprocessingMLUtil.CalcWidthOfRunInTwips(dummyRun4);
                         var delta2 = (int)tabAfterText.Attribute(W.pos) - (widthOfText / 2) - twipCounter;
                         if (delta2 < 0)
                             delta2 = 0;
                         currentElement.Add(
-                            new XAttribute(PtOpenXml.TabWidth,
-                                string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta2 / 1440m)),
-                            GetLeader(tabAfterText));
-                        twipCounter = Math.Max((int)tabAfterText.Attribute(W.pos) + widthOfText / 2, twipCounter + widthOfText);
+                            new XAttribute(
+                                PtOpenXml.TabWidth,
+                                string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta2 / 1440m)
+                            ),
+                            GetLeader(tabAfterText)
+                        );
+                        twipCounter = Math.Max(
+                            (int)tabAfterText.Attribute(W.pos) + widthOfText / 2,
+                            twipCounter + widthOfText
+                        );
 
                         var lastElement = textElementsToMeasure.LastOrDefault();
                         if (lastElement == null)
@@ -2116,9 +2327,12 @@ namespace Clippit.Word
                     {
                         var delta = (int)tabAfterText.Attribute(W.pos) - twipCounter;
                         currentElement.Add(
-                            new XAttribute(PtOpenXml.TabWidth,
-                                string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta / 1440m)),
-                            GetLeader(tabAfterText));
+                            new XAttribute(
+                                PtOpenXml.TabWidth,
+                                string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta / 1440m)
+                            ),
+                            GetLeader(tabAfterText)
+                        );
                         twipCounter = (int)tabAfterText.Attribute(W.pos);
 
                         currentElementIdx++;
@@ -2147,8 +2361,12 @@ namespace Clippit.Word
                     //    currentElement);
                     //var widthOfText = CalcWidthOfRunInTwips(dummyRun3);
                     const int widthOfText = 0;
-                    currentElement.Add(new XAttribute(PtOpenXml.TabWidth,
-                        string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", widthOfText/1440m)));
+                    currentElement.Add(
+                        new XAttribute(
+                            PtOpenXml.TabWidth,
+                            string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", widthOfText / 1440m)
+                        )
+                    );
                     twipCounter += widthOfText;
 
                     currentElementIdx++;
@@ -2163,9 +2381,11 @@ namespace Clippit.Word
                     break; // we're done
             }
 
-            return new XElement(element.Name,
+            return new XElement(
+                element.Name,
                 element.Attributes(),
-                element.Nodes().Select(n => CalculateSpanWidthTransform(n, defaultTabStop)));
+                element.Nodes().Select(n => CalculateSpanWidthTransform(n, defaultTabStop))
+            );
         }
 
         private static XAttribute GetLeader(XElement tabAfterText)
@@ -2178,8 +2398,7 @@ namespace Clippit.Word
 
         private static XElement AddDefaultTabsAfterLastTab(XElement tabs, int defaultTabStop)
         {
-            var lastTabElement = tabs
-                .Elements(W.tab)
+            var lastTabElement = tabs.Elements(W.tab)
                 .Where(t => (string)t.Attribute(W.val) != "clear" && (string)t.Attribute(W.val) != "bar")
                 .OrderBy(t => (int)t.Attribute(W.pos))
                 .LastOrDefault();
@@ -2188,23 +2407,33 @@ namespace Clippit.Word
                 if (defaultTabStop == 0)
                     defaultTabStop = 720;
                 var rangeStart = (int)lastTabElement.Attribute(W.pos) / defaultTabStop + 1;
-                var tempTabs = new XElement(W.tabs,
-                    tabs.Elements().Where(t => (string)t.Attribute(W.val) != "clear" && (string)t.Attribute(W.val) != "bar"),
-                    Enumerable.Range(rangeStart, 100)
-                    .Select(r => new XElement(W.tab,
-                        new XAttribute(W.val, "left"),
-                        new XAttribute(W.pos, r * defaultTabStop))));
-                tempTabs = new XElement(W.tabs,
-                    tempTabs.Elements().OrderBy(t => (int)t.Attribute(W.pos)));
+                var tempTabs = new XElement(
+                    W.tabs,
+                    tabs.Elements()
+                        .Where(t => (string)t.Attribute(W.val) != "clear" && (string)t.Attribute(W.val) != "bar"),
+                    Enumerable
+                        .Range(rangeStart, 100)
+                        .Select(r => new XElement(
+                            W.tab,
+                            new XAttribute(W.val, "left"),
+                            new XAttribute(W.pos, r * defaultTabStop)
+                        ))
+                );
+                tempTabs = new XElement(W.tabs, tempTabs.Elements().OrderBy(t => (int)t.Attribute(W.pos)));
                 return tempTabs;
             }
             else
             {
-                tabs = new XElement(W.tabs,
-                    Enumerable.Range(1, 100)
-                    .Select(r => new XElement(W.tab,
-                        new XAttribute(W.val, "left"),
-                        new XAttribute(W.pos, r * defaultTabStop))));
+                tabs = new XElement(
+                    W.tabs,
+                    Enumerable
+                        .Range(1, 100)
+                        .Select(r => new XElement(
+                            W.tab,
+                            new XAttribute(W.val, "left"),
+                            new XAttribute(W.pos, r * defaultTabStop)
+                        ))
+                );
             }
             return tabs;
         }
@@ -2215,7 +2444,8 @@ namespace Clippit.Word
             {
                 var pxd = part.GetXDocument();
                 var root = pxd.Root;
-                if (root == null) return;
+                if (root == null)
+                    return;
 
                 var newRoot = (XElement)InsertAppropriateNonbreakingSpacesTransform(root);
                 root.ReplaceWith(newRoot);
@@ -2263,35 +2493,37 @@ namespace Clippit.Word
                         .Where(e => e.Name != W.pPr)
                         .DescendantsAndSelf()
                         .Any(e =>
-                            e.Name == W.dayLong ||
-                            e.Name == W.dayShort ||
-                            e.Name == W.drawing ||
-                            e.Name == W.monthLong ||
-                            e.Name == W.monthShort ||
-                            e.Name == W.noBreakHyphen ||
-                            e.Name == W._object ||
-                            e.Name == W.pgNum ||
-                            e.Name == W.ptab ||
-                            e.Name == W.separator ||
-                            e.Name == W.softHyphen ||
-                            e.Name == W.sym ||
-                            e.Name == W.t ||
-                            e.Name == W.tab ||
-                            e.Name == W.yearLong ||
-                            e.Name == W.yearShort
+                            e.Name == W.dayLong
+                            || e.Name == W.dayShort
+                            || e.Name == W.drawing
+                            || e.Name == W.monthLong
+                            || e.Name == W.monthShort
+                            || e.Name == W.noBreakHyphen
+                            || e.Name == W._object
+                            || e.Name == W.pgNum
+                            || e.Name == W.ptab
+                            || e.Name == W.separator
+                            || e.Name == W.softHyphen
+                            || e.Name == W.sym
+                            || e.Name == W.t
+                            || e.Name == W.tab
+                            || e.Name == W.yearLong
+                            || e.Name == W.yearShort
                         );
                     if (hasContent == false)
-                        return new XElement(element.Name,
+                        return new XElement(
+                            element.Name,
                             element.Attributes(),
                             element.Nodes().Select(n => InsertAppropriateNonbreakingSpacesTransform(n)),
-                            new XElement(W.r,
-                                element.Elements(W.pPr).Elements(W.rPr),
-                                new XElement(W.t, " ")));
+                            new XElement(W.r, element.Elements(W.pPr).Elements(W.rPr), new XElement(W.t, " "))
+                        );
                 }
 
-                return new XElement(element.Name,
+                return new XElement(
+                    element.Name,
                     element.Attributes(),
-                    element.Nodes().Select(n => InsertAppropriateNonbreakingSpacesTransform(n)));
+                    element.Nodes().Select(n => InsertAppropriateNonbreakingSpacesTransform(n))
+                );
             }
             return node;
         }
@@ -2306,19 +2538,19 @@ namespace Clippit.Word
             var xd = wordDoc.MainDocumentPart.GetXDocument();
 
             var document = xd.Root;
-            if (document == null) return;
+            if (document == null)
+                return;
 
             var body = document.Element(W.body);
-            if (body == null) return;
+            if (body == null)
+                return;
 
             // move last sectPr into last paragraph
             var lastSectPr = body.Elements(W.sectPr).LastOrDefault();
             if (lastSectPr != null)
             {
                 // if the last thing in the document is a table, Word will always insert a paragraph following that.
-                var lastPara = body
-                    .DescendantsTrimmed(W.txbxContent)
-                    .LastOrDefault(p => p.Name == W.p);
+                var lastPara = body.DescendantsTrimmed(W.txbxContent).LastOrDefault(p => p.Name == W.p);
 
                 if (lastPara != null)
                 {
@@ -2342,10 +2574,7 @@ namespace Clippit.Word
                     if (d.Attribute(XNamespace.Xmlns + "w") == null)
                         d.Add(new XAttribute(XNamespace.Xmlns + "w", W.w));
 
-                    currentSection = new SectionAnnotation()
-                    {
-                        SectionElement = d
-                    };
+                    currentSection = new SectionAnnotation() { SectionElement = d };
                 }
                 else
                     d.AddAnnotation(currentSection);
@@ -2356,41 +2585,48 @@ namespace Clippit.Word
         {
             var currentSection = new SectionAnnotation()
             {
-                SectionElement = reverseDescendants.FirstOrDefault(e => e.Name == W.sectPr)
+                SectionElement = reverseDescendants.FirstOrDefault(e => e.Name == W.sectPr),
             };
-            if (currentSection.SectionElement != null &&
-                currentSection.SectionElement.Attribute(XNamespace.Xmlns + "w") == null)
+            if (
+                currentSection.SectionElement != null
+                && currentSection.SectionElement.Attribute(XNamespace.Xmlns + "w") == null
+            )
                 currentSection.SectionElement.Add(new XAttribute(XNamespace.Xmlns + "w", W.w));
 
             // todo what should the default section props be?
             if (currentSection.SectionElement == null)
                 currentSection = new SectionAnnotation()
                 {
-                    SectionElement = new XElement(W.sectPr,
+                    SectionElement = new XElement(
+                        W.sectPr,
                         new XAttribute(XNamespace.Xmlns + "w", W.w),
-                        new XElement(W.pgSz,
-                            new XAttribute(W._w, 12240),
-                            new XAttribute(W.h, 15840)),
-                        new XElement(W.pgMar,
+                        new XElement(W.pgSz, new XAttribute(W._w, 12240), new XAttribute(W.h, 15840)),
+                        new XElement(
+                            W.pgMar,
                             new XAttribute(W.top, 1440),
                             new XAttribute(W.right, 1440),
                             new XAttribute(W.bottom, 1440),
                             new XAttribute(W.left, 1440),
                             new XAttribute(W.header, 720),
                             new XAttribute(W.footer, 720),
-                            new XAttribute(W.gutter, 0)),
-                        new XElement(W.cols,
-                            new XAttribute(W.space, 720)),
-                        new XElement(W.docGrid,
-                            new XAttribute(W.linePitch, 360)))
+                            new XAttribute(W.gutter, 0)
+                        ),
+                        new XElement(W.cols, new XAttribute(W.space, 720)),
+                        new XElement(W.docGrid, new XAttribute(W.linePitch, 360))
+                    ),
                 };
 
             return currentSection;
         }
 
-        private static object CreateBorderDivs(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings settings, IEnumerable<XElement> elements)
+        private static object CreateBorderDivs(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            IEnumerable<XElement> elements
+        )
         {
-            return elements.GroupAdjacent(e =>
+            return elements
+                .GroupAdjacent(e =>
                 {
                     var pBdr = e.Elements(W.pPr).Elements(W.pBdr).FirstOrDefault();
                     if (pBdr != null)
@@ -2407,7 +2643,7 @@ namespace Clippit.Word
                 {
                     if (g.Key == string.Empty)
                     {
-                        return (object) GroupAndVerticallySpaceNumberedParagraphs(wordDoc, settings, g, 0m);
+                        return (object)GroupAndVerticallySpaceNumberedParagraphs(wordDoc, settings, g, 0m);
                     }
                     if (g.Key == "table")
                     {
@@ -2425,26 +2661,34 @@ namespace Clippit.Word
                     var ind = pPr.Element(W.ind);
                     if (ind != null)
                     {
-                        var leftInInches = (decimal?) ind.Attribute(W.left)/1440m ?? 0;
-                        var hangingInInches = -(decimal?) ind.Attribute(W.hanging)/1440m ?? 0;
+                        var leftInInches = (decimal?)ind.Attribute(W.left) / 1440m ?? 0;
+                        var hangingInInches = -(decimal?)ind.Attribute(W.hanging) / 1440m ?? 0;
                         currentMarginLeft = leftInInches + hangingInInches;
 
-                        style.AddIfMissing("margin-left",
+                        style.AddIfMissing(
+                            "margin-left",
                             currentMarginLeft > 0m
                                 ? string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", currentMarginLeft)
-                                : "0");
+                                : "0"
+                        );
                     }
 
-                    var div = new XElement(Xhtml.div,
-                        GroupAndVerticallySpaceNumberedParagraphs(wordDoc, settings, g, currentMarginLeft));
+                    var div = new XElement(
+                        Xhtml.div,
+                        GroupAndVerticallySpaceNumberedParagraphs(wordDoc, settings, g, currentMarginLeft)
+                    );
                     div.AddAnnotation(style);
                     return div;
                 })
-            .ToList();
+                .ToList();
         }
 
-        private static IEnumerable<object> GroupAndVerticallySpaceNumberedParagraphs(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings settings,
-            IEnumerable<XElement> elements, decimal currentMarginLeft)
+        private static IEnumerable<object> GroupAndVerticallySpaceNumberedParagraphs(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            IEnumerable<XElement> elements,
+            decimal currentMarginLeft
+        )
         {
             var grouped = elements
                 .GroupAdjacent(e =>
@@ -2463,14 +2707,13 @@ namespace Clippit.Word
                     return "";
                 })
                 .ToList();
-            var newContent = grouped
-                .Select(g =>
-                {
-                    if (g.Key == "")
-                        return g.Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, currentMarginLeft));
-                    var last = g.Count() - 1;
-                    return g.Select((e, i) => ConvertToHtmlTransform(wordDoc, settings, e, i != last, currentMarginLeft));
-                });
+            var newContent = grouped.Select(g =>
+            {
+                if (g.Key == "")
+                    return g.Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, currentMarginLeft));
+                var last = g.Count() - 1;
+                return g.Select((e, i) => ConvertToHtmlTransform(wordDoc, settings, e, i != last, currentMarginLeft));
+            });
             return newContent;
         }
 
@@ -2480,35 +2723,113 @@ namespace Clippit.Word
             public decimal CssSize;
         }
 
-        private static readonly Dictionary<string, BorderMappingInfo> BorderStyleMap = new()
-        {
-            { "single", new BorderMappingInfo() { CssName = "solid", CssSize = 1.0m }},
-            { "dotted", new BorderMappingInfo() { CssName = "dotted", CssSize = 1.0m }},
-            { "dashSmallGap", new BorderMappingInfo() { CssName = "dashed", CssSize = 1.0m }},
-            { "dashed", new BorderMappingInfo() { CssName = "dashed", CssSize = 1.0m }},
-            { "dotDash", new BorderMappingInfo() { CssName = "dashed", CssSize = 1.0m }},
-            { "dotDotDash", new BorderMappingInfo() { CssName = "dashed", CssSize = 1.0m }},
-            { "double", new BorderMappingInfo() { CssName = "double", CssSize = 2.5m }},
-            { "triple", new BorderMappingInfo() { CssName = "double", CssSize = 2.5m }},
-            { "thinThickSmallGap", new BorderMappingInfo() { CssName = "double", CssSize = 4.5m }},
-            { "thickThinSmallGap", new BorderMappingInfo() { CssName = "double", CssSize = 4.5m }},
-            { "thinThickThinSmallGap", new BorderMappingInfo() { CssName = "double", CssSize = 6.0m }},
-            { "thickThinMediumGap", new BorderMappingInfo() { CssName = "double", CssSize = 6.0m }},
-            { "thinThickMediumGap", new BorderMappingInfo() { CssName = "double", CssSize = 6.0m }},
-            { "thinThickThinMediumGap", new BorderMappingInfo() { CssName = "double", CssSize = 9.0m }},
-            { "thinThickLargeGap", new BorderMappingInfo() { CssName = "double", CssSize = 5.25m }},
-            { "thickThinLargeGap", new BorderMappingInfo() { CssName = "double", CssSize = 5.25m }},
-            { "thinThickThinLargeGap", new BorderMappingInfo() { CssName = "double", CssSize = 9.0m }},
-            { "wave", new BorderMappingInfo() { CssName = "solid", CssSize = 3.0m }},
-            { "doubleWave", new BorderMappingInfo() { CssName = "double", CssSize = 5.25m }},
-            { "dashDotStroked", new BorderMappingInfo() { CssName = "solid", CssSize = 3.0m }},
-            { "threeDEmboss", new BorderMappingInfo() { CssName = "ridge", CssSize = 6.0m }},
-            { "threeDEngrave", new BorderMappingInfo() { CssName = "groove", CssSize = 6.0m }},
-            { "outset", new BorderMappingInfo() { CssName = "outset", CssSize = 4.5m }},
-            { "inset", new BorderMappingInfo() { CssName = "inset", CssSize = 4.5m }},
-        };
+        private static readonly Dictionary<string, BorderMappingInfo> BorderStyleMap =
+            new()
+            {
+                {
+                    "single",
+                    new BorderMappingInfo() { CssName = "solid", CssSize = 1.0m }
+                },
+                {
+                    "dotted",
+                    new BorderMappingInfo() { CssName = "dotted", CssSize = 1.0m }
+                },
+                {
+                    "dashSmallGap",
+                    new BorderMappingInfo() { CssName = "dashed", CssSize = 1.0m }
+                },
+                {
+                    "dashed",
+                    new BorderMappingInfo() { CssName = "dashed", CssSize = 1.0m }
+                },
+                {
+                    "dotDash",
+                    new BorderMappingInfo() { CssName = "dashed", CssSize = 1.0m }
+                },
+                {
+                    "dotDotDash",
+                    new BorderMappingInfo() { CssName = "dashed", CssSize = 1.0m }
+                },
+                {
+                    "double",
+                    new BorderMappingInfo() { CssName = "double", CssSize = 2.5m }
+                },
+                {
+                    "triple",
+                    new BorderMappingInfo() { CssName = "double", CssSize = 2.5m }
+                },
+                {
+                    "thinThickSmallGap",
+                    new BorderMappingInfo() { CssName = "double", CssSize = 4.5m }
+                },
+                {
+                    "thickThinSmallGap",
+                    new BorderMappingInfo() { CssName = "double", CssSize = 4.5m }
+                },
+                {
+                    "thinThickThinSmallGap",
+                    new BorderMappingInfo() { CssName = "double", CssSize = 6.0m }
+                },
+                {
+                    "thickThinMediumGap",
+                    new BorderMappingInfo() { CssName = "double", CssSize = 6.0m }
+                },
+                {
+                    "thinThickMediumGap",
+                    new BorderMappingInfo() { CssName = "double", CssSize = 6.0m }
+                },
+                {
+                    "thinThickThinMediumGap",
+                    new BorderMappingInfo() { CssName = "double", CssSize = 9.0m }
+                },
+                {
+                    "thinThickLargeGap",
+                    new BorderMappingInfo() { CssName = "double", CssSize = 5.25m }
+                },
+                {
+                    "thickThinLargeGap",
+                    new BorderMappingInfo() { CssName = "double", CssSize = 5.25m }
+                },
+                {
+                    "thinThickThinLargeGap",
+                    new BorderMappingInfo() { CssName = "double", CssSize = 9.0m }
+                },
+                {
+                    "wave",
+                    new BorderMappingInfo() { CssName = "solid", CssSize = 3.0m }
+                },
+                {
+                    "doubleWave",
+                    new BorderMappingInfo() { CssName = "double", CssSize = 5.25m }
+                },
+                {
+                    "dashDotStroked",
+                    new BorderMappingInfo() { CssName = "solid", CssSize = 3.0m }
+                },
+                {
+                    "threeDEmboss",
+                    new BorderMappingInfo() { CssName = "ridge", CssSize = 6.0m }
+                },
+                {
+                    "threeDEngrave",
+                    new BorderMappingInfo() { CssName = "groove", CssSize = 6.0m }
+                },
+                {
+                    "outset",
+                    new BorderMappingInfo() { CssName = "outset", CssSize = 4.5m }
+                },
+                {
+                    "inset",
+                    new BorderMappingInfo() { CssName = "inset", CssSize = 4.5m }
+                },
+            };
 
-        private static void GenerateBorderStyle(XElement pBdr, XName sideXName, Dictionary<string, string> style, BorderType borderType)
+        private static void GenerateBorderStyle(
+            XElement pBdr,
+            XName sideXName,
+            Dictionary<string, string> style,
+            BorderType borderType
+        )
         {
             string whichSide;
             if (sideXName == W.top)
@@ -2522,8 +2843,7 @@ namespace Clippit.Word
             if (pBdr == null)
             {
                 style.Add("border-" + whichSide, "none");
-                if (borderType == BorderType.Cell &&
-                    whichSide is "left" or "right")
+                if (borderType == BorderType.Cell && whichSide is "left" or "right")
                     style.Add("padding-" + whichSide, "5.4pt");
                 return;
             }
@@ -2532,8 +2852,7 @@ namespace Clippit.Word
             if (side == null)
             {
                 style.Add("border-" + whichSide, "none");
-                if (borderType == BorderType.Cell &&
-                    whichSide is "left" or "right")
+                if (borderType == BorderType.Cell && whichSide is "left" or "right")
                     style.Add("padding-" + whichSide, "5.4pt");
                 return;
             }
@@ -2543,13 +2862,13 @@ namespace Clippit.Word
                 style.Add("border-" + whichSide + "-style", "none");
 
                 var space = (decimal?)side.Attribute(W.space) ?? 0;
-                if (borderType == BorderType.Cell &&
-                    whichSide is "left" or "right")
+                if (borderType == BorderType.Cell && whichSide is "left" or "right")
                     if (space < 5.4m)
                         space = 5.4m;
-                style.Add("padding-" + whichSide,
-                    space == 0 ? "0" : string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}pt", space));
-
+                style.Add(
+                    "padding-" + whichSide,
+                    space == 0 ? "0" : string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}pt", space)
+                );
             }
             else
             {
@@ -2574,7 +2893,7 @@ namespace Clippit.Word
                         {
                             <= 8 => 2.5m,
                             <= 18 => 6.75m,
-                            _ => sz / 3m
+                            _ => sz / 3m,
                         };
                     }
                     else if (type == "triple")
@@ -2583,7 +2902,7 @@ namespace Clippit.Word
                         {
                             <= 8 => 8m,
                             <= 18 => 11.25m,
-                            _ => 11.25m
+                            _ => 11.25m,
                         };
                     }
                     else if (type.ToLower().Contains("dash"))
@@ -2592,7 +2911,7 @@ namespace Clippit.Word
                         {
                             <= 4 => 1m,
                             <= 12 => 1.5m,
-                            _ => 2m
+                            _ => 2m,
                         };
                     }
                     else if (type != "single")
@@ -2603,56 +2922,58 @@ namespace Clippit.Word
                 var borderWidth = string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}pt", borderWidthInPoints);
 
                 style.Add("border-" + whichSide, borderStyle + " " + color + " " + borderWidth);
-                if (borderType == BorderType.Cell &&
-                    whichSide is "left" or "right")
+                if (borderType == BorderType.Cell && whichSide is "left" or "right")
                     if (space < 5.4m)
                         space = 5.4m;
 
-                style.Add("padding-" + whichSide,
-                    space == 0 ? "0" : string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}pt", space));
+                style.Add(
+                    "padding-" + whichSide,
+                    space == 0 ? "0" : string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}pt", space)
+                );
             }
         }
 
-        private static readonly Dictionary<string, Func<string, string, string>> ShadeMapper = new()
-        {
-            { "auto", (c, f) => c },
-            { "clear", (c, f) => f },
-            { "nil", (c, f) => f },
-            { "solid", (c, f) => c },
-            { "diagCross", (c, f) => ConvertColorFillPct(c, f, .75) },
-            { "diagStripe", (c, f) => ConvertColorFillPct(c, f, .75) },
-            { "horzCross", (c, f) => ConvertColorFillPct(c, f, .5) },
-            { "horzStripe", (c, f) => ConvertColorFillPct(c, f, .5) },
-            { "pct10", (c, f) => ConvertColorFillPct(c, f, .1) },
-            { "pct12", (c, f) => ConvertColorFillPct(c, f, .125) },
-            { "pct15", (c, f) => ConvertColorFillPct(c, f, .15) },
-            { "pct20", (c, f) => ConvertColorFillPct(c, f, .2) },
-            { "pct25", (c, f) => ConvertColorFillPct(c, f, .25) },
-            { "pct30", (c, f) => ConvertColorFillPct(c, f, .3) },
-            { "pct35", (c, f) => ConvertColorFillPct(c, f, .35) },
-            { "pct37", (c, f) => ConvertColorFillPct(c, f, .375) },
-            { "pct40", (c, f) => ConvertColorFillPct(c, f, .4) },
-            { "pct45", (c, f) => ConvertColorFillPct(c, f, .45) },
-            { "pct50", (c, f) => ConvertColorFillPct(c, f, .50) },
-            { "pct55", (c, f) => ConvertColorFillPct(c, f, .55) },
-            { "pct60", (c, f) => ConvertColorFillPct(c, f, .60) },
-            { "pct62", (c, f) => ConvertColorFillPct(c, f, .625) },
-            { "pct65", (c, f) => ConvertColorFillPct(c, f, .65) },
-            { "pct70", (c, f) => ConvertColorFillPct(c, f, .7) },
-            { "pct75", (c, f) => ConvertColorFillPct(c, f, .75) },
-            { "pct80", (c, f) => ConvertColorFillPct(c, f, .8) },
-            { "pct85", (c, f) => ConvertColorFillPct(c, f, .85) },
-            { "pct87", (c, f) => ConvertColorFillPct(c, f, .875) },
-            { "pct90", (c, f) => ConvertColorFillPct(c, f, .9) },
-            { "pct95", (c, f) => ConvertColorFillPct(c, f, .95) },
-            { "reverseDiagStripe", (c, f) => ConvertColorFillPct(c, f, .5) },
-            { "thinDiagCross", (c, f) => ConvertColorFillPct(c, f, .5) },
-            { "thinDiagStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
-            { "thinHorzCross", (c, f) => ConvertColorFillPct(c, f, .3) },
-            { "thinHorzStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
-            { "thinReverseDiagStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
-            { "thinVertStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
-        };
+        private static readonly Dictionary<string, Func<string, string, string>> ShadeMapper =
+            new()
+            {
+                { "auto", (c, f) => c },
+                { "clear", (c, f) => f },
+                { "nil", (c, f) => f },
+                { "solid", (c, f) => c },
+                { "diagCross", (c, f) => ConvertColorFillPct(c, f, .75) },
+                { "diagStripe", (c, f) => ConvertColorFillPct(c, f, .75) },
+                { "horzCross", (c, f) => ConvertColorFillPct(c, f, .5) },
+                { "horzStripe", (c, f) => ConvertColorFillPct(c, f, .5) },
+                { "pct10", (c, f) => ConvertColorFillPct(c, f, .1) },
+                { "pct12", (c, f) => ConvertColorFillPct(c, f, .125) },
+                { "pct15", (c, f) => ConvertColorFillPct(c, f, .15) },
+                { "pct20", (c, f) => ConvertColorFillPct(c, f, .2) },
+                { "pct25", (c, f) => ConvertColorFillPct(c, f, .25) },
+                { "pct30", (c, f) => ConvertColorFillPct(c, f, .3) },
+                { "pct35", (c, f) => ConvertColorFillPct(c, f, .35) },
+                { "pct37", (c, f) => ConvertColorFillPct(c, f, .375) },
+                { "pct40", (c, f) => ConvertColorFillPct(c, f, .4) },
+                { "pct45", (c, f) => ConvertColorFillPct(c, f, .45) },
+                { "pct50", (c, f) => ConvertColorFillPct(c, f, .50) },
+                { "pct55", (c, f) => ConvertColorFillPct(c, f, .55) },
+                { "pct60", (c, f) => ConvertColorFillPct(c, f, .60) },
+                { "pct62", (c, f) => ConvertColorFillPct(c, f, .625) },
+                { "pct65", (c, f) => ConvertColorFillPct(c, f, .65) },
+                { "pct70", (c, f) => ConvertColorFillPct(c, f, .7) },
+                { "pct75", (c, f) => ConvertColorFillPct(c, f, .75) },
+                { "pct80", (c, f) => ConvertColorFillPct(c, f, .8) },
+                { "pct85", (c, f) => ConvertColorFillPct(c, f, .85) },
+                { "pct87", (c, f) => ConvertColorFillPct(c, f, .875) },
+                { "pct90", (c, f) => ConvertColorFillPct(c, f, .9) },
+                { "pct95", (c, f) => ConvertColorFillPct(c, f, .95) },
+                { "reverseDiagStripe", (c, f) => ConvertColorFillPct(c, f, .5) },
+                { "thinDiagCross", (c, f) => ConvertColorFillPct(c, f, .5) },
+                { "thinDiagStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
+                { "thinHorzCross", (c, f) => ConvertColorFillPct(c, f, .3) },
+                { "thinHorzStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
+                { "thinReverseDiagStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
+                { "thinVertStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
+            };
 
         private static readonly Dictionary<string, string> ShadeCache = new();
 
@@ -2699,26 +3020,27 @@ namespace Clippit.Word
             }
         }
 
-        private static readonly Dictionary<string, string> NamedColors = new()
-        {
-            {"black", "black"},
-            {"blue", "blue" },
-            {"cyan", "aqua" },
-            {"green", "green" },
-            {"magenta", "fuchsia" },
-            {"red", "red" },
-            {"yellow", "yellow" },
-            {"white", "white" },
-            {"darkBlue", "#00008B" },
-            {"darkCyan", "#008B8B" },
-            {"darkGreen", "#006400" },
-            {"darkMagenta", "#800080" },
-            {"darkRed", "#8B0000" },
-            {"darkYellow", "#808000" },
-            {"darkGray", "#A9A9A9" },
-            {"lightGray", "#D3D3D3" },
-            {"none", "" },
-        };
+        private static readonly Dictionary<string, string> NamedColors =
+            new()
+            {
+                { "black", "black" },
+                { "blue", "blue" },
+                { "cyan", "aqua" },
+                { "green", "green" },
+                { "magenta", "fuchsia" },
+                { "red", "red" },
+                { "yellow", "yellow" },
+                { "white", "white" },
+                { "darkBlue", "#00008B" },
+                { "darkCyan", "#008B8B" },
+                { "darkGreen", "#006400" },
+                { "darkMagenta", "#800080" },
+                { "darkRed", "#8B0000" },
+                { "darkYellow", "#808000" },
+                { "darkGray", "#A9A9A9" },
+                { "lightGray", "#D3D3D3" },
+                { "none", "" },
+            };
 
         private static void CreateColorProperty(string propertyName, string color, Dictionary<string, string> style)
         {
@@ -2758,40 +3080,41 @@ namespace Clippit.Word
             return "#" + color;
         }
 
-        private static readonly Dictionary<string, string> FontFallback = new()
-        {
-            { "Arial", @"'{0}', 'sans-serif'" },
-            { "Arial Narrow", @"'{0}', 'sans-serif'" },
-            { "Arial Rounded MT Bold", @"'{0}', 'sans-serif'" },
-            { "Arial Unicode MS", @"'{0}', 'sans-serif'" },
-            { "Baskerville Old Face", @"'{0}', 'serif'" },
-            { "Berlin Sans FB", @"'{0}', 'sans-serif'" },
-            { "Berlin Sans FB Demi", @"'{0}', 'sans-serif'" },
-            { "Calibri Light", @"'{0}', 'sans-serif'" },
-            { "Gill Sans MT", @"'{0}', 'sans-serif'" },
-            { "Gill Sans MT Condensed", @"'{0}', 'sans-serif'" },
-            { "Lucida Sans", @"'{0}', 'sans-serif'" },
-            { "Lucida Sans Unicode", @"'{0}', 'sans-serif'" },
-            { "Segoe UI", @"'{0}', 'sans-serif'" },
-            { "Segoe UI Light", @"'{0}', 'sans-serif'" },
-            { "Segoe UI Semibold", @"'{0}', 'sans-serif'" },
-            { "Tahoma", @"'{0}', 'sans-serif'" },
-            { "Trebuchet MS", @"'{0}', 'sans-serif'" },
-            { "Verdana", @"'{0}', 'sans-serif'" },
-            { "Book Antiqua", @"'{0}', 'serif'" },
-            { "Bookman Old Style", @"'{0}', 'serif'" },
-            { "Californian FB", @"'{0}', 'serif'" },
-            { "Cambria", @"'{0}', 'serif'" },
-            { "Constantia", @"'{0}', 'serif'" },
-            { "Garamond", @"'{0}', 'serif'" },
-            { "Lucida Bright", @"'{0}', 'serif'" },
-            { "Lucida Fax", @"'{0}', 'serif'" },
-            { "Palatino Linotype", @"'{0}', 'serif'" },
-            { "Times New Roman", @"'{0}', 'serif'" },
-            { "Wide Latin", @"'{0}', 'serif'" },
-            { "Courier New", @"'{0}'" },
-            { "Lucida Console", @"'{0}'" },
-        };
+        private static readonly Dictionary<string, string> FontFallback =
+            new()
+            {
+                { "Arial", @"'{0}', 'sans-serif'" },
+                { "Arial Narrow", @"'{0}', 'sans-serif'" },
+                { "Arial Rounded MT Bold", @"'{0}', 'sans-serif'" },
+                { "Arial Unicode MS", @"'{0}', 'sans-serif'" },
+                { "Baskerville Old Face", @"'{0}', 'serif'" },
+                { "Berlin Sans FB", @"'{0}', 'sans-serif'" },
+                { "Berlin Sans FB Demi", @"'{0}', 'sans-serif'" },
+                { "Calibri Light", @"'{0}', 'sans-serif'" },
+                { "Gill Sans MT", @"'{0}', 'sans-serif'" },
+                { "Gill Sans MT Condensed", @"'{0}', 'sans-serif'" },
+                { "Lucida Sans", @"'{0}', 'sans-serif'" },
+                { "Lucida Sans Unicode", @"'{0}', 'sans-serif'" },
+                { "Segoe UI", @"'{0}', 'sans-serif'" },
+                { "Segoe UI Light", @"'{0}', 'sans-serif'" },
+                { "Segoe UI Semibold", @"'{0}', 'sans-serif'" },
+                { "Tahoma", @"'{0}', 'sans-serif'" },
+                { "Trebuchet MS", @"'{0}', 'sans-serif'" },
+                { "Verdana", @"'{0}', 'sans-serif'" },
+                { "Book Antiqua", @"'{0}', 'serif'" },
+                { "Bookman Old Style", @"'{0}', 'serif'" },
+                { "Californian FB", @"'{0}', 'serif'" },
+                { "Cambria", @"'{0}', 'serif'" },
+                { "Constantia", @"'{0}', 'serif'" },
+                { "Garamond", @"'{0}', 'serif'" },
+                { "Lucida Bright", @"'{0}', 'serif'" },
+                { "Lucida Fax", @"'{0}', 'serif'" },
+                { "Palatino Linotype", @"'{0}', 'serif'" },
+                { "Times New Roman", @"'{0}', 'serif'" },
+                { "Wide Latin", @"'{0}', 'serif'" },
+                { "Courier New", @"'{0}'" },
+                { "Lucida Console", @"'{0}'" },
+            };
 
         private static void CreateFontCssProperty(string font, Dictionary<string, string> style)
         {
@@ -2816,12 +3139,15 @@ namespace Clippit.Word
             {
                 "0" or "false" => false,
                 "1" or "true" => true,
-                _ => false
+                _ => false,
             };
         }
 
-        private static object ConvertContentThatCanContainFields(WordprocessingDocument wordDoc, WmlToHtmlConverterSettings settings,
-            IEnumerable<XElement> elements)
+        private static object ConvertContentThatCanContainFields(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            IEnumerable<XElement> elements
+        )
         {
             var grouped = elements
                 .GroupAdjacent(e =>
@@ -2838,17 +3164,20 @@ namespace Clippit.Word
                     if (key == null)
                         return (object)g.Select(n => ConvertToHtmlTransform(wordDoc, settings, n, false, 0m));
 
-                    var instrText = FieldRetriever.InstrText(g.First().Ancestors().Last(), (int)key)
-                        .TrimStart('{').TrimEnd('}');
+                    var instrText = FieldRetriever
+                        .InstrText(g.First().Ancestors().Last(), (int)key)
+                        .TrimStart('{')
+                        .TrimEnd('}');
 
                     var parsed = FieldRetriever.ParseField(instrText);
                     if (parsed.FieldType != "HYPERLINK")
                         return g.Select(n => ConvertToHtmlTransform(wordDoc, settings, n, false, 0m));
 
                     var content = g.DescendantsAndSelf(W.r).Select(run => ConvertRun(wordDoc, settings, run));
-                    var a = parsed.Arguments.Length > 0
-                        ? new XElement(Xhtml.a, new XAttribute("href", parsed.Arguments[0]), content)
-                        : new XElement(Xhtml.a, content);
+                    var a =
+                        parsed.Arguments.Length > 0
+                            ? new XElement(Xhtml.a, new XAttribute("href", parsed.Arguments[0]), content)
+                            : new XElement(Xhtml.a, content);
                     var a2 = a as XElement;
                     if (!a2.Nodes().Any())
                     {
@@ -2867,14 +3196,14 @@ namespace Clippit.Word
         // Don't process wmf files (with contentType == "image/x-wmf") because GDI consumes huge amounts
         // of memory when dealing with wmf perhaps because it loads a DLL to do the rendering?
         // It actually works, but is not recommended.
-        private static readonly List<string> ImageContentTypes = new()
-        {
-            "image/png", "image/gif", "image/tiff", "image/jpeg"
-        };
+        private static readonly List<string> ImageContentTypes =
+            new() { "image/png", "image/gif", "image/tiff", "image/jpeg" };
 
-
-        public static XElement ProcessImage(WordprocessingDocument wordDoc,
-            XElement element, Func<ImageInfo, XElement> imageHandler)
+        public static XElement ProcessImage(
+            WordprocessingDocument wordDoc,
+            XElement element,
+            Func<ImageInfo, XElement> imageHandler
+        )
         {
             if (imageHandler == null)
             {
@@ -2891,12 +3220,15 @@ namespace Clippit.Word
             return null;
         }
 
-        private static XElement ProcessDrawing(WordprocessingDocument wordDoc,
-            XElement element, Func<ImageInfo, XElement> imageHandler)
+        private static XElement ProcessDrawing(
+            WordprocessingDocument wordDoc,
+            XElement element,
+            Func<ImageInfo, XElement> imageHandler
+        )
         {
-            var containerElement = element.Elements()
-                .FirstOrDefault(e => e.Name == WP.inline || e.Name == WP.anchor);
-            if (containerElement == null) return null;
+            var containerElement = element.Elements().FirstOrDefault(e => e.Name == WP.inline || e.Name == WP.anchor);
+            if (containerElement == null)
+                return null;
 
             string hyperlinkUri = null;
             var hyperlinkElement = element
@@ -2909,7 +3241,9 @@ namespace Clippit.Word
                 var rId = (string)hyperlinkElement.Attribute(R.id);
                 if (rId != null)
                 {
-                    var hyperlinkRel = wordDoc.MainDocumentPart.HyperlinkRelationships.FirstOrDefault(hlr => hlr.Id == rId);
+                    var hyperlinkRel = wordDoc.MainDocumentPart.HyperlinkRelationships.FirstOrDefault(hlr =>
+                        hlr.Id == rId
+                    );
                     if (hyperlinkRel != null)
                     {
                         hyperlinkUri = hyperlinkRel.Uri.ToString();
@@ -2917,26 +3251,32 @@ namespace Clippit.Word
                 }
             }
 
-            var extentCx = (int?)containerElement.Elements(WP.extent)
-                .Attributes(NoNamespace.cx).FirstOrDefault();
-            var extentCy = (int?)containerElement.Elements(WP.extent)
-                .Attributes(NoNamespace.cy).FirstOrDefault();
-            var altText = (string)containerElement.Elements(WP.docPr).Attributes(NoNamespace.descr).FirstOrDefault() ??
-                          ((string)containerElement.Elements(WP.docPr).Attributes(NoNamespace.name).FirstOrDefault() ?? "");
+            var extentCx = (int?)containerElement.Elements(WP.extent).Attributes(NoNamespace.cx).FirstOrDefault();
+            var extentCy = (int?)containerElement.Elements(WP.extent).Attributes(NoNamespace.cy).FirstOrDefault();
+            var altText =
+                (string)containerElement.Elements(WP.docPr).Attributes(NoNamespace.descr).FirstOrDefault()
+                ?? ((string)containerElement.Elements(WP.docPr).Attributes(NoNamespace.name).FirstOrDefault() ?? "");
 
-            var blipFill = containerElement.Elements(A.graphic)
+            var blipFill = containerElement
+                .Elements(A.graphic)
                 .Elements(A.graphicData)
-                .Elements(Pic._pic).Elements(Pic.blipFill).FirstOrDefault();
-            if (blipFill == null) return null;
+                .Elements(Pic._pic)
+                .Elements(Pic.blipFill)
+                .FirstOrDefault();
+            if (blipFill == null)
+                return null;
 
             var imageRid = (string)blipFill.Elements(A.blip).Attributes(R.embed).FirstOrDefault();
-            if (imageRid == null) return null;
+            if (imageRid == null)
+                return null;
 
             var pp3 = wordDoc.MainDocumentPart.Parts.FirstOrDefault(pp => pp.RelationshipId == imageRid);
-            if (pp3 == default) return null;
+            if (pp3 == default)
+                return null;
 
             var imagePart = (ImagePart)pp3.OpenXmlPart;
-            if (imagePart == null) return null;
+            if (imagePart == null)
+                return null;
 
             // If the image markup points to a NULL image, then following will throw an ArgumentOutOfRangeException
             try
@@ -2959,11 +3299,15 @@ namespace Clippit.Word
                 var imageInfo = new ImageInfo()
                 {
                     Image = image,
-                    ImgStyleAttribute = new XAttribute("style",
-                        string.Format(NumberFormatInfo.InvariantInfo,
+                    ImgStyleAttribute = new XAttribute(
+                        "style",
+                        string.Format(
+                            NumberFormatInfo.InvariantInfo,
                             "width: {0}in; height: {1}in",
                             (float)extentCx / ImageInfo.EmusPerInch,
-                            (float)extentCy / ImageInfo.EmusPerInch)),
+                            (float)extentCy / ImageInfo.EmusPerInch
+                        )
+                    ),
                     ContentType = contentType,
                     DrawingElement = element,
                     AltText = altText,
@@ -2971,9 +3315,11 @@ namespace Clippit.Word
                 var imgElement2 = imageHandler(imageInfo);
                 if (hyperlinkUri != null)
                 {
-                    return new XElement(XhtmlNoNamespace.a,
+                    return new XElement(
+                        XhtmlNoNamespace.a,
                         new XAttribute(XhtmlNoNamespace.href, hyperlinkUri),
-                        imgElement2);
+                        imgElement2
+                    );
                 }
                 return imgElement2;
             }
@@ -2988,26 +3334,35 @@ namespace Clippit.Word
             var imgElement = imageHandler(imageInfo2);
             if (hyperlinkUri != null)
             {
-                return new XElement(XhtmlNoNamespace.a,
+                return new XElement(
+                    XhtmlNoNamespace.a,
                     new XAttribute(XhtmlNoNamespace.href, hyperlinkUri),
-                    imgElement);
+                    imgElement
+                );
             }
             return imgElement;
         }
 
-        private static XElement ProcessPictureOrObject(WordprocessingDocument wordDoc,
-            XElement element, Func<ImageInfo, XElement> imageHandler)
+        private static XElement ProcessPictureOrObject(
+            WordprocessingDocument wordDoc,
+            XElement element,
+            Func<ImageInfo, XElement> imageHandler
+        )
         {
-            var imageRid = (string)element.Elements(VML.shape).Elements(VML.imagedata).Attributes(R.id).FirstOrDefault();
-            if (imageRid == null) return null;
+            var imageRid = (string)
+                element.Elements(VML.shape).Elements(VML.imagedata).Attributes(R.id).FirstOrDefault();
+            if (imageRid == null)
+                return null;
 
             try
             {
                 var pp = wordDoc.MainDocumentPart.Parts.FirstOrDefault(pp2 => pp2.RelationshipId == imageRid);
-                if (pp == default) return null;
+                if (pp == default)
+                    return null;
 
                 var imagePart = (ImagePart)pp.OpenXmlPart;
-                if (imagePart == default) return null;
+                if (imagePart == default)
+                    return null;
 
                 var contentType = imagePart.ContentType;
                 if (!ImageContentTypes.Contains(contentType))
@@ -3021,20 +3376,27 @@ namespace Clippit.Word
                     {
                         Image = bitmap,
                         ContentType = contentType,
-                        DrawingElement = element
+                        DrawingElement = element,
                     };
 
                     var style = (string)element.Elements(VML.shape).Attributes("style").FirstOrDefault();
-                    if (style == null) return imageHandler(imageInfo);
+                    if (style == null)
+                        return imageHandler(imageInfo);
 
                     var tokens = style.Split(';');
                     var widthInPoints = WidthInPoints(tokens);
                     var heightInPoints = HeightInPoints(tokens);
                     if (widthInPoints != null && heightInPoints != null)
                     {
-                        imageInfo.ImgStyleAttribute = new XAttribute("style",
-                            string.Format(NumberFormatInfo.InvariantInfo,
-                                "width: {0}pt; height: {1}pt", widthInPoints, heightInPoints));
+                        imageInfo.ImgStyleAttribute = new XAttribute(
+                            "style",
+                            string.Format(
+                                NumberFormatInfo.InvariantInfo,
+                                "width: {0}pt; height: {1}pt",
+                                widthInPoints,
+                                heightInPoints
+                            )
+                        );
                     }
                     return imageHandler(imageInfo);
                 }
@@ -3067,18 +3429,12 @@ namespace Clippit.Word
         private static float? SizeInPoints(IEnumerable<string> tokens, string name)
         {
             var sizeString = tokens
-                .Select(t => new
-                {
-                    Name = t.Split(':').First(),
-                    Value = t.Split(':').Skip(1).Take(1).FirstOrDefault()
-                })
+                .Select(t => new { Name = t.Split(':').First(), Value = t.Split(':').Skip(1).Take(1).FirstOrDefault() })
                 .Where(p => p.Name == name)
                 .Select(p => p.Value)
                 .FirstOrDefault();
 
-            if (sizeString != null &&
-                sizeString.Length > 2 &&
-                sizeString.Substring(sizeString.Length - 2) == "pt")
+            if (sizeString != null && sizeString.Length > 2 && sizeString.Substring(sizeString.Length - 2) == "pt")
             {
                 if (float.TryParse(sizeString.Substring(0, sizeString.Length - 2), out var size))
                     return size;

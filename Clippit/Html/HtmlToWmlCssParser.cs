@@ -40,13 +40,8 @@ namespace Clippit.Html
 
         public string CssOperatorString
         {
-            get
-            {
-                return this.m_op?.ToString();
-            }
-            set {
-                this.m_op = (CssAttributeOperator)Enum.Parse(typeof(CssAttributeOperator), value);
-            }
+            get { return this.m_op?.ToString(); }
+            set { this.m_op = (CssAttributeOperator)Enum.Parse(typeof(CssAttributeOperator), value); }
         }
 
         public string Value { get; set; }
@@ -349,8 +344,7 @@ namespace Clippit.Html
             return sb.ToString();
         }
 
-        private string ToCharSetString(string start) =>
-            $"{start}{Name} {Expression}";
+        private string ToCharSetString(string start) => $"{start}{Name} {Expression}";
     }
 
     public enum CssDirectiveType
@@ -370,18 +364,12 @@ namespace Clippit.Html
 
         public bool IsNotAuto
         {
-            get
-            {
-                return (this != null && this.ToString() != "auto");
-            }
+            get { return (this != null && this.ToString() != "auto"); }
         }
 
         public bool IsAuto
         {
-            get
-            {
-                return (this.ToString() == "auto");
-            }
+            get { return (this.ToString() == "auto"); }
         }
 
         public bool IsNotNormal
@@ -391,10 +379,7 @@ namespace Clippit.Html
 
         public bool IsNormal
         {
-            get
-            {
-                return (this.ToString() == "normal");
-            }
+            get { return (this.ToString() == "normal"); }
         }
 
         public override string ToString()
@@ -416,8 +401,7 @@ namespace Clippit.Html
             return sb.ToString();
         }
 
-        public static implicit operator string(CssExpression e) =>
-            e.ToString();
+        public static implicit operator string(CssExpression e) => e.ToString();
 
         public static explicit operator double(CssExpression e) =>
             double.Parse(e.Terms.First().Value, CultureInfo.InvariantCulture);
@@ -520,7 +504,7 @@ namespace Clippit.Html
         projection,
         screen,
         tty,
-        tv
+        tv,
     }
 
     public class CssPropertyValue
@@ -548,14 +532,16 @@ namespace Clippit.Html
         {
             get
             {
-                if (((Type == CssValueType.Hex)
-                    || (Type == CssValueType.String && Value.StartsWith("#")))
-                    && (Value.Length == 6 || (Value.Length == 7 && Value.StartsWith("#"))))
+                if (
+                    ((Type == CssValueType.Hex) || (Type == CssValueType.String && Value.StartsWith("#")))
+                    && (Value.Length == 6 || (Value.Length == 7 && Value.StartsWith("#")))
+                )
                 {
                     var hex = true;
                     foreach (var c in Value)
                     {
-                        if (!char.IsDigit(c)
+                        if (
+                            !char.IsDigit(c)
                             && c != '#'
                             && c != 'a'
                             && c != 'A'
@@ -587,7 +573,10 @@ namespace Clippit.Html
                             break;
                         }
                     }
-                    if (number) { return false; }
+                    if (number)
+                    {
+                        return false;
+                    }
 
                     if (ColorParser.IsValidName(Value))
                     {
@@ -607,7 +596,7 @@ namespace Clippit.Html
                 {
                     7 when Value.StartsWith("#") => Value.Substring(1),
                     6 => Value,
-                    _ => hex
+                    _ => hex,
                 };
             }
             else
@@ -638,7 +627,7 @@ namespace Clippit.Html
                     "D" => 13,
                     "E" => 14,
                     "F" => 15,
-                    _ => int.Parse(chunk)
+                    _ => int.Parse(chunk),
                 };
                 if (i == 0)
                 {
@@ -730,16 +719,13 @@ namespace Clippit.Html
 
         public CssCombinator? Combinator
         {
-            get {
-                return m_combinator;
-            }
-            set {
-                m_combinator = value;
-            }
+            get { return m_combinator; }
+            set { m_combinator = value; }
         }
         public string CombinatorString
         {
-            get {
+            get
+            {
                 if (this.m_combinator.HasValue)
                 {
                     return m_combinator.ToString();
@@ -749,9 +735,7 @@ namespace Clippit.Html
                     return null;
                 }
             }
-            set {
-                this.m_combinator = (CssCombinator)Enum.Parse(typeof(CssCombinator), value);
-            }
+            set { this.m_combinator = (CssCombinator)Enum.Parse(typeof(CssCombinator), value); }
         }
 
         public string ElementName { get; set; }
@@ -901,7 +885,7 @@ namespace Clippit.Html
         Classed = 2,
         IDed = 4,
         Pseudoed = 8,
-        Directive = 16
+        Directive = 16,
     }
 
     public class CssTerm
@@ -912,40 +896,24 @@ namespace Clippit.Html
 
         public char? Separator
         {
-            get {
-                return m_separator;
-            }
-            set {
-                m_separator = value;
-            }
+            get { return m_separator; }
+            set { m_separator = value; }
         }
         public string SeparatorChar
         {
-            get {
-                return m_separator.HasValue ? this.m_separator.Value.ToString() : null;
-            }
-            set {
-                m_separator = !string.IsNullOrEmpty(value) ? value[0] : '\0';
-            }
+            get { return m_separator.HasValue ? this.m_separator.Value.ToString() : null; }
+            set { m_separator = !string.IsNullOrEmpty(value) ? value[0] : '\0'; }
         }
 
         public char? Sign
         {
-            get {
-                return m_sign;
-            }
-            set {
-                m_sign = value;
-            }
+            get { return m_sign; }
+            set { m_sign = value; }
         }
         public string SignChar
         {
-            get {
-                return this.m_sign.HasValue ? this.m_sign.Value.ToString() : null;
-            }
-            set {
-                this.m_sign = !string.IsNullOrEmpty(value) ? value[0] : '\0';
-            }
+            get { return this.m_sign.HasValue ? this.m_sign.Value.ToString() : null; }
+            set { this.m_sign = !string.IsNullOrEmpty(value) ? value[0] : '\0'; }
         }
 
         public CssTermType Type { get; set; }
@@ -954,16 +922,13 @@ namespace Clippit.Html
 
         public CssUnit? Unit
         {
-            get {
-                return m_unit;
-            }
-            set {
-                m_unit = value;
-            }
+            get { return m_unit; }
+            set { m_unit = value; }
         }
         public string UnitString
         {
-            get {
+            get
+            {
                 if (this.m_unit.HasValue)
                 {
                     return this.m_unit.ToString();
@@ -973,9 +938,7 @@ namespace Clippit.Html
                     return null;
                 }
             }
-            set {
-                this.m_unit = (CssUnit)Enum.Parse(typeof(CssUnit), value);
-            }
+            set { this.m_unit = (CssUnit)Enum.Parse(typeof(CssUnit), value); }
         }
 
         public CssFunction Function { get; set; }
@@ -1027,15 +990,16 @@ namespace Clippit.Html
         {
             get
             {
-                if (((Type == CssTermType.Hex)
-                    || (Type == CssTermType.String && Value.StartsWith("#")))
-                    && (Value.Length is 6 or 3 || (Value.Length is 7 or 4
-                                                   && Value.StartsWith("#"))))
+                if (
+                    ((Type == CssTermType.Hex) || (Type == CssTermType.String && Value.StartsWith("#")))
+                    && (Value.Length is 6 or 3 || (Value.Length is 7 or 4 && Value.StartsWith("#")))
+                )
                 {
                     var hex = true;
                     foreach (var c in Value)
                     {
-                        if (!char.IsDigit(c)
+                        if (
+                            !char.IsDigit(c)
                             && c != '#'
                             && c != 'a'
                             && c != 'A'
@@ -1067,7 +1031,8 @@ namespace Clippit.Html
                             break;
                         }
                     }
-                    if (number) {
+                    if (number)
+                    {
                         return false;
                     }
 
@@ -1078,9 +1043,10 @@ namespace Clippit.Html
                 }
                 else if (Type == CssTermType.Function)
                 {
-                    if ((Function.Name.ToLower().Equals("rgb") && Function.Expression.Terms.Count == 3)
+                    if (
+                        (Function.Name.ToLower().Equals("rgb") && Function.Expression.Terms.Count == 3)
                         || (Function.Name.ToLower().Equals("rgba") && Function.Expression.Terms.Count == 4)
-                        )
+                    )
                     {
                         for (var i = 0; i < Function.Expression.Terms.Count; i++)
                         {
@@ -1091,9 +1057,10 @@ namespace Clippit.Html
                         }
                         return true;
                     }
-                    else if ((Function.Name.ToLower().Equals("hsl") && Function.Expression.Terms.Count == 3)
-                      || (Function.Name.ToLower().Equals("hsla") && Function.Expression.Terms.Count == 4)
-                      )
+                    else if (
+                        (Function.Name.ToLower().Equals("hsl") && Function.Expression.Terms.Count == 3)
+                        || (Function.Name.ToLower().Equals("hsla") && Function.Expression.Terms.Count == 4)
+                    )
                     {
                         for (var i = 0; i < Function.Expression.Terms.Count; i++)
                         {
@@ -1142,16 +1109,19 @@ namespace Clippit.Html
                 {
                     7 or 4 when Value.StartsWith("#") => Value.Substring(1),
                     6 or 3 => Value,
-                    _ => hex
+                    _ => hex,
                 };
             }
             else if (Type == CssTermType.Function)
             {
-                if ((Function.Name.ToLower().Equals("rgb") && Function.Expression.Terms.Count == 3)
+                if (
+                    (Function.Name.ToLower().Equals("rgb") && Function.Expression.Terms.Count == 3)
                     || (Function.Name.ToLower().Equals("rgba") && Function.Expression.Terms.Count == 4)
-                    )
+                )
                 {
-                    int fr = 0, fg = 0, fb = 0;
+                    int fr = 0,
+                        fg = 0,
+                        fb = 0;
                     for (var i = 0; i < Function.Expression.Terms.Count; i++)
                     {
                         if (Function.Expression.Terms[i].Type != CssTermType.Number)
@@ -1160,31 +1130,43 @@ namespace Clippit.Html
                         }
                         switch (i)
                         {
-                            case 0: fr = GetRGBValue(Function.Expression.Terms[i]);
+                            case 0:
+                                fr = GetRGBValue(Function.Expression.Terms[i]);
                                 break;
-                            case 1: fg = GetRGBValue(Function.Expression.Terms[i]);
+                            case 1:
+                                fg = GetRGBValue(Function.Expression.Terms[i]);
                                 break;
-                            case 2: fb = GetRGBValue(Function.Expression.Terms[i]);
+                            case 2:
+                                fb = GetRGBValue(Function.Expression.Terms[i]);
                                 break;
                         }
                     }
                     return Color.FromArgb(fr, fg, fb);
                 }
-                else if ((Function.Name.ToLower().Equals("hsl") && Function.Expression.Terms.Count == 3)
-                  || (Function.Name.Equals("hsla") && Function.Expression.Terms.Count == 4)
-                  )
+                else if (
+                    (Function.Name.ToLower().Equals("hsl") && Function.Expression.Terms.Count == 3)
+                    || (Function.Name.Equals("hsla") && Function.Expression.Terms.Count == 4)
+                )
                 {
-                    int h = 0, s = 0, v = 0;
+                    int h = 0,
+                        s = 0,
+                        v = 0;
                     for (var i = 0; i < Function.Expression.Terms.Count; i++)
                     {
-                        if (Function.Expression.Terms[i].Type != CssTermType.Number) { return Color.Black; }
+                        if (Function.Expression.Terms[i].Type != CssTermType.Number)
+                        {
+                            return Color.Black;
+                        }
                         switch (i)
                         {
-                            case 0: h = GetHueValue(Function.Expression.Terms[i]);
+                            case 0:
+                                h = GetHueValue(Function.Expression.Terms[i]);
                                 break;
-                            case 1: s = GetRGBValue(Function.Expression.Terms[i]);
+                            case 1:
+                                s = GetRGBValue(Function.Expression.Terms[i]);
                                 break;
-                            case 2: v = GetRGBValue(Function.Expression.Terms[i]);
+                            case 2:
+                                v = GetRGBValue(Function.Expression.Terms[i]);
                                 break;
                         }
                     }
@@ -1213,6 +1195,7 @@ namespace Clippit.Html
             var b = ConvertFromHex(hex.Substring(4));
             return Color.FromArgb(r, g, b);
         }
+
         private int ConvertFromHex(string input)
         {
             int val;
@@ -1228,7 +1211,7 @@ namespace Clippit.Html
                     "D" => 13,
                     "E" => 14,
                     "F" => 15,
-                    _ => int.Parse(chunk)
+                    _ => int.Parse(chunk),
                 };
                 if (i == 0)
                 {
@@ -1250,7 +1233,7 @@ namespace Clippit.Html
         String,
         Url,
         Unicode,
-        Hex
+        Hex,
     }
 
     public enum CssUnit
@@ -1290,7 +1273,7 @@ namespace Clippit.Html
                 CssUnit.Percent => "%",
                 CssUnit.Hz or CssUnit.kHz => u.ToString(),
                 CssUnit.None => "",
-                _ => u.ToString().ToLower()
+                _ => u.ToString().ToLower(),
             };
         }
     }
@@ -1302,7 +1285,7 @@ namespace Clippit.Html
         Unit,
         Percent,
         Url,
-        Function
+        Function,
     }
 
     public class CssParser
@@ -1347,6 +1330,7 @@ namespace Clippit.Html
             Saturation = s;
             Value = v;
         }
+
         public HueSatVal(Color color)
         {
             Hue = 0;
@@ -1354,6 +1338,7 @@ namespace Clippit.Html
             Value = 0;
             ConvertFromRGB(color);
         }
+
         public int Hue { get; set; }
 
         public int Saturation { get; set; }
@@ -1362,19 +1347,17 @@ namespace Clippit.Html
 
         public Color Color
         {
-            get {
-                return ConvertToRGB();
-            }
-            set {
-                ConvertFromRGB(value);
-            }
+            get { return ConvertToRGB(); }
+            set { ConvertFromRGB(value); }
         }
+
         private void ConvertFromRGB(Color color)
         {
             var r = color.R / 255.0d;
             var g = color.G / 255.0d;
             var b = color.B / 255.0d;
-            double h; double s;
+            double h;
+            double s;
 
             var min = Math.Min(Math.Min(r, g), b);
             var max = Math.Max(Math.Max(r, g), b);
@@ -1530,7 +1513,28 @@ namespace Clippit.Html
             }
             var hexes = new List<string>
             {
-                "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "a", "b", "c", "d", "e", "f"
+                "0",
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "A",
+                "B",
+                "C",
+                "D",
+                "E",
+                "F",
+                "a",
+                "b",
+                "c",
+                "d",
+                "e",
+                "f",
             };
             foreach (var c in m_lookaheadToken.m_tokenValue)
             {
@@ -1551,8 +1555,30 @@ namespace Clippit.Html
             var units = new List<string>(
                 new string[]
                 {
-                    "em", "ex", "px", "gd", "rem", "vw", "vh", "vm", "ch", "mm", "cm", "in", "pt", "pc", "deg", "grad", "rad", "turn", "ms", "s", "hz", "khz"
-                });
+                    "em",
+                    "ex",
+                    "px",
+                    "gd",
+                    "rem",
+                    "vw",
+                    "vh",
+                    "vm",
+                    "ch",
+                    "mm",
+                    "cm",
+                    "in",
+                    "pt",
+                    "pc",
+                    "deg",
+                    "grad",
+                    "rad",
+                    "turn",
+                    "ms",
+                    "s",
+                    "hz",
+                    "khz",
+                }
+            );
             return units.Contains(m_lookaheadToken.m_tokenValue.ToLower());
         }
 
@@ -1587,7 +1613,7 @@ namespace Clippit.Html
 
         private void Get()
         {
-            for (;;)
+            for (; ; )
             {
                 m_lastRecognizedToken = m_lookaheadToken;
                 m_lookaheadToken = m_scanner.Scan();
@@ -1628,7 +1654,6 @@ namespace Clippit.Html
             }
         }
 
-
         private bool WeakSeparator(int n, int syFol, int repFol)
         {
             var kind = m_lookaheadToken.m_tokenKind;
@@ -1652,7 +1677,6 @@ namespace Clippit.Html
                 return StartOf(syFol);
             }
         }
-
 
         private void Css3()
         {
@@ -1806,7 +1830,7 @@ namespace Clippit.Html
                 "@page" => CssDirectiveType.Page,
                 "@font-face" => CssDirectiveType.FontFace,
                 "@namespace" => CssDirectiveType.Namespace,
-                _ => CssDirectiveType.Other
+                _ => CssDirectiveType.Other,
             };
 
             while (m_lookaheadToken.m_tokenKind == 4)
@@ -1929,7 +1953,8 @@ namespace Clippit.Html
                     Get();
                 }
             }
-            else SyntaxErr(50);
+            else
+                SyntaxErr(50);
         }
 
         private void QuotedString(out string qs)
@@ -1963,8 +1988,8 @@ namespace Clippit.Html
                 }
                 Expect(8);
             }
-            else SyntaxErr(51);
-
+            else
+                SyntaxErr(51);
         }
 
         private void URI(out string url)
@@ -1999,7 +2024,8 @@ namespace Clippit.Html
                     }
                 }
             }
-            else SyntaxErr(52);
+            else
+                SyntaxErr(52);
             while (m_lookaheadToken.m_tokenKind == 4)
             {
                 Get();
@@ -2016,66 +2042,68 @@ namespace Clippit.Html
             switch (m_lookaheadToken.m_tokenKind)
             {
                 case 12:
-                    {
-                        Get();
-                        m = CssMedium.all;
-                        break;
-                    }
+                {
+                    Get();
+                    m = CssMedium.all;
+                    break;
+                }
                 case 13:
-                    {
-                        Get();
-                        m = CssMedium.aural;
-                        break;
-                    }
+                {
+                    Get();
+                    m = CssMedium.aural;
+                    break;
+                }
                 case 14:
-                    {
-                        Get();
-                        m = CssMedium.braille;
-                        break;
-                    }
+                {
+                    Get();
+                    m = CssMedium.braille;
+                    break;
+                }
                 case 15:
-                    {
-                        Get();
-                        m = CssMedium.embossed;
-                        break;
-                    }
+                {
+                    Get();
+                    m = CssMedium.embossed;
+                    break;
+                }
                 case 16:
-                    {
-                        Get();
-                        m = CssMedium.handheld;
-                        break;
-                    }
+                {
+                    Get();
+                    m = CssMedium.handheld;
+                    break;
+                }
                 case 17:
-                    {
-                        Get();
-                        m = CssMedium.print;
-                        break;
-                    }
+                {
+                    Get();
+                    m = CssMedium.print;
+                    break;
+                }
                 case 18:
-                    {
-                        Get();
-                        m = CssMedium.projection;
-                        break;
-                    }
+                {
+                    Get();
+                    m = CssMedium.projection;
+                    break;
+                }
                 case 19:
-                    {
-                        Get();
-                        m = CssMedium.screen;
-                        break;
-                    }
+                {
+                    Get();
+                    m = CssMedium.screen;
+                    break;
+                }
                 case 20:
-                    {
-                        Get();
-                        m = CssMedium.tty;
-                        break;
-                    }
+                {
+                    Get();
+                    m = CssMedium.tty;
+                    break;
+                }
                 case 21:
-                    {
-                        Get();
-                        m = CssMedium.tv;
-                        break;
-                    }
-                default: SyntaxErr(53); break;
+                {
+                    Get();
+                    m = CssMedium.tv;
+                    break;
+                }
+                default:
+                    SyntaxErr(53);
+                    break;
             }
         }
 
@@ -2085,71 +2113,73 @@ namespace Clippit.Html
             switch (m_lookaheadToken.m_tokenKind)
             {
                 case 1:
-                    {
-                        Get();
-                        break;
-                    }
+                {
+                    Get();
+                    break;
+                }
                 case 22:
-                    {
-                        Get();
-                        break;
-                    }
+                {
+                    Get();
+                    break;
+                }
                 case 9:
-                    {
-                        Get();
-                        break;
-                    }
+                {
+                    Get();
+                    break;
+                }
                 case 12:
-                    {
-                        Get();
-                        break;
-                    }
+                {
+                    Get();
+                    break;
+                }
                 case 13:
-                    {
-                        Get();
-                        break;
-                    }
+                {
+                    Get();
+                    break;
+                }
                 case 14:
-                    {
-                        Get();
-                        break;
-                    }
+                {
+                    Get();
+                    break;
+                }
                 case 15:
-                    {
-                        Get();
-                        break;
-                    }
+                {
+                    Get();
+                    break;
+                }
                 case 16:
-                    {
-                        Get();
-                        break;
-                    }
+                {
+                    Get();
+                    break;
+                }
                 case 17:
-                    {
-                        Get();
-                        break;
-                    }
+                {
+                    Get();
+                    break;
+                }
                 case 18:
-                    {
-                        Get();
-                        break;
-                    }
+                {
+                    Get();
+                    break;
+                }
                 case 19:
-                    {
-                        Get();
-                        break;
-                    }
+                {
+                    Get();
+                    break;
+                }
                 case 20:
-                    {
-                        Get();
-                        break;
-                    }
+                {
+                    Get();
+                    break;
+                }
                 case 21:
-                    {
-                        Get();
-                        break;
-                    }
-                default: SyntaxErr(54); break;
+                {
+                    Get();
+                    break;
+                }
+                default:
+                    SyntaxErr(54);
+                    break;
             }
             ident += m_lastRecognizedToken.m_tokenValue;
         }
@@ -2362,7 +2392,8 @@ namespace Clippit.Html
                     ss.Pseudo = psd;
                 }
             }
-            else SyntaxErr(55);
+            else
+                SyntaxErr(55);
             while (StartOf(13))
             {
                 var child = new CssSimpleSelector();
@@ -2408,7 +2439,6 @@ namespace Clippit.Html
                 }
                 parent.Child = child;
                 parent = child;
-
             }
         }
 
@@ -2435,41 +2465,41 @@ namespace Clippit.Html
                 switch (m_lookaheadToken.m_tokenKind)
                 {
                     case 36:
-                        {
-                            Get();
-                            atb.Operator = CssAttributeOperator.Equals;
-                            break;
-                        }
+                    {
+                        Get();
+                        atb.Operator = CssAttributeOperator.Equals;
+                        break;
+                    }
                     case 37:
-                        {
-                            Get();
-                            atb.Operator = CssAttributeOperator.InList;
-                            break;
-                        }
+                    {
+                        Get();
+                        atb.Operator = CssAttributeOperator.InList;
+                        break;
+                    }
                     case 38:
-                        {
-                            Get();
-                            atb.Operator = CssAttributeOperator.Hyphenated;
-                            break;
-                        }
+                    {
+                        Get();
+                        atb.Operator = CssAttributeOperator.Hyphenated;
+                        break;
+                    }
                     case 39:
-                        {
-                            Get();
-                            atb.Operator = CssAttributeOperator.EndsWith;
-                            break;
-                        }
+                    {
+                        Get();
+                        atb.Operator = CssAttributeOperator.EndsWith;
+                        break;
+                    }
                     case 40:
-                        {
-                            Get();
-                            atb.Operator = CssAttributeOperator.BeginsWith;
-                            break;
-                        }
+                    {
+                        Get();
+                        atb.Operator = CssAttributeOperator.BeginsWith;
+                        break;
+                    }
                     case 41:
-                        {
-                            Get();
-                            atb.Operator = CssAttributeOperator.Contains;
-                            break;
-                        }
+                    {
+                        Get();
+                        atb.Operator = CssAttributeOperator.Contains;
+                        break;
+                    }
                 }
                 while (m_lookaheadToken.m_tokenKind == 4)
                 {
@@ -2490,7 +2520,8 @@ namespace Clippit.Html
                     QuotedString(out quote);
                     atb.Value = quote;
                 }
-                else SyntaxErr(56);
+                else
+                    SyntaxErr(56);
                 while (m_lookaheadToken.m_tokenKind == 4)
                 {
                     Get();
@@ -2550,7 +2581,8 @@ namespace Clippit.Html
             if (m_lookaheadToken.m_tokenKind is 7 or 8)
             {
                 QuotedString(out val);
-                trm.Value = val; trm.Type = CssTermType.String;
+                trm.Value = val;
+                trm.Type = CssTermType.String;
             }
             else if (m_lookaheadToken.m_tokenKind == 9)
             {
@@ -2634,7 +2666,8 @@ namespace Clippit.Html
                                         }
                                     }
                                 }
-                                else SyntaxErr(57);
+                                else
+                                    SyntaxErr(57);
                             }
                             else if (m_lookaheadToken.m_tokenKind == 34)
                             {
@@ -2670,7 +2703,8 @@ namespace Clippit.Html
                                         trm.Value += m_lastRecognizedToken.m_tokenValue;
                                     }
                                 }
-                                else SyntaxErr(58);
+                                else
+                                    SyntaxErr(58);
                             }
                         }
                     }
@@ -2703,7 +2737,10 @@ namespace Clippit.Html
                         Get();
                         trm.Sign = '+';
                     }
-                    if (minus) { trm.Sign = '-'; }
+                    if (minus)
+                    {
+                        trm.Sign = '-';
+                    }
                     while (m_lookaheadToken.m_tokenKind == 3)
                     {
                         Get();
@@ -2762,18 +2799,23 @@ namespace Clippit.Html
                                 }
                                 catch
                                 {
-                                    m_errors.SemanticError(m_lastRecognizedToken.m_tokenLine, m_lastRecognizedToken.m_tokenColumn,
-                                        $"Unrecognized unit '{ident}'");
+                                    m_errors.SemanticError(
+                                        m_lastRecognizedToken.m_tokenLine,
+                                        m_lastRecognizedToken.m_tokenColumn,
+                                        $"Unrecognized unit '{ident}'"
+                                    );
                                 }
-
                             }
                         }
                     }
-                    trm.Value = val; trm.Type = CssTermType.Number;
+                    trm.Value = val;
+                    trm.Type = CssTermType.Number;
                 }
-                else SyntaxErr(59);
+                else
+                    SyntaxErr(59);
             }
-            else SyntaxErr(60);
+            else
+                SyntaxErr(60);
         }
 
         private void HexValue(out string val)
@@ -2794,9 +2836,11 @@ namespace Clippit.Html
             else if (IsInHex(val))
             {
                 Expect(1);
-                val += m_lastRecognizedToken.m_tokenValue; found = true;
+                val += m_lastRecognizedToken.m_tokenValue;
+                found = true;
             }
-            else SyntaxErr(61);
+            else
+                SyntaxErr(61);
             if (!found && IsInHex(val))
             {
                 Expect(1);
@@ -2813,31 +2857,1123 @@ namespace Clippit.Html
             Expect(0);
         }
 
-        private static readonly bool[,] set = {
-		    {T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
-		    {x,T,x,x, x,x,x,x, x,T,x,x, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x},
-		    {x,T,x,x, x,x,x,x, x,T,x,x, T,T,T,T, T,T,T,T, T,T,T,x, T,x,x,x, x,x,x,x, T,T,T,T, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x},
-		    {x,T,x,x, x,x,x,x, x,T,x,x, T,T,T,T, T,T,T,T, T,T,T,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
-		    {x,T,x,T, T,x,x,T, T,T,x,x, T,T,T,T, T,T,T,T, T,T,T,x, T,T,T,T, x,T,x,x, x,T,T,x, x,x,x,x, x,x,x,x, x,x,T,T, T,x,x},
-		    {x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,T, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
-		    {x,T,x,x, x,x,x,x, x,T,x,x, T,T,T,T, T,T,T,T, T,T,T,T, T,x,x,x, T,x,x,x, T,T,T,T, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x},
-		    {x,T,T,T, T,T,T,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
-		    {x,T,T,T, T,T,T,T, x,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
-		    {x,T,T,T, T,T,T,T, T,T,x,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
-		    {x,T,T,T, x,T,T,x, x,T,x,x, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x},
-		    {x,T,x,T, T,x,x,T, T,T,x,x, T,T,T,T, T,T,T,T, T,T,T,x, T,T,x,x, x,T,x,x, x,T,T,x, x,x,x,x, x,x,x,x, x,x,T,T, T,x,x},
-		    {x,T,x,x, T,x,x,x, x,T,x,x, T,T,T,T, T,T,T,T, T,T,T,x, T,x,x,x, x,T,T,T, T,T,T,T, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x},
-		    {x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,T,T,T, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x},
-		    {x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,T,T,T, T,T,x,x, x,x,x,x, x,x,x},
-		    {x,T,x,T, T,x,x,T, T,T,x,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x,x, T,T,T,T, x,x,x,x, x,x,x,T, T,x,T,T, T,x,x},
-		    {x,T,x,x, x,x,x,x, x,T,x,x, T,T,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x},
-		    {x,x,x,x, x,x,x,x, x,x,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,T,x, T,x,x,x, x,x,x,T, x,x,x,x, x,x,x},
-		    {x,T,x,x, x,x,x,x, x,T,x,x, T,T,T,T, T,T,T,T, T,T,T,x, T,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,T, x,x,x,x, x,x,x},
-		    {x,T,x,T, T,x,x,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,T,T, T,T,x,x, T,T,T,T, T,x,x,x, x,x,x,T, T,x,T,T, T,x,x},
-		    {x,T,x,x, x,x,x,x, x,T,x,x, T,T,T,T, T,T,T,T, T,T,T,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, x,x,x,x, T,x,x}
-	    };
+        private static readonly bool[,] set =
+        {
+            {
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+            },
+            {
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+            },
+            {
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+            },
+            {
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+            },
+            {
+                x,
+                T,
+                x,
+                T,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                T,
+                T,
+                T,
+                T,
+                x,
+                T,
+                x,
+                x,
+                x,
+                T,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                T,
+                T,
+                x,
+                x,
+            },
+            {
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+            },
+            {
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+            },
+            {
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+            },
+            {
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+            },
+            {
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+            },
+            {
+                x,
+                T,
+                T,
+                T,
+                x,
+                T,
+                T,
+                x,
+                x,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+            },
+            {
+                x,
+                T,
+                x,
+                T,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                T,
+                T,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                x,
+                T,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                T,
+                T,
+                x,
+                x,
+            },
+            {
+                x,
+                T,
+                x,
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+            },
+            {
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                T,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+            },
+            {
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+            },
+            {
+                x,
+                T,
+                x,
+                T,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                T,
+                x,
+                T,
+                T,
+                T,
+                x,
+                x,
+            },
+            {
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+            },
+            {
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+            },
+            {
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+            },
+            {
+                x,
+                T,
+                x,
+                T,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                T,
+                x,
+                T,
+                T,
+                T,
+                x,
+                x,
+            },
+            {
+                x,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                T,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                x,
+                T,
+                x,
+                x,
+            },
+        };
     }
-
 
     public class Errors
     {
@@ -2910,7 +4046,7 @@ namespace Clippit.Html
                 59 => "invalid term",
                 60 => "invalid term",
                 61 => "invalid HexValue",
-                _ => "error " + n
+                _ => "error " + n,
             };
             var errorString = string.Format(errMsgFormat, line, col, s);
             throw new OpenXmlPowerToolsException(errorString);
@@ -2939,10 +4075,10 @@ namespace Clippit.Html
         }
     }
 
-
     public class FatalError : Exception
     {
-        public FatalError(string m) : base(m) { }
+        public FatalError(string m)
+            : base(m) { }
     }
 
     public class CssToken
@@ -2971,7 +4107,8 @@ namespace Clippit.Html
 
         public CssBuffer(Stream s, bool isUserStream)
         {
-            m_inputStream = s; this.m_isUserStream = isUserStream;
+            m_inputStream = s;
+            this.m_isUserStream = isUserStream;
 
             if (m_inputStream.CanSeek)
             {
@@ -3006,7 +4143,10 @@ namespace Clippit.Html
             m_isUserStream = b.m_isUserStream;
         }
 
-        ~CssBuffer() { Close(); }
+        ~CssBuffer()
+        {
+            Close();
+        }
 
         private void Close()
         {
@@ -3064,7 +4204,8 @@ namespace Clippit.Html
             {
                 if (value >= m_inputStreamLength && m_inputStream != null && !m_inputStream.CanSeek)
                 {
-                    while (value >= m_inputStreamLength && ReadNextStreamChunk() > 0) ;
+                    while (value >= m_inputStreamLength && ReadNextStreamChunk() > 0)
+                        ;
                 }
 
                 if (value < 0 || value > m_inputStreamLength)
@@ -3080,7 +4221,8 @@ namespace Clippit.Html
                 {
                     m_inputStream.Seek(value, SeekOrigin.Begin);
                     m_bufferLength = m_inputStream.Read(m_inputBuffer, 0, m_inputBuffer.Length);
-                    m_bufferStart = value; m_currentPositionInBuffer = 0;
+                    m_bufferStart = value;
+                    m_currentPositionInBuffer = 0;
                 }
                 else
                 {
@@ -3111,7 +4253,8 @@ namespace Clippit.Html
 
     public class UTF8Buffer : CssBuffer
     {
-        public UTF8Buffer(CssBuffer b) : base(b) { }
+        public UTF8Buffer(CssBuffer b)
+            : base(b) { }
 
         public override int Read()
         {
@@ -3232,7 +4375,6 @@ namespace Clippit.Html
             s_start[85] = 43;
             s_start[37] = 39;
             s_start[CssBuffer.EOF] = -1;
-
         }
 
         public Scanner(string fileName)
@@ -3271,7 +4413,7 @@ namespace Clippit.Html
                 var ch2 = m_currentInputCharacter;
                 if (ch1 != 0xBB || ch2 != 0xBF)
                 {
-                    throw new FatalError($"illegal byte order mark: EF {ch1,2:X} {ch2,2:X}");
+                    throw new FatalError($"illegal byte order mark: EF {ch1, 2:X} {ch2, 2:X}");
                 }
                 m_scannerBuffer = new UTF8Buffer(m_scannerBuffer);
                 m_columnNumberOfCurrentCharacter = 0;
@@ -3298,10 +4440,10 @@ namespace Clippit.Html
                     m_currentInputCharacter = END_OF_LINE;
                 if (m_currentInputCharacter == END_OF_LINE)
                 {
-                    m_lineNumberOfCurrentCharacter++; m_columnNumberOfCurrentCharacter = 0;
+                    m_lineNumberOfCurrentCharacter++;
+                    m_columnNumberOfCurrentCharacter = 0;
                 }
             }
-
         }
 
         private void AddCh()
@@ -3321,12 +4463,16 @@ namespace Clippit.Html
 
         private bool Comment0()
         {
-            int level = 1, pos0 = m_currentCharacterBytePosition, line0 = m_lineNumberOfCurrentCharacter, col0 = m_columnNumberOfCurrentCharacter, charPos0 = m_unicodeCharacterPosition;
+            int level = 1,
+                pos0 = m_currentCharacterBytePosition,
+                line0 = m_lineNumberOfCurrentCharacter,
+                col0 = m_columnNumberOfCurrentCharacter,
+                charPos0 = m_unicodeCharacterPosition;
             NextCh();
             if (m_currentInputCharacter == '*')
             {
                 NextCh();
-                for (;;)
+                for (; ; )
                 {
                     if (m_currentInputCharacter == '*')
                     {
@@ -3359,7 +4505,6 @@ namespace Clippit.Html
             }
             return false;
         }
-
 
         private void CheckLiteral()
         {
@@ -3427,7 +4572,8 @@ namespace Clippit.Html
             {
                 state = (int)s_start[m_currentInputCharacter];
             }
-            else {
+            else
+            {
                 state = 0;
             }
             m_lengthOfCurrentToken = 0;
@@ -3435,48 +4581,57 @@ namespace Clippit.Html
 
             switch (state)
             {
-                case -1: {
+                case -1:
+                {
                     m_currentToken.m_tokenKind = c_eof;
                     break;
                 }
                 case 0:
+                {
+                    if (recKind != c_noSym)
                     {
-                        if (recKind != c_noSym)
-                        {
-                            m_lengthOfCurrentToken = recEnd - m_currentToken.m_tokenPositionInBytes;
-                            SetScannerBehindT();
-                        }
-                        m_currentToken.m_tokenKind = recKind;
-                        break;
+                        m_lengthOfCurrentToken = recEnd - m_currentToken.m_tokenPositionInBytes;
+                        SetScannerBehindT();
                     }
+                    m_currentToken.m_tokenKind = recKind;
+                    break;
+                }
                 case 1:
-                    recEnd = m_currentCharacterBytePosition; recKind = 1;
-                    if (m_currentInputCharacter == '-' || m_currentInputCharacter >= '0' && m_currentInputCharacter <= '9' || m_currentInputCharacter >= 'A' && m_currentInputCharacter <= 'Z' || m_currentInputCharacter == '_' || m_currentInputCharacter >= 'a' && m_currentInputCharacter <= 'z')
+                    recEnd = m_currentCharacterBytePosition;
+                    recKind = 1;
+                    if (
+                        m_currentInputCharacter == '-'
+                        || m_currentInputCharacter >= '0' && m_currentInputCharacter <= '9'
+                        || m_currentInputCharacter >= 'A' && m_currentInputCharacter <= 'Z'
+                        || m_currentInputCharacter == '_'
+                        || m_currentInputCharacter >= 'a' && m_currentInputCharacter <= 'z'
+                    )
                     {
                         AddCh();
                         goto case 1;
                     }
                     else
                     {
-                        m_currentToken.m_tokenKind = 1; m_currentToken.m_tokenValue = new string(m_textOfCurrentToken, 0, m_lengthOfCurrentToken);
+                        m_currentToken.m_tokenKind = 1;
+                        m_currentToken.m_tokenValue = new string(m_textOfCurrentToken, 0, m_lengthOfCurrentToken);
                         CheckLiteral();
                         return m_currentToken;
                     }
                 case 2:
-                    {
-                        m_currentToken.m_tokenKind = 2;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 2;
+                    break;
+                }
                 case 3:
-                    {
-                        m_currentToken.m_tokenKind = 3;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 3;
+                    break;
+                }
                 case 4:
-                    {
-                        m_currentToken.m_tokenKind = 4;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 4;
+                    break;
+                }
                 case 5:
                     if (m_currentInputCharacter == '!')
                     {
@@ -3493,7 +4648,8 @@ namespace Clippit.Html
                         AddCh();
                         goto case 7;
                     }
-                    else {
+                    else
+                    {
                         goto case 0;
                     }
                 case 7:
@@ -3507,10 +4663,10 @@ namespace Clippit.Html
                         goto case 0;
                     }
                 case 8:
-                    {
-                        m_currentToken.m_tokenKind = 5;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 5;
+                    break;
+                }
                 case 9:
                     if (m_currentInputCharacter == '>')
                     {
@@ -3522,118 +4678,120 @@ namespace Clippit.Html
                         goto case 0;
                     }
                 case 10:
-                    {
-                        m_currentToken.m_tokenKind = 6;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 6;
+                    break;
+                }
                 case 11:
-                    {
-                        m_currentToken.m_tokenKind = 7;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 7;
+                    break;
+                }
                 case 12:
-                    {
-                        m_currentToken.m_tokenKind = 8;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 8;
+                    break;
+                }
                 case 13:
-                    {
-                        m_currentToken.m_tokenKind = 10;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 10;
+                    break;
+                }
                 case 14:
-                    {
-                        m_currentToken.m_tokenKind = 11;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 11;
+                    break;
+                }
                 case 15:
-                    {
-                        m_currentToken.m_tokenKind = 23;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 23;
+                    break;
+                }
                 case 16:
-                    {
-                        m_currentToken.m_tokenKind = 25;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 25;
+                    break;
+                }
                 case 17:
-                    {
-                        m_currentToken.m_tokenKind = 26;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 26;
+                    break;
+                }
                 case 18:
-                    {
-                        m_currentToken.m_tokenKind = 27;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 27;
+                    break;
+                }
                 case 19:
-                    {
-                        m_currentToken.m_tokenKind = 28;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 28;
+                    break;
+                }
                 case 20:
-                    {
-                        m_currentToken.m_tokenKind = 29;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 29;
+                    break;
+                }
                 case 21:
-                    {
-                        m_currentToken.m_tokenKind = 30;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 30;
+                    break;
+                }
                 case 22:
-                    {
-                        m_currentToken.m_tokenKind = 33;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 33;
+                    break;
+                }
                 case 23:
-                    {
-                        m_currentToken.m_tokenKind = 34;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 34;
+                    break;
+                }
                 case 24:
-                    {
-                        m_currentToken.m_tokenKind = 35;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 35;
+                    break;
+                }
                 case 25:
-                    {
-                        m_currentToken.m_tokenKind = 36;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 36;
+                    break;
+                }
                 case 26:
-                    {
-                        m_currentToken.m_tokenKind = 37;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 37;
+                    break;
+                }
                 case 27:
                     if (m_currentInputCharacter == '=')
                     {
                         AddCh();
                         goto case 28;
                     }
-                    else {
+                    else
+                    {
                         goto case 0;
                     }
                 case 28:
-                    {
-                        m_currentToken.m_tokenKind = 38;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 38;
+                    break;
+                }
                 case 29:
                     if (m_currentInputCharacter == '=')
                     {
                         AddCh();
                         goto case 30;
                     }
-                    else {
+                    else
+                    {
                         goto case 0;
                     }
                 case 30:
-                    {
-                        m_currentToken.m_tokenKind = 39;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 39;
+                    break;
+                }
                 case 31:
                     if (m_currentInputCharacter == '=')
                     {
@@ -3645,45 +4803,45 @@ namespace Clippit.Html
                         goto case 0;
                     }
                 case 32:
-                    {
-                        m_currentToken.m_tokenKind = 40;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 40;
+                    break;
+                }
                 case 33:
-                    {
-                        m_currentToken.m_tokenKind = 41;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 41;
+                    break;
+                }
                 case 34:
-                    {
-                        m_currentToken.m_tokenKind = 42;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 42;
+                    break;
+                }
                 case 35:
-                    {
-                        m_currentToken.m_tokenKind = 43;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 43;
+                    break;
+                }
                 case 36:
-                    {
-                        m_currentToken.m_tokenKind = 44;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 44;
+                    break;
+                }
                 case 37:
-                    {
-                        m_currentToken.m_tokenKind = 46;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 46;
+                    break;
+                }
                 case 38:
-                    {
-                        m_currentToken.m_tokenKind = 47;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 47;
+                    break;
+                }
                 case 39:
-                    {
-                        m_currentToken.m_tokenKind = 48;
-                        break;
-                    }
+                {
+                    m_currentToken.m_tokenKind = 48;
+                    break;
+                }
                 case 40:
                     recEnd = m_currentCharacterBytePosition;
                     recKind = 24;
@@ -3724,8 +4882,15 @@ namespace Clippit.Html
                         break;
                     }
                 case 43:
-                    recEnd = m_currentCharacterBytePosition; recKind = 1;
-                    if (m_currentInputCharacter == '-' || m_currentInputCharacter >= '0' && m_currentInputCharacter <= '9' || m_currentInputCharacter >= 'A' && m_currentInputCharacter <= 'Z' || m_currentInputCharacter == '_' || m_currentInputCharacter >= 'a' && m_currentInputCharacter <= 'z')
+                    recEnd = m_currentCharacterBytePosition;
+                    recKind = 1;
+                    if (
+                        m_currentInputCharacter == '-'
+                        || m_currentInputCharacter >= '0' && m_currentInputCharacter <= '9'
+                        || m_currentInputCharacter >= 'A' && m_currentInputCharacter <= 'Z'
+                        || m_currentInputCharacter == '_'
+                        || m_currentInputCharacter >= 'a' && m_currentInputCharacter <= 'z'
+                    )
                     {
                         AddCh();
                         goto case 1;
@@ -3742,7 +4907,6 @@ namespace Clippit.Html
                         CheckLiteral();
                         return m_currentToken;
                     }
-
             }
             m_currentToken.m_tokenValue = new string(m_textOfCurrentToken, 0, m_lengthOfCurrentToken);
             return m_currentToken;
@@ -3752,8 +4916,11 @@ namespace Clippit.Html
         {
             m_scannerBuffer.Pos = m_currentToken.m_tokenPositionInBytes;
             NextCh();
-            m_lineNumberOfCurrentCharacter = m_currentToken.m_tokenLine; m_columnNumberOfCurrentCharacter = m_currentToken.m_tokenColumn; m_unicodeCharacterPosition = m_currentToken.m_tokenPositionInCharacters;
-            for (var i = 0; i < m_lengthOfCurrentToken; i++) NextCh();
+            m_lineNumberOfCurrentCharacter = m_currentToken.m_tokenLine;
+            m_columnNumberOfCurrentCharacter = m_currentToken.m_tokenColumn;
+            m_unicodeCharacterPosition = m_currentToken.m_tokenPositionInCharacters;
+            for (var i = 0; i < m_lengthOfCurrentToken; i++)
+                NextCh();
         }
 
         public CssToken Scan()
@@ -3788,5 +4955,4 @@ namespace Clippit.Html
             m_currentPeekToken = m_tokensAlreadyPeeked;
         }
     }
-
 }

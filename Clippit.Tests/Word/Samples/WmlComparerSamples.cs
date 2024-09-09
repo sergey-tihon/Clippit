@@ -9,12 +9,10 @@ namespace Clippit.Tests.Word.Samples
 {
     public class WmlComparerSamples : TestsBase
     {
-        public WmlComparerSamples(ITestOutputHelper log) : base(log)
-        {
-        }
-        
-        private static string GetFilePath(string path) =>
-            Path.Combine("../../../Word/Samples/WmlComparer/", path);
+        public WmlComparerSamples(ITestOutputHelper log)
+            : base(log) { }
+
+        private static string GetFilePath(string path) => Path.Combine("../../../Word/Samples/WmlComparer/", path);
 
         [Fact]
         public void Sample1()
@@ -23,7 +21,8 @@ namespace Clippit.Tests.Word.Samples
             var result = WmlComparer.Compare(
                 new WmlDocument(GetFilePath("Sample1/Source1.docx")),
                 new WmlDocument(GetFilePath("Sample1/Source2.docx")),
-                settings);
+                settings
+            );
             result.SaveAs(Path.Combine(TempDir, "Compared.docx"));
 
             var revisions = WmlComparer.GetRevisions(result, settings);
@@ -54,12 +53,9 @@ namespace Clippit.Tests.Word.Samples
                     Color = Color.LightYellow,
                 },
             };
-            
+
             var settings = new WmlComparerSettings();
-            var consolidatedWml = WmlComparer.Consolidate(
-                originalWml,
-                revisedDocumentInfoList,
-                settings);
+            var consolidatedWml = WmlComparer.Consolidate(originalWml, revisedDocumentInfoList, settings);
             consolidatedWml.SaveAs(Path.Combine(TempDir, "Consolidated.docx"));
         }
     }

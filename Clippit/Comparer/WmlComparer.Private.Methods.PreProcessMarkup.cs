@@ -24,7 +24,8 @@ namespace Clippit
                 {
                     MarkupCompatibilityProcessSettings = new MarkupCompatibilityProcessSettings(
                         MarkupCompatibilityProcessMode.ProcessAllParts,
-                        FileFormatVersions.Office2007)
+                        FileFormatVersions.Office2007
+                    ),
                 };
 
                 using (var wDoc = WordprocessingDocument.Open(ms, true, os))
@@ -54,7 +55,8 @@ namespace Clippit
                 {
                     MarkupCompatibilityProcessSettings = new MarkupCompatibilityProcessSettings(
                         MarkupCompatibilityProcessMode.NoProcess, // Otherwise OpenXml delete custom `pt14:Unid` attributes on save
-                        FileFormatVersions.Office2007)
+                        FileFormatVersions.Office2007
+                    ),
                 };
 
                 using (var wDoc = WordprocessingDocument.Open(ms, true, os))
@@ -82,7 +84,7 @@ namespace Clippit
                         RemoveProof = true,
                         RemoveSmartTags = true,
                         RemoveSoftHyphens = true,
-                        RemoveHyperlinks = true
+                        RemoveHyperlinks = true,
                     };
                     MarkupSimplifier.SimplifyMarkup(wDoc, msSettings);
                     ChangeFootnoteEndnoteReferencesToUniqueRange(wDoc, startingIdForFootnotesEndnotes);
@@ -111,10 +113,8 @@ namespace Clippit
 
         private static void RemoveExistingPowerToolsMarkup(WordprocessingDocument wDoc)
         {
-            wDoc.MainDocumentPart
-                .GetXDocument()
-                .Root?
-                .Descendants()
+            wDoc.MainDocumentPart.GetXDocument()
+                .Root?.Descendants()
                 .Attributes()
                 .Where(a => a.Name.Namespace == PtOpenXml.pt)
                 .Where(a => a.Name != PtOpenXml.Unid)
@@ -127,8 +127,7 @@ namespace Clippit
             {
                 var fnXDoc = fnPart.GetXDocument();
                 fnXDoc
-                    .Root?
-                    .Descendants()
+                    .Root?.Descendants()
                     .Attributes()
                     .Where(a => a.Name.Namespace == PtOpenXml.pt)
                     .Where(a => a.Name != PtOpenXml.Unid)
@@ -142,8 +141,7 @@ namespace Clippit
             {
                 var enXDoc = enPart.GetXDocument();
                 enXDoc
-                    .Root?
-                    .Descendants()
+                    .Root?.Descendants()
                     .Attributes()
                     .Where(a => a.Name.Namespace == PtOpenXml.pt)
                     .Where(a => a.Name != PtOpenXml.Unid)
@@ -155,14 +153,14 @@ namespace Clippit
 
         private static void ChangeFootnoteEndnoteReferencesToUniqueRange(
             WordprocessingDocument wDoc,
-            int startingIdForFootnotesEndnotes)
+            int startingIdForFootnotesEndnotes
+        )
         {
             var mainDocPart = wDoc.MainDocumentPart;
             var footnotesPart = wDoc.MainDocumentPart.FootnotesPart;
             var endnotesPart = wDoc.MainDocumentPart.EndnotesPart;
 
-            var document =
-                mainDocPart.GetXDocument().Root ?? throw new OpenXmlPowerToolsException("Invalid document.");
+            var document = mainDocPart.GetXDocument().Root ?? throw new OpenXmlPowerToolsException("Invalid document.");
 
             var footnotes = footnotesPart?.GetXDocument().Root;
             var endnotes = endnotesPart?.GetXDocument().Root;
@@ -173,15 +171,13 @@ namespace Clippit
 
             foreach (var r in references)
             {
-                var oldId = (string) r.Attribute(W.id);
+                var oldId = (string)r.Attribute(W.id);
                 var newId = startingIdForFootnotesEndnotes.ToString();
                 startingIdForFootnotesEndnotes++;
                 r.SetAttributeValue(W.id, newId);
                 if (r.Name == W.footnoteReference)
                 {
-                    var fn = footnotes?
-                        .Elements()
-                        .FirstOrDefault(e => (string) e.Attribute(W.id) == oldId);
+                    var fn = footnotes?.Elements().FirstOrDefault(e => (string)e.Attribute(W.id) == oldId);
 
                     if (fn == null)
                     {
@@ -192,9 +188,7 @@ namespace Clippit
                 }
                 else
                 {
-                    var en = endnotes?
-                        .Elements()
-                        .FirstOrDefault(e => (string) e.Attribute(W.id) == oldId);
+                    var en = endnotes?.Elements().FirstOrDefault(e => (string)e.Attribute(W.id) == oldId);
 
                     if (en == null)
                     {
@@ -286,7 +280,8 @@ namespace Clippit
     </w:rPr>
     <w:footnoteRef/>
   </w:r>
-</w:p>");
+</w:p>"
+            );
 
             var emptyEndnote = XElement.Parse(
                 @"<w:p xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
@@ -299,7 +294,8 @@ namespace Clippit
     </w:rPr>
     <w:endnoteRef/>
   </w:r>
-</w:p>");
+</w:p>"
+            );
 
             var footnotePart = wDoc.MainDocumentPart.FootnotesPart;
             if (footnotePart != null)

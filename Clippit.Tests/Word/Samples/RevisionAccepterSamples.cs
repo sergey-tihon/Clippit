@@ -7,9 +7,8 @@ namespace Clippit.Tests.Word.Samples
 {
     public class RevisionAccepterSamples : TestsBase
     {
-        public RevisionAccepterSamples(ITestOutputHelper log) : base(log)
-        {
-        }
+        public RevisionAccepterSamples(ITestOutputHelper log)
+            : base(log) { }
 
         [Fact]
         public void Sample()

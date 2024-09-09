@@ -28,8 +28,7 @@ namespace Clippit
             RemoveExistingPowerToolsMarkup(wDoc);
 
             var contentParent = wDoc.MainDocumentPart.GetXDocument().Root?.Element(W.body);
-            var atomList =
-                CreateComparisonUnitAtomList(wDoc.MainDocumentPart, contentParent, settings).ToArray();
+            var atomList = CreateComparisonUnitAtomList(wDoc.MainDocumentPart, contentParent, settings).ToArray();
 
             if (False)
             {
@@ -46,10 +45,14 @@ namespace Clippit
                     var key = a.CorrelationStatus.ToString();
                     if (a.CorrelationStatus != CorrelationStatus.Equal)
                     {
-                        var rt = new XElement(a.RevTrackElement.Name,
-                            new XAttribute(XNamespace.Xmlns + "w",
-                                "http://schemas.openxmlformats.org/wordprocessingml/2006/main"),
-                            a.RevTrackElement.Attributes().Where(a2 => a2.Name != W.id && a2.Name != PtOpenXml.Unid));
+                        var rt = new XElement(
+                            a.RevTrackElement.Name,
+                            new XAttribute(
+                                XNamespace.Xmlns + "w",
+                                "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+                            ),
+                            a.RevTrackElement.Attributes().Where(a2 => a2.Name != W.id && a2.Name != PtOpenXml.Unid)
+                        );
                         key += rt.ToString(SaveOptions.DisableFormatting);
                     }
 
@@ -57,9 +60,7 @@ namespace Clippit
                 })
                 .ToList();
 
-            var revisions = grouped
-                .Where(k => k.Key != "Equal")
-                .ToList();
+            var revisions = grouped.Where(k => k.Key != "Equal").ToList();
 
             if (False)
             {
@@ -88,16 +89,17 @@ namespace Clippit
 
                     var revTrackElement = rg.First().RevTrackElement;
                     rev.RevisionXElement = revTrackElement;
-                    rev.Author = (string) revTrackElement.Attribute(W.author);
+                    rev.Author = (string)revTrackElement.Attribute(W.author);
                     rev.ContentXElement = rg.First().ContentElement;
-                    rev.Date = (string) revTrackElement.Attribute(W.date);
+                    rev.Date = (string)revTrackElement.Attribute(W.date);
                     rev.PartUri = wDoc.MainDocumentPart.Uri;
                     rev.PartContentType = wDoc.MainDocumentPart.ContentType;
 
                     if (!RevElementsWithNoText.Contains(rev.ContentXElement.Name))
                     {
-                        rev.Text = rg
-                            .Select(rgc => rgc.ContentElement.Name == W.pPr ? NewLine : rgc.ContentElement.Value)
+                        rev.Text = rg.Select(rgc =>
+                                rgc.ContentElement.Name == W.pPr ? NewLine : rgc.ContentElement.Value
+                            )
                             .StringConcatenate();
                     }
 
@@ -105,10 +107,16 @@ namespace Clippit
                 })
                 .ToList();
 
-            var footnotesRevisionList =
-                GetFootnoteEndnoteRevisionList(wDoc.MainDocumentPart.FootnotesPart, W.footnote, settings);
-            var endnotesRevisionList =
-                GetFootnoteEndnoteRevisionList(wDoc.MainDocumentPart.EndnotesPart, W.endnote, settings);
+            var footnotesRevisionList = GetFootnoteEndnoteRevisionList(
+                wDoc.MainDocumentPart.FootnotesPart,
+                W.footnote,
+                settings
+            );
+            var endnotesRevisionList = GetFootnoteEndnoteRevisionList(
+                wDoc.MainDocumentPart.EndnotesPart,
+                W.endnote,
+                settings
+            );
 
             var finalRevisionList = mainDocPartRevisionList
                 .Concat(footnotesRevisionList)
@@ -121,7 +129,8 @@ namespace Clippit
         private static IEnumerable<WmlComparerRevision> GetFootnoteEndnoteRevisionList(
             OpenXmlPart footnotesEndnotesPart,
             XName footnoteEndnoteElementName,
-            WmlComparerSettings settings)
+            WmlComparerSettings settings
+        )
         {
             if (footnotesEndnotesPart == null)
             {
@@ -130,7 +139,8 @@ namespace Clippit
 
             var xDoc = footnotesEndnotesPart.GetXDocument();
             var footnotesEndnotes =
-                xDoc.Root?.Elements(footnoteEndnoteElementName) ?? throw new OpenXmlPowerToolsException("Invalid document.");
+                xDoc.Root?.Elements(footnoteEndnoteElementName)
+                ?? throw new OpenXmlPowerToolsException("Invalid document.");
 
             var revisionsForPart = new List<WmlComparerRevision>();
             foreach (var fn in footnotesEndnotes)
@@ -155,10 +165,14 @@ namespace Clippit
                         var key = a.CorrelationStatus.ToString();
                         if (a.CorrelationStatus != CorrelationStatus.Equal)
                         {
-                            var rt = new XElement(a.RevTrackElement.Name,
-                                new XAttribute(XNamespace.Xmlns + "w",
-                                    "http://schemas.openxmlformats.org/wordprocessingml/2006/main"),
-                                a.RevTrackElement.Attributes().Where(a2 => a2.Name != W.id && a2.Name != PtOpenXml.Unid));
+                            var rt = new XElement(
+                                a.RevTrackElement.Name,
+                                new XAttribute(
+                                    XNamespace.Xmlns + "w",
+                                    "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+                                ),
+                                a.RevTrackElement.Attributes().Where(a2 => a2.Name != W.id && a2.Name != PtOpenXml.Unid)
+                            );
 
                             key += rt.ToString(SaveOptions.DisableFormatting);
                         }
@@ -167,40 +181,38 @@ namespace Clippit
                     })
                     .ToList();
 
-                var revisions = grouped
-                    .Where(k => k.Key != "Equal")
-                    .ToList();
+                var revisions = grouped.Where(k => k.Key != "Equal").ToList();
 
-                var thisNoteRevisionList = revisions
-                    .Select(rg =>
+                var thisNoteRevisionList = revisions.Select(rg =>
+                {
+                    var rev = new WmlComparerRevision();
+                    if (rg.Key.StartsWith("Inserted"))
                     {
-                        var rev = new WmlComparerRevision();
-                        if (rg.Key.StartsWith("Inserted"))
-                        {
-                            rev.RevisionType = WmlComparerRevisionType.Inserted;
-                        }
-                        else if (rg.Key.StartsWith("Deleted"))
-                        {
-                            rev.RevisionType = WmlComparerRevisionType.Deleted;
-                        }
+                        rev.RevisionType = WmlComparerRevisionType.Inserted;
+                    }
+                    else if (rg.Key.StartsWith("Deleted"))
+                    {
+                        rev.RevisionType = WmlComparerRevisionType.Deleted;
+                    }
 
-                        var revTrackElement = rg.First().RevTrackElement;
-                        rev.RevisionXElement = revTrackElement;
-                        rev.Author = (string) revTrackElement.Attribute(W.author);
-                        rev.ContentXElement = rg.First().ContentElement;
-                        rev.Date = (string) revTrackElement.Attribute(W.date);
-                        rev.PartUri = footnotesEndnotesPart.Uri;
-                        rev.PartContentType = footnotesEndnotesPart.ContentType;
+                    var revTrackElement = rg.First().RevTrackElement;
+                    rev.RevisionXElement = revTrackElement;
+                    rev.Author = (string)revTrackElement.Attribute(W.author);
+                    rev.ContentXElement = rg.First().ContentElement;
+                    rev.Date = (string)revTrackElement.Attribute(W.date);
+                    rev.PartUri = footnotesEndnotesPart.Uri;
+                    rev.PartContentType = footnotesEndnotesPart.ContentType;
 
-                        if (!RevElementsWithNoText.Contains(rev.ContentXElement.Name))
-                        {
-                            rev.Text = rg
-                                .Select(rgc => rgc.ContentElement.Name == W.pPr ? NewLine : rgc.ContentElement.Value)
-                                .StringConcatenate();
-                        }
+                    if (!RevElementsWithNoText.Contains(rev.ContentXElement.Name))
+                    {
+                        rev.Text = rg.Select(rgc =>
+                                rgc.ContentElement.Name == W.pPr ? NewLine : rgc.ContentElement.Value
+                            )
+                            .StringConcatenate();
+                    }
 
-                        return rev;
-                    });
+                    return rev;
+                });
 
                 revisionsForPart.AddRange(thisNoteRevisionList);
             }

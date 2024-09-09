@@ -15,7 +15,8 @@ namespace Clippit
         private static WmlDocument HashBlockLevelContent(
             WmlDocument source,
             WmlDocument sourceAfterProc,
-            WmlComparerSettings settings)
+            WmlComparerSettings settings
+        )
         {
             using var msSource = new MemoryStream();
             using var msAfterProc = new MemoryStream();
@@ -31,7 +32,7 @@ namespace Clippit
                 var sourceUnidDict = sourceMainRoot
                     .Descendants()
                     .Where(d => d.Name == W.p || d.Name == W.tbl || d.Name == W.tr)
-                    .ToDictionary(d => (string) d.Attribute(PtOpenXml.Unid));
+                    .ToDictionary(d => (string)d.Attribute(PtOpenXml.Unid));
 
                 var afterProcMainXDoc = wDocAfterProc.MainDocumentPart.GetXDocument();
                 var afterProcMainRoot = afterProcMainXDoc.Root ?? throw new ArgumentException();
@@ -41,18 +42,19 @@ namespace Clippit
 
                 foreach (var blockLevelContent in blockLevelElements)
                 {
-                    var cloneBlockLevelContentForHashing = (XElement) CloneBlockLevelContentForHashing(
+                    var cloneBlockLevelContentForHashing = (XElement)CloneBlockLevelContentForHashing(
                         wDocAfterProc.MainDocumentPart,
                         blockLevelContent,
                         true,
-                        settings);
+                        settings
+                    );
 
                     var shaString = cloneBlockLevelContentForHashing
                         .ToString(SaveOptions.DisableFormatting)
                         .Replace(" xmlns=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\"", "");
 
                     var sha1Hash = WmlComparerUtil.SHA1HashStringForUTF8String(shaString);
-                    var thisUnid = (string) blockLevelContent.Attribute(PtOpenXml.Unid);
+                    var thisUnid = (string)blockLevelContent.Attribute(PtOpenXml.Unid);
                     if (thisUnid != null)
                     {
                         if (sourceUnidDict.ContainsKey(thisUnid))
@@ -80,40 +82,51 @@ namespace Clippit
             OpenXmlPart mainDocumentPart,
             XNode node,
             bool includeRelatedParts,
-            WmlComparerSettings settings)
+            WmlComparerSettings settings
+        )
         {
             if (node is XElement element)
             {
-                if (element.Name == W.bookmarkStart ||
-                    element.Name == W.bookmarkEnd ||
-                    element.Name == W.pPr ||
-                    element.Name == W.rPr)
+                if (
+                    element.Name == W.bookmarkStart
+                    || element.Name == W.bookmarkEnd
+                    || element.Name == W.pPr
+                    || element.Name == W.rPr
+                )
                 {
                     return null;
                 }
 
                 if (element.Name == W.p)
                 {
-                    var clonedPara = new XElement(element.Name,
-                        element.Attributes().Where(a => a.Name != W.rsid &&
-                                                        a.Name != W.rsidDel &&
-                                                        a.Name != W.rsidP &&
-                                                        a.Name != W.rsidR &&
-                                                        a.Name != W.rsidRDefault &&
-                                                        a.Name != W.rsidRPr &&
-                                                        a.Name != W.rsidSect &&
-                                                        a.Name != W.rsidTr &&
-                                                        a.Name.Namespace != PtOpenXml.pt),
-                        element.Nodes().Select(n =>
-                            CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)));
+                    var clonedPara = new XElement(
+                        element.Name,
+                        element
+                            .Attributes()
+                            .Where(a =>
+                                a.Name != W.rsid
+                                && a.Name != W.rsidDel
+                                && a.Name != W.rsidP
+                                && a.Name != W.rsidR
+                                && a.Name != W.rsidRDefault
+                                && a.Name != W.rsidRPr
+                                && a.Name != W.rsidSect
+                                && a.Name != W.rsidTr
+                                && a.Name.Namespace != PtOpenXml.pt
+                            ),
+                        element
+                            .Nodes()
+                            .Select(n =>
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
+                            )
+                    );
 
                     var groupedRuns = clonedPara
                         .Elements()
-                        .GroupAdjacent(e => e.Name == W.r &&
-                                            e.Elements().Count() == 1 &&
-                                            e.Element(W.t) != null);
+                        .GroupAdjacent(e => e.Name == W.r && e.Elements().Count() == 1 && e.Element(W.t) != null);
 
-                    var clonedParaWithGroupedRuns = new XElement(element.Name,
+                    var clonedParaWithGroupedRuns = new XElement(
+                        element.Name,
                         groupedRuns.Select(g =>
                         {
                             if (g.Key)
@@ -121,14 +134,13 @@ namespace Clippit
                                 var text = g.Select(t => t.Value).StringConcatenate();
                                 if (settings.CaseInsensitive)
                                     text = text.ToUpper(settings.CultureInfo);
-                                var newRun = (object) new XElement(W.r,
-                                    new XElement(W.t,
-                                        text));
+                                var newRun = (object)new XElement(W.r, new XElement(W.t, text));
                                 return newRun;
                             }
 
                             return g;
-                        }));
+                        })
+                    );
 
                     return clonedParaWithGroupedRuns;
                 }
@@ -138,55 +150,84 @@ namespace Clippit
                     var clonedRuns = element
                         .Elements()
                         .Where(e => e.Name != W.rPr)
-                        .Select(rc => new XElement(W.r,
-                            CloneBlockLevelContentForHashing(mainDocumentPart, rc, includeRelatedParts, settings)));
+                        .Select(rc => new XElement(
+                            W.r,
+                            CloneBlockLevelContentForHashing(mainDocumentPart, rc, includeRelatedParts, settings)
+                        ));
                     return clonedRuns;
                 }
 
                 if (element.Name == W.tbl)
                 {
-                    var clonedTable = new XElement(W.tbl,
-                        element.Elements(W.tr).Select(n =>
-                            CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)));
+                    var clonedTable = new XElement(
+                        W.tbl,
+                        element
+                            .Elements(W.tr)
+                            .Select(n =>
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
+                            )
+                    );
                     return clonedTable;
                 }
 
                 if (element.Name == W.tr)
                 {
-                    var clonedRow = new XElement(W.tr,
-                        element.Elements(W.tc).Select(n =>
-                            CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)));
+                    var clonedRow = new XElement(
+                        W.tr,
+                        element
+                            .Elements(W.tc)
+                            .Select(n =>
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
+                            )
+                    );
                     return clonedRow;
                 }
 
                 if (element.Name == W.tc)
                 {
-                    var clonedCell = new XElement(W.tc,
-                        element.Elements().Select(n =>
-                            CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)));
+                    var clonedCell = new XElement(
+                        W.tc,
+                        element
+                            .Elements()
+                            .Select(n =>
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
+                            )
+                    );
                     return clonedCell;
                 }
 
                 if (element.Name == W.tcPr)
                 {
-                    var clonedCellProps = new XElement(W.tcPr,
-                        element.Elements(W.gridSpan).Select(n =>
-                            CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)));
+                    var clonedCellProps = new XElement(
+                        W.tcPr,
+                        element
+                            .Elements(W.gridSpan)
+                            .Select(n =>
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
+                            )
+                    );
                     return clonedCellProps;
                 }
 
                 if (element.Name == W.gridSpan)
                 {
-                    var clonedGridSpan = new XElement(W.gridSpan,
-                        new XAttribute("val", (string) element.Attribute(W.val)));
+                    var clonedGridSpan = new XElement(
+                        W.gridSpan,
+                        new XAttribute("val", (string)element.Attribute(W.val))
+                    );
                     return clonedGridSpan;
                 }
 
                 if (element.Name == W.txbxContent)
                 {
-                    var clonedTextbox = new XElement(W.txbxContent,
-                        element.Elements().Select(n =>
-                            CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)));
+                    var clonedTextbox = new XElement(
+                        W.txbxContent,
+                        element
+                            .Elements()
+                            .Select(n =>
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
+                            )
+                    );
                     return clonedTextbox;
                 }
 
@@ -194,8 +235,10 @@ namespace Clippit
                 {
                     if (ComparisonUnitWord.ElementsWithRelationshipIds.Contains(element.Name))
                     {
-                        var newElement = new XElement(element.Name,
-                            element.Attributes()
+                        var newElement = new XElement(
+                            element.Name,
+                            element
+                                .Attributes()
                                 .Where(a => a.Name.Namespace != PtOpenXml.pt)
                                 .Where(a => !AttributesToTrimWhenCloning.Contains(a.Name))
                                 .Select(a =>
@@ -203,7 +246,7 @@ namespace Clippit
                                     if (!ComparisonUnitWord.RelationshipAttributeNames.Contains(a.Name))
                                         return a;
 
-                                    var rId = (string) a;
+                                    var rId = (string)a;
 
                                     // could be an hyperlink relationship
                                     try
@@ -222,7 +265,7 @@ namespace Clippit
                                             byte[] ba;
                                             using (var br = new BinaryReader(str))
                                             {
-                                                ba = br.ReadBytes((int) str.Length);
+                                                ba = br.ReadBytes((int)str.Length);
                                             }
 
                                             var sha1 = WmlComparerUtil.SHA1HashStringForByteArray(ba);
@@ -232,8 +275,9 @@ namespace Clippit
                                     }
                                     catch (ArgumentOutOfRangeException)
                                     {
-                                        var hr =
-                                            mainDocumentPart.HyperlinkRelationships.FirstOrDefault(z => z.Id == rId);
+                                        var hr = mainDocumentPart.HyperlinkRelationships.FirstOrDefault(z =>
+                                            z.Id == rId
+                                        );
                                         if (hr != null)
                                         {
                                             var str = hr.Uri.ToString();
@@ -241,8 +285,9 @@ namespace Clippit
                                         }
 
                                         // could be an external relationship
-                                        var er =
-                                            mainDocumentPart.ExternalRelationships.FirstOrDefault(z => z.Id == rId);
+                                        var er = mainDocumentPart.ExternalRelationships.FirstOrDefault(z =>
+                                            z.Id == rId
+                                        );
                                         if (er != null)
                                         {
                                             var str = er.Uri.ToString();
@@ -254,58 +299,88 @@ namespace Clippit
 
                                     return null;
                                 }),
-                            element.Nodes().Select(n =>
-                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)));
+                            element
+                                .Nodes()
+                                .Select(n =>
+                                    CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
+                                )
+                        );
                         return newElement;
                     }
                 }
 
                 if (element.Name == VML.shape)
                 {
-                    return new XElement(element.Name,
-                        element.Attributes()
+                    return new XElement(
+                        element.Name,
+                        element
+                            .Attributes()
                             .Where(a => a.Name.Namespace != PtOpenXml.pt)
                             .Where(a => a.Name != "style" && a.Name != "id" && a.Name != "type"),
-                        element.Nodes().Select(n =>
-                            CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)));
+                        element
+                            .Nodes()
+                            .Select(n =>
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
+                            )
+                    );
                 }
 
                 if (element.Name == O.OLEObject)
                 {
-                    var o = new XElement(element.Name,
-                        element.Attributes()
+                    var o = new XElement(
+                        element.Name,
+                        element
+                            .Attributes()
                             .Where(a => a.Name.Namespace != PtOpenXml.pt)
                             .Where(a => a.Name != "ObjectID" && a.Name != R.id),
-                        element.Nodes().Select(n =>
-                            CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)));
+                        element
+                            .Nodes()
+                            .Select(n =>
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
+                            )
+                    );
                     return o;
                 }
 
                 if (element.Name == W._object)
                 {
-                    var o = new XElement(element.Name,
-                        element.Attributes()
-                            .Where(a => a.Name.Namespace != PtOpenXml.pt),
-                        element.Nodes().Select(n =>
-                            CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)));
+                    var o = new XElement(
+                        element.Name,
+                        element.Attributes().Where(a => a.Name.Namespace != PtOpenXml.pt),
+                        element
+                            .Nodes()
+                            .Select(n =>
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
+                            )
+                    );
                     return o;
                 }
 
                 if (element.Name == WP.docPr)
                 {
-                    return new XElement(element.Name,
-                        element.Attributes()
-                            .Where(a => a.Name.Namespace != PtOpenXml.pt && a.Name != "id"),
-                        element.Nodes().Select(n =>
-                            CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)));
+                    return new XElement(
+                        element.Name,
+                        element.Attributes().Where(a => a.Name.Namespace != PtOpenXml.pt && a.Name != "id"),
+                        element
+                            .Nodes()
+                            .Select(n =>
+                                CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
+                            )
+                    );
                 }
 
-                return new XElement(element.Name,
-                    element.Attributes()
+                return new XElement(
+                    element.Name,
+                    element
+                        .Attributes()
                         .Where(a => a.Name.Namespace != PtOpenXml.pt)
                         .Where(a => !AttributesToTrimWhenCloning.Contains(a.Name)),
-                    element.Nodes().Select(n =>
-                        CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)));
+                    element
+                        .Nodes()
+                        .Select(n =>
+                            CloneBlockLevelContentForHashing(mainDocumentPart, n, includeRelatedParts, settings)
+                        )
+                );
             }
 
             if (settings.CaseInsensitive)

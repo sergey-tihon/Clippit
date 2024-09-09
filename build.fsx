@@ -26,6 +26,10 @@ pipeline "build" {
         run "dotnet paket restore"
     }
 
+    stage "Check Formatting" {
+        run "dotnet csharpier --check ."
+    }
+
     stage "Clean" {
         run (fun _ ->
             Shell.mkdir "bin"

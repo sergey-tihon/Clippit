@@ -11,12 +11,10 @@ namespace Clippit.Tests.Common.Samples
 {
     public class OpenXmlRegexSamples : TestsBase
     {
-        public OpenXmlRegexSamples(ITestOutputHelper log) : base(log)
-        {
-        }
-        
-        private static string GetFilePath(string path) =>
-            Path.Combine("../../../Common/Samples/OpenXmlRegex/", path);
+        public OpenXmlRegexSamples(ITestOutputHelper log)
+            : base(log) { }
+
+        private static string GetFilePath(string path) => Path.Combine("../../../Common/Samples/OpenXmlRegex/", path);
 
         [Fact]
         public void WordSample1()
@@ -43,8 +41,11 @@ namespace Clippit.Tests.Common.Samples
             // Match content, with callback (paragraph 1)
             content = xDoc.Descendants(W.p).Take(1);
             regex = new Regex("video", RegexOptions.IgnoreCase);
-            OpenXmlRegex.Match(content, regex, (element, match) =>
-                Log.WriteLine("Example #3 Found value: >{0}<", match.Value));
+            OpenXmlRegex.Match(
+                content,
+                regex,
+                (element, match) => Log.WriteLine("Example #3 Found value: >{0}<", match.Value)
+            );
 
             // Replace content, beginning of paragraph (paragraph 2)
             content = xDoc.Descendants(W.p).Skip(1).Take(1);
@@ -205,7 +206,12 @@ namespace Clippit.Tests.Common.Samples
 
             // Replace or comment on symbols (paragraph 23)
             paras = xDoc.Descendants(W.p).Skip(22).Take(1).ToList();
-            count = OpenXmlRegex.Replace(paras, new Regex($"{oldPhone}"), $"{newPhone} (replaced with new phone)", null);
+            count = OpenXmlRegex.Replace(
+                paras,
+                new Regex($"{oldPhone}"),
+                $"{newPhone} (replaced with new phone)",
+                null
+            );
             count += OpenXmlRegex.Replace(paras, new Regex($"({pencil})"), "$1 (same pencil)", null);
             count += OpenXmlRegex.Replace(paras, new Regex($"({spider})"), "$1 (same spider)", null);
             Log.WriteLine("Example #25 Replaced: {0}", count);
@@ -217,7 +223,7 @@ namespace Clippit.Tests.Common.Samples
         public void WordSample2()
         {
             var sourceDoc = new FileInfo(GetFilePath("TestDocument.docx"));
-            var newDoc = new FileInfo(Path.Combine(TempDir,"Modified.docx"));
+            var newDoc = new FileInfo(Path.Combine(TempDir, "Modified.docx"));
             File.Copy(sourceDoc.FullName, newDoc.FullName);
 
             using var wDoc = WordprocessingDocument.Open(newDoc.FullName, true);
@@ -236,23 +242,22 @@ namespace Clippit.Tests.Common.Samples
 
             wDoc.MainDocumentPart.PutXDocument();
         }
-        
+
         private static object TransformEnvironmentNewLineToParagraph(XNode node)
         {
             if (node is XElement element)
             {
-                if (element.Name == W.p)
-                {
+                if (element.Name == W.p) { }
 
-                }
-
-                return new XElement(element.Name,
+                return new XElement(
+                    element.Name,
                     element.Attributes(),
-                    element.Nodes().Select(TransformEnvironmentNewLineToParagraph));
+                    element.Nodes().Select(TransformEnvironmentNewLineToParagraph)
+                );
             }
             return node;
         }
-        
+
         [Fact]
         public void PowerPointSample()
         {

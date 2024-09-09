@@ -48,24 +48,24 @@ namespace Clippit.Word
             var fai = new FormattingAssemblerInfo();
             var sXDoc = wDoc.MainDocumentPart.StyleDefinitionsPart.GetXDocument();
             var defaultParagraphStyle = sXDoc
-                .Root
-                .Elements(W.style)
-                .FirstOrDefault(st => st.Attribute(W._default).ToBoolean() == true &&
-                    (string)st.Attribute(W.type) == "paragraph");
+                .Root.Elements(W.style)
+                .FirstOrDefault(st =>
+                    st.Attribute(W._default).ToBoolean() == true && (string)st.Attribute(W.type) == "paragraph"
+                );
             if (defaultParagraphStyle != null)
                 fai.DefaultParagraphStyleName = (string)defaultParagraphStyle.Attribute(W.styleId);
             var defaultCharacterStyle = sXDoc
-                .Root
-                .Elements(W.style)
-                .FirstOrDefault(st => st.Attribute(W._default).ToBoolean() == true &&
-                    (string)st.Attribute(W.type) == "character");
+                .Root.Elements(W.style)
+                .FirstOrDefault(st =>
+                    st.Attribute(W._default).ToBoolean() == true && (string)st.Attribute(W.type) == "character"
+                );
             if (defaultCharacterStyle != null)
                 fai.DefaultCharacterStyleName = (string)defaultCharacterStyle.Attribute(W.styleId);
             var defaultTableStyle = sXDoc
-                .Root
-                .Elements(W.style)
-                .FirstOrDefault(st => st.Attribute(W._default).ToBoolean() == true &&
-                    (string)st.Attribute(W.type) == "table");
+                .Root.Elements(W.style)
+                .FirstOrDefault(st =>
+                    st.Attribute(W._default).ToBoolean() == true && (string)st.Attribute(W.type) == "table"
+                );
             if (defaultTableStyle != null)
                 fai.DefaultTableStyleName = (string)defaultTableStyle.Attribute(W.styleId);
             var listItemRetrieverSettings = new ListItemRetrieverSettings();
@@ -150,9 +150,7 @@ namespace Clippit.Word
                         return null;
                 }
 
-                return new XElement(element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(CleanupTransform));
+                return new XElement(element.Name, element.Attributes(), element.Nodes().Select(CleanupTransform));
             }
             return node;
         }
@@ -162,32 +160,30 @@ namespace Clippit.Word
             var stylePart = wDoc.MainDocumentPart.StyleDefinitionsPart;
             var sXDoc = stylePart.GetXDocument();
 
-            var newRoot = new XElement(sXDoc.Root.Name,
+            var newRoot = new XElement(
+                sXDoc.Root.Name,
                 sXDoc.Root.Attributes(),
-                sXDoc.Root.Elements().Select(e =>
-                {
-                    if (e.Name != W.style)
-                        return e;
-                    return new XElement(e.Name,
-                        e.Attributes(),
-                        e.Element(W.name),
-                        new XElement(W.pPr),
-                        new XElement(W.rPr));
-                }));
+                sXDoc
+                    .Root.Elements()
+                    .Select(e =>
+                    {
+                        if (e.Name != W.style)
+                            return e;
+                        return new XElement(
+                            e.Name,
+                            e.Attributes(),
+                            e.Element(W.name),
+                            new XElement(W.pPr),
+                            new XElement(W.rPr)
+                        );
+                    })
+            );
 
-            var globalrPr = newRoot
-                .Elements(W.docDefaults)
-                .Elements(W.rPrDefault)
-                .Elements(W.rPr)
-                .FirstOrDefault();
+            var globalrPr = newRoot.Elements(W.docDefaults).Elements(W.rPrDefault).Elements(W.rPr).FirstOrDefault();
             if (globalrPr != null)
                 globalrPr.ReplaceWith(new XElement(W.rPr));
 
-            var globalpPr = newRoot
-                .Elements(W.docDefaults)
-                .Elements(W.pPrDefault)
-                .Elements(W.pPr)
-                .FirstOrDefault();
+            var globalpPr = newRoot.Elements(W.docDefaults).Elements(W.pPrDefault).Elements(W.pPr).FirstOrDefault();
             if (globalpPr != null)
                 globalpPr.ReplaceWith(new XElement(W.pPr));
 
@@ -196,7 +192,11 @@ namespace Clippit.Word
             stylePart.PutXDocument();
         }
 
-        private static void NormalizeListItems(FormattingAssemblerInfo fai, WordprocessingDocument wDoc, FormattingAssemblerSettings settings)
+        private static void NormalizeListItems(
+            FormattingAssemblerInfo fai,
+            WordprocessingDocument wDoc,
+            FormattingAssemblerSettings settings
+        )
         {
             foreach (var part in wDoc.ContentParts())
             {
@@ -210,7 +210,12 @@ namespace Clippit.Word
             }
         }
 
-        private static object NormalizeListItemsTransform(FormattingAssemblerInfo fai, WordprocessingDocument wDoc, XNode node, FormattingAssemblerSettings settings)
+        private static object NormalizeListItemsTransform(
+            FormattingAssemblerInfo fai,
+            WordprocessingDocument wDoc,
+            XNode node,
+            FormattingAssemblerSettings settings
+        )
         {
             if (node is XElement element)
             {
@@ -221,7 +226,8 @@ namespace Clippit.Word
                     {
                         var listItemInfo = element.Annotation<ListItemRetriever.ListItemInfo>();
 
-                        var newParaProps = new XElement(W.pPr,
+                        var newParaProps = new XElement(
+                            W.pPr,
                             element.Elements(W.pPr).Elements().Where(e => e.Name != W.numPr)
                         );
 
@@ -233,39 +239,36 @@ namespace Clippit.Word
 
                             var paraStyleRunProps = CharStyleRollup(fai, wDoc, element);
 
-                            var paragraphStyleName = (string)element
-                                .Elements(W.pPr)
-                                .Elements(W.pStyle)
-                                .Attributes(W.val)
-                                .FirstOrDefault();
+                            var paragraphStyleName = (string)
+                                element.Elements(W.pPr).Elements(W.pStyle).Attributes(W.val).FirstOrDefault();
 
-                            var defaultStyleName = (string)wDoc
-                                    .MainDocumentPart
-                                    .StyleDefinitionsPart
-                                    .GetXDocument()
-                                    .Root
-                                    .Elements(W.style)
-                                    .Where(s => (string)s.Attribute(W.type) == "paragraph" && s.Attribute(W._default).ToBoolean() == true)
+                            var defaultStyleName = (string)
+                                wDoc
+                                    .MainDocumentPart.StyleDefinitionsPart.GetXDocument()
+                                    .Root.Elements(W.style)
+                                    .Where(s =>
+                                        (string)s.Attribute(W.type) == "paragraph"
+                                        && s.Attribute(W._default).ToBoolean() == true
+                                    )
                                     .Attributes(W.styleId)
                                     .FirstOrDefault();
 
                             if (paragraphStyleName == null)
                                 paragraphStyleName = defaultStyleName;
 
-                            var stylesXDoc = wDoc
-                                .MainDocumentPart
-                                .StyleDefinitionsPart
-                                .GetXDocument();
+                            var stylesXDoc = wDoc.MainDocumentPart.StyleDefinitionsPart.GetXDocument();
 
                             // put together run props for list item.
 
                             var lvlStyleRpr = ParaStyleRunPropsStack(wDoc, paragraphStyleName)
-                                .Aggregate(new XElement(W.rPr),
+                                .Aggregate(
+                                    new XElement(W.rPr),
                                     (r, s) =>
                                     {
                                         var newCharStyleRunProps = MergeStyleElement(s, r);
                                         return newCharStyleRunProps;
-                                    });
+                                    }
+                                );
 
                             var mergedRunProps = MergeStyleElement(lvlStyleRpr, paraStyleRunProps);
 
@@ -287,11 +290,18 @@ namespace Clippit.Word
                                 if (pPr != null)
                                 {
                                     var bidiel = pPr.Element(W.bidi);
-                                    var bidi = bidiel != null && (bidiel.Attribute(W.val) == null || bidiel.Attribute(W.val).ToBoolean() == true);
+                                    var bidi =
+                                        bidiel != null
+                                        && (
+                                            bidiel.Attribute(W.val) == null
+                                            || bidiel.Attribute(W.val).ToBoolean() == true
+                                        );
                                     if (bidi)
                                     {
-                                        listItemRunProps = MergeStyleElement(new XElement(W.rPr,
-                                            new XElement(W.rtl)), listItemRunProps);
+                                        listItemRunProps = MergeStyleElement(
+                                            new XElement(W.rPr, new XElement(W.rtl)),
+                                            listItemRunProps
+                                        );
                                     }
                                 }
                             }
@@ -300,20 +310,19 @@ namespace Clippit.Word
                         var paragraphLevel = ListItemRetriever.GetParagraphLevel(element);
                         var levelNums = element.Annotation<ListItemRetriever.LevelNumbers>();
                         var levelNumsString = levelNums
-                            .LevelNumbersArray
-                            .Take(paragraphLevel + 1)
+                            .LevelNumbersArray.Take(paragraphLevel + 1)
                             .Select(i => i + ".")
                             .StringConcatenate()
                             .TrimEnd('.');
 
-                        var listItemRun = new XElement(W.r,
+                        var listItemRun = new XElement(
+                            W.r,
                             new XAttribute(PtOpenXml.ListItemRun, levelNumsString),
                             element.Attribute(PtOpenXml.FontName),
                             element.Attribute(PtOpenXml.LanguageType),
                             listItemRunProps,
-                            new XElement(W.t,
-                                new XAttribute(XNamespace.Xml + "space", "preserve"),
-                                li));
+                            new XElement(W.t, new XAttribute(XNamespace.Xml + "space", "preserve"), li)
+                        );
 
                         AdjustFontAttributes(wDoc, listItemRun, null, listItemRunProps, settings);
 
@@ -324,7 +333,7 @@ namespace Clippit.Word
                         {
                             "space" => new XElement(W.t, new XAttribute(XNamespace.Xml + "space", "preserve"), " "),
                             "nothing" => null,
-                            _ => suffix
+                            _ => suffix,
                         };
 
                         var jc = (string)lvl.Elements(W.lvlJc).Attributes(W.val).FirstOrDefault();
@@ -332,7 +341,10 @@ namespace Clippit.Word
                         {
                             var accumulatedParaProps = element.Element(PtOpenXml.pPr);
 
-                            var hangingAtt = accumulatedParaProps.Elements(W.ind).Attributes(W.hanging).FirstOrDefault();
+                            var hangingAtt = accumulatedParaProps
+                                .Elements(W.ind)
+                                .Attributes(W.hanging)
+                                .FirstOrDefault();
                             if (hangingAtt == null)
                             {
                                 var listItemRunLength = WordprocessingMLUtil.CalcWidthOfRunInTwips(listItemRun);
@@ -356,7 +368,10 @@ namespace Clippit.Word
                         {
                             var accumulatedParaProps = element.Element(PtOpenXml.pPr);
 
-                            var hangingAtt = accumulatedParaProps.Elements(W.ind).Attributes(W.hanging).FirstOrDefault();
+                            var hangingAtt = accumulatedParaProps
+                                .Elements(W.ind)
+                                .Attributes(W.hanging)
+                                .FirstOrDefault();
                             if (hangingAtt == null)
                             {
                                 var listItemRunLength = WordprocessingMLUtil.CalcWidthOfRunInTwips(listItemRun);
@@ -378,27 +393,36 @@ namespace Clippit.Word
                         }
                         AddTabAtLeftIndent(element.Element(PtOpenXml.pPr));
 
-                        var newPara = new XElement(W.p,
+                        var newPara = new XElement(
+                            W.p,
                             element.Attribute(PtOpenXml.FontName),
                             element.Attribute(PtOpenXml.LanguageType),
                             element.Attribute(PtOpenXml.Unid),
                             new XAttribute(PtOpenXml.AbstractNumId, abstractNumId),
                             newParaProps,
                             listItemRun,
-                            suffix != null ?
-                                new XElement(W.r,
+                            suffix != null
+                                ? new XElement(
+                                    W.r,
                                     new XAttribute(PtOpenXml.ListItemRun, levelNumsString),
                                     listItemRunProps,
-                                    suffix) : null,
-                            element.Elements().Where(e => e.Name != W.pPr).Select(n => NormalizeListItemsTransform(fai, wDoc, n, settings)));
+                                    suffix
+                                )
+                                : null,
+                            element
+                                .Elements()
+                                .Where(e => e.Name != W.pPr)
+                                .Select(n => NormalizeListItemsTransform(fai, wDoc, n, settings))
+                        );
                         return newPara;
-
                     }
                 }
 
-                return new XElement(element.Name,
+                return new XElement(
+                    element.Name,
                     element.Attributes(),
-                    element.Nodes().Select(n => NormalizeListItemsTransform(fai, wDoc, n, settings)));
+                    element.Nodes().Select(n => NormalizeListItemsTransform(fai, wDoc, n, settings))
+                );
             }
             return node;
         }
@@ -420,14 +444,12 @@ namespace Clippit.Word
             var tabAtLeft = tabs.Elements(W.tab).FirstOrDefault(t => (int)t.Attribute(W.pos) == left);
             if (tabAtLeft == null)
             {
-                tabs.Add(
-                    new XElement(W.tab,
-                        new XAttribute(W.val, "left"),
-                        new XAttribute(W.pos, left)));
+                tabs.Add(new XElement(W.tab, new XAttribute(W.val, "left"), new XAttribute(W.pos, left)));
             }
         }
 
-        public static XName[] PtNamesToKeep = new[] {
+        public static XName[] PtNamesToKeep = new[]
+        {
             PtOpenXml.FontName,
             PtOpenXml.AbstractNumId,
             PtOpenXml.StyleName,
@@ -440,8 +462,10 @@ namespace Clippit.Word
         {
             if (settings.CreateHtmlConverterAnnotationAttributes)
             {
-                pxd.Root.Descendants().Attributes().Where(d => d.Name.Namespace == PtOpenXml.pt &&
-                    !PtNamesToKeep.Contains(d.Name)).Remove();
+                pxd.Root.Descendants()
+                    .Attributes()
+                    .Where(d => d.Name.Namespace == PtOpenXml.pt && !PtNamesToKeep.Contains(d.Name))
+                    .Remove();
                 if (pxd.Root.Attribute(XNamespace.Xmlns + "pt14") == null)
                     pxd.Root.Add(new XAttribute(XNamespace.Xmlns + "pt14", PtOpenXml.pt.NamespaceName));
                 if (pxd.Root.Attribute(XNamespace.Xmlns + "mc") == null)
@@ -467,9 +491,7 @@ namespace Clippit.Word
             var runProps = pxd.Root.Descendants(PtOpenXml.rPr).ToList();
             foreach (var item in runProps)
             {
-                var newRunProps = new XElement(W.rPr,
-                    item.Attributes(),
-                    item.Elements());
+                var newRunProps = new XElement(W.rPr, item.Attributes(), item.Elements());
                 var parent = item.Parent;
                 if (parent.Name == W.p)
                 {
@@ -521,10 +543,12 @@ namespace Clippit.Word
                     }
                 }
 
-                var newParaProps = new XElement(W.pPr,
+                var newParaProps = new XElement(
+                    W.pPr,
                     item.Attributes(),
                     item.Elements().Where(e => e.Name != W.rPr),
-                    merged);
+                    merged
+                );
                 var para = item.Parent;
                 var existingParaProps = para.Element(W.pPr);
                 if (existingParaProps != null)
@@ -590,7 +614,10 @@ namespace Clippit.Word
             }
         }
 
-        private static void AssembleListItemInformation(WordprocessingDocument wordDoc, ListItemRetrieverSettings settings)
+        private static void AssembleListItemInformation(
+            WordprocessingDocument wordDoc,
+            ListItemRetrieverSettings settings
+        )
         {
             foreach (var part in wordDoc.ContentParts())
             {
@@ -602,68 +629,82 @@ namespace Clippit.Word
             }
         }
 
-        private static void AnnotateWithGlobalDefaults(WordprocessingDocument wDoc, XElement rootElement, FormattingAssemblerSettings settings)
+        private static void AnnotateWithGlobalDefaults(
+            WordprocessingDocument wDoc,
+            XElement rootElement,
+            FormattingAssemblerSettings settings
+        )
         {
             XElement globalDefaultParaProps = null;
             XElement globalDefaultParaPropsAsDefined = null;
             XElement globalDefaultRunProps = null;
             XElement globalDefaultRunPropsAsDefined = null;
             var sXDoc = wDoc.MainDocumentPart.StyleDefinitionsPart.GetXDocument();
-            var defaultParaStyleName = (string)sXDoc
-                .Root
-                .Elements(W.style)
-                .Where(st => (string)st.Attribute(W.type) == "paragraph" && st.Attribute(W._default).ToBoolean() == true)
-                .Attributes(W.styleId)
-                .FirstOrDefault();
-            var defaultCharStyleName = (string)sXDoc
-                .Root
-                .Elements(W.style)
-                .Where(st => (string)st.Attribute(W.type) == "character" && st.Attribute(W._default).ToBoolean() == true)
-                .Attributes(W.styleId)
-                .FirstOrDefault();
+            var defaultParaStyleName = (string)
+                sXDoc
+                    .Root.Elements(W.style)
+                    .Where(st =>
+                        (string)st.Attribute(W.type) == "paragraph" && st.Attribute(W._default).ToBoolean() == true
+                    )
+                    .Attributes(W.styleId)
+                    .FirstOrDefault();
+            var defaultCharStyleName = (string)
+                sXDoc
+                    .Root.Elements(W.style)
+                    .Where(st =>
+                        (string)st.Attribute(W.type) == "character" && st.Attribute(W._default).ToBoolean() == true
+                    )
+                    .Attributes(W.styleId)
+                    .FirstOrDefault();
             var docDefaults = sXDoc.Root.Element(W.docDefaults);
             if (docDefaults != null)
             {
-                globalDefaultParaPropsAsDefined = docDefaults.Elements(W.pPrDefault).Elements(W.pPr)
-                    .FirstOrDefault();
+                globalDefaultParaPropsAsDefined = docDefaults.Elements(W.pPrDefault).Elements(W.pPr).FirstOrDefault();
                 if (globalDefaultParaPropsAsDefined == null)
-                    globalDefaultParaPropsAsDefined = new XElement(W.pPr,
-                        new XElement(W.rPr));
-                globalDefaultRunPropsAsDefined = docDefaults.Elements(W.rPrDefault).Elements(W.rPr)
-                    .FirstOrDefault();
+                    globalDefaultParaPropsAsDefined = new XElement(W.pPr, new XElement(W.rPr));
+                globalDefaultRunPropsAsDefined = docDefaults.Elements(W.rPrDefault).Elements(W.rPr).FirstOrDefault();
                 if (globalDefaultRunPropsAsDefined == null)
                     globalDefaultRunPropsAsDefined = new XElement(W.rPr);
                 if (globalDefaultRunPropsAsDefined.Element(W.rFonts) == null)
                     globalDefaultRunPropsAsDefined.Add(
-                        new XElement(W.rFonts,
+                        new XElement(
+                            W.rFonts,
                             new XAttribute(W.ascii, "Times New Roman"),
                             new XAttribute(W.hAnsi, "Times New Roman"),
-                            new XAttribute(W.cs, "Times New Roman")));
+                            new XAttribute(W.cs, "Times New Roman")
+                        )
+                    );
                 if (globalDefaultRunPropsAsDefined.Element(W.sz) == null)
-                    globalDefaultRunPropsAsDefined.Add(
-                        new XElement(W.sz,
-                            new XAttribute(W.val, "20")));
+                    globalDefaultRunPropsAsDefined.Add(new XElement(W.sz, new XAttribute(W.val, "20")));
                 if (globalDefaultRunPropsAsDefined.Element(W.szCs) == null)
-                    globalDefaultRunPropsAsDefined.Add(
-                        new XElement(W.szCs,
-                            new XAttribute(W.val, "20")));
+                    globalDefaultRunPropsAsDefined.Add(new XElement(W.szCs, new XAttribute(W.val, "20")));
 
-                var runPropsForGlobalDefaultParaProps = MergeStyleElement(globalDefaultRunPropsAsDefined, globalDefaultParaPropsAsDefined.Element(W.rPr));
-                globalDefaultParaProps = new XElement(globalDefaultParaPropsAsDefined.Name,
+                var runPropsForGlobalDefaultParaProps = MergeStyleElement(
+                    globalDefaultRunPropsAsDefined,
+                    globalDefaultParaPropsAsDefined.Element(W.rPr)
+                );
+                globalDefaultParaProps = new XElement(
+                    globalDefaultParaPropsAsDefined.Name,
                     globalDefaultParaPropsAsDefined.Attributes(),
                     globalDefaultParaPropsAsDefined.Elements().Where(e => e.Name != W.rPr),
-                    runPropsForGlobalDefaultParaProps);
-                globalDefaultRunProps = MergeStyleElement(globalDefaultParaPropsAsDefined.Element(W.rPr), globalDefaultRunPropsAsDefined);
+                    runPropsForGlobalDefaultParaProps
+                );
+                globalDefaultRunProps = MergeStyleElement(
+                    globalDefaultParaPropsAsDefined.Element(W.rPr),
+                    globalDefaultRunPropsAsDefined
+                );
             }
-            var rPr = new XElement(W.rPr,
-                        new XElement(W.rFonts,
-                                new XAttribute(W.ascii, "Times New Roman"),
-                                new XAttribute(W.hAnsi, "Times New Roman"),
-                                new XAttribute(W.cs, "Times New Roman")),
-                            new XElement(W.sz,
-                                new XAttribute(W.val, "20")),
-                            new XElement(W.szCs,
-                                new XAttribute(W.val, "20")));
+            var rPr = new XElement(
+                W.rPr,
+                new XElement(
+                    W.rFonts,
+                    new XAttribute(W.ascii, "Times New Roman"),
+                    new XAttribute(W.hAnsi, "Times New Roman"),
+                    new XAttribute(W.cs, "Times New Roman")
+                ),
+                new XElement(W.sz, new XAttribute(W.val, "20")),
+                new XElement(W.szCs, new XAttribute(W.val, "20"))
+            );
 
             if (globalDefaultParaProps == null)
                 globalDefaultParaProps = new XElement(W.pPr, rPr);
@@ -675,10 +716,12 @@ namespace Clippit.Word
             var ptGlobalDefaultRunProps = new XElement(globalDefaultRunProps);
             ptGlobalDefaultParaProps.Name = PtOpenXml.pPr;
             ptGlobalDefaultRunProps.Name = PtOpenXml.rPr;
-            var parasAndRuns = rootElement.Descendants().Where(d =>
-            {
-                return d.Name == W.p || d.Name == W.r;
-            });
+            var parasAndRuns = rootElement
+                .Descendants()
+                .Where(d =>
+                {
+                    return d.Name == W.p || d.Name == W.r;
+                });
             if (settings.CreateHtmlConverterAnnotationAttributes)
             {
                 foreach (var d in parasAndRuns)
@@ -729,18 +772,21 @@ namespace Clippit.Word
             }
         }
 
-        private static XElement BlankTcBorders = new XElement(W.tcBorders,
+        private static XElement BlankTcBorders = new XElement(
+            W.tcBorders,
             new XElement(W.top, new XAttribute(W.val, "nil")),
             new XElement(W.left, new XAttribute(W.val, "nil")),
             new XElement(W.bottom, new XAttribute(W.val, "nil")),
-            new XElement(W.right, new XAttribute(W.val, "nil")));
+            new XElement(W.right, new XAttribute(W.val, "nil"))
+        );
 
         private static void AnnotateTablesWithTableStyles(WordprocessingDocument wDoc, XElement rootElement)
         {
             var sXDoc = wDoc.MainDocumentPart.StyleDefinitionsPart.GetXDocument();
             foreach (var tbl in rootElement.Descendants(W.tbl))
             {
-                var tblStyleName = (string)tbl.Elements(W.tblPr).Elements(W.tblStyle).Attributes(W.val).FirstOrDefault();
+                var tblStyleName = (string)
+                    tbl.Elements(W.tblPr).Elements(W.tblStyle).Attributes(W.val).FirstOrDefault();
                 if (tblStyleName != null)
                 {
                     var style = TableStyleRollup(wDoc, tblStyleName);
@@ -826,10 +872,12 @@ namespace Clippit.Word
                     foreach (var ot in TableStyleOverrideTypes)
                     {
                         var attName = TableStyleOverrideXNameMap[ot];
-                        if (attName == W.oddHBand ||
-                            attName == W.evenHBand ||
-                            attName == W.firstRow ||
-                            attName == W.lastRow)
+                        if (
+                            attName == W.oddHBand
+                            || attName == W.evenHBand
+                            || attName == W.firstRow
+                            || attName == W.lastRow
+                        )
                         {
                             foreach (var row in tbl.Elements(W.tr))
                             {
@@ -862,10 +910,12 @@ namespace Clippit.Word
                                 }
                             }
                         }
-                        else if (attName == W.firstColumn ||
-                            attName == W.lastColumn ||
-                            attName == W.oddVBand ||
-                            attName == W.evenVBand)
+                        else if (
+                            attName == W.firstColumn
+                            || attName == W.lastColumn
+                            || attName == W.oddVBand
+                            || attName == W.evenVBand
+                        )
                         {
                             foreach (var row in tbl.Elements(W.tr))
                             {
@@ -944,8 +994,7 @@ namespace Clippit.Word
                     var tcPrPt = cell.Element(PtOpenXml.pt + "tcPr");
                     if (tcPrPt != null)
                         continue;
-                    tcPrPt = new XElement(PtOpenXml.pt + "tcPr",
-                        new XElement(W.tcBorders));
+                    tcPrPt = new XElement(PtOpenXml.pt + "tcPr", new XElement(W.tcBorders));
                     cell.Add(tcPrPt);
                 }
             }
@@ -956,10 +1005,7 @@ namespace Clippit.Word
             var cellCnf = cell.Elements(W.tcPr).Elements(W.cnfStyle).FirstOrDefault();
             if (cellCnf != null && cellCnf.Attribute(attName).ToBoolean() == true)
             {
-                var o = style
-                    .Elements(W.tblStylePr)
-                    .Where(tsp => (string)tsp.Attribute(W.type) == ot)
-                    .FirstOrDefault();
+                var o = style.Elements(W.tblStylePr).Where(tsp => (string)tsp.Attribute(W.type) == ot).FirstOrDefault();
                 if (o != null)
                 {
                     var tcPrPtExists = false;
@@ -1060,7 +1106,10 @@ namespace Clippit.Word
                     var firstCell = row.Elements(W.tc).FirstOrDefault();
                     if (firstCell != null)
                     {
-                        var cellTcBorders = firstCell.Elements(PtOpenXml.pt + "tcPr").Elements(W.tcBorders).FirstOrDefault();
+                        var cellTcBorders = firstCell
+                            .Elements(PtOpenXml.pt + "tcPr")
+                            .Elements(W.tcBorders)
+                            .FirstOrDefault();
                         if (cellTcBorders != null)
                         {
                             var firstCellLeft = cellTcBorders.Element(W.left);
@@ -1077,7 +1126,10 @@ namespace Clippit.Word
                     var lastCell = row.Elements(W.tc).LastOrDefault();
                     if (lastCell != null)
                     {
-                        var cellTcBorders = lastCell.Elements(PtOpenXml.pt + "tcPr").Elements(W.tcBorders).FirstOrDefault();
+                        var cellTcBorders = lastCell
+                            .Elements(PtOpenXml.pt + "tcPr")
+                            .Elements(W.tcBorders)
+                            .FirstOrDefault();
                         if (cellTcBorders != null)
                         {
                             var lastCellRight = cellTcBorders.Element(W.right);
@@ -1130,14 +1182,20 @@ namespace Clippit.Word
                                     var left = styleTcBorders.Element(W.left);
                                     var bottom = styleTcBorders.Element(W.bottom);
                                     var right = styleTcBorders.Element(W.right);
-                                    insideV = cndStyle.Elements(W.tcPr).Elements(W.tcBorders).Elements(W.insideV).FirstOrDefault();
+                                    insideV = cndStyle
+                                        .Elements(W.tcPr)
+                                        .Elements(W.tcBorders)
+                                        .Elements(W.insideV)
+                                        .FirstOrDefault();
                                     if (insideV != null)
                                     {
                                         var lastCol = row.Elements(W.tc).Count() - 1;
                                         var colIdx = 0;
                                         foreach (var cell in row.Elements(W.tc))
                                         {
-                                            var tcBorders = cell.Elements(PtOpenXml.pt + "tcPr").Elements(W.tcBorders).FirstOrDefault();
+                                            var tcBorders = cell.Elements(PtOpenXml.pt + "tcPr")
+                                                .Elements(W.tcBorders)
+                                                .FirstOrDefault();
                                             if (colIdx == 0)
                                             {
                                                 ResolveInsideWithExisting(tcBorders, insideV, W.right);
@@ -1181,10 +1239,16 @@ namespace Clippit.Word
                                     .FirstOrDefault(tsp => (string)tsp.Attribute(W.type) == cndType);
                                 if (cndStyle != null)
                                 {
-                                    var insideH = cndStyle.Elements(W.tcPr).Elements(W.tcBorders).Elements(W.insideH).FirstOrDefault();
+                                    var insideH = cndStyle
+                                        .Elements(W.tcPr)
+                                        .Elements(W.tcBorders)
+                                        .Elements(W.insideH)
+                                        .FirstOrDefault();
                                     if (insideH != null)
                                     {
-                                        var tcBorders = cell.Elements(PtOpenXml.pt + "tcPr").Elements(W.tcBorders).FirstOrDefault();
+                                        var tcBorders = cell.Elements(PtOpenXml.pt + "tcPr")
+                                            .Elements(W.tcBorders)
+                                            .FirstOrDefault();
                                         if (rowIdx == 0)
                                         {
                                             ResolveInsideWithExisting(tcBorders, insideH, W.bottom);
@@ -1290,53 +1354,52 @@ namespace Clippit.Word
             if (tcBorders.Element(whichSide) != null)
             {
                 var newInsideH = ResolveInsideBorder(inside, tcBorders.Element(whichSide));
-                tcBorders.Element(whichSide).ReplaceAttributes(
-                    newInsideH.Attributes());
+                tcBorders.Element(whichSide).ReplaceAttributes(newInsideH.Attributes());
             }
             else
             {
-                tcBorders.Add(
-                    new XElement(whichSide,
-                        inside.Attributes()));
+                tcBorders.Add(new XElement(whichSide, inside.Attributes()));
             }
         }
 
-        private static readonly Dictionary<string, int> BorderTypePriority = new()
-        {
-            { "single", 1 },
-            { "thick", 2 },
-            { "double", 3 },
-            { "dotted", 4 },
-        };
+        private static readonly Dictionary<string, int> BorderTypePriority =
+            new()
+            {
+                { "single", 1 },
+                { "thick", 2 },
+                { "double", 3 },
+                { "dotted", 4 },
+            };
 
-        private static readonly Dictionary<string, int> BorderNumber = new()
-        {
-            {"single", 1 },
-            {"thick", 2 },
-            {"double", 3 },
-            {"dotted", 4 },
-            {"dashed", 5 },
-            {"dotDash", 6 },
-            {"dotDotDash", 7 },
-            {"triple", 8 },
-            {"thinThickSmallGap", 9 },
-            {"thickThinSmallGap", 10 },
-            {"thinThickThinSmallGap", 11 },
-            {"thinThickMediumGap", 12 },
-            {"thickThinMediumGap", 13 },
-            {"thinThickThinMediumGap", 14 },
-            {"thinThickLargeGap", 15 },
-            {"thickThinLargeGap", 16 },
-            {"thinThickThinLargeGap", 17 },
-            {"wave", 18 },
-            {"doubleWave", 19 },
-            {"dashSmallGap", 20 },
-            {"dashDotStroked", 21 },
-            {"threeDEmboss", 22 },
-            {"threeDEngrave", 23 },
-            {"outset", 24 },
-            {"inset", 25 },
-        };
+        private static readonly Dictionary<string, int> BorderNumber =
+            new()
+            {
+                { "single", 1 },
+                { "thick", 2 },
+                { "double", 3 },
+                { "dotted", 4 },
+                { "dashed", 5 },
+                { "dotDash", 6 },
+                { "dotDotDash", 7 },
+                { "triple", 8 },
+                { "thinThickSmallGap", 9 },
+                { "thickThinSmallGap", 10 },
+                { "thinThickThinSmallGap", 11 },
+                { "thinThickMediumGap", 12 },
+                { "thickThinMediumGap", 13 },
+                { "thinThickThinMediumGap", 14 },
+                { "thinThickLargeGap", 15 },
+                { "thickThinLargeGap", 16 },
+                { "thinThickThinLargeGap", 17 },
+                { "wave", 18 },
+                { "doubleWave", 19 },
+                { "dashSmallGap", 20 },
+                { "dashDotStroked", 21 },
+                { "threeDEmboss", 22 },
+                { "threeDEngrave", 23 },
+                { "outset", 24 },
+                { "inset", 25 },
+            };
 
         private static XElement ResolveInsideBorder(XElement inside1, XElement sideToReplace)
         {
@@ -1350,8 +1413,7 @@ namespace Clippit.Word
             // The following handles the situation where
             // if table innerV is set, and cnd format for first row specifies nill border, then nil border wins.
             // if table innerH is set, and cnd format for first columns specifies nil border, then table innerH wins.
-            if (sideToReplace.Name == W.left ||
-                sideToReplace.Name == W.right)
+            if (sideToReplace.Name == W.left || sideToReplace.Name == W.right)
             {
                 if ((string)inside1.Attribute(W.val) == "nil")
                     return inside1;
@@ -1390,8 +1452,7 @@ namespace Clippit.Word
             if ((int)sideToReplace.Attribute(W.sz) > (int)inside1.Attribute(W.sz))
                 return sideToReplace;
 
-            if (BorderTypePriority.ContainsKey(inside1Val) &&
-                BorderTypePriority.ContainsKey(sideToReplaceVal))
+            if (BorderTypePriority.ContainsKey(inside1Val) && BorderTypePriority.ContainsKey(sideToReplaceVal))
             {
                 var inside1Pri = BorderTypePriority[inside1Val];
                 var inside2Pri = BorderTypePriority[sideToReplaceVal];
@@ -1422,7 +1483,7 @@ namespace Clippit.Word
                     color1 = Convert.ToInt32(color1str, 16);
                 }
                 // if the above throws ArgumentException, FormatException, or OverflowException, then abort
-                catch (Exception) 
+                catch (Exception)
                 {
                     return sideToReplace;
                 }
@@ -1446,8 +1507,7 @@ namespace Clippit.Word
 
         private static XElement TableStyleRollup(WordprocessingDocument wDoc, string tblStyleName)
         {
-            var tblStyleChain = TableStyleStack(wDoc, tblStyleName)
-                .Reverse();
+            var tblStyleChain = TableStyleStack(wDoc, tblStyleName).Reverse();
             var rolledStyle = new XElement(W.style);
             foreach (var style in tblStyleChain)
             {
@@ -1504,40 +1564,46 @@ namespace Clippit.Word
             "swCell",
         };
 
-        private static readonly Dictionary<string, XName> TableStyleOverrideXNameMap = new()
-        {
-            {"band1Vert", W.oddVBand},
-            {"band2Vert", W.evenVBand},
-            {"band1Horz", W.oddHBand},
-            {"band2Horz", W.evenHBand},
-            {"firstCol", W.firstColumn},
-            {"lastCol", W.lastColumn},
-            {"firstRow", W.firstRow},
-            {"lastRow", W.lastRow},
-            {"neCell", W.firstRowLastColumn},
-            {"nwCell", W.firstRowFirstColumn},
-            {"seCell", W.lastRowLastColumn},
-            {"swCell", W.lastRowFirstColumn},
-        };
+        private static readonly Dictionary<string, XName> TableStyleOverrideXNameMap =
+            new()
+            {
+                { "band1Vert", W.oddVBand },
+                { "band2Vert", W.evenVBand },
+                { "band1Horz", W.oddHBand },
+                { "band2Horz", W.evenHBand },
+                { "firstCol", W.firstColumn },
+                { "lastCol", W.lastColumn },
+                { "firstRow", W.firstRow },
+                { "lastRow", W.lastRow },
+                { "neCell", W.firstRowLastColumn },
+                { "nwCell", W.firstRowFirstColumn },
+                { "seCell", W.lastRowLastColumn },
+                { "swCell", W.lastRowFirstColumn },
+            };
 
-        private static readonly Dictionary<XName, string> TableStyleOverrideXNameRevMap = new()
-        {
-            {W.oddVBand, "band1Vert"},
-            {W.evenVBand, "band2Vert"},
-            {W.oddHBand, "band1Horz"},
-            {W.evenHBand, "band2Horz"},
-            {W.firstColumn, "firstCol"},
-            {W.lastColumn, "lastCol"},
-            {W.firstRow, "firstRow"},
-            {W.lastRow, "lastRow"},
-        };
+        private static readonly Dictionary<XName, string> TableStyleOverrideXNameRevMap =
+            new()
+            {
+                { W.oddVBand, "band1Vert" },
+                { W.evenVBand, "band2Vert" },
+                { W.oddHBand, "band1Horz" },
+                { W.evenHBand, "band2Horz" },
+                { W.firstColumn, "firstCol" },
+                { W.lastColumn, "lastCol" },
+                { W.firstRow, "firstRow" },
+                { W.lastRow, "lastRow" },
+            };
 
         private static XElement MergeStyleElement(XElement higherPriorityElement, XElement lowerPriorityElement)
         {
             return MergeStyleElement(higherPriorityElement, lowerPriorityElement, null);
         }
 
-        private static XElement MergeStyleElement(XElement higherPriorityElement, XElement lowerPriorityElement, bool? highPriIsDirectFormatting)
+        private static XElement MergeStyleElement(
+            XElement higherPriorityElement,
+            XElement lowerPriorityElement,
+            bool? highPriIsDirectFormatting
+        )
         {
             // If, when in the process of merging, the source element doesn't have a
             // corresponding element in the merged element, then include the source element
@@ -1553,12 +1619,12 @@ namespace Clippit.Word
                 .ToArray();
             if (highPriIsDirectFormatting == true)
             {
-                hpe = hpe
-                    .Select(e =>
-                        new XElement(e.Name,
-                            e.Attributes(),
-                            new XAttribute(PtOpenXml.pt + "fromDirect", true),
-                            e.Elements()))
+                hpe = hpe.Select(e => new XElement(
+                        e.Name,
+                        e.Attributes(),
+                        new XAttribute(PtOpenXml.pt + "fromDirect", true),
+                        e.Elements()
+                    ))
                     .ToArray();
             }
             var lpe = lowerPriorityElement
@@ -1582,10 +1648,14 @@ namespace Clippit.Word
                         return l;
                     if (h != null && l == null)
                     {
-                        var newH = new XElement(h.Name,
+                        var newH = new XElement(
+                            h.Name,
                             h.Attributes(),
-                            highPriIsDirectFormatting == true ? new XAttribute(PtOpenXml.pt + "fromDirect", true) : null,
-                            h.Elements());
+                            highPriIsDirectFormatting == true
+                                ? new XAttribute(PtOpenXml.pt + "fromDirect", true)
+                                : null,
+                            h.Elements()
+                        );
                         return newH;
                     }
                     return MergeStyleElement(h, l, highPriIsDirectFormatting);
@@ -1596,8 +1666,12 @@ namespace Clippit.Word
                 .Select(e =>
                 {
                     // test is here to prevent unnecessary recursion to make debugging easier
-                    var h = higherPriorityElement.Elements(W.tblStylePr).FirstOrDefault(tsp => (string)tsp.Attribute(W.type) == e);
-                    var l = lowerPriorityElement.Elements(W.tblStylePr).FirstOrDefault(tsp => (string)tsp.Attribute(W.type) == e);
+                    var h = higherPriorityElement
+                        .Elements(W.tblStylePr)
+                        .FirstOrDefault(tsp => (string)tsp.Attribute(W.type) == e);
+                    var l = lowerPriorityElement
+                        .Elements(W.tblStylePr)
+                        .FirstOrDefault(tsp => (string)tsp.Attribute(W.type) == e);
                     if (h == null && l == null)
                         return null;
                     if (h == null && l != null)
@@ -1609,17 +1683,18 @@ namespace Clippit.Word
                 .Where(m => m != null)
                 .ToArray();
 
-            var newMergedElement = new XElement(higherPriorityElement.Name,
+            var newMergedElement = new XElement(
+                higherPriorityElement.Name,
                 new XAttribute(XNamespace.Xmlns + "w", W.w),
                 higherPriorityElement.Attributes().Where(a => !a.IsNamespaceDeclaration),
-                hpe,  // higher priority elements
-                lpe,  // lower priority elements where there is not a higher priority element of same name
-                ind,  // w:ind has very special rules
-                ma,   // elements that require merged attributes
+                hpe, // higher priority elements
+                lpe, // lower priority elements where there is not a higher priority element of same name
+                ind, // w:ind has very special rules
+                ma, // elements that require merged attributes
                 lang,
-                rFonts,  // font merge is special case
-                tabs,    // tabs merge is special case
-                mcp,  // elements that need child properties to be merged
+                rFonts, // font merge is special case
+                tabs, // tabs merge is special case
+                mcp, // elements that need child properties to be merged
                 tsor // merged table style override elements
             );
 
@@ -1634,10 +1709,12 @@ namespace Clippit.Word
                 return hLang;
             if (lLang != null && hLang == null)
                 return lLang;
-            return new XElement(W.lang,
+            return new XElement(
+                W.lang,
                 hLang.Attribute(W.val) != null ? hLang.Attribute(W.val) : lLang.Attribute(W.val),
                 hLang.Attribute(W.bidi) != null ? hLang.Attribute(W.bidi) : lLang.Attribute(W.bidi),
-                hLang.Attribute(W.eastAsia) != null ? hLang.Attribute(W.eastAsia) : lLang.Attribute(W.eastAsia));
+                hLang.Attribute(W.eastAsia) != null ? hLang.Attribute(W.eastAsia) : lLang.Attribute(W.eastAsia)
+            );
         }
 
         private enum IndAttType
@@ -1674,23 +1751,16 @@ namespace Clippit.Word
             if (hpe.Attribute(W.hangingChars) != null)
                 lpe.Attributes(W.firstLineChars).Remove();
 
-            var highPriAtts = hpe
-                .Attributes()
-                .Where(a => !a.IsNamespaceDeclaration)
-                .ToList();
+            var highPriAtts = hpe.Attributes().Where(a => !a.IsNamespaceDeclaration).ToList();
 
-            var highPriAttNames = highPriAtts
-                .Select(a => a.Name);
+            var highPriAttNames = highPriAtts.Select(a => a.Name);
 
-            var lowPriAtts = lpe
-                .Attributes()
+            var lowPriAtts = lpe.Attributes()
                 .Where(a => !a.IsNamespaceDeclaration)
                 .Where(a => !highPriAttNames.Contains(a.Name))
                 .ToList();
 
-            var mergedElement = new XElement(higherPriorityElement.Name,
-                highPriAtts,
-                lowPriAtts);
+            var mergedElement = new XElement(higherPriorityElement.Name, highPriAtts, lowPriAtts);
 
             return mergedElement;
         }
@@ -1706,22 +1776,22 @@ namespace Clippit.Word
                 return lowerPriorityElement;
             if (higherPriorityElement == null && lowerPriorityElement == null)
                 return null;
-            var hps = higherPriorityElement.Elements().Select(e =>
-                new
+            var hps = higherPriorityElement
+                .Elements()
+                .Select(e => new
                 {
                     Pos = (int)e.Attribute(W.pos),
                     Pri = 1,
                     Element = e,
-                }
-            );
-            var lps = lowerPriorityElement.Elements().Select(e =>
-                new
+                });
+            var lps = lowerPriorityElement
+                .Elements()
+                .Select(e => new
                 {
                     Pos = (int)e.Attribute(W.pos),
                     Pri = 2,
                     Element = e,
-                }
-            );
+                });
             var newTabElements = hps.Concat(lps)
                 .GroupBy(s => s.Pos)
                 .Select(g => g.OrderBy(s => s.Pri).First().Element)
@@ -1739,9 +1809,11 @@ namespace Clippit.Word
                 return hn;
             if (hn == null && ln != null)
                 return ln;
-            var mn1 = new XElement(W.spacing,
+            var mn1 = new XElement(
+                W.spacing,
                 hn.Attributes(),
-                ln.Attributes().Where(a => hn.Attribute(a.Name) == null));
+                ln.Attributes().Where(a => hn.Attribute(a.Name) == null)
+            );
             return mn1;
         }
 
@@ -1752,9 +1824,10 @@ namespace Clippit.Word
             while (true)
             {
                 var style = sXDoc
-                    .Root
-                    .Elements(W.style).Where(s => (string)s.Attribute(W.type) == "table" &&
-                        (string)s.Attribute(W.styleId) == currentStyle)
+                    .Root.Elements(W.style)
+                    .Where(s =>
+                        (string)s.Attribute(W.type) == "table" && (string)s.Attribute(W.styleId) == currentStyle
+                    )
                     .FirstOrDefault();
                 if (style == null)
                     yield break;
@@ -1772,28 +1845,39 @@ namespace Clippit.Word
             if (lowerPriorityFont == null)
                 return higherPriorityFont;
 
-
-            var rFonts = new XElement(W.rFonts,
-                (higherPriorityFont.Attribute(W.ascii) != null || higherPriorityFont.Attribute(W.asciiTheme) != null) ?
-                    new[] { higherPriorityFont.Attribute(W.ascii), higherPriorityFont.Attribute(W.asciiTheme) } :
-                    new[] { lowerPriorityFont.Attribute(W.ascii), lowerPriorityFont.Attribute(W.asciiTheme) },
-                (higherPriorityFont.Attribute(W.hAnsi) != null || higherPriorityFont.Attribute(W.hAnsiTheme) != null) ?
-                    new[] { higherPriorityFont.Attribute(W.hAnsi), higherPriorityFont.Attribute(W.hAnsiTheme) } :
-                    new[] { lowerPriorityFont.Attribute(W.hAnsi), lowerPriorityFont.Attribute(W.hAnsiTheme) },
-                (higherPriorityFont.Attribute(W.eastAsia) != null || higherPriorityFont.Attribute(W.eastAsiaTheme) != null) ?
-                    new[] { higherPriorityFont.Attribute(W.eastAsia), higherPriorityFont.Attribute(W.eastAsiaTheme) } :
-                    new[] { lowerPriorityFont.Attribute(W.eastAsia), lowerPriorityFont.Attribute(W.eastAsiaTheme) },
-                (higherPriorityFont.Attribute(W.cs) != null || higherPriorityFont.Attribute(W.cstheme) != null) ?
-                    new[] { higherPriorityFont.Attribute(W.cs), higherPriorityFont.Attribute(W.cstheme) } :
-                    new[] { lowerPriorityFont.Attribute(W.cs), lowerPriorityFont.Attribute(W.cstheme) },
-                (higherPriorityFont.Attribute(W.hint) != null ? higherPriorityFont.Attribute(W.hint) :
-                    lowerPriorityFont.Attribute(W.hint))
+            var rFonts = new XElement(
+                W.rFonts,
+                (higherPriorityFont.Attribute(W.ascii) != null || higherPriorityFont.Attribute(W.asciiTheme) != null)
+                    ? new[] { higherPriorityFont.Attribute(W.ascii), higherPriorityFont.Attribute(W.asciiTheme) }
+                    : new[] { lowerPriorityFont.Attribute(W.ascii), lowerPriorityFont.Attribute(W.asciiTheme) },
+                (higherPriorityFont.Attribute(W.hAnsi) != null || higherPriorityFont.Attribute(W.hAnsiTheme) != null)
+                    ? new[] { higherPriorityFont.Attribute(W.hAnsi), higherPriorityFont.Attribute(W.hAnsiTheme) }
+                    : new[] { lowerPriorityFont.Attribute(W.hAnsi), lowerPriorityFont.Attribute(W.hAnsiTheme) },
+                (
+                    higherPriorityFont.Attribute(W.eastAsia) != null
+                    || higherPriorityFont.Attribute(W.eastAsiaTheme) != null
+                )
+                    ? new[] { higherPriorityFont.Attribute(W.eastAsia), higherPriorityFont.Attribute(W.eastAsiaTheme) }
+                    : new[] { lowerPriorityFont.Attribute(W.eastAsia), lowerPriorityFont.Attribute(W.eastAsiaTheme) },
+                (higherPriorityFont.Attribute(W.cs) != null || higherPriorityFont.Attribute(W.cstheme) != null)
+                    ? new[] { higherPriorityFont.Attribute(W.cs), higherPriorityFont.Attribute(W.cstheme) }
+                    : new[] { lowerPriorityFont.Attribute(W.cs), lowerPriorityFont.Attribute(W.cstheme) },
+                (
+                    higherPriorityFont.Attribute(W.hint) != null
+                        ? higherPriorityFont.Attribute(W.hint)
+                        : lowerPriorityFont.Attribute(W.hint)
+                )
             );
 
             return rFonts;
         }
 
-        private static void AnnotateParagraphs(FormattingAssemblerInfo fai, WordprocessingDocument wDoc, XElement root, FormattingAssemblerSettings settings)
+        private static void AnnotateParagraphs(
+            FormattingAssemblerInfo fai,
+            WordprocessingDocument wDoc,
+            XElement root,
+            FormattingAssemblerSettings settings
+        )
         {
             foreach (var para in root.Descendants(W.p))
             {
@@ -1801,7 +1885,12 @@ namespace Clippit.Word
             }
         }
 
-        private static void AnnotateParagraph(FormattingAssemblerInfo fai, WordprocessingDocument wDoc, XElement para, FormattingAssemblerSettings settings)
+        private static void AnnotateParagraph(
+            FormattingAssemblerInfo fai,
+            WordprocessingDocument wDoc,
+            XElement para,
+            FormattingAssemblerSettings settings
+        )
         {
             var localParaProps = para.Element(W.pPr);
             if (localParaProps == null)
@@ -1812,15 +1901,16 @@ namespace Clippit.Word
             // get para table props, to be merged.
             XElement tablepPr = null;
 
-            var blockLevelContentContainer = para
-                .Ancestors()
-                .FirstOrDefault(a => a.Name == W.body ||
-                    a.Name == W.tbl ||
-                    a.Name == W.txbxContent ||
-                    a.Name == W.ftr ||
-                    a.Name == W.hdr ||
-                    a.Name == W.footnote ||
-                    a.Name == W.endnote);
+            var blockLevelContentContainer = para.Ancestors()
+                .FirstOrDefault(a =>
+                    a.Name == W.body
+                    || a.Name == W.tbl
+                    || a.Name == W.txbxContent
+                    || a.Name == W.ftr
+                    || a.Name == W.hdr
+                    || a.Name == W.footnote
+                    || a.Name == W.endnote
+                );
             if (blockLevelContentContainer.Name == W.tbl)
             {
                 var tbl = blockLevelContentContainer;
@@ -1839,8 +1929,10 @@ namespace Clippit.Word
                     foreach (var ot in TableStyleOverrideTypes)
                     {
                         var attName = TableStyleOverrideXNameMap[ot];
-                        if ((cellCnf != null && cellCnf.Attribute(attName).ToBoolean() == true) ||
-                            (rowCnf != null && rowCnf.Attribute(attName).ToBoolean() == true))
+                        if (
+                            (cellCnf != null && cellCnf.Attribute(attName).ToBoolean() == true)
+                            || (rowCnf != null && rowCnf.Attribute(attName).ToBoolean() == true)
+                        )
                         {
                             var o = style
                                 .Elements(W.tblStylePr)
@@ -1873,10 +1965,18 @@ namespace Clippit.Word
             {
                 if (settings.RestrictToSupportedNumberingFormats)
                 {
-                    var numFmtForLevel = (string)lif.Lvl(ListItemRetriever.GetParagraphLevel(para)).Elements(W.numFmt).Attributes(W.val).FirstOrDefault();
+                    var numFmtForLevel = (string)
+                        lif.Lvl(ListItemRetriever.GetParagraphLevel(para))
+                            .Elements(W.numFmt)
+                            .Attributes(W.val)
+                            .FirstOrDefault();
                     if (numFmtForLevel == null)
                     {
-                        var numFmtElement = lif.Lvl(ListItemRetriever.GetParagraphLevel(para)).Elements(MC.AlternateContent).Elements(MC.Choice).Elements(W.numFmt).FirstOrDefault();
+                        var numFmtElement = lif.Lvl(ListItemRetriever.GetParagraphLevel(para))
+                            .Elements(MC.AlternateContent)
+                            .Elements(MC.Choice)
+                            .Elements(W.numFmt)
+                            .FirstOrDefault();
                         if (numFmtElement != null && (string)numFmtElement.Attribute(W.val) == "custom")
                             numFmtForLevel = (string)numFmtElement.Attribute(W.format);
                     }
@@ -1884,24 +1984,20 @@ namespace Clippit.Word
                     if (isLgl && numFmtForLevel != "decimalZero")
                         numFmtForLevel = "decimal";
                     if (!AcceptableNumFormats.Contains(numFmtForLevel))
-                        throw new UnsupportedNumberingFormatException(numFmtForLevel + " is not a supported numbering format");
+                        throw new UnsupportedNumberingFormatException(
+                            numFmtForLevel + " is not a supported numbering format"
+                        );
                 }
 
                 var paragraphLevel = ListItemRetriever.GetParagraphLevel(para);
-                var numberingParaProps = lif
-                    .Lvl(paragraphLevel)
-                    .Elements(W.pPr)
-                    .FirstOrDefault();
+                var numberingParaProps = lif.Lvl(paragraphLevel).Elements(W.pPr).FirstOrDefault();
                 if (numberingParaProps == null)
                 {
                     numberingParaProps = new XElement(W.pPr);
                 }
                 else
                 {
-                    numberingParaProps
-                        .Elements()
-                        .Where(e => e.Name != W.ind)
-                        .Remove();
+                    numberingParaProps.Elements().Where(e => e.Name != W.ind).Remove();
                 }
 
                 // have:
@@ -1956,7 +2052,8 @@ namespace Clippit.Word
             }
         }
 
-        private static readonly string[] AcceptableNumFormats = new[] {
+        private static readonly string[] AcceptableNumFormats = new[]
+        {
             "decimal",
             "decimalZero",
             "upperRoman",
@@ -1971,13 +2068,13 @@ namespace Clippit.Word
             "none",
         };
 
-        public static XElement ParagraphStyleRollup(XElement paragraph, XDocument stylesXDoc, string defaultParagraphStyleName)
+        public static XElement ParagraphStyleRollup(
+            XElement paragraph,
+            XDocument stylesXDoc,
+            string defaultParagraphStyleName
+        )
         {
-            var paraStyle = (string)paragraph
-                .Elements(W.pPr)
-                .Elements(W.pStyle)
-                .Attributes(W.val)
-                .FirstOrDefault();
+            var paraStyle = (string)paragraph.Elements(W.pPr).Elements(W.pStyle).Attributes(W.val).FirstOrDefault();
             if (paraStyle == null)
                 paraStyle = defaultParagraphStyleName;
             var rolledUpParaStyleParaProps = new XElement(W.pPr);
@@ -1987,26 +2084,34 @@ namespace Clippit.Word
             {
                 rolledUpParaStyleParaProps = ParaStyleParaPropsStack(stylesXDoc, paraStyle, paragraph)
                     .Reverse()
-                    .Aggregate(new XElement(W.pPr),
+                    .Aggregate(
+                        new XElement(W.pPr),
                         (r, s) =>
                         {
                             var newParaProps = MergeStyleElement(s, r);
                             return newParaProps;
-                        });
+                        }
+                    );
             }
             return rolledUpParaStyleParaProps;
         }
 
-        private static IEnumerable<XElement> ParaStyleParaPropsStack(XDocument stylesXDoc, string paraStyleName, XElement para)
+        private static IEnumerable<XElement> ParaStyleParaPropsStack(
+            XDocument stylesXDoc,
+            string paraStyleName,
+            XElement para
+        )
         {
             if (stylesXDoc == null)
                 yield break;
             var localParaStyleName = paraStyleName;
             while (localParaStyleName != null)
             {
-                var paraStyle = stylesXDoc.Root.Elements(W.style).FirstOrDefault(s =>
-                    s.Attribute(W.type).Value == "paragraph" &&
-                    s.Attribute(W.styleId).Value == localParaStyleName);
+                var paraStyle = stylesXDoc
+                    .Root.Elements(W.style)
+                    .FirstOrDefault(s =>
+                        s.Attribute(W.type).Value == "paragraph" && s.Attribute(W.styleId).Value == localParaStyleName
+                    );
                 if (paraStyle == null)
                 {
                     yield break;
@@ -2015,21 +2120,19 @@ namespace Clippit.Word
                 {
                     if (paraStyle.Element(W.rPr) != null)
                     {
-                        var elementToYield2 = new XElement(W.pPr,
-                            paraStyle.Element(W.rPr));
+                        var elementToYield2 = new XElement(W.pPr, paraStyle.Element(W.rPr));
                         yield return elementToYield2;
                     }
-                    localParaStyleName = (string)(paraStyle
-                        .Elements(W.basedOn)
-                        .Attributes(W.val)
-                        .FirstOrDefault());
+                    localParaStyleName = (string)(paraStyle.Elements(W.basedOn).Attributes(W.val).FirstOrDefault());
                     continue;
                 }
 
-                var elementToYield = new XElement(W.pPr,
+                var elementToYield = new XElement(
+                    W.pPr,
                     paraStyle.Element(W.pPr).Attributes(),
                     paraStyle.Element(W.pPr).Elements(),
-                    paraStyle.Element(W.rPr));
+                    paraStyle.Element(W.rPr)
+                );
                 yield return (elementToYield);
 
                 var listItemInfo = para.Annotation<ListItemRetriever.ListItemInfo>();
@@ -2041,22 +2144,21 @@ namespace Clippit.Word
                         if (lipPr == null)
                             lipPr = new XElement(W.pPr);
                         var lirPr = listItemInfo.Lvl(ListItemRetriever.GetParagraphLevel(para)).Element(W.rPr);
-                        var elementToYield2 = new XElement(W.pPr,
-                            lipPr.Attributes(),
-                            lipPr.Elements(),
-                            lirPr);
+                        var elementToYield2 = new XElement(W.pPr, lipPr.Attributes(), lipPr.Elements(), lirPr);
                         yield return (elementToYield2);
                     }
                 }
 
-                localParaStyleName = (string)paraStyle
-                    .Elements(W.basedOn)
-                    .Attributes(W.val)
-                    .FirstOrDefault();
+                localParaStyleName = (string)paraStyle.Elements(W.basedOn).Attributes(W.val).FirstOrDefault();
             }
         }
 
-        private static void AnnotateRuns(FormattingAssemblerInfo fai, WordprocessingDocument wDoc, XElement root, FormattingAssemblerSettings settings)
+        private static void AnnotateRuns(
+            FormattingAssemblerInfo fai,
+            WordprocessingDocument wDoc,
+            XElement root,
+            FormattingAssemblerSettings settings
+        )
         {
             var runsOrParas = root.Descendants()
                 .Where(rp =>
@@ -2069,7 +2171,12 @@ namespace Clippit.Word
             }
         }
 
-        private static void AnnotateRunProperties(FormattingAssemblerInfo fai, WordprocessingDocument wDoc, XElement runOrPara, FormattingAssemblerSettings settings)
+        private static void AnnotateRunProperties(
+            FormattingAssemblerInfo fai,
+            WordprocessingDocument wDoc,
+            XElement runOrPara,
+            FormattingAssemblerSettings settings
+        )
         {
             XElement localRunProps = null;
             if (runOrPara.Name == W.p)
@@ -2093,13 +2200,15 @@ namespace Clippit.Word
             XElement tablerPr = null;
             var blockLevelContentContainer = runOrPara
                 .Ancestors()
-                .FirstOrDefault(a => a.Name == W.body ||
-                    a.Name == W.tbl ||
-                    a.Name == W.txbxContent ||
-                    a.Name == W.ftr ||
-                    a.Name == W.hdr ||
-                    a.Name == W.footnote ||
-                    a.Name == W.endnote);
+                .FirstOrDefault(a =>
+                    a.Name == W.body
+                    || a.Name == W.tbl
+                    || a.Name == W.txbxContent
+                    || a.Name == W.ftr
+                    || a.Name == W.hdr
+                    || a.Name == W.footnote
+                    || a.Name == W.endnote
+                );
             if (blockLevelContentContainer.Name == W.tbl)
             {
                 var tbl = blockLevelContentContainer;
@@ -2116,8 +2225,10 @@ namespace Clippit.Word
                     foreach (var ot in TableStyleOverrideTypes)
                     {
                         var attName = TableStyleOverrideXNameMap[ot];
-                        if ((cellCnf != null && cellCnf.Attribute(attName).ToBoolean() == true) ||
-                            (rowCnf != null && rowCnf.Attribute(attName).ToBoolean() == true))
+                        if (
+                            (cellCnf != null && cellCnf.Attribute(attName).ToBoolean() == true)
+                            || (rowCnf != null && rowCnf.Attribute(attName).ToBoolean() == true)
+                        )
                         {
                             var o = style
                                 .Elements(W.tblStylePr)
@@ -2153,7 +2264,11 @@ namespace Clippit.Word
             }
         }
 
-        private static XElement CharStyleRollup(FormattingAssemblerInfo fai, WordprocessingDocument wDoc, XElement runOrPara)
+        private static XElement CharStyleRollup(
+            FormattingAssemblerInfo fai,
+            WordprocessingDocument wDoc,
+            XElement runOrPara
+        )
         {
             var sXDoc = wDoc.MainDocumentPart.StyleDefinitionsPart.GetXDocument();
 
@@ -2181,11 +2296,7 @@ namespace Clippit.Word
                     {
                         paraStyle = fai.DefaultParagraphStyleName;
                     }
-                    cpi = new CachedParaInfo
-                    {
-                        ParagraphProperties = pPr,
-                        ParagraphStyleName = paraStyle,
-                    };
+                    cpi = new CachedParaInfo { ParagraphProperties = pPr, ParagraphStyleName = paraStyle };
                     runOrPara.AddAnnotation(cpi);
                 }
                 if (pPr != null)
@@ -2207,19 +2318,17 @@ namespace Clippit.Word
                 else
                 {
                     if (runOrPara.Name == W.r)
-                        charStyle = (string)runOrPara
-                            .Ancestors(W.p)
-                            .Take(1)
-                            .Elements(W.pPr)
-                            .Elements(W.pStyle)
-                            .Attributes(W.val)
-                            .FirstOrDefault();
+                        charStyle = (string)
+                            runOrPara
+                                .Ancestors(W.p)
+                                .Take(1)
+                                .Elements(W.pPr)
+                                .Elements(W.pStyle)
+                                .Attributes(W.val)
+                                .FirstOrDefault();
                     else
-                        charStyle = (string)runOrPara
-                            .Elements(W.pPr)
-                            .Elements(W.pStyle)
-                            .Attributes(W.val)
-                            .FirstOrDefault();
+                        charStyle = (string)
+                            runOrPara.Elements(W.pPr).Elements(W.pStyle).Attributes(W.val).FirstOrDefault();
                 }
             }
 
@@ -2232,7 +2341,14 @@ namespace Clippit.Word
                     if (cpi != null)
                         charStyle = cpi.ParagraphStyleName;
                     else
-                        charStyle = (string)runOrPara.Ancestors(W.p).First().Elements(W.pPr).Elements(W.pStyle).Attributes(W.val).FirstOrDefault();
+                        charStyle = (string)
+                            runOrPara
+                                .Ancestors(W.p)
+                                .First()
+                                .Elements(W.pPr)
+                                .Elements(W.pStyle)
+                                .Attributes(W.val)
+                                .FirstOrDefault();
                 }
                 if (charStyle == null)
                 {
@@ -2276,8 +2392,7 @@ namespace Clippit.Word
             else
                 paraStyle = fai.DefaultParagraphStyleName;
 
-            var key = (paraStyle == null ? "[null]" : paraStyle) + "~|~" +
-                      (charStyle == null ? "[null]" : charStyle);
+            var key = (paraStyle == null ? "[null]" : paraStyle) + "~|~" + (charStyle == null ? "[null]" : charStyle);
             XElement rolledRunProps = null;
 
             if (fai.RolledCharacterStyles.ContainsKey(key))
@@ -2287,25 +2402,28 @@ namespace Clippit.Word
                 var rolledUpCharStyleRunProps = new XElement(W.rPr);
                 if (charStyle != null)
                 {
-                    rolledUpCharStyleRunProps =
-                        CharStyleStack(wDoc, charStyle)
-                            .Aggregate(new XElement(W.rPr),
-                                (r, s) =>
-                                {
-                                    var newRunProps = MergeStyleElement(s, r);
-                                    return newRunProps;
-                                });
+                    rolledUpCharStyleRunProps = CharStyleStack(wDoc, charStyle)
+                        .Aggregate(
+                            new XElement(W.rPr),
+                            (r, s) =>
+                            {
+                                var newRunProps = MergeStyleElement(s, r);
+                                return newRunProps;
+                            }
+                        );
                 }
 
                 if (paraStyle != null)
                 {
                     rolledUpParaStyleRunProps = ParaStyleRunPropsStack(wDoc, paraStyle)
-                        .Aggregate(new XElement(W.rPr),
+                        .Aggregate(
+                            new XElement(W.rPr),
                             (r, s) =>
                             {
                                 var newCharStyleRunProps = MergeStyleElement(s, r);
                                 return newCharStyleRunProps;
-                            });
+                            }
+                        );
                 }
                 rolledRunProps = MergeStyleElement(rolledUpCharStyleRunProps, rolledUpParaStyleRunProps);
                 fai.RolledCharacterStyles.Add(key, rolledRunProps);
@@ -2321,11 +2439,13 @@ namespace Clippit.Word
             var rValue = new Stack<XElement>();
             while (localParaStyleName != null)
             {
-                var paraStyle = sXDoc.Root.Elements(W.style).FirstOrDefault(s =>
-                {
-                    return (string)s.Attribute(W.type) == "paragraph" &&
-                        (string)s.Attribute(W.styleId) == localParaStyleName;
-                });
+                var paraStyle = sXDoc
+                    .Root.Elements(W.style)
+                    .FirstOrDefault(s =>
+                    {
+                        return (string)s.Attribute(W.type) == "paragraph"
+                            && (string)s.Attribute(W.styleId) == localParaStyleName;
+                    });
                 if (paraStyle == null)
                 {
                     return rValue;
@@ -2334,10 +2454,7 @@ namespace Clippit.Word
                 {
                     rValue.Push(paraStyle.Element(W.rPr));
                 }
-                localParaStyleName = (string)paraStyle
-                    .Elements(W.basedOn)
-                    .Attributes(W.val)
-                    .FirstOrDefault();
+                localParaStyleName = (string)paraStyle.Elements(W.basedOn).Attributes(W.val).FirstOrDefault();
             }
             return rValue;
         }
@@ -2352,18 +2469,22 @@ namespace Clippit.Word
             {
                 XElement basedOn = null;
                 // first look for character style
-                var charStyle = sXDoc.Root.Elements(W.style).FirstOrDefault(s =>
-                {
-                    return (string)s.Attribute(W.type) == "character" &&
-                        (string)s.Attribute(W.styleId) == localCharStyleName;
-                });
+                var charStyle = sXDoc
+                    .Root.Elements(W.style)
+                    .FirstOrDefault(s =>
+                    {
+                        return (string)s.Attribute(W.type) == "character"
+                            && (string)s.Attribute(W.styleId) == localCharStyleName;
+                    });
                 // if not found, look for paragraph style
                 if (charStyle == null)
                 {
-                    charStyle = sXDoc.Root.Elements(W.style).FirstOrDefault(s =>
-                    {
-                        return (string)s.Attribute(W.styleId) == localCharStyleName;
-                    });
+                    charStyle = sXDoc
+                        .Root.Elements(W.style)
+                        .FirstOrDefault(s =>
+                        {
+                            return (string)s.Attribute(W.styleId) == localCharStyleName;
+                        });
                 }
                 if (charStyle == null)
                 {
@@ -2401,12 +2522,16 @@ namespace Clippit.Word
 
             var hpe = higherPriorityElement.Elements().Select(e => e.Name).ToArray();
 
-            var newMergedElement = new XElement(higherPriorityElement.Name,
+            var newMergedElement = new XElement(
+                higherPriorityElement.Name,
                 higherPriorityElement.Attributes(),
-
                 // process toggle properties
-                higherPriorityElement.Elements()
-                    .Where(e => { return e.Name != W.rFonts; })
+                higherPriorityElement
+                    .Elements()
+                    .Where(e =>
+                    {
+                        return e.Name != W.rFonts;
+                    })
                     .Select(higherChildElement =>
                     {
                         if (TogglePropertyNames.Contains(higherChildElement.Name))
@@ -2417,9 +2542,13 @@ namespace Clippit.Word
                                 return higherChildElement;
                             }
 
-                            var bHigher = higherChildElement.Attribute(W.val) == null || higherChildElement.Attribute(W.val).ToBoolean() == true;
+                            var bHigher =
+                                higherChildElement.Attribute(W.val) == null
+                                || higherChildElement.Attribute(W.val).ToBoolean() == true;
 
-                            var bLower = lowerChildElement.Attribute(W.val) == null || lowerChildElement.Attribute(W.val).ToBoolean() == true;
+                            var bLower =
+                                lowerChildElement.Attribute(W.val) == null
+                                || lowerChildElement.Attribute(W.val).ToBoolean() == true;
 
                             return bHigher switch
                             {
@@ -2429,27 +2558,28 @@ namespace Clippit.Word
                                 false when bLower => higherChildElement,
                                 // if higher and lower are both true, then return false
                                 true when bLower => new XElement(higherChildElement.Name, new XAttribute(W.val, "0")),
-                                _ => higherChildElement
+                                _ => higherChildElement,
                             };
 
                             // otherwise, both higher and lower are false so can return higher element.
                         }
                         return higherChildElement;
                     }),
-
-                    FontMerge(higherPriorityElement.Element(W.rFonts), lowerPriorityElement.Element(W.rFonts)),
-
-                    // take lower priority elements where there is not a higher priority element of same name
-                    lowerPriorityElement.Elements()
-                        .Where(e =>
-                        {
-                            return e.Name != W.rFonts && !hpe.Contains(e.Name);
-                        }));
+                FontMerge(higherPriorityElement.Element(W.rFonts), lowerPriorityElement.Element(W.rFonts)),
+                // take lower priority elements where there is not a higher priority element of same name
+                lowerPriorityElement
+                    .Elements()
+                    .Where(e =>
+                    {
+                        return e.Name != W.rFonts && !hpe.Contains(e.Name);
+                    })
+            );
 
             return newMergedElement;
         }
 
-        private static readonly XName[] TogglePropertyNames = new[] {
+        private static readonly XName[] TogglePropertyNames = new[]
+        {
             W.b,
             W.bCs,
             W.caps,
@@ -2461,17 +2591,10 @@ namespace Clippit.Word
             W.shadow,
             W.smallCaps,
             W.strike,
-            W.vanish
+            W.vanish,
         };
 
-        private static XName[] PropertyNames = new[] {
-            W.cs,
-            W.rtl,
-            W.u,
-            W.color,
-            W.highlight,
-            W.shd
-        };
+        private static XName[] PropertyNames = new[] { W.cs, W.rtl, W.u, W.color, W.highlight, W.shd };
 
         public class CharStyleAttributes
         {
@@ -2524,12 +2647,15 @@ namespace Clippit.Word
                 var csel = this.Properties[W.cs];
                 var cs = csel != null && (csel.Attribute(W.val) == null || csel.Attribute(W.val).ToBoolean() == true);
                 var rtlel = this.Properties[W.rtl];
-                var rtl = rtlel != null && (rtlel.Attribute(W.val) == null || rtlel.Attribute(W.val).ToBoolean() == true);
+                var rtl =
+                    rtlel != null && (rtlel.Attribute(W.val) == null || rtlel.Attribute(W.val).ToBoolean() == true);
                 var bidi = false;
                 if (pPr != null)
                 {
                     var bidiel = pPr.Element(W.bidi);
-                    bidi = bidiel != null && (bidiel.Attribute(W.val) == null || bidiel.Attribute(W.val).ToBoolean() == true);
+                    bidi =
+                        bidiel != null
+                        && (bidiel.Attribute(W.val) == null || bidiel.Attribute(W.val).ToBoolean() == true);
                 }
                 Rtl = cs || rtl || bidi;
                 var lang = rPr.Element(W.lang);
@@ -2554,7 +2680,7 @@ namespace Clippit.Word
                     "false" => false,
                     "on" => true,
                     "off" => false,
-                    _ => (bool)(rPr.Element(propertyName).Attribute(W.val))
+                    _ => (bool)(rPr.Element(propertyName).Attribute(W.val)),
                 };
             }
 
@@ -2563,7 +2689,8 @@ namespace Clippit.Word
                 return rPr.Element(propertyName);
             }
 
-            private static readonly XName[] TogglePropertyNames = new[] {
+            private static readonly XName[] TogglePropertyNames = new[]
+            {
                 W.b,
                 W.bCs,
                 W.caps,
@@ -2575,123 +2702,117 @@ namespace Clippit.Word
                 W.shadow,
                 W.smallCaps,
                 W.strike,
-                W.vanish
+                W.vanish,
             };
 
-            private static readonly XName[] PropertyNames = new[] {
-                W.cs,
-                W.rtl,
-                W.u,
-                W.color,
-                W.highlight,
-                W.shd
-            };
-
+            private static readonly XName[] PropertyNames = new[] { W.cs, W.rtl, W.u, W.color, W.highlight, W.shd };
         }
 
-        private static readonly HashSet<char> WeakAndNeutralDirectionalCharacters = new() {
-            '0',
-            '1',
-            '2',
-            '3',
-            '4',
-            '5',
-            '6',
-            '7',
-            '8',
-            '9',
-            '+',
-            '-',
-            ':',
-            ',',
-            '.',
-            '|',
-            '\t',
-            '\r',
-            '\n',
-            ' ',
-            '\x00A0', // non breaking space
+        private static readonly HashSet<char> WeakAndNeutralDirectionalCharacters =
+            new()
+            {
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+                '6',
+                '7',
+                '8',
+                '9',
+                '+',
+                '-',
+                ':',
+                ',',
+                '.',
+                '|',
+                '\t',
+                '\r',
+                '\n',
+                ' ',
+                '\x00A0', // non breaking space
+                '\x00B0', // degree sign
+                '\x066B', // arabic decimal separator
+                '\x066C', // arabic thousands separator
+                '\x0627', // arabic pipe
+                '\x20A0', // start currency symbols
+                '\x20A1',
+                '\x20A2',
+                '\x20A3',
+                '\x20A4',
+                '\x20A5',
+                '\x20A6',
+                '\x20A7',
+                '\x20A8',
+                '\x20A9',
+                '\x20AA',
+                '\x20AB',
+                '\x20AC',
+                '\x20AD',
+                '\x20AE',
+                '\x20AF',
+                '\x20B0',
+                '\x20B1',
+                '\x20B2',
+                '\x20B3',
+                '\x20B4',
+                '\x20B5',
+                '\x20B6',
+                '\x20B7',
+                '\x20B8',
+                '\x20B9',
+                '\x20BA',
+                '\x20BB',
+                '\x20BC',
+                '\x20BD',
+                '\x20BE',
+                '\x20BF',
+                '\x20C0',
+                '\x20C1',
+                '\x20C2',
+                '\x20C3',
+                '\x20C4',
+                '\x20C5',
+                '\x20C6',
+                '\x20C7',
+                '\x20C8',
+                '\x20C9',
+                '\x20CA',
+                '\x20CB',
+                '\x20CC',
+                '\x20CD',
+                '\x20CE',
+                '\x20CF', // end currency symbols
+                '\x0660', // "Arabic" Indic Numeral Forms Iraq and West
+                '\x0661',
+                '\x0662',
+                '\x0663',
+                '\x0664',
+                '\x0665',
+                '\x0666',
+                '\x0667',
+                '\x0668',
+                '\x0669',
+                '\x06F0', // "Arabic" Indic Numberal Forms Iran and East
+                '\x06F1',
+                '\x06F2',
+                '\x06F3',
+                '\x06F4',
+                '\x06F5',
+                '\x06F6',
+                '\x06F7',
+                '\x06F8',
+                '\x06F9',
+            };
 
-            '\x00B0', // degree sign
-            '\x066B', // arabic decimal separator
-            '\x066C', // arabic thousands separator
-
-            '\x0627', // arabic pipe 
-
-            '\x20A0', // start currency symbols
-            '\x20A1',
-            '\x20A2',
-            '\x20A3',
-            '\x20A4',
-            '\x20A5',
-            '\x20A6',
-            '\x20A7',
-            '\x20A8',
-            '\x20A9',
-            '\x20AA',
-            '\x20AB',
-            '\x20AC',
-            '\x20AD',
-            '\x20AE',
-            '\x20AF',
-            '\x20B0',
-            '\x20B1',
-            '\x20B2',
-            '\x20B3',
-            '\x20B4',
-            '\x20B5',
-            '\x20B6',
-            '\x20B7',
-            '\x20B8',
-            '\x20B9',
-            '\x20BA',
-            '\x20BB',
-            '\x20BC',
-            '\x20BD',
-            '\x20BE',
-            '\x20BF',
-            '\x20C0',
-            '\x20C1',
-            '\x20C2',
-            '\x20C3',
-            '\x20C4',
-            '\x20C5',
-            '\x20C6',
-            '\x20C7',
-            '\x20C8',
-            '\x20C9',
-            '\x20CA',
-            '\x20CB',
-            '\x20CC',
-            '\x20CD',
-            '\x20CE',
-            '\x20CF',  // end currency symbols
-
-            '\x0660', // "Arabic" Indic Numeral Forms Iraq and West
-            '\x0661',
-            '\x0662',
-            '\x0663',
-            '\x0664',
-            '\x0665',
-            '\x0666',
-            '\x0667',
-            '\x0668',
-            '\x0669',
-
-            '\x06F0', // "Arabic" Indic Numberal Forms Iran and East
-            '\x06F1',
-            '\x06F2',
-            '\x06F3',
-            '\x06F4',
-            '\x06F5',
-            '\x06F6',
-            '\x06F7',
-            '\x06F8',
-            '\x06F9',
-        };
-
-        private static void AdjustFontAttributes(WordprocessingDocument wDoc, XElement paraOrRun, XElement pPr,
-            XElement rPr, FormattingAssemblerSettings settings)
+        private static void AdjustFontAttributes(
+            WordprocessingDocument wDoc,
+            XElement paraOrRun,
+            XElement pPr,
+            XElement rPr,
+            FormattingAssemblerSettings settings
+        )
         {
             XDocument themeXDoc = null;
             if (wDoc.MainDocumentPart.ThemePart != null)
@@ -2838,7 +2959,7 @@ namespace Clippit.Word
                 .toArray();
             */
 
-            var charToExamine = str.FirstOrDefault(c => ! WeakAndNeutralDirectionalCharacters.Contains(c));
+            var charToExamine = str.FirstOrDefault(c => !WeakAndNeutralDirectionalCharacters.Contains(c));
             if (charToExamine == '\0')
                 charToExamine = str[0];
 
@@ -2900,7 +3021,7 @@ namespace Clippit.Word
             Ascii,
             HAnsi,
             EastAsia,
-            CS
+            CS,
         };
 
         // The algorithm for this method comes from the implementer notes in [MS-OI29500].pdf
@@ -2928,8 +3049,7 @@ namespace Clippit.Word
 
             // If the eastAsia (or eastAsiaTheme if defined) attribute’s value is “Times New Roman” and the ascii (or asciiTheme if defined)
             // and hAnsi (or hAnsiTheme if defined) attributes are equal, then the ascii (or asciiTheme if defined) font is used.
-            if (csa.EastAsiaFont == "Times New Roman" &&
-                csa.AsciiFont == csa.HAnsiFont)
+            if (csa.EastAsiaFont == "Times New Roman" && csa.AsciiFont == csa.HAnsiFont)
             {
                 return FontType.Ascii;
             }
@@ -2939,30 +3059,34 @@ namespace Clippit.Word
             {
                 if (csa.Hint == "eastAsia")
                 {
-                    if (ch == 0xA1 ||
-                        ch == 0xA4 ||
-                        ch == 0xA7 ||
-                        ch == 0xA8 ||
-                        ch == 0xAA ||
-                        ch == 0xAD ||
-                        ch == 0xAF ||
-                        (ch >= 0xB0 && ch <= 0xB4) ||
-                        (ch >= 0xB6 && ch <= 0xBA) ||
-                        (ch >= 0xBC && ch <= 0xBF) ||
-                        ch == 0xD7 ||
-                        ch == 0xF7)
+                    if (
+                        ch == 0xA1
+                        || ch == 0xA4
+                        || ch == 0xA7
+                        || ch == 0xA8
+                        || ch == 0xAA
+                        || ch == 0xAD
+                        || ch == 0xAF
+                        || (ch >= 0xB0 && ch <= 0xB4)
+                        || (ch >= 0xB6 && ch <= 0xBA)
+                        || (ch >= 0xBC && ch <= 0xBF)
+                        || ch == 0xD7
+                        || ch == 0xF7
+                    )
                     {
                         return FontType.EastAsia;
                     }
                     if (csa.EastAsiaLang is "zh-hant" or "zh-hans")
                     {
-                        if (ch == 0xE0 ||
-                            ch == 0xE1 ||
-                            (ch >= 0xE8 && ch <= 0xEA) ||
-                            (ch >= 0xEC && ch <= 0xED) ||
-                            (ch >= 0xF2 && ch <= 0xF3) ||
-                            (ch >= 0xF9 && ch <= 0xFA) ||
-                            ch == 0xFC)
+                        if (
+                            ch == 0xE0
+                            || ch == 0xE1
+                            || (ch >= 0xE8 && ch <= 0xEA)
+                            || (ch >= 0xEC && ch <= 0xED)
+                            || (ch >= 0xF2 && ch <= 0xF3)
+                            || (ch >= 0xF9 && ch <= 0xFA)
+                            || ch == 0xFC
+                        )
                         {
                             return FontType.EastAsia;
                         }
@@ -2976,8 +3100,9 @@ namespace Clippit.Word
             {
                 if (csa.Hint == "eastAsia")
                 {
-                    if (csa.EastAsiaLang is "zh-hant" or "zh-hans"
-                        /* || the character set of the east Asia (or east Asia theme) font is Chinese5 || GB2312 todo */)
+                    if (
+                        csa.EastAsiaLang is "zh-hant" or "zh-hans"
+                    /* || the character set of the east Asia (or east Asia theme) font is Chinese5 || GB2312 todo */)
                     {
                         return FontType.EastAsia;
                     }
@@ -2990,8 +3115,9 @@ namespace Clippit.Word
             {
                 if (csa.Hint == "eastAsia")
                 {
-                    if (csa.EastAsiaLang is "zh-hant" or "zh-hans"
-                        /* || the character set of the east Asia (or east Asia theme) font is Chinese5 || GB2312 todo */)
+                    if (
+                        csa.EastAsiaLang is "zh-hant" or "zh-hans"
+                    /* || the character set of the east Asia (or east Asia theme) font is Chinese5 || GB2312 todo */)
                     {
                         return FontType.EastAsia;
                     }
@@ -3004,8 +3130,9 @@ namespace Clippit.Word
             {
                 if (csa.Hint == "eastAsia")
                 {
-                    if (csa.EastAsiaLang is "zh-hant" or "zh-hans"
-                        /* || the character set of the east Asia (or east Asia theme) font is Chinese5 || GB2312 todo */)
+                    if (
+                        csa.EastAsiaLang is "zh-hant" or "zh-hans"
+                    /* || the character set of the east Asia (or east Asia theme) font is Chinese5 || GB2312 todo */)
                     {
                         return FontType.EastAsia;
                     }
@@ -3092,8 +3219,7 @@ namespace Clippit.Word
             // Unicode Block: Latin Extended Additional
             if (ch >= 0x1E00 && ch <= 0x1EFF)
             {
-                if (csa.Hint == "eastAsia" &&
-                    csa.EastAsiaLang is "zh-hant" or "zh-hans")
+                if (csa.Hint == "eastAsia" && csa.EastAsiaLang is "zh-hant" or "zh-hans")
                 {
                     return FontType.EastAsia;
                 }
@@ -3455,6 +3581,7 @@ namespace Clippit.Word
             public string DefaultCharacterStyleName;
             public string DefaultTableStyleName;
             public readonly Dictionary<string, XElement> RolledCharacterStyles;
+
             public FormattingAssemblerInfo()
             {
                 RolledCharacterStyles = new Dictionary<string, XElement>();
@@ -3470,12 +3597,14 @@ namespace Clippit.Word
 
         public class UnsupportedNumberingFormatException : Exception
         {
-            public UnsupportedNumberingFormatException(string message) : base(message) { }
+            public UnsupportedNumberingFormatException(string message)
+                : base(message) { }
         }
 
         public class UnsupportedLanguageException : Exception
         {
-            public UnsupportedLanguageException(string message) : base(message) { }
+            public UnsupportedLanguageException(string message)
+                : base(message) { }
         }
     }
 }

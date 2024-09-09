@@ -24,25 +24,18 @@ namespace Clippit.Excel
             public string FormatCode;
         }
 
-        private static readonly Dictionary<string, FormatConfig> ExcelFormatCodeToNetFormatCodeExceptionMap = new()
-        {
+        private static readonly Dictionary<string, FormatConfig> ExcelFormatCodeToNetFormatCodeExceptionMap =
+            new()
             {
-                "# ?/?",
-                new FormatConfig
                 {
-                    CellType = CellType.Number,
-                    FormatCode = "0.00",
-                }
-            },
-            {
-                "# ??/??",
-                new FormatConfig
+                    "# ?/?",
+                    new FormatConfig { CellType = CellType.Number, FormatCode = "0.00" }
+                },
                 {
-                    CellType = CellType.Number,
-                    FormatCode = "0.00",
-                }
-            },
-        };
+                    "# ??/??",
+                    new FormatConfig { CellType = CellType.Number, FormatCode = "0.00" }
+                },
+            };
 
         // Up to four sections of format codes can be specified. The format codes, separated by semicolons, define the
         // formats for positive numbers, negative numbers, zero values, and text, in that order. If only two sections are
@@ -79,7 +72,6 @@ namespace Clippit.Excel
                     }
                 }
                 return value;
-
             }
             // positive, negative, zero, text
             // _("$"* #,##0.00_);_("$"* \(#,##0.00\);_("$"* "-"??_);_(@_)
@@ -137,14 +129,18 @@ namespace Clippit.Excel
                 .Replace("AM/PM", "tt")
                 .Replace("m/", "M/")
                 .Replace("*", "")
-                .Replace("?", "#")
-                ;
+                .Replace("?", "#");
             var withTrimmedUnderscores = UnderRegex.Replace(newFormatCode, "");
-            var withTransformedCurrency = Regex.Replace(withTrimmedUnderscores, s_CurrRegex, m => m.Groups[1].Value.TrimEnd('-'));
+            var withTransformedCurrency = Regex.Replace(
+                withTrimmedUnderscores,
+                s_CurrRegex,
+                m => m.Groups[1].Value.TrimEnd('-')
+            );
             return withTransformedCurrency;
         }
 
-        private static readonly string[] ValidColors = new[] {
+        private static readonly string[] ValidColors = new[]
+        {
             "Black",
             "Blue",
             "Cyan",
@@ -159,13 +155,11 @@ namespace Clippit.Excel
         {
             color = null;
             var trimmed = formatCode.Trim();
-            if (trimmed.StartsWith("[") &&
-                trimmed.Contains("]"))
+            if (trimmed.StartsWith("[") && trimmed.Contains("]"))
             {
                 var colorLen = trimmed.IndexOf(']');
                 color = trimmed.Substring(1, colorLen - 1);
-                if (ValidColors.Contains(color) ||
-                    color.StartsWith("Color"))
+                if (ValidColors.Contains(color) || color.StartsWith("Color"))
                 {
                     if (color.StartsWith("Color"))
                     {
@@ -183,7 +177,6 @@ namespace Clippit.Excel
                 else
                     color = null;
             }
-
 
             if (formatCode == "General")
                 return dv.ToString(CultureInfo.InvariantCulture);
@@ -239,13 +232,13 @@ namespace Clippit.Excel
         {
             if (formatCode == "General")
                 return false;
-            return formatCode.Contains("m") ||
-                formatCode.Contains("d") ||
-                formatCode.Contains("y") ||
-                formatCode.Contains("h") ||
-                formatCode.Contains("s") ||
-                formatCode.Contains("AM") ||
-                formatCode.Contains("PM");
+            return formatCode.Contains("m")
+                || formatCode.Contains("d")
+                || formatCode.Contains("y")
+                || formatCode.Contains("h")
+                || formatCode.Contains("s")
+                || formatCode.Contains("AM")
+                || formatCode.Contains("PM");
         }
     }
 }

@@ -60,11 +60,14 @@ namespace Clippit
 {
     public class PowerToolsDocumentException : Exception
     {
-        public PowerToolsDocumentException(string message) : base(message) { }
+        public PowerToolsDocumentException(string message)
+            : base(message) { }
     }
+
     public class PowerToolsInvalidDataException : Exception
     {
-        public PowerToolsInvalidDataException(string message) : base(message) { }
+        public PowerToolsInvalidDataException(string message)
+            : base(message) { }
     }
 
     public class OpenXmlPowerToolsDocument
@@ -92,7 +95,7 @@ namespace Clippit
                 return new PmlDocument(fileName, bytes);
             if (type == typeof(Package))
             {
-                return new OpenXmlPowerToolsDocument(bytes) {FileName = fileName};
+                return new OpenXmlPowerToolsDocument(bytes) { FileName = fileName };
             }
             throw new PowerToolsDocumentException("Not an Open XML document.");
         }
@@ -106,7 +109,7 @@ namespace Clippit
                 return new SmlDocument(doc);
             if (type == typeof(PresentationDocument))
                 return new PmlDocument(doc);
-            return null;    // This should not be possible from a valid OpenXmlPowerToolsDocument object
+            return null; // This should not be possible from a valid OpenXmlPowerToolsDocument object
         }
 
         public OpenXmlPowerToolsDocument(OpenXmlPowerToolsDocument original)
@@ -176,9 +179,7 @@ namespace Clippit
                     {
                         var _ = part.OpenXmlPart.RootElement;
                     }
-                    catch (Exception)
-                    {
-                    }
+                    catch (Exception) { }
                 }
             }
             else if (type == typeof(SpreadsheetDocument))
@@ -191,9 +192,7 @@ namespace Clippit
                     {
                         var z = part.OpenXmlPart.RootElement;
                     }
-                    catch (Exception)
-                    {
-                    }
+                    catch (Exception) { }
                 }
             }
             else if (type == typeof(PresentationDocument))
@@ -206,9 +205,7 @@ namespace Clippit
                     {
                         var z = part.OpenXmlPart.RootElement;
                     }
-                    catch (Exception)
-                    {
-                    }
+                    catch (Exception) { }
                 }
             }
             this.FileName = fileName;
@@ -271,7 +268,9 @@ namespace Clippit
         public void Save()
         {
             if (FileName is null)
-                throw new InvalidOperationException("Attempting to Save a document that has no file name.  Use SaveAs instead.");
+                throw new InvalidOperationException(
+                    "Attempting to Save a document that has no file name.  Use SaveAs instead."
+                );
             File.WriteAllBytes(FileName, DocumentByteArray);
         }
 
@@ -290,8 +289,15 @@ namespace Clippit
             using var stream = new MemoryStream();
             stream.Write(bytes, 0, bytes.Length);
             using var package = Package.Open(stream, FileMode.Open);
-            var relationship = package.GetRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument").FirstOrDefault() ??
-                               package.GetRelationshipsByType("http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument").FirstOrDefault();
+            var relationship =
+                package
+                    .GetRelationshipsByType(
+                        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"
+                    )
+                    .FirstOrDefault()
+                ?? package
+                    .GetRelationshipsByType("http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument")
+                    .FirstOrDefault();
             if (relationship is null)
                 return null;
 
@@ -332,7 +338,7 @@ namespace Clippit
             partStream.CopyTo(fileStream);
         }
     }
-    
+
     public class OpenXmlMemoryStreamDocument : IDisposable
     {
         private readonly OpenXmlPowerToolsDocument _document;
@@ -372,54 +378,85 @@ namespace Clippit
         public static OpenXmlMemoryStreamDocument CreateWordprocessingDocument()
         {
             var stream = new MemoryStream();
-            using (var doc = WordprocessingDocument.Create(stream, DocumentFormat.OpenXml.WordprocessingDocumentType.Document)) {
-                doc.AddMainDocumentPart();
-                doc.MainDocumentPart.PutXDocument(new XDocument(
-                    new XElement(W.document,
-                        new XAttribute(XNamespace.Xmlns + "w", W.w),
-                        new XAttribute(XNamespace.Xmlns + "r", R.r),
-                        new XElement(W.body))));
-            }
-            
-            return new OpenXmlMemoryStreamDocument(stream);
-        }
-        public static OpenXmlMemoryStreamDocument CreateSpreadsheetDocument()
-        {
-            var stream = new MemoryStream();
-            using (var doc = SpreadsheetDocument.Create(stream,
-                       DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook))
+            using (
+                var doc = WordprocessingDocument.Create(
+                    stream,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
             {
-                doc.AddWorkbookPart();
-                XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
-                XNamespace relationshipsns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
-                doc.WorkbookPart.PutXDocument(new XDocument(
-                    new XElement(ns + "workbook",
-                        new XAttribute("xmlns", ns),
-                        new XAttribute(XNamespace.Xmlns + "r", relationshipsns),
-                        new XElement(ns + "sheets"))));
+                doc.AddMainDocumentPart();
+                doc.MainDocumentPart.PutXDocument(
+                    new XDocument(
+                        new XElement(
+                            W.document,
+                            new XAttribute(XNamespace.Xmlns + "w", W.w),
+                            new XAttribute(XNamespace.Xmlns + "r", R.r),
+                            new XElement(W.body)
+                        )
+                    )
+                );
             }
 
             return new OpenXmlMemoryStreamDocument(stream);
         }
+
+        public static OpenXmlMemoryStreamDocument CreateSpreadsheetDocument()
+        {
+            var stream = new MemoryStream();
+            using (
+                var doc = SpreadsheetDocument.Create(stream, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook)
+            )
+            {
+                doc.AddWorkbookPart();
+                XNamespace ns = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+                XNamespace relationshipsns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+                doc.WorkbookPart.PutXDocument(
+                    new XDocument(
+                        new XElement(
+                            ns + "workbook",
+                            new XAttribute("xmlns", ns),
+                            new XAttribute(XNamespace.Xmlns + "r", relationshipsns),
+                            new XElement(ns + "sheets")
+                        )
+                    )
+                );
+            }
+
+            return new OpenXmlMemoryStreamDocument(stream);
+        }
+
         public static OpenXmlMemoryStreamDocument CreatePresentationDocument()
         {
             var stream = new MemoryStream();
-            using (var doc = PresentationDocument.Create(stream,
-                       DocumentFormat.OpenXml.PresentationDocumentType.Presentation))
+            using (
+                var doc = PresentationDocument.Create(
+                    stream,
+                    DocumentFormat.OpenXml.PresentationDocumentType.Presentation
+                )
+            )
             {
                 doc.AddPresentationPart();
                 XNamespace ns = "http://schemas.openxmlformats.org/presentationml/2006/main";
                 XNamespace relationshipsns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
                 XNamespace drawingns = "http://schemas.openxmlformats.org/drawingml/2006/main";
-                doc.PresentationPart.PutXDocument(new XDocument(
-                    new XElement(ns + "presentation",
-                        new XAttribute(XNamespace.Xmlns + "a", drawingns),
-                        new XAttribute(XNamespace.Xmlns + "r", relationshipsns),
-                        new XAttribute(XNamespace.Xmlns + "p", ns),
-                        new XElement(ns + "sldMasterIdLst"),
-                        new XElement(ns + "sldIdLst"),
-                        new XElement(ns + "notesSz", new XAttribute("cx", "6858000"),
-                            new XAttribute("cy", "9144000")))));
+                doc.PresentationPart.PutXDocument(
+                    new XDocument(
+                        new XElement(
+                            ns + "presentation",
+                            new XAttribute(XNamespace.Xmlns + "a", drawingns),
+                            new XAttribute(XNamespace.Xmlns + "r", relationshipsns),
+                            new XAttribute(XNamespace.Xmlns + "p", ns),
+                            new XElement(ns + "sldMasterIdLst"),
+                            new XElement(ns + "sldIdLst"),
+                            new XElement(
+                                ns + "notesSz",
+                                new XAttribute("cx", "6858000"),
+                                new XAttribute("cy", "9144000")
+                            )
+                        )
+                    )
+                );
             }
 
             return new OpenXmlMemoryStreamDocument(stream);
@@ -453,6 +490,7 @@ namespace Clippit
                 throw new PowerToolsDocumentException(e.Message);
             }
         }
+
         public SpreadsheetDocument GetSpreadsheetDocument(OpenSettings openSettings = null)
         {
             try
@@ -469,7 +507,7 @@ namespace Clippit
             }
         }
 
-        public PresentationDocument GetPresentationDocument(OpenSettings openSettings=null)
+        public PresentationDocument GetPresentationDocument(OpenSettings openSettings = null)
         {
             try
             {
@@ -487,11 +525,20 @@ namespace Clippit
 
         public Type GetDocumentType()
         {
-            var relationship = _docPackage.GetRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument").FirstOrDefault() ??
-                               _docPackage.GetRelationshipsByType("http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument").FirstOrDefault();
+            var relationship =
+                _docPackage
+                    .GetRelationshipsByType(
+                        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"
+                    )
+                    .FirstOrDefault()
+                ?? _docPackage
+                    .GetRelationshipsByType("http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument")
+                    .FirstOrDefault();
             if (relationship == null)
                 throw new PowerToolsDocumentException("Not an Open XML Document.");
-            var part = _docPackage.GetPart(PackUriHelper.ResolvePartUri(relationship.SourceUri, relationship.TargetUri));
+            var part = _docPackage.GetPart(
+                PackUriHelper.ResolvePartUri(relationship.SourceUri, relationship.TargetUri)
+            );
             switch (part.ContentType)
             {
                 case "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml":
@@ -572,6 +619,5 @@ namespace Clippit
             _disposedValue = true;
         }
 #pragma warning restore IDISP003
-        
     }
 }

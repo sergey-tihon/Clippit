@@ -10,12 +10,10 @@ namespace Clippit.Tests.Word.Samples
 {
     public class FieldRetrieverSamples : TestsBase
     {
-        public FieldRetrieverSamples(ITestOutputHelper log) : base(log)
-        {
-        }
+        public FieldRetrieverSamples(ITestOutputHelper log)
+            : base(log) { }
 
-        private static string GetFilePath(string path) =>
-            Path.Combine("../../../Word/Samples/FieldRetriever/", path);
+        private static string GetFilePath(string path) => Path.Combine("../../../Word/Samples/FieldRetriever/", path);
 
         [Fact]
         public void Sample1()
@@ -51,31 +49,31 @@ namespace Clippit.Tests.Word.Samples
         private static void RemoveAllButSpecificFields(XElement root, string[] fieldTypesToRetain)
         {
             var cachedAnnotationInformation = root.Annotation<Dictionary<int, List<XElement>>>();
-            var runsToKeep = cachedAnnotationInformation.SelectMany(item => root.Descendants()
-                    .Where(d =>
-                    {
-                        var stack = d.Annotation<Stack<FieldRetriever.FieldElementTypeInfo>>();
-                        return stack != null && stack.Any(stackItem => stackItem.Id == item.Key);
-                    })
-                    .Select(d => d.AncestorsAndSelf(W.r).FirstOrDefault())
-                    .GroupAdjacent(o => o)
-                    .Select(g => g.First())
-                    .ToList())
+            var runsToKeep = cachedAnnotationInformation
+                .SelectMany(item =>
+                    root.Descendants()
+                        .Where(d =>
+                        {
+                            var stack = d.Annotation<Stack<FieldRetriever.FieldElementTypeInfo>>();
+                            return stack != null && stack.Any(stackItem => stackItem.Id == item.Key);
+                        })
+                        .Select(d => d.AncestorsAndSelf(W.r).FirstOrDefault())
+                        .GroupAdjacent(o => o)
+                        .Select(g => g.First())
+                        .ToList()
+                )
                 .ToList();
 
             foreach (var paragraph in root.Descendants(W.p).ToList())
             {
                 if (paragraph.Elements(W.r).Any(r => runsToKeep.Contains(r)))
                 {
-                    paragraph.Elements(W.r)
-                        .Where(r => !runsToKeep.Contains(r) &&
-                                    !r.Elements(W.tab).Any())
-                        .Remove();
-                    paragraph.Elements(W.r)
+                    paragraph.Elements(W.r).Where(r => !runsToKeep.Contains(r) && !r.Elements(W.tab).Any()).Remove();
+                    paragraph
+                        .Elements(W.r)
                         .Where(r => !runsToKeep.Contains(r))
                         .Elements()
-                        .Where(rc => rc.Name != W.rPr &&
-                                     rc.Name != W.tab)
+                        .Where(rc => rc.Name != W.rPr && rc.Name != W.tab)
                         .Remove();
                 }
                 else

@@ -7,10 +7,9 @@ namespace Clippit.Tests.Excel.Samples
 {
     public class WorksheetAccessorSamples : TestsBase
     {
-        public WorksheetAccessorSamples(ITestOutputHelper log) : base(log)
-        {
-        }
-        
+        public WorksheetAccessorSamples(ITestOutputHelper log)
+            : base(log) { }
+
         private static string GetFilePath(string path) =>
             Path.Combine("../../../Excel/Samples/WorksheetAccessor/", path);
 
@@ -19,7 +18,7 @@ namespace Clippit.Tests.Excel.Samples
         {
             var sourceFile = GetFilePath("Formulas1/Formulas.xlsx");
             // Change sheet name in formulas
-            using (var streamDoc = new OpenXmlMemoryStreamDocument( OpenXmlPowerToolsDocument.FromFileName(sourceFile)))
+            using (var streamDoc = new OpenXmlMemoryStreamDocument(OpenXmlPowerToolsDocument.FromFileName(sourceFile)))
             {
                 using (var doc = streamDoc.GetSpreadsheetDocument())
                 {
@@ -48,8 +47,7 @@ namespace Clippit.Tests.Excel.Samples
             var qsu = new FileInfo(Path.Combine(TempDir, "QuarterlyPivot.xlsx"));
 
             var row = 1;
-            using (var streamDoc = new OpenXmlMemoryStreamDocument(
-               OpenXmlPowerToolsDocument.FromFileName(qs.FullName)))
+            using (var streamDoc = new OpenXmlMemoryStreamDocument(OpenXmlPowerToolsDocument.FromFileName(qs.FullName)))
             {
                 using (var doc = streamDoc.GetSpreadsheetDocument())
                 {
@@ -431,39 +429,61 @@ namespace Clippit.Tests.Excel.Samples
                     });
 #endif
 
-                    var southIndex = WorksheetAccessor.GetStyleIndex(doc, 0, 8, 1, 2,
+                    var southIndex = WorksheetAccessor.GetStyleIndex(
+                        doc,
+                        0,
+                        8,
+                        1,
+                        2,
                         new WorksheetAccessor.CellAlignment
                         {
-                            HorizontalAlignment = WorksheetAccessor.CellAlignment.Horizontal.Center
+                            HorizontalAlignment = WorksheetAccessor.CellAlignment.Horizontal.Center,
                         },
-                        true, false);
+                        true,
+                        false
+                    );
                     var gradient = new WorksheetAccessor.GradientFill(90);
                     gradient.AddStop(
-                        new WorksheetAccessor.GradientStop(0, new WorksheetAccessor.ColorInfo("FF92D050")));
+                        new WorksheetAccessor.GradientStop(0, new WorksheetAccessor.ColorInfo("FF92D050"))
+                    );
                     gradient.AddStop(
-                        new WorksheetAccessor.GradientStop(1, new WorksheetAccessor.ColorInfo("FF0070C0")));
-                    var northIndex = WorksheetAccessor.GetStyleIndex(doc, 0,
-                        WorksheetAccessor.GetFontIndex(doc,
+                        new WorksheetAccessor.GradientStop(1, new WorksheetAccessor.ColorInfo("FF0070C0"))
+                    );
+                    var northIndex = WorksheetAccessor.GetStyleIndex(
+                        doc,
+                        0,
+                        WorksheetAccessor.GetFontIndex(
+                            doc,
                             new WorksheetAccessor.Font
                             {
                                 Italic = true,
                                 Size = 8,
-                                Color = new WorksheetAccessor.ColorInfo(WorksheetAccessor.ColorInfo.ColorType.Theme,
-                                    1),
+                                Color = new WorksheetAccessor.ColorInfo(WorksheetAccessor.ColorInfo.ColorType.Theme, 1),
                                 Name = "Times New Roman",
-                                Family = 1
-                            }),
+                                Family = 1,
+                            }
+                        ),
                         WorksheetAccessor.GetFillIndex(doc, gradient),
-                        WorksheetAccessor.GetBorderIndex(doc, new WorksheetAccessor.Border
-                        {
-                            DiagonalDown = true,
-                            Diagonal =
-                                new WorksheetAccessor.BorderLine(WorksheetAccessor.BorderLine.LineStyle.Thin,
-                                    new WorksheetAccessor.ColorInfo("FF616100"))
-                        }),
-                        null, false, false);
-                    WorksheetAccessor.CheckNumberFormat(doc, 100,
-                        "_(\"$\"* #,##0.00_);_(\"$\"* \\(#,##0.00\\);_(\"$\"* \"-\"??_);_(@_)");
+                        WorksheetAccessor.GetBorderIndex(
+                            doc,
+                            new WorksheetAccessor.Border
+                            {
+                                DiagonalDown = true,
+                                Diagonal = new WorksheetAccessor.BorderLine(
+                                    WorksheetAccessor.BorderLine.LineStyle.Thin,
+                                    new WorksheetAccessor.ColorInfo("FF616100")
+                                ),
+                            }
+                        ),
+                        null,
+                        false,
+                        false
+                    );
+                    WorksheetAccessor.CheckNumberFormat(
+                        doc,
+                        100,
+                        "_(\"$\"* #,##0.00_);_(\"$\"* \\(#,##0.00\\);_(\"$\"* \"-\"??_);_(@_)"
+                    );
                     var amountIndex = WorksheetAccessor.GetStyleIndex(doc, 100, 0, 0, 0, null, false, false);
 
                     using (var source = new StreamReader(GetFilePath("PivotTables1/PivotData.txt")))
@@ -485,8 +505,12 @@ namespace Clippit.Tests.Excel.Samples
                                             ms.SetCellValue(row, column++, num);
                                     }
                                     else if (item == "Accessories")
-                                        ms.SetCellValue(row, column++, item,
-                                            WorksheetAccessor.GetStyleIndex(doc, "Good"));
+                                        ms.SetCellValue(
+                                            row,
+                                            column++,
+                                            item,
+                                            WorksheetAccessor.GetStyleIndex(doc, "Good")
+                                        );
                                     else if (item == "South")
                                         ms.SetCellValue(row, column++, item, southIndex);
                                     else if (item == "North")
@@ -519,11 +543,13 @@ namespace Clippit.Tests.Excel.Samples
                 streamDoc.GetModifiedSmlDocument().SaveAs(Path.Combine(TempDir, "NewPivot.xlsx"));
             }
 
-
             // Add pivot table to existing spreadsheet
             // Demonstrate multiple data fields
-            using (var streamDoc = new OpenXmlMemoryStreamDocument(
-                OpenXmlPowerToolsDocument.FromFileName(GetFilePath("PivotTables1/QuarterlyUnitSales.xlsx"))))
+            using (
+                var streamDoc = new OpenXmlMemoryStreamDocument(
+                    OpenXmlPowerToolsDocument.FromFileName(GetFilePath("PivotTables1/QuarterlyUnitSales.xlsx"))
+                )
+            )
             {
                 using (var doc = streamDoc.GetSpreadsheetDocument())
                 {
@@ -544,6 +570,5 @@ namespace Clippit.Tests.Excel.Samples
                 streamDoc.GetModifiedSmlDocument().SaveAs(Path.Combine(TempDir, "QuarterlyUnitSalesWithPivot.xlsx"));
             }
         }
-
     }
 }

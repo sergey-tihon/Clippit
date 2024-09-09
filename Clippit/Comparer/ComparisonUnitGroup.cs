@@ -13,7 +13,8 @@ namespace Clippit
         public ComparisonUnitGroup(
             IEnumerable<ComparisonUnit> comparisonUnitList,
             ComparisonUnitGroupType groupType,
-            int level)
+            int level
+        )
         {
             Contents = comparisonUnitList.ToList();
             ComparisonUnitGroupType = groupType;
@@ -21,16 +22,18 @@ namespace Clippit
             var comparisonUnitAtom = GetFirstComparisonUnitAtomOfGroup(first);
 
             var ancestorsToLookAt = comparisonUnitAtom
-                .AncestorElements
-                .Where(e => e.Name == W.tbl || e.Name == W.tr || e.Name == W.tc || e.Name == W.p || e.Name == W.txbxContent)
+                .AncestorElements.Where(e =>
+                    e.Name == W.tbl || e.Name == W.tr || e.Name == W.tc || e.Name == W.p || e.Name == W.txbxContent
+                )
                 .ToArray();
 
             var ancestor = ancestorsToLookAt[level];
-            if (ancestor == null) throw new OpenXmlPowerToolsException("Internal error: ComparisonUnitGroup");
+            if (ancestor == null)
+                throw new OpenXmlPowerToolsException("Internal error: ComparisonUnitGroup");
 
-            SHA1Hash = (string) ancestor.Attribute(PtOpenXml.SHA1Hash);
-            CorrelatedSHA1Hash = (string) ancestor.Attribute(PtOpenXml.CorrelatedSHA1Hash);
-            StructureSHA1Hash = (string) ancestor.Attribute(PtOpenXml.StructureSHA1Hash);
+            SHA1Hash = (string)ancestor.Attribute(PtOpenXml.SHA1Hash);
+            CorrelatedSHA1Hash = (string)ancestor.Attribute(PtOpenXml.CorrelatedSHA1Hash);
+            StructureSHA1Hash = (string)ancestor.Attribute(PtOpenXml.StructureSHA1Hash);
         }
 
         public ComparisonUnitGroupType ComparisonUnitGroupType { get; }
@@ -55,7 +58,7 @@ namespace Clippit
                     throw new OpenXmlPowerToolsException("Internal error: GetFirstComparisonUnitAtomOfGroup");
                 }
 
-                var ca = (ComparisonUnitAtom) tw.Contents.First();
+                var ca = (ComparisonUnitAtom)tw.Contents.First();
                 return ca;
             }
         }
@@ -63,7 +66,14 @@ namespace Clippit
         public override string ToString(int indent)
         {
             var sb = new StringBuilder();
-            sb.Append("".PadRight(indent) + "Group Type: " + ComparisonUnitGroupType + " SHA1:" + SHA1Hash + Environment.NewLine);
+            sb.Append(
+                "".PadRight(indent)
+                    + "Group Type: "
+                    + ComparisonUnitGroupType
+                    + " SHA1:"
+                    + SHA1Hash
+                    + Environment.NewLine
+            );
 
             foreach (var comparisonUnitAtom in Contents)
             {

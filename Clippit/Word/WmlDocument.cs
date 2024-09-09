@@ -11,7 +11,7 @@ namespace Clippit.Word;
 public partial class WmlDocument : OpenXmlPowerToolsDocument
 {
     private const string NotWordprocessingExceptionMessage = "The document is not a WordprocessingML document.";
-    
+
     public WmlDocument(OpenXmlPowerToolsDocument original)
         : base(original)
     {
@@ -57,15 +57,11 @@ public partial class WmlDocument : OpenXmlPowerToolsDocument
     }
 
     public WmlDocument(string fileName, MemoryStream memStream)
-        : base(fileName, memStream)
-    {
-    }
+        : base(fileName, memStream) { }
 
     public WmlDocument(string fileName, MemoryStream memStream, bool convertToTransitional)
-        : base(fileName, memStream, convertToTransitional)
-    {
-    }
-    
+        : base(fileName, memStream, convertToTransitional) { }
+
     public PtMainDocumentPart MainDocumentPart
     {
         get
@@ -76,7 +72,13 @@ public partial class WmlDocument : OpenXmlPowerToolsDocument
             var childNodes = partElement.Nodes().ToList();
             foreach (var item in childNodes)
                 item.Remove();
-            return new PtMainDocumentPart(this, wDoc.MainDocumentPart.Uri, partElement.Name, partElement.Attributes(), childNodes);
+            return new PtMainDocumentPart(
+                this,
+                wDoc.MainDocumentPart.Uri,
+                partElement.Name,
+                partElement.Attributes(),
+                childNodes
+            );
         }
     }
 
@@ -100,7 +102,7 @@ public partial class WmlDocument : OpenXmlPowerToolsDocument
         }
         this.DocumentByteArray = streamDoc.GetModifiedDocument().DocumentByteArray;
     }
-    
+
     public WmlDocument SearchAndReplace(string search, string replace, bool matchCase)
     {
         return TextReplacer.SearchAndReplace(this, search, replace, matchCase);
@@ -124,8 +126,13 @@ public class PtMainDocumentPart : XElement
             var childNodes = partElement.Nodes().ToList();
             foreach (var item in childNodes)
                 item.Remove();
-            return new PtWordprocessingCommentsPart(this.ParentWmlDocument, commentsPart.Uri, partElement.Name,
-                partElement.Attributes(), childNodes);
+            return new PtWordprocessingCommentsPart(
+                this.ParentWmlDocument,
+                commentsPart.Uri,
+                partElement.Name,
+                partElement.Attributes(),
+                childNodes
+            );
         }
     }
 
@@ -133,10 +140,7 @@ public class PtMainDocumentPart : XElement
         : base(name, values)
     {
         ParentWmlDocument = wmlDocument;
-        this.Add(
-            new XAttribute(PtOpenXml.Uri, uri),
-            new XAttribute(XNamespace.Xmlns + "pt", PtOpenXml.pt)
-        );
+        this.Add(new XAttribute(PtOpenXml.Uri, uri), new XAttribute(XNamespace.Xmlns + "pt", PtOpenXml.pt));
     }
 }
 
@@ -148,9 +152,6 @@ public class PtWordprocessingCommentsPart : XElement
         : base(name, values)
     {
         ParentWmlDocument = wmlDocument;
-        this.Add(
-            new XAttribute(PtOpenXml.Uri, uri),
-            new XAttribute(XNamespace.Xmlns + "pt", PtOpenXml.pt)
-        );
+        this.Add(new XAttribute(PtOpenXml.Uri, uri), new XAttribute(XNamespace.Xmlns + "pt", PtOpenXml.pt));
     }
 }

@@ -3,10 +3,19 @@
 # top-most EditorConfig file
 root = true
 
-# Don't use tabs for indentation.
 [*]
+# Non-configurable behaviors
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+
+# Configurable behaviors
+# end_of_line = lf - there is no 'auto' with a .editorconfig
 indent_style = space
-# (Please don't specify an indent_size here; that has too many unintended consequences.)
+indent_size = 4
+max_line_length = 120
 
 # Code files
 [*.{cs,csx,vb,vbx}]

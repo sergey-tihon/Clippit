@@ -22,10 +22,11 @@ namespace Clippit
         {
             get
             {
-                if (_descendantContentAtomsCount != null) return (int) _descendantContentAtomsCount;
+                if (_descendantContentAtomsCount != null)
+                    return (int)_descendantContentAtomsCount;
 
                 _descendantContentAtomsCount = DescendantContentAtoms().Count();
-                return (int) _descendantContentAtomsCount;
+                return (int)_descendantContentAtomsCount;
             }
         }
 
@@ -41,9 +42,7 @@ namespace Clippit
             return Descendants().OfType<ComparisonUnitAtom>();
         }
 
-        private static void DescendantsInternal(
-            ComparisonUnit comparisonUnit,
-            List<ComparisonUnit> comparisonUnitList)
+        private static void DescendantsInternal(ComparisonUnit comparisonUnit, List<ComparisonUnit> comparisonUnitList)
         {
             foreach (var cu in comparisonUnit.Contents)
             {
@@ -59,7 +58,8 @@ namespace Clippit
         {
             var sb = new StringBuilder();
             sb.Append("Dump Comparision Unit List To String" + Environment.NewLine);
-            foreach (var item in cul) sb.Append(item.ToString(2) + Environment.NewLine);
+            foreach (var item in cul)
+                sb.Append(item.ToString(2) + Environment.NewLine);
 
             return sb.ToString();
         }
