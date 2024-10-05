@@ -65,7 +65,7 @@ namespace Clippit.PowerPoint
         }
     }
 
-    public static class PresentationBuilder
+    public static partial class PresentationBuilder
     {
         public static PmlDocument BuildPresentation(List<SlideSource> sources)
         {
@@ -88,6 +88,7 @@ namespace Clippit.PowerPoint
         public static IEnumerable<PmlDocument> PublishSlides(PresentationDocument srcDoc, string fileName)
         {
             var slidesCount = srcDoc.PresentationPart.GetXElement().Descendants(P.sldId).Count();
+            var slideNameRegex = SlideNameRegex();
             for (var slideNumber = 0; slideNumber < slidesCount; slideNumber++)
             {
                 using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument();
@@ -106,12 +107,7 @@ namespace Clippit.PowerPoint
                 var slideDoc = streamDoc.GetModifiedPmlDocument();
                 if (!string.IsNullOrWhiteSpace(fileName))
                 {
-                    slideDoc.FileName = Regex.Replace(
-                        fileName,
-                        ".pptx",
-                        $"_{slideNumber + 1:000}.pptx",
-                        RegexOptions.IgnoreCase
-                    );
+                    slideDoc.FileName = slideNameRegex.Replace(fileName, $"_{slideNumber + 1:000}.pptx");
                 }
 
                 yield return slideDoc;
@@ -164,5 +160,8 @@ namespace Clippit.PowerPoint
                 sourceNum++;
             }
         }
+
+        [GeneratedRegex(".pptx", RegexOptions.IgnoreCase, "en-US")]
+        private static partial Regex SlideNameRegex();
     }
 }

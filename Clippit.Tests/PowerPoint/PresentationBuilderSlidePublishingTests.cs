@@ -10,13 +10,17 @@ namespace Clippit.Tests.PowerPoint
 {
     public class PresentationBuilderSlidePublishingTests : TestsBase
     {
-        public static string SourceDirectory = "../../../../TestFiles/PublishSlides/";
-        public static string TargetDirectory = "../../../../TestFiles/PublishSlides/output";
+        private const string SourceDirectory = "../../../../TestFiles/PublishSlides/";
+        private const string TargetDirectory = "../../../../TestFiles/PublishSlides/output";
 
-        public static IEnumerable<object[]> GetData()
+        private class PublishingTestData : TheoryData<string>
         {
-            var files = Directory.GetFiles(SourceDirectory, "*.pptx", SearchOption.TopDirectoryOnly);
-            return files.OrderBy(x => x).Select(path => new[] { path });
+            public PublishingTestData()
+            {
+                var files = Directory.GetFiles(SourceDirectory, "*.pptx", SearchOption.TopDirectoryOnly);
+                foreach (var file in files.OrderBy(x => x))
+                    Add(file);
+            }
         }
 
         public PresentationBuilderSlidePublishingTests(ITestOutputHelper log)
@@ -27,7 +31,7 @@ namespace Clippit.Tests.PowerPoint
         }
 
         [Theory]
-        [MemberData(nameof(GetData))]
+        [ClassData(typeof(PublishingTestData))]
         public void PublishUsingPublishSlides(string sourcePath)
         {
             var targetDir = Path.Combine(TargetDirectory, Path.GetFileNameWithoutExtension(sourcePath));
@@ -66,7 +70,7 @@ namespace Clippit.Tests.PowerPoint
             var document = new PmlDocument(file);
 
             var source = new SlideSource(document, slideNumber - 1, 1, true);
-            var slide = PresentationBuilder.BuildPresentation(new List<SlideSource> { source });
+            var slide = PresentationBuilder.BuildPresentation([source]);
 
             slide.FileName = document.FileName.Replace(".pptx", $"_{slideNumber:000}.pptx");
             slide.SaveAs(Path.Combine(TargetDirectory, Path.GetFileName(slide.FileName)));
@@ -126,7 +130,7 @@ namespace Clippit.Tests.PowerPoint
                 numberOfMasters = doc1.PresentationPart.SlideMasterParts.Count();
             }
 
-            var onlyMaster = PresentationBuilder.BuildPresentation(new List<SlideSource> { new(source, 0, 0, true) });
+            var onlyMaster = PresentationBuilder.BuildPresentation([new(source, 0, 0, true)]);
 
             onlyMaster.FileName = fileName.Replace(".pptx", "_masterOnly.pptx");
             onlyMaster.SaveAs(Path.Combine(TargetDirectory, onlyMaster.FileName));
@@ -146,9 +150,7 @@ namespace Clippit.Tests.PowerPoint
             var presentation = new PmlDocument(file);
 
             // generate presentation with all masters
-            var onlyMaster = PresentationBuilder.BuildPresentation(
-                new List<SlideSource> { new(presentation, 0, 0, true) }
-            );
+            var onlyMaster = PresentationBuilder.BuildPresentation([new(presentation, 0, 0, true)]);
 
             // publish slides with one-layout masters
             var slides = PresentationBuilder.PublishSlides(presentation);

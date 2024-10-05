@@ -13,11 +13,8 @@ using Xunit.Abstractions;
 
 namespace Clippit.Tests.PowerPoint
 {
-    public class PresentationBuilderTests : TestsBase
+    public class PresentationBuilderTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public PresentationBuilderTests(ITestOutputHelper log)
-            : base(log) { }
-
         [Fact]
         public void PB001_Formatting()
         {

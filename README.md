@@ -1,19 +1,18 @@
-﻿# Clippit [![NuGet Badge](https://buildstats.info/nuget/Clippit)](https://www.nuget.org/packages/Clippit)
+# Clippit
 
-[![Build and Test](https://github.com/sergey-tihon/Clippit/actions/workflows/main.yml/badge.svg)](https://github.com/sergey-tihon/Clippit/actions/workflows/main.yml)
+![NuGet Version](https://img.shields.io/nuget/v/Clippit) ![NuGet Downloads](https://img.shields.io/nuget/dt/Clippit) [![Build and Test](https://github.com/sergey-tihon/Clippit/actions/workflows/main.yml/badge.svg)](https://github.com/sergey-tihon/Clippit/actions/workflows/main.yml)
 
 ## Build Instructions
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/sergey-tihon/Clippit)
-
 ### Build
 
-Call `.\build.cmd` on Windows or `./build.sh` on other systems.
+Run `./build.sh` on Unix systems or `.\build.cmd` on Windows.
 
-### Update docs
+### Documentation
 
 - Install DocFx
-  - Windows : `choco install docfx -y`
+
   - MacOS: `brew install docfx`
+  - Windows : `choco install docfx -y`
 
 - Run `docfx docs/docfx.json --serve` to start local copy of site/docs.

@@ -25,7 +25,7 @@ namespace Clippit.PowerPoint
         {
             if (ReferenceEquals(this, other))
                 return 0;
-            if (ReferenceEquals(null, other))
+            if (other is null)
                 return 1;
             return string.Compare(ShapeXml, other.ShapeXml, StringComparison.Ordinal);
         }
@@ -41,13 +41,13 @@ namespace Clippit.PowerPoint
         private static readonly XNamespace s_relNs =
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
         private static readonly XName[] s_noiseAttNames =
-        {
+        [
             "smtClean",
             "dirty",
             "userDrawn",
             s_relNs + "id",
             s_relNs + "embed",
-        };
+        ];
 
         /// <summary>
         /// Remove OpenXml attributes that may occur on Layout/Master elements but does not affect rendering
@@ -106,11 +106,9 @@ namespace Clippit.PowerPoint
     }
 
     // This class is used to prevent duplication of layouts and handle content modification
-    internal class SlideLayoutData : SlidePartData<SlideLayoutPart>
+    internal class SlideLayoutData(SlideLayoutPart slideLayout, double scaleFactor)
+        : SlidePartData<SlideLayoutPart>(slideLayout, scaleFactor)
     {
-        public SlideLayoutData(SlideLayoutPart slideLayout, double scaleFactor)
-            : base(slideLayout, scaleFactor) { }
-
         protected override string GetShapeDescriptor(SlideLayoutPart slideLayout)
         {
             var sb = new StringBuilder();
@@ -123,27 +121,18 @@ namespace Clippit.PowerPoint
     }
 
     // This class is used to prevent duplication of themes and handle content modification
-    internal class ThemeData : SlidePartData<ThemePart>
+    internal class ThemeData(ThemePart themePart, double scaleFactor) : SlidePartData<ThemePart>(themePart, scaleFactor)
     {
-        public ThemeData(ThemePart themePart, double scaleFactor)
-            : base(themePart, scaleFactor) { }
-
         protected override string GetShapeDescriptor(ThemePart themePart) =>
             NormalizeXml(themePart.Theme.ThemeElements.OuterXml);
     }
 
     // This class is used to prevent duplication of masters and handle content modification
-    internal class SlideMasterData : SlidePartData<SlideMasterPart>
+    internal class SlideMasterData(SlideMasterPart slideMaster, double scaleFactor)
+        : SlidePartData<SlideMasterPart>(slideMaster, scaleFactor)
     {
-        public ThemeData ThemeData { get; }
-        public List<SlideLayoutData> SlideLayoutList { get; }
-
-        public SlideMasterData(SlideMasterPart slideMaster, double scaleFactor)
-            : base(slideMaster, scaleFactor)
-        {
-            ThemeData = new ThemeData(slideMaster.ThemePart, scaleFactor);
-            SlideLayoutList = new List<SlideLayoutData>();
-        }
+        public ThemeData ThemeData { get; } = new ThemeData(slideMaster.ThemePart, scaleFactor);
+        public List<SlideLayoutData> SlideLayoutList { get; } = [];
 
         protected override string GetShapeDescriptor(SlideMasterPart slideMaster)
         {

@@ -18,9 +18,9 @@ namespace Clippit.Tests.PowerPoint
             var sourceMht = new FileInfo(Path.Combine(sourceDir.FullName, name));
             var src = File.ReadAllText(sourceMht.FullName);
             var p = MhtParser.Parse(src);
-            Assert.True(p.ContentType != null);
-            Assert.True(p.MimeVersion != null);
-            Assert.True(p.Parts.Length != 0);
+            Assert.NotNull(p.ContentType);
+            Assert.NotNull(p.MimeVersion);
+            Assert.NotEmpty(p.Parts);
             Assert.DoesNotContain(p.Parts, part => part.ContentType == null || part.ContentLocation == null);
         }
     }
