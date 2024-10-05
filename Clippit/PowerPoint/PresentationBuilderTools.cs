@@ -44,7 +44,7 @@ namespace Clippit.PowerPoint
             return paragraphText.ToString().Trim();
         }
 
-        internal static readonly Dictionary<XName, int> s_orderPresentation =
+        internal static readonly Dictionary<XName, int> OrderPresentation =
             new()
             {
                 { P.sldMasterIdLst, 10 },
@@ -155,10 +155,9 @@ namespace Clippit.PowerPoint
                 else
                 {
                     //ExternalRelationship oldRelationship = oldChart.GetExternalRelationship(relId);
-                    var oldRel = oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
-                    if (oldRel is null)
-                        throw new PresentationBuilderInternalException("Internal Error 0007");
-
+                    var oldRel =
+                        oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId)
+                        ?? throw new PresentationBuilderInternalException("Internal Error 0007");
                     var newRid = Relationships.GetNewRelationshipId();
                     newChart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     dataReference.Attribute(R.id).Set(newRid);
@@ -250,10 +249,9 @@ namespace Clippit.PowerPoint
                 else
                 {
                     //ExternalRelationship oldRelationship = oldChart.GetExternalRelationship(relId);
-                    var oldRel = oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
-                    if (oldRel is null)
-                        throw new PresentationBuilderInternalException("Internal Error 0007");
-
+                    var oldRel =
+                        oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId)
+                        ?? throw new PresentationBuilderInternalException("Internal Error 0007");
                     var newRid = Relationships.GetNewRelationshipId();
                     newChart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     dataReference.Attribute(R.id).Set(newRid);
@@ -368,9 +366,9 @@ namespace Clippit.PowerPoint
                     if (newPart.ExternalRelationships.Any(h => h.Id == relId))
                         continue;
                     var newRid = Relationships.GetNewRelationshipId();
-                    var oldRel = oldPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
-                    if (oldRel is null)
-                        throw new PresentationBuilderInternalException("Internal Error 0006");
+                    var oldRel =
+                        oldPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId)
+                        ?? throw new PresentationBuilderInternalException("Internal Error 0006");
                     newPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     UpdateContent(newContent, e.Name, relId, newRid);
                 }
@@ -951,15 +949,7 @@ namespace Clippit.PowerPoint
             || part.ExternalRelationships.Any(er => er.Id == relId);
     }
 
-    public class PresentationBuilderException : Exception
-    {
-        public PresentationBuilderException(string message)
-            : base(message) { }
-    }
+    public class PresentationBuilderException(string message) : Exception(message) { }
 
-    public class PresentationBuilderInternalException : Exception
-    {
-        public PresentationBuilderInternalException(string message)
-            : base(message) { }
-    }
+    public class PresentationBuilderInternalException(string message) : Exception(message) { }
 }

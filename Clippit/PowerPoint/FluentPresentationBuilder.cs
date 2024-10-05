@@ -237,9 +237,7 @@ namespace Clippit.PowerPoint
             foreach (var rc in listOfRootChildren)
                 rc.Remove();
             newPresentation.Root.Add(
-                listOfRootChildren.OrderBy(e =>
-                    PBT.s_orderPresentation.TryGetValue(e.Name, out var value) ? value : 999
-                )
+                listOfRootChildren.OrderBy(e => PBT.OrderPresentation.TryGetValue(e.Name, out var value) ? value : 999)
             );
         }
 
