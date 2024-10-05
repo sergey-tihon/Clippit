@@ -12,14 +12,9 @@ namespace Clippit.Internal
 {
     public class TextReplacer
     {
-        private class MatchSemaphore
+        private class MatchSemaphore(int matchId)
         {
-            public int MatchId { get; }
-
-            public MatchSemaphore(int matchId)
-            {
-                MatchId = matchId;
-            }
+            public int MatchId { get; } = matchId;
         }
 
         private static XObject CloneWithAnnotation(XNode node)
@@ -44,7 +39,10 @@ namespace Clippit.Internal
                 if (element.Name == W.p)
                 {
                     var contents = element.Descendants(W.t).Select(t => (string)t).StringConcatenate();
-                    if (contents.Contains(search) || (!matchCase && contents.ToUpper().Contains(search.ToUpper())))
+                    if (
+                        contents.Contains(search)
+                        || (!matchCase && contents.Contains(search, System.StringComparison.CurrentCultureIgnoreCase))
+                    )
                     {
                         var paragraphWithSplitRuns = new XElement(
                             W.p,
@@ -82,9 +80,10 @@ namespace Clippit.Internal
                                 if (matchCase)
                                     b = z.ParagraphChildProjection.Value != z.CharacterToCompare.ToString();
                                 else
-                                    b =
-                                        z.ParagraphChildProjection.Value.ToUpper()
-                                        != z.CharacterToCompare.ToString().ToUpper();
+                                    b = !z.ParagraphChildProjection.Value.Equals(
+                                        z.CharacterToCompare.ToString(),
+                                        System.StringComparison.CurrentCultureIgnoreCase
+                                    );
                                 return b;
                             });
                             var match = !dontMatch;
@@ -141,7 +140,7 @@ namespace Clippit.Internal
                                     return (object)g;
                                 var textValue = g.Select(r => r.Element(W.t).Value).StringConcatenate();
                                 XAttribute xs = null;
-                                if (textValue[0] == ' ' || textValue[textValue.Length - 1] == ' ')
+                                if (textValue[0] == ' ' || textValue[^1] == ' ')
                                     xs = new XAttribute(XNamespace.Xml + "space", "preserve");
                                 return new XElement(W.r, g.First().Elements(W.rPr), new XElement(W.t, xs, textValue));
                             })
@@ -259,13 +258,15 @@ namespace Clippit.Internal
 
         private static object PmlReplaceTextTransform(XNode node, string search, string replace, bool matchCase)
         {
-            var element = node as XElement;
-            if (element != null)
+            if (node is XElement element)
             {
                 if (element.Name == A.p)
                 {
                     var contents = element.Descendants(A.t).Select(t => (string)t).StringConcatenate();
-                    if (contents.Contains(search) || (!matchCase && contents.ToUpper().Contains(search.ToUpper())))
+                    if (
+                        contents.Contains(search)
+                        || (!matchCase && contents.Contains(search, System.StringComparison.CurrentCultureIgnoreCase))
+                    )
                     {
                         var paragraphWithSplitRuns = new XElement(
                             A.p,
@@ -303,9 +304,10 @@ namespace Clippit.Internal
                                 if (matchCase)
                                     b = z.ParagraphChildProjection.Value != z.CharacterToCompare.ToString();
                                 else
-                                    b =
-                                        z.ParagraphChildProjection.Value.ToUpper()
-                                        != z.CharacterToCompare.ToString().ToUpper();
+                                    b = !z.ParagraphChildProjection.Value.Equals(
+                                        z.CharacterToCompare.ToString(),
+                                        System.StringComparison.CurrentCultureIgnoreCase
+                                    );
                                 return b;
                             });
                             var match = !dontMatch;
