@@ -94,21 +94,16 @@ namespace Clippit.PowerPoint
 
         public static IEnumerable<PmlDocument> PublishSlides(PresentationDocument srcDoc, string fileName)
         {
-            var slidesCount = srcDoc.PresentationPart.GetXElement().Descendants(P.sldId).Count();
+            var slidesIds = GetSlidesInOrder(srcDoc);
             var slideNameRegex = SlideNameRegex();
-            for (var slideNumber = 0; slideNumber < slidesCount; slideNumber++)
+            for (var slideNumber = 0; slideNumber < slidesIds.Count; slideNumber++)
             {
+                var srcSlidePart = (SlidePart)srcDoc.PresentationPart.GetPartById(slidesIds[slideNumber]);
+
                 using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument();
                 using (var output = streamDoc.GetPresentationDocument(new OpenSettings { AutoSave = false }))
                 {
-                    ExtractSlide(srcDoc, slideNumber, output);
-
-                    var slides = output.PresentationPart.GetXElement().Descendants(P.sldId);
-                    var slidePartId = slides.Single().Attribute(R.id)?.Value;
-                    var slidePart = (SlidePart)output.PresentationPart.GetPartById(slidePartId);
-                    var title = PresentationBuilderTools.GetSlideTitle(slidePart.GetXElement());
-
-                    output.PackageProperties.Title = title;
+                    ExtractSlide(srcSlidePart, output);
                 }
 
                 var slideDoc = streamDoc.GetModifiedPmlDocument();
@@ -121,17 +116,34 @@ namespace Clippit.PowerPoint
             }
         }
 
-        private static void ExtractSlide(PresentationDocument srcDoc, int slideNumber, PresentationDocument output)
+        private static List<string> GetSlidesInOrder(PresentationDocument srcDoc)
+        {
+            return srcDoc
+                .PresentationPart.GetXElement()
+                .Descendants(P.sldId)
+                .Select(x => x.Attribute(R.id)!.Value)
+                .ToList();
+        }
+
+        private static void ExtractSlide(SlidePart slidePart, PresentationDocument output)
         {
             using var builder = new FluentPresentationBuilder(output);
             try
             {
-                builder.AppendSlides(srcDoc, slideNumber, 1, true);
+                var newSlidePart = builder.AddSlide(slidePart);
+
+                // Remove the show attribute from the slide element (if it exists)
+                var slideDocument = newSlidePart.GetXDocument();
+                slideDocument.Root?.Attribute(NoNamespace.show)?.Remove();
+
+                // Set the title of the new presentation to the title of the slide
+                var title = PresentationBuilderTools.GetSlideTitle(newSlidePart.GetXElement());
+                output.PackageProperties.Title = title;
             }
             catch (PresentationBuilderInternalException dbie)
             {
                 if (dbie.Message.Contains("{0}"))
-                    throw new PresentationBuilderException(string.Format(dbie.Message, slideNumber));
+                    throw new PresentationBuilderException(string.Format(dbie.Message, slidePart.Uri));
                 throw;
             }
         }
@@ -155,7 +167,17 @@ namespace Clippit.PowerPoint
                             builder.AddSlideMaster(slideMasterPart);
                         }
                     }
-                    builder.AppendSlides(doc, source.Start, source.Count);
+
+                    var slideIds = GetSlidesInOrder(doc);
+                    var (count, start) = (source.Count, source.Start);
+                    while (count > 0 && start < slideIds.Count)
+                    {
+                        var slidePart = (SlidePart)doc.PresentationPart.GetPartById(slideIds[start]);
+                        builder.AddSlide(slidePart);
+
+                        start++;
+                        count--;
+                    }
                 }
                 catch (PresentationBuilderInternalException dbie)
                 {

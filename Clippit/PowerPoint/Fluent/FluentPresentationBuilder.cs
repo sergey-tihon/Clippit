@@ -306,79 +306,64 @@ internal sealed partial class FluentPresentationBuilder : IFluentPresentationBui
         _isDocumentInitialized = true;
     }
 
-    public void AppendSlides(PresentationDocument sourceDocument, int start, int count) =>
-        AppendSlides(sourceDocument, start, count, false);
-
-    internal void AppendSlides(PresentationDocument sourceDocument, int start, int count, bool unHideSlides)
+    public SlidePart AddSlide(SlidePart slidePart)
     {
+        var sourceDocument = (PresentationDocument)slidePart.OpenXmlPackage;
         EnsureDocumentInitialized(sourceDocument);
 
-        var newPresentation = _newDocument.PresentationPart.GetXDocument();
         var scaleFactor = GetScaleFactor(sourceDocument);
 
+        // TODO: Maintain it globally on the builder level, instead of calculating it for each slide add operation
+        var newPresentation = _newDocument.PresentationPart.GetXDocument();
         uint newId = 256;
         var ids = newPresentation.Root.Descendants(P.sldId).Select(f => (uint)f.Attribute(NoNamespace.id)).ToList();
         if (ids.Count != 0)
             newId = ids.Max() + 1;
 
-        var slideList = sourceDocument.PresentationPart.GetXDocument().Root.Descendants(P.sldId).ToList();
-        while (count > 0 && start < slideList.Count)
+        var newSlide = _newDocument.PresentationPart.AddNewPart<SlidePart>();
+        using (var sourceStream = slidePart.GetStream())
         {
-            var slide = (SlidePart)
-                sourceDocument.PresentationPart.GetPartById(slideList.ElementAt(start).Attribute(R.id).Value);
-            var newSlide = _newDocument.PresentationPart.AddNewPart<SlidePart>();
-
-            using (var sourceStream = slide.GetStream())
-            {
-                newSlide.FeedData(sourceStream);
-            }
-
-            var slideDocument = newSlide.GetXDocument();
-            if (unHideSlides)
-            {
-                slideDocument.Root?.Attribute(NoNamespace.show)?.Remove();
-            }
-
-            SlideLayoutData.ScaleShapes(slideDocument, scaleFactor);
-
-            PBT.AddRelationships(slide, newSlide, [newSlide.GetXDocument().Root]);
-            CopyRelatedPartsForContentParts(slide, newSlide, [newSlide.GetXDocument().Root]);
-            CopyTableStyles(sourceDocument, newSlide);
-
-            if (slide.NotesSlidePart is { } notesSlide)
-            {
-                if (_newDocument.PresentationPart.NotesMasterPart is null)
-                    CopyNotesMaster(sourceDocument);
-                var newPart = newSlide.AddNewPart<NotesSlidePart>();
-                newPart.PutXDocument(notesSlide.GetXDocument());
-                newPart.AddPart(newSlide);
-                if (_newDocument.PresentationPart.NotesMasterPart is not null)
-                    newPart.AddPart(_newDocument.PresentationPart.NotesMasterPart);
-                PBT.AddRelationships(notesSlide, newPart, [newPart.GetXDocument().Root]);
-                CopyRelatedPartsForContentParts(slide.NotesSlidePart, newPart, [newPart.GetXDocument().Root]);
-            }
-
-            var slideLayoutData = GetOrAddSlideLayoutPart(sourceDocument, slide.SlideLayoutPart, scaleFactor);
-            newSlide.AddPart(slideLayoutData.Part);
-
-            if (slide.SlideCommentsPart is not null)
-                CopyComments(sourceDocument, slide, newSlide);
-
-            newPresentation = _newDocument.PresentationPart.GetXDocument();
-            newPresentation
-                .Root.Element(P.sldIdLst)
-                .Add(
-                    new XElement(
-                        P.sldId,
-                        new XAttribute(NoNamespace.id, newId.ToString()),
-                        new XAttribute(R.id, _newDocument.PresentationPart.GetIdOfPart(newSlide))
-                    )
-                );
-
-            newId++;
-            start++;
-            count--;
+            newSlide.FeedData(sourceStream);
         }
+
+        var slideDocument = newSlide.GetXDocument();
+        SlideLayoutData.ScaleShapes(slideDocument, scaleFactor);
+
+        PBT.AddRelationships(slidePart, newSlide, [newSlide.GetXDocument().Root]);
+        CopyRelatedPartsForContentParts(slidePart, newSlide, [newSlide.GetXDocument().Root]);
+        CopyTableStyles(sourceDocument, newSlide);
+
+        if (slidePart.NotesSlidePart is { } notesSlide)
+        {
+            if (_newDocument.PresentationPart.NotesMasterPart is null)
+                CopyNotesMaster(sourceDocument);
+            var newPart = newSlide.AddNewPart<NotesSlidePart>();
+            newPart.PutXDocument(notesSlide.GetXDocument());
+            newPart.AddPart(newSlide);
+            if (_newDocument.PresentationPart.NotesMasterPart is not null)
+                newPart.AddPart(_newDocument.PresentationPart.NotesMasterPart);
+            PBT.AddRelationships(notesSlide, newPart, [newPart.GetXDocument().Root]);
+            CopyRelatedPartsForContentParts(slidePart.NotesSlidePart, newPart, [newPart.GetXDocument().Root]);
+        }
+
+        var slideLayoutData = GetOrAddSlideLayoutPart(sourceDocument, slidePart.SlideLayoutPart, scaleFactor);
+        newSlide.AddPart(slideLayoutData.Part);
+
+        if (slidePart.SlideCommentsPart is not null)
+            CopyComments(sourceDocument, slidePart, newSlide);
+
+        newPresentation = _newDocument.PresentationPart.GetXDocument();
+        newPresentation
+            .Root.Element(P.sldIdLst)
+            .Add(
+                new XElement(
+                    P.sldId,
+                    new XAttribute(NoNamespace.id, newId.ToString()),
+                    new XAttribute(R.id, _newDocument.PresentationPart.GetIdOfPart(newSlide))
+                )
+            );
+
+        return newSlide;
     }
 
     // Copies notes master and notesSz element from presentation
