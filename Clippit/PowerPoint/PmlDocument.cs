@@ -4,7 +4,7 @@ using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.PowerPoint;
 
-public partial class PmlDocument : OpenXmlPowerToolsDocument
+public class PmlDocument : OpenXmlPowerToolsDocument
 {
     private const string NotPresentationExceptionMessage = "The document is not a PresentationML document.";
 

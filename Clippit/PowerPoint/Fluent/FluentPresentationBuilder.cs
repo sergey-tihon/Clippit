@@ -10,7 +10,7 @@ using DocumentFormat.OpenXml.Features;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Presentation;
 using Path = System.IO.Path;
-using PBT = Clippit.PowerPoint.PresentationBuilderTools;
+using PBT = Clippit.PowerPoint.Fluent.PresentationBuilderTools;
 
 namespace Clippit.PowerPoint.Fluent;
 
