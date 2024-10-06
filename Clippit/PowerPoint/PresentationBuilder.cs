@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Clippit.Excel;
+using Clippit.PowerPoint.Fluent;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.PowerPoint
@@ -67,6 +69,11 @@ namespace Clippit.PowerPoint
 
     public static partial class PresentationBuilder
     {
+        public static IFluentPresentationBuilder Create(PresentationDocument document)
+        {
+            return new FluentPresentationBuilder(document);
+        }
+
         public static PmlDocument BuildPresentation(List<SlideSource> sources)
         {
             using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument();
@@ -116,10 +123,10 @@ namespace Clippit.PowerPoint
 
         private static void ExtractSlide(PresentationDocument srcDoc, int slideNumber, PresentationDocument output)
         {
-            using var fluentBuilder = new FluentPresentationBuilder(output);
+            using var builder = new FluentPresentationBuilder(output);
             try
             {
-                fluentBuilder.AppendSlides(srcDoc, slideNumber, 1, true);
+                builder.AppendSlides(srcDoc, slideNumber, 1, true);
             }
             catch (PresentationBuilderInternalException dbie)
             {
@@ -131,7 +138,7 @@ namespace Clippit.PowerPoint
 
         private static void BuildPresentation(List<SlideSource> sources, PresentationDocument output)
         {
-            using var fluentBuilder = new FluentPresentationBuilder(output);
+            using var builder = Create(output);
 
             var sourceNum = 0;
             var openSettings = new OpenSettings { AutoSave = false };
@@ -145,10 +152,10 @@ namespace Clippit.PowerPoint
                     {
                         foreach (var slideMasterPart in doc.PresentationPart.SlideMasterParts)
                         {
-                            fluentBuilder.AppendMaster(doc, slideMasterPart);
+                            builder.AddSlideMaster(slideMasterPart);
                         }
                     }
-                    fluentBuilder.AppendSlides(doc, source.Start, source.Count);
+                    builder.AppendSlides(doc, source.Start, source.Count);
                 }
                 catch (PresentationBuilderInternalException dbie)
                 {
