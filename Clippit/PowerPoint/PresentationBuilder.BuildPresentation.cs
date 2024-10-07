@@ -38,7 +38,7 @@ public static partial class PresentationBuilder
                 {
                     foreach (var slideMasterPart in doc.PresentationPart.SlideMasterParts)
                     {
-                        builder.AddSlideMaster(slideMasterPart);
+                        builder.AddSlideMasterPart(slideMasterPart);
                     }
                 }
 
@@ -47,7 +47,7 @@ public static partial class PresentationBuilder
                 while (count > 0 && start < slideIds.Count)
                 {
                     var slidePart = (SlidePart)doc.PresentationPart.GetPartById(slideIds[start]);
-                    builder.AddSlide(slidePart);
+                    builder.AddSlidePart(slidePart);
 
                     start++;
                     count--;

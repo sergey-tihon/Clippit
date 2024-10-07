@@ -5,6 +5,6 @@ namespace Clippit.PowerPoint;
 
 public interface IFluentPresentationBuilder : IDisposable
 {
-    public void AddSlideMaster(SlideMasterPart slideMasterPart);
-    public SlidePart AddSlide(SlidePart slidePart);
+    public SlideMasterPart AddSlideMasterPart(SlideMasterPart slideMasterPart);
+    public SlidePart AddSlidePart(SlidePart slidePart);
 }

@@ -131,7 +131,7 @@ internal class SlideMasterData(SlideMasterPart slideMaster, double scaleFactor)
     : SlidePartData<SlideMasterPart>(slideMaster, scaleFactor)
 {
     public ThemeData ThemeData { get; } = new(slideMaster.ThemePart, scaleFactor);
-    public List<SlideLayoutData> SlideLayoutList { get; } = [];
+    public Dictionary<SlideLayoutPart, SlideLayoutData> SlideLayouts { get; } = [];
 
     protected override string GetShapeDescriptor(SlideMasterPart slideMaster)
     {

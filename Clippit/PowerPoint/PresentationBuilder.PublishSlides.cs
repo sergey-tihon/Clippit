@@ -19,17 +19,22 @@ public static partial class PresentationBuilder
     {
         var slideNameRegex = SlideNameRegex();
         var slideNumber = 0;
-        foreach (var memoryStreamDocument in PublishSlides(srcDoc))
+        foreach (var streamDoc in PublishSlides(srcDoc))
         {
-            using var streamDoc = memoryStreamDocument;
-
-            var slideDoc = streamDoc.GetModifiedPmlDocument();
-            if (!string.IsNullOrWhiteSpace(fileName))
+            try
             {
-                slideDoc.FileName = slideNameRegex.Replace(fileName, $"_{++slideNumber:000}.pptx");
-            }
+                var slideDoc = streamDoc.GetModifiedPmlDocument();
+                if (!string.IsNullOrWhiteSpace(fileName))
+                {
+                    slideDoc.FileName = slideNameRegex.Replace(fileName, $"_{++slideNumber:000}.pptx");
+                }
 
-            yield return slideDoc;
+                yield return slideDoc;
+            }
+            finally
+            {
+                streamDoc.Dispose();
+            }
         }
     }
 
@@ -57,10 +62,10 @@ public static partial class PresentationBuilder
 
     private static void ExtractSlide(SlidePart slidePart, PresentationDocument output)
     {
-        using var builder = new FluentPresentationBuilder(output);
+        using var builder = Create(output);
         try
         {
-            var newSlidePart = builder.AddSlide(slidePart);
+            var newSlidePart = builder.AddSlidePart(slidePart);
 
             // Remove the show attribute from the slide element (if it exists)
             var slideDocument = newSlidePart.GetXDocument();

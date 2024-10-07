@@ -275,16 +275,20 @@ internal sealed partial class FluentPresentationBuilder : IFluentPresentationBui
         return new XElement(fontXName, new XAttribute(R.id, newFontPartId));
     }
 
-    public void AddSlideMaster(SlideMasterPart slideMasterPart)
+    public SlideMasterPart AddSlideMasterPart(SlideMasterPart slideMasterPart)
     {
         var sourceDocument = (PresentationDocument)slideMasterPart.OpenXmlPackage;
         EnsureDocumentInitialized(sourceDocument);
 
         var scaleFactor = GetScaleFactor(sourceDocument);
+        var slideMasterData = GetOrAddSlideMasterPart(sourceDocument, slideMasterPart, scaleFactor);
+
         foreach (var slideLayoutPart in slideMasterPart.SlideLayoutParts)
         {
             _ = GetOrAddSlideLayoutPart(sourceDocument, slideLayoutPart, scaleFactor);
         }
+
+        return slideMasterData.Part;
     }
 
     private void EnsureDocumentInitialized(PresentationDocument sourceDocument)
@@ -306,7 +310,7 @@ internal sealed partial class FluentPresentationBuilder : IFluentPresentationBui
         _isDocumentInitialized = true;
     }
 
-    public SlidePart AddSlide(SlidePart slidePart)
+    public SlidePart AddSlidePart(SlidePart slidePart)
     {
         var sourceDocument = (PresentationDocument)slidePart.OpenXmlPackage;
         EnsureDocumentInitialized(sourceDocument);
@@ -1253,7 +1257,7 @@ internal sealed partial class FluentPresentationBuilder : IFluentPresentationBui
         if (masterIds.Count != 0)
             newId = Math.Max(newId, masterIds.Max());
 
-        foreach (var slideMasterData in _slideMasterList)
+        foreach (var slideMasterData in _slideMasters.Values)
         {
             var masterPartDoc = slideMasterData.Part.GetXDocument();
             var layoutIds = masterPartDoc

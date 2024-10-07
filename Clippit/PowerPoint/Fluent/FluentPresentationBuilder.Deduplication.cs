@@ -9,7 +9,7 @@ namespace Clippit.PowerPoint.Fluent;
 internal partial class FluentPresentationBuilder
 {
     private readonly List<ContentData> _mediaCache = [];
-    private readonly List<SlideMasterData> _slideMasterList = [];
+    private readonly Dictionary<SlideMasterPart, SlideMasterData> _slideMasters = [];
     private SlideSize _slideSize;
 
     private void InitializeCaches()
@@ -69,8 +69,13 @@ internal partial class FluentPresentationBuilder
         double scaleFactor
     )
     {
-        var slideMasterData = new SlideMasterData(slideMasterPart, scaleFactor);
-        foreach (var item in _slideMasterList)
+        if (_slideMasters.TryGetValue(slideMasterPart, out var slideMasterData))
+        {
+            return slideMasterData;
+        }
+
+        slideMasterData = new SlideMasterData(slideMasterPart, scaleFactor);
+        foreach (var item in _slideMasters.Values)
         {
             if (item.CompareTo(slideMasterData) == 0)
                 return item;
@@ -82,7 +87,7 @@ internal partial class FluentPresentationBuilder
             slideMasterData = new SlideMasterData(newSlideMasterPart, 1.0);
         }
 
-        _slideMasterList.Add(slideMasterData);
+        _slideMasters.Add(slideMasterPart, slideMasterData);
         return slideMasterData;
     }
 
@@ -99,8 +104,13 @@ internal partial class FluentPresentationBuilder
             scaleFactor
         );
 
-        var slideLayoutData = new SlideLayoutData(slideLayoutPart, scaleFactor);
-        foreach (var item in slideMasterData.SlideLayoutList)
+        if (slideMasterData.SlideLayouts.TryGetValue(slideLayoutPart, out var slideLayoutData))
+        {
+            return slideLayoutData;
+        }
+
+        slideLayoutData = new SlideLayoutData(slideLayoutPart, scaleFactor);
+        foreach (var item in slideMasterData.SlideLayouts.Values)
         {
             if (item.CompareTo(slideLayoutData) == 0)
                 return item;
@@ -112,7 +122,7 @@ internal partial class FluentPresentationBuilder
             slideLayoutData = new SlideLayoutData(newSlideLayoutPart, 1.0);
         }
 
-        slideMasterData.SlideLayoutList.Add(slideLayoutData);
+        slideMasterData.SlideLayouts.Add(slideLayoutPart, slideLayoutData);
         return slideLayoutData;
     }
 }
