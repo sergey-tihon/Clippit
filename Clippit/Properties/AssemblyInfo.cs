@@ -4,4 +4,3 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Clippit.Tests")]
-[assembly: InternalsVisibleTo("Clippit.Benchmark")]

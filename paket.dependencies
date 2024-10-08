@@ -19,4 +19,3 @@ nuget Microsoft.NET.Test.Sdk
 nuget xunit
 nuget xunit.runner.console
 nuget xunit.runner.visualstudio
-nuget BenchmarkDotNet

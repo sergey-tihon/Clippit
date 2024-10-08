@@ -375,7 +375,7 @@ namespace Clippit
             }
         }
 
-        public static OpenXmlMemoryStreamDocument CreateWordprocessingDocument(MemoryStream stream = null)
+        public static OpenXmlMemoryStreamDocument CreateWordprocessingDocument(MemoryStream stream)
         {
             stream ??= new MemoryStream();
             using (
@@ -401,7 +401,7 @@ namespace Clippit
             return new OpenXmlMemoryStreamDocument(stream);
         }
 
-        public static OpenXmlMemoryStreamDocument CreateSpreadsheetDocument(MemoryStream stream = null)
+        public static OpenXmlMemoryStreamDocument CreateSpreadsheetDocument(MemoryStream stream)
         {
             stream ??= new MemoryStream();
             using (
