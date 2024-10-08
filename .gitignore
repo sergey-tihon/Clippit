@@ -48,3 +48,4 @@ TestFiles/PublishSlides/output/
 
 .ionide/
 temp/
+BenchmarkDotNet.Artifacts/
