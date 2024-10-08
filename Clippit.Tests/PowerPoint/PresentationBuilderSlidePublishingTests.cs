@@ -8,7 +8,7 @@ using Xunit.Abstractions;
 
 namespace Clippit.Tests.PowerPoint
 {
-    public class PresentationBuilderSlidePublishingTests : TestsBase
+    public partial class PresentationBuilderSlidePublishingTests : TestsBase
     {
         private const string SourceDirectory = "../../../../TestFiles/PublishSlides/";
         private const string TargetDirectory = "../../../../TestFiles/PublishSlides/output";

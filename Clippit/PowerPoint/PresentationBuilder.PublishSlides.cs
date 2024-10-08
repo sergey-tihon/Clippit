@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 using Clippit.PowerPoint.Fluent;
 using DocumentFormat.OpenXml.Packaging;
 
@@ -38,7 +39,7 @@ public static partial class PresentationBuilder
         }
     }
 
-    public static IEnumerable<OpenXmlMemoryStreamDocument> PublishSlides(PresentationDocument srcDoc)
+    private static IEnumerable<OpenXmlMemoryStreamDocument> PublishSlides(PresentationDocument srcDoc)
     {
         var slidesIds = PresentationBuilderTools.GetSlideIdsInOrder(srcDoc);
         foreach (var slideId in slidesIds)
@@ -55,6 +56,9 @@ public static partial class PresentationBuilder
                 var title = PresentationBuilderTools.GetSlideTitle(srcSlidePart.GetXElement());
                 output.PackageProperties.Title = title;
             }
+
+            srcSlidePart.RemoveAnnotations<XDocument>();
+            srcSlidePart.UnloadRootElement();
 
             yield return streamDoc;
         }
