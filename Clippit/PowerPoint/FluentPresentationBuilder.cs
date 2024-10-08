@@ -371,6 +371,9 @@ namespace Clippit.PowerPoint
                         newPart.AddPart(_newDocument.PresentationPart.NotesMasterPart);
                     PBT.AddRelationships(notesSlide, newPart, [newPart.GetXDocument().Root]);
                     CopyRelatedPartsForContentParts(slide.NotesSlidePart, newPart, [newPart.GetXDocument().Root]);
+
+                    notesSlide.RemoveAnnotations<XDocument>();
+                    notesSlide.UnloadRootElement();
                 }
 
                 var slideLayoutData = ManageSlideLayoutPart(sourceDocument, slide.SlideLayoutPart, scaleFactor);
@@ -389,6 +392,9 @@ namespace Clippit.PowerPoint
                             new XAttribute(R.id, _newDocument.PresentationPart.GetIdOfPart(newSlide))
                         )
                     );
+
+                slide.RemoveAnnotations<XDocument>();
+                slide.UnloadRootElement();
 
                 newId++;
                 start++;
