@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.2.1] - October 8, 2024
+
+- fix: optimized memory usage during slide publishing
+
 ## [2.2.0] - September 8, 2024
 
 - DocumentFormat.OpenXml 3.0.2 -> 3.1.0
