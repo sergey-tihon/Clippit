@@ -375,9 +375,9 @@ namespace Clippit
             }
         }
 
-        public static OpenXmlMemoryStreamDocument CreateWordprocessingDocument(MemoryStream stream = null)
+        public static OpenXmlMemoryStreamDocument CreateWordprocessingDocument()
         {
-            stream ??= new MemoryStream();
+            var stream = new MemoryStream();
             using (
                 var doc = WordprocessingDocument.Create(
                     stream,
@@ -401,9 +401,9 @@ namespace Clippit
             return new OpenXmlMemoryStreamDocument(stream);
         }
 
-        public static OpenXmlMemoryStreamDocument CreateSpreadsheetDocument(MemoryStream stream = null)
+        public static OpenXmlMemoryStreamDocument CreateSpreadsheetDocument()
         {
-            stream ??= new MemoryStream();
+            var stream = new MemoryStream();
             using (
                 var doc = SpreadsheetDocument.Create(stream, DocumentFormat.OpenXml.SpreadsheetDocumentType.Workbook)
             )
@@ -426,9 +426,9 @@ namespace Clippit
             return new OpenXmlMemoryStreamDocument(stream);
         }
 
-        public static OpenXmlMemoryStreamDocument CreatePresentationDocument(MemoryStream stream = null)
+        public static OpenXmlMemoryStreamDocument CreatePresentationDocument()
         {
-            stream ??= new MemoryStream();
+            var stream = new MemoryStream();
             using (
                 var doc = PresentationDocument.Create(
                     stream,
@@ -563,7 +563,7 @@ namespace Clippit
         }
 
 #pragma warning disable IDISP003
-        public void ClosePackage()
+        private void ClosePackage()
         {
             _docPackage.Close();
             _docPackage = null;
