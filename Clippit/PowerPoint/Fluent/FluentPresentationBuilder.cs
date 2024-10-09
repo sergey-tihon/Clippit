@@ -16,12 +16,37 @@ internal sealed partial class FluentPresentationBuilder : IFluentPresentationBui
     {
         _newDocument = presentationDocument ?? throw new NullReferenceException(nameof(presentationDocument));
 
-        var mainPart = _newDocument.PresentationPart.GetXDocument();
-        mainPart.Declaration.Standalone = "yes";
-        mainPart.Declaration.Encoding = "UTF-8";
+        if (_newDocument.PresentationPart is null)
+        {
+            _newDocument.AddPresentationPart();
+            var xDocument = GetPresentationXDocument();
+            _newDocument.PresentationPart.PutXDocument(xDocument);
+        }
 
         _isDocumentInitialized = false;
         InitializeCaches();
+    }
+
+    private static XDocument GetPresentationXDocument()
+    {
+        XNamespace ns = "http://schemas.openxmlformats.org/presentationml/2006/main";
+        XNamespace relationshipsns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+        XNamespace drawingns = "http://schemas.openxmlformats.org/drawingml/2006/main";
+
+        return new XDocument(
+            new XElement(
+                ns + "presentation",
+                new XAttribute(XNamespace.Xmlns + "a", drawingns),
+                new XAttribute(XNamespace.Xmlns + "r", relationshipsns),
+                new XAttribute(XNamespace.Xmlns + "p", ns),
+                new XElement(ns + "sldMasterIdLst"),
+                new XElement(ns + "sldIdLst"),
+                new XElement(ns + "notesSz", new XAttribute("cx", "6858000"), new XAttribute("cy", "9144000"))
+            )
+        )
+        {
+            Declaration = new XDeclaration("1.0", "UTF-8", "yes"),
+        };
     }
 
     public void Dispose() => SaveAndCleanup();
@@ -94,6 +119,22 @@ internal sealed partial class FluentPresentationBuilder : IFluentPresentationBui
     public SlidePart AddSlidePart(SlidePart slidePart)
     {
         var sourceDocument = (PresentationDocument)slidePart.OpenXmlPackage;
+        ArgumentNullException.ThrowIfNull(sourceDocument);
+
+        try
+        {
+            return AddSlidePartImpl(sourceDocument, slidePart);
+        }
+        catch (PresentationBuilderInternalException dbie)
+        {
+            if (dbie.Message.Contains("{0}"))
+                throw new PresentationBuilderException(string.Format(dbie.Message, slidePart.Uri));
+            throw;
+        }
+    }
+
+    private SlidePart AddSlidePartImpl(PresentationDocument sourceDocument, SlidePart slidePart)
+    {
         EnsureDocumentInitialized(sourceDocument);
 
         var scaleFactor = GetScaleFactor(sourceDocument);

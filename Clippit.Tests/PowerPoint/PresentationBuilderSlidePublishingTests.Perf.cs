@@ -32,38 +32,26 @@ public partial class PresentationBuilderSlidePublishingTests
             var srcSlidePart = (SlidePart)srcDoc.PresentationPart.GetPartById(slideId);
             var title = PresentationBuilderTools.GetSlideTitle(srcSlidePart.GetXElement());
 
-            using var ms = new MemoryStream();
-            using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument(ms);
-            using (var output = streamDoc.GetPresentationDocument(new OpenSettings { AutoSave = false }))
+            using var stream = new MemoryStream();
+            using (var newDocument = PresentationBuilder.NewDocument(stream))
             {
-                using (var builder = PresentationBuilder.Create(output))
+                using (var builder = PresentationBuilder.Create(newDocument))
                 {
-                    try
-                    {
-                        var newSlidePart = builder.AddSlidePart(srcSlidePart);
+                    var newSlidePart = builder.AddSlidePart(srcSlidePart);
 
-                        // Remove the show attribute from the slide element (if it exists)
-                        var slideDocument = newSlidePart.GetXDocument();
-                        slideDocument.Root?.Attribute(NoNamespace.show)?.Remove();
-                    }
-                    catch (PresentationBuilderInternalException dbie)
-                    {
-                        if (dbie.Message.Contains("{0}"))
-                            throw new PresentationBuilderException(string.Format(dbie.Message, srcSlidePart.Uri));
-                        throw;
-                    }
+                    // Remove the show attribute from the slide element (if it exists)
+                    var slideDocument = newSlidePart.GetXDocument();
+                    slideDocument.Root?.Attribute(NoNamespace.show)?.Remove();
                 }
 
                 // Set the title of the new presentation to the title of the slide
-                output.PackageProperties.Title = title;
+                newDocument.PackageProperties.Title = title;
             }
 
-            streamDoc.ClosePackage();
-
             var slideFileName = string.Concat(fileName, $"_{++slideNumber:000}.pptx");
-            await using var fs = File.Create(Path.Combine(TargetDirectory, slideFileName));
-            ms.Position = 0;
-            await ms.CopyToAsync(fs);
+            await using var fs = File.Create(Path.Combine(targetDir, slideFileName));
+            stream.Position = 0;
+            await stream.CopyToAsync(fs);
 
             srcSlidePart.RemoveAnnotations<XDocument>();
             srcSlidePart.UnloadRootElement();
