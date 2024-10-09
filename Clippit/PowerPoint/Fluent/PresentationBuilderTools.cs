@@ -8,7 +8,7 @@ using Clippit.Internal;
 using DocumentFormat.OpenXml.Experimental;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace Clippit.PowerPoint
+namespace Clippit.PowerPoint.Fluent
 {
     internal static class PresentationBuilderTools
     {
@@ -42,6 +42,15 @@ namespace Clippit.PowerPoint
             }
 
             return paragraphText.ToString().Trim();
+        }
+
+        internal static List<string> GetSlideIdsInOrder(PresentationDocument srcDoc)
+        {
+            return srcDoc
+                .PresentationPart.GetXElement()
+                .Descendants(P.sldId)
+                .Select(x => x.Attribute(R.id)!.Value)
+                .ToList();
         }
 
         internal static readonly Dictionary<XName, int> OrderPresentation =

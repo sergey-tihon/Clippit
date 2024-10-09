@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.0.0-beta01] - October 10, 2024
+
+- Public exposure of `IFluentPresentationBuilder` ergonomic API for the code behind `PresentationBuilder`
+
 ## [2.2.1] - October 8, 2024
 
 - fix: optimized memory usage during slide publishing
