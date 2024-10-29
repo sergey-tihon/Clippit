@@ -72,6 +72,6 @@ Cheryl.]]></Description>
 
 ## Further Reading
 
-If you are interested in using the Image functionality in DocumentAssembler then you best bet is to look at `DocumentAssemblerTests.cs` and particularly the data files which can be found in the repository under `Test Files/DA`.
+If you are interested in using the Image functionality in DocumentAssembler then your best bet is to look at `DocumentAssemblerTests.cs` and particularly the data files which can be found in the repository under `Test Files/DA`.
 
 Changes merged in: [#31](https://github.com/sergey-tihon/Clippit/pull/31)
