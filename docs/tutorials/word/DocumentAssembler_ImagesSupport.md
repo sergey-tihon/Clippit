@@ -4,14 +4,22 @@ uid: Tutorial.Word.DocumentAssembler.ImagesSupport
 
 # Key highlights from [#31](https://github.com/sergey-tihon/Clippit/pull/31#issuecomment-874335292)
 
-1. Images can be provided either by base64-encoded string or by specifying the filename. The Assembler will have to figure out the image type, based on either MIME or file extension. Here are both examples:
+## Introduction
 
-  - `<Logo>../../md-logo.png</Logo>`
-  - `<Image>data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcetc…</Image>`
+The Image content control works by being placed directly before an image placeholder in your Word document.  The image placeholder must be inline.
 
-2. The Image content control will be surrounded by new type of select (similar to Repeat or Conditional) – `Image Select`. I found this approach easier than dealing just with the Image content control.
+Images content can be provided in your XML data using a path to a file on disk, or by using the [data URI scheme](https://en.wikipedia.org/wiki/Data_URI_scheme).  Example of both approaches are shown below: 
 
-Examples below are taken from the Tests:
+```xml
+<Logo>../../md-logo.png</Logo>
+```
+```xml
+<Image>data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcetc…</Image>
+```
+
+Document Assembler will either infer the MIME type based on the extension of the filename, or take use the MIME type passed in when using the data URI scheme.
+
+Examples below show the Image content control in action and are taken from the Document Assembler Test Files:
 
 ## Image Select
 
