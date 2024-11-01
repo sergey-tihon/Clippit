@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.0.0-beta01] - November 10, 2024
+
+- Public exposure of `IFluentPresentationBuilder` ergonomic API for the code behind `PresentationBuilder`
+
 ## [2.2.2] - November 1, 2024
 
 - feat: DocumentFormat.OpenXml 3.1.0 -> 3.1.1
