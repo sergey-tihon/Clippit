@@ -4,27 +4,74 @@ uid: Tutorial.Word.DocumentAssembler.ImagesSupport
 
 # Key highlights from [#31](https://github.com/sergey-tihon/Clippit/pull/31#issuecomment-874335292)
 
-1. Image can be provided either by base64-encoded string or by specifying the filename. The Assembler will have to figure out the image type, based on either MIME or file extension. Here are both examples:
+## Introduction
 
-  - `<Logo>../../md-logo.png</Logo>`
-  - `<Image>data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcetc…</Image>`
+The Image content control works by being placed directly before an image placeholder in your Word document.  The image placeholder must be inline.
 
-2. The image content control will be surrounded by new type of select (in similar to repeat or conditional) – `Image Select` and `EndImage`. I found this approach easier than dealing just with the image content control. Here is the example:
+Images content can be provided in your XML data using a path to a file on disk, or by using the [data URI scheme](https://en.wikipedia.org/wiki/Data_URI_scheme).  Example of both approaches are shown below: 
+
+```xml
+<Logo>../../md-logo.png</Logo>
+```
+```xml
+<Image>data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcetc…</Image>
+```
+
+Document Assembler will either infer the MIME type based on the extension of the filename, or take use the MIME type passed in when using the data URI scheme.
+
+Examples below show the Image content control in action and are taken from the Document Assembler Test Files:
+
+## Image Select
 
 ![image1](../../images/word/documentassembler/image1.jpg)
 
-3. When used in repeated context, the image is used with relative XPath (in similar to other fields):
+## Image Select within a Repeat
+
+Note that when using a Repeat XPATH is aware of the Context it is in and should operate on the "current" Node.
 
 ![image2](../../images/word/documentassembler/image2.png)
 
-4. Very similar situation with the Table:
+## Image Select within a Table
+
+Works in a very similar way to Repeat.
 
 ![image3](../../images/word/documentassembler/image3.png)
 
-5. Here is example of data xml file:
+## XML Data used in above Examples
 
-![image4](../../images/word/documentassembler/image4.png)
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Customer>
+  <CustomerID>1</CustomerID>
+  <Name>Cheryl</Name>
+  <HighValueCustomer>True</HighValueCustomer>
+  <CustomerLogo>../../../../TestFiles/img.png</CustomerLogo>
+  <Header>../../../../TestFiles/T0936_files/image001.png</Header>
+  <Orders>
+    <Order>
+      <ProductDescription>Unicycle</ProductDescription>
+      <Quantity>3</Quantity>
+      <OrderDate>9/5/2001</OrderDate>
+	  <Thumbnail>../../../../TestFiles/img2.png</Thumbnail>
+    </Order>
+    <Order>
+      <ProductDescription>Tricycle</ProductDescription>
+      <Quantity>3</Quantity>
+      <OrderDate>8/6/2000</OrderDate>
+	  <Thumbnail>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMcAAACTCAYA...</Thumbnail>	  
+    </Order>
+  </Orders>
+  <TotalQuantity>6</TotalQuantity>
+  <Description><![CDATA[This
+is a multiline
+description that
+contains details about
+Cheryl.]]></Description>
+</Customer>
+```
 
-6. There is still a lot to be improved and some issues to be resolved, such as using templated image in header/footer, managing image size (preserve original/modify based on template/maintain aspect ratio etc.)
+## Further Reading
 
-7. Samples can be found in `DocumentAssemblerTests.cs` merged in [#31](https://github.com/sergey-tihon/Clippit/pull/31)
+If you are interested in using the Image functionality in DocumentAssembler then your best bet is to look at `DocumentAssemblerTests.cs` and particularly the data files which can be found in the repository under `Test Files/DA`.
+
+Changes merged in: [#31](https://github.com/sergey-tihon/Clippit/pull/31)
