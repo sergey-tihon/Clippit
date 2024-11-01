@@ -11,12 +11,11 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.XPath;
+using Clippit.Word.Assembler;
 using DocumentFormat.OpenXml.Packaging;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Path = System.IO.Path;
-
-using Clippit.Word.Assembler;
 
 namespace Clippit.Word
 {
@@ -141,7 +140,10 @@ namespace Clippit.Word
                         var newPara = new XElement(element);
                         var newMeta = newPara.Elements().First(n => s_metaToForceToBlock.Contains(n.Name));
                         newMeta.ReplaceWith(
-                            ErrorHandler.CreateRunErrorMessage("Error: Unmatched metadata can't be in paragraph with other text", te)
+                            ErrorHandler.CreateRunErrorMessage(
+                                "Error: Unmatched metadata can't be in paragraph with other text",
+                                te
+                            )
                         );
                         return newPara;
                     }
@@ -161,7 +163,10 @@ namespace Clippit.Word
                         childMeta.Count(c => c.Name == PA.Conditional)
                         != childMeta.Count(c => c.Name == PA.EndConditional)
                     )
-                        return element.CreateContextErrorMessage("Error: Mismatch Conditional / EndConditional at run level", te);
+                        return element.CreateContextErrorMessage(
+                            "Error: Mismatch Conditional / EndConditional at run level",
+                            te
+                        );
                     return new XElement(
                         element.Name,
                         element.Attributes(),
@@ -277,7 +282,10 @@ namespace Clippit.Word
                 if (followingElement == null)
                 {
                     image.ReplaceWith(
-                        ErrorHandler.CreateParaErrorMessage("Image metadata is not immediately followed by an image", te)
+                        ErrorHandler.CreateParaErrorMessage(
+                            "Image metadata is not immediately followed by an image",
+                            te
+                        )
                     );
                     continue;
                 }
@@ -299,7 +307,10 @@ namespace Clippit.Word
                         if (picture == null)
                         {
                             image.ReplaceWith(
-                                ErrorHandler.CreateParaErrorMessage("Image metadata does not contain picture element", te)
+                                ErrorHandler.CreateParaErrorMessage(
+                                    "Image metadata does not contain picture element",
+                                    te
+                                )
                             );
                             continue;
                         }
@@ -551,7 +562,9 @@ namespace Clippit.Word
                         if (rri.XmlExceptionMessage != null)
                             runToReplace.ReplaceWith(ErrorHandler.CreateRunErrorMessage(rri.XmlExceptionMessage, te));
                         else if (rri.SchemaValidationMessage != null)
-                            runToReplace.ReplaceWith(ErrorHandler.CreateRunErrorMessage(rri.SchemaValidationMessage, te));
+                            runToReplace.ReplaceWith(
+                                ErrorHandler.CreateRunErrorMessage(rri.SchemaValidationMessage, te)
+                            );
                         else
                         {
                             var newXml = new XElement(rri.Xml);
@@ -652,7 +665,9 @@ namespace Clippit.Word
                         if (rri.XmlExceptionMessage != null)
                             runToReplace.ReplaceWith(ErrorHandler.CreateRunErrorMessage(rri.XmlExceptionMessage, te));
                         else if (rri.SchemaValidationMessage != null)
-                            runToReplace.ReplaceWith(ErrorHandler.CreateRunErrorMessage(rri.SchemaValidationMessage, te));
+                            runToReplace.ReplaceWith(
+                                ErrorHandler.CreateRunErrorMessage(rri.SchemaValidationMessage, te)
+                            );
                         else
                         {
                             var newXml = new XElement(rri.Xml);
@@ -971,7 +986,10 @@ namespace Clippit.Word
             // check for first run having image element in it
             if (orig == null || !orig.Descendants(W.r).FirstOrDefault().Descendants(W.drawing).Any())
             {
-                return element.CreateContextErrorMessage("Image metadata is not immediately followed by an image", templateError);
+                return element.CreateContextErrorMessage(
+                    "Image metadata is not immediately followed by an image",
+                    templateError
+                );
             }
 
             // clone the paragraph, so repeating elements won't be overridden
@@ -1026,14 +1044,20 @@ namespace Clippit.Word
 
             if (extent == null || pictureExtent == null)
             {
-                return element.CreateContextErrorMessage("Image: missing element in picture control - extent(s)", templateError);
+                return element.CreateContextErrorMessage(
+                    "Image: missing element in picture control - extent(s)",
+                    templateError
+                );
             }
 
             // get docPr
             var docPr = inline.Descendants(WP.docPr).FirstOrDefault();
             if (docPr == null)
             {
-                return element.CreateContextErrorMessage("Image: missing element in picture control - docPtr", templateError);
+                return element.CreateContextErrorMessage(
+                    "Image: missing element in picture control - docPtr",
+                    templateError
+                );
             }
 
             docPr.SetAttributeValue(NoNamespace.id, imageId);
@@ -1493,9 +1517,15 @@ namespace Clippit.Word
                 var notMatch = (string)element.Attribute(PA.NotMatch);
 
                 if (match == null && notMatch == null)
-                    return element.CreateContextErrorMessage("Conditional: Must specify either Match or NotMatch", templateError);
+                    return element.CreateContextErrorMessage(
+                        "Conditional: Must specify either Match or NotMatch",
+                        templateError
+                    );
                 if (match != null && notMatch != null)
-                    return element.CreateContextErrorMessage("Conditional: Cannot specify both Match and NotMatch", templateError);
+                    return element.CreateContextErrorMessage(
+                        "Conditional: Cannot specify both Match and NotMatch",
+                        templateError
+                    );
 
                 string testValue;
                 try
@@ -1522,7 +1552,5 @@ namespace Clippit.Word
                 element.Nodes().Select(n => ContentReplacementTransform(n, data, templateError, part))
             );
         }
-
-        
     }
 }
