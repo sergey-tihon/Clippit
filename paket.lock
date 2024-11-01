@@ -2,10 +2,10 @@ STORAGE: NONE
 RESTRICTION: == net8.0
 NUGET
   remote: https://api.nuget.org/v3/index.json
-    DocumentFormat.OpenXml (3.1)
-      DocumentFormat.OpenXml.Framework (>= 3.1)
-    DocumentFormat.OpenXml.Framework (3.1)
-      System.IO.Packaging (>= 8.0)
+    DocumentFormat.OpenXml (3.1.1)
+      DocumentFormat.OpenXml.Framework (>= 3.1.1)
+    DocumentFormat.OpenXml.Framework (3.1.1)
+      System.IO.Packaging (>= 8.0.1)
     IDisposableAnalyzers (4.0.8)
     Microsoft.CodeCoverage (17.11.1)
     Microsoft.NET.Test.Sdk (17.11.1)
@@ -18,7 +18,7 @@ NUGET
       Microsoft.TestPlatform.ObjectModel (>= 17.11.1)
       Newtonsoft.Json (>= 13.0.1)
     Newtonsoft.Json (13.0.3)
-    SixLabors.Fonts (2.0.4)
+    SixLabors.Fonts (2.0.6)
     SixLabors.ImageSharp (3.1.5)
     SixLabors.ImageSharp.Drawing (2.1.4)
       SixLabors.Fonts (>= 2.0.4)
