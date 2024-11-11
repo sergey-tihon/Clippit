@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using System.Xml;
-
-using HtmlAgilityPack;
-using System.Text;
-
 using DocumentFormat.OpenXml.Packaging;
+using HtmlAgilityPack;
 
 namespace Clippit.Word.Assembler
 {
@@ -42,7 +40,8 @@ namespace Clippit.Word.Assembler
             XElement data,
             XElement pPr,
             TemplateError templateError,
-            ref OpenXmlPart part)
+            ref OpenXmlPart part
+        )
         {
             var xPath = (string)element.Attribute(PA.Select);
             var optionalString = (string)element.Attribute(PA.Optional);
@@ -58,7 +57,10 @@ namespace Clippit.Word.Assembler
                 return element.CreateContextErrorMessage("XPathException: " + e.Message, templateError);
             }
 
-            bool bold = false, italic = false, underline = false, link = false;
+            bool bold = false,
+                italic = false,
+                underline = false,
+                link = false;
 
             // create an empty paragraph with the same properties as the current paragraph in case we have new lines
             XElement emptyPara = new XElement(W.p, pPr);
@@ -79,7 +81,10 @@ namespace Clippit.Word.Assembler
                             string tagName = xmlReader.LocalName.ToLower();
 
                             // process XML elements
-                            if (xmlReader.NodeType == XmlNodeType.Element || xmlReader.NodeType == XmlNodeType.EndElement)
+                            if (
+                                xmlReader.NodeType == XmlNodeType.Element
+                                || xmlReader.NodeType == XmlNodeType.EndElement
+                            )
                             {
                                 bool isStart = xmlReader.IsStartElement();
                                 bool isEmpty = xmlReader.IsEmptyElement;
@@ -106,7 +111,12 @@ namespace Clippit.Word.Assembler
                                 {
                                     underline = isStart;
                                 }
-                                else if ((newlineInlineElements.Contains(tagName) || (newlineBlockElements.Contains(tagName)) && (!isStart || isEmpty)))
+                                else if (
+                                    (
+                                        newlineInlineElements.Contains(tagName)
+                                        || (newlineBlockElements.Contains(tagName)) && (!isStart || isEmpty)
+                                    )
+                                )
                                 {
                                     AppendRun(elementList, CreateRun(content, bold, italic, underline, ref part, url));
                                     content = string.Empty;
@@ -130,13 +140,11 @@ namespace Clippit.Word.Assembler
                             }
                         }
 
-                        
-                        if (!string.IsNullOrEmpty(content))  // append the last run
+                        if (!string.IsNullOrEmpty(content)) // append the last run
                         {
                             AppendRun(elementList, CreateRun(content, bold, italic, underline, ref part));
                         }
                     }
-
                 }
             }
             catch (Exception e)
@@ -145,9 +153,11 @@ namespace Clippit.Word.Assembler
             }
 
             // if we have trailing empty paragraphs lets remove them from the list
-            while (elementList.Count > 0 &&
-                elementList.Last().Name == W.p &&
-                elementList.Last().Descendants().Where(x => x.Name == W.t).Count() == 0)
+            while (
+                elementList.Count > 0
+                && elementList.Last().Name == W.p
+                && elementList.Last().Descendants().Where(x => x.Name == W.t).Count() == 0
+            )
             {
                 elementList.RemoveAt(elementList.Count - 1);
             }
@@ -169,7 +179,14 @@ namespace Clippit.Word.Assembler
             }
         }
 
-        private static XElement CreateRun(string text, bool bold, bool italic, bool underline, ref OpenXmlPart part, string url = "")
+        private static XElement CreateRun(
+            string text,
+            bool bold,
+            bool italic,
+            bool underline,
+            ref OpenXmlPart part,
+            string url = ""
+        )
         {
             if (!string.IsNullOrWhiteSpace(url))
             {
@@ -201,7 +218,7 @@ namespace Clippit.Word.Assembler
                     rProps.Add(new XElement(W.i));
                     rProps.Add(new XElement(W.iCs));
                 }
-                if(underline)
+                if (underline)
                 {
                     rProps.Add(new XElement(W.u, new XAttribute(W.val, "single")));
                 }
@@ -214,7 +231,9 @@ namespace Clippit.Word.Assembler
                         new XElement(
                             W.t,
                             PreserveWhitespace(text) ? new XAttribute(XNamespace.Xml + "space", "preserve") : null,
-                            text ?? string.Empty));
+                            text ?? string.Empty
+                        )
+                    );
                 }
 
                 hyp.Add(r2);
@@ -228,10 +247,14 @@ namespace Clippit.Word.Assembler
             // add the required properties according to the formatting which is currently on
             if (bold || italic || underline)
             {
-                r.Add(new XElement(W.rPr,
-                    bold ? new XElement(W.b) : null,
-                    italic ? new XElement(W.i) : null,
-                    underline ? new XElement(W.u, new XAttribute(W.val, "single")) : null));
+                r.Add(
+                    new XElement(
+                        W.rPr,
+                        bold ? new XElement(W.b) : null,
+                        italic ? new XElement(W.i) : null,
+                        underline ? new XElement(W.u, new XAttribute(W.val, "single")) : null
+                    )
+                );
             }
 
             if (!string.IsNullOrEmpty(text) && text.Any())
@@ -240,7 +263,9 @@ namespace Clippit.Word.Assembler
                     new XElement(
                         W.t,
                         PreserveWhitespace(text) ? new XAttribute(XNamespace.Xml + "space", "preserve") : null,
-                        text ?? string.Empty));
+                        text ?? string.Empty
+                    )
+                );
             }
 
             return r;
@@ -271,9 +296,7 @@ namespace Clippit.Word.Assembler
         {
             // assume our text is either text with inline html tags or plain text
             // wrap in html tags and add br tags in place of crlf or lf
-            return value.Replace("\r\n", "<br/>")
-                        .Replace("\n", "<br/>")
-                        .Replace("<br>", "<br/>");
+            return value.Replace("\r\n", "<br/>").Replace("\n", "<br/>").Replace("<br>", "<br/>");
         }
 
         private static string HtmlExpandEntities(string value)

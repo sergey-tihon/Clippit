@@ -1308,7 +1308,7 @@ namespace Clippit.Word
 
                 // if we have an embedded paragraph then create a new paragraph to add our content to.
                 // As the Content control is replaced then we will lose the paragraph otherwise.
-                if (embeddedPara != null)  
+                if (embeddedPara != null)
                 {
                     // get the current paragraph properties
                     XElement currentParaProps = embeddedPara.Descendants(W.pPr).FirstOrDefault();

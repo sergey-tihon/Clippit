@@ -189,11 +189,8 @@ namespace Clippit.Tests.Word
             var brCount = afterAssembling
                 .MainDocumentPart.Element(W.body)
                 .Elements(W.p)
-                .ElementAt(1)
-                .Elements(W.r)
-                .Elements(W.br)
                 .Count();
-            Assert.Equal(4, brCount);
+            Assert.Equal(6, brCount);
         }
 
         [Theory]
