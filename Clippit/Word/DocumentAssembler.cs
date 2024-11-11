@@ -1303,63 +1303,69 @@ namespace Clippit.Word
             }
             if (element.Name == PA.Content)
             {
-                if (element.Descendants(A.r).FirstOrDefault() is not null)
-                {
-                    return ProcessAParagraph(element, data, templateError);
-                }
+                XElement parentPara = element.Ancestors(W.p).FirstOrDefault(); // is the Content element in a paragraph
+                XElement embeddedPara = element.Descendants(W.p).FirstOrDefault(); // does the Content element contain a paragraph
 
-                var para = element.Descendants(W.p).FirstOrDefault();
-                var run = element.Descendants(W.r).FirstOrDefault();
-
-                var xPath = (string)element.Attribute(PA.Select);
-                var optionalString = (string)element.Attribute(PA.Optional);
-                var optional = (optionalString != null && optionalString.ToLower() == "true");
-
-                string[] newValues;
-                try
+                // if we have an embedded paragraph then create a new paragraph to add our content to.
+                // As the Content control is replaced then we will lose the paragraph otherwise.
+                if (embeddedPara != null)  
                 {
-                    newValues = data.EvaluateXPath(xPath, optional);
-                }
-                catch (XPathException e)
-                {
-                    return element.CreateContextErrorMessage("XPathException: " + e.Message, templateError);
-                }
+                    // get the current paragraph properties
+                    XElement currentParaProps = embeddedPara.Descendants(W.pPr).FirstOrDefault();
 
-                var lines = newValues.SelectMany(x => x.Split('\n'));
-                if (para is not null)
-                {
-                    var p = new XElement(W.p, para.Elements(W.pPr));
-                    var rPr = para.Elements(W.r).Elements(W.rPr).FirstOrDefault();
-                    foreach (var line in lines)
+                    // create a new paragraph to return
+                    embeddedPara = new XElement(W.p);
+
+                    // add the paragraph properties
+                    if (currentParaProps != null)
                     {
-                        p.Add(
-                            new XElement(
-                                W.r,
-                                rPr,
-                                (p.Elements().Count() > 1) ? new XElement(W.br) : null,
-                                new XElement(W.t, line)
-                            )
-                        );
+                        embeddedPara.Add(currentParaProps);
                     }
-                    return p;
                 }
-                else
+
+                // get the list of created elements, will be a number of runs followed by potentially a number of paragraphs
+                // runs are always returned first
+                XElement pPr = embeddedPara != null ? embeddedPara.Element(W.pPr) : parentPara.Element(W.pPr);
+                object content = element.ProcessContentElement(data, pPr, templateError, ref part);
+
+                // if this is a single XElment then convert to an array
+                if (content is XElement)
                 {
-                    var list = new List<XElement>();
-                    var rPr = run.Elements().Where(e => e.Name != W.t);
-                    foreach (var line in lines)
-                    {
-                        list.Add(
-                            new XElement(
-                                W.r,
-                                rPr,
-                                (list.Count > 0) ? new XElement(W.br) : null,
-                                new XElement(W.t, line)
-                            )
-                        );
-                    }
-                    return list;
+                    content = new XElement[] { content as XElement };
                 }
+
+                if (content is IEnumerable<XElement>)
+                {
+                    IEnumerable<XElement> elements = content as IEnumerable<XElement>;
+                    IEnumerable<XElement> paras = elements.Where(x => x.Name == W.p);
+                    IEnumerable<XElement> runs = elements.Where(x => x.Name != W.p);
+
+                    // add any paragraph elements after the current paragraph
+                    for (int i = paras.Count() - 1; i >= 0; i--)
+                    {
+                        if (embeddedPara == null && parentPara != null)
+                        {
+                            parentPara.AddAfterSelf(paras.ElementAt(i));
+                        }
+                        else
+                        {
+                            element.AddAfterSelf(paras.ElementAt(i));
+                        }
+                    }
+
+                    // returns runs in embedded paragraph
+                    if (embeddedPara != null)
+                    {
+                        embeddedPara.Add(runs);
+                        return embeddedPara;
+                    }
+
+                    // or simply return the runs
+                    return runs;
+                }
+
+                // or just return the content
+                return content;
             }
             if (element.Name == PA.Repeat)
             {
@@ -1382,11 +1388,6 @@ namespace Clippit.Word
                     if (optional)
                     {
                         return null;
-                        //XElement para = element.Descendants(W.p).FirstOrDefault();
-                        //if (para != null)
-                        //    return new XElement(W.p, new XElement(W.r));
-                        //else
-                        //    return new XElement(W.r);
                     }
                     return element.CreateContextErrorMessage("Repeat: Select returned no data", templateError);
                 }
