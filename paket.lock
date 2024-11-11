@@ -33,7 +33,7 @@ NUGET
       xunit.assert (>= 2.9.2)
       xunit.core (2.9.2)
     xunit.abstractions (2.0.3)
-    xunit.analyzers (1.16)
+    xunit.analyzers (1.17)
     xunit.assert (2.9.2)
     xunit.core (2.9.2)
       xunit.extensibility.core (2.9.2)
