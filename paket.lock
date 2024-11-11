@@ -6,6 +6,7 @@ NUGET
       DocumentFormat.OpenXml.Framework (>= 3.1.1)
     DocumentFormat.OpenXml.Framework (3.1.1)
       System.IO.Packaging (>= 8.0.1)
+    HtmlAgilityPack (1.11.70)
     IDisposableAnalyzers (4.0.8)
     Microsoft.CodeCoverage (17.11.1)
     Microsoft.NET.Test.Sdk (17.11.1)

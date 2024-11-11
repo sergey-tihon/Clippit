@@ -5,6 +5,7 @@ framework: net8.0
 
 nuget DocumentFormat.OpenXml
 nuget DocumentFormat.OpenXml.Framework
+nuget HtmlAgilityPack
 nuget SixLabors.ImageSharp.Drawing
 nuget SixLabors.ImageSharp
 

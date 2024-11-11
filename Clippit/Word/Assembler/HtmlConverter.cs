@@ -50,7 +50,9 @@ namespace Clippit.Word.Assembler
             string value;
             try
             {
-                value = PreprocessHtml(EscapeAmpersands(data.EvaluateXPathToString(xPath, optional)));
+                string[] values = data.EvaluateXPath(xPath, optional);
+
+                value = PreprocessHtml(EscapeAmpersands(string.Join("\r\n", values)));
             }
             catch (XPathException e)
             {

@@ -186,10 +186,7 @@ namespace Clippit.Tests.Word
                 Path.Combine(TempDir, name.Replace(".docx", "-processed-by-DocumentAssembler.docx"))
             );
             var afterAssembling = new WmlDocument(assembledDocx.FullName);
-            var brCount = afterAssembling
-                .MainDocumentPart.Element(W.body)
-                .Elements(W.p)
-                .Count();
+            var brCount = afterAssembling.MainDocumentPart.Element(W.body).Elements(W.p).Count();
             Assert.Equal(6, brCount);
         }
 

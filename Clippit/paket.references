@@ -2,3 +2,4 @@ DocumentFormat.OpenXml
 DocumentFormat.OpenXml.Framework
 SixLabors.ImageSharp.Drawing
 IDisposableAnalyzers
+HtmlAgilityPack
