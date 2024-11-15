@@ -3,25 +3,20 @@
   "isRoot": true,
   "tools": {
     "paket": {
-      "version": "8.0.3",
-      "commands": [
-        "paket"
-      ],
+      "version": "9.0.0",
+      "commands": ["paket"],
       "rollForward": false
     },
     "csharpier": {
       "version": "0.29.2",
-      "commands": [
-        "dotnet-csharpier"
-      ],
-      "rollForward": false
+      "commands": ["dotnet-csharpier"],
+      "rollForward": true
     },
     "husky": {
       "version": "0.7.1",
-      "commands": [
-        "husky"
-      ],
+      "commands": ["husky"],
       "rollForward": false
     }
   }
 }
+
