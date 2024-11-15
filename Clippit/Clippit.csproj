@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
 
     <PackageId>Clippit</PackageId>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageIcon>logo.jpeg</PackageIcon>
     <License>MIT</License>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
