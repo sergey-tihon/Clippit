@@ -3,7 +3,7 @@
 ## [2.3.0] - November 15, 2024
 
 - Build with .NET 9.0
-- Pack with `dotnet pack` instead of `packet`
+- Pack with `dotnet pack` instead of `paket`
 
 ## [2.2.2] - November 1, 2024
 
