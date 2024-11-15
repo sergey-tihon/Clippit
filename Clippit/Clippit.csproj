@@ -1,11 +1,18 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <AssemblyName>Clippit</AssemblyName>
-    <RootNamespace>Clippit</RootNamespace>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+    <PackageId>Clippit</PackageId>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageIcon>logo.jpeg</PackageIcon>
+    <License>MIT</License>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageTags>OpenXML;PowerTools;PowerPoint;Word;Excel;HTML</PackageTags>
+    <Description>Fresh PowerTools for OpenXml</Description>
   </PropertyGroup>
-  <Import Project="..\.paket\Paket.Restore.targets" />
+  <ItemGroup>
+    <None Include="..\docs\images\logo.jpeg" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 </Project>
