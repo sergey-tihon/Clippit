@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.3.0] - November 15, 2024
+
+- Build with .NET 9.0
+- Pack with `dotnet pack` instead of `packet`
+
 ## [2.2.2] - November 1, 2024
 
 - feat: DocumentFormat.OpenXml 3.1.0 -> 3.1.1
