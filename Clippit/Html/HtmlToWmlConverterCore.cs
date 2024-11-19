@@ -824,7 +824,7 @@ namespace Clippit.Html
             return node;
         }
 
-        private enum NextExpected
+        internal enum NextExpected
         {
             Paragraph,
             Run,
@@ -2830,7 +2830,7 @@ namespace Clippit.Html
               </a:graphicData>
             </a:graphic>
 #endif
-        private static XElement GetParagraphProperties(
+        internal static XElement GetParagraphProperties(
             XElement blockLevelElement,
             string styleName,
             HtmlToWmlConverterSettings settings
@@ -3048,7 +3048,7 @@ namespace Clippit.Html
             return rPr;
         }
 
-        private static XElement GetRunProperties(XElement element, HtmlToWmlConverterSettings settings)
+        internal static XElement GetRunProperties(XElement element, HtmlToWmlConverterSettings settings)
         {
             var colorProperty = element.GetProp("color");
             var fontFamilyProperty = element.GetProp("font-family");
@@ -3191,7 +3191,7 @@ namespace Clippit.Html
         // todo this is not right - needs to be rationalized for all characters in an entire paragraph.
         // if there is text like <p>abc <em> def </em> ghi</p> then there needs to be just one space between abc and def, and between
         // def and ghi.
-        private static string GetDisplayText(XText node, bool preserveWhiteSpace)
+        internal static string GetDisplayText(XText node, bool preserveWhiteSpace)
         {
             var textTransform = node.Parent.GetProp("text-transform").ToString();
             var isFirst = node.Parent.Name == XhtmlNoNamespace.p && node == node.Parent.FirstNode;
@@ -3884,7 +3884,7 @@ namespace Clippit.Html
             return trPr;
         }
 
-        private static XAttribute GetXmlSpaceAttribute(string value)
+        internal static XAttribute GetXmlSpaceAttribute(string value)
         {
             if (value.StartsWith(" ") || value.EndsWith(" "))
                 return new XAttribute(XNamespace.Xml + "space", "preserve");

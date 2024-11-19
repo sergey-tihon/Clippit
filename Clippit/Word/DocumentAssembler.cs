@@ -844,14 +844,14 @@ namespace Clippit.Word
         private static Dictionary<XName, PASchemaSet> s_paSchemaSets;
 
         /// <summary>
-        /// Gets the next image relationship identifier of given part. The
+        /// Gets the next relationship identifier of given part. The
         /// parts can be either header, footer or main document part. The method
         /// scans for already present relationship identifiers, then increments and
         /// returns the next available value.
         /// </summary>
         /// <param name="part">The part.</param>
         /// <returns>System.String.</returns>
-        private static string GetNextImageRelationshipId(OpenXmlPart part)
+        internal static string GetNextRelationshipId(OpenXmlPart part)
         {
             switch (part)
             {
@@ -1003,7 +1003,7 @@ namespace Clippit.Word
             // assign unique image and paragraph ids. Image id is document property Id  (wp:docPr)
             // and relationship id is rId. Their numbering is different.
             const string imageId = InvalidImageId; // Ids will be replaced with real ones later, after transform is done
-            var relationshipId = GetNextImageRelationshipId(part);
+            var relationshipId = GetNextRelationshipId(part);
 
             var inline = para.Descendants(W.drawing).Descendants(WP.inline).FirstOrDefault();
             if (inline == null)

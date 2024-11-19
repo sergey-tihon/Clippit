@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
+
 using Clippit.Html;
 using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;
+
+using NextExpected = Clippit.Html.HtmlToWmlConverterCore.NextExpected;
 
 namespace Clippit.Word.Assembler
 {
     internal static class HtmlConverter
     {
+        private static readonly HtmlToWmlConverterSettings htmlConverterSettings = HtmlToWmlConverter.GetDefaultSettings();
+
         private static readonly Regex detectEntityRegEx = new Regex("^&(?:#([0-9]+)|#x([0-9a-fA-F]+)|([0-9a-zA-Z]+));");
 
         private static readonly string[] strongElements = { "b", "strong" };
@@ -48,19 +47,15 @@ namespace Clippit.Word.Assembler
             var optionalString = (string)element.Attribute(PA.Optional);
             bool optional = (optionalString != null && optionalString.ToLower() == "true");
 
-            string value;
-            try
-            {
-                string[] values = data.EvaluateXPath(xPath, optional);
-
-                value = EscapeAmpersands(string.Join("\r\n", values));
-            }
-            catch (XPathException e)
-            {
-                return element.CreateContextErrorMessage("XPathException: " + e.Message, templateError);
-            }
-
-            bool bold = false,
+            return data.EvaluateXPath(xPath, optional)
+                .Select(x =>
+                    Transform(XElement.Parse(x),
+                        htmlConverterSettings,
+                        null,
+                        NextExpected.Paragraph,
+                        true));
+            
+            /*bool bold = false,
                 italic = false,
                 underline = false,
                 link = false;
@@ -165,7 +160,7 @@ namespace Clippit.Word.Assembler
                 elementList.RemoveAt(elementList.Count - 1);
             }
 
-            return elementList;
+            return elementList;*/
         }
 
         private static void AppendRun(List<XElement> elementList, XElement newRun)
@@ -292,7 +287,7 @@ namespace Clippit.Word.Assembler
         private static object Transform(
             XNode node,
             HtmlToWmlConverterSettings settings,
-            WordprocessingDocument wDoc,
+            OpenXmlPart part,
             NextExpected nextExpected,
             bool preserveWhiteSpace
         )
@@ -302,7 +297,7 @@ namespace Clippit.Word.Assembler
             {
                 if (element.Name == XhtmlNoNamespace.a)
                 {
-                    var rId = Relationships.GetNewRelationshipId();
+                    var rId = DocumentAssembler.GetNextRelationshipId(part);
                     var href = (string)element.Attribute(NoNamespace.href);
                     if (href != null)
                     {
@@ -313,19 +308,19 @@ namespace Clippit.Word.Assembler
                         }
                         catch (UriFormatException)
                         {
-                            var rPr = GetRunProperties(element, settings);
+                            var rPr = HtmlToWmlConverterCore.GetRunProperties(element, settings);
                             var run = new XElement(W.r, rPr, new XElement(W.t, element.Value));
                             return new[] { run };
                         }
 
                         if (uri != null)
                         {
-                            wDoc.MainDocumentPart.AddHyperlinkRelationship(uri, true, rId);
+                            part.AddHyperlinkRelationship(uri, true, rId);
                             if (element.Element(XhtmlNoNamespace.img) != null)
                             {
                                 var imageTransformed = element
                                     .Nodes()
-                                    .Select(n => Transform(n, settings, wDoc, nextExpected, preserveWhiteSpace))
+                                    .Select(n => Transform(n, settings, part, nextExpected, preserveWhiteSpace))
                                     .OfType<XElement>();
                                 var newImageTransformed = imageTransformed
                                     .Select(i =>
@@ -355,7 +350,7 @@ namespace Clippit.Word.Assembler
                                 return newImageTransformed;
                             }
 
-                            var rPr = GetRunProperties(element, settings);
+                            var rPr = HtmlToWmlConverterCore.GetRunProperties(element, settings);
                             var hyperlink = new XElement(
                                 W.hyperlink,
                                 new XAttribute(R.id, rId),
@@ -368,7 +363,7 @@ namespace Clippit.Word.Assembler
                 }
 
                 if (element.Name == XhtmlNoNamespace.b)
-                    return element.Nodes().Select(n => Transform(n, settings, wDoc, nextExpected, preserveWhiteSpace));
+                    return element.Nodes().Select(n => Transform(n, settings, part, nextExpected, preserveWhiteSpace));
 
                 if (element.Name == XhtmlNoNamespace.div)
                 {
@@ -378,73 +373,70 @@ namespace Clippit.Word.Assembler
                             element
                                 .Descendants()
                                 .Any(d =>
-                                    || d.Name == XhtmlNoNamespace.li
-                                    || d.Name == XhtmlNoNamespace.p
+                                    d.Name == XhtmlNoNamespace.li ||
+                                    d.Name == XhtmlNoNamespace.p
                                 )
                         )
                         {
                             return element
                                 .Nodes()
-                                .Select(n => Transform(n, settings, wDoc, nextExpected, preserveWhiteSpace));
+                                .Select(n => Transform(n, settings, part, nextExpected, preserveWhiteSpace));
                         }
                         else
                         {
-                            return GenerateNextExpected(element, settings, wDoc, null, nextExpected, false);
+                            return GenerateNextExpected(element, settings, part, null, nextExpected, false);
                         }
                     }
                     else
                     {
                         return element
                             .Nodes()
-                            .Select(n => Transform(n, settings, wDoc, nextExpected, preserveWhiteSpace));
+                            .Select(n => Transform(n, settings, part, nextExpected, preserveWhiteSpace));
                     }
                 }
 
                 if (element.Name == XhtmlNoNamespace.em)
                     return element
                         .Nodes()
-                        .Select(n => Transform(n, settings, wDoc, NextExpected.Run, preserveWhiteSpace));
+                        .Select(n => Transform(n, settings, part, NextExpected.Run, preserveWhiteSpace));
 
                 if (element.Name == XhtmlNoNamespace.html)
                     return element
                         .Nodes()
-                        .Select(n => Transform(n, settings, wDoc, NextExpected.Paragraph, preserveWhiteSpace));
+                        .Select(n => Transform(n, settings, part, NextExpected.Paragraph, preserveWhiteSpace));
 
                 if (element.Name == XhtmlNoNamespace.i)
-                    return element.Nodes().Select(n => Transform(n, settings, wDoc, nextExpected, preserveWhiteSpace));
+                    return element.Nodes().Select(n => Transform(n, settings, part, nextExpected, preserveWhiteSpace));
 
                 if (element.Name == XhtmlNoNamespace.li)
                 {
-                    return GenerateNextExpected(element, settings, wDoc, null, NextExpected.Paragraph, false);
+                    return GenerateNextExpected(element, settings, part, null, NextExpected.Paragraph, false);
                 }
 
                 if (element.Name == XhtmlNoNamespace.ol)
                     return element
                         .Nodes()
-                        .Select(n => Transform(n, settings, wDoc, NextExpected.Paragraph, preserveWhiteSpace));
+                        .Select(n => Transform(n, settings, part, NextExpected.Paragraph, preserveWhiteSpace));
 
                 if (element.Name == XhtmlNoNamespace.p)
                 {
-                    return GenerateNextExpected(element, settings, wDoc, null, NextExpected.Paragraph, false);
+                    return GenerateNextExpected(element, settings, part, null, NextExpected.Paragraph, false);
                 }
 
-                if (element.Name == XhtmlNoNamespace.s)
-                    return element.Nodes().Select(n => Transform(n, settings, wDoc, nextExpected, preserveWhiteSpace));
-
                 if (element.Name == XhtmlNoNamespace.strong)
-                    return element.Nodes().Select(n => Transform(n, settings, wDoc, nextExpected, preserveWhiteSpace));
+                    return element.Nodes().Select(n => Transform(n, settings, part, nextExpected, preserveWhiteSpace));
 
                 if (element.Name == XhtmlNoNamespace.sub)
-                    return element.Nodes().Select(n => Transform(n, settings, wDoc, nextExpected, preserveWhiteSpace));
+                    return element.Nodes().Select(n => Transform(n, settings, part, nextExpected, preserveWhiteSpace));
 
                 if (element.Name == XhtmlNoNamespace.sup)
-                    return element.Nodes().Select(n => Transform(n, settings, wDoc, nextExpected, preserveWhiteSpace));
+                    return element.Nodes().Select(n => Transform(n, settings, part, nextExpected, preserveWhiteSpace));
 
                 if (element.Name == XhtmlNoNamespace.u)
-                    return element.Nodes().Select(n => Transform(n, settings, wDoc, nextExpected, preserveWhiteSpace));
+                    return element.Nodes().Select(n => Transform(n, settings, part, nextExpected, preserveWhiteSpace));
 
                 if (element.Name == XhtmlNoNamespace.ul)
-                    return element.Nodes().Select(n => Transform(n, settings, wDoc, nextExpected, preserveWhiteSpace));
+                    return element.Nodes().Select(n => Transform(n, settings, part, nextExpected, preserveWhiteSpace));
 
                 if (element.Name == XhtmlNoNamespace.br)
                     if (nextExpected == NextExpected.Paragraph)
@@ -457,10 +449,71 @@ namespace Clippit.Word.Assembler
                     }
 
                 // if no match up to this point, then just recursively process descendants
-                return element.Nodes().Select(n => Transform(n, settings, wDoc, nextExpected, preserveWhiteSpace));
+                return element.Nodes().Select(n => Transform(n, settings, part, nextExpected, preserveWhiteSpace));
             }
 
             return null;
+        }
+
+        private static object GenerateNextExpected(
+            XNode node,
+            HtmlToWmlConverterSettings settings,
+            OpenXmlPart part,
+            string styleName,
+            NextExpected nextExpected,
+            bool preserveWhiteSpace
+        )
+        {
+            if (nextExpected == NextExpected.Paragraph)
+            {
+                var element = node as XElement;
+                if (element != null)
+                {
+                    return new XElement(
+                        W.p,
+                        HtmlToWmlConverterCore.GetParagraphProperties(element, styleName, settings),
+                        element.Nodes().Select(n => Transform(n, settings, part, NextExpected.Run, preserveWhiteSpace))
+                    );
+                }
+                else
+                {
+                    var xTextNode = node as XText;
+                    if (xTextNode != null)
+                    {
+                        var textNodeString = HtmlToWmlConverterCore.GetDisplayText(xTextNode, preserveWhiteSpace);
+                        var p = new XElement(
+                            W.p,
+                            HtmlToWmlConverterCore.GetParagraphProperties(node.Parent, null, settings),
+                            new XElement(
+                                W.r,
+                                HtmlToWmlConverterCore.GetRunProperties((XElement)node, settings),
+                                new XElement(W.t, HtmlToWmlConverterCore.GetXmlSpaceAttribute(textNodeString), textNodeString)
+                            )
+                        );
+                        return p;
+                    }
+                    return null;
+                }
+            }
+            else
+            {
+                var element = node as XElement;
+                if (element != null)
+                {
+                    return element.Nodes().Select(n => Transform(n, settings, part, nextExpected, preserveWhiteSpace));
+                }
+                else
+                {
+                    var textNodeString = HtmlToWmlConverterCore.GetDisplayText((XText)node, preserveWhiteSpace);
+                    var rPr = HtmlToWmlConverterCore.GetRunProperties((XElement)node, settings);
+                    var r = new XElement(
+                        W.r,
+                        rPr,
+                        new XElement(W.t, HtmlToWmlConverterCore.GetXmlSpaceAttribute(textNodeString), textNodeString)
+                    );
+                    return r;
+                }
+            }
         }
 
 
