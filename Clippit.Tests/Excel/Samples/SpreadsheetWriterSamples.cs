@@ -244,49 +244,11 @@ namespace Clippit.Tests.Excel.Samples
                         ],
                     },
                 ],
-                Options = new WorkbookDfnOptions { InvalidCharterBehavior = InvalidCharterBehavior.Remove },
             };
 
             var fileName = Path.Combine(TempDir, $"{nameof(CanEncodeInvalidXmlCharacters)}.xlsx");
             using var stream = File.Open(fileName, FileMode.OpenOrCreate);
             wb.WriteTo(stream);
-        }
-
-        // write another test but this time throw an exception
-        [Fact]
-        public void CanThrowExceptionOnInvalidXmlCharacters()
-        {
-            var wb = new WorkbookDfn
-            {
-                Worksheets =
-                [
-                    new WorksheetDfn
-                    {
-                        Name = "MyFirstSheet",
-                        Rows =
-                        [
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.String,
-                                        Value = "Invalid character: \uFFFF",
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-                Options = new WorkbookDfnOptions { InvalidCharterBehavior = InvalidCharterBehavior.ThrowException },
-            };
-
-            var fileName = Path.Combine(TempDir, $"{nameof(CanThrowExceptionOnInvalidXmlCharacters)}.xlsx");
-            using var stream = File.Open(fileName, FileMode.OpenOrCreate);
-
-            var exception = Assert.Throws<ArgumentException>(() => wb.WriteTo(stream));
-            Assert.Contains("invalid character", exception.Message, StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }

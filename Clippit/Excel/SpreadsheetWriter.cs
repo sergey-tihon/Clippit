@@ -22,18 +22,6 @@ namespace Clippit.Excel
     public class WorkbookDfn
     {
         public IEnumerable<WorksheetDfn> Worksheets { get; set; } = [];
-        public WorkbookDfnOptions Options { get; set; } = new();
-    }
-
-    public class WorkbookDfnOptions
-    {
-        public InvalidCharterBehavior InvalidCharterBehavior { get; set; } = InvalidCharterBehavior.ThrowException;
-    }
-
-    public enum InvalidCharterBehavior
-    {
-        ThrowException,
-        Remove,
     }
 
     public class WorksheetDfn
@@ -204,17 +192,13 @@ namespace Clippit.Excel
             if (workbook.Worksheets is not null)
             {
                 foreach (var worksheet in workbook.Worksheets)
-                    AddWorksheet(sDoc, worksheet, workbook.Options);
+                    AddWorksheet(sDoc, worksheet);
             }
 
             workbookPart.WorkbookStylesPart.PutXDocument();
         }
 
-        public static void AddWorksheet(
-            SpreadsheetDocument sDoc,
-            WorksheetDfn worksheetData,
-            WorkbookDfnOptions? options = default
-        )
+        public static void AddWorksheet(SpreadsheetDocument sDoc, WorksheetDfn worksheetData)
         {
             var validSheetName = new Regex(@"^[^'*\[\]/\\:?][^*\[\]/\\:?]{0,30}$");
             if (!validSheetName.IsMatch(worksheetData.Name))
@@ -282,24 +266,13 @@ namespace Clippit.Excel
 
                     var numColumnHeadingRows = 0;
                     var numColumns = 0;
-                    var invalidCharterBehavior =
-                        options?.InvalidCharterBehavior ?? InvalidCharterBehavior.ThrowException;
                     if (worksheetData.ColumnHeadings != null)
                     {
                         var row = new RowDfn { Cells = worksheetData.ColumnHeadings };
-                        SerializeRows(
-                            sDoc,
-                            invalidCharterBehavior,
-                            partXmlWriter,
-                            new[] { row },
-                            1,
-                            out numColumns,
-                            out numColumnHeadingRows
-                        );
+                        SerializeRows(sDoc, partXmlWriter, new[] { row }, 1, out numColumns, out numColumnHeadingRows);
                     }
                     SerializeRows(
                         sDoc,
-                        invalidCharterBehavior,
                         partXmlWriter,
                         worksheetData.Rows,
                         numColumnHeadingRows + 1,
@@ -380,7 +353,6 @@ namespace Clippit.Excel
 
         private static void SerializeRows(
             SpreadsheetDocument sDoc,
-            InvalidCharterBehavior invalidCharterBehavior,
             XmlWriter xmlWriter,
             IEnumerable<RowDfn> rows,
             int startingRowNumber,
@@ -397,7 +369,7 @@ namespace Clippit.Excel
 #endif
             foreach (var row in rows)
             {
-                SerializeRow(sDoc, invalidCharterBehavior, xmlWriter, rowNumber, row, out var localNumColumns);
+                SerializeRow(sDoc, xmlWriter, rowNumber, row, out var localNumColumns);
                 maxColumns = Math.Max(maxColumns, localNumColumns);
                 rowNumber++;
                 rowCount++;
@@ -415,7 +387,6 @@ namespace Clippit.Excel
 
         private static void SerializeRow(
             SpreadsheetDocument sDoc,
-            InvalidCharterBehavior invalidCharterBehavior,
             XmlWriter xw,
             int rowCount,
             RowDfn row,
@@ -494,12 +465,11 @@ namespace Clippit.Excel
                                     dts.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz", CultureInfo.InvariantCulture)
                                 );
                                 break;
+                            case bool b:
+                                xw.WriteValue(cell.Value);
+                                break;
                             default:
-                                xw.WriteValue(
-                                    invalidCharterBehavior == InvalidCharterBehavior.Remove
-                                        ? SanitizeXmlString(cell.Value.ToString())
-                                        : cell.Value.ToString()
-                                );
+                                xw.WriteValue(SanitizeXmlString(cell.Value.ToString()));
                                 break;
                         }
                         xw.WriteEndElement();
@@ -732,6 +702,10 @@ namespace Clippit.Excel
                 if (XmlConvert.IsXmlChar(c))
                 {
                     buffer.Append(c);
+                }
+                else
+                {
+                    buffer.AppendFormat(CultureInfo.InvariantCulture, "&#x{0:X};", (int)c);
                 }
             }
 
