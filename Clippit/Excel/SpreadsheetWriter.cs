@@ -3,10 +3,8 @@
 
 #undef DisplayWorkingSet
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -23,7 +21,19 @@ namespace Clippit.Excel
 
     public class WorkbookDfn
     {
-        public IEnumerable<WorksheetDfn> Worksheets { get; set; }
+        public IEnumerable<WorksheetDfn> Worksheets { get; set; } = [];
+        public WorkbookDfnOptions Options { get; set; } = new();
+    }
+
+    public class WorkbookDfnOptions
+    {
+        public InvalidCharterBehavior InvalidCharterBehavior { get; set; } = InvalidCharterBehavior.ThrowException;
+    }
+
+    public enum InvalidCharterBehavior
+    {
+        ThrowException,
+        Remove,
     }
 
     public class WorksheetDfn
@@ -194,13 +204,17 @@ namespace Clippit.Excel
             if (workbook.Worksheets is not null)
             {
                 foreach (var worksheet in workbook.Worksheets)
-                    AddWorksheet(sDoc, worksheet);
+                    AddWorksheet(sDoc, worksheet, workbook.Options);
             }
 
             workbookPart.WorkbookStylesPart.PutXDocument();
         }
 
-        public static void AddWorksheet(SpreadsheetDocument sDoc, WorksheetDfn worksheetData)
+        public static void AddWorksheet(
+            SpreadsheetDocument sDoc,
+            WorksheetDfn worksheetData,
+            WorkbookDfnOptions? options
+        )
         {
             var validSheetName = new Regex(@"^[^'*\[\]/\\:?][^*\[\]/\\:?]{0,30}$");
             if (!validSheetName.IsMatch(worksheetData.Name))
@@ -268,13 +282,24 @@ namespace Clippit.Excel
 
                     var numColumnHeadingRows = 0;
                     var numColumns = 0;
+                    var invalidCharterBehavior =
+                        options?.InvalidCharterBehavior ?? InvalidCharterBehavior.ThrowException;
                     if (worksheetData.ColumnHeadings != null)
                     {
                         var row = new RowDfn { Cells = worksheetData.ColumnHeadings };
-                        SerializeRows(sDoc, partXmlWriter, new[] { row }, 1, out numColumns, out numColumnHeadingRows);
+                        SerializeRows(
+                            sDoc,
+                            invalidCharterBehavior,
+                            partXmlWriter,
+                            new[] { row },
+                            1,
+                            out numColumns,
+                            out numColumnHeadingRows
+                        );
                     }
                     SerializeRows(
                         sDoc,
+                        invalidCharterBehavior,
                         partXmlWriter,
                         worksheetData.Rows,
                         numColumnHeadingRows + 1,
@@ -355,6 +380,7 @@ namespace Clippit.Excel
 
         private static void SerializeRows(
             SpreadsheetDocument sDoc,
+            InvalidCharterBehavior invalidCharterBehavior,
             XmlWriter xmlWriter,
             IEnumerable<RowDfn> rows,
             int startingRowNumber,
@@ -371,7 +397,7 @@ namespace Clippit.Excel
 #endif
             foreach (var row in rows)
             {
-                SerializeRow(sDoc, xmlWriter, rowNumber, row, out var localNumColumns);
+                SerializeRow(sDoc, invalidCharterBehavior, xmlWriter, rowNumber, row, out var localNumColumns);
                 maxColumns = Math.Max(maxColumns, localNumColumns);
                 rowNumber++;
                 rowCount++;
@@ -389,6 +415,7 @@ namespace Clippit.Excel
 
         private static void SerializeRow(
             SpreadsheetDocument sDoc,
+            InvalidCharterBehavior invalidCharterBehavior,
             XmlWriter xw,
             int rowCount,
             RowDfn row,
@@ -458,13 +485,21 @@ namespace Clippit.Excel
                         switch (cell.Value)
                         {
                             case DateTime dt:
-                                xw.WriteValue(dt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff"));
+                                xw.WriteValue(
+                                    dt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff", CultureInfo.InvariantCulture)
+                                );
                                 break;
                             case DateTimeOffset dts:
-                                xw.WriteValue(dts.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz"));
+                                xw.WriteValue(
+                                    dts.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz", CultureInfo.InvariantCulture)
+                                );
                                 break;
                             default:
-                                xw.WriteValue(cell.Value);
+                                xw.WriteValue(
+                                    invalidCharterBehavior == InvalidCharterBehavior.Remove
+                                        ? SanitizeXmlString(cell.Value.ToString())
+                                        : cell.Value.ToString()
+                                );
                                 break;
                         }
                         xw.WriteEndElement();
@@ -681,6 +716,26 @@ namespace Clippit.Excel
             var styleFormatCode = (string)numFmt.Attribute(SSNoNamespace.formatCode);
             var match = styleFormatCode == cell.FormatCode;
             return match;
+        }
+
+        private static string SanitizeXmlString(string? xml)
+        {
+            if (string.IsNullOrEmpty(xml))
+            {
+                return string.Empty;
+            }
+
+            var buffer = new StringBuilder(xml.Length);
+
+            foreach (var c in xml)
+            {
+                if (XmlConvert.IsXmlChar(c))
+                {
+                    buffer.Append(c);
+                }
+            }
+
+            return buffer.ToString();
         }
 
         private static readonly string _EmptyXlsx =
