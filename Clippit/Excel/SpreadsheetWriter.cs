@@ -213,7 +213,7 @@ namespace Clippit.Excel
         public static void AddWorksheet(
             SpreadsheetDocument sDoc,
             WorksheetDfn worksheetData,
-            WorkbookDfnOptions? options
+            WorkbookDfnOptions? options = default
         )
         {
             var validSheetName = new Regex(@"^[^'*\[\]/\\:?][^*\[\]/\\:?]{0,30}$");
