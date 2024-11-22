@@ -1,9 +1,11 @@
 # Changelog
 
-## [2.3.0] - November 15, 2024
+## [2.3.0] - November 23, 2024
 
-- Build with .NET 9.0
-- Pack with `dotnet pack` instead of `paket`
+- hk: build with .NET 9.0
+- hk: DocumentFormat.OpenXml 3.2.0
+- hk: Pack with `dotnet pack` instead of `paket`
+- feat: handle invalid xml characters (#89)
 
 ## [2.2.2] - November 1, 2024
 

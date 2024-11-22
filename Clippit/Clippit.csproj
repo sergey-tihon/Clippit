@@ -7,10 +7,11 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageIcon>logo.jpeg</PackageIcon>
-    <License>MIT</License>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageTags>OpenXML;PowerTools;PowerPoint;Word;Excel;HTML</PackageTags>
     <Description>Fresh PowerTools for OpenXml</Description>
+    <PackageProjectUrl>https://github.com/sergey-tihon/Clippit</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\docs\images\logo.jpeg" Pack="true" PackagePath="\"/>
