@@ -3048,7 +3048,7 @@ namespace Clippit.Html
             {
                 return GetRunProperties(parent, settings);
             }
-            
+
             return new XElement(W.rPr);
         }
 

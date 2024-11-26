@@ -846,8 +846,6 @@ namespace Clippit.Word
 
         private static Dictionary<XName, PASchemaSet> s_paSchemaSets;
 
-        
-
         /// <summary>
         /// Calculates the maximum docPr id. The identifier is
         /// unique throughout the document. This method
@@ -1300,7 +1298,7 @@ namespace Clippit.Word
                     return element.CreateContextErrorMessage($"Content: {ex.Message}", templateError);
                 }
 
-                // get XElements and ensure all but the first element is in a 
+                // get XElements and ensure all but the first element is in a
                 List<XElement> elements = new List<XElement>();
                 for (int i = 0; i < content.Count; i++)
                 {
