@@ -6,13 +6,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using System.Xml.XPath;
+using Clippit.Internal;
 using Clippit.Word.Assembler;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using Path = System.IO.Path;
@@ -843,46 +846,7 @@ namespace Clippit.Word
 
         private static Dictionary<XName, PASchemaSet> s_paSchemaSets;
 
-        /// <summary>
-        /// Gets the next image relationship identifier of given part. The
-        /// parts can be either header, footer or main document part. The method
-        /// scans for already present relationship identifiers, then increments and
-        /// returns the next available value.
-        /// </summary>
-        /// <param name="part">The part.</param>
-        /// <returns>System.String.</returns>
-        private static string GetNextImageRelationshipId(OpenXmlPart part)
-        {
-            switch (part)
-            {
-                case MainDocumentPart mainDocumentPart:
-                {
-                    var imageId = mainDocumentPart
-                        .Parts.Select(p => Regex.Match(p.RelationshipId, @"rId(?<rId>\d+)").Groups["rId"].Value)
-                        .Max(Convert.ToDecimal);
-
-                    return $"rId{++imageId}";
-                }
-                case HeaderPart headerPart:
-                {
-                    var imageId = headerPart
-                        .Parts.Select(p => Regex.Match(p.RelationshipId, @"rId(?<rId>\d+)").Groups["rId"].Value)
-                        .Max(Convert.ToDecimal);
-
-                    return $"rId{++imageId}";
-                }
-                case FooterPart footerPart:
-                {
-                    var imageId = footerPart
-                        .Parts.Select(p => Regex.Match(p.RelationshipId, @"rId(?<rId>\d+)").Groups["rId"].Value)
-                        .Max(Convert.ToDecimal);
-
-                    return $"rId{++imageId}";
-                }
-                default:
-                    return null;
-            }
-        }
+        
 
         /// <summary>
         /// Calculates the maximum docPr id. The identifier is
@@ -1003,7 +967,7 @@ namespace Clippit.Word
             // assign unique image and paragraph ids. Image id is document property Id  (wp:docPr)
             // and relationship id is rId. Their numbering is different.
             const string imageId = InvalidImageId; // Ids will be replaced with real ones later, after transform is done
-            var relationshipId = GetNextImageRelationshipId(part);
+            var relationshipId = Relationships.GetNewRelationshipId();
 
             var inline = para.Descendants(W.drawing).Descendants(WP.inline).FirstOrDefault();
             if (inline == null)
@@ -1306,66 +1270,77 @@ namespace Clippit.Word
                 XElement parentPara = element.Ancestors(W.p).FirstOrDefault(); // is the Content element in a paragraph
                 XElement embeddedPara = element.Descendants(W.p).FirstOrDefault(); // does the Content element contain a paragraph
 
-                // if we have an embedded paragraph then create a new paragraph to add our content to.
-                // As the Content control is replaced then we will lose the paragraph otherwise.
+                // if so create a new paragraph to add our content to
                 if (embeddedPara != null)
                 {
                     // get the current paragraph properties
-                    XElement currentParaProps = embeddedPara.Descendants(W.pPr).FirstOrDefault();
+                    XElement pProps = embeddedPara.Descendants(W.pPr).FirstOrDefault();
 
                     // create a new paragraph to return
                     embeddedPara = new XElement(W.p);
 
                     // add the paragraph properties
-                    if (currentParaProps != null)
+                    if (pProps != null)
                     {
-                        embeddedPara.Add(currentParaProps);
+                        embeddedPara.Add(pProps);
                     }
                 }
 
-                // get the list of created elements, will be a number of runs followed by potentially a number of paragraphs
-                // runs are always returned first
-                XElement pPr = embeddedPara != null ? embeddedPara.Element(W.pPr) : parentPara.Element(W.pPr);
-                object content = element.ProcessContentElement(data, pPr, templateError, ref part);
+                XElement currentPara = embeddedPara ?? parentPara;
+                XElement currentParaProps = currentPara.Descendants(W.pPr).FirstOrDefault();
 
-                // if this is a single XElment then convert to an array
-                if (content is XElement)
+                // get the list of created elements, could be all paragraphs or a run followed by paragraphs
+                IList<object> content;
+                try
                 {
-                    content = new XElement[] { content as XElement };
+                    content = element.ProcessContentElement(data, templateError, ref part).ToList();
+                }
+                catch (Exception ex)
+                {
+                    return element.CreateContextErrorMessage($"Content: {ex.Message}", templateError);
                 }
 
-                if (content is IEnumerable<XElement>)
+                // get XElements and ensure all but the first element is in a 
+                List<XElement> elements = new List<XElement>();
+                for (int i = 0; i < content.Count; i++)
                 {
-                    IEnumerable<XElement> elements = content as IEnumerable<XElement>;
-                    IEnumerable<XElement> paras = elements.Where(x => x.Name == W.p);
-                    IEnumerable<XElement> runs = elements.Where(x => x.Name != W.p);
-
-                    // add any paragraph elements after the current paragraph
-                    for (int i = paras.Count() - 1; i >= 0; i--)
+                    object obj = content[i];
+                    if (obj is XElement)
                     {
-                        if (embeddedPara == null && parentPara != null)
+                        var objEl = obj as XElement;
+                        if (i > 0 && objEl.Name == W.r || objEl.Name == W.hyperlink)
                         {
-                            parentPara.AddAfterSelf(paras.ElementAt(i));
+                            elements.Add(new XElement(W.p, currentParaProps, content[i]));
                         }
                         else
                         {
-                            element.AddAfterSelf(paras.ElementAt(i));
+                            elements.Add(objEl);
                         }
                     }
-
-                    // returns runs in embedded paragraph
-                    if (embeddedPara != null)
-                    {
-                        embeddedPara.Add(runs);
-                        return embeddedPara;
-                    }
-
-                    // or simply return the runs
-                    return runs;
                 }
 
-                // or just return the content
-                return content;
+                // add all but the first element after the current paragraph
+                for (int i = elements.Count - 1; i > 0; i--)
+                {
+                    if (embeddedPara == null && parentPara != null)
+                    {
+                        parentPara.AddAfterSelf(elements[i]);
+                    }
+                    else
+                    {
+                        element.AddAfterSelf(elements[i]);
+                    }
+                }
+
+                // return first element wrapped in the embedded para if we do not have a paragraph
+                if (elements[0].Name != W.p && embeddedPara != null)
+                {
+                    embeddedPara.Add(elements[0]);
+                    return embeddedPara;
+                }
+
+                // or simply return the first element
+                return elements[0];
             }
             if (element.Name == PA.Repeat)
             {
