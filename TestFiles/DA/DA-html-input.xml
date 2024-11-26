@@ -1,6 +1,6 @@
 ﻿<Doc>
 	<!-- Valid XHTML formatting examples -->
-	<OnlyBoldText>&lt;b&gt;Some Bold Text&lt;/b&gt;</OnlyBoldText>
+	<OnlyBoldText>&lt;p&gt;&lt;b&gt;Some Bold Text&lt;/b&gt;&lt;/p&gt;</OnlyBoldText>
 	<OnlyItalicText>&lt;i&gt;Some Italic Text&lt;/i&gt;</OnlyItalicText>
 	<OnlyUnderlineText>&lt;u&gt;Some Underline Text&lt;/u&gt;</OnlyUnderlineText>
 	<OnlyLinkText>&lt;a href="https://www.google.co.uk"&gt;Google&lt;/a&gt;</OnlyLinkText>
@@ -16,6 +16,23 @@
 	<LinkItalicUnderlineText>&lt;u&gt;&lt;i&gt;&lt;a href="https://www.google.co.uk"&gt;Italic Underline Google&lt;/a&gt;&lt;/i&gt;&lt;/u&gt;</LinkItalicUnderlineText>
 	<LinkBoldItalicUnderlineText>&lt;b&gt;&lt;u&gt;&lt;i&gt;&lt;a href="https://www.google.co.uk"&gt;Bold Italic Underline Google&lt;/a&gt;&lt;/i&gt;&lt;/u&gt;&lt;/b&gt;</LinkBoldItalicUnderlineText>
 	<LinkWithNoProtocol>&lt;a href="www.google.co.uk"&gt;Google&lt;/a&gt;</LinkWithNoProtocol>
+	<CData><![CDATA[
+	  <p>This content comes from <b>CDATA</b></p>
+	]]>
+	</CData>
+	<Subscript><![CDATA[
+	  <p>What follows is <sub>Subscript!</sub></p>
+	  <p>What follows is more <sub>Subscript!</sub> followed by a break<br /> and some more text.</p>
+	]]>
+	</Subscript>
+	<Superscript><![CDATA[
+	  <p>What follows is <sup>Superscript!</sup></p>
+	]]>
+	</Superscript>
+	<Strikethrough><![CDATA[
+	  <p>What follows is <s>Struckout!</s></p>
+	]]>
+	</Strikethrough>
 	<!-- Valid HTML Not Supported -->
 	<NotXHTML>This is NOT valid XHTML.&lt;br&gt;But is Valid HTML.</NotXHTML>
 	<!-- Invalid XHTML -->

@@ -3041,11 +3041,15 @@ namespace Clippit.Html
             return new XElement[] { spacing, ind, contextualSpacing };
         }
 
-        private static XElement GetRunProperties(XText textNode, HtmlToWmlConverterSettings settings)
+        internal static XElement GetRunProperties(XText textNode, HtmlToWmlConverterSettings settings)
         {
             var parent = textNode.Parent;
-            var rPr = GetRunProperties(parent, settings);
-            return rPr;
+            if (parent != null)
+            {
+                return GetRunProperties(parent, settings);
+            }
+            
+            return new XElement(W.rPr);
         }
 
         internal static XElement GetRunProperties(XElement element, HtmlToWmlConverterSettings settings)
@@ -3060,15 +3064,15 @@ namespace Clippit.Html
             var letterSpacingProperty = element.GetProp("letter-spacing");
             var directionProp = element.GetProp("direction");
 
-            var colorPropertyString = colorProperty.ToString();
+            var colorPropertyString = colorProperty?.ToString();
             var fontFamilyString = GetUsedFontFromFontFamilyProperty(fontFamilyProperty);
             var fontSizeTPoint = GetUsedSizeFromFontSizeProperty(fontSizeProperty);
-            var textDecorationString = textDecorationProperty.ToString();
-            var fontStyleString = fontStyleProperty.ToString();
-            var fontWeightString = fontWeightProperty.ToString().ToLower();
-            var backgroundColorString = backgroundColorProperty.ToString().ToLower();
-            var letterSpacingString = letterSpacingProperty.ToString().ToLower();
-            var directionString = directionProp.ToString().ToLower();
+            var textDecorationString = textDecorationProperty?.ToString();
+            var fontStyleString = fontStyleProperty?.ToString();
+            var fontWeightString = fontWeightProperty?.ToString().ToLower();
+            var backgroundColorString = backgroundColorProperty?.ToString().ToLower();
+            var letterSpacingString = letterSpacingProperty?.ToString().ToLower();
+            var directionString = directionProp?.ToString().ToLower();
 
             var subAncestor = element.AncestorsAndSelf(XhtmlNoNamespace.sub).Any();
             var supAncestor = element.AncestorsAndSelf(XhtmlNoNamespace.sup).Any();
@@ -3085,7 +3089,7 @@ namespace Clippit.Html
                 dirAttributeString = dirAttribute.Value.ToLower();
 
             XElement shd = null;
-            if (backgroundColorString != "transparent")
+            if (backgroundColorString != null && backgroundColorString != "transparent")
                 shd = new XElement(
                     W.shd,
                     new XAttribute(W.val, "clear"),
@@ -3155,7 +3159,7 @@ namespace Clippit.Html
                 rStyle = new XElement(W.rStyle, new XAttribute(W.val, "Hyperlink"));
 
             XElement spacing = null;
-            if (letterSpacingProperty.IsNotNormal)
+            if (letterSpacingProperty != null && letterSpacingProperty.IsNotNormal)
                 spacing = new XElement(W.spacing, new XAttribute(W.val, (long)(Twip)letterSpacingProperty));
 
             XElement rtl = null;
@@ -3193,7 +3197,7 @@ namespace Clippit.Html
         // def and ghi.
         internal static string GetDisplayText(XText node, bool preserveWhiteSpace)
         {
-            var textTransform = node.Parent.GetProp("text-transform").ToString();
+            var textTransform = node.Parent.GetProp("text-transform")?.ToString();
             var isFirst = node.Parent.Name == XhtmlNoNamespace.p && node == node.Parent.FirstNode;
             var isLast = node.Parent.Name == XhtmlNoNamespace.p && node == node.Parent.LastNode;
 
@@ -4331,7 +4335,7 @@ namespace Clippit.Html
             var color = element.GetProp("background-color");
 
             // todo this really should test against default background color
-            if (color.ToString() != "transparent")
+            if (color != null && color.ToString() != "transparent")
             {
                 var hexString = color.ToString();
                 var shd = new XElement(
