@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.4.0] - December 8, 2024
+
+- feat: Added support for HTML fragments in Document Assembler Content tag (#86)
+
 ## [2.3.0] - November 23, 2024
 
 - hk: build with .NET 9.0
