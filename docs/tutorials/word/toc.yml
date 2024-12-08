@@ -8,3 +8,5 @@
   items:
   - name: Images Support
     href: DocumentAssembler_ImagesSupport.md
+  - name: Inline HTML Support
+    href: DocumentAssembler_InlineHtmlSupport.md
