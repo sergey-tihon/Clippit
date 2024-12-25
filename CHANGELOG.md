@@ -1,8 +1,19 @@
 # Changelog
 
-## [3.0.0-beta01] - November 10, 2024
+## [3.0.0-beta01] - January 10, 2025
 
 - Public exposure of `IFluentPresentationBuilder` ergonomic API for the code behind `PresentationBuilder`
+
+## [2.4.0] - December 8, 2024
+
+- feat: Added support for HTML fragments in Document Assembler Content tag (#86)
+
+## [2.3.0] - November 23, 2024
+
+- hk: build with .NET 9.0
+- hk: DocumentFormat.OpenXml 3.2.0
+- hk: Pack with `dotnet pack` instead of `paket`
+- feat: handle invalid xml characters (#89)
 
 ## [2.2.2] - November 1, 2024
 

@@ -3,10 +3,8 @@
 
 #undef DisplayWorkingSet
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -23,7 +21,7 @@ namespace Clippit.Excel
 
     public class WorkbookDfn
     {
-        public IEnumerable<WorksheetDfn> Worksheets { get; set; }
+        public IEnumerable<WorksheetDfn> Worksheets { get; set; } = [];
     }
 
     public class WorksheetDfn
@@ -458,13 +456,20 @@ namespace Clippit.Excel
                         switch (cell.Value)
                         {
                             case DateTime dt:
-                                xw.WriteValue(dt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff"));
+                                xw.WriteValue(
+                                    dt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff", CultureInfo.InvariantCulture)
+                                );
                                 break;
                             case DateTimeOffset dts:
-                                xw.WriteValue(dts.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz"));
+                                xw.WriteValue(
+                                    dts.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz", CultureInfo.InvariantCulture)
+                                );
+                                break;
+                            case bool b:
+                                xw.WriteValue(cell.Value);
                                 break;
                             default:
-                                xw.WriteValue(cell.Value);
+                                xw.WriteValue(SanitizeXmlString(cell.Value.ToString()));
                                 break;
                         }
                         xw.WriteEndElement();
@@ -681,6 +686,30 @@ namespace Clippit.Excel
             var styleFormatCode = (string)numFmt.Attribute(SSNoNamespace.formatCode);
             var match = styleFormatCode == cell.FormatCode;
             return match;
+        }
+
+        private static string SanitizeXmlString(string? xml)
+        {
+            if (string.IsNullOrEmpty(xml))
+            {
+                return string.Empty;
+            }
+
+            var buffer = new StringBuilder(xml.Length);
+
+            foreach (var c in xml)
+            {
+                if (XmlConvert.IsXmlChar(c))
+                {
+                    buffer.Append(c);
+                }
+                else
+                {
+                    buffer.AppendFormat(CultureInfo.InvariantCulture, "&#x{0:X};", (int)c);
+                }
+            }
+
+            return buffer.ToString();
         }
 
         private static readonly string _EmptyXlsx =

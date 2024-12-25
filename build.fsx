@@ -1,6 +1,5 @@
-#r "nuget: Fun.Build, 1.0.5"
+#r "nuget: Fun.Build, 1.1.14"
 #r "nuget: Fake.DotNet.AssemblyInfoFile"
-#r "nuget: Fake.DotNet.Paket"
 
 open Fun.Build
 open Fake.IO
@@ -23,12 +22,10 @@ pipeline "build" {
 
     stage "Check environment" {
         run "dotnet tool restore"
-        run "dotnet paket restore"
+        run "dotnet restore"
     }
 
-    stage "Check Formatting" {
-        run "dotnet csharpier --check ."
-    }
+    stage "Check Formatting" { run "dotnet csharpier --check ." }
 
     stage "Clean" {
         run (fun _ ->
@@ -56,13 +53,8 @@ pipeline "build" {
     stage "RunTests" { run "dotnet test Clippit.Tests/" }
 
     stage "NuGet" {
-        run (fun _ ->
-            Paket.pack (fun p ->
-                { p with
-                    ToolType = ToolType.CreateLocalTool()
-                    OutputPath = "bin"
-                    Version = version.Version
-                    ReleaseNotes = version.ReleaseNotes }))
+        run
+            $"dotnet pack Clippit/Clippit.csproj -o bin/ -p:PackageVersion={version.Version} -p:PackageReleaseNotes=\"{version.ReleaseNotes}\""
     }
 
     runIfOnlySpecified
