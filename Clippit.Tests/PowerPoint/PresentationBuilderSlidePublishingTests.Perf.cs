@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using Clippit.PowerPoint;
 using Clippit.PowerPoint.Fluent;
 using DocumentFormat.OpenXml.Packaging;

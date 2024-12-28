@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
+﻿using System.Drawing;
 using Clippit.Word;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Word.Samples
 {

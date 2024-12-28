@@ -1,12 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Clippit.Internal;
@@ -14,7 +10,6 @@ using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Xunit;
-using Xunit.Abstractions;
 
 /****************************************************************************************************************/
 // Large tests have been commented out below.  If and when there is an effort to improve performance for WmlComparer,

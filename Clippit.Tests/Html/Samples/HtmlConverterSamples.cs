@@ -1,11 +1,8 @@
-﻿using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Xml.Linq;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Html.Samples
 {

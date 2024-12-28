@@ -1,9 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using Clippit.Word;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Word.Samples
 {

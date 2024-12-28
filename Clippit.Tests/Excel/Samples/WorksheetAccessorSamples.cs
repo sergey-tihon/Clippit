@@ -1,7 +1,5 @@
-﻿using System.IO;
-using Clippit.Excel;
+﻿using Clippit.Excel;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Excel.Samples
 {

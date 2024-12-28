@@ -1,6 +1,5 @@
 ﻿using Clippit.Excel;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Excel.Samples
 {

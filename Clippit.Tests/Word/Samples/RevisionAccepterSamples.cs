@@ -1,7 +1,5 @@
-﻿using System.IO;
-using Clippit.Word;
+﻿using Clippit.Word;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Word.Samples
 {
