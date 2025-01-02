@@ -1,0 +1,5 @@
+﻿<Doc>
+	<TestCase>Hyperlink and Underline</TestCase>
+	<EscapedHTML>&lt;u&gt;&lt;a href="https://www.bbc.co.uk"&gt;BBC&lt;/a&gt;&lt;/u&gt;</EscapedHTML>
+	<CDATA><![CDATA[<u><a href="https://www.bbc.co.uk">BBC</a></u>]]></CDATA>
+</Doc>

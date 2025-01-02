@@ -154,9 +154,6 @@ namespace Clippit.Tests.Word
         [InlineData("DA285-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
         [InlineData("DA285A-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
         [InlineData("DA-I0038-TemplateWithMultipleXPathResults.docx", "DA-I0038-Data.xml", false)]
-        [InlineData("DA289A-xhtml-formatting.docx", "DA-html-input.xml", false)]
-        [InlineData("DA289B-html-not-supported.docx", "DA-html-input.xml", true)]
-        [InlineData("DA289C-not-well-formed-xhtml.docx", "DA-html-input.xml", true)]
         public void DA101(string name, string data, bool err)
         {
             var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
@@ -177,6 +174,93 @@ namespace Clippit.Tests.Word
 
             Validate(assembledDocx);
             Assert.Equal(err, returnedTemplateError);
+        }
+
+        [Theory]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-no-inline-styles.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-bold.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-strong.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-italic.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-emphasis.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-underline.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-bold-underline.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-bold-italic.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-italic-underline.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-subscript.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-superscript.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-strikethrough.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-hyperlink.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-hyperlink-bold.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-hyperlink-italic.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-hyperlink-underline.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-hyperlink-no-protocol.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-multi-paragraph.xml", 3, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-invalid.xml", 0, true)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-not-well-formed.xml", 0, true)]
+        public void DA289(string name, string data, int parasInContent, bool err)
+        {
+            var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
+            var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
+
+            var wmlTemplate = new WmlDocument(templateDocx.FullName);
+            var xmlData = XElement.Load(dataFile.FullName);
+
+            var wmlResult = DocumentAssembler.AssembleDocument(
+                wmlTemplate,
+                xmlData,
+                out var returnedTemplateError
+            );
+            var assembledDocx = new FileInfo(
+                Path.Combine(TempDir, data.Replace(".xml", "-processed-by-DocumentAssembler.docx"))
+            );
+            wmlResult.SaveAs(assembledDocx.FullName);
+
+            Validate(assembledDocx);
+            Assert.Equal(err, returnedTemplateError);
+
+            // if we are not expecting an error then verify that we have the same number of paragraphs and that
+            // the paragraph properties from source and target are the same
+            if (!err)
+            {
+                IList<XElement> sourceParas = wmlTemplate.MainDocumentPart.Element(W.body).Descendants(W.p).ToList();
+                IList<XElement> targetParas = wmlResult.MainDocumentPart.Element(W.body).Descendants(W.p).ToList();
+
+                // Check we have the expected number of paragraphs
+                // Expected document structure is:
+                //   Heading paragraph (1 line)
+                //   Empty paragraph (1 line)
+                //   Escaped HTML paragraph (potential multi-line)
+                //   CDATA paragraph (potential multi-line)
+
+                int expectedParas = sourceParas.Count + (2 * parasInContent) - 2;
+                Assert.Equal(expectedParas, targetParas.Count);
+
+                var equalityComparer = new XNodeEqualityComparer();
+                int paraOffset = 0;
+
+                for (var i = 0; i < sourceParas.Count(); i++)
+                {
+                    var parasToCompare = i <= 1 ? 1 : parasInContent;
+                    var sourceProps = sourceParas[i].Element(W.pPr);
+
+                    for (var j = i + paraOffset; j < i + paraOffset + parasToCompare; j++)
+                    {
+                        var targetProps = targetParas[j].Element(W.pPr);
+                        if (sourceProps == null && targetProps == null)
+                        {
+                            continue;
+                        }
+
+                        Assert.True(equalityComparer.Equals(sourceProps, targetProps));
+                    }
+
+                    // update paragraph offset versus source when we have processed multi-line content
+                    if (parasToCompare > 1)
+                    {
+                        paraOffset += parasToCompare - 1;
+                    }
+                }
+            }
         }
 
         [Theory]

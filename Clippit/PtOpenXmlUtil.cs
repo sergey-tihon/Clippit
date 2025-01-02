@@ -5870,7 +5870,7 @@ listSeparator
         public static XName ol = "ol";
         public static XName ul = "ul";
         public static XName li = "li";
-        public static XName strong = "Bold";
+        public static XName strong = "strong";
         public static XName em = "em";
         public static XName tbody = "tbody";
         public static XName valign = "valign";

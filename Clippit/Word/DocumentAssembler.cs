@@ -1300,7 +1300,7 @@ namespace Clippit.Word
                     return element.CreateContextErrorMessage($"Content: {ex.Message}", templateError);
                 }
 
-                // get XElements and ensure all but the first element is in a 
+                // get XElements and ensure all but the first element is in a paragraph
                 List<XElement> elements = new List<XElement>();
                 for (int i = 0; i < content.Count; i++)
                 {
@@ -1310,12 +1310,25 @@ namespace Clippit.Word
                         var objEl = obj as XElement;
                         if (i > 0 && objEl.Name == W.r || objEl.Name == W.hyperlink)
                         {
-                            elements.Add(new XElement(W.p, currentParaProps, content[i]));
+                            objEl = new XElement(W.p, currentParaProps, content[i]);
                         }
-                        else
+                        else if (objEl.Name == W.p)
                         {
-                            elements.Add(objEl);
+                            // get the processed paragraph properties
+                            XElement pProps = objEl.Descendants(W.pPr).FirstOrDefault();
+                            if (pProps != null)
+                            {
+                                pProps.Remove();
+                            }
+
+                            // add the current paragraph properties
+                            if (currentParaProps != null)
+                            {
+                                objEl.AddFirst(currentParaProps);
+                            }
                         }
+
+                        elements.Add(objEl);
                     }
                 }
 
