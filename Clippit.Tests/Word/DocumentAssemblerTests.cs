@@ -205,11 +205,7 @@ namespace Clippit.Tests.Word
             var wmlTemplate = new WmlDocument(templateDocx.FullName);
             var xmlData = XElement.Load(dataFile.FullName);
 
-            var wmlResult = DocumentAssembler.AssembleDocument(
-                wmlTemplate,
-                xmlData,
-                out var returnedTemplateError
-            );
+            var wmlResult = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var returnedTemplateError);
             var assembledDocx = new FileInfo(
                 Path.Combine(TempDir, data.Replace(".xml", "-processed-by-DocumentAssembler.docx"))
             );

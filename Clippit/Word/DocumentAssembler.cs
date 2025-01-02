@@ -846,8 +846,6 @@ namespace Clippit.Word
 
         private static Dictionary<XName, PASchemaSet> s_paSchemaSets;
 
-        
-
         /// <summary>
         /// Calculates the maximum docPr id. The identifier is
         /// unique throughout the document. This method
