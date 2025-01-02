@@ -1299,6 +1299,7 @@ namespace Clippit.Word
                 }
 
                 // get XElements and ensure all but the first element is in a paragraph
+
                 List<XElement> elements = new List<XElement>();
                 for (int i = 0; i < content.Count; i++)
                 {

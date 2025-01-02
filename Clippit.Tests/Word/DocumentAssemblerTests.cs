@@ -154,6 +154,9 @@ namespace Clippit.Tests.Word
         [InlineData("DA285-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
         [InlineData("DA285A-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
         [InlineData("DA-I0038-TemplateWithMultipleXPathResults.docx", "DA-I0038-Data.xml", false)]
+        [InlineData("DA289A-xhtml-formatting.docx", "DA-html-input.xml", false)]
+        [InlineData("DA289B-html-not-supported.docx", "DA-html-input.xml", true)]
+        [InlineData("DA289C-not-well-formed-xhtml.docx", "DA-html-input.xml", true)]
         public void DA101(string name, string data, bool err)
         {
             var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
