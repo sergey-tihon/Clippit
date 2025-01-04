@@ -1,10 +1,7 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
+﻿using System.Globalization;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Common.Samples
 {

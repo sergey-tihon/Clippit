@@ -1,10 +1,6 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Clippit.PowerPoint;
+﻿using Clippit.PowerPoint;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.PowerPoint
 {

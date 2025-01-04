@@ -3,11 +3,8 @@
 
 #define COPY_FILES_FOR_DEBUGGING
 
-using System;
-using System.IO;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 

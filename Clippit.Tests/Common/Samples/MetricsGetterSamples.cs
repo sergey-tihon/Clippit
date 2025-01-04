@@ -1,6 +1,4 @@
-﻿using System.IO;
-using Xunit;
-using Xunit.Abstractions;
+﻿using Xunit;
 
 namespace Clippit.Tests.Common.Samples
 {

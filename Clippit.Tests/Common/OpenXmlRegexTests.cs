@@ -1,14 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
