@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.PowerPoint
@@ -52,7 +51,7 @@ namespace Clippit.PowerPoint
         public static IEnumerable<PmlDocument> PublishSlides(PresentationDocument srcDoc, string fileName)
         {
             var slidesCount = srcDoc.PresentationPart.GetXElement().Descendants(P.sldId).Count();
-            var slideNameRegex = SlideNameRegex();
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
             for (var slideNumber = 0; slideNumber < slidesCount; slideNumber++)
             {
                 using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument();
@@ -71,7 +70,7 @@ namespace Clippit.PowerPoint
                 var slideDoc = streamDoc.GetModifiedPmlDocument();
                 if (!string.IsNullOrWhiteSpace(fileName))
                 {
-                    slideDoc.FileName = slideNameRegex.Replace(fileName, $"_{slideNumber + 1:000}.pptx");
+                    slideDoc.FileName = $"{fileNameWithoutExtension}_{slideNumber + 1:000}.pptx";
                 }
 
                 yield return slideDoc;
@@ -124,8 +123,5 @@ namespace Clippit.PowerPoint
                 sourceNum++;
             }
         }
-
-        [GeneratedRegex(".pptx", RegexOptions.IgnoreCase, "en-US")]
-        private static partial Regex SlideNameRegex();
     }
 }
