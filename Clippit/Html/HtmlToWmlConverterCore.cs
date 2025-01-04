@@ -96,16 +96,11 @@
 // then need to make sure that all of the cells below the caption have the border on the appropriate sides so that it looks as if the table
 // has a border.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Xml.Linq;
 using Clippit.Internal;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using SixLabors.ImageSharp.Formats.Bmp;
-using SixLabors.ImageSharp.PixelFormats;
 using Image = SixLabors.ImageSharp.Image;
 
 namespace Clippit.Html

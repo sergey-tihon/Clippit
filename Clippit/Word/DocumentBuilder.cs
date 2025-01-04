@@ -4,10 +4,6 @@
 #define TestForUnsupportedDocuments
 #define MergeStylesWithSameNames
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Xml.Linq;
 using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;

@@ -1,11 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 #if false
@@ -92,10 +88,10 @@ Following is my new theory of the correct algorithm:
       compute value
       set the computed value
       return the computed value
-  
+
   ComputeValue
     this needs to be specifically coded for each property
-    if value is relative (em, ex, percentage, 
+    if value is relative (em, ex, percentage,
       if property is not on font-size
         GetComputedValue for font-size
         compute value accordingly
@@ -4461,7 +4457,7 @@ word-spacing
 z-index
 
 attributes
-==========			
+==========
 meta
 style
 _class
@@ -4486,7 +4482,7 @@ descr
 type
 
 elements
-========			
+========
 html
 head
 body
