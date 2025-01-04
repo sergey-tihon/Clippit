@@ -1,12 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Remoting;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -15,9 +9,7 @@ using System.Xml.XPath;
 using Clippit.Internal;
 using Clippit.Word.Assembler;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using Path = System.IO.Path;
 
 namespace Clippit.Word
@@ -420,8 +412,16 @@ namespace Clippit.Word
             }
         }
 
-        private static readonly List<string> s_aliasList =
-            new() { "Image", "Content", "Table", "Repeat", "EndRepeat", "Conditional", "EndConditional" };
+        private static readonly List<string> s_aliasList = new()
+        {
+            "Image",
+            "Content",
+            "Table",
+            "Repeat",
+            "EndRepeat",
+            "Conditional",
+            "EndConditional",
+        };
 
         private static object TransformToMetadata(XNode node, TemplateError te)
         {
@@ -1298,7 +1298,8 @@ namespace Clippit.Word
                     return element.CreateContextErrorMessage($"Content: {ex.Message}", templateError);
                 }
 
-                // get XElements and ensure all but the first element is in a
+                // get XElements and ensure all but the first element is in a paragraph
+
                 List<XElement> elements = new List<XElement>();
                 for (int i = 0; i < content.Count; i++)
                 {
@@ -1308,12 +1309,25 @@ namespace Clippit.Word
                         var objEl = obj as XElement;
                         if (i > 0 && objEl.Name == W.r || objEl.Name == W.hyperlink)
                         {
-                            elements.Add(new XElement(W.p, currentParaProps, content[i]));
+                            objEl = new XElement(W.p, currentParaProps, content[i]);
                         }
-                        else
+                        else if (objEl.Name == W.p)
                         {
-                            elements.Add(objEl);
+                            // get the processed paragraph properties
+                            XElement pProps = objEl.Descendants(W.pPr).FirstOrDefault();
+                            if (pProps != null)
+                            {
+                                pProps.Remove();
+                            }
+
+                            // add the current paragraph properties
+                            if (currentParaProps != null)
+                            {
+                                objEl.AddFirst(currentParaProps);
+                            }
                         }
+
+                        elements.Add(objEl);
                     }
                 }
 

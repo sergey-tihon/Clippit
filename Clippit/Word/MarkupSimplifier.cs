@@ -1,10 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using DocumentFormat.OpenXml.Packaging;
@@ -704,17 +701,9 @@ namespace Clippit.Word
             public static readonly XName noNamespaceSchemaLocation = xsi + "noNamespaceSchemaLocation";
         }
 
-        public class InternalException : Exception
-        {
-            public InternalException(string message)
-                : base(message) { }
-        }
+        public class InternalException(string message) : Exception(message);
 
-        public class InvalidSettingsException : Exception
-        {
-            public InvalidSettingsException(string message)
-                : base(message) { }
-        }
+        public class InvalidSettingsException(string message) : Exception(message);
 
         private class SimplifyMarkupParameters
         {

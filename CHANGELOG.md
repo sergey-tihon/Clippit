@@ -4,6 +4,12 @@
 
 - Public exposure of `IFluentPresentationBuilder` ergonomic API for the code behind `PresentationBuilder`
 
+## [2.4.1] - January 4, 2025
+
+- fix: Bug fix/document assembler paragraph properties not copied from template #91
+- fix: slide naming issues during publishing presentation with \*.potx extension
+- hk: Migration to xUnit.v3
+
 ## [2.4.0] - December 8, 2024
 
 - feat: Added support for HTML fragments in Document Assembler Content tag (#86)

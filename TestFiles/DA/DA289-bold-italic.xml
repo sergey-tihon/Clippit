@@ -1,0 +1,5 @@
+﻿<Doc>
+	<TestCase>Bold and Italic</TestCase>
+	<EscapedHTML>&lt;p&gt;This content is escaped &lt;b&gt;&lt;i&gt;HTML&lt;/i&gt;&lt;/b&gt;&lt;/p&gt;</EscapedHTML>
+	<CDATA><![CDATA[<p>This content comes from <b><i>CDATA</i></b></p>]]></CDATA>
+</Doc>

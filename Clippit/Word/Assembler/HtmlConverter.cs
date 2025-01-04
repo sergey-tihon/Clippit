@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Text.RegularExpressions;
-using System.Xml;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using Clippit.Html;
 using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;

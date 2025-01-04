@@ -5,11 +5,8 @@ using Xunit;
 
 namespace Clippit.Tests.Word.Samples
 {
-    public class DocumentBuilderSamples : TestsBase
+    public class DocumentBuilderSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public DocumentBuilderSamples(ITestOutputHelper log)
-            : base(log) { }
-
         private static string GetFilePath(string path) => Path.Combine("../../../Word/Samples/DocumentBuilder/", path);
 
         [Fact]

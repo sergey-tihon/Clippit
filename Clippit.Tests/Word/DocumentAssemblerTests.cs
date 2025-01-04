@@ -11,15 +11,9 @@ using Xunit;
 
 namespace Clippit.Tests.Word
 {
-    public class DocumentAssemblerTests : TestsBase
+    public class DocumentAssemblerTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public DocumentAssemblerTests(ITestOutputHelper log)
-            : base(log)
-        {
-            _sourceDir = new DirectoryInfo("../../../../TestFiles/DA/");
-        }
-
-        private readonly DirectoryInfo _sourceDir;
+        private readonly DirectoryInfo _sourceDir = new("../../../../TestFiles/DA/");
 
         [Theory]
         [InlineData("DA001-TemplateDocument.docx", "DA-Data.xml", false)]
@@ -176,6 +170,89 @@ namespace Clippit.Tests.Word
         }
 
         [Theory]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-no-inline-styles.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-bold.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-strong.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-italic.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-emphasis.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-underline.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-bold-underline.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-bold-italic.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-italic-underline.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-subscript.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-superscript.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-strikethrough.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-hyperlink.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-hyperlink-bold.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-hyperlink-italic.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-hyperlink-underline.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-hyperlink-no-protocol.xml", 1, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-multi-paragraph.xml", 3, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-invalid.xml", 0, true)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-not-well-formed.xml", 0, true)]
+        public void DA289(string name, string data, int parasInContent, bool err)
+        {
+            var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
+            var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
+
+            var wmlTemplate = new WmlDocument(templateDocx.FullName);
+            var xmlData = XElement.Load(dataFile.FullName);
+
+            var wmlResult = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var returnedTemplateError);
+            var assembledDocx = new FileInfo(
+                Path.Combine(TempDir, data.Replace(".xml", "-processed-by-DocumentAssembler.docx"))
+            );
+            wmlResult.SaveAs(assembledDocx.FullName);
+
+            Validate(assembledDocx);
+            Assert.Equal(err, returnedTemplateError);
+
+            // if we are not expecting an error then verify that we have the same number of paragraphs and that
+            // the paragraph properties from source and target are the same
+            if (!err)
+            {
+                IList<XElement> sourceParas = wmlTemplate.MainDocumentPart.Element(W.body).Descendants(W.p).ToList();
+                IList<XElement> targetParas = wmlResult.MainDocumentPart.Element(W.body).Descendants(W.p).ToList();
+
+                // Check we have the expected number of paragraphs
+                // Expected document structure is:
+                //   Heading paragraph (1 line)
+                //   Empty paragraph (1 line)
+                //   Escaped HTML paragraph (potential multi-line)
+                //   CDATA paragraph (potential multi-line)
+
+                int expectedParas = sourceParas.Count + (2 * parasInContent) - 2;
+                Assert.Equal(expectedParas, targetParas.Count);
+
+                var equalityComparer = new XNodeEqualityComparer();
+                int paraOffset = 0;
+
+                for (var i = 0; i < sourceParas.Count(); i++)
+                {
+                    var parasToCompare = i <= 1 ? 1 : parasInContent;
+                    var sourceProps = sourceParas[i].Element(W.pPr);
+
+                    for (var j = i + paraOffset; j < i + paraOffset + parasToCompare; j++)
+                    {
+                        var targetProps = targetParas[j].Element(W.pPr);
+                        if (sourceProps == null && targetProps == null)
+                        {
+                            continue;
+                        }
+
+                        Assert.True(equalityComparer.Equals(sourceProps, targetProps));
+                    }
+
+                    // update paragraph offset versus source when we have processed multi-line content
+                    if (parasToCompare > 1)
+                    {
+                        paraOffset += parasToCompare - 1;
+                    }
+                }
+            }
+        }
+
+        [Theory]
         [InlineData("DA259-MultiLineContents.docx", "DA-Data.xml", false)]
         public void DA259(string name, string data, bool err)
         {
@@ -276,24 +353,23 @@ namespace Clippit.Tests.Word
             Validate(wDoc, s_expectedErrors);
         }
 
-        private static readonly List<string> s_expectedErrors =
-            new()
-            {
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenHBand' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenVBand' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstColumn' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRow' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRowFirstColumn' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRowLastColumn' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastColumn' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRow' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRowFirstColumn' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRowLastColumn' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noHBand' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noVBand' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddHBand' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddVBand' attribute is not declared.",
-            };
+        private static readonly List<string> s_expectedErrors = new()
+        {
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenHBand' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenVBand' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstColumn' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRow' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRowFirstColumn' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRowLastColumn' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastColumn' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRow' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRowFirstColumn' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRowLastColumn' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noHBand' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noVBand' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddHBand' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddVBand' attribute is not declared.",
+        };
     }
 }
 

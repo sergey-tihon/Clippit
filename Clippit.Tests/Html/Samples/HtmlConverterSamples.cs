@@ -19,11 +19,8 @@ namespace Clippit.Tests.Html.Samples
     * in WmlToHtmlConverter is identical to the old HtmlConverter class.
    ***************************************************************************/
 
-    public class HtmlConverterSamples : TestsBase
+    public class HtmlConverterSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public HtmlConverterSamples(ITestOutputHelper log)
-            : base(log) { }
-
         [Theory]
         [InlineData("5DayTourPlanTemplate.docx")]
         [InlineData("Contract.docx")]

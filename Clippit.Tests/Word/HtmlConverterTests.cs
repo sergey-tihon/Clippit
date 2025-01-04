@@ -18,11 +18,8 @@ using Word = Microsoft.Office.Interop.Word;
 
 namespace Clippit.Tests.Word
 {
-    public class HtmlConverterTests : TestsBase
+    public class HtmlConverterTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public HtmlConverterTests(ITestOutputHelper log)
-            : base(log) { }
-
         public static bool s_CopySourceFiles = true;
         public static bool s_CopyFormattingAssembledDocx = true;
         public static bool s_ConvertUsingWord = true;

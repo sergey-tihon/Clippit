@@ -1,9 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
@@ -98,38 +95,37 @@ namespace Clippit.Word
             UpdateSeries(chartPart, chartData);
         }
 
-        private static readonly Dictionary<int, string> FormatCodes =
-            new()
-            {
-                { 0, "general" },
-                { 1, "0" },
-                { 2, "0.00" },
-                { 3, "#,##0" },
-                { 4, "#,##0.00" },
-                { 9, "0%" },
-                { 10, "0.00%" },
-                { 11, "0.00E+00" },
-                { 12, "# ?/?" },
-                { 13, "# ??/??" },
-                { 14, "mm-dd-yy" },
-                { 15, "d-mmm-yy" },
-                { 16, "d-mmm" },
-                { 17, "mmm-yy" },
-                { 18, "h:mm AM/PM" },
-                { 19, "h:mm:ss AM/PM" },
-                { 20, "h:mm" },
-                { 21, "h:mm:ss" },
-                { 22, "m/d/yy h:mm" },
-                { 37, "#,##0 ;(#,##0)" },
-                { 38, "#,##0 ;[Red](#,##0)" },
-                { 39, "#,##0.00;(#,##0.00)" },
-                { 40, "#,##0.00;[Red](#,##0.00)" },
-                { 45, "mm:ss" },
-                { 46, "[h]:mm:ss" },
-                { 47, "mmss.0" },
-                { 48, "##0.0E+0" },
-                { 49, "@" },
-            };
+        private static readonly Dictionary<int, string> FormatCodes = new()
+        {
+            { 0, "general" },
+            { 1, "0" },
+            { 2, "0.00" },
+            { 3, "#,##0" },
+            { 4, "#,##0.00" },
+            { 9, "0%" },
+            { 10, "0.00%" },
+            { 11, "0.00E+00" },
+            { 12, "# ?/?" },
+            { 13, "# ??/??" },
+            { 14, "mm-dd-yy" },
+            { 15, "d-mmm-yy" },
+            { 16, "d-mmm" },
+            { 17, "mmm-yy" },
+            { 18, "h:mm AM/PM" },
+            { 19, "h:mm:ss AM/PM" },
+            { 20, "h:mm" },
+            { 21, "h:mm:ss" },
+            { 22, "m/d/yy h:mm" },
+            { 37, "#,##0 ;(#,##0)" },
+            { 38, "#,##0 ;[Red](#,##0)" },
+            { 39, "#,##0.00;(#,##0.00)" },
+            { 40, "#,##0.00;[Red](#,##0.00)" },
+            { 45, "mm:ss" },
+            { 46, "[h]:mm:ss" },
+            { 47, "mmss.0" },
+            { 48, "##0.0E+0" },
+            { 49, "@" },
+        };
 
         private static void UpdateSeries(ChartPart chartPart, ChartData chartData)
         {

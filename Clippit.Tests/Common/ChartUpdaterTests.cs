@@ -11,11 +11,8 @@ using Xunit;
 
 namespace Clippit.Tests.Common
 {
-    public class ChartUpdaterTests : TestsBase
+    public class ChartUpdaterTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public ChartUpdaterTests(ITestOutputHelper log)
-            : base(log) { }
-
         [Theory]
         [InlineData("CU001-Chart-Cached-Data-01.docx")]
         [InlineData("CU002-Chart-Cached-Data-02.docx")]

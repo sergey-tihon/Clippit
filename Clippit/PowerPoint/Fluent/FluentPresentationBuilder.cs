@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Presentation;
 using PBT = Clippit.PowerPoint.Fluent.PresentationBuilderTools;

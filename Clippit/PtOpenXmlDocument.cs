@@ -46,10 +46,7 @@ Here is creating a new WmlDocument:
     }
 */
 
-using System;
-using System.IO;
 using System.IO.Packaging;
-using System.Linq;
 using System.Xml.Linq;
 using Clippit.Excel;
 using Clippit.PowerPoint;
@@ -58,17 +55,9 @@ using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit
 {
-    public class PowerToolsDocumentException : Exception
-    {
-        public PowerToolsDocumentException(string message)
-            : base(message) { }
-    }
+    public class PowerToolsDocumentException(string message) : Exception(message);
 
-    public class PowerToolsInvalidDataException : Exception
-    {
-        public PowerToolsInvalidDataException(string message)
-            : base(message) { }
-    }
+    public class PowerToolsInvalidDataException(string message) : Exception(message);
 
     public class OpenXmlPowerToolsDocument
     {

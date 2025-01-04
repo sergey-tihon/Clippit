@@ -8,11 +8,7 @@
  * <</History>>
 */
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace Clippit.Excel
@@ -173,11 +169,7 @@ namespace Clippit.Excel
     }
     #endregion Input File Support
     #region Error handling
-    public class PegException : Exception
-    {
-        public PegException()
-            : base("Fatal parsing error ocurred") { }
-    }
+    public class PegException() : Exception("Fatal parsing error ocurred");
 
     public struct PegError
     {
@@ -253,17 +245,9 @@ namespace Clippit.Excel
         public int _posEnd;
     }
 
-    public class PegNode : ICloneable
+    public class PegNode(PegNode parent, int id, PegBegEnd match, PegNode child, PegNode next) : ICloneable
     {
         #region Constructors
-        public PegNode(PegNode parent, int id, PegBegEnd match, PegNode child, PegNode next)
-        {
-            parent_ = parent;
-            id_ = id;
-            child_ = child;
-            next_ = next;
-            match_ = match;
-        }
 
         public PegNode(PegNode parent, int id, PegBegEnd match, PegNode child)
             : this(parent, id, match, child, null) { }
@@ -307,11 +291,11 @@ namespace Clippit.Excel
         }
         #endregion Protected Members
         #region Data Members
-        public int id_;
-        public PegNode parent_,
-            child_,
-            next_;
-        public PegBegEnd match_;
+        public int id_ = id;
+        public PegNode parent_ = parent,
+            child_ = child,
+            next_ = next;
+        public PegBegEnd match_ = match;
         #endregion Data Members
 
         #region ICloneable Members
@@ -357,33 +341,26 @@ namespace Clippit.Excel
         public abstract void PrintDistNext(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel);
     }
 
-    public class TreePrint : PrintNode
+    public class TreePrint(
+        TextWriter treeOut,
+        string src,
+        int nMaxLineLen,
+        TreePrint.GetNodeName getNodeName,
+        bool bVerbose
+    ) : PrintNode
     {
         #region Data Members
         public delegate string GetNodeName(PegNode node);
 
-        private readonly string _src;
-        private readonly TextWriter _treeOut;
-        private readonly int _nMaxLineLen;
-        private readonly bool _bVerbose;
-        private readonly GetNodeName _getNodeName;
         #endregion Data Members
         #region Methods
-        public TreePrint(TextWriter treeOut, string src, int nMaxLineLen, GetNodeName GetNodeName, bool bVerbose)
-        {
-            _treeOut = treeOut;
-            _nMaxLineLen = nMaxLineLen;
-            _bVerbose = bVerbose;
-            _getNodeName = GetNodeName;
-            _src = src;
-        }
 
         public void PrintTree(PegNode parent, int nOffsetLineBeg, int nLevel)
         {
             if (IsLeaf(parent))
             {
                 PrintLeaf(parent, ref nOffsetLineBeg, false);
-                _treeOut.Flush();
+                treeOut.Flush();
                 return;
             }
             var bAlignVertical = DetermineLineLength(parent, nOffsetLineBeg) > LenMaxLine();
@@ -415,7 +392,7 @@ namespace Clippit.Excel
                 }
             }
             PrintNodeEnd(parent, bAlignVertical, ref nOffsetLineBeg, nLevel);
-            _treeOut.Flush();
+            treeOut.Flush();
         }
 
         private int DetermineLineLength(PegNode parent, int nOffsetLineBeg)
@@ -445,17 +422,17 @@ namespace Clippit.Excel
 
         public override int LenMaxLine()
         {
-            return _nMaxLineLen;
+            return nMaxLineLen;
         }
 
         public override void PrintNodeBeg(PegNode p, bool bAlignVertical, ref int nOffsetLineBeg, int nLevel)
         {
             PrintIdAsName(p);
-            _treeOut.Write("<");
+            treeOut.Write("<");
             if (bAlignVertical)
             {
-                _treeOut.WriteLine();
-                _treeOut.Write(new string(' ', nOffsetLineBeg += 2));
+                treeOut.WriteLine();
+                treeOut.Write(new string(' ', nOffsetLineBeg += 2));
             }
             else
             {
@@ -467,10 +444,10 @@ namespace Clippit.Excel
         {
             if (bAlignVertical)
             {
-                _treeOut.WriteLine();
-                _treeOut.Write(new string(' ', nOffsetLineBeg -= 2));
+                treeOut.WriteLine();
+                treeOut.Write(new string(' ', nOffsetLineBeg -= 2));
             }
-            _treeOut.Write('>');
+            treeOut.Write('>');
             if (!bAlignVertical)
             {
                 ++nOffsetLineBeg;
@@ -489,26 +466,26 @@ namespace Clippit.Excel
 
         public override void PrintLeaf(PegNode p, ref int nOffsetLineBeg, bool bAlignVertical)
         {
-            if (_bVerbose)
+            if (bVerbose)
             {
                 PrintIdAsName(p);
-                _treeOut.Write('<');
+                treeOut.Write('<');
             }
             var len = p.match_._posEnd - p.match_._posBeg;
-            _treeOut.Write("'");
+            treeOut.Write("'");
             if (len > 0)
             {
-                _treeOut.Write(_src.Substring(p.match_._posBeg, p.match_._posEnd - p.match_._posBeg));
+                treeOut.Write(src.Substring(p.match_._posBeg, p.match_._posEnd - p.match_._posBeg));
             }
-            _treeOut.Write("'");
-            if (_bVerbose)
-                _treeOut.Write('>');
+            treeOut.Write("'");
+            if (bVerbose)
+                treeOut.Write('>');
         }
 
         public override int LenLeaf(PegNode p)
         {
             var nLen = p.match_._posEnd - p.match_._posBeg + 2;
-            if (_bVerbose)
+            if (bVerbose)
                 nLen += LenIdAsName(p) + 2;
             return nLen;
         }
@@ -522,12 +499,12 @@ namespace Clippit.Excel
         {
             if (bAlignVertical)
             {
-                _treeOut.WriteLine();
-                _treeOut.Write(new string(' ', nOffsetLineBeg));
+                treeOut.WriteLine();
+                treeOut.Write(new string(' ', nOffsetLineBeg));
             }
             else
             {
-                _treeOut.Write(' ');
+                treeOut.Write(' ');
                 ++nOffsetLineBeg;
             }
         }
@@ -537,9 +514,9 @@ namespace Clippit.Excel
             return 1;
         }
 
-        private int LenIdAsName(PegNode p) => _getNodeName(p).Length;
+        private int LenIdAsName(PegNode p) => getNodeName(p).Length;
 
-        private void PrintIdAsName(PegNode p) => _treeOut.Write(_getNodeName(p));
+        private void PrintIdAsName(PegNode p) => treeOut.Write(getNodeName(p));
 
         #endregion Methods
     }
@@ -940,16 +917,10 @@ namespace Clippit.Excel
         #region PEG optimizations
         public sealed class BytesetData
         {
-            public struct Range
+            public struct Range(byte low, byte high)
             {
-                public Range(byte low, byte high)
-                {
-                    this.low = low;
-                    this.high = high;
-                }
-
-                public byte low;
-                public byte high;
+                public byte low = low;
+                public byte high = high;
             }
 
             private readonly System.Collections.BitArray charSet_;
@@ -1748,16 +1719,10 @@ namespace Clippit.Excel
         #region PEG optimizations
         public sealed class OptimizedCharset
         {
-            public struct Range
+            public struct Range(char low, char high)
             {
-                public Range(char low, char high)
-                {
-                    this.low = low;
-                    this.high = high;
-                }
-
-                public char low;
-                public char high;
+                public char low = low;
+                public char high = high;
             }
 
             private readonly System.Collections.BitArray charSet_;
@@ -1813,7 +1778,7 @@ namespace Clippit.Excel
             }
         }
 
-        public sealed class OptimizedLiterals
+        public sealed class OptimizedLiterals(string[] litAlternatives)
         {
             internal class Trie
             {
@@ -1871,12 +1836,7 @@ namespace Clippit.Excel
                 internal Trie[] children_; //contains the successor node of cThis_;
             }
 
-            internal Trie literalsRoot;
-
-            public OptimizedLiterals(string[] litAlternatives)
-            {
-                literalsRoot = new Trie('\u0000', 0, litAlternatives);
-            }
+            internal Trie literalsRoot = new('\u0000', 0, litAlternatives);
         }
         #endregion  PEG optimizations
         #region Constructors

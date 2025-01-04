@@ -1,16 +1,12 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Excel
 {
-    public class Table
+    public class Table(WorksheetPart parent)
     {
         public int Id { get; set; }
         public string TableName { get; set; }
@@ -25,12 +21,7 @@ namespace Clippit.Excel
         public int? TotalsRowCount { get; set; }
         public string TableType { get; set; } // external data query, data in worksheet, or XML data
         public TableDefinitionPart TableDefinitionPart { get; set; }
-        public WorksheetPart Parent { get; set; }
-
-        public Table(WorksheetPart parent)
-        {
-            Parent = parent;
-        }
+        public WorksheetPart Parent { get; set; } = parent;
 
         public IEnumerable<TableColumn> TableColumns()
         {
@@ -75,7 +66,7 @@ namespace Clippit.Excel
         }
     }
 
-    public class TableColumn
+    public class TableColumn(Table parent)
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -84,23 +75,13 @@ namespace Clippit.Excel
         public string UniqueName { get; set; }
         public int ColumnNumber { get; set; }
         public int ColumnIndex { get; set; }
-        public Table Parent { get; set; }
-
-        public TableColumn(Table parent)
-        {
-            Parent = parent;
-        }
+        public Table Parent { get; set; } = parent;
     }
 
-    public class TableRow
+    public class TableRow(Table parent)
     {
         public Row Row { get; set; }
-        public Table Parent { get; set; }
-
-        public TableRow(Table parent)
-        {
-            Parent = parent;
-        }
+        public Table Parent { get; set; } = parent;
 
         public TableCell this[string columnName]
         {
@@ -128,14 +109,9 @@ namespace Clippit.Excel
         }
     }
 
-    public class TableCell : IEquatable<TableCell>
+    public class TableCell(string v) : IEquatable<TableCell>
     {
-        public string Value { get; set; }
-
-        public TableCell(string v)
-        {
-            Value = v;
-        }
+        public string Value { get; set; } = v;
 
         public override string ToString()
         {
@@ -305,7 +281,7 @@ namespace Clippit.Excel
         }
     }
 
-    public class Row
+    public class Row(WorksheetPart parent)
     {
         public XElement RowElement { get; set; }
         public string RowId { get; set; }
@@ -352,15 +328,10 @@ namespace Clippit.Excel
             return ra;
         }
 
-        public WorksheetPart Parent { get; set; }
-
-        public Row(WorksheetPart parent)
-        {
-            Parent = parent;
-        }
+        public WorksheetPart Parent { get; set; } = parent;
     }
 
-    public class Cell
+    public class Cell(Row parent)
     {
         public XElement CellElement { get; set; }
         public string Row { get; set; }
@@ -372,12 +343,7 @@ namespace Clippit.Excel
         public string Formula { get; set; }
         public int? Style { get; set; }
         public string SharedString { get; set; }
-        public Row Parent { get; set; }
-
-        public Cell(Row parent)
-        {
-            Parent = parent;
-        }
+        public Row Parent { get; set; } = parent;
     }
 
     public static class XlsxTables

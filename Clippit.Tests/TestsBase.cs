@@ -12,7 +12,7 @@ namespace Clippit.Tests
     /// <summary>
     /// Base class for unit tests providing utility methods.
     /// </summary>
-    public class TestsBase
+    public class TestsBase(ITestOutputHelper log)
     {
         protected static void CreateEmptyWordprocessingDocument(Stream stream)
         {
@@ -21,24 +21,17 @@ namespace Clippit.Tests
             part.Document = new Document(new Body());
         }
 
-        public TestsBase(ITestOutputHelper log)
+        protected readonly ITestOutputHelper Log = log;
+        private readonly OpenXmlValidator _validator = new();
+
+        private static readonly Lazy<string> s_tempDir = new(() =>
         {
-            this.Log = log;
-            this._validator = new OpenXmlValidator();
-        }
-
-        protected readonly ITestOutputHelper Log;
-        private readonly OpenXmlValidator _validator;
-
-        private static readonly Lazy<string> s_tempDir =
-            new(() =>
-            {
-                var dir = new DirectoryInfo("./../../../../temp");
-                if (dir.Exists)
-                    dir.Delete(true);
-                dir.Create();
-                return dir.FullName;
-            });
+            var dir = new DirectoryInfo("./../../../../temp");
+            if (dir.Exists)
+                dir.Delete(true);
+            dir.Create();
+            return dir.FullName;
+        });
 
         protected static string TempDir => s_tempDir.Value;
 

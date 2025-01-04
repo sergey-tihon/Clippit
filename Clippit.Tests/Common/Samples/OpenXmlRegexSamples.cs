@@ -5,11 +5,8 @@ using Xunit;
 
 namespace Clippit.Tests.Common.Samples
 {
-    public class OpenXmlRegexSamples : TestsBase
+    public class OpenXmlRegexSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public OpenXmlRegexSamples(ITestOutputHelper log)
-            : base(log) { }
-
         private static string GetFilePath(string path) => Path.Combine("../../../Common/Samples/OpenXmlRegex/", path);
 
         [Fact]

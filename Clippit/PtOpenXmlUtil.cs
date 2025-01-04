@@ -1,12 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.IO.Compression;
 using System.IO.Packaging;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -5870,7 +5866,7 @@ listSeparator
         public static XName ol = "ol";
         public static XName ul = "ul";
         public static XName li = "li";
-        public static XName strong = "Bold";
+        public static XName strong = "strong";
         public static XName em = "em";
         public static XName tbody = "tbody";
         public static XName valign = "valign";
@@ -5885,27 +5881,13 @@ listSeparator
         public static XName pre = "pre";
     }
 
-    public class InvalidOpenXmlDocumentException : Exception
-    {
-        public InvalidOpenXmlDocumentException(string message)
-            : base(message) { }
-    }
+    public class InvalidOpenXmlDocumentException(string message) : Exception(message);
 
-    public class OpenXmlPowerToolsException : Exception
-    {
-        public OpenXmlPowerToolsException(string message)
-            : base(message) { }
-    }
+    public class OpenXmlPowerToolsException(string message) : Exception(message);
 
-    public class ColumnReferenceOutOfRange : Exception
-    {
-        public ColumnReferenceOutOfRange(string columnReference)
-            : base($"Column reference ({columnReference}) is out of range.") { }
-    }
+    public class ColumnReferenceOutOfRange(string columnReference)
+        : Exception($"Column reference ({columnReference}) is out of range.");
 
-    public class WorksheetAlreadyExistsException : Exception
-    {
-        public WorksheetAlreadyExistsException(string sheetName)
-            : base($"The worksheet ({sheetName}) already exists.") { }
-    }
+    public class WorksheetAlreadyExistsException(string sheetName)
+        : Exception($"The worksheet ({sheetName}) already exists.");
 }

@@ -5,11 +5,8 @@ using Xunit;
 
 namespace Clippit.Tests.Common.Samples
 {
-    public class ChartUpdaterSamples : TestsBase
+    public class ChartUpdaterSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public ChartUpdaterSamples(ITestOutputHelper log)
-            : base(log) { }
-
         private static string GetFilePath(string path) => Path.Combine("../../../Common/Samples/ChartUpdater/", path);
 
         [Theory]

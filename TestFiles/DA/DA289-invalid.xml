@@ -1,0 +1,6 @@
+﻿<Doc>
+    <TestCase>Invalid XHTML</TestCase>
+	<EscapedHTML>This is NOT valid XHTML.&lt;br&gt;But is Valid HTML.</EscapedHTML>
+	<!-- Invalid XHTML -->
+	<CDATA><![CDATA[This is NOT valid XHTML.<br>But is Valid HTML.]]></CDATA>
+</Doc>

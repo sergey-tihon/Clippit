@@ -64,20 +64,19 @@ internal abstract class SlidePartData<T> : IComparable<SlidePartData<T>>
         }
     }
 
-    private static readonly Dictionary<XName, string[]> s_resizableAttributes =
-        new()
-        {
-            { A.off, ["x", "y"] }, // <a:off x="2054132" y="1665577"/>
-            { A.ext, ["cx", "cy"] }, // <a:ext cx="2289267" cy="3074329"/>
-            { A.chOff, ["x", "y"] }, // <a:chOff x="698501" y="1640632"/>
-            { A.chExt, ["cx", "cy"] }, // <a:chExt cx="906462" cy="270006"/>
-            { A.rPr, ["sz"] }, // <a:rPr lang="en-US" sz="700" b="1">
-            { A.defRPr, ["sz"] }, // <a:defRPr sz="1350" kern="1200">
-            { A.pPr, ["defTabSz"] }, // <a:pPr defTabSz="457119">
-            { A.endParaRPr, ["sz"] }, // <a:endParaRPr lang="en-US" sz="2400" kern="0">
-            { A.gridCol, ["w"] }, // <a:gridCol w="347223">
-            { A.tr, ["h"] }, // <a:tr h="229849">
-        };
+    private static readonly Dictionary<XName, string[]> s_resizableAttributes = new()
+    {
+        { A.off, ["x", "y"] }, // <a:off x="2054132" y="1665577"/>
+        { A.ext, ["cx", "cy"] }, // <a:ext cx="2289267" cy="3074329"/>
+        { A.chOff, ["x", "y"] }, // <a:chOff x="698501" y="1640632"/>
+        { A.chExt, ["cx", "cy"] }, // <a:chExt cx="906462" cy="270006"/>
+        { A.rPr, ["sz"] }, // <a:rPr lang="en-US" sz="700" b="1">
+        { A.defRPr, ["sz"] }, // <a:defRPr sz="1350" kern="1200">
+        { A.pPr, ["defTabSz"] }, // <a:pPr defTabSz="457119">
+        { A.endParaRPr, ["sz"] }, // <a:endParaRPr lang="en-US" sz="2400" kern="0">
+        { A.gridCol, ["w"] }, // <a:gridCol w="347223">
+        { A.tr, ["h"] }, // <a:tr h="229849">
+    };
 
     public static void ScaleShapes(XDocument openXmlPart, double scale)
     {

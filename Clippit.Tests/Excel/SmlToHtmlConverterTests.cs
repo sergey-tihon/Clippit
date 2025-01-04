@@ -9,11 +9,8 @@ using Xunit;
 
 namespace Clippit.Tests.Excel
 {
-    public class SmlToHtmlConverterTests : TestsBase
+    public class SmlToHtmlConverterTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public SmlToHtmlConverterTests(ITestOutputHelper log)
-            : base(log) { }
-
         // PowerShell oneliner that generates InlineData for all files in a directory
         // dir | % { '[InlineData("' + $_.Name + '")]' } | clip
 

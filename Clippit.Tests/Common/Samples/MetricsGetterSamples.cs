@@ -2,11 +2,8 @@
 
 namespace Clippit.Tests.Common.Samples
 {
-    public class MetricsGetterSamples : TestsBase
+    public class MetricsGetterSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public MetricsGetterSamples(ITestOutputHelper log)
-            : base(log) { }
-
         private static string GetFilePath(string path) => Path.Combine("../../../Common/Samples/MetricsGetter/", path);
 
         [Theory]

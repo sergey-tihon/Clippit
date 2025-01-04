@@ -1,11 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 #if false
@@ -92,10 +88,10 @@ Following is my new theory of the correct algorithm:
       compute value
       set the computed value
       return the computed value
-  
+
   ComputeValue
     this needs to be specifically coded for each property
-    if value is relative (em, ex, percentage, 
+    if value is relative (em, ex, percentage,
       if property is not on font-size
         GetComputedValue for font-size
         compute value accordingly
@@ -115,1452 +111,1427 @@ namespace Clippit.Html
 {
     internal class CssApplier
     {
-        private static readonly List<PropertyInfo> PropertyInfoList =
-            new()
+        private static readonly List<PropertyInfo> PropertyInfoList = new()
+        {
+            // color
+            // Value:          <color> | inherit
+            // Initial:        depends on UA
+            // Applies to:     all elements
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
             {
-                // color
-                // Value:          <color> | inherit
-                // Initial:        depends on UA
-                // Applies to:     all elements
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
-                {
-                    Names = new[] { "color" },
-                    Inherits = true,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "black", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = (element, assignedValue, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = GetWmlColorFromExpression(assignedValue), Type = CssTermType.String },
-                            },
-                        },
-                },
-                // direction
-                // Value:          ltr | rtl | inherit
-                // Initial:        ltr
-                // Applies to:     all elements
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
-                {
-                    Names = new[] { "direction" },
-                    Inherits = true,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "ltr", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = null,
-                },
-                // line-height
-                // Value:          normal | <number> | <length> | <percentage> | <inherit>
-                // Initial:        normal
-                // Applies to:     all elements
-                // Inherited:      yes
-                // Percentages:    refer to the font size of the element itself
-                // Computed value: for <length> and <percentage> the absolute value, otherwise as specified.
-                new PropertyInfo
-                {
-                    Names = new[] { "line-height" },
-                    Inherits = true,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "normal", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = (element, assignedValue, settings) =>
+                Names = new[] { "color" },
+                Inherits = true,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
                     {
-                        CssExpression valueForPercentage = null;
-                        if (element.Parent != null)
-                            valueForPercentage = GetComputedPropertyValue(null, element, "font-size", settings);
-                        return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
-                    },
-                },
-                // visibility
-                // Value:          visible | hidden | collapse | inherit
-                // Initial:        visible
-                // Applies to:     all elements
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
-                {
-                    Names = new[] { "visibility" },
-                    Inherits = true,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
+                        Terms = new List<CssTerm>
                         {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "visible", Type = CssTermType.String },
-                            },
+                            new() { Value = "black", Type = CssTermType.String },
                         },
-                    ComputedValue = null,
-                },
-                // list-style-type
-                // Value:          disc | circle | square | decimal | decimal-leading-zero |
-                //                 lower-roman | upper-roman | lower-greek | lower-latin |
-                //                 upper-latin | armenian | georgian | lower-alpha | upper-alpha |
-                //                 none | inherit
-                // Initial:        disc
-                // Applies to:     elements with display: list-item
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
-                {
-                    Names = new[] { "list-style-type" },
-                    Inherits = true,
-                    Includes = (e, settings) =>
+                    },
+                ComputedValue = (element, assignedValue, settings) =>
+                    new CssExpression
                     {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        if (display.ToString() == "list-item")
-                            return true;
-                        return false;
-                    },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
+                        Terms = new List<CssTerm>
                         {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "disc", Type = CssTermType.String },
-                            },
+                            new() { Value = GetWmlColorFromExpression(assignedValue), Type = CssTermType.String },
                         },
-                    ComputedValue = null,
-                },
-                // list-style-image
-                // Value:          <uri> | none | inherit
-                // Initial:        none
-                // Applies to:     elements with ’display: list-item’
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: absolute URI or ’none’
-                new PropertyInfo
-                {
-                    Names = new[] { "list-style-image" },
-                    Inherits = true,
-                    Includes = (e, settings) =>
+                    },
+            },
+            // direction
+            // Value:          ltr | rtl | inherit
+            // Initial:        ltr
+            // Applies to:     all elements
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "direction" },
+                Inherits = true,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
                     {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        if (display.ToString() == "list-item")
-                            return true;
-                        return false;
-                    },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
+                        Terms = new List<CssTerm>
                         {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "none", Type = CssTermType.String },
-                            },
+                            new() { Value = "ltr", Type = CssTermType.String },
                         },
-                    ComputedValue = null,
-                },
-                // list-style-position
-                // Value:          inside | outside | inherit
-                // Initial:        outside
-                // Applies to:     elements with ’display: list-item’
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
-                {
-                    Names = new[] { "list-style-position" },
-                    Inherits = true,
-                    Includes = (e, settings) =>
+                    },
+                ComputedValue = null,
+            },
+            // line-height
+            // Value:          normal | <number> | <length> | <percentage> | <inherit>
+            // Initial:        normal
+            // Applies to:     all elements
+            // Inherited:      yes
+            // Percentages:    refer to the font size of the element itself
+            // Computed value: for <length> and <percentage> the absolute value, otherwise as specified.
+            new PropertyInfo
+            {
+                Names = new[] { "line-height" },
+                Inherits = true,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
                     {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        if (display.ToString() == "list-item")
-                            return true;
-                        return false;
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "normal", Type = CssTermType.String },
+                        },
                     },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "none", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = null,
-                },
-                // font-family
-                // Value:          [[ <family-name> | <generic-family> ] [, <family-name>|
-                //                 <generic-family>]* ] | inherit
-                // Initial:        depends on user agent
-                // Applies to:     all elements
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
+                ComputedValue = (element, assignedValue, settings) =>
                 {
-                    Names = new[] { "font-family" },
-                    Inherits = true,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = settings.MinorLatinFont, Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = (element, assignedValue, settings) => assignedValue,
+                    CssExpression valueForPercentage = null;
+                    if (element.Parent != null)
+                        valueForPercentage = GetComputedPropertyValue(null, element, "font-size", settings);
+                    return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
                 },
-                // font-style
-                // Value:          normal | italic | oblique | inherit
-                // Initial:        normal
-                // Applies to:     all elements
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
-                {
-                    Names = new[] { "font-style" },
-                    Inherits = true,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "normal", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = null,
-                },
-                // font-variant
-                // Value:          normal | small-caps | inherit
-                // Initial:        normal
-                // Applies to:     all elements
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
-                {
-                    Names = new[] { "font-variant" },
-                    Inherits = true,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "normal", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = null,
-                },
-                // font-weight
-                // Value:          normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 |
-                //                 600 | 700 | 800 | 900 | inherit
-                // Initial:        normal
-                // Applies to:     all elements
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: see text
-                new PropertyInfo
-                {
-                    Names = new[] { "font-weight" },
-                    Inherits = true,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "normal", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = null,
-                },
-                // font-size
-                // Value:          <absolute-size> | <relative-size> | <length> | <percentage> |
-                //                 inherit
-                // Initial:        medium
-                // Applies to:     all elements
-                // Inherited:      yes
-                // Percentages:    refer to inherited font size
-                // Computed value: absolute length
-                new PropertyInfo
-                {
-                    Names = new[] { "font-size" },
-                    Inherits = true,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new()
-                                {
-                                    Value = settings.DefaultFontSize.ToString(CultureInfo.InvariantCulture),
-                                    Type = CssTermType.String,
-                                    Unit = CssUnit.PT,
-                                },
-                            },
-                        },
-                    ComputedValue = (element, assignedValue, settings) =>
-                        ComputeAbsoluteFontSize(element, assignedValue, settings),
-                },
-                // text-indent
-                // Value:          <length> | <percentage> | inherit
-                // Initial:        0
-                // Applies to:     block containers
-                // Inherited:      yes
-                // Percentages:    refer to width of containing block
-                // Computed value: the percentage as specified or the absolute length
-                new PropertyInfo
-                {
-                    Names = new[] { "text-indent" },
-                    Inherits = true,
-                    Includes = (e, settings) =>
+            },
+            // visibility
+            // Value:          visible | hidden | collapse | inherit
+            // Initial:        visible
+            // Applies to:     all elements
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "visibility" },
+                Inherits = true,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
                     {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        if (display.ToString() == "block")
-                            return true;
-                        return false;
-                    },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
+                        Terms = new List<CssTerm>
                         {
-                            Terms = new List<CssTerm>
+                            new() { Value = "visible", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // list-style-type
+            // Value:          disc | circle | square | decimal | decimal-leading-zero |
+            //                 lower-roman | upper-roman | lower-greek | lower-latin |
+            //                 upper-latin | armenian | georgian | lower-alpha | upper-alpha |
+            //                 none | inherit
+            // Initial:        disc
+            // Applies to:     elements with display: list-item
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "list-style-type" },
+                Inherits = true,
+                Includes = (e, settings) =>
+                {
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    if (display.ToString() == "list-item")
+                        return true;
+                    return false;
+                },
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "disc", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // list-style-image
+            // Value:          <uri> | none | inherit
+            // Initial:        none
+            // Applies to:     elements with ’display: list-item’
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: absolute URI or ’none’
+            new PropertyInfo
+            {
+                Names = new[] { "list-style-image" },
+                Inherits = true,
+                Includes = (e, settings) =>
+                {
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    if (display.ToString() == "list-item")
+                        return true;
+                    return false;
+                },
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "none", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // list-style-position
+            // Value:          inside | outside | inherit
+            // Initial:        outside
+            // Applies to:     elements with ’display: list-item’
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "list-style-position" },
+                Inherits = true,
+                Includes = (e, settings) =>
+                {
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    if (display.ToString() == "list-item")
+                        return true;
+                    return false;
+                },
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "none", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // font-family
+            // Value:          [[ <family-name> | <generic-family> ] [, <family-name>|
+            //                 <generic-family>]* ] | inherit
+            // Initial:        depends on user agent
+            // Applies to:     all elements
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "font-family" },
+                Inherits = true,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = settings.MinorLatinFont, Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = (element, assignedValue, settings) => assignedValue,
+            },
+            // font-style
+            // Value:          normal | italic | oblique | inherit
+            // Initial:        normal
+            // Applies to:     all elements
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "font-style" },
+                Inherits = true,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "normal", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // font-variant
+            // Value:          normal | small-caps | inherit
+            // Initial:        normal
+            // Applies to:     all elements
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "font-variant" },
+                Inherits = true,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "normal", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // font-weight
+            // Value:          normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 |
+            //                 600 | 700 | 800 | 900 | inherit
+            // Initial:        normal
+            // Applies to:     all elements
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: see text
+            new PropertyInfo
+            {
+                Names = new[] { "font-weight" },
+                Inherits = true,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "normal", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // font-size
+            // Value:          <absolute-size> | <relative-size> | <length> | <percentage> |
+            //                 inherit
+            // Initial:        medium
+            // Applies to:     all elements
+            // Inherited:      yes
+            // Percentages:    refer to inherited font size
+            // Computed value: absolute length
+            new PropertyInfo
+            {
+                Names = new[] { "font-size" },
+                Inherits = true,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new()
                             {
-                                new()
-                                {
-                                    Value = "0",
-                                    Type = CssTermType.Number,
-                                    Unit = CssUnit.PT,
-                                },
+                                Value = settings.DefaultFontSize.ToString(CultureInfo.InvariantCulture),
+                                Type = CssTermType.String,
+                                Unit = CssUnit.PT,
                             },
                         },
-                    ComputedValue = (element, assignedValue, settings) =>
-                    {
-                        CssExpression valueForPercentage = null;
-                        if (element.Parent != null)
-                            valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
-                        return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
                     },
-                },
-                // text-align
-                // Value:          left | right | center | justify | inherit
-                // Initial:        a nameless value that acts as ’left’ if ’direction’ is ’ltr’, ’right’ if
-                //                 ’direction’ is ’rtl’
-                // Applies to:     block containers
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: the initial value or as spec
-                new PropertyInfo
+                ComputedValue = (element, assignedValue, settings) =>
+                    ComputeAbsoluteFontSize(element, assignedValue, settings),
+            },
+            // text-indent
+            // Value:          <length> | <percentage> | inherit
+            // Initial:        0
+            // Applies to:     block containers
+            // Inherited:      yes
+            // Percentages:    refer to width of containing block
+            // Computed value: the percentage as specified or the absolute length
+            new PropertyInfo
+            {
+                Names = new[] { "text-indent" },
+                Inherits = true,
+                Includes = (e, settings) =>
                 {
-                    Names = new[] { "text-align" },
-                    Inherits = true,
-                    Includes = (e, settings) =>
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    if (display.ToString() == "block")
+                        return true;
+                    return false;
+                },
+                InitialValue = (element, settings) =>
+                    new CssExpression
                     {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        if (display.ToString() == "block")
-                            return true;
-                        return false;
-                    },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
+                        Terms = new List<CssTerm>
                         {
-                            Terms = new List<CssTerm>
+                            new()
                             {
-                                new() { Value = "left", Type = CssTermType.String },
-                            },
-                        }, // todo should be based on the direction property
-                    ComputedValue = null,
-                },
-                // text-decoration
-                // Value:          none | [ underline || overline || line-through || blink ] | inherit
-                // Initial:        none
-                // Applies to:     all elements
-                // Inherited:      no
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
-                {
-                    Names = new[] { "text-decoration" },
-                    Inherits = true, // todo need to read css 16.3.1 in full detail to understand how this is implemented.
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "none", Type = CssTermType.String },
+                                Value = "0",
+                                Type = CssTermType.Number,
+                                Unit = CssUnit.PT,
                             },
                         },
-                    ComputedValue = null,
+                    },
+                ComputedValue = (element, assignedValue, settings) =>
+                {
+                    CssExpression valueForPercentage = null;
+                    if (element.Parent != null)
+                        valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
+                    return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
                 },
-                // letter-spacing
-                // Value:          normal | <length> | inherit
-                // Initial:        normal
-                // Applies to:     all elements
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: ’normal’ or absolute length
+            },
+            // text-align
+            // Value:          left | right | center | justify | inherit
+            // Initial:        a nameless value that acts as ’left’ if ’direction’ is ’ltr’, ’right’ if
+            //                 ’direction’ is ’rtl’
+            // Applies to:     block containers
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: the initial value or as spec
+            new PropertyInfo
+            {
+                Names = new[] { "text-align" },
+                Inherits = true,
+                Includes = (e, settings) =>
+                {
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    if (display.ToString() == "block")
+                        return true;
+                    return false;
+                },
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "left", Type = CssTermType.String },
+                        },
+                    }, // todo should be based on the direction property
+                ComputedValue = null,
+            },
+            // text-decoration
+            // Value:          none | [ underline || overline || line-through || blink ] | inherit
+            // Initial:        none
+            // Applies to:     all elements
+            // Inherited:      no
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "text-decoration" },
+                Inherits = true, // todo need to read css 16.3.1 in full detail to understand how this is implemented.
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "none", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // letter-spacing
+            // Value:          normal | <length> | inherit
+            // Initial:        normal
+            // Applies to:     all elements
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: ’normal’ or absolute length
 
-                // word-spacing
-                // Value:          normal | <length> | inherit
-                // Initial:        normal
-                // Applies to:     all elements
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: for ’normal’ the value 0; otherwise the absolute length
-                new PropertyInfo
-                {
-                    Names = new[] { "letter-spacing", "word-spacing" },
-                    Inherits = true,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "normal", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = (element, assignedValue, settings) =>
-                        ComputeAbsoluteLength(element, assignedValue, settings, null),
-                },
-                // white-space
-                // Value:          normal | pre | nowrap | pre-wrap | pre-line | inherit
-                // Initial:        normal
-                // Applies to:     all elements
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
-                {
-                    Names = new[] { "white-space" },
-                    Inherits = true,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "normal", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = null,
-                },
-                // caption-side
-                // Value:          top | bottom | inherit
-                // Initial:        top
-                // Applies to:     'table-caption' elements
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
-                {
-                    Names = new[] { "caption-side" },
-                    Inherits = true,
-                    Includes = (e, settings) =>
+            // word-spacing
+            // Value:          normal | <length> | inherit
+            // Initial:        normal
+            // Applies to:     all elements
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: for ’normal’ the value 0; otherwise the absolute length
+            new PropertyInfo
+            {
+                Names = new[] { "letter-spacing", "word-spacing" },
+                Inherits = true,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
                     {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        if (display.ToString() == "table-caption")
-                            return true;
-                        return false;
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "normal", Type = CssTermType.String },
+                        },
                     },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
+                ComputedValue = (element, assignedValue, settings) =>
+                    ComputeAbsoluteLength(element, assignedValue, settings, null),
+            },
+            // white-space
+            // Value:          normal | pre | nowrap | pre-wrap | pre-line | inherit
+            // Initial:        normal
+            // Applies to:     all elements
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "white-space" },
+                Inherits = true,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
                         {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "top", Type = CssTermType.String },
-                            },
+                            new() { Value = "normal", Type = CssTermType.String },
                         },
-                    ComputedValue = null,
-                },
-                // border-collapse
-                // Value:          collapse | separate | inherit
-                // Initial:        separate
-                // Applies to:     ’table’ and ’inline-table’ elements
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
-                {
-                    Names = new[] { "border-collapse" },
-                    Inherits = true,
-                    Includes = (e, settings) =>
-                    {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        if (display.ToString() == "table" || display.ToString() == "inline-table")
-                            return true;
-                        return false;
                     },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "separate", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = null,
-                },
-                // border-spacing
-                // Value:          <length> <length>? | inherit
-                // Initial:        0
-                // Applies to:     ’table’ and ’inline-table’ elements
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: two absolute lengths
-                new PropertyInfo
+                ComputedValue = null,
+            },
+            // caption-side
+            // Value:          top | bottom | inherit
+            // Initial:        top
+            // Applies to:     'table-caption' elements
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "caption-side" },
+                Inherits = true,
+                Includes = (e, settings) =>
                 {
-                    Names = new[] { "border-spacing" },
-                    Inherits = true,
-                    Includes = (e, settings) =>
-                    {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        if (display.ToString() == "table" || display.ToString() == "inline-table")
-                            return true;
-                        return false;
-                    },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new()
-                                {
-                                    Value = "0",
-                                    Type = CssTermType.Number,
-                                    Unit = CssUnit.PT,
-                                },
-                            },
-                        },
-                    ComputedValue = (element, assignedValue, settings) =>
-                        ComputeAbsoluteLength(element, assignedValue, settings, null), // todo need to handle two lengths here
-                },
-                // empty-cells
-                // Value:          show | hide | inherit
-                // Initial:        show
-                // Applies to:     'table-cell' elements
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
-                {
-                    Names = new[] { "empty-cells" },
-                    Inherits = true,
-                    Includes = (e, settings) =>
-                    {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        if (display.ToString() == "table" || display.ToString() == "table-cell")
-                            return true;
-                        return false;
-                    },
-                    InitialValue = (element, settings) =>
-                        new CssExpression { Terms = new List<CssTerm> { new() { Value = "show" } } },
-                    ComputedValue = null,
-                },
-                // margin-top, margin-bottom
-                // Value:          <margin-width> | inherit
-                // Initial:        0
-                // Applies to:     all elements except elements with table display types other than table-caption, table, and inline-table
-                //                 all elements except th, td, tr
-                // Inherited:      no
-                // Percentages:    refer to width of containing block
-                // Computed value: the percentage as specified or the absolute length
-                new PropertyInfo
-                {
-                    Names = new[] { "margin-top", "margin-bottom" },
-                    Inherits = false,
-                    Includes = (e, settings) =>
-                    {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        if (
-                            display.ToString() == "table-caption"
-                            || display.ToString() == "table"
-                            || display.ToString() == "inline-table"
-                        )
-                            return false;
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    if (display.ToString() == "table-caption")
                         return true;
-                    },
-                    InitialValue = (element, settings) =>
-                    {
-                        if (settings.DefaultBlockContentMargin != null)
-                        {
-                            if (settings.DefaultBlockContentMargin == "auto")
-                                return new CssExpression
-                                {
-                                    Terms = new List<CssTerm>
-                                    {
-                                        new() { Value = "auto", Type = CssTermType.String },
-                                    },
-                                };
-                            else if (settings.DefaultBlockContentMargin.ToLower().EndsWith("pt"))
-                            {
-                                var s1 = settings.DefaultBlockContentMargin.Substring(
-                                    0,
-                                    settings.DefaultBlockContentMargin.Length - 2
-                                );
-                                if (double.TryParse(s1, NumberStyles.Float, CultureInfo.InvariantCulture, out var d1))
-                                {
-                                    return new CssExpression
-                                    {
-                                        Terms = new List<CssTerm>
-                                        {
-                                            new()
-                                            {
-                                                Value = d1.ToString(CultureInfo.InvariantCulture),
-                                                Type = CssTermType.Number,
-                                                Unit = CssUnit.PT,
-                                            },
-                                        },
-                                    };
-                                }
-                            }
-                            throw new OpenXmlPowerToolsException("invalid setting");
-                        }
-                        return new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new()
-                                {
-                                    Value = "0",
-                                    Type = CssTermType.Number,
-                                    Unit = CssUnit.PT,
-                                },
-                            },
-                        };
-                    },
-                    ComputedValue = (element, assignedValue, settings) =>
-                    {
-                        CssExpression valueForPercentage = null;
-                        if (element.Parent != null)
-                            valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
-                        return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
-                    },
+                    return false;
                 },
-                // margin-right, margin-left
-                // Value:          <margin-width> | inherit
-                // Initial:        0
-                // Applies to:     all elements except elements with table display types other than table-caption, table, and inline-table
-                //                 all elements except th, td, tr
-                // Inherited:      no
-                // Percentages:    refer to width of containing block
-                // Computed value: the percentage as specified or the absolute length
-                new PropertyInfo
-                {
-                    Names = new[] { "margin-right", "margin-left" },
-                    Inherits = false,
-                    Includes = (e, settings) =>
+                InitialValue = (element, settings) =>
+                    new CssExpression
                     {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        if (
-                            display.ToString() == "table-caption"
-                            || display.ToString() == "table"
-                            || display.ToString() == "inline-table"
-                        )
-                            return false;
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "top", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // border-collapse
+            // Value:          collapse | separate | inherit
+            // Initial:        separate
+            // Applies to:     ’table’ and ’inline-table’ elements
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "border-collapse" },
+                Inherits = true,
+                Includes = (e, settings) =>
+                {
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    if (display.ToString() == "table" || display.ToString() == "inline-table")
                         return true;
-                    },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new()
-                                {
-                                    Value = "0",
-                                    Type = CssTermType.Number,
-                                    Unit = CssUnit.PT,
-                                },
-                            },
-                        },
-                    ComputedValue = (element, assignedValue, settings) =>
-                    {
-                        CssExpression valueForPercentage = null;
-                        if (element.Parent != null)
-                            valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
-                        return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
-                    },
+                    return false;
                 },
-                // padding-top, padding-right, padding-bottom, padding-left
-                // Value:          <padding-width> | inherit
-                // Initial:        0
-                // Applies to:     all elements except table-row-group, table-header-group,
-                //                 table-footer-group, table-row, table-column-group and table-column
-                //                 all elements except tr
-                // Inherited:      no
-                // Percentages:    refer to width of containing block
-                // Computed value: the percentage as specified or the absolute length
-                new PropertyInfo
-                {
-                    Names = new[] { "padding-top", "padding-right", "padding-bottom", "padding-left" },
-                    Inherits = false,
-                    Includes = (e, settings) =>
+                InitialValue = (element, settings) =>
+                    new CssExpression
                     {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        var dv = display.ToString();
-                        if (
-                            dv
-                            is "table-row-group"
-                                or "table-header-group"
-                                or "table-footer-group"
-                                or "table-row"
-                                or "table-column-group"
-                                or "table-column"
-                        )
-                            return false;
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "separate", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // border-spacing
+            // Value:          <length> <length>? | inherit
+            // Initial:        0
+            // Applies to:     ’table’ and ’inline-table’ elements
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: two absolute lengths
+            new PropertyInfo
+            {
+                Names = new[] { "border-spacing" },
+                Inherits = true,
+                Includes = (e, settings) =>
+                {
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    if (display.ToString() == "table" || display.ToString() == "inline-table")
                         return true;
-                    },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new()
-                                {
-                                    Value = "0",
-                                    Type = CssTermType.Number,
-                                    Unit = CssUnit.PT,
-                                },
-                            },
-                        },
-                    ComputedValue = (element, assignedValue, settings) =>
+                    return false;
+                },
+                InitialValue = (element, settings) =>
+                    new CssExpression
                     {
-                        CssExpression valueForPercentage = null;
-                        if (element.Parent != null)
-                            valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
-                        return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
+                        Terms = new List<CssTerm>
+                        {
+                            new()
+                            {
+                                Value = "0",
+                                Type = CssTermType.Number,
+                                Unit = CssUnit.PT,
+                            },
+                        },
                     },
-                },
-                // border-top-width, border-right-width, border-bottom-width, border-left-width
-                // Value:          <border-width> | inherit
-                // Initial:        medium
-                // Applies to:     all elements
-                // Inherited:      no
-                // Percentages:    N/A
-                // Computed value: absolute length; '0' if the border style is 'none' or 'hidden'
-                new PropertyInfo
+                ComputedValue = (element, assignedValue, settings) =>
+                    ComputeAbsoluteLength(element, assignedValue, settings, null), // todo need to handle two lengths here
+            },
+            // empty-cells
+            // Value:          show | hide | inherit
+            // Initial:        show
+            // Applies to:     'table-cell' elements
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "empty-cells" },
+                Inherits = true,
+                Includes = (e, settings) =>
                 {
-                    Names = new[]
-                    {
-                        "border-top-width",
-                        "border-right-width",
-                        "border-bottom-width",
-                        "border-left-width",
-                    },
-                    Inherits = false,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new()
-                                {
-                                    Value = "0",
-                                    Type = CssTermType.Number,
-                                    Unit = CssUnit.PT,
-                                },
-                            },
-                        },
-                    ComputedValue = (element, assignedValue, settings) =>
-                    {
-                        var assignedValueStr = assignedValue.ToString();
-                        return assignedValueStr switch
-                        {
-                            "thin" => new CssExpression
-                            {
-                                Terms = new List<CssTerm>
-                                {
-                                    new()
-                                    {
-                                        Value = "0.75",
-                                        Type = CssTermType.Number,
-                                        Unit = CssUnit.PT,
-                                    },
-                                },
-                            },
-                            "medium" => new CssExpression
-                            {
-                                Terms = new List<CssTerm>
-                                {
-                                    new()
-                                    {
-                                        Value = "3.0",
-                                        Type = CssTermType.Number,
-                                        Unit = CssUnit.PT,
-                                    },
-                                },
-                            },
-                            "thick" => new CssExpression
-                            {
-                                Terms = new List<CssTerm>
-                                {
-                                    new()
-                                    {
-                                        Value = "4.5",
-                                        Type = CssTermType.Number,
-                                        Unit = CssUnit.PT,
-                                    },
-                                },
-                            },
-                            _ => ComputeAbsoluteLength(element, assignedValue, settings, null),
-                        };
-                    },
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    if (display.ToString() == "table" || display.ToString() == "table-cell")
+                        return true;
+                    return false;
                 },
-                // border-top-style, border-right-style, border-bottom-style, border-left-style
-                // Value:          <border-style> | inherit
-                // Initial:        none
-                // Applies to:     all elements
-                // Inherited:      no
-                // Percentages:    N/A
-                // Computed value: as specified
-                new PropertyInfo
+                InitialValue = (element, settings) =>
+                    new CssExpression { Terms = new List<CssTerm> { new() { Value = "show" } } },
+                ComputedValue = null,
+            },
+            // margin-top, margin-bottom
+            // Value:          <margin-width> | inherit
+            // Initial:        0
+            // Applies to:     all elements except elements with table display types other than table-caption, table, and inline-table
+            //                 all elements except th, td, tr
+            // Inherited:      no
+            // Percentages:    refer to width of containing block
+            // Computed value: the percentage as specified or the absolute length
+            new PropertyInfo
+            {
+                Names = new[] { "margin-top", "margin-bottom" },
+                Inherits = false,
+                Includes = (e, settings) =>
                 {
-                    Names = new[]
-                    {
-                        "border-top-style",
-                        "border-right-style",
-                        "border-bottom-style",
-                        "border-left-style",
-                    },
-                    Inherits = false,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "none", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = null,
-                },
-                // display
-                // Value:          inline | block | list-item | inline-block | table | inline-table |
-                //                 table-row-group | table-header-group | table-footer-group |
-                //                 table-row | table-column-group | table-column | table-cell |
-                //                 table-caption | none | inherit
-                // Initial:        inline
-                // Applies to:     all elements
-                // Inherited:      no
-                // Percentages:    N/A
-                // Computed value: see text
-                new PropertyInfo
-                {
-                    Names = new[] { "display" },
-                    Inherits = false,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "inline", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = null,
-                },
-                // position
-                // Value:          static | relative | absolute | fixed | inherit
-                // Initial:        static
-                // Applies to:     all elements
-                // Inherited:      no
-                // Percentages:    N/A
-                // Computed value: as specified
-                new PropertyInfo
-                {
-                    Names = new[] { "position" },
-                    Inherits = false,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "static", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = null,
-                },
-                // float
-                // Value:          left | right | none | inherit
-                // Initial:        none
-                // Applies to:     all, but see 9.7 p. 153
-                // Inherited:      no
-                // Percentages:    N/A
-                // Computed value: as specified
-                new PropertyInfo
-                {
-                    Names = new[] { "float" },
-                    Inherits = false,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "none", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = null,
-                },
-                // unicode-bidi
-                // Value:          normal | embed | bidi-override | inherit
-                // Initial:        normal
-                // Applies to:     all elements, but see prose
-                // Inherited:      no
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
-                {
-                    Names = new[] { "unicode-bidi" },
-                    Inherits = false,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "normal", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = null,
-                },
-                // background-color
-                // Value:          <color> | transparent | inherit
-                // Initial:        transparent
-                // Applies to:     all elements
-                // Inherited:      no
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
-                {
-                    Names = new[] { "background-color" },
-                    Inherits = false,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "transparent", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = (element, assignedValue, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = GetWmlColorFromExpression(assignedValue), Type = CssTermType.String },
-                            },
-                        },
-                },
-                // text-transform
-                // Value:          capitalize | uppercase | lowercase | none | inherit
-                // Initial:        none
-                // Applies to:     all elements
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
-                {
-                    Names = new[] { "text-transform" },
-                    Inherits = true,
-                    Includes = (e, settings) => true,
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "none", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = null,
-                },
-                // table-layout
-                // Value:          auto | fixed | inherit
-                // Initial:        auto
-                // Applies to:     ’table’ and ’inline-table’ elements
-                // Inherited:      no
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
-                {
-                    Names = new[] { "table-layout" },
-                    Inherits = true,
-                    Includes = (e, settings) =>
-                    {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        if (display.ToString() == "table" || display.ToString() == "inline-table")
-                            return true;
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    if (
+                        display.ToString() == "table-caption"
+                        || display.ToString() == "table"
+                        || display.ToString() == "inline-table"
+                    )
                         return false;
-                    },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "auto", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = null,
+                    return true;
                 },
-                // empty-cells
-                // Value:          show | hide | inherit
-                // Initial:        show
-                // Applies to:     'table-cell' elements
-                // Inherited:      yes
-                // Percentages:    N/A
-                // Computed value: as spec
-                new PropertyInfo
+                InitialValue = (element, settings) =>
                 {
-                    Names = new[] { "border-spacing" },
-                    Inherits = true,
-                    Includes = (e, settings) =>
+                    if (settings.DefaultBlockContentMargin != null)
                     {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        if (display.ToString() == "table-cell")
-                            return true;
-                        return false;
-                    },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "show", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = null,
-                },
-                // border-top-color, border-right-color, border-bottom-color, border-left-color
-                // Value:          <color> | transparent | inherit
-                // Initial:        the value of the color property
-                // Applies to:     all elements
-                // Inherited:      no
-                // Percentages:    N/A
-                // Computed value: when taken from the ’color’ property, the computed value of
-                //                 ’color’; otherwise, as specified
-                new PropertyInfo
-                {
-                    Names = new[]
-                    {
-                        "border-top-color",
-                        "border-right-color",
-                        "border-bottom-color",
-                        "border-left-color",
-                    },
-                    Inherits = false,
-                    Includes = (e, settings) => true,
-                    InitialValue = (e, settings) =>
-                    {
-                        var display = GetComputedPropertyValue(null, e, "color", settings);
-                        return display;
-                    },
-                    ComputedValue = (element, assignedValue, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = GetWmlColorFromExpression(assignedValue), Type = CssTermType.String },
-                            },
-                        },
-                },
-                // width
-                // Value:          <length> | <percentage> | auto | inherit
-                // Initial:        auto
-                // Applies to:     all elements but non-replaced in-line elements, table rows, and row groups
-                // Inherited:      no
-                // Percentages:    refer to width of containing block
-                // Computed value: the percentage or 'auto' as specified or the absolute length
-                new PropertyInfo
-                {
-                    Names = new[] { "width" },
-                    Inherits = false,
-                    Includes = (e, settings) =>
-                    {
-                        if (e.Name == XhtmlNoNamespace.img)
-                            return true;
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        var dv = display.ToString();
-                        if (dv is "inline" or "table-row" or "table-row-group")
-                            return false;
-                        return true;
-                    },
-                    InitialValue = (element, settings) =>
-                    {
-                        if (element.Parent == null)
-                        {
-                            var pageWidth = (double?)settings.SectPr.Elements(W.pgSz).Attributes(W._w).FirstOrDefault();
-                            if (pageWidth == null)
-                                pageWidth = 12240;
-                            var leftMargin = (double?)
-                                settings.SectPr.Elements(W.pgMar).Attributes(W.left).FirstOrDefault();
-                            if (leftMargin == null)
-                                leftMargin = 1440;
-                            var rightMargin = (double?)
-                                settings.SectPr.Elements(W.pgMar).Attributes(W.left).FirstOrDefault();
-                            if (rightMargin == null)
-                                rightMargin = 1440;
-                            var width = (double)(pageWidth - leftMargin - rightMargin) / 20;
+                        if (settings.DefaultBlockContentMargin == "auto")
                             return new CssExpression
                             {
                                 Terms = new List<CssTerm>
                                 {
-                                    new()
-                                    {
-                                        Value = width.ToString(CultureInfo.InvariantCulture),
-                                        Type = CssTermType.String,
-                                        Unit = CssUnit.PT,
-                                    },
+                                    new() { Value = "auto", Type = CssTermType.String },
                                 },
                             };
+                        else if (settings.DefaultBlockContentMargin.ToLower().EndsWith("pt"))
+                        {
+                            var s1 = settings.DefaultBlockContentMargin.Substring(
+                                0,
+                                settings.DefaultBlockContentMargin.Length - 2
+                            );
+                            if (double.TryParse(s1, NumberStyles.Float, CultureInfo.InvariantCulture, out var d1))
+                            {
+                                return new CssExpression
+                                {
+                                    Terms = new List<CssTerm>
+                                    {
+                                        new()
+                                        {
+                                            Value = d1.ToString(CultureInfo.InvariantCulture),
+                                            Type = CssTermType.Number,
+                                            Unit = CssUnit.PT,
+                                        },
+                                    },
+                                };
+                            }
                         }
+                        throw new OpenXmlPowerToolsException("invalid setting");
+                    }
+                    return new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new()
+                            {
+                                Value = "0",
+                                Type = CssTermType.Number,
+                                Unit = CssUnit.PT,
+                            },
+                        },
+                    };
+                },
+                ComputedValue = (element, assignedValue, settings) =>
+                {
+                    CssExpression valueForPercentage = null;
+                    if (element.Parent != null)
+                        valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
+                    return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
+                },
+            },
+            // margin-right, margin-left
+            // Value:          <margin-width> | inherit
+            // Initial:        0
+            // Applies to:     all elements except elements with table display types other than table-caption, table, and inline-table
+            //                 all elements except th, td, tr
+            // Inherited:      no
+            // Percentages:    refer to width of containing block
+            // Computed value: the percentage as specified or the absolute length
+            new PropertyInfo
+            {
+                Names = new[] { "margin-right", "margin-left" },
+                Inherits = false,
+                Includes = (e, settings) =>
+                {
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    if (
+                        display.ToString() == "table-caption"
+                        || display.ToString() == "table"
+                        || display.ToString() == "inline-table"
+                    )
+                        return false;
+                    return true;
+                },
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new()
+                            {
+                                Value = "0",
+                                Type = CssTermType.Number,
+                                Unit = CssUnit.PT,
+                            },
+                        },
+                    },
+                ComputedValue = (element, assignedValue, settings) =>
+                {
+                    CssExpression valueForPercentage = null;
+                    if (element.Parent != null)
+                        valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
+                    return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
+                },
+            },
+            // padding-top, padding-right, padding-bottom, padding-left
+            // Value:          <padding-width> | inherit
+            // Initial:        0
+            // Applies to:     all elements except table-row-group, table-header-group,
+            //                 table-footer-group, table-row, table-column-group and table-column
+            //                 all elements except tr
+            // Inherited:      no
+            // Percentages:    refer to width of containing block
+            // Computed value: the percentage as specified or the absolute length
+            new PropertyInfo
+            {
+                Names = new[] { "padding-top", "padding-right", "padding-bottom", "padding-left" },
+                Inherits = false,
+                Includes = (e, settings) =>
+                {
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    var dv = display.ToString();
+                    if (
+                        dv
+                        is "table-row-group"
+                            or "table-header-group"
+                            or "table-footer-group"
+                            or "table-row"
+                            or "table-column-group"
+                            or "table-column"
+                    )
+                        return false;
+                    return true;
+                },
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new()
+                            {
+                                Value = "0",
+                                Type = CssTermType.Number,
+                                Unit = CssUnit.PT,
+                            },
+                        },
+                    },
+                ComputedValue = (element, assignedValue, settings) =>
+                {
+                    CssExpression valueForPercentage = null;
+                    if (element.Parent != null)
+                        valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
+                    return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
+                },
+            },
+            // border-top-width, border-right-width, border-bottom-width, border-left-width
+            // Value:          <border-width> | inherit
+            // Initial:        medium
+            // Applies to:     all elements
+            // Inherited:      no
+            // Percentages:    N/A
+            // Computed value: absolute length; '0' if the border style is 'none' or 'hidden'
+            new PropertyInfo
+            {
+                Names = new[] { "border-top-width", "border-right-width", "border-bottom-width", "border-left-width" },
+                Inherits = false,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new()
+                            {
+                                Value = "0",
+                                Type = CssTermType.Number,
+                                Unit = CssUnit.PT,
+                            },
+                        },
+                    },
+                ComputedValue = (element, assignedValue, settings) =>
+                {
+                    var assignedValueStr = assignedValue.ToString();
+                    return assignedValueStr switch
+                    {
+                        "thin" => new CssExpression
+                        {
+                            Terms = new List<CssTerm>
+                            {
+                                new()
+                                {
+                                    Value = "0.75",
+                                    Type = CssTermType.Number,
+                                    Unit = CssUnit.PT,
+                                },
+                            },
+                        },
+                        "medium" => new CssExpression
+                        {
+                            Terms = new List<CssTerm>
+                            {
+                                new()
+                                {
+                                    Value = "3.0",
+                                    Type = CssTermType.Number,
+                                    Unit = CssUnit.PT,
+                                },
+                            },
+                        },
+                        "thick" => new CssExpression
+                        {
+                            Terms = new List<CssTerm>
+                            {
+                                new()
+                                {
+                                    Value = "4.5",
+                                    Type = CssTermType.Number,
+                                    Unit = CssUnit.PT,
+                                },
+                            },
+                        },
+                        _ => ComputeAbsoluteLength(element, assignedValue, settings, null),
+                    };
+                },
+            },
+            // border-top-style, border-right-style, border-bottom-style, border-left-style
+            // Value:          <border-style> | inherit
+            // Initial:        none
+            // Applies to:     all elements
+            // Inherited:      no
+            // Percentages:    N/A
+            // Computed value: as specified
+            new PropertyInfo
+            {
+                Names = new[] { "border-top-style", "border-right-style", "border-bottom-style", "border-left-style" },
+                Inherits = false,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "none", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // display
+            // Value:          inline | block | list-item | inline-block | table | inline-table |
+            //                 table-row-group | table-header-group | table-footer-group |
+            //                 table-row | table-column-group | table-column | table-cell |
+            //                 table-caption | none | inherit
+            // Initial:        inline
+            // Applies to:     all elements
+            // Inherited:      no
+            // Percentages:    N/A
+            // Computed value: see text
+            new PropertyInfo
+            {
+                Names = new[] { "display" },
+                Inherits = false,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "inline", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // position
+            // Value:          static | relative | absolute | fixed | inherit
+            // Initial:        static
+            // Applies to:     all elements
+            // Inherited:      no
+            // Percentages:    N/A
+            // Computed value: as specified
+            new PropertyInfo
+            {
+                Names = new[] { "position" },
+                Inherits = false,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "static", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // float
+            // Value:          left | right | none | inherit
+            // Initial:        none
+            // Applies to:     all, but see 9.7 p. 153
+            // Inherited:      no
+            // Percentages:    N/A
+            // Computed value: as specified
+            new PropertyInfo
+            {
+                Names = new[] { "float" },
+                Inherits = false,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "none", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // unicode-bidi
+            // Value:          normal | embed | bidi-override | inherit
+            // Initial:        normal
+            // Applies to:     all elements, but see prose
+            // Inherited:      no
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "unicode-bidi" },
+                Inherits = false,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "normal", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // background-color
+            // Value:          <color> | transparent | inherit
+            // Initial:        transparent
+            // Applies to:     all elements
+            // Inherited:      no
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "background-color" },
+                Inherits = false,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "transparent", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = (element, assignedValue, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = GetWmlColorFromExpression(assignedValue), Type = CssTermType.String },
+                        },
+                    },
+            },
+            // text-transform
+            // Value:          capitalize | uppercase | lowercase | none | inherit
+            // Initial:        none
+            // Applies to:     all elements
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "text-transform" },
+                Inherits = true,
+                Includes = (e, settings) => true,
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "none", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // table-layout
+            // Value:          auto | fixed | inherit
+            // Initial:        auto
+            // Applies to:     ’table’ and ’inline-table’ elements
+            // Inherited:      no
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "table-layout" },
+                Inherits = true,
+                Includes = (e, settings) =>
+                {
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    if (display.ToString() == "table" || display.ToString() == "inline-table")
+                        return true;
+                    return false;
+                },
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "auto", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // empty-cells
+            // Value:          show | hide | inherit
+            // Initial:        show
+            // Applies to:     'table-cell' elements
+            // Inherited:      yes
+            // Percentages:    N/A
+            // Computed value: as spec
+            new PropertyInfo
+            {
+                Names = new[] { "border-spacing" },
+                Inherits = true,
+                Includes = (e, settings) =>
+                {
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    if (display.ToString() == "table-cell")
+                        return true;
+                    return false;
+                },
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "show", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = null,
+            },
+            // border-top-color, border-right-color, border-bottom-color, border-left-color
+            // Value:          <color> | transparent | inherit
+            // Initial:        the value of the color property
+            // Applies to:     all elements
+            // Inherited:      no
+            // Percentages:    N/A
+            // Computed value: when taken from the ’color’ property, the computed value of
+            //                 ’color’; otherwise, as specified
+            new PropertyInfo
+            {
+                Names = new[] { "border-top-color", "border-right-color", "border-bottom-color", "border-left-color" },
+                Inherits = false,
+                Includes = (e, settings) => true,
+                InitialValue = (e, settings) =>
+                {
+                    var display = GetComputedPropertyValue(null, e, "color", settings);
+                    return display;
+                },
+                ComputedValue = (element, assignedValue, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = GetWmlColorFromExpression(assignedValue), Type = CssTermType.String },
+                        },
+                    },
+            },
+            // width
+            // Value:          <length> | <percentage> | auto | inherit
+            // Initial:        auto
+            // Applies to:     all elements but non-replaced in-line elements, table rows, and row groups
+            // Inherited:      no
+            // Percentages:    refer to width of containing block
+            // Computed value: the percentage or 'auto' as specified or the absolute length
+            new PropertyInfo
+            {
+                Names = new[] { "width" },
+                Inherits = false,
+                Includes = (e, settings) =>
+                {
+                    if (e.Name == XhtmlNoNamespace.img)
+                        return true;
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    var dv = display.ToString();
+                    if (dv is "inline" or "table-row" or "table-row-group")
+                        return false;
+                    return true;
+                },
+                InitialValue = (element, settings) =>
+                {
+                    if (element.Parent == null)
+                    {
+                        var pageWidth = (double?)settings.SectPr.Elements(W.pgSz).Attributes(W._w).FirstOrDefault();
+                        if (pageWidth == null)
+                            pageWidth = 12240;
+                        var leftMargin = (double?)settings.SectPr.Elements(W.pgMar).Attributes(W.left).FirstOrDefault();
+                        if (leftMargin == null)
+                            leftMargin = 1440;
+                        var rightMargin = (double?)
+                            settings.SectPr.Elements(W.pgMar).Attributes(W.left).FirstOrDefault();
+                        if (rightMargin == null)
+                            rightMargin = 1440;
+                        var width = (double)(pageWidth - leftMargin - rightMargin) / 20;
                         return new CssExpression
                         {
                             Terms = new List<CssTerm>
                             {
-                                new() { Value = "auto", Type = CssTermType.String },
+                                new()
+                                {
+                                    Value = width.ToString(CultureInfo.InvariantCulture),
+                                    Type = CssTermType.String,
+                                    Unit = CssUnit.PT,
+                                },
                             },
                         };
-                    },
-                    ComputedValue = (element, assignedValue, settings) =>
+                    }
+                    return new CssExpression
                     {
-                        if (
-                            element.Name != XhtmlNoNamespace.caption
-                            && element.Name != XhtmlNoNamespace.td
-                            && element.Name != XhtmlNoNamespace.th
-                            && element.Name != XhtmlNoNamespace.tr
-                            && element.Name != XhtmlNoNamespace.table
-                            && assignedValue.IsAuto
-                        )
+                        Terms = new List<CssTerm>
                         {
-                            var pi = PropertyInfoList.FirstOrDefault(p => p.Names.Contains("width"));
-                            var display = GetComputedPropertyValue(pi, element, "display", settings).ToString();
-                            if (display != "inline")
-                            {
-                                var parentPropertyValue = GetComputedPropertyValue(
-                                    pi,
-                                    element.Parent,
-                                    "width",
-                                    settings
-                                );
-                                return parentPropertyValue;
-                            }
-                        }
-                        CssExpression valueForPercentage = null;
-                        var elementToQuery = element.Parent;
-                        while (elementToQuery != null)
+                            new() { Value = "auto", Type = CssTermType.String },
+                        },
+                    };
+                },
+                ComputedValue = (element, assignedValue, settings) =>
+                {
+                    if (
+                        element.Name != XhtmlNoNamespace.caption
+                        && element.Name != XhtmlNoNamespace.td
+                        && element.Name != XhtmlNoNamespace.th
+                        && element.Name != XhtmlNoNamespace.tr
+                        && element.Name != XhtmlNoNamespace.table
+                        && assignedValue.IsAuto
+                    )
+                    {
+                        var pi = PropertyInfoList.FirstOrDefault(p => p.Names.Contains("width"));
+                        var display = GetComputedPropertyValue(pi, element, "display", settings).ToString();
+                        if (display != "inline")
                         {
-                            valueForPercentage = GetComputedPropertyValue(null, elementToQuery, "width", settings);
-                            if (valueForPercentage.IsAuto)
-                            {
-                                elementToQuery = elementToQuery.Parent;
-                                continue;
-                            }
-                            break;
+                            var parentPropertyValue = GetComputedPropertyValue(pi, element.Parent, "width", settings);
+                            return parentPropertyValue;
                         }
+                    }
+                    CssExpression valueForPercentage = null;
+                    var elementToQuery = element.Parent;
+                    while (elementToQuery != null)
+                    {
+                        valueForPercentage = GetComputedPropertyValue(null, elementToQuery, "width", settings);
+                        if (valueForPercentage.IsAuto)
+                        {
+                            elementToQuery = elementToQuery.Parent;
+                            continue;
+                        }
+                        break;
+                    }
 
-                        return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
-                    },
+                    return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
                 },
-                // min-width
-                // Value:          <length> | <percentage> | inherit
-                // Initial:        0
-                // Applies to:     all elements but non-replaced in-line elements, table rows, and row groups
-                // Inherited:      no
-                // Percentages:    refer to width of containing block
-                // Computed value: the percentage as spec or the absolute length
-                new PropertyInfo
+            },
+            // min-width
+            // Value:          <length> | <percentage> | inherit
+            // Initial:        0
+            // Applies to:     all elements but non-replaced in-line elements, table rows, and row groups
+            // Inherited:      no
+            // Percentages:    refer to width of containing block
+            // Computed value: the percentage as spec or the absolute length
+            new PropertyInfo
+            {
+                Names = new[] { "min-width" },
+                Inherits = false,
+                Includes = (e, settings) =>
                 {
-                    Names = new[] { "min-width" },
-                    Inherits = false,
-                    Includes = (e, settings) =>
-                    {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        var dv = display.ToString();
-                        if (dv is "inline" or "table-row" or "table-row-group")
-                            return false;
-                        return true;
-                    },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new()
-                                {
-                                    Value = "0",
-                                    Type = CssTermType.Number,
-                                    Unit = CssUnit.PT,
-                                },
-                            },
-                        },
-                    ComputedValue = (element, assignedValue, settings) =>
-                    {
-                        CssExpression valueForPercentage = null;
-                        if (element.Parent != null)
-                            valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
-                        return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
-                    },
-                },
-                // max-width
-                // Value:          <length> | <percentage> | none | inherit
-                // Initial:        none
-                // Applies to:     all elements but non-replaced in-line elements, table rows, and row groups
-                // Inherited:      no
-                // Percentages:    refer to width of containing block
-                // Computed value: the percentage as spec or the absolute length
-                new PropertyInfo
-                {
-                    Names = new[] { "max-width" },
-                    Inherits = false,
-                    Includes = (e, settings) =>
-                    {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        var dv = display.ToString();
-                        if (dv is "inline" or "table-row" or "table-row-group")
-                            return false;
-                        return true;
-                    },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "none", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = (element, assignedValue, settings) =>
-                    {
-                        CssExpression valueForPercentage = null;
-                        if (element.Parent != null)
-                            valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
-                        return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
-                    },
-                },
-                // height
-                // Value:          <length> | <percentage> | auto | inherit
-                // Initial:        auto
-                // Applies to:     all elements but non-replaced in-line elements, table columns, and column groups
-                // Inherited:      no
-                // Percentages:    see prose
-                // Computed value: the percentage as spec or the absolute length
-                new PropertyInfo
-                {
-                    Names = new[] { "height" },
-                    Inherits = false,
-                    Includes = (e, settings) =>
-                    {
-                        if (e.Name == XhtmlNoNamespace.img)
-                            return true;
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        var dv = display.ToString();
-                        if (dv is "inline" or "table-row" or "table-row-group")
-                            return false;
-                        return true;
-                    },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "auto", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = (element, assignedValue, settings) =>
-                    {
-                        CssExpression valueForPercentage = null;
-                        if (element.Parent != null)
-                            valueForPercentage = GetComputedPropertyValue(null, element.Parent, "height", settings);
-                        return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
-                    },
-                },
-                // min-height
-                // Value:          <length> | <percentage> | inherit
-                // Initial:        0
-                // Applies to:     all elements but non-replaced in-line elements, table columns, and column groups
-                // Inherited:      no
-                // Percentages:    see prose
-                // Computed value: the percentage as spec or the absolute length
-                new PropertyInfo
-                {
-                    Names = new[] { "min-height" },
-                    Inherits = false,
-                    Includes = (e, settings) =>
-                    {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        var dv = display.ToString();
-                        if (dv is "inline" or "table-column" or "table-column-group")
-                            return false;
-                        return true;
-                    },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new()
-                                {
-                                    Value = "0",
-                                    Type = CssTermType.Number,
-                                    Unit = CssUnit.PT,
-                                },
-                            },
-                        },
-                    ComputedValue = (element, assignedValue, settings) =>
-                    {
-                        CssExpression valueForPercentage = null;
-                        if (element.Parent != null)
-                            valueForPercentage = GetComputedPropertyValue(null, element.Parent, "height", settings);
-                        return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
-                    },
-                },
-                // max-height
-                // Value:          <length> | <percentage> | none | inherit
-                // Initial:        none
-                // Applies to:     all elements but non-replaced in-line elements, table columns, and column groups
-                // Inherited:      no
-                // Percentages:    refer to height of containing block
-                // Computed value: the percentage as spec or the absolute length
-                new PropertyInfo
-                {
-                    Names = new[] { "max-height" },
-                    Inherits = false,
-                    Includes = (e, settings) =>
-                    {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        var dv = display.ToString();
-                        if (dv is "inline" or "table-column" or "table-column-group")
-                            return false;
-                        return true;
-                    },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
-                        {
-                            Terms = new List<CssTerm>
-                            {
-                                new() { Value = "none", Type = CssTermType.String },
-                            },
-                        },
-                    ComputedValue = (element, assignedValue, settings) =>
-                    {
-                        CssExpression valueForPercentage = null;
-                        if (element.Parent != null)
-                            valueForPercentage = GetComputedPropertyValue(null, element.Parent, "height", settings);
-                        return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
-                    },
-                },
-                // vertical-align
-                // Value:          baseline | sub | super | top | text-top | middle | bottom | text-bottom |
-                //                 <percentage> | <length> | inherit
-                // Initial:        baseline
-                // Applies to:     inline-level and 'table-cell' elements
-                // Inherited:      no
-                // Percentages:    refer to the line height of the element itself
-                // Computed value: for <length> and <percentage> the absolute length, otherwise as specified.
-                new PropertyInfo
-                {
-                    Names = new[] { "vertical-align" },
-                    Inherits = false,
-                    Includes = (e, settings) =>
-                    {
-                        var display = GetComputedPropertyValue(null, e, "display", settings);
-                        var dv = display.ToString();
-                        if (dv is "inline" or "table-cell")
-                            return true;
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    var dv = display.ToString();
+                    if (dv is "inline" or "table-row" or "table-row-group")
                         return false;
-                    },
-                    InitialValue = (element, settings) =>
-                        new CssExpression
+                    return true;
+                },
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
                         {
-                            Terms = new List<CssTerm>
+                            new()
                             {
-                                new() { Value = "baseline", Type = CssTermType.String },
+                                Value = "0",
+                                Type = CssTermType.Number,
+                                Unit = CssUnit.PT,
                             },
                         },
-                    ComputedValue = (element, assignedValue, settings) => assignedValue, // todo fix
+                    },
+                ComputedValue = (element, assignedValue, settings) =>
+                {
+                    CssExpression valueForPercentage = null;
+                    if (element.Parent != null)
+                        valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
+                    return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
                 },
+            },
+            // max-width
+            // Value:          <length> | <percentage> | none | inherit
+            // Initial:        none
+            // Applies to:     all elements but non-replaced in-line elements, table rows, and row groups
+            // Inherited:      no
+            // Percentages:    refer to width of containing block
+            // Computed value: the percentage as spec or the absolute length
+            new PropertyInfo
+            {
+                Names = new[] { "max-width" },
+                Inherits = false,
+                Includes = (e, settings) =>
+                {
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    var dv = display.ToString();
+                    if (dv is "inline" or "table-row" or "table-row-group")
+                        return false;
+                    return true;
+                },
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "none", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = (element, assignedValue, settings) =>
+                {
+                    CssExpression valueForPercentage = null;
+                    if (element.Parent != null)
+                        valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
+                    return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
+                },
+            },
+            // height
+            // Value:          <length> | <percentage> | auto | inherit
+            // Initial:        auto
+            // Applies to:     all elements but non-replaced in-line elements, table columns, and column groups
+            // Inherited:      no
+            // Percentages:    see prose
+            // Computed value: the percentage as spec or the absolute length
+            new PropertyInfo
+            {
+                Names = new[] { "height" },
+                Inherits = false,
+                Includes = (e, settings) =>
+                {
+                    if (e.Name == XhtmlNoNamespace.img)
+                        return true;
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    var dv = display.ToString();
+                    if (dv is "inline" or "table-row" or "table-row-group")
+                        return false;
+                    return true;
+                },
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "auto", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = (element, assignedValue, settings) =>
+                {
+                    CssExpression valueForPercentage = null;
+                    if (element.Parent != null)
+                        valueForPercentage = GetComputedPropertyValue(null, element.Parent, "height", settings);
+                    return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
+                },
+            },
+            // min-height
+            // Value:          <length> | <percentage> | inherit
+            // Initial:        0
+            // Applies to:     all elements but non-replaced in-line elements, table columns, and column groups
+            // Inherited:      no
+            // Percentages:    see prose
+            // Computed value: the percentage as spec or the absolute length
+            new PropertyInfo
+            {
+                Names = new[] { "min-height" },
+                Inherits = false,
+                Includes = (e, settings) =>
+                {
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    var dv = display.ToString();
+                    if (dv is "inline" or "table-column" or "table-column-group")
+                        return false;
+                    return true;
+                },
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new()
+                            {
+                                Value = "0",
+                                Type = CssTermType.Number,
+                                Unit = CssUnit.PT,
+                            },
+                        },
+                    },
+                ComputedValue = (element, assignedValue, settings) =>
+                {
+                    CssExpression valueForPercentage = null;
+                    if (element.Parent != null)
+                        valueForPercentage = GetComputedPropertyValue(null, element.Parent, "height", settings);
+                    return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
+                },
+            },
+            // max-height
+            // Value:          <length> | <percentage> | none | inherit
+            // Initial:        none
+            // Applies to:     all elements but non-replaced in-line elements, table columns, and column groups
+            // Inherited:      no
+            // Percentages:    refer to height of containing block
+            // Computed value: the percentage as spec or the absolute length
+            new PropertyInfo
+            {
+                Names = new[] { "max-height" },
+                Inherits = false,
+                Includes = (e, settings) =>
+                {
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    var dv = display.ToString();
+                    if (dv is "inline" or "table-column" or "table-column-group")
+                        return false;
+                    return true;
+                },
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "none", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = (element, assignedValue, settings) =>
+                {
+                    CssExpression valueForPercentage = null;
+                    if (element.Parent != null)
+                        valueForPercentage = GetComputedPropertyValue(null, element.Parent, "height", settings);
+                    return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
+                },
+            },
+            // vertical-align
+            // Value:          baseline | sub | super | top | text-top | middle | bottom | text-bottom |
+            //                 <percentage> | <length> | inherit
+            // Initial:        baseline
+            // Applies to:     inline-level and 'table-cell' elements
+            // Inherited:      no
+            // Percentages:    refer to the line height of the element itself
+            // Computed value: for <length> and <percentage> the absolute length, otherwise as specified.
+            new PropertyInfo
+            {
+                Names = new[] { "vertical-align" },
+                Inherits = false,
+                Includes = (e, settings) =>
+                {
+                    var display = GetComputedPropertyValue(null, e, "display", settings);
+                    var dv = display.ToString();
+                    if (dv is "inline" or "table-cell")
+                        return true;
+                    return false;
+                },
+                InitialValue = (element, settings) =>
+                    new CssExpression
+                    {
+                        Terms = new List<CssTerm>
+                        {
+                            new() { Value = "baseline", Type = CssTermType.String },
+                        },
+                    },
+                ComputedValue = (element, assignedValue, settings) => assignedValue, // todo fix
+            },
 
-                // positioned elements are not supported
-                //
-                // top
-                // Value:          <length> | <percentage> | auto | inherit
-                // Initial:        auto
-                // Applies to:     positioned elements
-                // Inherited:      no
-                // Percentages:    refer to height of containing block
-                // Computed value: if specified as a length, the corresponding absolute length; if
-                //                 specified as a percentage, the specified value; otherwise, ’auto’.
-                //
-                // right
-                // Value:          <length> | <percentage> | auto | inherit
-                // Initial:        auto
-                // Applies to:     positioned elements
-                // Inherited:      no
-                // Percentages:    refer to width of containing block
-                // Computed value: if specified as a length, the corresponding absolute length; if
-                //                 specified as a percentage, the specified value; otherwise, ’auto’.
-                //
-                // bottom
-                // Value:          <length> | <percentage> | auto | inherit
-                // Initial:        auto
-                // Applies to:     positioned elements
-                // Inherited:      no
-                // Percentages:    refer to height of containing block
-                // Computed value: if specified as a length, the corresponding absolute length; if
-                //                 specified as a percentage, the specified value; otherwise, ’auto’.
-                //
-                // left
-                // Value:          <length> | <percentage> | auto | inherit
-                // Initial:        auto
-                // Applies to:     positioned elements
-                // Inherited:      no
-                // Percentages:    refer to width of containing block
-                // Computed value: if specified as a length, the corresponding absolute length; if
-                //                 specified as a percentage, the specified value; otherwise, ’auto’.
+            // positioned elements are not supported
+            //
+            // top
+            // Value:          <length> | <percentage> | auto | inherit
+            // Initial:        auto
+            // Applies to:     positioned elements
+            // Inherited:      no
+            // Percentages:    refer to height of containing block
+            // Computed value: if specified as a length, the corresponding absolute length; if
+            //                 specified as a percentage, the specified value; otherwise, ’auto’.
+            //
+            // right
+            // Value:          <length> | <percentage> | auto | inherit
+            // Initial:        auto
+            // Applies to:     positioned elements
+            // Inherited:      no
+            // Percentages:    refer to width of containing block
+            // Computed value: if specified as a length, the corresponding absolute length; if
+            //                 specified as a percentage, the specified value; otherwise, ’auto’.
+            //
+            // bottom
+            // Value:          <length> | <percentage> | auto | inherit
+            // Initial:        auto
+            // Applies to:     positioned elements
+            // Inherited:      no
+            // Percentages:    refer to height of containing block
+            // Computed value: if specified as a length, the corresponding absolute length; if
+            //                 specified as a percentage, the specified value; otherwise, ’auto’.
+            //
+            // left
+            // Value:          <length> | <percentage> | auto | inherit
+            // Initial:        auto
+            // Applies to:     positioned elements
+            // Inherited:      no
+            // Percentages:    refer to width of containing block
+            // Computed value: if specified as a length, the corresponding absolute length; if
+            //                 specified as a percentage, the specified value; otherwise, ’auto’.
 
-                // floated elements are not supported
-                //
-                // clear
-                // Value:          none | left | right | both | inherit
-                // Initial:        none
-                // Applies to:     block-level elements
-                // Inherited:      no
-                // Percentages:    N/A
-                // Computed value: as specified
-                //
-                // z-index
-                // Value:          auto | integer | inherit
-                // Initial:        auto
-                // Applies to:     positioned elements
-                // Inherited:      no
-                // Percentages:    N/A
-                // Computed value: as spec
-            };
+            // floated elements are not supported
+            //
+            // clear
+            // Value:          none | left | right | both | inherit
+            // Initial:        none
+            // Applies to:     block-level elements
+            // Inherited:      no
+            // Percentages:    N/A
+            // Computed value: as specified
+            //
+            // z-index
+            // Value:          auto | integer | inherit
+            // Initial:        auto
+            // Applies to:     positioned elements
+            // Inherited:      no
+            // Percentages:    N/A
+            // Computed value: as spec
+        };
 
         /*
          * 1. Process user-agent default style sheet
@@ -2113,17 +2084,16 @@ namespace Clippit.Html
             return newExpr;
         }
 
-        private static readonly Dictionary<string, double> FontSizeMap =
-            new()
-            {
-                { "xx-small", 7.5d },
-                { "x-small", 10d },
-                { "small", 12d },
-                { "medium", 13.5d },
-                { "large", 18d },
-                { "x-large", 24d },
-                { "xx-large", 36d },
-            };
+        private static readonly Dictionary<string, double> FontSizeMap = new()
+        {
+            { "xx-small", 7.5d },
+            { "x-small", 10d },
+            { "small", 12d },
+            { "medium", 13.5d },
+            { "large", 18d },
+            { "x-large", 24d },
+            { "xx-large", 36d },
+        };
 
         private static void ApplySelector(
             CssSelector selector,
@@ -3720,31 +3690,30 @@ namespace Clippit.Html
             }
         }
 
-        private static readonly Dictionary<string, string> ColorMap =
-            new()
-            {
-                { "maroon", "800000" },
-                { "red", "FF0000" },
-                { "orange", "FFA500" },
-                { "yellow", "FFFF00" },
-                { "olive", "808000" },
-                { "purple", "800080" },
-                { "fuchsia", "FF00FF" },
-                { "white", "FFFFFF" },
-                { "lime", "00FF00" },
-                { "green", "008000" },
-                { "navy", "000080" },
-                { "blue", "0000FF" },
-                { "mediumblue", "0000CD" },
-                { "aqua", "00FFFF" },
-                { "teal", "008080" },
-                { "black", "000000" },
-                { "silver", "C0C0C0" },
-                { "gray", "808080" },
-                { "darkgray", "A9A9A9" },
-                { "beige", "F5F5DC" },
-                { "windowtext", "000000" },
-            };
+        private static readonly Dictionary<string, string> ColorMap = new()
+        {
+            { "maroon", "800000" },
+            { "red", "FF0000" },
+            { "orange", "FFA500" },
+            { "yellow", "FFFF00" },
+            { "olive", "808000" },
+            { "purple", "800080" },
+            { "fuchsia", "FF00FF" },
+            { "white", "FFFFFF" },
+            { "lime", "00FF00" },
+            { "green", "008000" },
+            { "navy", "000080" },
+            { "blue", "0000FF" },
+            { "mediumblue", "0000CD" },
+            { "aqua", "00FFFF" },
+            { "teal", "008080" },
+            { "black", "000000" },
+            { "silver", "C0C0C0" },
+            { "gray", "808080" },
+            { "darkgray", "A9A9A9" },
+            { "beige", "F5F5DC" },
+            { "windowtext", "000000" },
+        };
 
         public static string GetWmlColorFromExpression(CssExpression color)
         {
@@ -4461,7 +4430,7 @@ word-spacing
 z-index
 
 attributes
-==========			
+==========
 meta
 style
 _class
@@ -4486,7 +4455,7 @@ descr
 type
 
 elements
-========			
+========
 html
 head
 body

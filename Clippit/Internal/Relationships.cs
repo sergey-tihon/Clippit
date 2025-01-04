@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Clippit.Internal;
+﻿namespace Clippit.Internal;
 
 internal static class Relationships
 {
