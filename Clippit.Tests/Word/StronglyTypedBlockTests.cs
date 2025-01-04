@@ -11,11 +11,8 @@ using Xunit;
 
 namespace Clippit.Tests.Word
 {
-    public class StronglyTypedBlockTests : TestsBase
+    public class StronglyTypedBlockTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public StronglyTypedBlockTests(ITestOutputHelper log)
-            : base(log) { }
-
         [Fact]
         public void CanUseStronglyTypedBlockToDemarcateApis()
         {

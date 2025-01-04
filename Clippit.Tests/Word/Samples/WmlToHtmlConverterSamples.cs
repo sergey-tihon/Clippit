@@ -6,11 +6,8 @@ using Xunit;
 
 namespace Clippit.Tests.Word.Samples
 {
-    public class WmlToHtmlConverterSamples : TestsBase
+    public class WmlToHtmlConverterSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public WmlToHtmlConverterSamples(ITestOutputHelper log)
-            : base(log) { }
-
         private static string RootFolder => "../../../Word/Samples/WmlToHtmlConverter/";
 
         [Fact]

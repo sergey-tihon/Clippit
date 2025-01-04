@@ -46,37 +46,36 @@ namespace Clippit.Excel
     // Standard formats
     public class CellDfn
     {
-        public static readonly Dictionary<string, int> StandardFormats =
-            new()
-            {
-                { "0", 1 },
-                { "0.00", 2 },
-                { "#,##0", 3 },
-                { "#,##0.00", 4 },
-                { "0%", 9 },
-                { "0.00%", 10 },
-                { "0.00E+00", 11 },
-                { "# ?/?", 12 },
-                { "# ??/??", 13 },
-                { "mm-dd-yy", 14 },
-                { "d-mmm-yy", 15 },
-                { "d-mmm", 16 },
-                { "mmm-yy", 17 },
-                { "h:mm AM/PM", 18 },
-                { "h:mm:ss AM/PM", 19 },
-                { "h:mm", 20 },
-                { "h:mm:ss", 21 },
-                { "h/d/yy h:mm", 22 },
-                { "#,##0;(#,##0)", 37 },
-                { "#,##0;[Red](#,##0)", 38 },
-                { "#,##0.00;(#,##0.00)", 39 },
-                { "#,##0.00;[Red](#,##0.00)", 40 },
-                { "mm:ss", 45 },
-                { "[h]:mm:ss", 46 },
-                { "mmss.0", 47 },
-                { "##0.0E+0", 48 },
-                { "@", 49 },
-            };
+        public static readonly Dictionary<string, int> StandardFormats = new()
+        {
+            { "0", 1 },
+            { "0.00", 2 },
+            { "#,##0", 3 },
+            { "#,##0.00", 4 },
+            { "0%", 9 },
+            { "0.00%", 10 },
+            { "0.00E+00", 11 },
+            { "# ?/?", 12 },
+            { "# ??/??", 13 },
+            { "mm-dd-yy", 14 },
+            { "d-mmm-yy", 15 },
+            { "d-mmm", 16 },
+            { "mmm-yy", 17 },
+            { "h:mm AM/PM", 18 },
+            { "h:mm:ss AM/PM", 19 },
+            { "h:mm", 20 },
+            { "h:mm:ss", 21 },
+            { "h/d/yy h:mm", 22 },
+            { "#,##0;(#,##0)", 37 },
+            { "#,##0;[Red](#,##0)", 38 },
+            { "#,##0.00;(#,##0.00)", 39 },
+            { "#,##0.00;[Red](#,##0.00)", 40 },
+            { "mm:ss", 45 },
+            { "[h]:mm:ss", 46 },
+            { "mmss.0", 47 },
+            { "##0.0E+0", 48 },
+            { "@", 49 },
+        };
         public object Value { get; set; }
         public CellDataType? CellDataType { get; set; }
         public HorizontalCellAlignment? HorizontalCellAlignment { get; set; }
@@ -849,15 +848,8 @@ L2NvcmUueG1sUEsBAi0AFAAGAAgAAAAhAHREzCiJAQAAEQMAABAAAAAAAAAAAAAAAAAAbBgAAGRv
 Y1Byb3BzL2FwcC54bWxQSwUGAAAAAAoACgCAAgAAKxsAAAAA";
     }
 
-    public class SpreadsheetWriterInternalException : Exception
-    {
-        public SpreadsheetWriterInternalException()
-            : base("Internal error - unexpected content in _EmptyXlsx.") { }
-    }
+    public class SpreadsheetWriterInternalException() : Exception("Internal error - unexpected content in _EmptyXlsx.");
 
-    public class InvalidSheetNameException : Exception
-    {
-        public InvalidSheetNameException(string name)
-            : base($"The supplied name ({name}) is not a valid XLSX worksheet name.") { }
-    }
+    public class InvalidSheetNameException(string name)
+        : Exception($"The supplied name ({name}) is not a valid XLSX worksheet name.");
 }

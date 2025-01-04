@@ -958,16 +958,10 @@ namespace Clippit
         public XElement PreviousElement;
     }
 
-    public class GroupOfAdjacent<TSource, TKey> : IGrouping<TKey, TSource>
+    public class GroupOfAdjacent<TSource, TKey>(List<TSource> source, TKey key) : IGrouping<TKey, TSource>
     {
-        public GroupOfAdjacent(List<TSource> source, TKey key)
-        {
-            GroupList = source;
-            Key = key;
-        }
-
-        public TKey Key { get; set; }
-        private List<TSource> GroupList { get; set; }
+        public TKey Key { get; set; } = key;
+        private List<TSource> GroupList { get; set; } = source;
 
         IEnumerator IEnumerable.GetEnumerator()
         {
@@ -1052,7 +1046,7 @@ namespace Clippit
         }
     }
 
-    public class XEntity : XText
+    public class XEntity(string value) : XText(value)
     {
         public override void WriteTo(XmlWriter writer)
         {
@@ -1063,9 +1057,6 @@ namespace Clippit
             else
                 writer.WriteEntityRef(Value);
         }
-
-        public XEntity(string value)
-            : base(value) { }
     }
 
     public static class Xsi

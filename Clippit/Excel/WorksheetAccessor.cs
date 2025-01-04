@@ -9,12 +9,7 @@ namespace Clippit.Excel
     // Classes for "bulk load" of a spreadsheet
     public class MemorySpreadsheet
     {
-        private readonly SortedList<int, MemoryRow> rowList;
-
-        public MemorySpreadsheet()
-        {
-            rowList = new SortedList<int, MemoryRow>();
-        }
+        private readonly SortedList<int, MemoryRow> rowList = new();
 
         public void SetCellValue(int row, int column, object value)
         {
@@ -51,16 +46,9 @@ namespace Clippit.Excel
         }
     }
 
-    public class MemoryRow
+    public class MemoryRow(int row)
     {
-        private readonly int row;
-        private readonly SortedList<int, MemoryCell> cellList;
-
-        public MemoryRow(int Row)
-        {
-            row = Row;
-            cellList = new SortedList<int, MemoryCell>();
-        }
+        private readonly SortedList<int, MemoryCell> cellList = new();
 
         public MemoryCell GetCell(int column)
         {
@@ -85,50 +73,36 @@ namespace Clippit.Excel
         }
     }
 
-    public class MemoryCell
+    public class MemoryCell(int col, object value, int style)
     {
-        private readonly int column;
-        private readonly object cellValue;
-        private readonly int styleIndex;
-
         public MemoryCell(int col, object value)
-        {
-            column = col;
-            cellValue = value;
-        }
-
-        public MemoryCell(int col, object value, int style)
-        {
-            column = col;
-            cellValue = value;
-            styleIndex = style;
-        }
+            : this(col, value, 0) { }
 
         public int GetColumn()
         {
-            return column;
+            return col;
         }
 
         public object GetValue()
         {
-            return cellValue;
+            return value;
         }
 
         public int GetStyleIndex()
         {
-            return styleIndex;
+            return style;
         }
 
         public XElement GetElements(int row)
         {
-            var cellReference = WorksheetAccessor.GetColumnId(column) + row;
+            var cellReference = WorksheetAccessor.GetColumnId(col) + row;
 
-            var newCell = cellValue switch
+            var newCell = value switch
             {
                 int or double => new XElement(
                     S.c,
                     new XAttribute(NoNamespace.r, cellReference),
-                    new XElement(S.v, cellValue.ToString())
+                    new XElement(S.v, value.ToString())
                 ),
                 bool value => new XElement(
                     S.c,
@@ -140,14 +114,14 @@ namespace Clippit.Excel
                     S.c,
                     new XAttribute(NoNamespace.r, cellReference),
                     new XAttribute(NoNamespace.t, "inlineStr"),
-                    new XElement(S._is, new XElement(S.t, cellValue.ToString()))
+                    new XElement(S._is, new XElement(S.t, value.ToString()))
                 ),
                 _ => null,
             };
             if (newCell == null)
                 throw new ArgumentException("Invalid cell type.");
-            if (styleIndex != 0)
-                newCell.Add(new XAttribute(NoNamespace.s, styleIndex));
+            if (style != 0)
+                newCell.Add(new XAttribute(NoNamespace.s, style));
 
             return newCell;
         }
@@ -1180,7 +1154,7 @@ namespace Clippit.Excel
             return fonts.Elements(S.font).Count() - 1;
         }
 
-        public class PatternFill
+        public class PatternFill(PatternFill.PatternType pattern, ColorInfo bgColor, ColorInfo fgColor)
         {
             public enum PatternType
             {
@@ -1205,102 +1179,82 @@ namespace Clippit.Excel
                 MediumGray,
             };
 
-            private readonly PatternType Pattern;
-            private readonly ColorInfo BgColor;
-            private readonly ColorInfo FgColor;
-
-            public PatternFill(PatternType pattern, ColorInfo bgColor, ColorInfo fgColor)
-            {
-                Pattern = pattern;
-                BgColor = bgColor;
-                FgColor = fgColor;
-            }
-
             public XElement GetXElement()
             {
-                var pattern = new XElement(S.patternFill);
-                switch (Pattern)
+                var result = new XElement(S.patternFill);
+                switch (pattern)
                 {
                     case PatternType.DarkDown:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "darkDown"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "darkDown"));
                         break;
                     case PatternType.DarkGray:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "darkGray"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "darkGray"));
                         break;
                     case PatternType.DarkGrid:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "darkGrid"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "darkGrid"));
                         break;
                     case PatternType.DarkHorizontal:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "darkHorizontal"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "darkHorizontal"));
                         break;
                     case PatternType.DarkTrellis:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "darkTrellis"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "darkTrellis"));
                         break;
                     case PatternType.DarkUp:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "darkUp"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "darkUp"));
                         break;
                     case PatternType.DarkVertical:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "darkVertical"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "darkVertical"));
                         break;
                     case PatternType.Gray0625:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "gray0625"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "gray0625"));
                         break;
                     case PatternType.Gray125:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "gray125"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "gray125"));
                         break;
                     case PatternType.LightDown:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "lightDown"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "lightDown"));
                         break;
                     case PatternType.LightGray:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "lightGray"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "lightGray"));
                         break;
                     case PatternType.LightGrid:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "lightGrid"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "lightGrid"));
                         break;
                     case PatternType.LightHorizontal:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "lightHorizontal"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "lightHorizontal"));
                         break;
                     case PatternType.LightTrellis:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "lightTrellis"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "lightTrellis"));
                         break;
                     case PatternType.LightUp:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "lightUp"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "lightUp"));
                         break;
                     case PatternType.LightVertical:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "lightVertical"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "lightVertical"));
                         break;
                     case PatternType.MediumGray:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "mediumGray"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "mediumGray"));
                         break;
                     case PatternType.None:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "none"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "none"));
                         break;
                     case PatternType.Solid:
-                        pattern.Add(new XAttribute(NoNamespace.patternType, "solid"));
+                        result.Add(new XAttribute(NoNamespace.patternType, "solid"));
                         break;
                 }
-                if (FgColor != null)
-                    pattern.Add(FgColor.GetXElement(S.fgColor));
-                if (BgColor != null)
-                    pattern.Add(BgColor.GetXElement(S.bgColor));
-                return new XElement(S.fill, pattern);
+                if (fgColor != null)
+                    result.Add(fgColor.GetXElement(S.fgColor));
+                if (bgColor != null)
+                    result.Add(bgColor.GetXElement(S.bgColor));
+                return new XElement(S.fill, result);
             }
         }
 
-        public class GradientStop
+        public class GradientStop(double position, ColorInfo color)
         {
-            private readonly double Position;
-            private readonly ColorInfo Color;
-
-            public GradientStop(double position, ColorInfo color)
-            {
-                Position = position;
-                Color = color;
-            }
-
             public XElement GetXElement()
             {
-                return new XElement(S.stop, new XAttribute(NoNamespace.position, Position), Color.GetXElement(S.color));
+                return new XElement(S.stop, new XAttribute(NoNamespace.position, position), color.GetXElement(S.color));
             }
         }
 
@@ -1382,7 +1336,7 @@ namespace Clippit.Excel
             return fills.Elements(S.fill).Count() - 1;
         }
 
-        public class BorderLine
+        public class BorderLine(BorderLine.LineStyle style, ColorInfo color)
         {
             public enum LineStyle
             {
@@ -1402,19 +1356,10 @@ namespace Clippit.Excel
                 Thin,
             };
 
-            private readonly LineStyle Style;
-            private readonly ColorInfo Color;
-
-            public BorderLine(LineStyle style, ColorInfo color)
-            {
-                Style = style;
-                Color = color;
-            }
-
             public XElement GetXElement(XName name)
             {
                 var line = new XElement(name);
-                switch (Style)
+                switch (style)
                 {
                     case LineStyle.DashDot:
                         line.Add(new XAttribute(NoNamespace.style, "dashDot"));
@@ -1456,7 +1401,7 @@ namespace Clippit.Excel
                         line.Add(new XAttribute(NoNamespace.style, "thin"));
                         break;
                 }
-                line.Add(Color.GetXElement(S.color));
+                line.Add(color.GetXElement(S.color));
                 return line;
             }
         }
@@ -1586,26 +1531,14 @@ namespace Clippit.Excel
                 Top,
             };
 
-            public Horizontal HorizontalAlignment { get; set; }
-            public int Indent { get; set; }
-            public bool JustifyLastLine { get; set; }
-            public int ReadingOrder { get; set; }
-            public bool ShrinkToFit { get; set; }
-            public int TextRotation { get; set; }
-            public Vertical VerticalAlignment { get; set; }
-            public bool WrapText { get; set; }
-
-            public CellAlignment()
-            {
-                HorizontalAlignment = Horizontal.General;
-                Indent = 0;
-                JustifyLastLine = false;
-                ReadingOrder = 0;
-                ShrinkToFit = false;
-                TextRotation = 0;
-                VerticalAlignment = Vertical.Bottom;
-                WrapText = false;
-            }
+            public Horizontal HorizontalAlignment { get; set; } = Horizontal.General;
+            public int Indent { get; set; } = 0;
+            public bool JustifyLastLine { get; set; } = false;
+            public int ReadingOrder { get; set; } = 0;
+            public bool ShrinkToFit { get; set; } = false;
+            public int TextRotation { get; set; } = 0;
+            public Vertical VerticalAlignment { get; set; } = Vertical.Bottom;
+            public bool WrapText { get; set; } = false;
 
             public XElement GetXElement()
             {

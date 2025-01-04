@@ -455,9 +455,9 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
         }
     }
 
-    public struct Emu
+    public struct Emu(long value)
     {
-        public long m_Value;
+        public long m_Value = value;
         public static int s_EmusPerInch = 914400;
 
         public static Emu TwipsToEmus(long twips)
@@ -477,11 +477,6 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
             return new Emu(emus);
         }
 
-        public Emu(long value)
-        {
-            m_Value = value;
-        }
-
         public static implicit operator long(Emu e)
         {
             return e.m_Value;
@@ -498,14 +493,9 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
         }
     }
 
-    public struct TPoint
+    public struct TPoint(double value)
     {
-        public double m_Value;
-
-        public TPoint(double value)
-        {
-            m_Value = value;
-        }
+        public double m_Value = value;
 
         public static implicit operator double(TPoint t)
         {
@@ -523,14 +513,9 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
         }
     }
 
-    public struct Twip
+    public struct Twip(long value)
     {
-        public long m_Value;
-
-        public Twip(long value)
-        {
-            m_Value = value;
-        }
+        public long m_Value = value;
 
         public static implicit operator long(Twip t)
         {
@@ -553,21 +538,12 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
         }
     }
 
-    public class SizeEmu
+    public class SizeEmu(Emu width, Emu height)
     {
-        public Emu m_Height;
-        public Emu m_Width;
-
-        public SizeEmu(Emu width, Emu height)
-        {
-            m_Width = width;
-            m_Height = height;
-        }
+        public Emu m_Height = height;
+        public Emu m_Width = width;
 
         public SizeEmu(long width, long height)
-        {
-            m_Width = width;
-            m_Height = height;
-        }
+            : this(new Emu(width), new Emu(height)) { }
     }
 }

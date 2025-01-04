@@ -3,11 +3,8 @@ using Xunit;
 
 namespace Clippit.Tests.Word.Samples
 {
-    public class RevisionAccepterSamples : TestsBase
+    public class RevisionAccepterSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public RevisionAccepterSamples(ITestOutputHelper log)
-            : base(log) { }
-
         [Fact]
         public void Sample()
         {

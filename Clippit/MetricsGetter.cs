@@ -587,12 +587,7 @@ namespace Clippit
             public int EastAsiaRunCount;
             public int HAnsiRunCount;
 
-            public List<string> Languages;
-
-            public FormattingMetrics()
-            {
-                Languages = new List<string>();
-            }
+            public List<string> Languages = new();
         }
 
         private static void FontAndCharSetAnalysis(

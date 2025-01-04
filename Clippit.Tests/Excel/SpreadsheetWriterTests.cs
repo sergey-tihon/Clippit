@@ -9,11 +9,8 @@ using Xunit;
 
 namespace Clippit.Tests.Excel
 {
-    public class SpreadsheetWriterTests : TestsBase
+    public class SpreadsheetWriterTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public SpreadsheetWriterTests(ITestOutputHelper log)
-            : base(log) { }
-
         private static WorkbookDfn GetSimpleWorkbookDfn() =>
             new() { Worksheets = new[] { GetSimpleWorksheetDfn("MyFirstSheet", "NamesAndRates") } };
 
@@ -364,8 +361,10 @@ namespace Clippit.Tests.Excel
             Validate(sDoc, s_spreadsheetExpectedErrors);
         }
 
-        private static readonly List<string> s_spreadsheetExpectedErrors =
-            new() { "The attribute 't' has invalid value 'd'. The Enumeration constraint failed." };
+        private static readonly List<string> s_spreadsheetExpectedErrors = new()
+        {
+            "The attribute 't' has invalid value 'd'. The Enumeration constraint failed.",
+        };
     }
 }
 

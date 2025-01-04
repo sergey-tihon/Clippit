@@ -2019,11 +2019,7 @@ namespace Clippit.Word
             public ContentTypeApplierInfo() { }
         }
 
-        public class ContentApplierException : Exception
-        {
-            public ContentApplierException(string message)
-                : base(message) { }
-        }
+        public class ContentApplierException(string message) : Exception(message);
 
         public static List<WmlToXmlValidationError> ValidateContentTypeXml(
             WmlDocument wmlRawSourceDocument,

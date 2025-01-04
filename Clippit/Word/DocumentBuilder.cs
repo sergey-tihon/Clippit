@@ -195,14 +195,8 @@ namespace Clippit.Word
     }
 
     [Serializable]
-    public class TableCellSource : ISource
+    public class TableCellSource() : ISource
     {
-        public TableCellSource()
-        {
-            KeepSections = false;
-            DiscardHeadersAndFootersInKeptSections = false;
-        }
-
         public TableCellSource(WmlDocument source)
             : this()
         {
@@ -218,8 +212,8 @@ namespace Clippit.Word
         [NonSerialized]
         private WmlDocument _wmlDocument;
 
-        public bool KeepSections { get; set; }
-        public bool DiscardHeadersAndFootersInKeptSections { get; set; }
+        public bool KeepSections { get; set; } = false;
+        public bool DiscardHeadersAndFootersInKeptSections { get; set; } = false;
 
         public string InsertId { get; set; }
 
@@ -4420,15 +4414,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         };
     }
 
-    public class DocumentBuilderException : Exception
-    {
-        public DocumentBuilderException(string message)
-            : base(message) { }
-    }
+    public class DocumentBuilderException(string message) : Exception(message);
 
-    public class DocumentBuilderInternalException : Exception
-    {
-        public DocumentBuilderInternalException(string message)
-            : base(message) { }
-    }
+    public class DocumentBuilderInternalException(string message) : Exception(message);
 }

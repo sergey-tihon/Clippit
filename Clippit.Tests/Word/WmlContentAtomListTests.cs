@@ -10,11 +10,8 @@ using Xunit;
 
 namespace Clippit.Tests.Word
 {
-    public class WmlContentAtomListTests : TestsBase
+    public class WmlContentAtomListTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public WmlContentAtomListTests(ITestOutputHelper log)
-            : base(log) { }
-
         /*
          * This test was removed because it depends on the Coalesce method, which is only ever used
          * by this test.

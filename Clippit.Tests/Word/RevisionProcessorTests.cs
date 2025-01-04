@@ -8,11 +8,8 @@ using Xunit;
 
 namespace Clippit.Tests.Word
 {
-    public class RevisionProcessorTests : TestsBase
+    public class RevisionProcessorTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public RevisionProcessorTests(ITestOutputHelper log)
-            : base(log) { }
-
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // perf settings
         public static bool m_CopySourceFilesToTempDir = true;

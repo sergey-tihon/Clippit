@@ -20,7 +20,7 @@ using Xunit;
 
 namespace Clippit.Tests.Word
 {
-    public class WmlComparerTests : TestsBase
+    public class WmlComparerTests(ITestOutputHelper log) : TestsBase(log)
     {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public static bool s_OpenWord = false;
@@ -1166,9 +1166,6 @@ namespace Clippit.Tests.Word
             "The 'urn:schemas-microsoft-com:office:office:gfxdata' attribute is not declared.",
             "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:fill' attribute is invalid - The value '0' is not valid according to any of the memberTypes of the union.",
         };
-
-        public WmlComparerTests(ITestOutputHelper log)
-            : base(log) { }
     }
 
     public class WordRunner

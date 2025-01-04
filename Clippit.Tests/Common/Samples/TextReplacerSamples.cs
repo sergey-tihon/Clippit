@@ -4,11 +4,8 @@ using Xunit;
 
 namespace Clippit.Tests.Common.Samples
 {
-    public class TextReplacerSamples : TestsBase
+    public class TextReplacerSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public TextReplacerSamples(ITestOutputHelper log)
-            : base(log) { }
-
         private static string GetFilePath(string path) => Path.Combine("../../../Common/Samples/TextReplacer/", path);
 
         [Theory]

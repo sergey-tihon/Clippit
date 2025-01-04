@@ -1475,7 +1475,7 @@ namespace Clippit.Html
         }
     }
 
-    public class Parser
+    public class Parser(Scanner scanner)
     {
         public const int c_EOF = 0;
         public const int c_ident = 1;
@@ -1488,8 +1488,8 @@ namespace Clippit.Html
         private const bool x = false;
         private const int minErrDist = 2;
 
-        public Scanner m_scanner;
-        public Errors m_errors;
+        public Scanner m_scanner = scanner;
+        public Errors m_errors = new();
 
         public CssToken m_lastRecognizedToken;
         public CssToken m_lookaheadToken;
@@ -1585,12 +1585,6 @@ namespace Clippit.Html
                 return char.IsDigit(m_lookaheadToken.m_tokenValue[0]);
             }
             return false;
-        }
-
-        public Parser(Scanner scanner)
-        {
-            this.m_scanner = scanner;
-            m_errors = new Errors();
         }
 
         private void SyntaxErr(int n)
@@ -4071,11 +4065,7 @@ namespace Clippit.Html
         }
     }
 
-    public class FatalError : Exception
-    {
-        public FatalError(string m)
-            : base(m) { }
-    }
+    public class FatalError(string m) : Exception(m);
 
     public class CssToken
     {
@@ -4247,11 +4237,8 @@ namespace Clippit.Html
         }
     }
 
-    public class UTF8Buffer : CssBuffer
+    public class UTF8Buffer(CssBuffer b) : CssBuffer(b)
     {
-        public UTF8Buffer(CssBuffer b)
-            : base(b) { }
-
         public override int Read()
         {
             int ch;

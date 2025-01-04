@@ -33,11 +33,8 @@ using Word = Microsoft.Office.Interop.Word;
 
 namespace Clippit.Tests.Html
 {
-    public class HtmlToWmlConverterTests : TestsBase
+    public class HtmlToWmlConverterTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public HtmlToWmlConverterTests(ITestOutputHelper log)
-            : base(log) { }
-
         private static readonly bool s_ProduceAnnotatedHtml = true;
 
         // PowerShell oneliner that generates InlineData for all files in a directory

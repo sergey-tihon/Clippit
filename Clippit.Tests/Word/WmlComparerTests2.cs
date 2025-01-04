@@ -11,11 +11,8 @@ using Xunit;
 
 namespace Clippit.Tests.Word
 {
-    public class WmlComparerTests2 : TestsBase
+    public class WmlComparerTests2(ITestOutputHelper log) : TestsBase(log)
     {
-        public WmlComparerTests2(ITestOutputHelper log)
-            : base(log) { }
-
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public static bool m_OpenWord = false;
         public static bool m_OpenTempDirInExplorer = false;

@@ -7,11 +7,8 @@ using Xunit;
 
 namespace Clippit.Tests.Html.Samples
 {
-    public class HtmlToWmlConverterSamples : TestsBase
+    public class HtmlToWmlConverterSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public HtmlToWmlConverterSamples(ITestOutputHelper log)
-            : base(log) { }
-
         private static string GetFilePath(string path) =>
             Path.Combine("../../../Html/Samples/HtmlToWmlConverter/", path);
 

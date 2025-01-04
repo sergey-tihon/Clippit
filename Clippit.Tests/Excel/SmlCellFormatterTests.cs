@@ -9,11 +9,8 @@ using Xunit;
 
 namespace Clippit.Tests.Excel
 {
-    public class SmlCellFormatterTests : TestsBase
+    public class SmlCellFormatterTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public SmlCellFormatterTests(ITestOutputHelper log)
-            : base(log) { }
-
         [Theory]
         [InlineData("General", "0", "0", null)]
         [InlineData("0", "1.1000000000000001", "1", null)]

@@ -11,11 +11,8 @@ using Xunit;
 
 namespace Clippit.Tests.Common
 {
-    public class MetricsGetterTests : TestsBase
+    public class MetricsGetterTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public MetricsGetterTests(ITestOutputHelper log)
-            : base(log) { }
-
         [Theory]
         [InlineData("Presentation.pptx")]
         [InlineData("Spreadsheet.xlsx")]

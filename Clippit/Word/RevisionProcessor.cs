@@ -1475,24 +1475,23 @@ namespace Clippit.Word
             return node;
         }
 
-        private static readonly Dictionary<XName, int> Order_tcPr =
-            new()
-            {
-                { W.cnfStyle, 10 },
-                { W.tcW, 20 },
-                { W.gridSpan, 30 },
-                { W.hMerge, 40 },
-                { W.vMerge, 50 },
-                { W.tcBorders, 60 },
-                { W.shd, 70 },
-                { W.noWrap, 80 },
-                { W.tcMar, 90 },
-                { W.textDirection, 100 },
-                { W.tcFitText, 110 },
-                { W.vAlign, 120 },
-                { W.hideMark, 130 },
-                { W.headers, 140 },
-            };
+        private static readonly Dictionary<XName, int> Order_tcPr = new()
+        {
+            { W.cnfStyle, 10 },
+            { W.tcW, 20 },
+            { W.gridSpan, 30 },
+            { W.hMerge, 40 },
+            { W.vMerge, 50 },
+            { W.tcBorders, 60 },
+            { W.shd, 70 },
+            { W.noWrap, 80 },
+            { W.tcMar, 90 },
+            { W.textDirection, 100 },
+            { W.tcFitText, 110 },
+            { W.vAlign, 120 },
+            { W.hideMark, 130 },
+            { W.headers, 140 },
+        };
 
         private static XElement FixWidths(XElement tbl)
         {
@@ -2111,15 +2110,14 @@ namespace Clippit.Word
             return newDocument;
         }
 
-        private static readonly Dictionary<XName, int> Order_sdt =
-            new()
-            {
-                { W.sdtPr, 10 },
-                { W.sdtEndPr, 20 },
-                { W.sdtContent, 30 },
-                { W.bookmarkStart, 40 },
-                { W.bookmarkEnd, 50 },
-            };
+        private static readonly Dictionary<XName, int> Order_sdt = new()
+        {
+            { W.sdtPr, 10 },
+            { W.sdtEndPr, 20 },
+            { W.sdtContent, 30 },
+            { W.bookmarkStart, 40 },
+            { W.bookmarkEnd, 50 },
+        };
 
         private static XElement AcceptDeletedAndMoveFromParagraphMarks(XElement element)
         {
@@ -2465,14 +2463,8 @@ namespace Clippit.Word
 
         private class PotentialInRangeElements
         {
-            public readonly List<XElement> PotentialStartElementTagsInRange;
-            public readonly List<XElement> PotentialEndElementTagsInRange;
-
-            public PotentialInRangeElements()
-            {
-                PotentialStartElementTagsInRange = new List<XElement>();
-                PotentialEndElementTagsInRange = new List<XElement>();
-            }
+            public readonly List<XElement> PotentialStartElementTagsInRange = new();
+            public readonly List<XElement> PotentialEndElementTagsInRange = new();
         }
 
         private enum TagTypeEnum

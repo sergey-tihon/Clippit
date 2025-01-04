@@ -8,11 +8,8 @@ using Xunit;
 
 namespace Clippit.Tests.Word
 {
-    public class RevisionAccepterTests : TestsBase
+    public class RevisionAccepterTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public RevisionAccepterTests(ITestOutputHelper log)
-            : base(log) { }
-
         [Theory]
         [InlineData("RA001-Tracked-Revisions-01.docx")]
         [InlineData("RA001-Tracked-Revisions-02.docx")]

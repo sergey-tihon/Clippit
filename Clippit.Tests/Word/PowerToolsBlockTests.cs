@@ -11,11 +11,8 @@ using Xunit;
 
 namespace Clippit.Tests.Word
 {
-    public class PowerToolsBlockTests : TestsBase
+    public class PowerToolsBlockTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public PowerToolsBlockTests(ITestOutputHelper log)
-            : base(log) { }
-
         [Fact]
         public void CanUsePowerToolsBlockToDemarcateApis()
         {

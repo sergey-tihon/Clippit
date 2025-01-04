@@ -10,15 +10,9 @@ using Xunit;
 
 namespace Clippit.Tests.Word
 {
-    public class DocumentBuilderTests : TestsBase
+    public class DocumentBuilderTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public DocumentBuilderTests(ITestOutputHelper log)
-            : base(log)
-        {
-            _sourceDir = new DirectoryInfo("../../../../TestFiles/");
-        }
-
-        private readonly DirectoryInfo _sourceDir;
+        private readonly DirectoryInfo _sourceDir = new("../../../../TestFiles/");
 
         [Fact]
         public void DB001_DocumentBuilderKeepSections()
@@ -988,37 +982,36 @@ namespace Clippit.Tests.Word
             Validate(wDoc, s_expectedErrors);
         }
 
-        private static readonly List<string> s_expectedErrors =
-            new()
-            {
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenHBand' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenVBand' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstColumn' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRow' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRowFirstColumn' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRowLastColumn' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastColumn' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRow' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRowFirstColumn' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRowLastColumn' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noHBand' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noVBand' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddHBand' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddVBand' attribute is not declared.",
-                "The element has unexpected child element 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:updateFields'.",
-                "The attribute 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:name' has invalid value 'useWord2013TrackBottomHyphenation'. The Enumeration constraint failed.",
-                "The 'http://schemas.microsoft.com/office/word/2012/wordml:restartNumberingAfterBreak' attribute is not declared.",
-                "Attribute 'id' should have unique value. Its current value '",
-                "The 'urn:schemas-microsoft-com:mac:vml:blur' attribute is not declared.",
-                "Attribute 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:id' should have unique value. Its current value '",
-                "The element has unexpected child element 'http://schemas.microsoft.com/office/word/2012/wordml:",
-                "The element has invalid child element 'http://schemas.microsoft.com/office/word/2012/wordml:",
-                "The 'urn:schemas-microsoft-com:mac:vml:complextextbox' attribute is not declared.",
-                "http://schemas.microsoft.com/office/word/2010/wordml:",
-                "http://schemas.microsoft.com/office/word/2008/9/12/wordml:",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:allStyles' attribute is not declared.",
-                "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:customStyles' attribute is not declared.",
-            };
+        private static readonly List<string> s_expectedErrors = new()
+        {
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenHBand' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenVBand' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstColumn' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRow' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRowFirstColumn' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRowLastColumn' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastColumn' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRow' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRowFirstColumn' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRowLastColumn' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noHBand' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noVBand' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddHBand' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddVBand' attribute is not declared.",
+            "The element has unexpected child element 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:updateFields'.",
+            "The attribute 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:name' has invalid value 'useWord2013TrackBottomHyphenation'. The Enumeration constraint failed.",
+            "The 'http://schemas.microsoft.com/office/word/2012/wordml:restartNumberingAfterBreak' attribute is not declared.",
+            "Attribute 'id' should have unique value. Its current value '",
+            "The 'urn:schemas-microsoft-com:mac:vml:blur' attribute is not declared.",
+            "Attribute 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:id' should have unique value. Its current value '",
+            "The element has unexpected child element 'http://schemas.microsoft.com/office/word/2012/wordml:",
+            "The element has invalid child element 'http://schemas.microsoft.com/office/word/2012/wordml:",
+            "The 'urn:schemas-microsoft-com:mac:vml:complextextbox' attribute is not declared.",
+            "http://schemas.microsoft.com/office/word/2010/wordml:",
+            "http://schemas.microsoft.com/office/word/2008/9/12/wordml:",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:allStyles' attribute is not declared.",
+            "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:customStyles' attribute is not declared.",
+        };
     }
 }
 #endif

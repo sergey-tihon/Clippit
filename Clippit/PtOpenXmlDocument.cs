@@ -55,17 +55,9 @@ using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit
 {
-    public class PowerToolsDocumentException : Exception
-    {
-        public PowerToolsDocumentException(string message)
-            : base(message) { }
-    }
+    public class PowerToolsDocumentException(string message) : Exception(message);
 
-    public class PowerToolsInvalidDataException : Exception
-    {
-        public PowerToolsInvalidDataException(string message)
-            : base(message) { }
-    }
+    public class PowerToolsInvalidDataException(string message) : Exception(message);
 
     public class OpenXmlPowerToolsDocument
     {

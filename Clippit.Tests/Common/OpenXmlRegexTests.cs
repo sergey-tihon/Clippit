@@ -11,11 +11,8 @@ using Xunit;
 
 namespace Clippit.Tests.Common
 {
-    public class OpenXmlRegexTests : TestsBase
+    public class OpenXmlRegexTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public OpenXmlRegexTests(ITestOutputHelper log)
-            : base(log) { }
-
         private const WordprocessingDocumentType DocumentType = WordprocessingDocumentType.Document;
 
         private const string LeftDoubleQuotationMarks = @"[\u0022“„«»”]";

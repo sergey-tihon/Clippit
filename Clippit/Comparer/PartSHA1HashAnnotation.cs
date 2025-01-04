@@ -3,13 +3,8 @@
 
 namespace Clippit
 {
-    internal class PartSHA1HashAnnotation
+    internal class PartSHA1HashAnnotation(string hash)
     {
-        public string Hash { get; set; }
-
-        public PartSHA1HashAnnotation(string hash)
-        {
-            Hash = hash;
-        }
+        public string Hash { get; set; } = hash;
     }
 }
