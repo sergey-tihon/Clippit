@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.4.1] - January 4, 2025
+
+- fix: Bug fix/document assembler paragraph properties not copied from template #91
+
 ## [2.4.0] - December 8, 2024
 
 - feat: Added support for HTML fragments in Document Assembler Content tag (#86)
