@@ -3,6 +3,7 @@
 ## [2.4.1] - January 4, 2025
 
 - fix: Bug fix/document assembler paragraph properties not copied from template #91
+- hk: Migration to xUnit.v3
 
 ## [2.4.0] - December 8, 2024
 
