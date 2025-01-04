@@ -1,0 +1,5 @@
+﻿<Doc>
+	<TestCase>Not Well Formed XHTML</TestCase>
+	<EscapedHTML>&lt;b&gt;&lt;i&gt;This is NOT well formed XHTML.&lt;/b&gt;&lt;/i&gt;</EscapedHTML>
+	<CDATA><![CDATA[<b><i>This is NOT well formed XHTML.</b></i>]]></CDATA>
+</Doc>

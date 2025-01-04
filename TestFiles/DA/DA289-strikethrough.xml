@@ -1,0 +1,5 @@
+﻿<Doc>
+	<TestCase>Strikethrough</TestCase>
+	<EscapedHTML>&lt;p&gt;This content is escaped &lt;s&gt;HTML&lt;/s&gt;&lt;/p&gt;</EscapedHTML>
+	<CDATA><![CDATA[<p>This content comes from <s>CDATA</s></p>]]></CDATA>
+</Doc>

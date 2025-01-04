@@ -1,0 +1,5 @@
+﻿<Doc>
+	<TestCase>No Inline Styles</TestCase>
+	<EscapedHTML>&lt;p&gt;This content is escaped HTML&lt;/p&gt;</EscapedHTML>
+	<CDATA><![CDATA[<p>This content comes from CDATA</p>]]></CDATA>
+</Doc>
