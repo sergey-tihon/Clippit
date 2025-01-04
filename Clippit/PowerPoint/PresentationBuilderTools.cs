@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Xml.Linq;
 using Clippit.Internal;
 using DocumentFormat.OpenXml.Experimental;
@@ -44,58 +40,56 @@ namespace Clippit.PowerPoint
             return paragraphText.ToString().Trim();
         }
 
-        internal static readonly Dictionary<XName, int> OrderPresentation =
-            new()
-            {
-                { P.sldMasterIdLst, 10 },
-                { P.notesMasterIdLst, 20 },
-                { P.handoutMasterIdLst, 30 },
-                { P.sldIdLst, 40 },
-                { P.sldSz, 50 },
-                { P.notesSz, 60 },
-                { P.embeddedFontLst, 70 },
-                { P.custShowLst, 80 },
-                { P.photoAlbum, 90 },
-                { P.custDataLst, 100 },
-                { P.kinsoku, 120 },
-                { P.defaultTextStyle, 130 },
-                { P.modifyVerifier, 150 },
-                { P.extLst, 160 },
-            };
+        internal static readonly Dictionary<XName, int> OrderPresentation = new()
+        {
+            { P.sldMasterIdLst, 10 },
+            { P.notesMasterIdLst, 20 },
+            { P.handoutMasterIdLst, 30 },
+            { P.sldIdLst, 40 },
+            { P.sldSz, 50 },
+            { P.notesSz, 60 },
+            { P.embeddedFontLst, 70 },
+            { P.custShowLst, 80 },
+            { P.photoAlbum, 90 },
+            { P.custDataLst, 100 },
+            { P.kinsoku, 120 },
+            { P.defaultTextStyle, 130 },
+            { P.modifyVerifier, 150 },
+            { P.extLst, 160 },
+        };
 
-        private static readonly Dictionary<XName, XName[]> s_relationshipMarkup =
-            new()
-            {
-                { A.audioFile, new[] { R.link } },
-                { A.videoFile, new[] { R.link } },
-                { A.quickTimeFile, new[] { R.link } },
-                { A.wavAudioFile, new[] { R.embed } },
-                { A.blip, new[] { R.embed, R.link } },
-                { A.hlinkClick, new[] { R.id } },
-                { A.hlinkMouseOver, new[] { R.id } },
-                { A.hlinkHover, new[] { R.id } },
-                { A.relIds, new[] { R.cs, R.dm, R.lo, R.qs } },
-                { C.chart, new[] { R.id } },
-                { C.externalData, new[] { R.id } },
-                { C.userShapes, new[] { R.id } },
-                { Cx.chart, new[] { R.id } },
-                { Cx.externalData, new[] { R.id } },
-                { DGM.relIds, new[] { R.cs, R.dm, R.lo, R.qs } },
-                { A14.imgLayer, new[] { R.embed } },
-                { P14.media, new[] { R.embed, R.link } },
-                { P.oleObj, new[] { R.id } },
-                { P.externalData, new[] { R.id } },
-                { P.control, new[] { R.id } },
-                { P.snd, new[] { R.embed } },
-                { P.sndTgt, new[] { R.embed } },
-                { PAV.srcMedia, new[] { R.embed, R.link } },
-                { P.contentPart, new[] { R.id } },
-                { VML.fill, new[] { R.id } },
-                { VML.imagedata, new[] { R.href, R.id, R.pict, O.relid } },
-                { VML.stroke, new[] { R.id } },
-                { WNE.toolbarData, new[] { R.id } },
-                { Plegacy.textdata, new[] { XName.Get("id") } },
-            };
+        private static readonly Dictionary<XName, XName[]> s_relationshipMarkup = new()
+        {
+            { A.audioFile, new[] { R.link } },
+            { A.videoFile, new[] { R.link } },
+            { A.quickTimeFile, new[] { R.link } },
+            { A.wavAudioFile, new[] { R.embed } },
+            { A.blip, new[] { R.embed, R.link } },
+            { A.hlinkClick, new[] { R.id } },
+            { A.hlinkMouseOver, new[] { R.id } },
+            { A.hlinkHover, new[] { R.id } },
+            { A.relIds, new[] { R.cs, R.dm, R.lo, R.qs } },
+            { C.chart, new[] { R.id } },
+            { C.externalData, new[] { R.id } },
+            { C.userShapes, new[] { R.id } },
+            { Cx.chart, new[] { R.id } },
+            { Cx.externalData, new[] { R.id } },
+            { DGM.relIds, new[] { R.cs, R.dm, R.lo, R.qs } },
+            { A14.imgLayer, new[] { R.embed } },
+            { P14.media, new[] { R.embed, R.link } },
+            { P.oleObj, new[] { R.id } },
+            { P.externalData, new[] { R.id } },
+            { P.control, new[] { R.id } },
+            { P.snd, new[] { R.embed } },
+            { P.sndTgt, new[] { R.embed } },
+            { PAV.srcMedia, new[] { R.embed, R.link } },
+            { P.contentPart, new[] { R.id } },
+            { VML.fill, new[] { R.id } },
+            { VML.imagedata, new[] { R.href, R.id, R.pict, O.relid } },
+            { VML.stroke, new[] { R.id } },
+            { WNE.toolbarData, new[] { R.id } },
+            { Plegacy.textdata, new[] { XName.Get("id") } },
+        };
 
         internal static void CopyChartObjects(ChartPart oldChart, ChartPart newChart)
         {

@@ -1,23 +1,18 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.IO;
 using System.Xml.Linq;
 using Clippit.Excel;
 using Clippit.PowerPoint;
 using Clippit.Word;
 using Xunit;
-using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
 namespace Clippit.Tests.Common
 {
-    public class MetricsGetterTests : TestsBase
+    public class MetricsGetterTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public MetricsGetterTests(ITestOutputHelper log)
-            : base(log) { }
-
         [Theory]
         [InlineData("Presentation.pptx")]
         [InlineData("Spreadsheet.xlsx")]

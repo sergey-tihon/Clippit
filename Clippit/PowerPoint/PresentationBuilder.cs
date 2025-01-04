@@ -1,68 +1,31 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.PowerPoint
 {
-    public class SlideSource
+    public class SlideSource(PmlDocument source, int start, int count, bool keepMaster)
     {
-        public PmlDocument PmlDocument { get; set; }
-        public int Start { get; set; }
-        public int Count { get; set; }
-        public bool KeepMaster { get; set; }
+        public PmlDocument PmlDocument { get; set; } = source;
+        public int Start { get; set; } = start;
+        public int Count { get; set; } = count;
+        public bool KeepMaster { get; set; } = keepMaster;
 
         public SlideSource(PmlDocument source, bool keepMaster)
-        {
-            PmlDocument = source;
-            Start = 0;
-            Count = int.MaxValue;
-            KeepMaster = keepMaster;
-        }
+            : this(source, 0, int.MaxValue, keepMaster) { }
 
         public SlideSource(string fileName, bool keepMaster)
-        {
-            PmlDocument = new PmlDocument(fileName);
-            Start = 0;
-            Count = int.MaxValue;
-            KeepMaster = keepMaster;
-        }
+            : this(new PmlDocument(fileName), 0, int.MaxValue, keepMaster) { }
 
         public SlideSource(PmlDocument source, int start, bool keepMaster)
-        {
-            PmlDocument = source;
-            Start = start;
-            Count = int.MaxValue;
-            KeepMaster = keepMaster;
-        }
+            : this(source, start, int.MaxValue, keepMaster) { }
 
         public SlideSource(string fileName, int start, bool keepMaster)
-        {
-            PmlDocument = new PmlDocument(fileName);
-            Start = start;
-            Count = int.MaxValue;
-            KeepMaster = keepMaster;
-        }
-
-        public SlideSource(PmlDocument source, int start, int count, bool keepMaster)
-        {
-            PmlDocument = source;
-            Start = start;
-            Count = count;
-            KeepMaster = keepMaster;
-        }
+            : this(new PmlDocument(fileName), start, int.MaxValue, keepMaster) { }
 
         public SlideSource(string fileName, int start, int count, bool keepMaster)
-        {
-            PmlDocument = new PmlDocument(fileName);
-            Start = start;
-            Count = count;
-            KeepMaster = keepMaster;
-        }
+            : this(new PmlDocument(fileName), start, count, keepMaster) { }
     }
 
     public static partial class PresentationBuilder
@@ -88,7 +51,7 @@ namespace Clippit.PowerPoint
         public static IEnumerable<PmlDocument> PublishSlides(PresentationDocument srcDoc, string fileName)
         {
             var slidesCount = srcDoc.PresentationPart.GetXElement().Descendants(P.sldId).Count();
-            var slideNameRegex = SlideNameRegex();
+            var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
             for (var slideNumber = 0; slideNumber < slidesCount; slideNumber++)
             {
                 using var streamDoc = OpenXmlMemoryStreamDocument.CreatePresentationDocument();
@@ -107,7 +70,7 @@ namespace Clippit.PowerPoint
                 var slideDoc = streamDoc.GetModifiedPmlDocument();
                 if (!string.IsNullOrWhiteSpace(fileName))
                 {
-                    slideDoc.FileName = slideNameRegex.Replace(fileName, $"_{slideNumber + 1:000}.pptx");
+                    slideDoc.FileName = $"{fileNameWithoutExtension}_{slideNumber + 1:000}.pptx";
                 }
 
                 yield return slideDoc;
@@ -160,8 +123,5 @@ namespace Clippit.PowerPoint
                 sourceNum++;
             }
         }
-
-        [GeneratedRegex(".pptx", RegexOptions.IgnoreCase, "en-US")]
-        private static partial Regex SlideNameRegex();
     }
 }

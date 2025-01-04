@@ -9,10 +9,6 @@
 // Twitter: @EricWhiteDev
 // Email: eric@ericwhite.com
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -836,7 +832,7 @@ namespace Clippit.Word
                         .Element(W.t);
 
                     var lastRunText = lastRunTextElement.Value;
-                    
+
                     var nextRun = lastRun
                         .ElementsAfterSelf(W.r)
                         .FirstOrDefault(r => r.Element(W.t) != null);
@@ -2023,11 +2019,7 @@ namespace Clippit.Word
             public ContentTypeApplierInfo() { }
         }
 
-        public class ContentApplierException : Exception
-        {
-            public ContentApplierException(string message)
-                : base(message) { }
-        }
+        public class ContentApplierException(string message) : Exception(message);
 
         public static List<WmlToXmlValidationError> ValidateContentTypeXml(
             WmlDocument wmlRawSourceDocument,

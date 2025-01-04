@@ -1,23 +1,18 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests
 {
     /// <summary>
     /// Base class for unit tests providing utility methods.
     /// </summary>
-    public class TestsBase
+    public class TestsBase(ITestOutputHelper log)
     {
         protected static void CreateEmptyWordprocessingDocument(Stream stream)
         {
@@ -26,24 +21,17 @@ namespace Clippit.Tests
             part.Document = new Document(new Body());
         }
 
-        public TestsBase(ITestOutputHelper log)
+        protected readonly ITestOutputHelper Log = log;
+        private readonly OpenXmlValidator _validator = new();
+
+        private static readonly Lazy<string> s_tempDir = new(() =>
         {
-            this.Log = log;
-            this._validator = new OpenXmlValidator();
-        }
-
-        protected readonly ITestOutputHelper Log;
-        private readonly OpenXmlValidator _validator;
-
-        private static readonly Lazy<string> s_tempDir =
-            new(() =>
-            {
-                var dir = new DirectoryInfo("./../../../../temp");
-                if (dir.Exists)
-                    dir.Delete(true);
-                dir.Create();
-                return dir.FullName;
-            });
+            var dir = new DirectoryInfo("./../../../../temp");
+            if (dir.Exists)
+                dir.Delete(true);
+            dir.Create();
+            return dir.FullName;
+        });
 
         protected static string TempDir => s_tempDir.Value;
 

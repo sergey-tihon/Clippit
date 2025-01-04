@@ -1,16 +1,11 @@
-﻿using System.IO;
-using Clippit.Word;
+﻿using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Word.Samples
 {
-    public class ReferenceAdderSamples : TestsBase
+    public class ReferenceAdderSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public ReferenceAdderSamples(ITestOutputHelper log)
-            : base(log) { }
-
         [Theory]
         [InlineData("RaTest01.docx", "/w:document/w:body/w:p[1]", @"TOC \o '1-3' \h \z \u")] // Inserts a basic TOC before the first paragraph of the document
         [InlineData("RaTest02.docx", "/w:document/w:body/w:p[2]", @"TOC \o '1-3' \h \z \u")] // Inserts a TOC after the title of the document

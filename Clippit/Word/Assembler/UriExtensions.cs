@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Clippit.Word.Assembler
+﻿namespace Clippit.Word.Assembler
 {
     internal static class UriExtensions
     {

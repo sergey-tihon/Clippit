@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
@@ -65,20 +63,19 @@ namespace Clippit.PowerPoint
             }
         }
 
-        private static readonly Dictionary<XName, string[]> s_resizableAttributes =
-            new()
-            {
-                { A.off, new[] { "x", "y" } }, // <a:off x="2054132" y="1665577"/>
-                { A.ext, new[] { "cx", "cy" } }, // <a:ext cx="2289267" cy="3074329"/>
-                { A.chOff, new[] { "x", "y" } }, // <a:chOff x="698501" y="1640632"/>
-                { A.chExt, new[] { "cx", "cy" } }, // <a:chExt cx="906462" cy="270006"/>
-                { A.rPr, new[] { "sz" } }, // <a:rPr lang="en-US" sz="700" b="1">
-                { A.defRPr, new[] { "sz" } }, // <a:defRPr sz="1350" kern="1200">
-                { A.pPr, new[] { "defTabSz" } }, // <a:pPr defTabSz="457119">
-                { A.endParaRPr, new[] { "sz" } }, // <a:endParaRPr lang="en-US" sz="2400" kern="0">
-                { A.gridCol, new[] { "w" } }, // <a:gridCol w="347223">
-                { A.tr, new[] { "h" } }, // <a:tr h="229849">
-            };
+        private static readonly Dictionary<XName, string[]> s_resizableAttributes = new()
+        {
+            { A.off, new[] { "x", "y" } }, // <a:off x="2054132" y="1665577"/>
+            { A.ext, new[] { "cx", "cy" } }, // <a:ext cx="2289267" cy="3074329"/>
+            { A.chOff, new[] { "x", "y" } }, // <a:chOff x="698501" y="1640632"/>
+            { A.chExt, new[] { "cx", "cy" } }, // <a:chExt cx="906462" cy="270006"/>
+            { A.rPr, new[] { "sz" } }, // <a:rPr lang="en-US" sz="700" b="1">
+            { A.defRPr, new[] { "sz" } }, // <a:defRPr sz="1350" kern="1200">
+            { A.pPr, new[] { "defTabSz" } }, // <a:pPr defTabSz="457119">
+            { A.endParaRPr, new[] { "sz" } }, // <a:endParaRPr lang="en-US" sz="2400" kern="0">
+            { A.gridCol, new[] { "w" } }, // <a:gridCol w="347223">
+            { A.tr, new[] { "h" } }, // <a:tr h="229849">
+        };
 
         public static void ScaleShapes(XDocument openXmlPart, double scale)
         {

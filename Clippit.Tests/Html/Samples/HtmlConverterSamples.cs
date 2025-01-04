@@ -1,11 +1,8 @@
-﻿using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Xml.Linq;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Html.Samples
 {
@@ -22,11 +19,8 @@ namespace Clippit.Tests.Html.Samples
     * in WmlToHtmlConverter is identical to the old HtmlConverter class.
    ***************************************************************************/
 
-    public class HtmlConverterSamples : TestsBase
+    public class HtmlConverterSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public HtmlConverterSamples(ITestOutputHelper log)
-            : base(log) { }
-
         [Theory]
         [InlineData("5DayTourPlanTemplate.docx")]
         [InlineData("Contract.docx")]

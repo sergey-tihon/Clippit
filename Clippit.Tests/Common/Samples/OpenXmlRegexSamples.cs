@@ -1,19 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Common.Samples
 {
-    public class OpenXmlRegexSamples : TestsBase
+    public class OpenXmlRegexSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public OpenXmlRegexSamples(ITestOutputHelper log)
-            : base(log) { }
-
         private static string GetFilePath(string path) => Path.Combine("../../../Common/Samples/OpenXmlRegex/", path);
 
         [Fact]

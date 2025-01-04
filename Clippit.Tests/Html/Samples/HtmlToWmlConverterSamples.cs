@@ -1,21 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Xml.Linq;
 using Clippit.Html;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Html.Samples
 {
-    public class HtmlToWmlConverterSamples : TestsBase
+    public class HtmlToWmlConverterSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public HtmlToWmlConverterSamples(ITestOutputHelper log)
-            : base(log) { }
-
         private static string GetFilePath(string path) =>
             Path.Combine("../../../Html/Samples/HtmlToWmlConverter/", path);
 

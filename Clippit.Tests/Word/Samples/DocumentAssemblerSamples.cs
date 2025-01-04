@@ -1,17 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using Clippit.Word;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Word.Samples
 {
-    public class DocumentAssemblerSamples : TestsBase
+    public class DocumentAssemblerSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public DocumentAssemblerSamples(ITestOutputHelper log)
-            : base(log) { }
-
         private const string FolderPath = "../../../Word/Samples/DocumentAssembler/";
         private const string TemplateDocumentFilePath = FolderPath + "TemplateDocument.docx";
         private const string TemplateDataFilePath = FolderPath + "Data.xml";

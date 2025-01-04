@@ -1,11 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using Clippit.Word;
@@ -222,41 +218,40 @@ namespace Clippit.Excel
             return null;
         }
 
-        private static readonly Dictionary<string, string> FontFallback =
-            new()
-            {
-                { "Arial", @"'{0}', 'sans-serif'" },
-                { "Arial Narrow", @"'{0}', 'sans-serif'" },
-                { "Arial Rounded MT Bold", @"'{0}', 'sans-serif'" },
-                { "Arial Unicode MS", @"'{0}', 'sans-serif'" },
-                { "Baskerville Old Face", @"'{0}', 'serif'" },
-                { "Berlin Sans FB", @"'{0}', 'sans-serif'" },
-                { "Berlin Sans FB Demi", @"'{0}', 'sans-serif'" },
-                { "Calibri Light", @"'{0}', 'sans-serif'" },
-                { "Gill Sans MT", @"'{0}', 'sans-serif'" },
-                { "Gill Sans MT Condensed", @"'{0}', 'sans-serif'" },
-                { "Lucida Sans", @"'{0}', 'sans-serif'" },
-                { "Lucida Sans Unicode", @"'{0}', 'sans-serif'" },
-                { "Segoe UI", @"'{0}', 'sans-serif'" },
-                { "Segoe UI Light", @"'{0}', 'sans-serif'" },
-                { "Segoe UI Semibold", @"'{0}', 'sans-serif'" },
-                { "Tahoma", @"'{0}', 'sans-serif'" },
-                { "Trebuchet MS", @"'{0}', 'sans-serif'" },
-                { "Verdana", @"'{0}', 'sans-serif'" },
-                { "Book Antiqua", @"'{0}', 'serif'" },
-                { "Bookman Old Style", @"'{0}', 'serif'" },
-                { "Californian FB", @"'{0}', 'serif'" },
-                { "Cambria", @"'{0}', 'serif'" },
-                { "Constantia", @"'{0}', 'serif'" },
-                { "Garamond", @"'{0}', 'serif'" },
-                { "Lucida Bright", @"'{0}', 'serif'" },
-                { "Lucida Fax", @"'{0}', 'serif'" },
-                { "Palatino Linotype", @"'{0}', 'serif'" },
-                { "Times New Roman", @"'{0}', 'serif'" },
-                { "Wide Latin", @"'{0}', 'serif'" },
-                { "Courier New", @"'{0}'" },
-                { "Lucida Console", @"'{0}'" },
-            };
+        private static readonly Dictionary<string, string> FontFallback = new()
+        {
+            { "Arial", @"'{0}', 'sans-serif'" },
+            { "Arial Narrow", @"'{0}', 'sans-serif'" },
+            { "Arial Rounded MT Bold", @"'{0}', 'sans-serif'" },
+            { "Arial Unicode MS", @"'{0}', 'sans-serif'" },
+            { "Baskerville Old Face", @"'{0}', 'serif'" },
+            { "Berlin Sans FB", @"'{0}', 'sans-serif'" },
+            { "Berlin Sans FB Demi", @"'{0}', 'sans-serif'" },
+            { "Calibri Light", @"'{0}', 'sans-serif'" },
+            { "Gill Sans MT", @"'{0}', 'sans-serif'" },
+            { "Gill Sans MT Condensed", @"'{0}', 'sans-serif'" },
+            { "Lucida Sans", @"'{0}', 'sans-serif'" },
+            { "Lucida Sans Unicode", @"'{0}', 'sans-serif'" },
+            { "Segoe UI", @"'{0}', 'sans-serif'" },
+            { "Segoe UI Light", @"'{0}', 'sans-serif'" },
+            { "Segoe UI Semibold", @"'{0}', 'sans-serif'" },
+            { "Tahoma", @"'{0}', 'sans-serif'" },
+            { "Trebuchet MS", @"'{0}', 'sans-serif'" },
+            { "Verdana", @"'{0}', 'sans-serif'" },
+            { "Book Antiqua", @"'{0}', 'serif'" },
+            { "Bookman Old Style", @"'{0}', 'serif'" },
+            { "Californian FB", @"'{0}', 'serif'" },
+            { "Cambria", @"'{0}', 'serif'" },
+            { "Constantia", @"'{0}', 'serif'" },
+            { "Garamond", @"'{0}', 'serif'" },
+            { "Lucida Bright", @"'{0}', 'serif'" },
+            { "Lucida Fax", @"'{0}', 'serif'" },
+            { "Palatino Linotype", @"'{0}', 'serif'" },
+            { "Times New Roman", @"'{0}', 'serif'" },
+            { "Wide Latin", @"'{0}', 'serif'" },
+            { "Courier New", @"'{0}'" },
+            { "Lucida Console", @"'{0}'" },
+        };
 
         private static void CreateFontCssProperty(string font, Dictionary<string, string> style)
         {

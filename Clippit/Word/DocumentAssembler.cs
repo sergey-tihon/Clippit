@@ -1,12 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Remoting;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -15,9 +9,7 @@ using System.Xml.XPath;
 using Clippit.Internal;
 using Clippit.Word.Assembler;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using Path = System.IO.Path;
 
 namespace Clippit.Word
@@ -420,8 +412,16 @@ namespace Clippit.Word
             }
         }
 
-        private static readonly List<string> s_aliasList =
-            new() { "Image", "Content", "Table", "Repeat", "EndRepeat", "Conditional", "EndConditional" };
+        private static readonly List<string> s_aliasList = new()
+        {
+            "Image",
+            "Content",
+            "Table",
+            "Repeat",
+            "EndRepeat",
+            "Conditional",
+            "EndConditional",
+        };
 
         private static object TransformToMetadata(XNode node, TemplateError te)
         {

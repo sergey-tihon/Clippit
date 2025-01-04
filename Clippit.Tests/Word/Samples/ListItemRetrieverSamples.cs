@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Word.Samples
 {
-    public class ListItemRetrieverSamples : TestsBase
+    public class ListItemRetrieverSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public ListItemRetrieverSamples(ITestOutputHelper log)
-            : base(log) { }
-
         private class XmlStackItem
         {
             public XElement Element { get; init; }

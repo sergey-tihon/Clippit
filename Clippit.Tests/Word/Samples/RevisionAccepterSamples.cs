@@ -1,15 +1,10 @@
-﻿using System.IO;
-using Clippit.Word;
+﻿using Clippit.Word;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Word.Samples
 {
-    public class RevisionAccepterSamples : TestsBase
+    public class RevisionAccepterSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public RevisionAccepterSamples(ITestOutputHelper log)
-            : base(log) { }
-
         [Fact]
         public void Sample()
         {

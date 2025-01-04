@@ -1,22 +1,16 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.IO;
-using System.Linq;
 using Clippit.Excel;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
 namespace Clippit.Tests.Excel
 {
-    public class SmlCellFormatterTests : TestsBase
+    public class SmlCellFormatterTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public SmlCellFormatterTests(ITestOutputHelper log)
-            : base(log) { }
-
         [Theory]
         [InlineData("General", "0", "0", null)]
         [InlineData("0", "1.1000000000000001", "1", null)]

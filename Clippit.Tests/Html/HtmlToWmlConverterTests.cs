@@ -1,15 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.IO;
-using System.Linq;
 using Clippit.Html;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Xunit;
-using Xunit.Abstractions;
 /*******************************************************************************************
  * HtmlToWmlConverter expects the HTML to be passed as an XElement, i.e. as XML.  While the HTML test files that
  * are included in Open-Xml-PowerTools are able to be read as XML, most HTML is not able to be read as XML.
@@ -37,11 +33,8 @@ using Word = Microsoft.Office.Interop.Word;
 
 namespace Clippit.Tests.Html
 {
-    public class HtmlToWmlConverterTests : TestsBase
+    public class HtmlToWmlConverterTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public HtmlToWmlConverterTests(ITestOutputHelper log)
-            : base(log) { }
-
         private static readonly bool s_ProduceAnnotatedHtml = true;
 
         // PowerShell oneliner that generates InlineData for all files in a directory

@@ -1,10 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.IO;
 using System.IO.Packaging;
-using System.Linq;
 using System.Xml.Linq;
 using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;

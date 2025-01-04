@@ -1,22 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.IO;
-using System.Linq;
 using Clippit.Word;
 using Xunit;
-using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
 namespace Clippit.Tests.Word
 {
-    public class RevisionProcessorTests : TestsBase
+    public class RevisionProcessorTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public RevisionProcessorTests(ITestOutputHelper log)
-            : base(log) { }
-
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // perf settings
         public static bool m_CopySourceFilesToTempDir = true;
