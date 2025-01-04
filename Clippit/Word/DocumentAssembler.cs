@@ -412,8 +412,16 @@ namespace Clippit.Word
             }
         }
 
-        private static readonly List<string> s_aliasList =
-            new() { "Image", "Content", "Table", "Repeat", "EndRepeat", "Conditional", "EndConditional" };
+        private static readonly List<string> s_aliasList = new()
+        {
+            "Image",
+            "Content",
+            "Table",
+            "Repeat",
+            "EndRepeat",
+            "Conditional",
+            "EndConditional",
+        };
 
         private static object TransformToMetadata(XNode node, TemplateError te)
         {

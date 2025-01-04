@@ -10,36 +10,35 @@ namespace Clippit
     {
         private const string DontConsolidate = "DontConsolidate";
 
-        private static readonly HashSet<XName> RevTrackMarkupWithId =
-            new()
-            {
-                W.cellDel,
-                W.cellIns,
-                W.cellMerge,
-                W.customXmlDelRangeEnd,
-                W.customXmlDelRangeStart,
-                W.customXmlInsRangeEnd,
-                W.customXmlInsRangeStart,
-                W.customXmlMoveFromRangeEnd,
-                W.customXmlMoveFromRangeStart,
-                W.customXmlMoveToRangeEnd,
-                W.customXmlMoveToRangeStart,
-                W.del,
-                W.ins,
-                W.moveFrom,
-                W.moveFromRangeEnd,
-                W.moveFromRangeStart,
-                W.moveTo,
-                W.moveToRangeEnd,
-                W.moveToRangeStart,
-                W.pPrChange,
-                W.rPrChange,
-                W.sectPrChange,
-                W.tblGridChange,
-                W.tblPrChange,
-                W.tblPrExChange,
-                W.tcPrChange,
-            };
+        private static readonly HashSet<XName> RevTrackMarkupWithId = new()
+        {
+            W.cellDel,
+            W.cellIns,
+            W.cellMerge,
+            W.customXmlDelRangeEnd,
+            W.customXmlDelRangeStart,
+            W.customXmlInsRangeEnd,
+            W.customXmlInsRangeStart,
+            W.customXmlMoveFromRangeEnd,
+            W.customXmlMoveFromRangeStart,
+            W.customXmlMoveToRangeEnd,
+            W.customXmlMoveToRangeStart,
+            W.del,
+            W.ins,
+            W.moveFrom,
+            W.moveFromRangeEnd,
+            W.moveFromRangeStart,
+            W.moveTo,
+            W.moveToRangeEnd,
+            W.moveToRangeStart,
+            W.pPrChange,
+            W.rPrChange,
+            W.sectPrChange,
+            W.tblGridChange,
+            W.tblPrChange,
+            W.tblPrExChange,
+            W.tcPrChange,
+        };
 
         public static int Match(IEnumerable<XElement> content, Regex regex)
         {

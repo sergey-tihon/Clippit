@@ -21,18 +21,17 @@ namespace Clippit.Excel
             public string FormatCode;
         }
 
-        private static readonly Dictionary<string, FormatConfig> ExcelFormatCodeToNetFormatCodeExceptionMap =
-            new()
+        private static readonly Dictionary<string, FormatConfig> ExcelFormatCodeToNetFormatCodeExceptionMap = new()
+        {
             {
-                {
-                    "# ?/?",
-                    new FormatConfig { CellType = CellType.Number, FormatCode = "0.00" }
-                },
-                {
-                    "# ??/??",
-                    new FormatConfig { CellType = CellType.Number, FormatCode = "0.00" }
-                },
-            };
+                "# ?/?",
+                new FormatConfig { CellType = CellType.Number, FormatCode = "0.00" }
+            },
+            {
+                "# ??/??",
+                new FormatConfig { CellType = CellType.Number, FormatCode = "0.00" }
+            },
+        };
 
         // Up to four sections of format codes can be specified. The format codes, separated by semicolons, define the
         // formats for positive numbers, negative numbers, zero values, and text, in that order. If only two sections are
