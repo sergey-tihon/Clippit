@@ -11,7 +11,7 @@
     <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
 
     <Authors>Sergey Tihon, Microsoft Corporation, Eric White, and others</Authors>
-    <Copyright>Copyright 2012-2024</Copyright>
+    <Copyright>Copyright 2012-2025</Copyright>
     <RepositoryUrl>https://github.com/sergey-tihon/Clippit</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
