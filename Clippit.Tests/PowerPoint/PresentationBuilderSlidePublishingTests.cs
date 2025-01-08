@@ -79,6 +79,7 @@ namespace Clippit.Tests.PowerPoint
             using var srcStream = File.Open(sourcePath, FileMode.Open);
             var openSettings = new OpenSettings { AutoSave = false };
             using var srcDoc = OpenXmlExtensions.OpenPresentation(srcStream, false, openSettings);
+            ArgumentNullException.ThrowIfNull(srcDoc.PresentationPart);
 
             var srcEmbeddingCount = srcDoc
                 .PresentationPart.SlideParts.SelectMany(slide => slide.ExtendedChartParts)
@@ -88,6 +89,7 @@ namespace Clippit.Tests.PowerPoint
             var slide = PresentationBuilder.PublishSlides(srcDoc, Path.GetFileName(sourcePath)).First();
             using var streamDoc = new OpenXmlMemoryStreamDocument(slide);
             using var slideDoc = streamDoc.GetPresentationDocument(openSettings);
+            ArgumentNullException.ThrowIfNull(slideDoc.PresentationPart);
 
             var slideEmbeddingCount = slideDoc
                 .PresentationPart.SlideParts.Select(slide => slide.ExtendedChartParts)
@@ -133,6 +135,7 @@ namespace Clippit.Tests.PowerPoint
 
             using var streamDoc = new OpenXmlMemoryStreamDocument(onlyMaster);
             using var resDoc = streamDoc.GetPresentationDocument();
+            ArgumentNullException.ThrowIfNull(resDoc.PresentationPart);
 
             Assert.Empty(resDoc.PresentationPart.SlideParts);
             Assert.InRange(resDoc.PresentationPart.SlideMasterParts.Count(), 1, numberOfMasters);

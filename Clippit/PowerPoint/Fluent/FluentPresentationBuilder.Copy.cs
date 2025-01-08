@@ -14,19 +14,19 @@ internal sealed partial class FluentPresentationBuilder
     private void CopyStartingParts(PresentationDocument sourceDocument)
     {
         // A Core File Properties part does not have implicit or explicit relationships to other parts.
-        var corePart = sourceDocument.CoreFilePropertiesPart;
-        if (corePart?.GetXDocument().Root is not null)
+        var srcCorePart = sourceDocument.CoreFilePropertiesPart;
+        if (srcCorePart?.GetXDocument().Root is not null && _newDocument.CoreFilePropertiesPart is null)
         {
             _newDocument.AddCoreFilePropertiesPart();
             var newXDoc = _newDocument.CoreFilePropertiesPart.GetXDocument();
             newXDoc.Declaration.Standalone = "yes";
             newXDoc.Declaration.Encoding = "UTF-8";
-            var sourceXDoc = corePart.GetXDocument();
+            var sourceXDoc = srcCorePart.GetXDocument();
             newXDoc.Add(sourceXDoc.Root);
         }
 
         // An application attributes part does not have implicit or explicit relationships to other parts.
-        if (sourceDocument.ExtendedFilePropertiesPart is { } extPart)
+        if (sourceDocument.ExtendedFilePropertiesPart is { } extPart && _newDocument.ExtendedFilePropertiesPart is null)
         {
             _newDocument.AddExtendedFilePropertiesPart();
             var newXDoc = _newDocument.ExtendedFilePropertiesPart.GetXDocument();
@@ -36,7 +36,7 @@ internal sealed partial class FluentPresentationBuilder
         }
 
         // An custom file properties part does not have implicit or explicit relationships to other parts.
-        if (sourceDocument.CustomFilePropertiesPart is { } customPart)
+        if (sourceDocument.CustomFilePropertiesPart is { } customPart && _newDocument.CustomFilePropertiesPart is null)
         {
             _newDocument.AddCustomFilePropertiesPart();
             var newXDoc = _newDocument.CustomFilePropertiesPart.GetXDocument();
@@ -59,24 +59,33 @@ internal sealed partial class FluentPresentationBuilder
     private void CopyPresentationParts(PresentationDocument sourceDocument)
     {
         var newPresentation = _newDocument.PresentationPart.GetXDocument();
+        var newPresentationRoot = newPresentation.Root!;
 
         // Copy slide and note slide sizes
         var oldPresentationDoc = sourceDocument.PresentationPart.GetXDocument();
 
         foreach (var att in oldPresentationDoc.Root.Attributes())
         {
-            if (!att.IsNamespaceDeclaration && newPresentation.Root.Attribute(att.Name) is null)
-                newPresentation.Root.Add(oldPresentationDoc.Root.Attribute(att.Name));
+            if (!att.IsNamespaceDeclaration && newPresentationRoot.Attribute(att.Name) is null)
+                newPresentationRoot.Add(oldPresentationDoc.Root.Attribute(att.Name));
         }
 
-        if (oldPresentationDoc.Root.Elements(P.sldSz).FirstOrDefault() is { } oldElement)
-            newPresentation.Root.Add(oldElement);
+        if (
+            oldPresentationDoc.Root.Elements(P.sldSz).FirstOrDefault() is { } oldElement
+            && newPresentationRoot.Element(P.sldSz) is null
+        )
+        {
+            newPresentationRoot.Add(oldElement);
+        }
 
         // Copy Font Parts
-        if (oldPresentationDoc.Root.Element(P.embeddedFontLst) is not null)
+        if (
+            oldPresentationDoc.Root.Element(P.embeddedFontLst) is { } embeddedFontLst
+            && newPresentationRoot.Element(P.embeddedFontLst) is null
+        )
         {
             var newFontLst = new XElement(P.embeddedFontLst);
-            foreach (var font in oldPresentationDoc.Root.Element(P.embeddedFontLst).Elements(P.embeddedFont))
+            foreach (var font in embeddedFontLst.Elements(P.embeddedFont))
             {
                 var newEmbeddedFont = new XElement(P.embeddedFont, font.Elements(P.font));
 
@@ -91,11 +100,13 @@ internal sealed partial class FluentPresentationBuilder
 
                 newFontLst.Add(newEmbeddedFont);
             }
-            newPresentation.Root.Add(newFontLst);
+            newPresentationRoot.Add(newFontLst);
         }
 
-        newPresentation.Root.Add(oldPresentationDoc.Root.Element(P.defaultTextStyle));
-        newPresentation.Root.Add(SanitizeExtLst(oldPresentationDoc.Root.Elements(P.extLst)));
+        if (newPresentationRoot.Element(P.defaultTextStyle) is null)
+            newPresentationRoot.Add(oldPresentationDoc.Root.Element(P.defaultTextStyle));
+        if (newPresentationRoot.Element(P.extLst) is null)
+            newPresentationRoot.Add(SanitizeExtLst(oldPresentationDoc.Root.Elements(P.extLst)));
 
         //<p:embeddedFont xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"
         //                         xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
@@ -107,7 +118,10 @@ internal sealed partial class FluentPresentationBuilder
         //</p:embeddedFont>
 
         // Copy Handout Master
-        if (sourceDocument.PresentationPart.HandoutMasterPart is { } oldMaster)
+        if (
+            sourceDocument.PresentationPart.HandoutMasterPart is { } oldMaster
+            && _newDocument.PresentationPart.HandoutMasterPart is null
+        )
         {
             var newMaster = _newDocument.PresentationPart.AddNewPart<HandoutMasterPart>();
 
@@ -121,7 +135,7 @@ internal sealed partial class FluentPresentationBuilder
             PBT.AddRelationships(oldMaster, newMaster, [newMaster.GetXDocument().Root]);
             CopyRelatedPartsForContentParts(oldMaster, newMaster, [newMaster.GetXDocument().Root]);
 
-            newPresentation.Root.Add(
+            newPresentationRoot.Add(
                 new XElement(
                     P.handoutMasterIdLst,
                     new XElement(
@@ -136,7 +150,10 @@ internal sealed partial class FluentPresentationBuilder
         CopyNotesMaster(sourceDocument);
 
         // Copy Presentation Properties
-        if (sourceDocument.PresentationPart.PresentationPropertiesPart is { } presentationPropertiesPart)
+        if (
+            sourceDocument.PresentationPart.PresentationPropertiesPart is { } presentationPropertiesPart
+            && _newDocument.PresentationPart.PresentationPropertiesPart is null
+        )
         {
             var newPart = _newDocument.PresentationPart.AddNewPart<PresentationPropertiesPart>();
             var xd1 = presentationPropertiesPart.GetXDocument();
@@ -145,7 +162,10 @@ internal sealed partial class FluentPresentationBuilder
         }
 
         // Copy View Properties
-        if (sourceDocument.PresentationPart.ViewPropertiesPart is { } viewPropertiesPart)
+        if (
+            sourceDocument.PresentationPart.ViewPropertiesPart is { } viewPropertiesPart
+            && _newDocument.PresentationPart.ViewPropertiesPart is null
+        )
         {
             var newPart = _newDocument.PresentationPart.AddNewPart<ViewPropertiesPart>();
             var xd = viewPropertiesPart.GetXDocument();
@@ -165,12 +185,10 @@ internal sealed partial class FluentPresentationBuilder
             newPart.FeedData(stream);
         }
 
-        var listOfRootChildren = newPresentation.Root.Elements().ToList();
+        var listOfRootChildren = newPresentationRoot.Elements().ToList();
         foreach (var rc in listOfRootChildren)
             rc.Remove();
-        newPresentation.Root.Add(
-            listOfRootChildren.OrderBy(e => PBT.OrderPresentation.TryGetValue(e.Name, out var value) ? value : 999)
-        );
+        newPresentationRoot.Add(listOfRootChildren.OrderBy(e => PBT.OrderPresentation.GetValueOrDefault(e.Name, 999)));
     }
 
     /// <summary>
@@ -233,7 +251,10 @@ internal sealed partial class FluentPresentationBuilder
         newPresentation.Root.Element(P.notesSz).ReplaceWith(oldElement);
 
         // Copy Notes Master
-        if (sourceDocument.PresentationPart.NotesMasterPart is { } oldMaster)
+        if (
+            sourceDocument.PresentationPart.NotesMasterPart is { } oldMaster
+            && _newDocument.PresentationPart.NotesMasterPart is null
+        )
         {
             var newMaster = _newDocument.PresentationPart.AddNewPart<NotesMasterPart>();
 

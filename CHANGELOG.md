@@ -1,6 +1,6 @@
 # Changelog
 
-## [3.0.0-beta01] - December 28, 2024
+## [3.0.0-beta02] - January 8, 2025
 
 - Public exposure of `IFluentPresentationBuilder` ergonomic API for the code behind `PresentationBuilder`
 
