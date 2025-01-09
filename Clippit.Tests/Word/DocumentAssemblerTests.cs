@@ -6,8 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Validation;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -273,6 +275,46 @@ namespace Clippit.Tests.Word
         }
 
         [Theory]
+        [InlineData("DA286-DocumentTemplate-Base-Main.docx", "DA286-DocumentTemplate-Base.xml", false)]
+        [InlineData("DA286-DocumentTemplate-MirroredMargins-Main.docx", "DA286-DocumentTemplate-MirroredMargins.xml", false)]
+        [InlineData("DA286-DocumentTemplate-NoBreaks-Main.docx", "DA286-DocumentTemplate-NoBreaks.xml", false)]
+        [InlineData("DA286-DocumentTemplate-HeaderFooter-Main.docx", "DA286-DocumentTemplate-HeaderFooter.xml", false)]
+        [InlineData("DA286-Document-SolarSystem-Main.docx", "DA286-Document-SolarSystem.xml", false)]
+        public void DA286(string templateName, string data, bool err)
+        {
+            var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, templateName));
+            var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
+
+            var wmlTemplate = new WmlDocument(templateDocx.FullName, true);
+            var xmldata = XElement.Load(dataFile.FullName);
+
+            // set the directory for TemplatePath attributes
+            var ns = xmldata.GetDefaultNamespace();
+            foreach (var ele in xmldata.XPathSelectElements("//*[@TemplatePath]"))
+            {
+                var templatePath = ele.Attribute(ns + "TemplatePath").Value;
+                templatePath = Path.Combine(_sourceDir.FullName, templatePath);
+                ele.Attribute(ns + "TemplatePath").Value = templatePath;
+            }
+
+            // set the directory for Path attributes
+            foreach (var ele in xmldata.XPathSelectElements("//*[@Path]"))
+            {
+                var path = ele.Attribute(ns + "Path").Value;
+                path = Path.Combine(_sourceDir.FullName, path);
+                ele.Attribute(ns + "Path").Value = path;
+            }
+
+            var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmldata, out bool templateError);
+            var assembledDocx = new FileInfo(Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
+            afterAssembling.SaveAs(assembledDocx.FullName);
+
+            Validate(assembledDocx);
+
+            Assert.Equal(err, templateError);
+        }
+
+        [Theory]
         [InlineData("DA024-TrackedRevisions.docx", "DA-Data.xml")]
         public void DA102_Throws(string name, string data)
         {
@@ -283,7 +325,7 @@ namespace Clippit.Tests.Word
             var xmldata = XElement.Load(dataFile.FullName);
 
             WmlDocument afterAssembling;
-            Assert.Throws<OpenXmlPowerToolsException>(() =>
+            _ = Assert.Throws<OpenXmlPowerToolsException>(() =>
             {
                 afterAssembling = DocumentAssembler.AssembleDocument(
                     wmlTemplate,
@@ -377,6 +419,9 @@ namespace Clippit.Tests.Word
                 "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:noVBand' attribute is not declared.",
                 "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddHBand' attribute is not declared.",
                 "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:oddVBand' attribute is not declared.",
+                "The 'http://schemas.microsoft.com/office/word/2012/wordml:restartNumberingAfterBreak' attribute is not declared.",
+                "The 'http://schemas.microsoft.com/office/word/2016/wordml/cid:durableId' attribute is not declared.",
+                "Attribute 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:val' should have unique value. Its current value",
             };
     }
 }
