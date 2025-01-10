@@ -1,15 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using SixLabors.ImageSharp.PixelFormats;
 using Image = SixLabors.ImageSharp.Image;
 
 // 200e lrm - LTR
@@ -79,27 +75,16 @@ namespace Clippit.Word
     [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
     public class HtmlConverterSettings
     {
-        public string PageTitle;
-        public string CssClassPrefix;
-        public bool FabricateCssClasses;
-        public string GeneralCss;
-        public string AdditionalCss;
-        public bool RestrictToSupportedLanguages;
-        public bool RestrictToSupportedNumberingFormats;
-        public Dictionary<string, Func<string, int, string, string>> ListItemImplementations;
+        public string PageTitle = "";
+        public string CssClassPrefix = "pt-";
+        public bool FabricateCssClasses = true;
+        public string GeneralCss = "span { white-space: pre-wrap; }";
+        public string AdditionalCss = "";
+        public bool RestrictToSupportedLanguages = false;
+        public bool RestrictToSupportedNumberingFormats = false;
+        public Dictionary<string, Func<string, int, string, string>> ListItemImplementations =
+            ListItemRetrieverSettings.DefaultListItemTextImplementations;
         public Func<ImageInfo, XElement> ImageHandler;
-
-        public HtmlConverterSettings()
-        {
-            PageTitle = "";
-            CssClassPrefix = "pt-";
-            FabricateCssClasses = true;
-            GeneralCss = "span { white-space: pre-wrap; }";
-            AdditionalCss = "";
-            RestrictToSupportedLanguages = false;
-            RestrictToSupportedNumberingFormats = false;
-            ListItemImplementations = ListItemRetrieverSettings.DefaultListItemTextImplementations;
-        }
     }
 
     public static class HtmlConverter
@@ -1847,44 +1832,42 @@ namespace Clippit.Word
             }
         }
 
-        private static readonly Dictionary<string, int> BorderTypePriority =
-            new()
-            {
-                { "single", 1 },
-                { "thick", 2 },
-                { "double", 3 },
-                { "dotted", 4 },
-            };
+        private static readonly Dictionary<string, int> BorderTypePriority = new()
+        {
+            { "single", 1 },
+            { "thick", 2 },
+            { "double", 3 },
+            { "dotted", 4 },
+        };
 
-        private static readonly Dictionary<string, int> BorderNumber =
-            new()
-            {
-                { "single", 1 },
-                { "thick", 2 },
-                { "double", 3 },
-                { "dotted", 4 },
-                { "dashed", 5 },
-                { "dotDash", 5 },
-                { "dotDotDash", 5 },
-                { "triple", 6 },
-                { "thinThickSmallGap", 6 },
-                { "thickThinSmallGap", 6 },
-                { "thinThickThinSmallGap", 6 },
-                { "thinThickMediumGap", 6 },
-                { "thickThinMediumGap", 6 },
-                { "thinThickThinMediumGap", 6 },
-                { "thinThickLargeGap", 6 },
-                { "thickThinLargeGap", 6 },
-                { "thinThickThinLargeGap", 6 },
-                { "wave", 7 },
-                { "doubleWave", 7 },
-                { "dashSmallGap", 5 },
-                { "dashDotStroked", 5 },
-                { "threeDEmboss", 7 },
-                { "threeDEngrave", 7 },
-                { "outset", 7 },
-                { "inset", 7 },
-            };
+        private static readonly Dictionary<string, int> BorderNumber = new()
+        {
+            { "single", 1 },
+            { "thick", 2 },
+            { "double", 3 },
+            { "dotted", 4 },
+            { "dashed", 5 },
+            { "dotDash", 5 },
+            { "dotDotDash", 5 },
+            { "triple", 6 },
+            { "thinThickSmallGap", 6 },
+            { "thickThinSmallGap", 6 },
+            { "thinThickThinSmallGap", 6 },
+            { "thinThickMediumGap", 6 },
+            { "thickThinMediumGap", 6 },
+            { "thinThickThinMediumGap", 6 },
+            { "thinThickLargeGap", 6 },
+            { "thickThinLargeGap", 6 },
+            { "thinThickThinLargeGap", 6 },
+            { "wave", 7 },
+            { "doubleWave", 7 },
+            { "dashSmallGap", 5 },
+            { "dashDotStroked", 5 },
+            { "threeDEmboss", 7 },
+            { "threeDEngrave", 7 },
+            { "outset", 7 },
+            { "inset", 7 },
+        };
 
         private static void ResolveCellBorder(XElement border1, XElement border2)
         {
@@ -2723,106 +2706,105 @@ namespace Clippit.Word
             public decimal CssSize;
         }
 
-        private static readonly Dictionary<string, BorderMappingInfo> BorderStyleMap =
-            new()
+        private static readonly Dictionary<string, BorderMappingInfo> BorderStyleMap = new()
+        {
             {
-                {
-                    "single",
-                    new BorderMappingInfo() { CssName = "solid", CssSize = 1.0m }
-                },
-                {
-                    "dotted",
-                    new BorderMappingInfo() { CssName = "dotted", CssSize = 1.0m }
-                },
-                {
-                    "dashSmallGap",
-                    new BorderMappingInfo() { CssName = "dashed", CssSize = 1.0m }
-                },
-                {
-                    "dashed",
-                    new BorderMappingInfo() { CssName = "dashed", CssSize = 1.0m }
-                },
-                {
-                    "dotDash",
-                    new BorderMappingInfo() { CssName = "dashed", CssSize = 1.0m }
-                },
-                {
-                    "dotDotDash",
-                    new BorderMappingInfo() { CssName = "dashed", CssSize = 1.0m }
-                },
-                {
-                    "double",
-                    new BorderMappingInfo() { CssName = "double", CssSize = 2.5m }
-                },
-                {
-                    "triple",
-                    new BorderMappingInfo() { CssName = "double", CssSize = 2.5m }
-                },
-                {
-                    "thinThickSmallGap",
-                    new BorderMappingInfo() { CssName = "double", CssSize = 4.5m }
-                },
-                {
-                    "thickThinSmallGap",
-                    new BorderMappingInfo() { CssName = "double", CssSize = 4.5m }
-                },
-                {
-                    "thinThickThinSmallGap",
-                    new BorderMappingInfo() { CssName = "double", CssSize = 6.0m }
-                },
-                {
-                    "thickThinMediumGap",
-                    new BorderMappingInfo() { CssName = "double", CssSize = 6.0m }
-                },
-                {
-                    "thinThickMediumGap",
-                    new BorderMappingInfo() { CssName = "double", CssSize = 6.0m }
-                },
-                {
-                    "thinThickThinMediumGap",
-                    new BorderMappingInfo() { CssName = "double", CssSize = 9.0m }
-                },
-                {
-                    "thinThickLargeGap",
-                    new BorderMappingInfo() { CssName = "double", CssSize = 5.25m }
-                },
-                {
-                    "thickThinLargeGap",
-                    new BorderMappingInfo() { CssName = "double", CssSize = 5.25m }
-                },
-                {
-                    "thinThickThinLargeGap",
-                    new BorderMappingInfo() { CssName = "double", CssSize = 9.0m }
-                },
-                {
-                    "wave",
-                    new BorderMappingInfo() { CssName = "solid", CssSize = 3.0m }
-                },
-                {
-                    "doubleWave",
-                    new BorderMappingInfo() { CssName = "double", CssSize = 5.25m }
-                },
-                {
-                    "dashDotStroked",
-                    new BorderMappingInfo() { CssName = "solid", CssSize = 3.0m }
-                },
-                {
-                    "threeDEmboss",
-                    new BorderMappingInfo() { CssName = "ridge", CssSize = 6.0m }
-                },
-                {
-                    "threeDEngrave",
-                    new BorderMappingInfo() { CssName = "groove", CssSize = 6.0m }
-                },
-                {
-                    "outset",
-                    new BorderMappingInfo() { CssName = "outset", CssSize = 4.5m }
-                },
-                {
-                    "inset",
-                    new BorderMappingInfo() { CssName = "inset", CssSize = 4.5m }
-                },
-            };
+                "single",
+                new BorderMappingInfo() { CssName = "solid", CssSize = 1.0m }
+            },
+            {
+                "dotted",
+                new BorderMappingInfo() { CssName = "dotted", CssSize = 1.0m }
+            },
+            {
+                "dashSmallGap",
+                new BorderMappingInfo() { CssName = "dashed", CssSize = 1.0m }
+            },
+            {
+                "dashed",
+                new BorderMappingInfo() { CssName = "dashed", CssSize = 1.0m }
+            },
+            {
+                "dotDash",
+                new BorderMappingInfo() { CssName = "dashed", CssSize = 1.0m }
+            },
+            {
+                "dotDotDash",
+                new BorderMappingInfo() { CssName = "dashed", CssSize = 1.0m }
+            },
+            {
+                "double",
+                new BorderMappingInfo() { CssName = "double", CssSize = 2.5m }
+            },
+            {
+                "triple",
+                new BorderMappingInfo() { CssName = "double", CssSize = 2.5m }
+            },
+            {
+                "thinThickSmallGap",
+                new BorderMappingInfo() { CssName = "double", CssSize = 4.5m }
+            },
+            {
+                "thickThinSmallGap",
+                new BorderMappingInfo() { CssName = "double", CssSize = 4.5m }
+            },
+            {
+                "thinThickThinSmallGap",
+                new BorderMappingInfo() { CssName = "double", CssSize = 6.0m }
+            },
+            {
+                "thickThinMediumGap",
+                new BorderMappingInfo() { CssName = "double", CssSize = 6.0m }
+            },
+            {
+                "thinThickMediumGap",
+                new BorderMappingInfo() { CssName = "double", CssSize = 6.0m }
+            },
+            {
+                "thinThickThinMediumGap",
+                new BorderMappingInfo() { CssName = "double", CssSize = 9.0m }
+            },
+            {
+                "thinThickLargeGap",
+                new BorderMappingInfo() { CssName = "double", CssSize = 5.25m }
+            },
+            {
+                "thickThinLargeGap",
+                new BorderMappingInfo() { CssName = "double", CssSize = 5.25m }
+            },
+            {
+                "thinThickThinLargeGap",
+                new BorderMappingInfo() { CssName = "double", CssSize = 9.0m }
+            },
+            {
+                "wave",
+                new BorderMappingInfo() { CssName = "solid", CssSize = 3.0m }
+            },
+            {
+                "doubleWave",
+                new BorderMappingInfo() { CssName = "double", CssSize = 5.25m }
+            },
+            {
+                "dashDotStroked",
+                new BorderMappingInfo() { CssName = "solid", CssSize = 3.0m }
+            },
+            {
+                "threeDEmboss",
+                new BorderMappingInfo() { CssName = "ridge", CssSize = 6.0m }
+            },
+            {
+                "threeDEngrave",
+                new BorderMappingInfo() { CssName = "groove", CssSize = 6.0m }
+            },
+            {
+                "outset",
+                new BorderMappingInfo() { CssName = "outset", CssSize = 4.5m }
+            },
+            {
+                "inset",
+                new BorderMappingInfo() { CssName = "inset", CssSize = 4.5m }
+            },
+        };
 
         private static void GenerateBorderStyle(
             XElement pBdr,
@@ -2933,47 +2915,46 @@ namespace Clippit.Word
             }
         }
 
-        private static readonly Dictionary<string, Func<string, string, string>> ShadeMapper =
-            new()
-            {
-                { "auto", (c, f) => c },
-                { "clear", (c, f) => f },
-                { "nil", (c, f) => f },
-                { "solid", (c, f) => c },
-                { "diagCross", (c, f) => ConvertColorFillPct(c, f, .75) },
-                { "diagStripe", (c, f) => ConvertColorFillPct(c, f, .75) },
-                { "horzCross", (c, f) => ConvertColorFillPct(c, f, .5) },
-                { "horzStripe", (c, f) => ConvertColorFillPct(c, f, .5) },
-                { "pct10", (c, f) => ConvertColorFillPct(c, f, .1) },
-                { "pct12", (c, f) => ConvertColorFillPct(c, f, .125) },
-                { "pct15", (c, f) => ConvertColorFillPct(c, f, .15) },
-                { "pct20", (c, f) => ConvertColorFillPct(c, f, .2) },
-                { "pct25", (c, f) => ConvertColorFillPct(c, f, .25) },
-                { "pct30", (c, f) => ConvertColorFillPct(c, f, .3) },
-                { "pct35", (c, f) => ConvertColorFillPct(c, f, .35) },
-                { "pct37", (c, f) => ConvertColorFillPct(c, f, .375) },
-                { "pct40", (c, f) => ConvertColorFillPct(c, f, .4) },
-                { "pct45", (c, f) => ConvertColorFillPct(c, f, .45) },
-                { "pct50", (c, f) => ConvertColorFillPct(c, f, .50) },
-                { "pct55", (c, f) => ConvertColorFillPct(c, f, .55) },
-                { "pct60", (c, f) => ConvertColorFillPct(c, f, .60) },
-                { "pct62", (c, f) => ConvertColorFillPct(c, f, .625) },
-                { "pct65", (c, f) => ConvertColorFillPct(c, f, .65) },
-                { "pct70", (c, f) => ConvertColorFillPct(c, f, .7) },
-                { "pct75", (c, f) => ConvertColorFillPct(c, f, .75) },
-                { "pct80", (c, f) => ConvertColorFillPct(c, f, .8) },
-                { "pct85", (c, f) => ConvertColorFillPct(c, f, .85) },
-                { "pct87", (c, f) => ConvertColorFillPct(c, f, .875) },
-                { "pct90", (c, f) => ConvertColorFillPct(c, f, .9) },
-                { "pct95", (c, f) => ConvertColorFillPct(c, f, .95) },
-                { "reverseDiagStripe", (c, f) => ConvertColorFillPct(c, f, .5) },
-                { "thinDiagCross", (c, f) => ConvertColorFillPct(c, f, .5) },
-                { "thinDiagStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
-                { "thinHorzCross", (c, f) => ConvertColorFillPct(c, f, .3) },
-                { "thinHorzStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
-                { "thinReverseDiagStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
-                { "thinVertStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
-            };
+        private static readonly Dictionary<string, Func<string, string, string>> ShadeMapper = new()
+        {
+            { "auto", (c, f) => c },
+            { "clear", (c, f) => f },
+            { "nil", (c, f) => f },
+            { "solid", (c, f) => c },
+            { "diagCross", (c, f) => ConvertColorFillPct(c, f, .75) },
+            { "diagStripe", (c, f) => ConvertColorFillPct(c, f, .75) },
+            { "horzCross", (c, f) => ConvertColorFillPct(c, f, .5) },
+            { "horzStripe", (c, f) => ConvertColorFillPct(c, f, .5) },
+            { "pct10", (c, f) => ConvertColorFillPct(c, f, .1) },
+            { "pct12", (c, f) => ConvertColorFillPct(c, f, .125) },
+            { "pct15", (c, f) => ConvertColorFillPct(c, f, .15) },
+            { "pct20", (c, f) => ConvertColorFillPct(c, f, .2) },
+            { "pct25", (c, f) => ConvertColorFillPct(c, f, .25) },
+            { "pct30", (c, f) => ConvertColorFillPct(c, f, .3) },
+            { "pct35", (c, f) => ConvertColorFillPct(c, f, .35) },
+            { "pct37", (c, f) => ConvertColorFillPct(c, f, .375) },
+            { "pct40", (c, f) => ConvertColorFillPct(c, f, .4) },
+            { "pct45", (c, f) => ConvertColorFillPct(c, f, .45) },
+            { "pct50", (c, f) => ConvertColorFillPct(c, f, .50) },
+            { "pct55", (c, f) => ConvertColorFillPct(c, f, .55) },
+            { "pct60", (c, f) => ConvertColorFillPct(c, f, .60) },
+            { "pct62", (c, f) => ConvertColorFillPct(c, f, .625) },
+            { "pct65", (c, f) => ConvertColorFillPct(c, f, .65) },
+            { "pct70", (c, f) => ConvertColorFillPct(c, f, .7) },
+            { "pct75", (c, f) => ConvertColorFillPct(c, f, .75) },
+            { "pct80", (c, f) => ConvertColorFillPct(c, f, .8) },
+            { "pct85", (c, f) => ConvertColorFillPct(c, f, .85) },
+            { "pct87", (c, f) => ConvertColorFillPct(c, f, .875) },
+            { "pct90", (c, f) => ConvertColorFillPct(c, f, .9) },
+            { "pct95", (c, f) => ConvertColorFillPct(c, f, .95) },
+            { "reverseDiagStripe", (c, f) => ConvertColorFillPct(c, f, .5) },
+            { "thinDiagCross", (c, f) => ConvertColorFillPct(c, f, .5) },
+            { "thinDiagStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
+            { "thinHorzCross", (c, f) => ConvertColorFillPct(c, f, .3) },
+            { "thinHorzStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
+            { "thinReverseDiagStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
+            { "thinVertStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
+        };
 
         private static readonly Dictionary<string, string> ShadeCache = new();
 
@@ -3020,27 +3001,26 @@ namespace Clippit.Word
             }
         }
 
-        private static readonly Dictionary<string, string> NamedColors =
-            new()
-            {
-                { "black", "black" },
-                { "blue", "blue" },
-                { "cyan", "aqua" },
-                { "green", "green" },
-                { "magenta", "fuchsia" },
-                { "red", "red" },
-                { "yellow", "yellow" },
-                { "white", "white" },
-                { "darkBlue", "#00008B" },
-                { "darkCyan", "#008B8B" },
-                { "darkGreen", "#006400" },
-                { "darkMagenta", "#800080" },
-                { "darkRed", "#8B0000" },
-                { "darkYellow", "#808000" },
-                { "darkGray", "#A9A9A9" },
-                { "lightGray", "#D3D3D3" },
-                { "none", "" },
-            };
+        private static readonly Dictionary<string, string> NamedColors = new()
+        {
+            { "black", "black" },
+            { "blue", "blue" },
+            { "cyan", "aqua" },
+            { "green", "green" },
+            { "magenta", "fuchsia" },
+            { "red", "red" },
+            { "yellow", "yellow" },
+            { "white", "white" },
+            { "darkBlue", "#00008B" },
+            { "darkCyan", "#008B8B" },
+            { "darkGreen", "#006400" },
+            { "darkMagenta", "#800080" },
+            { "darkRed", "#8B0000" },
+            { "darkYellow", "#808000" },
+            { "darkGray", "#A9A9A9" },
+            { "lightGray", "#D3D3D3" },
+            { "none", "" },
+        };
 
         private static void CreateColorProperty(string propertyName, string color, Dictionary<string, string> style)
         {
@@ -3080,41 +3060,40 @@ namespace Clippit.Word
             return "#" + color;
         }
 
-        private static readonly Dictionary<string, string> FontFallback =
-            new()
-            {
-                { "Arial", @"'{0}', 'sans-serif'" },
-                { "Arial Narrow", @"'{0}', 'sans-serif'" },
-                { "Arial Rounded MT Bold", @"'{0}', 'sans-serif'" },
-                { "Arial Unicode MS", @"'{0}', 'sans-serif'" },
-                { "Baskerville Old Face", @"'{0}', 'serif'" },
-                { "Berlin Sans FB", @"'{0}', 'sans-serif'" },
-                { "Berlin Sans FB Demi", @"'{0}', 'sans-serif'" },
-                { "Calibri Light", @"'{0}', 'sans-serif'" },
-                { "Gill Sans MT", @"'{0}', 'sans-serif'" },
-                { "Gill Sans MT Condensed", @"'{0}', 'sans-serif'" },
-                { "Lucida Sans", @"'{0}', 'sans-serif'" },
-                { "Lucida Sans Unicode", @"'{0}', 'sans-serif'" },
-                { "Segoe UI", @"'{0}', 'sans-serif'" },
-                { "Segoe UI Light", @"'{0}', 'sans-serif'" },
-                { "Segoe UI Semibold", @"'{0}', 'sans-serif'" },
-                { "Tahoma", @"'{0}', 'sans-serif'" },
-                { "Trebuchet MS", @"'{0}', 'sans-serif'" },
-                { "Verdana", @"'{0}', 'sans-serif'" },
-                { "Book Antiqua", @"'{0}', 'serif'" },
-                { "Bookman Old Style", @"'{0}', 'serif'" },
-                { "Californian FB", @"'{0}', 'serif'" },
-                { "Cambria", @"'{0}', 'serif'" },
-                { "Constantia", @"'{0}', 'serif'" },
-                { "Garamond", @"'{0}', 'serif'" },
-                { "Lucida Bright", @"'{0}', 'serif'" },
-                { "Lucida Fax", @"'{0}', 'serif'" },
-                { "Palatino Linotype", @"'{0}', 'serif'" },
-                { "Times New Roman", @"'{0}', 'serif'" },
-                { "Wide Latin", @"'{0}', 'serif'" },
-                { "Courier New", @"'{0}'" },
-                { "Lucida Console", @"'{0}'" },
-            };
+        private static readonly Dictionary<string, string> FontFallback = new()
+        {
+            { "Arial", @"'{0}', 'sans-serif'" },
+            { "Arial Narrow", @"'{0}', 'sans-serif'" },
+            { "Arial Rounded MT Bold", @"'{0}', 'sans-serif'" },
+            { "Arial Unicode MS", @"'{0}', 'sans-serif'" },
+            { "Baskerville Old Face", @"'{0}', 'serif'" },
+            { "Berlin Sans FB", @"'{0}', 'sans-serif'" },
+            { "Berlin Sans FB Demi", @"'{0}', 'sans-serif'" },
+            { "Calibri Light", @"'{0}', 'sans-serif'" },
+            { "Gill Sans MT", @"'{0}', 'sans-serif'" },
+            { "Gill Sans MT Condensed", @"'{0}', 'sans-serif'" },
+            { "Lucida Sans", @"'{0}', 'sans-serif'" },
+            { "Lucida Sans Unicode", @"'{0}', 'sans-serif'" },
+            { "Segoe UI", @"'{0}', 'sans-serif'" },
+            { "Segoe UI Light", @"'{0}', 'sans-serif'" },
+            { "Segoe UI Semibold", @"'{0}', 'sans-serif'" },
+            { "Tahoma", @"'{0}', 'sans-serif'" },
+            { "Trebuchet MS", @"'{0}', 'sans-serif'" },
+            { "Verdana", @"'{0}', 'sans-serif'" },
+            { "Book Antiqua", @"'{0}', 'serif'" },
+            { "Bookman Old Style", @"'{0}', 'serif'" },
+            { "Californian FB", @"'{0}', 'serif'" },
+            { "Cambria", @"'{0}', 'serif'" },
+            { "Constantia", @"'{0}', 'serif'" },
+            { "Garamond", @"'{0}', 'serif'" },
+            { "Lucida Bright", @"'{0}', 'serif'" },
+            { "Lucida Fax", @"'{0}', 'serif'" },
+            { "Palatino Linotype", @"'{0}', 'serif'" },
+            { "Times New Roman", @"'{0}', 'serif'" },
+            { "Wide Latin", @"'{0}', 'serif'" },
+            { "Courier New", @"'{0}'" },
+            { "Lucida Console", @"'{0}'" },
+        };
 
         private static void CreateFontCssProperty(string font, Dictionary<string, string> style)
         {
@@ -3196,8 +3175,13 @@ namespace Clippit.Word
         // Don't process wmf files (with contentType == "image/x-wmf") because GDI consumes huge amounts
         // of memory when dealing with wmf perhaps because it loads a DLL to do the rendering?
         // It actually works, but is not recommended.
-        private static readonly List<string> ImageContentTypes =
-            new() { "image/png", "image/gif", "image/tiff", "image/jpeg" };
+        private static readonly List<string> ImageContentTypes = new()
+        {
+            "image/png",
+            "image/gif",
+            "image/tiff",
+            "image/jpeg",
+        };
 
         public static XElement ProcessImage(
             WordprocessingDocument wordDoc,

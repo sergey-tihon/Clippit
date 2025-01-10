@@ -14,9 +14,6 @@ Email: thomas@barnekow.info
 
 ***************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Linq;
 
 namespace Clippit

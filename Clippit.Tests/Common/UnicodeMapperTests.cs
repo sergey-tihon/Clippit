@@ -14,7 +14,6 @@ Email: thomas@barnekow.info
 
 ***************************************************************************/
 
-using System.Linq;
 using System.Xml.Linq;
 using Xunit;
 

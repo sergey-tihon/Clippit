@@ -13,7 +13,6 @@ using DocumentFormat.OpenXml.InkML;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using Path = System.IO.Path;
 
 namespace Clippit.Word
@@ -517,8 +516,16 @@ namespace Clippit.Word
             }
         }
 
-        private static readonly List<string> s_aliasList =
-            new() { "Image", "Content", "Table", "Repeat", "EndRepeat", "Conditional", "EndConditional" };
+        private static readonly List<string> s_aliasList = new()
+        {
+            "Image",
+            "Content",
+            "Table",
+            "Repeat",
+            "EndRepeat",
+            "Conditional",
+            "EndConditional",
+        };
 
         private static object TransformToMetadata(XNode node, TemplateError te)
         {
@@ -1476,7 +1483,9 @@ namespace Clippit.Word
                 {
                     return documentBytes.GetBase64EncodedDocumentElement();
                 }
-                else
+
+                // add all but the first element after the current paragraph
+                for (int i = elements.Count - 1; i > 0; i--)
                 {
                     return element.CreateContextErrorMessage($"Template not found at '{documentPath}'", templateError);
                 }

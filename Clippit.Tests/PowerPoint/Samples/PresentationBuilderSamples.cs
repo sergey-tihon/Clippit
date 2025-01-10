@@ -1,19 +1,12 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Clippit.PowerPoint;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.PowerPoint.Samples
 {
-    public class PresentationBuilderSamples : TestsBase
+    public class PresentationBuilderSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public PresentationBuilderSamples(ITestOutputHelper log)
-            : base(log) { }
-
         private static string GetFilePath(string path) =>
             Path.Combine("../../../PowerPoint/Samples/PresentationBuilder/", path);
 

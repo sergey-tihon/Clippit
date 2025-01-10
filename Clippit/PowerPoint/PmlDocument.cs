@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Clippit.Internal;
+﻿using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.PowerPoint;

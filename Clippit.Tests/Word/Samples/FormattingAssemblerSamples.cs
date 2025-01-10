@@ -1,16 +1,11 @@
-﻿using System.IO;
-using Clippit.Word;
+﻿using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Word.Samples
 {
-    public class FormattingAssemblerSamples : TestsBase
+    public class FormattingAssemblerSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public FormattingAssemblerSamples(ITestOutputHelper log)
-            : base(log) { }
-
         [Theory]
         [InlineData("Test01.docx")]
         [InlineData("Test02.docx")]

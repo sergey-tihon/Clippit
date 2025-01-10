@@ -1,18 +1,11 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Word.Samples
 {
-    public class FieldRetrieverSamples : TestsBase
+    public class FieldRetrieverSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public FieldRetrieverSamples(ITestOutputHelper log)
-            : base(log) { }
-
         private static string GetFilePath(string path) => Path.Combine("../../../Word/Samples/FieldRetriever/", path);
 
         [Fact]

@@ -1,17 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
+﻿using System.Drawing;
 using Clippit.Word;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Word.Samples
 {
-    public class WmlComparerSamples : TestsBase
+    public class WmlComparerSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public WmlComparerSamples(ITestOutputHelper log)
-            : base(log) { }
-
         private static string GetFilePath(string path) => Path.Combine("../../../Word/Samples/WmlComparer/", path);
 
         [Fact]

@@ -31,7 +31,7 @@ Most of existing content about Open-Xml-PowerTools is still relevant:
 ## About Open-XML-PowerTools
 
 The Open XML PowerTools provides guidance and example code for programming with Open XML
-Documents (DOCX, XLSX, and PPTX).  It is based on, and extends the functionality
+Documents (DOCX, XLSX, and PPTX). It is based on, and extends the functionality
 of the [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK).
 
 It supports scenarios such as:
@@ -53,6 +53,7 @@ It supports scenarios such as:
 ```
 Copyright (c) Microsoft Corporation 2012-2017
 Portions Copyright (c) Eric White Inc 2018-2019
-Portions Copyright (c) Sergey Tihon 2019-2024
+Portions Copyright (c) Sergey Tihon 2019-2025
 Licensed under the MIT License.
 ```
+

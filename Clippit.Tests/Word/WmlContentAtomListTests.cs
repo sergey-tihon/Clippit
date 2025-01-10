@@ -3,21 +3,15 @@
 
 #define COPY_FILES_FOR_DEBUGGING
 
-using System;
-using System.IO;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
 namespace Clippit.Tests.Word
 {
-    public class WmlContentAtomListTests : TestsBase
+    public class WmlContentAtomListTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public WmlContentAtomListTests(ITestOutputHelper log)
-            : base(log) { }
-
         /*
          * This test was removed because it depends on the Coalesce method, which is only ever used
          * by this test.

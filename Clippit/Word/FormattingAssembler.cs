@@ -1,9 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
@@ -11,24 +8,13 @@ namespace Clippit.Word
 {
     public class FormattingAssemblerSettings
     {
-        public bool RemoveStyleNamesFromParagraphAndRunProperties;
-        public bool ClearStyles;
-        public bool OrderElementsPerStandard;
-        public bool CreateHtmlConverterAnnotationAttributes;
-        public bool RestrictToSupportedNumberingFormats;
-        public bool RestrictToSupportedLanguages;
-        public ListItemRetrieverSettings ListItemRetrieverSettings;
-
-        public FormattingAssemblerSettings()
-        {
-            RemoveStyleNamesFromParagraphAndRunProperties = true;
-            ClearStyles = true;
-            OrderElementsPerStandard = true;
-            CreateHtmlConverterAnnotationAttributes = true;
-            RestrictToSupportedNumberingFormats = false;
-            RestrictToSupportedLanguages = false;
-            ListItemRetrieverSettings = new ListItemRetrieverSettings();
-        }
+        public bool RemoveStyleNamesFromParagraphAndRunProperties = true;
+        public bool ClearStyles = true;
+        public bool OrderElementsPerStandard = true;
+        public bool CreateHtmlConverterAnnotationAttributes = true;
+        public bool RestrictToSupportedNumberingFormats = false;
+        public bool RestrictToSupportedLanguages = false;
+        public ListItemRetrieverSettings ListItemRetrieverSettings = new();
     }
 
     public static class FormattingAssembler
@@ -1362,44 +1348,42 @@ namespace Clippit.Word
             }
         }
 
-        private static readonly Dictionary<string, int> BorderTypePriority =
-            new()
-            {
-                { "single", 1 },
-                { "thick", 2 },
-                { "double", 3 },
-                { "dotted", 4 },
-            };
+        private static readonly Dictionary<string, int> BorderTypePriority = new()
+        {
+            { "single", 1 },
+            { "thick", 2 },
+            { "double", 3 },
+            { "dotted", 4 },
+        };
 
-        private static readonly Dictionary<string, int> BorderNumber =
-            new()
-            {
-                { "single", 1 },
-                { "thick", 2 },
-                { "double", 3 },
-                { "dotted", 4 },
-                { "dashed", 5 },
-                { "dotDash", 6 },
-                { "dotDotDash", 7 },
-                { "triple", 8 },
-                { "thinThickSmallGap", 9 },
-                { "thickThinSmallGap", 10 },
-                { "thinThickThinSmallGap", 11 },
-                { "thinThickMediumGap", 12 },
-                { "thickThinMediumGap", 13 },
-                { "thinThickThinMediumGap", 14 },
-                { "thinThickLargeGap", 15 },
-                { "thickThinLargeGap", 16 },
-                { "thinThickThinLargeGap", 17 },
-                { "wave", 18 },
-                { "doubleWave", 19 },
-                { "dashSmallGap", 20 },
-                { "dashDotStroked", 21 },
-                { "threeDEmboss", 22 },
-                { "threeDEngrave", 23 },
-                { "outset", 24 },
-                { "inset", 25 },
-            };
+        private static readonly Dictionary<string, int> BorderNumber = new()
+        {
+            { "single", 1 },
+            { "thick", 2 },
+            { "double", 3 },
+            { "dotted", 4 },
+            { "dashed", 5 },
+            { "dotDash", 6 },
+            { "dotDotDash", 7 },
+            { "triple", 8 },
+            { "thinThickSmallGap", 9 },
+            { "thickThinSmallGap", 10 },
+            { "thinThickThinSmallGap", 11 },
+            { "thinThickMediumGap", 12 },
+            { "thickThinMediumGap", 13 },
+            { "thinThickThinMediumGap", 14 },
+            { "thinThickLargeGap", 15 },
+            { "thickThinLargeGap", 16 },
+            { "thinThickThinLargeGap", 17 },
+            { "wave", 18 },
+            { "doubleWave", 19 },
+            { "dashSmallGap", 20 },
+            { "dashDotStroked", 21 },
+            { "threeDEmboss", 22 },
+            { "threeDEngrave", 23 },
+            { "outset", 24 },
+            { "inset", 25 },
+        };
 
         private static XElement ResolveInsideBorder(XElement inside1, XElement sideToReplace)
         {
@@ -1564,35 +1548,33 @@ namespace Clippit.Word
             "swCell",
         };
 
-        private static readonly Dictionary<string, XName> TableStyleOverrideXNameMap =
-            new()
-            {
-                { "band1Vert", W.oddVBand },
-                { "band2Vert", W.evenVBand },
-                { "band1Horz", W.oddHBand },
-                { "band2Horz", W.evenHBand },
-                { "firstCol", W.firstColumn },
-                { "lastCol", W.lastColumn },
-                { "firstRow", W.firstRow },
-                { "lastRow", W.lastRow },
-                { "neCell", W.firstRowLastColumn },
-                { "nwCell", W.firstRowFirstColumn },
-                { "seCell", W.lastRowLastColumn },
-                { "swCell", W.lastRowFirstColumn },
-            };
+        private static readonly Dictionary<string, XName> TableStyleOverrideXNameMap = new()
+        {
+            { "band1Vert", W.oddVBand },
+            { "band2Vert", W.evenVBand },
+            { "band1Horz", W.oddHBand },
+            { "band2Horz", W.evenHBand },
+            { "firstCol", W.firstColumn },
+            { "lastCol", W.lastColumn },
+            { "firstRow", W.firstRow },
+            { "lastRow", W.lastRow },
+            { "neCell", W.firstRowLastColumn },
+            { "nwCell", W.firstRowFirstColumn },
+            { "seCell", W.lastRowLastColumn },
+            { "swCell", W.lastRowFirstColumn },
+        };
 
-        private static readonly Dictionary<XName, string> TableStyleOverrideXNameRevMap =
-            new()
-            {
-                { W.oddVBand, "band1Vert" },
-                { W.evenVBand, "band2Vert" },
-                { W.oddHBand, "band1Horz" },
-                { W.evenHBand, "band2Horz" },
-                { W.firstColumn, "firstCol" },
-                { W.lastColumn, "lastCol" },
-                { W.firstRow, "firstRow" },
-                { W.lastRow, "lastRow" },
-            };
+        private static readonly Dictionary<XName, string> TableStyleOverrideXNameRevMap = new()
+        {
+            { W.oddVBand, "band1Vert" },
+            { W.evenVBand, "band2Vert" },
+            { W.oddHBand, "band1Horz" },
+            { W.evenHBand, "band2Horz" },
+            { W.firstColumn, "firstCol" },
+            { W.lastColumn, "lastCol" },
+            { W.firstRow, "firstRow" },
+            { W.lastRow, "lastRow" },
+        };
 
         private static XElement MergeStyleElement(XElement higherPriorityElement, XElement lowerPriorityElement)
         {
@@ -2708,103 +2690,102 @@ namespace Clippit.Word
             private static readonly XName[] PropertyNames = new[] { W.cs, W.rtl, W.u, W.color, W.highlight, W.shd };
         }
 
-        private static readonly HashSet<char> WeakAndNeutralDirectionalCharacters =
-            new()
-            {
-                '0',
-                '1',
-                '2',
-                '3',
-                '4',
-                '5',
-                '6',
-                '7',
-                '8',
-                '9',
-                '+',
-                '-',
-                ':',
-                ',',
-                '.',
-                '|',
-                '\t',
-                '\r',
-                '\n',
-                ' ',
-                '\x00A0', // non breaking space
-                '\x00B0', // degree sign
-                '\x066B', // arabic decimal separator
-                '\x066C', // arabic thousands separator
-                '\x0627', // arabic pipe
-                '\x20A0', // start currency symbols
-                '\x20A1',
-                '\x20A2',
-                '\x20A3',
-                '\x20A4',
-                '\x20A5',
-                '\x20A6',
-                '\x20A7',
-                '\x20A8',
-                '\x20A9',
-                '\x20AA',
-                '\x20AB',
-                '\x20AC',
-                '\x20AD',
-                '\x20AE',
-                '\x20AF',
-                '\x20B0',
-                '\x20B1',
-                '\x20B2',
-                '\x20B3',
-                '\x20B4',
-                '\x20B5',
-                '\x20B6',
-                '\x20B7',
-                '\x20B8',
-                '\x20B9',
-                '\x20BA',
-                '\x20BB',
-                '\x20BC',
-                '\x20BD',
-                '\x20BE',
-                '\x20BF',
-                '\x20C0',
-                '\x20C1',
-                '\x20C2',
-                '\x20C3',
-                '\x20C4',
-                '\x20C5',
-                '\x20C6',
-                '\x20C7',
-                '\x20C8',
-                '\x20C9',
-                '\x20CA',
-                '\x20CB',
-                '\x20CC',
-                '\x20CD',
-                '\x20CE',
-                '\x20CF', // end currency symbols
-                '\x0660', // "Arabic" Indic Numeral Forms Iraq and West
-                '\x0661',
-                '\x0662',
-                '\x0663',
-                '\x0664',
-                '\x0665',
-                '\x0666',
-                '\x0667',
-                '\x0668',
-                '\x0669',
-                '\x06F0', // "Arabic" Indic Numberal Forms Iran and East
-                '\x06F1',
-                '\x06F2',
-                '\x06F3',
-                '\x06F4',
-                '\x06F5',
-                '\x06F6',
-                '\x06F7',
-                '\x06F8',
-                '\x06F9',
-            };
+        private static readonly HashSet<char> WeakAndNeutralDirectionalCharacters = new()
+        {
+            '0',
+            '1',
+            '2',
+            '3',
+            '4',
+            '5',
+            '6',
+            '7',
+            '8',
+            '9',
+            '+',
+            '-',
+            ':',
+            ',',
+            '.',
+            '|',
+            '\t',
+            '\r',
+            '\n',
+            ' ',
+            '\x00A0', // non breaking space
+            '\x00B0', // degree sign
+            '\x066B', // arabic decimal separator
+            '\x066C', // arabic thousands separator
+            '\x0627', // arabic pipe
+            '\x20A0', // start currency symbols
+            '\x20A1',
+            '\x20A2',
+            '\x20A3',
+            '\x20A4',
+            '\x20A5',
+            '\x20A6',
+            '\x20A7',
+            '\x20A8',
+            '\x20A9',
+            '\x20AA',
+            '\x20AB',
+            '\x20AC',
+            '\x20AD',
+            '\x20AE',
+            '\x20AF',
+            '\x20B0',
+            '\x20B1',
+            '\x20B2',
+            '\x20B3',
+            '\x20B4',
+            '\x20B5',
+            '\x20B6',
+            '\x20B7',
+            '\x20B8',
+            '\x20B9',
+            '\x20BA',
+            '\x20BB',
+            '\x20BC',
+            '\x20BD',
+            '\x20BE',
+            '\x20BF',
+            '\x20C0',
+            '\x20C1',
+            '\x20C2',
+            '\x20C3',
+            '\x20C4',
+            '\x20C5',
+            '\x20C6',
+            '\x20C7',
+            '\x20C8',
+            '\x20C9',
+            '\x20CA',
+            '\x20CB',
+            '\x20CC',
+            '\x20CD',
+            '\x20CE',
+            '\x20CF', // end currency symbols
+            '\x0660', // "Arabic" Indic Numeral Forms Iraq and West
+            '\x0661',
+            '\x0662',
+            '\x0663',
+            '\x0664',
+            '\x0665',
+            '\x0666',
+            '\x0667',
+            '\x0668',
+            '\x0669',
+            '\x06F0', // "Arabic" Indic Numberal Forms Iran and East
+            '\x06F1',
+            '\x06F2',
+            '\x06F3',
+            '\x06F4',
+            '\x06F5',
+            '\x06F6',
+            '\x06F7',
+            '\x06F8',
+            '\x06F9',
+        };
 
         private static void AdjustFontAttributes(
             WordprocessingDocument wDoc,
@@ -3580,12 +3561,7 @@ namespace Clippit.Word
             public string DefaultParagraphStyleName;
             public string DefaultCharacterStyleName;
             public string DefaultTableStyleName;
-            public readonly Dictionary<string, XElement> RolledCharacterStyles;
-
-            public FormattingAssemblerInfo()
-            {
-                RolledCharacterStyles = new Dictionary<string, XElement>();
-            }
+            public readonly Dictionary<string, XElement> RolledCharacterStyles = new();
         }
 
         // CachedParaInfo is an optimization for the case where a paragraph contains thousands of runs.
@@ -3595,16 +3571,8 @@ namespace Clippit.Word
             public XElement ParagraphProperties;
         }
 
-        public class UnsupportedNumberingFormatException : Exception
-        {
-            public UnsupportedNumberingFormatException(string message)
-                : base(message) { }
-        }
+        public class UnsupportedNumberingFormatException(string message) : Exception(message);
 
-        public class UnsupportedLanguageException : Exception
-        {
-            public UnsupportedLanguageException(string message)
-                : base(message) { }
-        }
+        public class UnsupportedLanguageException(string message) : Exception(message);
     }
 }

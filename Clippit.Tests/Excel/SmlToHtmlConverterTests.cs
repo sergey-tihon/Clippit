@@ -1,21 +1,16 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.IO;
 using Clippit.Excel;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
 namespace Clippit.Tests.Excel
 {
-    public class SmlToHtmlConverterTests : TestsBase
+    public class SmlToHtmlConverterTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public SmlToHtmlConverterTests(ITestOutputHelper log)
-            : base(log) { }
-
         // PowerShell oneliner that generates InlineData for all files in a directory
         // dir | % { '[InlineData("' + $_.Name + '")]' } | clip
 

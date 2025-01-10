@@ -3,9 +3,6 @@
 
 /* created on 9/8/2012 9:28:14 AM from peg generator V1.0 using 'ExcelFormula.txt' as input*/
 
-using System;
-using System.IO;
-
 namespace Clippit.Excel
 {
     internal enum EExcelFormula

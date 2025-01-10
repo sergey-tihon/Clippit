@@ -1,25 +1,18 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.IO;
-using System.Linq;
 using System.Text;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Xunit;
-using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
 namespace Clippit.Tests.Word
 {
-    public class WmlComparerTests2 : TestsBase
+    public class WmlComparerTests2(ITestOutputHelper log) : TestsBase(log)
     {
-        public WmlComparerTests2(ITestOutputHelper log)
-            : base(log) { }
-
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public static bool m_OpenWord = false;
         public static bool m_OpenTempDirInExplorer = false;

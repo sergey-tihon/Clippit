@@ -1,19 +1,13 @@
-﻿using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Xml.Linq;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Word.Samples
 {
-    public class WmlToHtmlConverterSamples : TestsBase
+    public class WmlToHtmlConverterSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public WmlToHtmlConverterSamples(ITestOutputHelper log)
-            : base(log) { }
-
         private static string RootFolder => "../../../Word/Samples/WmlToHtmlConverter/";
 
         [Fact]

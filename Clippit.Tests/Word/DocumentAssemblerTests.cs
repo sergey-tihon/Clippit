@@ -1,9 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -11,21 +8,14 @@ using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using Xunit;
-using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
 namespace Clippit.Tests.Word
 {
-    public class DocumentAssemblerTests : TestsBase
+    public class DocumentAssemblerTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public DocumentAssemblerTests(ITestOutputHelper log)
-            : base(log)
-        {
-            _sourceDir = new DirectoryInfo("../../../../TestFiles/DA/");
-        }
-
-        private readonly DirectoryInfo _sourceDir;
+        private readonly DirectoryInfo _sourceDir = new("../../../../TestFiles/DA/");
 
         [Theory]
         [InlineData("DA001-TemplateDocument.docx", "DA-Data.xml", false)]
@@ -156,6 +146,9 @@ namespace Clippit.Tests.Word
         [InlineData("DA285-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
         [InlineData("DA285A-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
         [InlineData("DA-I0038-TemplateWithMultipleXPathResults.docx", "DA-I0038-Data.xml", false)]
+        [InlineData("DA289A-xhtml-formatting.docx", "DA-html-input.xml", false)]
+        [InlineData("DA289B-html-not-supported.docx", "DA-html-input.xml", true)]
+        [InlineData("DA289C-not-well-formed-xhtml.docx", "DA-html-input.xml", true)]
         public void DA101(string name, string data, bool err)
         {
             var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));

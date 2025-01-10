@@ -1,24 +1,18 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Globalization;
-using System.IO;
 using Clippit.PowerPoint;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 #if !ELIDE_XUNIT_TESTS
 
 namespace Clippit.Tests.Common
 {
-    public class ChartUpdaterTests : TestsBase
+    public class ChartUpdaterTests(ITestOutputHelper log) : TestsBase(log)
     {
-        public ChartUpdaterTests(ITestOutputHelper log)
-            : base(log) { }
-
         [Theory]
         [InlineData("CU001-Chart-Cached-Data-01.docx")]
         [InlineData("CU002-Chart-Cached-Data-02.docx")]

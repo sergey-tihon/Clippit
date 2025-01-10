@@ -3,10 +3,8 @@
 
 #undef DisplayWorkingSet
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -23,7 +21,7 @@ namespace Clippit.Excel
 
     public class WorkbookDfn
     {
-        public IEnumerable<WorksheetDfn> Worksheets { get; set; }
+        public IEnumerable<WorksheetDfn> Worksheets { get; set; } = [];
     }
 
     public class WorksheetDfn
@@ -48,37 +46,36 @@ namespace Clippit.Excel
     // Standard formats
     public class CellDfn
     {
-        public static readonly Dictionary<string, int> StandardFormats =
-            new()
-            {
-                { "0", 1 },
-                { "0.00", 2 },
-                { "#,##0", 3 },
-                { "#,##0.00", 4 },
-                { "0%", 9 },
-                { "0.00%", 10 },
-                { "0.00E+00", 11 },
-                { "# ?/?", 12 },
-                { "# ??/??", 13 },
-                { "mm-dd-yy", 14 },
-                { "d-mmm-yy", 15 },
-                { "d-mmm", 16 },
-                { "mmm-yy", 17 },
-                { "h:mm AM/PM", 18 },
-                { "h:mm:ss AM/PM", 19 },
-                { "h:mm", 20 },
-                { "h:mm:ss", 21 },
-                { "h/d/yy h:mm", 22 },
-                { "#,##0;(#,##0)", 37 },
-                { "#,##0;[Red](#,##0)", 38 },
-                { "#,##0.00;(#,##0.00)", 39 },
-                { "#,##0.00;[Red](#,##0.00)", 40 },
-                { "mm:ss", 45 },
-                { "[h]:mm:ss", 46 },
-                { "mmss.0", 47 },
-                { "##0.0E+0", 48 },
-                { "@", 49 },
-            };
+        public static readonly Dictionary<string, int> StandardFormats = new()
+        {
+            { "0", 1 },
+            { "0.00", 2 },
+            { "#,##0", 3 },
+            { "#,##0.00", 4 },
+            { "0%", 9 },
+            { "0.00%", 10 },
+            { "0.00E+00", 11 },
+            { "# ?/?", 12 },
+            { "# ??/??", 13 },
+            { "mm-dd-yy", 14 },
+            { "d-mmm-yy", 15 },
+            { "d-mmm", 16 },
+            { "mmm-yy", 17 },
+            { "h:mm AM/PM", 18 },
+            { "h:mm:ss AM/PM", 19 },
+            { "h:mm", 20 },
+            { "h:mm:ss", 21 },
+            { "h/d/yy h:mm", 22 },
+            { "#,##0;(#,##0)", 37 },
+            { "#,##0;[Red](#,##0)", 38 },
+            { "#,##0.00;(#,##0.00)", 39 },
+            { "#,##0.00;[Red](#,##0.00)", 40 },
+            { "mm:ss", 45 },
+            { "[h]:mm:ss", 46 },
+            { "mmss.0", 47 },
+            { "##0.0E+0", 48 },
+            { "@", 49 },
+        };
         public object Value { get; set; }
         public CellDataType? CellDataType { get; set; }
         public HorizontalCellAlignment? HorizontalCellAlignment { get; set; }
@@ -458,13 +455,20 @@ namespace Clippit.Excel
                         switch (cell.Value)
                         {
                             case DateTime dt:
-                                xw.WriteValue(dt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff"));
+                                xw.WriteValue(
+                                    dt.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff", CultureInfo.InvariantCulture)
+                                );
                                 break;
                             case DateTimeOffset dts:
-                                xw.WriteValue(dts.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz"));
+                                xw.WriteValue(
+                                    dts.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffzzz", CultureInfo.InvariantCulture)
+                                );
+                                break;
+                            case bool b:
+                                xw.WriteValue(cell.Value);
                                 break;
                             default:
-                                xw.WriteValue(cell.Value);
+                                xw.WriteValue(SanitizeXmlString(cell.Value.ToString()));
                                 break;
                         }
                         xw.WriteEndElement();
@@ -683,6 +687,30 @@ namespace Clippit.Excel
             return match;
         }
 
+        private static string SanitizeXmlString(string? xml)
+        {
+            if (string.IsNullOrEmpty(xml))
+            {
+                return string.Empty;
+            }
+
+            var buffer = new StringBuilder(xml.Length);
+
+            foreach (var c in xml)
+            {
+                if (XmlConvert.IsXmlChar(c))
+                {
+                    buffer.Append(c);
+                }
+                else
+                {
+                    buffer.AppendFormat(CultureInfo.InvariantCulture, "&#x{0:X};", (int)c);
+                }
+            }
+
+            return buffer.ToString();
+        }
+
         private static readonly string _EmptyXlsx =
             @"UEsDBBQABgAIAAAAIQBi7p1oYQEAAJAEAAATAAgCW0NvbnRlbnRfVHlwZXNdLnhtbCCiBAIooAAC
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -820,15 +848,8 @@ L2NvcmUueG1sUEsBAi0AFAAGAAgAAAAhAHREzCiJAQAAEQMAABAAAAAAAAAAAAAAAAAAbBgAAGRv
 Y1Byb3BzL2FwcC54bWxQSwUGAAAAAAoACgCAAgAAKxsAAAAA";
     }
 
-    public class SpreadsheetWriterInternalException : Exception
-    {
-        public SpreadsheetWriterInternalException()
-            : base("Internal error - unexpected content in _EmptyXlsx.") { }
-    }
+    public class SpreadsheetWriterInternalException() : Exception("Internal error - unexpected content in _EmptyXlsx.");
 
-    public class InvalidSheetNameException : Exception
-    {
-        public InvalidSheetNameException(string name)
-            : base($"The supplied name ({name}) is not a valid XLSX worksheet name.") { }
-    }
+    public class InvalidSheetNameException(string name)
+        : Exception($"The supplied name ({name}) is not a valid XLSX worksheet name.");
 }

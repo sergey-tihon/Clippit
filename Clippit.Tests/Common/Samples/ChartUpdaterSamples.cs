@@ -1,18 +1,12 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
+﻿using System.Globalization;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Clippit.Tests.Common.Samples
 {
-    public class ChartUpdaterSamples : TestsBase
+    public class ChartUpdaterSamples(ITestOutputHelper log) : TestsBase(log)
     {
-        public ChartUpdaterSamples(ITestOutputHelper log)
-            : base(log) { }
-
         private static string GetFilePath(string path) => Path.Combine("../../../Common/Samples/ChartUpdater/", path);
 
         [Theory]
