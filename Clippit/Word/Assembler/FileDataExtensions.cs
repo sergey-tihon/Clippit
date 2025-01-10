@@ -18,11 +18,10 @@ namespace Clippit.Word.Assembler
             */
 
             var xmlString = $"<Document Data=\"{Convert.ToBase64String(bytes)}\" />";
-            XElement sdt = new XElement(W.sdt,
-                new XElement(W.sdtContent,
-                new XElement(W.p,
-                new XElement(W.r,
-                new XElement(W.t, xmlString)))));
+            XElement sdt = new XElement(
+                W.sdt,
+                new XElement(W.sdtContent, new XElement(W.p, new XElement(W.r, new XElement(W.t, xmlString))))
+            );
 
             return sdt;
         }

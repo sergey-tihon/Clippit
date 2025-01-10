@@ -276,7 +276,11 @@ namespace Clippit.Tests.Word
 
         [Theory]
         [InlineData("DA286-DocumentTemplate-Base-Main.docx", "DA286-DocumentTemplate-Base.xml", false)]
-        [InlineData("DA286-DocumentTemplate-MirroredMargins-Main.docx", "DA286-DocumentTemplate-MirroredMargins.xml", false)]
+        [InlineData(
+            "DA286-DocumentTemplate-MirroredMargins-Main.docx",
+            "DA286-DocumentTemplate-MirroredMargins.xml",
+            false
+        )]
         [InlineData("DA286-DocumentTemplate-NoBreaks-Main.docx", "DA286-DocumentTemplate-NoBreaks.xml", false)]
         [InlineData("DA286-DocumentTemplate-HeaderFooter-Main.docx", "DA286-DocumentTemplate-HeaderFooter.xml", false)]
         [InlineData("DA286-Document-SolarSystem-Main.docx", "DA286-Document-SolarSystem.xml", false)]
@@ -306,7 +310,9 @@ namespace Clippit.Tests.Word
             }
 
             var afterAssembling = DocumentAssembler.AssembleDocument(wmlTemplate, xmldata, out bool templateError);
-            var assembledDocx = new FileInfo(Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx")));
+            var assembledDocx = new FileInfo(
+                Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx"))
+            );
             afterAssembling.SaveAs(assembledDocx.FullName);
 
             Validate(assembledDocx);

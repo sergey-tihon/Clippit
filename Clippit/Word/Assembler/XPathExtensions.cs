@@ -69,7 +69,9 @@ namespace Clippit.Word.Assembler
                 var fileInfo = element.EvaluateStringToFileInfo(pathOrXPath);
                 if (fileInfo != null)
                 {
-                    using (var fs = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    using (
+                        var fs = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
+                    )
                     {
                         using (var ms = new MemoryStream())
                         {
@@ -85,7 +87,6 @@ namespace Clippit.Word.Assembler
 
             return false;
         }
-
 
         private static FileInfo EvaluateStringToFileInfo(this XElement element, string pathOrXPath)
         {
@@ -112,9 +113,10 @@ namespace Clippit.Word.Assembler
                         {
                             // the element should have one child text node
                             XElement ele = selectedData as XElement;
-                            XText text = ele.Nodes().Where(x => x.NodeType == XmlNodeType.Text)
-                                                    .Select(x => x as XText)
-                                                    .SingleOrDefault();
+                            XText text = ele.Nodes()
+                                .Where(x => x.NodeType == XmlNodeType.Text)
+                                .Select(x => x as XText)
+                                .SingleOrDefault();
 
                             if (text != null)
                             {
@@ -125,8 +127,7 @@ namespace Clippit.Word.Assembler
                 }
             }
             catch (XPathException) // suppress the xpath exception
-            {
-            }
+            { }
 
             // check whether the xPath is actually just a file path
             try

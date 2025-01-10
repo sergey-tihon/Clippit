@@ -41,7 +41,9 @@ namespace Clippit.Word
                 using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(mem, true))
                 {
                     if (RevisionAccepter.HasTrackedRevisions(wordDoc))
-                        throw new OpenXmlPowerToolsException("Invalid DocumentAssembler template - contains tracked revisions");
+                        throw new OpenXmlPowerToolsException(
+                            "Invalid DocumentAssembler template - contains tracked revisions"
+                        );
 
                     // calculate and store the max docPr id for later use when adding image objects
                     var macDocPrId = GetMaxDocPrId(wordDoc);
@@ -87,27 +89,31 @@ namespace Clippit.Word
                             try
                             {
                                 // parse the xml data
-                                docElement = XElement.Parse(e.Element(W.sdtContent)
-                                    .Element(W.p)
-                                    .Element(W.r)
-                                    .Element(W.t)
-                                    .Value);
+                                docElement = XElement.Parse(
+                                    e.Element(W.sdtContent).Element(W.p).Element(W.r).Element(W.t).Value
+                                );
 
                                 if (docElement != null)
                                 {
                                     // get the default namespace
                                     var ns = docElement.GetDefaultNamespace();
-                                    if (docElement.Name == ns + "Document" &&
-                                        docElement.Attribute(ns + "Data") != null)
+                                    if (docElement.Name == ns + "Document" && docElement.Attribute(ns + "Data") != null)
                                     {
                                         // increment our id
                                         counter++;
 
                                         // get the embedded data
-                                        byte[] embeddedData = Convert.FromBase64String(docElement.Attribute(ns + "Data").Value);
+                                        byte[] embeddedData = Convert.FromBase64String(
+                                            docElement.Attribute(ns + "Data").Value
+                                        );
 
                                         // add the document to our sources with the name of our id
-                                        sources.Add(new Source(new WmlDocument($"temp_{counter}.docx", embeddedData), counter.ToString()));
+                                        sources.Add(
+                                            new Source(
+                                                new WmlDocument($"temp_{counter}.docx", embeddedData),
+                                                counter.ToString()
+                                            )
+                                        );
 
                                         // add this element to the replacement dictionary
                                         insertId2replacement.Add(counter, e);
@@ -130,9 +136,7 @@ namespace Clippit.Word
                                 XElement e = insertId2replacement[insertId];
 
                                 // replace this element with the special PtOpenXml.Insert element
-                                e.ReplaceWith(
-                                    new XElement(PtOpenXml.Insert,
-                                        new XAttribute("Id", insertId)));
+                                e.ReplaceWith(new XElement(PtOpenXml.Insert, new XAttribute("Id", insertId)));
                             }
 
                             // update the document part
@@ -217,7 +221,7 @@ namespace Clippit.Word
             PA.Table,
             PA.Image,
             PA.Document,
-            PA.DocumentTemplate
+            PA.DocumentTemplate,
         };
 
         private static object ForceBlockLevelAsAppropriate(XNode node, TemplateError te)
@@ -812,7 +816,7 @@ namespace Clippit.Word
             {
                 return $"Invalid XML: {element.Name.LocalName} is not a valid element";
             }
-            
+
             var d = new XDocument(element);
             string message = null;
             d.Validate(
@@ -839,7 +843,8 @@ namespace Clippit.Word
                             <xs:attribute name='Optional' type='xs:boolean' use='optional' />
                         </xs:complexType>
                         </xs:element>
-                    </xs:schema>")
+                    </xs:schema>"
+                )
             },
             {
                 PA.Document,
@@ -851,12 +856,13 @@ namespace Clippit.Word
                             <xs:attribute name='Data' type='xs:string' use='optional' />
                         </xs:complexType>
                         </xs:element>
-                    </xs:schema>")
+                    </xs:schema>"
+                )
             },
             {
                 PA.DocumentTemplate,
                 new PASchemaSet(
-                   @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+                    @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
                         <xs:element name='DocumentTemplate'>
                         <xs:complexType>
                             <xs:attribute name='Path' type='xs:string' use='optional' />
@@ -864,7 +870,8 @@ namespace Clippit.Word
                             <xs:attribute name='Select' type='xs:string' use='optional' />
                         </xs:complexType>
                         </xs:element>
-                    </xs:schema>")
+                    </xs:schema>"
+                )
             },
             {
                 PA.Table,
@@ -875,7 +882,8 @@ namespace Clippit.Word
                             <xs:attribute name='Select' type='xs:string' use='required' />
                         </xs:complexType>
                         </xs:element>
-                    </xs:schema>")
+                    </xs:schema>"
+                )
             },
             {
                 PA.Repeat,
@@ -888,14 +896,16 @@ namespace Clippit.Word
                             <xs:attribute name='Align' type='xs:string' use='optional' />
                         </xs:complexType>
                         </xs:element>
-                    </xs:schema>")
+                    </xs:schema>"
+                )
             },
             {
                 PA.EndRepeat,
                 new PASchemaSet(
                     @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
                         <xs:element name='EndRepeat' />
-                    </xs:schema>")
+                    </xs:schema>"
+                )
             },
             {
                 PA.Conditional,
@@ -908,14 +918,16 @@ namespace Clippit.Word
                             <xs:attribute name='NotMatch' type='xs:string' use='optional' />
                         </xs:complexType>
                         </xs:element>
-                    </xs:schema>")
+                    </xs:schema>"
+                )
             },
             {
                 PA.EndConditional,
                 new PASchemaSet(
                     @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
                         <xs:element name='EndConditional' />
-                    </xs:schema>")
+                    </xs:schema>"
+                )
             },
             {
                 PA.Image,
@@ -926,7 +938,8 @@ namespace Clippit.Word
                                 <xs:attribute name='Select' type='xs:string' use='required' />
                             </xs:complexType>
                         </xs:element>
-                    </xs:schema>")
+                    </xs:schema>"
+                )
             },
         };
 
@@ -1444,12 +1457,18 @@ namespace Clippit.Word
 
                 if (string.IsNullOrWhiteSpace(documentPath) && string.IsNullOrWhiteSpace(documentData))
                 {
-                    return element.CreateContextErrorMessage("Either the Path or Data attribute must be supplied", templateError);
+                    return element.CreateContextErrorMessage(
+                        "Either the Path or Data attribute must be supplied",
+                        templateError
+                    );
                 }
 
                 if (!string.IsNullOrWhiteSpace(documentPath) && !string.IsNullOrWhiteSpace(documentData))
                 {
-                    return element.CreateContextErrorMessage("Only one of the Path or Data attributes should be supplied", templateError);
+                    return element.CreateContextErrorMessage(
+                        "Only one of the Path or Data attributes should be supplied",
+                        templateError
+                    );
                 }
 
                 // if we have a Document Element with a Data attribute then we simply leave it be for post-processing
@@ -1476,12 +1495,18 @@ namespace Clippit.Word
 
                 if (string.IsNullOrWhiteSpace(templatePath) && string.IsNullOrWhiteSpace(templateData))
                 {
-                    return element.CreateContextErrorMessage("Either the Path or Data attribute must be supplied", templateError);
+                    return element.CreateContextErrorMessage(
+                        "Either the Path or Data attribute must be supplied",
+                        templateError
+                    );
                 }
 
                 if (!string.IsNullOrWhiteSpace(templatePath) && !string.IsNullOrWhiteSpace(templateData))
                 {
-                    return element.CreateContextErrorMessage("Only one of the Path or Data attributes should be supplied", templateError);
+                    return element.CreateContextErrorMessage(
+                        "Only one of the Path or Data attributes should be supplied",
+                        templateError
+                    );
                 }
 
                 byte[] templateBytes;
@@ -1489,7 +1514,10 @@ namespace Clippit.Word
                 {
                     if (!data.TryEvalueStringToByteArray(templatePath, out templateBytes))
                     {
-                        return element.CreateContextErrorMessage($"Template not found at '{templatePath}'", templateError);
+                        return element.CreateContextErrorMessage(
+                            $"Template not found at '{templatePath}'",
+                            templateError
+                        );
                     }
                 }
                 else
@@ -1519,7 +1547,10 @@ namespace Clippit.Word
                 }
                 catch (PowerToolsDocumentException e)
                 {
-                    return element.CreateContextErrorMessage("PowerToolsDocumentException: " + e.Message, templateError);
+                    return element.CreateContextErrorMessage(
+                        "PowerToolsDocumentException: " + e.Message,
+                        templateError
+                    );
                 }
 
                 // process the template
