@@ -944,8 +944,6 @@ namespace Clippit.Word
             },
         };
 
-        
-
         /// <summary>
         /// Calculates the maximum docPr id. The identifier is
         /// unique throughout the document. This method
@@ -1486,11 +1484,7 @@ namespace Clippit.Word
                     return documentBytes.GetBase64EncodedDocumentElement();
                 }
 
-                // add all but the first element after the current paragraph
-                for (int i = elements.Count - 1; i > 0; i--)
-                {
-                    return element.CreateContextErrorMessage($"Template not found at '{documentPath}'", templateError);
-                }
+                return element.CreateContextErrorMessage($"Template not found at '{documentPath}'", templateError);
             }
             if (element.Name == PA.DocumentTemplate)
             {
