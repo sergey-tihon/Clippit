@@ -1,17 +1,20 @@
 ﻿using System.Collections;
 using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Linq;
+using System.Xml.XPath;
+
 using Clippit.Html;
 using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;
+
 using NextExpected = Clippit.Html.HtmlToWmlConverterCore.NextExpected;
 
 namespace Clippit.Word.Assembler
 {
     internal static class HtmlConverter
     {
-        private static readonly HtmlToWmlConverterSettings htmlConverterSettings =
-            HtmlToWmlConverter.GetDefaultSettings();
+        private static readonly HtmlToWmlConverterSettings htmlConverterSettings = HtmlToWmlConverter.GetDefaultSettings();
 
         private static readonly Regex detectEntityRegEx = new Regex("^&(?:#([0-9]+)|#x([0-9a-fA-F]+)|([0-9a-zA-Z]+));");
 
@@ -45,25 +48,17 @@ namespace Clippit.Word.Assembler
             }
 
             // otherwise split the values if there are new line characters
-            values = values
-                .SelectMany(x => x.Replace("\r\n", "\n", StringComparison.OrdinalIgnoreCase).Split('\n'))
-                .ToArray();
+            values = values.SelectMany(x => x.Replace("\r\n", "\n", StringComparison.OrdinalIgnoreCase)
+                                             .Split('\n'))
+                           .ToArray();
 
             List<object> results = new List<object>();
-            for (int i = 0; i < values.Length; i++)
+            for(int i = 0; i < values.Length; i++)
             {
                 // try processing as XML
                 XElement parsedElement = XElement.Parse($"<xhtml>{EscapeAmpersands(values[i])}</xhtml>");
 
-                results.Add(
-                    Transform(
-                        parsedElement,
-                        htmlConverterSettings,
-                        part,
-                        i == 0 ? NextExpected.Run : NextExpected.Paragraph,
-                        true
-                    )
-                );
+                results.Add(Transform(parsedElement, htmlConverterSettings, part, i == 0 ? NextExpected.Run : NextExpected.Paragraph, true));
             }
 
             results = FlattenResults(results);
@@ -173,7 +168,7 @@ namespace Clippit.Word.Assembler
                             {
                                 return new XElement(W.p, hyperlink);
                             }
-
+                            
                             return new[] { hyperlink };
                         }
                     }
@@ -190,7 +185,10 @@ namespace Clippit.Word.Assembler
                         if (
                             element
                                 .Descendants()
-                                .Any(d => d.Name == XhtmlNoNamespace.li || d.Name == XhtmlNoNamespace.p)
+                                .Any(d =>
+                                    d.Name == XhtmlNoNamespace.li ||
+                                    d.Name == XhtmlNoNamespace.p
+                                )
                         )
                         {
                             return element
@@ -304,11 +302,7 @@ namespace Clippit.Word.Assembler
                             new XElement(
                                 W.r,
                                 HtmlToWmlConverterCore.GetRunProperties(xTextNode, settings),
-                                new XElement(
-                                    W.t,
-                                    HtmlToWmlConverterCore.GetXmlSpaceAttribute(textNodeString),
-                                    textNodeString
-                                )
+                                new XElement(W.t, HtmlToWmlConverterCore.GetXmlSpaceAttribute(textNodeString), textNodeString)
                             )
                         );
                         return p;
@@ -321,10 +315,7 @@ namespace Clippit.Word.Assembler
                 var element = node as XElement;
                 if (element != null)
                 {
-                    return element
-                        .Nodes()
-                        .Select(n => Transform(n, settings, part, nextExpected, preserveWhiteSpace))
-                        .AsEnumerable();
+                    return element.Nodes().Select(n => Transform(n, settings, part, nextExpected, preserveWhiteSpace)).AsEnumerable();
                 }
                 else
                 {
@@ -339,6 +330,7 @@ namespace Clippit.Word.Assembler
                 }
             }
         }
+
 
         private static string EscapeAmpersands(string value)
         {

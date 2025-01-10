@@ -944,6 +944,8 @@ namespace Clippit.Word
             },
         };
 
+        
+
         /// <summary>
         /// Calculates the maximum docPr id. The identifier is
         /// unique throughout the document. This method
