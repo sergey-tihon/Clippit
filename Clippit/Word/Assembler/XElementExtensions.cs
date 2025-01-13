@@ -22,20 +22,14 @@ namespace Clippit.Word.Assembler
                 XElement paraProps = element.Elements(W.pPr).FirstOrDefault();
                 if (paraProps != null)
                 {
-                    XElement paraRunProps = element.Elements(W.rPr).FirstOrDefault();
+                    XElement paraRunProps = paraProps.Elements(W.rPr).FirstOrDefault();
                     if (paraRunProps == null)
                     {
                         paraProps.Add(paraRunProperties);
                     }
                     else
                     {
-                        foreach (var prop in paraRunProperties.Elements())
-                        {
-                            if (paraRunProps.Element(prop.Name) == null)
-                            {
-                                paraRunProps.Add(prop);
-                            }
-                        }
+                        paraRunProps.MergeOriginalRunProperties(paraRunProperties);
                     }
                 }
             }
@@ -52,13 +46,25 @@ namespace Clippit.Word.Assembler
                     }
                     else
                     {
-                        foreach (var prop in runRunProperties.Elements())
-                        {
-                            if (runProps.Element(prop.Name) == null)
-                            {
-                                runProps.Add(prop);
-                            }
-                        }
+                        runProps.MergeOriginalRunProperties(runRunProperties);
+                    }
+                }
+            }
+        }
+
+        private static void MergeOriginalRunProperties(this XElement runProps, XElement originalRunProps)
+        {
+            foreach (var prop in originalRunProps.Elements())
+            {
+                if (runProps.Element(prop.Name) == null)
+                {
+                    if (prop.Name == W.rStyle)
+                    {
+                        runProps.AddFirst(prop);
+                    }
+                    else
+                    {
+                        runProps.Add(prop);
                     }
                 }
             }

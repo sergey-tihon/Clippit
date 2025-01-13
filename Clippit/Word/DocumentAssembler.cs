@@ -1286,7 +1286,7 @@ namespace Clippit.Word
 
                 XElement currentPara = embeddedPara ?? parentPara;
                 XElement currentParaProps = currentPara.Descendants(W.pPr).FirstOrDefault();
-                XElement currentParaRunProps = currentParaProps.Elements(W.rPr).FirstOrDefault();
+                XElement currentParaRunProps = currentParaProps?.Elements(W.rPr).FirstOrDefault();
                 XElement currentRunRunProps = element
                     .Descendants(W.r)
                     .FirstOrDefault()
