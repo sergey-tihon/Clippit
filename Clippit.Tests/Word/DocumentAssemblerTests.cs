@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 #if !ELIDE_XUNIT_TESTS
 
@@ -190,6 +191,7 @@ namespace Clippit.Tests.Word
         [InlineData("DA289-xhtml-formatting.docx", "DA289-multi-paragraph.xml", 3, false)]
         [InlineData("DA289-xhtml-formatting.docx", "DA289-invalid.xml", 0, true)]
         [InlineData("DA289-xhtml-formatting.docx", "DA289-not-well-formed.xml", 0, true)]
+        [InlineData("DA289-xhtml-formatting-error.docx", "DA289-xhtml-formatting-error.xml", 1, false)]
         public void DA289(string name, string data, int parasInContent, bool err)
         {
             var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
