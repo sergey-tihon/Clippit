@@ -1287,7 +1287,11 @@ namespace Clippit.Word
                 XElement currentPara = embeddedPara ?? parentPara;
                 XElement currentParaProps = currentPara.Descendants(W.pPr).FirstOrDefault();
                 XElement currentParaRunProps = currentParaProps.Elements(W.rPr).FirstOrDefault();
-                XElement currentRunRunProps = element.Descendants(W.r).FirstOrDefault()?.Elements(W.rPr).FirstOrDefault();
+                XElement currentRunRunProps = element
+                    .Descendants(W.r)
+                    .FirstOrDefault()
+                    ?.Elements(W.rPr)
+                    .FirstOrDefault();
 
                 // get the list of created elements, could be all paragraphs or a run followed by paragraphs
                 IList<object> content;

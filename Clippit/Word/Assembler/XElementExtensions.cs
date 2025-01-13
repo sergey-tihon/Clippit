@@ -10,7 +10,11 @@ namespace Clippit.Word.Assembler
 {
     internal static class XElementExtensions
     {
-        internal static void MergeRunProperties(this XElement element, XElement paraRunProperties, XElement runRunProperties)
+        internal static void MergeRunProperties(
+            this XElement element,
+            XElement paraRunProperties,
+            XElement runRunProperties
+        )
         {
             // merge run properties of paragraph properties
             if (element.Name == W.p && paraRunProperties != null)
