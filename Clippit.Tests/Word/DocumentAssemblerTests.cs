@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using Xunit;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 #if !ELIDE_XUNIT_TESTS
 
@@ -144,9 +145,6 @@ namespace Clippit.Tests.Word
         [InlineData("DA285-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
         [InlineData("DA285A-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
         [InlineData("DA-I0038-TemplateWithMultipleXPathResults.docx", "DA-I0038-Data.xml", false)]
-        [InlineData("DA289A-xhtml-formatting.docx", "DA-html-input.xml", false)]
-        [InlineData("DA289B-html-not-supported.docx", "DA-html-input.xml", true)]
-        [InlineData("DA289C-not-well-formed-xhtml.docx", "DA-html-input.xml", true)]
         public void DA101(string name, string data, bool err)
         {
             var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
@@ -190,6 +188,7 @@ namespace Clippit.Tests.Word
         [InlineData("DA289-xhtml-formatting.docx", "DA289-multi-paragraph.xml", 3, false)]
         [InlineData("DA289-xhtml-formatting.docx", "DA289-invalid.xml", 0, true)]
         [InlineData("DA289-xhtml-formatting.docx", "DA289-not-well-formed.xml", 0, true)]
+        [InlineData("DA289-xhtml-merge-run-formatting.docx", "DA289-xhtml-merge-run-formatting.xml", 1, false)]
         public void DA289(string name, string data, int parasInContent, bool err)
         {
             var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
