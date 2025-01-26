@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.4.2] - January 15, 2025
+
+- fix: Font Sizing Font Styling and Font Coloring is not working #94
+- hk: dependencies update
+
 ## [2.4.1] - January 4, 2025
 
 - fix: Bug fix/document assembler paragraph properties not copied from template #91
