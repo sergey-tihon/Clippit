@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.5.0] - February 7, 2025
+
+- Insert Documents or Document Templates using Document Assembler #93 by @MalcolmJohnston
+
 ## [2.4.2] - January 15, 2025
 
 - fix: Font Sizing Font Styling and Font Coloring is not working #94
