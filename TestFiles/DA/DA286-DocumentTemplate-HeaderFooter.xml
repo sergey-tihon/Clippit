@@ -1,0 +1,5 @@
+<Content>
+  <Header TemplatePath="DA286-DocumentTemplate-HeaderFooter-Sub-Header.docx">This is the Header.</Header>
+  <Body>This is the Body.</Body>
+  <Footer TemplatePath="DA286-DocumentTemplate-HeaderFooter-Sub-Footer.docx">This is the Footer.</Footer>
+</Content>

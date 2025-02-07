@@ -8,7 +8,10 @@ using System.Xml.Schema;
 using System.Xml.XPath;
 using Clippit.Internal;
 using Clippit.Word.Assembler;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.InkML;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using SixLabors.ImageSharp;
 using Path = System.IO.Path;
 
@@ -25,32 +28,131 @@ namespace Clippit.Word
         public static WmlDocument AssembleDocument(WmlDocument templateDoc, XElement data, out bool templateError)
         {
             var byteArray = templateDoc.DocumentByteArray;
-            using var mem = new MemoryStream();
-            mem.Write(byteArray, 0, byteArray.Length);
-
-            using (var wordDoc = WordprocessingDocument.Open(mem, true))
+            using (MemoryStream mem = new MemoryStream())
             {
-                if (RevisionAccepter.HasTrackedRevisions(wordDoc))
-                    throw new OpenXmlPowerToolsException(
-                        "Invalid DocumentAssembler template - contains tracked revisions"
-                    );
-
-                // calculate and store the max docPr id for later use when adding image objects
-                var macDocPrId = GetMaxDocPrId(wordDoc);
-
-                var te = new TemplateError();
-                foreach (var part in wordDoc.ContentParts())
+                mem.Write(byteArray, 0, (int)byteArray.Length);
+                using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(mem, true))
                 {
-                    ProcessTemplatePart(data, te, part);
-                }
-                templateError = te.HasError;
+                    if (RevisionAccepter.HasTrackedRevisions(wordDoc))
+                        throw new OpenXmlPowerToolsException(
+                            "Invalid DocumentAssembler template - contains tracked revisions"
+                        );
 
-                // update image docPr ids for the whole document
-                FixUpDocPrIds(wordDoc, macDocPrId);
+                    // calculate and store the max docPr id for later use when adding image objects
+                    var macDocPrId = GetMaxDocPrId(wordDoc);
+
+                    var te = new TemplateError();
+                    foreach (var part in wordDoc.ContentParts())
+                    {
+                        ProcessTemplatePart(data, te, part);
+                    }
+                    templateError = te.HasError;
+
+                    // update image docPr ids for the whole document
+                    FixUpDocPrIds(wordDoc, macDocPrId);
+                }
+
+                byteArray = mem.ToArray();
             }
 
-            var assembledDocument = new WmlDocument("TempFileName.docx", mem.ToArray());
-            return assembledDocument;
+            return ProcessEmbeddedDocuments(byteArray);
+        }
+
+        private static WmlDocument ProcessEmbeddedDocuments(byte[] docData)
+        {
+            // use document builder named sources to deal with embedded documents initialise a list of sources
+            List<ISource> sources = new List<ISource>();
+
+            // replace <Document> sdt source with PtOpenXml.Insert elements and add <Document> data to source list
+            int counter = 0;
+            using (MemoryStream mem = new MemoryStream())
+            {
+                mem.Write(docData, 0, (int)docData.Length);
+                using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(mem, true))
+                {
+                    foreach (var part in wordDoc.ContentParts())
+                    {
+                        XDocument doc = part.GetXDocument();
+
+                        Dictionary<int, XElement> insertId2replacement = new Dictionary<int, XElement>();
+                        foreach (XElement e in doc.Root.Descendants(W.sdt))
+                        {
+                            // try to parse a <Document> element
+                            XElement docElement = null;
+                            try
+                            {
+                                // parse the xml data
+                                docElement = XElement.Parse(
+                                    e.Element(W.sdtContent).Element(W.p).Element(W.r).Element(W.t).Value
+                                );
+
+                                if (docElement != null)
+                                {
+                                    // get the default namespace
+                                    var ns = docElement.GetDefaultNamespace();
+                                    if (docElement.Name == ns + "Document" && docElement.Attribute(ns + "Data") != null)
+                                    {
+                                        // increment our id
+                                        counter++;
+
+                                        // get the embedded data
+                                        byte[] embeddedData = Convert.FromBase64String(
+                                            docElement.Attribute(ns + "Data").Value
+                                        );
+
+                                        // add the document to our sources with the name of our id
+                                        sources.Add(
+                                            new Source(
+                                                new WmlDocument($"temp_{counter}.docx", embeddedData),
+                                                counter.ToString()
+                                            )
+                                        );
+
+                                        // add this element to the replacement dictionary
+                                        insertId2replacement.Add(counter, e);
+                                    }
+                                }
+                            }
+                            catch
+                            {
+                                // if we cannot parse the document then just ignore it
+                                continue;
+                            }
+                        }
+
+                        // we now have a list of replacements to make
+                        if (insertId2replacement.Count > 0)
+                        {
+                            foreach (int insertId in insertId2replacement.Keys)
+                            {
+                                // get the element
+                                XElement e = insertId2replacement[insertId];
+
+                                // replace this element with the special PtOpenXml.Insert element
+                                e.ReplaceWith(new XElement(PtOpenXml.Insert, new XAttribute("Id", insertId)));
+                            }
+
+                            // update the document part
+                            part.PutXDocument(doc);
+                        }
+                    }
+                }
+
+                // get the updated document data
+                docData = mem.ToArray();
+            }
+
+            if (sources.Count > 0)
+            {
+                // insert our template document as the first source
+                sources.Insert(0, new Source(new WmlDocument("template.docx", docData), true));
+
+                return DocumentBuilder.BuildDocument(sources);
+            }
+            else
+            {
+                return new WmlDocument("template.docx", docData);
+            }
         }
 
         private static void ProcessTemplatePart(XElement data, TemplateError te, OpenXmlPart part)
@@ -111,6 +213,8 @@ namespace Clippit.Word
             PA.EndRepeat,
             PA.Table,
             PA.Image,
+            PA.Document,
+            PA.DocumentTemplate,
         };
 
         private static object ForceBlockLevelAsAppropriate(XNode node, TemplateError te)
@@ -707,130 +811,13 @@ namespace Clippit.Word
             return xml;
         }
 
-        private class RunReplacementInfo
-        {
-            public XElement Xml { get; set; }
-            public string XmlExceptionMessage { get; set; }
-            public string SchemaValidationMessage { get; set; }
-        }
-
         private static string ValidatePerSchema(XElement element)
         {
-            if (s_paSchemaSets == null)
-            {
-                s_paSchemaSets = new Dictionary<XName, PASchemaSet>
-                {
-                    {
-                        PA.Content,
-                        new PASchemaSet
-                        {
-                            XsdMarkup =
-                                @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-                                  <xs:element name='Content'>
-                                    <xs:complexType>
-                                      <xs:attribute name='Select' type='xs:string' use='required' />
-                                      <xs:attribute name='Optional' type='xs:boolean' use='optional' />
-                                    </xs:complexType>
-                                  </xs:element>
-                                </xs:schema>",
-                        }
-                    },
-                    {
-                        PA.Table,
-                        new PASchemaSet
-                        {
-                            XsdMarkup =
-                                @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-                                  <xs:element name='Table'>
-                                    <xs:complexType>
-                                      <xs:attribute name='Select' type='xs:string' use='required' />
-                                    </xs:complexType>
-                                  </xs:element>
-                                </xs:schema>",
-                        }
-                    },
-                    {
-                        PA.Repeat,
-                        new PASchemaSet
-                        {
-                            XsdMarkup =
-                                @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-                                  <xs:element name='Repeat'>
-                                    <xs:complexType>
-                                      <xs:attribute name='Select' type='xs:string' use='required' />
-                                      <xs:attribute name='Optional' type='xs:boolean' use='optional' />
-                                      <xs:attribute name='Align' type='xs:string' use='optional' />
-                                    </xs:complexType>
-                                  </xs:element>
-                                </xs:schema>",
-                        }
-                    },
-                    {
-                        PA.EndRepeat,
-                        new PASchemaSet
-                        {
-                            XsdMarkup =
-                                @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-                                  <xs:element name='EndRepeat' />
-                                </xs:schema>",
-                        }
-                    },
-                    {
-                        PA.Conditional,
-                        new PASchemaSet
-                        {
-                            XsdMarkup =
-                                @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-                                  <xs:element name='Conditional'>
-                                    <xs:complexType>
-                                      <xs:attribute name='Select' type='xs:string' use='required' />
-                                      <xs:attribute name='Match' type='xs:string' use='optional' />
-                                      <xs:attribute name='NotMatch' type='xs:string' use='optional' />
-                                    </xs:complexType>
-                                  </xs:element>
-                                </xs:schema>",
-                        }
-                    },
-                    {
-                        PA.EndConditional,
-                        new PASchemaSet
-                        {
-                            XsdMarkup =
-                                @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-                                  <xs:element name='EndConditional' />
-                                </xs:schema>",
-                        }
-                    },
-                    {
-                        PA.Image,
-                        new PASchemaSet
-                        {
-                            XsdMarkup =
-                                @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-                                  <xs:element name='Image'>
-                                    <xs:complexType>
-                                      <xs:attribute name='Select' type='xs:string' use='required' />
-                                    </xs:complexType>
-                                  </xs:element>
-                                </xs:schema>",
-                        }
-                    },
-                };
-                foreach (var item in s_paSchemaSets)
-                {
-                    var itemPAss = item.Value;
-                    var schemas = new XmlSchemaSet();
-                    using (var stringReader = new StringReader(itemPAss.XsdMarkup))
-                    using (var xmlReader = XmlReader.Create(stringReader))
-                        schemas.Add("", xmlReader);
-                    itemPAss.SchemaSet = schemas;
-                }
-            }
-            if (!s_paSchemaSets.ContainsKey(element.Name))
+            if (s_paSchemaSets.TryGetValue(element.Name, out var paSchemaSet) == false)
             {
                 return $"Invalid XML: {element.Name.LocalName} is not a valid element";
             }
-            var paSchemaSet = s_paSchemaSets[element.Name];
+
             var d = new XDocument(element);
             string message = null;
             d.Validate(
@@ -841,10 +828,121 @@ namespace Clippit.Word
                 },
                 true
             );
+
             return message;
         }
 
-        private static Dictionary<XName, PASchemaSet> s_paSchemaSets;
+        private static readonly Dictionary<XName, PASchemaSet> s_paSchemaSets = new Dictionary<XName, PASchemaSet>
+        {
+            {
+                PA.Content,
+                new PASchemaSet(
+                    @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+                        <xs:element name='Content'>
+                        <xs:complexType>
+                            <xs:attribute name='Select' type='xs:string' use='required' />
+                            <xs:attribute name='Optional' type='xs:boolean' use='optional' />
+                        </xs:complexType>
+                        </xs:element>
+                    </xs:schema>"
+                )
+            },
+            {
+                PA.Document,
+                new PASchemaSet(
+                    @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+                        <xs:element name='Document'>
+                        <xs:complexType>
+                            <xs:attribute name='Path' type='xs:string' use='optional' />
+                            <xs:attribute name='Data' type='xs:string' use='optional' />
+                        </xs:complexType>
+                        </xs:element>
+                    </xs:schema>"
+                )
+            },
+            {
+                PA.DocumentTemplate,
+                new PASchemaSet(
+                    @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+                        <xs:element name='DocumentTemplate'>
+                        <xs:complexType>
+                            <xs:attribute name='Path' type='xs:string' use='optional' />
+                            <xs:attribute name='Data' type='xs:string' use='optional' />
+                            <xs:attribute name='Select' type='xs:string' use='optional' />
+                        </xs:complexType>
+                        </xs:element>
+                    </xs:schema>"
+                )
+            },
+            {
+                PA.Table,
+                new PASchemaSet(
+                    @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+                        <xs:element name='Table'>
+                        <xs:complexType>
+                            <xs:attribute name='Select' type='xs:string' use='required' />
+                        </xs:complexType>
+                        </xs:element>
+                    </xs:schema>"
+                )
+            },
+            {
+                PA.Repeat,
+                new PASchemaSet(
+                    @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+                        <xs:element name='Repeat'>
+                        <xs:complexType>
+                            <xs:attribute name='Select' type='xs:string' use='required' />
+                            <xs:attribute name='Optional' type='xs:boolean' use='optional' />
+                            <xs:attribute name='Align' type='xs:string' use='optional' />
+                        </xs:complexType>
+                        </xs:element>
+                    </xs:schema>"
+                )
+            },
+            {
+                PA.EndRepeat,
+                new PASchemaSet(
+                    @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+                        <xs:element name='EndRepeat' />
+                    </xs:schema>"
+                )
+            },
+            {
+                PA.Conditional,
+                new PASchemaSet(
+                    @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+                        <xs:element name='Conditional'>
+                        <xs:complexType>
+                            <xs:attribute name='Select' type='xs:string' use='required' />
+                            <xs:attribute name='Match' type='xs:string' use='optional' />
+                            <xs:attribute name='NotMatch' type='xs:string' use='optional' />
+                        </xs:complexType>
+                        </xs:element>
+                    </xs:schema>"
+                )
+            },
+            {
+                PA.EndConditional,
+                new PASchemaSet(
+                    @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+                        <xs:element name='EndConditional' />
+                    </xs:schema>"
+                )
+            },
+            {
+                PA.Image,
+                new PASchemaSet(
+                    @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+                        <xs:element name='Image'>
+                            <xs:complexType>
+                                <xs:attribute name='Select' type='xs:string' use='required' />
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:schema>"
+                )
+            },
+        };
 
         /// <summary>
         /// Calculates the maximum docPr id. The identifier is
@@ -1294,7 +1392,7 @@ namespace Clippit.Word
                     .FirstOrDefault();
 
                 // get the list of created elements, could be all paragraphs or a run followed by paragraphs
-                IList<object> content;
+                List<object> content;
                 try
                 {
                     content = element.ProcessContentElement(data, templateError, ref part).ToList();
@@ -1305,7 +1403,6 @@ namespace Clippit.Word
                 }
 
                 // get XElements and ensure all but the first element is in a paragraph
-
                 List<XElement> elements = new List<XElement>();
                 for (int i = 0; i < content.Count; i++)
                 {
@@ -1361,6 +1458,113 @@ namespace Clippit.Word
 
                 // or simply return the first element
                 return elements[0];
+            }
+            if (element.Name == PA.Document)
+            {
+                var documentPath = (string)element.Attribute(PA.Path);
+                var documentData = (string)element.Attribute(PA.Data);
+
+                if (string.IsNullOrWhiteSpace(documentPath) && string.IsNullOrWhiteSpace(documentData))
+                {
+                    return element.CreateContextErrorMessage(
+                        "Either the Path or Data attribute must be supplied",
+                        templateError
+                    );
+                }
+
+                if (!string.IsNullOrWhiteSpace(documentPath) && !string.IsNullOrWhiteSpace(documentData))
+                {
+                    return element.CreateContextErrorMessage(
+                        "Only one of the Path or Data attributes should be supplied",
+                        templateError
+                    );
+                }
+
+                // if we have a Document Element with a Data attribute then we simply leave it be for post-processing
+                if (!string.IsNullOrWhiteSpace(documentData))
+                {
+                    return element;
+                }
+
+                // otherwise we are dealing with a Path
+                if (data.TryEvalueStringToByteArray(documentPath, out byte[] documentBytes))
+                {
+                    return documentBytes.GetBase64EncodedDocumentElement();
+                }
+
+                return element.CreateContextErrorMessage($"Template not found at '{documentPath}'", templateError);
+            }
+            if (element.Name == PA.DocumentTemplate)
+            {
+                var templatePath = (string)element.Attribute(PA.Path);
+                var templateData = (string)element.Attribute(PA.Data);
+                var xmlXPath = (string)element.Attribute(PA.Select);
+
+                if (string.IsNullOrWhiteSpace(templatePath) && string.IsNullOrWhiteSpace(templateData))
+                {
+                    return element.CreateContextErrorMessage(
+                        "Either the Path or Data attribute must be supplied",
+                        templateError
+                    );
+                }
+
+                if (!string.IsNullOrWhiteSpace(templatePath) && !string.IsNullOrWhiteSpace(templateData))
+                {
+                    return element.CreateContextErrorMessage(
+                        "Only one of the Path or Data attributes should be supplied",
+                        templateError
+                    );
+                }
+
+                byte[] templateBytes;
+                if (!string.IsNullOrWhiteSpace(templatePath))
+                {
+                    if (!data.TryEvalueStringToByteArray(templatePath, out templateBytes))
+                    {
+                        return element.CreateContextErrorMessage(
+                            $"Template not found at '{templatePath}'",
+                            templateError
+                        );
+                    }
+                }
+                else
+                {
+                    templateBytes = Convert.FromBase64String(templateData);
+                }
+
+                // get the xml element that should be passed to the template
+                XElement xmlData = null;
+                if (xmlXPath != null)
+                {
+                    try
+                    {
+                        xmlData = data.XPathSelectElement(xmlXPath);
+                    }
+                    catch (XPathException e)
+                    {
+                        return element.CreateContextErrorMessage("XPathException: " + e.Message, templateError);
+                    }
+                }
+
+                // load the template document
+                WmlDocument templateDoc = null;
+                try
+                {
+                    templateDoc = new WmlDocument($"Sub-Template-{Guid.NewGuid()}.docx", templateBytes);
+                }
+                catch (PowerToolsDocumentException e)
+                {
+                    return element.CreateContextErrorMessage(
+                        "PowerToolsDocumentException: " + e.Message,
+                        templateError
+                    );
+                }
+
+                // process the template
+                bool subTemplateError = false;
+                templateDoc = AssembleDocument(templateDoc, xmlData, out subTemplateError);
+
+                return templateDoc.DocumentByteArray.GetBase64EncodedDocumentElement();
             }
             if (element.Name == PA.Repeat)
             {
