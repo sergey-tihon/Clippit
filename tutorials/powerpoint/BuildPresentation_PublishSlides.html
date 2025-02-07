@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Slide Publishing | Clippit </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Slide Publishing | Clippit ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../images/logo-site.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Tutorial.Word.PresentationBuilder.PublishSlides">
+<h1 id="slide-publishing">Slide Publishing</h1>
+
+<p>Namespace: <code>Clippit.PowerPoint</code></p>
+<p>Split PowerPoint presentation (<code>PmlDocument</code>) into lazy sequence of one-slide presentations.</p>
+<pre><code class="lang-csharp">public static class PresentationBuilder {
+    public static IEnumerable&lt;PmlDocument&gt; PublishSlides(PmlDocument src)
+    {...}
+}
+</code></pre>
+<p>This is fully managed alternative of <a href="https://docs.microsoft.com/en-us/office/vba/api/powerpoint.presentation.publishslides">Presentation.PublishSlides</a> that does not require MS Office to be installed on the machine.</p>
+<h4 id="key-facts">Key facts</h4>
+<ol>
+<li>All extracted slides are marked as visible (even if they were hidden in the source presentation)</li>
+<li>Generated slides contain only one master with only one used layout (master will be renamed). Behavior is similar to <code>Presentation.PublishSlides</code> and allow to dramatically decrease total size of generated slides.</li>
+<li><code>PublishSlides</code> is up to <code>6x</code> times faster than <code>BuildPresentation</code> for the same task (Because we open source presentation only once)</li>
+<li>Slide title promoted to generated presentation title (when layout has slide). Last modified date propagated from source document.</li>
+</ol>
+<h3 id="publishing-sample">Publishing sample</h3>
+<pre><code class="lang-csharp">var presentation = new PmlDocument(sourcePath);
+var slides = PresentationBuilder.PublishSlides(presentation)
+foreach (var slide in slides)
+{
+    var targetPath = Path.Combine(targetDir, Path.GetFileName(slide.FileName))
+    slide.SaveAs(targetPath);
+}
+</code></pre>
+<h3 id="composing-slides-to-one-presentation">Composing slides to one presentation</h3>
+<p>You can combine generate slide back to one presentation without breaking them</p>
+<pre><code class="lang-csharp">var presentation = new PmlDocument(sourceFile);
+var slides = PresentationBuilder.PublishSlides(presentation).ToList();
+
+var sources = slides.Select(x =&gt; new SlideSource(x, keepMaster:true)).ToList();
+PresentationBuilder.BuildPresentation(sources)
+    .SaveAs(newFileName);
+</code></pre>
+<p>this code will generate presentation with multiple one-layout masters.</p>
+<p>If you want to have full master inside your generated presentation the first slide source should carry this master</p>
+<pre><code class="lang-csharp">var presentation = new PmlDocument(sourceFile);
+
+// generate presentation with all masters
+var onlyMasters = PresentationBuilder.BuildPresentation(
+    new List&lt;SlideSource&gt; {
+        new SlideSource(presentation, start:0, count:0, keepMaster:true)
+    });
+
+// publish slides with one-layout masters
+var slides = PresentationBuilder.PublishSlides(presentation);
+
+// compose them together using only master as the first SlideSource
+var sources = new List&lt;SlideSource&gt; {
+    new SlideSource(onlyMaster, keepMaster:true)};
+sources.AddRange(slides.Select(x =&gt; new SlideSource(x, keepMaster:false)));
+PresentationBuilder.BuildPresentation(sources)
+    .SaveAs(newFileName);
+</code></pre>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/tutorials/powerpoint/BuildPresentation_PublishSlides.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>
