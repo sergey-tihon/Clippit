@@ -394,6 +394,31 @@ namespace Clippit.Tests.Word
             Assert.Equal(err, returnedTemplateError);
         }
 
+        [Theory]
+        [InlineData("DA-Issue-95-Template.docx", "DA-Issue-95-Data.xml", false)]
+        public void DA_Issue_95_Repro(string name, string data, bool err)
+        {
+            var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
+            var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
+
+            var wmlTemplate = new WmlDocument(templateDocx.FullName);
+            var xmlData = new XmlDocument();
+            xmlData.Load(dataFile.FullName);
+
+            var afterAssembling = DocumentAssembler.AssembleDocument(
+                wmlTemplate,
+                xmlData,
+                out var returnedTemplateError
+            );
+            var assembledDocx = new FileInfo(
+                Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx"))
+            );
+            afterAssembling.SaveAs(assembledDocx.FullName);
+
+            Validate(assembledDocx);
+            Assert.Equal(err, returnedTemplateError);
+        }
+
         private void Validate(FileInfo fi)
         {
             using var wDoc = WordprocessingDocument.Open(fi.FullName, false);
