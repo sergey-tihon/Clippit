@@ -1,30 +1,14 @@
-<Data>
-  <Notes>
-    <OptionNotes>
-		Random Engine Model XYZ 2.0l Engine in-line 4 cylinders.
-
-Engine power (rated) at 2200 rpm: 150 kW (201 hp / 204 PS)
-
-Engine power (max) at 2100 rpm: 170 kW (228 hp / 231 PS)
-	</OptionNotes>,
-  </Notes>
-  <Notes>
-    <OptionNotes>
-		Random Cutterhead Model ABC
-500 mm width, 600 mm diameter
-	</OptionNotes>
-  </Notes>
-  <Notes>
-    <OptionNotes>
-		Random Sensor and HarvestLab Sensor Factory installed, I decal.
-Requires HarvestLab 4000, code 1234
-Display mounting rail, code 5678 can be ordered in addition, to install a second display.
-	</OptionNotes>
-  </Notes>
-  <Notes>
-    <OptionNotes>
-		Required when pick-up is equipped with an auxiliary drive (2nd hydraulic drive for the pick-up reel)
-	DUAL HEADER DRIVE MUST BE ORDERED ALSO WITH THE PICK-UP! This option is also mandatory for vertical saw drives installed on a Random ProfiCut (for random seeds)
-	</OptionNotes>
-  </Notes>
-</Data>
+<root>
+<Notes>
+<optionNotes>Random Engine Model XYZ 2.0l Engine in-line 4 cylinders.\n\nEngine power (rated) at 2200 rpm: 150 kW (201 hp / 204 PS)\n\nEngine power (max) at 2100 rpm: 170 kW (228 hp / 231 PS)</optionNotes>
+</Notes>
+<Notes>
+<optionNotes>Random Cutterhead Model ABC\n500 mm width, 600 mm diameter</optionNotes>
+</Notes>
+<Notes>
+<optionNotes>Random Sensor and HarvestLab Sensor Factory installed, I decal.\nRequires HarvestLab 4000, code 1234\nDisplay mounting rail, code 5678 can be ordered in addition, to install a second display.</optionNotes>
+</Notes>
+<Notes>
+<optionNotes>Required when pick-up is equipped with an auxiliary drive (2nd hydraulic drive for the pick-up reel)\n\t\tDUAL HEADER DRIVE MUST BE ORDERED ALSO WITH THE PICK-UP! This option is also mandatory for vertical saw drives installed on a Random ProfiCut (for random seeds)</optionNotes>
+</Notes>
+</root>
