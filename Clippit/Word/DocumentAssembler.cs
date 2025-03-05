@@ -1392,72 +1392,25 @@ namespace Clippit.Word
                     .FirstOrDefault();
 
                 // get the list of created elements, could be all paragraphs or a run followed by paragraphs
-                List<object> content;
+                List<XElement> content;
                 try
                 {
-                    content = element.ProcessContentElement(data, templateError, ref part).ToList();
+                    content = element.ProcessContentElement(data, templateError, ref part);
                 }
                 catch (Exception ex)
                 {
                     return element.CreateContextErrorMessage($"Content: {ex.Message}", templateError);
                 }
 
-                // get XElements and ensure all but the first element is in a paragraph
-                List<XElement> elements = new List<XElement>();
-                for (int i = 0; i < content.Count; i++)
+                // return content wrapped in the embedded para if we do not have a paragraph
+                if (embeddedPara != null)
                 {
-                    object obj = content[i];
-                    if (obj is XElement)
-                    {
-                        var objEl = obj as XElement;
-                        if (i > 0 && objEl.Name == W.r || objEl.Name == W.hyperlink)
-                        {
-                            objEl = new XElement(W.p, currentParaProps, content[i]);
-                        }
-                        else if (objEl.Name == W.p)
-                        {
-                            // get the processed paragraph properties
-                            XElement pProps = objEl.Descendants(W.pPr).FirstOrDefault();
-                            if (pProps != null)
-                            {
-                                pProps.Remove();
-                            }
-
-                            // add the current paragraph properties
-                            if (currentParaProps != null)
-                            {
-                                objEl.AddFirst(currentParaProps);
-                            }
-                        }
-
-                        objEl.MergeRunProperties(currentParaRunProps, currentRunRunProps);
-
-                        elements.Add(objEl);
-                    }
-                }
-
-                // add all but the first element after the current paragraph
-                for (int i = elements.Count - 1; i > 0; i--)
-                {
-                    if (embeddedPara == null && parentPara != null)
-                    {
-                        parentPara.AddAfterSelf(elements[i]);
-                    }
-                    else
-                    {
-                        element.AddAfterSelf(elements[i]);
-                    }
-                }
-
-                // return first element wrapped in the embedded para if we do not have a paragraph
-                if (elements[0].Name != W.p && embeddedPara != null)
-                {
-                    embeddedPara.Add(elements[0]);
+                    embeddedPara.Add(content);
                     return embeddedPara;
                 }
 
                 // or simply return the first element
-                return elements[0];
+                return content;
             }
             if (element.Name == PA.Document)
             {
@@ -1590,6 +1543,7 @@ namespace Clippit.Word
                     }
                     return element.CreateContextErrorMessage("Repeat: Select returned no data", templateError);
                 }
+
                 var newContent = repeatingData
                     .Select(d =>
                     {
@@ -1600,6 +1554,7 @@ namespace Clippit.Word
                         return content;
                     })
                     .ToList();
+
                 switch (alignmentOption.ToLower())
                 {
                     case "horizontal":

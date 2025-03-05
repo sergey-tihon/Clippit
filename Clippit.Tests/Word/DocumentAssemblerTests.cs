@@ -214,6 +214,7 @@ namespace Clippit.Tests.Word
             {
                 IList<XElement> sourceParas = wmlTemplate.MainDocumentPart.Element(W.body).Descendants(W.p).ToList();
                 IList<XElement> targetParas = wmlResult.MainDocumentPart.Element(W.body).Descendants(W.p).ToList();
+                IList<XElement> targetBreaks = wmlResult.MainDocumentPart.Element(W.body).Descendants(W.br).ToList();
 
                 // Check we have the expected number of paragraphs
                 // Expected document structure is:
@@ -221,34 +222,24 @@ namespace Clippit.Tests.Word
                 //   Empty paragraph (1 line)
                 //   Escaped HTML paragraph (potential multi-line)
                 //   CDATA paragraph (potential multi-line)
-
-                int expectedParas = sourceParas.Count + (2 * parasInContent) - 2;
-                Assert.Equal(expectedParas, targetParas.Count);
+                Assert.Equal(sourceParas.Count(), targetParas.Count());
+                int expectedBreaks = (parasInContent - 1) * 2;
+                Assert.Equal(expectedBreaks, targetBreaks.Count());
 
                 var equalityComparer = new XNodeEqualityComparer();
                 int paraOffset = 0;
 
                 for (var i = 0; i < sourceParas.Count(); i++)
                 {
-                    var parasToCompare = i <= 1 ? 1 : parasInContent;
                     var sourceProps = sourceParas[i].Element(W.pPr);
+                    var targetProps = targetParas[i].Element(W.pPr);
 
-                    for (var j = i + paraOffset; j < i + paraOffset + parasToCompare; j++)
+                    if (sourceProps == null && targetProps == null)
                     {
-                        var targetProps = targetParas[j].Element(W.pPr);
-                        if (sourceProps == null && targetProps == null)
-                        {
-                            continue;
-                        }
-
-                        Assert.True(equalityComparer.Equals(sourceProps, targetProps));
+                        continue;
                     }
 
-                    // update paragraph offset versus source when we have processed multi-line content
-                    if (parasToCompare > 1)
-                    {
-                        paraOffset += parasToCompare - 1;
-                    }
+                    Assert.True(equalityComparer.Equals(sourceProps, targetProps));
                 }
             }
         }
@@ -262,8 +253,13 @@ namespace Clippit.Tests.Word
                 Path.Combine(TempDir, name.Replace(".docx", "-processed-by-DocumentAssembler.docx"))
             );
             var afterAssembling = new WmlDocument(assembledDocx.FullName);
-            var brCount = afterAssembling.MainDocumentPart.Element(W.body).Elements(W.p).Count();
-            Assert.Equal(6, brCount);
+            var brCount = afterAssembling.MainDocumentPart
+                .Element(W.body)
+                .Descendants(W.r)
+                .Elements(W.br)
+                .Count();
+
+            Assert.Equal(4, brCount);
         }
 
         [Theory]
@@ -415,8 +411,38 @@ namespace Clippit.Tests.Word
             );
             afterAssembling.SaveAs(assembledDocx.FullName);
 
+            // Assert - no errors
             Validate(assembledDocx);
             Assert.Equal(err, returnedTemplateError);
+
+            // Assert - tables are present and correct
+            IEnumerable<XElement> tables = afterAssembling.MainDocumentPart.Descendants(W.tbl);
+            Assert.True(tables.Count() == 4);
+
+            // Assert - the second table cell of each table has one paragraph
+            List<XElement> paras = new List<XElement>();
+            foreach (XElement table in tables)
+            {
+                paras.AddRange(table.Descendants(W.tc).ElementAt(1).Elements(W.p));
+            }
+
+            Assert.True(paras.Count() == tables.Count());
+
+            // Assert - first tables paragraph has 4 soft breaks
+            Assert.True(paras.ElementAt(0).Elements(W.r).Count() == 7);
+            Assert.True(paras.ElementAt(0).Elements(W.r).Elements(W.br).Count() == 4);
+
+            // Assert - second tables paragraph has 1 soft breaks
+            Assert.True(paras.ElementAt(1).Elements(W.r).Count() == 3);
+            Assert.True(paras.ElementAt(1).Elements(W.r).Elements(W.br).Count() == 1);
+
+            // Assert - thrid tables paragraph has 2 soft breaks
+            Assert.True(paras.ElementAt(2).Elements(W.r).Count() == 5);
+            Assert.True(paras.ElementAt(2).Elements(W.r).Elements(W.br).Count() == 2);
+
+            // Assert - fourth tables paragraph has 1 soft breaks
+            Assert.True(paras.ElementAt(3).Elements(W.r).Count() == 3);
+            Assert.True(paras.ElementAt(3).Elements(W.r).Elements(W.br).Count() == 1);
         }
 
         private void Validate(FileInfo fi)
