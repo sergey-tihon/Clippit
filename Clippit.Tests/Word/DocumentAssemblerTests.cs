@@ -5,8 +5,10 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Clippit.Word;
+using DocumentFormat.OpenXml.Office.Y2022.FeaturePropertyBag;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Xunit;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -149,20 +151,8 @@ namespace Clippit.Tests.Word
         [InlineData("DA-I0038-TemplateWithMultipleXPathResults.docx", "DA-I0038-Data.xml", false)]
         public void DA101(string name, string data, bool err)
         {
-            var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
-            var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
-
-            var wmlTemplate = new WmlDocument(templateDocx.FullName);
-            var xmlData = XElement.Load(dataFile.FullName);
-
-            var afterAssembling = DocumentAssembler.AssembleDocument(
-                wmlTemplate,
-                xmlData,
-                out var returnedTemplateError
-            );
-            var assembledDocx = new FileInfo(
-                Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx"))
-            );
+            var afterAssembling = AssembleDocument(name, data, out bool returnedTemplateError);
+            FileInfo assembledDocx = GetOutputFile(name);
             afterAssembling.SaveAs(assembledDocx.FullName);
 
             Validate(assembledDocx);
@@ -188,21 +178,16 @@ namespace Clippit.Tests.Word
         [InlineData("DA289-xhtml-formatting.docx", "DA289-hyperlink-underline.xml", 1, false)]
         [InlineData("DA289-xhtml-formatting.docx", "DA289-hyperlink-no-protocol.xml", 1, false)]
         [InlineData("DA289-xhtml-formatting.docx", "DA289-multi-paragraph.xml", 3, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-multi-paragraph-with-CRLF.xml", 3, false)]
+        [InlineData("DA289-xhtml-formatting.docx", "DA289-multi-paragraph-text-only.xml", 3, false)]
         [InlineData("DA289-xhtml-formatting.docx", "DA289-invalid.xml", 0, true)]
         [InlineData("DA289-xhtml-formatting.docx", "DA289-not-well-formed.xml", 0, true)]
-        [InlineData("DA289-xhtml-merge-run-formatting.docx", "DA289-xhtml-merge-run-formatting.xml", 1, false)]
         public void DA289(string name, string data, int parasInContent, bool err)
         {
-            var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
-            var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
+            var wmlTemplate = new WmlDocument(Path.Combine(_sourceDir.FullName, name));
 
-            var wmlTemplate = new WmlDocument(templateDocx.FullName);
-            var xmlData = XElement.Load(dataFile.FullName);
-
-            var wmlResult = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var returnedTemplateError);
-            var assembledDocx = new FileInfo(
-                Path.Combine(TempDir, data.Replace(".xml", "-processed-by-DocumentAssembler.docx"))
-            );
+            var wmlResult = AssembleDocument(name, data, out bool returnedTemplateError);
+            FileInfo assembledDocx = GetOutputFile(data);
             wmlResult.SaveAs(assembledDocx.FullName);
 
             Validate(assembledDocx);
@@ -245,14 +230,147 @@ namespace Clippit.Tests.Word
         }
 
         [Theory]
+        [InlineData("DA290-xhtml-merge-run-formatting.docx", "DA290-xhtml-merge-run-formatting.xml")]
+        public void DA290_Merge_Run_Formatting(string name, string data)
+        {
+            // Act
+            var afterAssembling = AssembleDocument(name, data, out bool returnedTemplateError);
+            FileInfo assembledDocx = GetOutputFile(name);
+            afterAssembling.SaveAs(assembledDocx.FullName);
+
+            // Assert - para count is expected
+            List<XElement> paras = afterAssembling.MainDocumentPart.Element(W.body).Descendants(W.p).ToList();
+            Assert.Equal(9, paras.Count());
+
+            // Assert - Paragraph 1 Styles
+            XElement para = paras[0];
+            Assert.Equal("Heading1", para.Element(W.pPr).Element(W.pStyle).Attribute(W.val).Value);
+            Assert.Equal("16", para.Element(W.pPr).Element(W.rPr).Element(W.sz).Attribute(W.val).Value);
+            Assert.Equal("16", para.Element(W.pPr).Element(W.rPr).Element(W.szCs).Attribute(W.val).Value);
+            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
+            {
+                Assert.Equal("16", x.Element(W.sz).Attribute(W.val).Value);
+                Assert.Equal("16", x.Element(W.szCs).Attribute(W.val).Value);
+            });
+
+            // Assert - Paragraph 2 Styles
+            para = paras[1];
+            Assert.Equal("Heading2", para.Element(W.pPr).Element(W.pStyle).Attribute(W.val).Value);
+            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
+            {
+                Assert.Equal("Heading2Char", x.Element(W.rStyle).Attribute(W.val).Value);
+            });
+
+            // Assert - Paragraph 3 Styles
+            para = paras[2];
+            Assert.Equal("Heading2CDATA", para.Element(W.pPr).Element(W.pStyle).Attribute(W.val).Value);
+            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
+            {
+                Assert.Equal("538135", x.Element(W.color).Attribute(W.val).Value);
+            });
+
+            // Assert - Paragraph 4 Styles
+            para = paras[3];
+            Assert.Equal("Heading2CDATA", para.Element(W.pPr).Element(W.pStyle).Attribute(W.val).Value);
+            Assert.NotNull(para.Element(W.pPr).Element(W.rPr).Element(W.rFonts));
+            Assert.Equal("auto", para.Element(W.pPr).Element(W.rPr).Element(W.color).Attribute(W.val).Value);
+            Assert.Equal("22", para.Element(W.pPr).Element(W.rPr).Element(W.sz).Attribute(W.val).Value);
+            Assert.Equal("22", para.Element(W.pPr).Element(W.rPr).Element(W.szCs).Attribute(W.val).Value);
+            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
+            {
+                Assert.Equal("Algerian", x.Element(W.rFonts).Attribute(W.ascii).Value);
+                Assert.NotNull(x.Element(W.i));
+                Assert.NotNull(x.Element(W.iCs));
+                Assert.Equal("single", x.Element(W.u).Attribute(W.val).Value);
+            });
+
+            // Assert - Paragraph 5 Styles
+            para = paras[4];
+            Assert.Equal("Heading2CDATA", para.Element(W.pPr).Element(W.pStyle).Attribute(W.val).Value);
+            Assert.Equal("C45911", para.Element(W.pPr).Element(W.rPr).Element(W.color).Attribute(W.val).Value);
+            Assert.Equal("14", para.Element(W.pPr).Element(W.rPr).Element(W.sz).Attribute(W.val).Value);
+            Assert.Equal("14", para.Element(W.pPr).Element(W.rPr).Element(W.szCs).Attribute(W.val).Value);
+            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
+            {
+                Assert.Equal("14", x.Element(W.sz).Attribute(W.val).Value);
+                Assert.Equal("14", x.Element(W.szCs).Attribute(W.val).Value);
+            });
+
+            // Assert - Paragraph 6 Styles
+            para = paras[5];
+            Assert.Equal("Heading2CDATA", para.Element(W.pPr).Element(W.pStyle).Attribute(W.val).Value);
+            Assert.Equal("C45911", para.Element(W.pPr).Element(W.rPr).Element(W.color).Attribute(W.val).Value);
+            Assert.Equal("40", para.Element(W.pPr).Element(W.rPr).Element(W.sz).Attribute(W.val).Value);
+            Assert.Equal("40", para.Element(W.pPr).Element(W.rPr).Element(W.szCs).Attribute(W.val).Value);
+            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
+            {
+                Assert.Equal("40", x.Element(W.sz).Attribute(W.val).Value);
+                Assert.Equal("40", x.Element(W.szCs).Attribute(W.val).Value);
+            });
+
+            // Assert - Paragraph 7 Styles
+            para = paras[6];
+            Assert.Equal("Heading2CDATA", para.Element(W.pPr).Element(W.pStyle).Attribute(W.val).Value);
+            Assert.Equal("00B0F0", para.Element(W.pPr).Element(W.rPr).Element(W.color).Attribute(W.val).Value);
+            Assert.Equal("40", para.Element(W.pPr).Element(W.rPr).Element(W.sz).Attribute(W.val).Value);
+            Assert.Equal("40", para.Element(W.pPr).Element(W.rPr).Element(W.szCs).Attribute(W.val).Value);
+            Assert.Equal("Algerian", paras[6].Element(W.pPr).Element(W.rPr).Element(W.rFonts).Attribute(W.ascii).Value);
+            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
+            {
+                Assert.Equal("Algerian", x.Element(W.rFonts).Attribute(W.ascii).Value);
+                Assert.Equal("00B0F0", x.Element(W.color).Attribute(W.val).Value);
+                Assert.Equal("40", x.Element(W.sz).Attribute(W.val).Value);
+                Assert.Equal("40", x.Element(W.szCs).Attribute(W.val).Value);
+            });
+
+
+            // Assert - Paragraph 8 Styles
+            para = paras[7];
+            Assert.Equal("Heading2CDATA", para.Element(W.pPr).Element(W.pStyle).Attribute(W.val).Value);
+            Assert.Equal("C45911", para.Element(W.pPr).Element(W.rPr).Element(W.color).Attribute(W.val).Value);
+            Assert.Equal("32", para.Element(W.pPr).Element(W.rPr).Element(W.sz).Attribute(W.val).Value);
+            Assert.Equal("32", para.Element(W.pPr).Element(W.rPr).Element(W.szCs).Attribute(W.val).Value);
+            Assert.Equal("Algerian", para.Element(W.pPr).Element(W.rPr).Element(W.rFonts).Attribute(W.ascii).Value);
+            Assert.Equal("single", para.Element(W.pPr).Element(W.rPr).Element(W.u).Attribute(W.val).Value);
+            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
+            {
+                Assert.Equal("Algerian", x.Element(W.rFonts).Attribute(W.ascii).Value);
+                Assert.Equal("single", x.Element(W.u).Attribute(W.val).Value);
+                Assert.Equal("32", x.Element(W.sz).Attribute(W.val).Value);
+                Assert.Equal("32", x.Element(W.szCs).Attribute(W.val).Value);
+            });
+
+
+            // Assert - Paragraph 9 Styles
+            para = paras[8];
+            Assert.Equal("Heading2CDATA", para.Element(W.pPr).Element(W.pStyle).Attribute(W.val).Value);
+            Assert.Equal("538135", para.Element(W.pPr).Element(W.rPr).Element(W.color).Attribute(W.val).Value);
+            Assert.Equal("28", para.Element(W.pPr).Element(W.rPr).Element(W.sz).Attribute(W.val).Value);
+            Assert.Equal("28", para.Element(W.pPr).Element(W.rPr).Element(W.szCs).Attribute(W.val).Value);
+            Assert.Equal("Algerian", para.Element(W.pPr).Element(W.rPr).Element(W.rFonts).Attribute(W.ascii).Value);
+            Assert.Equal("single", para.Element(W.pPr).Element(W.rPr).Element(W.u).Attribute(W.val).Value);
+            Assert.NotNull(para.Element(W.pPr).Element(W.rPr).Element(W.i));
+            Assert.NotNull(para.Element(W.pPr).Element(W.rPr).Element(W.iCs));
+            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
+            {
+                Assert.Equal("Algerian", x.Element(W.rFonts).Attribute(W.ascii).Value);
+                Assert.Equal("538135", x.Element(W.color).Attribute(W.val).Value);
+                Assert.Equal("single", x.Element(W.u).Attribute(W.val).Value);
+                Assert.Equal("28", x.Element(W.sz).Attribute(W.val).Value);
+                Assert.Equal("28", x.Element(W.szCs).Attribute(W.val).Value);
+                Assert.NotNull(x.Element(W.i));
+                Assert.NotNull(x.Element(W.iCs));
+            });
+        }
+
+        [Theory]
         [InlineData("DA259-MultiLineContents.docx", "DA-Data.xml", false)]
         public void DA259(string name, string data, bool err)
         {
-            DA101(name, data, err);
-            var assembledDocx = new FileInfo(
-                Path.Combine(TempDir, name.Replace(".docx", "-processed-by-DocumentAssembler.docx"))
-            );
-            var afterAssembling = new WmlDocument(assembledDocx.FullName);
+            var afterAssembling = AssembleDocument(name, data, out bool returnedTemplateError);
+            FileInfo assembledDocx = GetOutputFile(name);
+            afterAssembling.SaveAs(assembledDocx.FullName);
+
             var brCount = afterAssembling.MainDocumentPart
                 .Element(W.body)
                 .Descendants(W.r)
@@ -333,11 +451,9 @@ namespace Clippit.Tests.Word
         [InlineData("DA-TemplateMaior.docx", "DA-templateMaior.xml", false)]
         public void DATemplateMaior(string name, string data, bool err)
         {
-            DA101(name, data, err);
-            var assembledDocx = new FileInfo(
-                Path.Combine(TempDir, name.Replace(".docx", "-processed-by-DocumentAssembler.docx"))
-            );
-            var afterAssembling = new WmlDocument(assembledDocx.FullName);
+            var afterAssembling = AssembleDocument(name, data, out bool returnedTemplateError);
+            FileInfo assembledDocx = GetOutputFile(name);
+            afterAssembling.SaveAs(assembledDocx.FullName);
 
             var descendants = afterAssembling.MainDocumentPart.Value;
 
@@ -348,20 +464,8 @@ namespace Clippit.Tests.Word
         [InlineData("DA-xmlerror.docx", "DA-xmlerror.xml")]
         public void DAXmlError(string name, string data)
         {
-            var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
-            var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
-
-            var wmlTemplate = new WmlDocument(templateDocx.FullName);
-            var xmlData = XElement.Load(dataFile.FullName);
-
-            var afterAssembling = DocumentAssembler.AssembleDocument(
-                wmlTemplate,
-                xmlData,
-                out var returnedTemplateError
-            );
-            var assembledDocx = new FileInfo(
-                Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx"))
-            );
+            var afterAssembling = AssembleDocument(name, data, out bool returnedTemplateError);
+            FileInfo assembledDocx = GetOutputFile(name);
             afterAssembling.SaveAs(assembledDocx.FullName);
         }
 
@@ -369,21 +473,8 @@ namespace Clippit.Tests.Word
         [InlineData("DA025-TemplateDocument.docx", "DA-Data.xml", false)]
         public void DA103_UseXmlDocument(string name, string data, bool err)
         {
-            var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
-            var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
-
-            var wmlTemplate = new WmlDocument(templateDocx.FullName);
-            var xmlData = new XmlDocument();
-            xmlData.Load(dataFile.FullName);
-
-            var afterAssembling = DocumentAssembler.AssembleDocument(
-                wmlTemplate,
-                xmlData,
-                out var returnedTemplateError
-            );
-            var assembledDocx = new FileInfo(
-                Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx"))
-            );
+            var afterAssembling = AssembleDocument(name, data, out bool returnedTemplateError);
+            FileInfo assembledDocx = GetOutputFile(name);
             afterAssembling.SaveAs(assembledDocx.FullName);
 
             Validate(assembledDocx);
@@ -394,23 +485,10 @@ namespace Clippit.Tests.Word
         [InlineData("DA-Issue-95-Template.docx", "DA-Issue-95-Data.xml", false)]
         public void DA_Issue_95_Repro(string name, string data, bool err)
         {
-            var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, name));
-            var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, data));
-
-            var wmlTemplate = new WmlDocument(templateDocx.FullName);
-            var xmlData = new XmlDocument();
-            xmlData.Load(dataFile.FullName);
-
-            var afterAssembling = DocumentAssembler.AssembleDocument(
-                wmlTemplate,
-                xmlData,
-                out var returnedTemplateError
-            );
-            var assembledDocx = new FileInfo(
-                Path.Combine(TempDir, templateDocx.Name.Replace(".docx", "-processed-by-DocumentAssembler.docx"))
-            );
+            var afterAssembling = AssembleDocument(name, data, out bool returnedTemplateError);
+            FileInfo assembledDocx = GetOutputFile(name);
             afterAssembling.SaveAs(assembledDocx.FullName);
-
+            
             // Assert - no errors
             Validate(assembledDocx);
             Assert.Equal(err, returnedTemplateError);
@@ -436,7 +514,7 @@ namespace Clippit.Tests.Word
             Assert.True(paras.ElementAt(1).Elements(W.r).Count() == 3);
             Assert.True(paras.ElementAt(1).Elements(W.r).Elements(W.br).Count() == 1);
 
-            // Assert - thrid tables paragraph has 2 soft breaks
+            // Assert - third tables paragraph has 2 soft breaks
             Assert.True(paras.ElementAt(2).Elements(W.r).Count() == 5);
             Assert.True(paras.ElementAt(2).Elements(W.r).Elements(W.br).Count() == 2);
 
@@ -449,6 +527,30 @@ namespace Clippit.Tests.Word
         {
             using var wDoc = WordprocessingDocument.Open(fi.FullName, false);
             Validate(wDoc, s_expectedErrors);
+        }
+
+        private WmlDocument AssembleDocument(string templateFilename, string xmlFilename, out bool templateError)
+        {
+            var templateDocx = new FileInfo(Path.Combine(_sourceDir.FullName, templateFilename));
+            var dataFile = new FileInfo(Path.Combine(_sourceDir.FullName, xmlFilename));
+
+            var wmlTemplate = new WmlDocument(templateDocx.FullName);
+            var xmlData = new XmlDocument();
+            xmlData.Load(dataFile.FullName);
+
+            return DocumentAssembler.AssembleDocument(
+                wmlTemplate,
+                xmlData,
+                out templateError
+            );
+        }
+
+        private FileInfo GetOutputFile(string fileName)
+        {
+            return new FileInfo(
+                Path.Combine(
+                    TempDir,
+                    fileName.Replace(Path.GetExtension(fileName), "-processed-by-DocumentAssembler.docx")));
         }
 
         private static readonly List<string> s_expectedErrors = new()

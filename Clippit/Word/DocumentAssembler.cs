@@ -1402,6 +1402,12 @@ namespace Clippit.Word
                     return element.CreateContextErrorMessage($"Content: {ex.Message}", templateError);
                 }
 
+                // merge paragraph and run properties
+                foreach(XElement contentEl in content)
+                {
+                    contentEl.MergeRunProperties(currentParaRunProps, currentRunRunProps);
+                }
+
                 // return content wrapped in the embedded para if we do not have a paragraph
                 if (embeddedPara != null)
                 {

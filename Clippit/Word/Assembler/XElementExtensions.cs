@@ -1,9 +1,16 @@
-﻿using System.Xml.Linq;
+﻿using System.Runtime.CompilerServices;
+using System.Xml.Linq;
+using DocumentFormat.OpenXml.Drawing;
 
 namespace Clippit.Word.Assembler
 {
     internal static class XElementExtensions
     {
+        internal static bool IsPlainText(this XElement element)
+        {
+            return element.Value == element.GetInnerXml();
+        }
+
         internal static void MergeRunProperties(
             this XElement element,
             XElement paraRunProperties,
@@ -63,5 +70,15 @@ namespace Clippit.Word.Assembler
                 }
             }
         }
+
+        private static string GetInnerXml(this XElement element)
+        {
+            using (var reader = element.CreateReader())
+            {
+                reader.MoveToContent();
+                return reader.ReadInnerXml();
+            }
+        }
+
     }
 }

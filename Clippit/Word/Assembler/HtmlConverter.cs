@@ -21,6 +21,7 @@ namespace Clippit.Word.Assembler
         private static readonly Regex detectEntityRegEx = new Regex("^&(?:#([0-9]+)|#x([0-9a-fA-F]+)|([0-9a-zA-Z]+));");
 
         private static readonly XElement softBreak = new XElement(W.r, new XElement(W.br));
+        private static readonly XElement emptyRun = new XElement(W.r, new XElement(W.t));
 
         /// <summary>
         /// Method processes a string that contains inline html tags and generates a run with the necessary properties
@@ -48,15 +49,10 @@ namespace Clippit.Word.Assembler
             // if we no data returned then just return an empty run
             if (values.Length == 0)
             {
-                return new List<XElement> { new XElement(W.r, W.t) };
+                return new List<XElement> { emptyRun };
             }
 
             // otherwise split the values if there are new line characters
-            values = values
-                .SelectMany(x => x.Replace("\r\n", "\n", StringComparison.OrdinalIgnoreCase)
-                .Split('\n'))
-                .ToArray();
-
             List<object> results = new List<object>();
             for(int i = 0; i < values.Length; i++)
             {
@@ -69,45 +65,50 @@ namespace Clippit.Word.Assembler
                     continue;
                 }
                 
-                // try processing as XML
+                // parse as XML
                 XElement parsedElement = XElement.Parse($"<xhtml>{EscapeAmpersands(value)}</xhtml>");
 
-                results.Add(
-                    Transform(
-                        parsedElement,
-                        htmlConverterSettings,
-                        part,
-                        NextExpected.Run,
-                        true
-                    )
-                );
+                // check whether this is plain text and add runs if so
+                if (parsedElement.IsPlainText())
+                {
+                    string[] runs = parsedElement.Value
+                        .Replace("\r\n", "\n", StringComparison.OrdinalIgnoreCase)
+                        .Split('\n');
+
+                    for(int r = 0; r < runs.Length; r++)
+                    {
+                        // replace empty entries with a soft-break
+                        if (string.IsNullOrEmpty(runs[r]))
+                        {
+                            results.Add(softBreak);
+                        }
+                        else
+                        {
+                            results.Add(new XElement(W.r, new XElement(W.t, runs[r])));
+                        }
+                    }
+                }
+                else
+                {
+                    // otherwise we have XML let's process it
+                    results.Add(
+                        Transform(
+                            parsedElement,
+                            htmlConverterSettings,
+                            part,
+                            NextExpected.Run,
+                            true
+                        )
+                    );
+                } 
             }
 
             if (results.Count == 0)
             {
-                return new List<XElement> { new XElement(W.r, W.t) };
+                return new List<XElement> { emptyRun };
             }
 
             return AddLineBreaks(results);
-        }
-
-        private static List<object> ReplaceEmptyEnumerableWit(IEnumerable content)
-        {
-            // flatten the returned content
-            List<object> results = new List<object>();
-            foreach (object obj in content)
-            {
-                if (obj is IEnumerable)
-                {
-                    results.AddRange(FlattenResults(obj as IEnumerable));
-                }
-                else
-                {
-                    results.Add(obj);
-                }
-            }
-
-            return results;
         }
 
         private static List<object> FlattenResults(IEnumerable content)
@@ -141,17 +142,27 @@ namespace Clippit.Word.Assembler
                 if (obj is XElement)
                 {
                     XElement element = obj as XElement;
-                    XElement run = element.DescendantsAndSelf(W.r).FirstOrDefault();
-                    if (run != null)
+                    IEnumerable<XElement> runs = element.DescendantsAndSelf(W.r);
+                    if (runs != null && runs.Any())
                     {
-                        // if this is not the first run, and this run is not an explicit soft break
-                        // then add a soft break before
-                        if (i > 0 && !run.Equals(softBreak))
+                        if (i > 0 && runs.ElementAt(0) != softBreak)
                         {
+                            // if this is not the first element we are processing then add a soft break before
+                            // only if our first run is not a soft-break itself!
                             result.Add(softBreak);
                         }
-                                                    
-                        result.Add(run);
+
+                        foreach (var run in runs)
+                        {
+                            if (run.Parent != null && run.Parent.Name == W.hyperlink)
+                            {
+                                result.Add(run.Parent);
+                            }
+                            else
+                            {
+                                result.Add(run);
+                            }
+                        }
                     }
                 }
                 else
