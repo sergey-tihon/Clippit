@@ -29,7 +29,6 @@ namespace Clippit.Word.Assembler
                     // no delimiters were found, but at least one character remains. Add the rest and stop.
                     parts.Add(s.Substring(first, s.Length - first));
                     break;
-
                 } while (first < s.Length);
             }
 

@@ -82,6 +82,5 @@ namespace Clippit.Word.Assembler
 
             return System.Net.WebUtility.HtmlDecode(result);
         }
-
     }
 }

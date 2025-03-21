@@ -2,7 +2,6 @@
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-
 using Clippit.Html;
 using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;
@@ -53,7 +52,7 @@ namespace Clippit.Word.Assembler
 
             // otherwise split the values if there are new line characters
             List<XElement> results = new List<XElement>();
-            for(int i = 0; i < values.Length; i++)
+            for (int i = 0; i < values.Length; i++)
             {
                 string value = values[i];
 
@@ -63,15 +62,18 @@ namespace Clippit.Word.Assembler
                     results.Add(softBreak);
                     continue;
                 }
-                
+
                 // parse as XML
                 XElement parsedElement = XElement.Parse($"<xhtml>{EscapeAmpersands(value)}</xhtml>");
 
                 // check whether this is plain text and add runs if so
                 if (parsedElement.IsPlainText())
                 {
-                    foreach (var run in parsedElement.Value.Replace("\r\n", "\n", StringComparison.OrdinalIgnoreCase)
-                                                           .SplitAndKeep('\n'))
+                    foreach (
+                        var run in parsedElement
+                            .Value.Replace("\r\n", "\n", StringComparison.OrdinalIgnoreCase)
+                            .SplitAndKeep('\n')
+                    )
                     {
                         if (run == "\n")
                             results.Add(softBreak);
@@ -100,17 +102,11 @@ namespace Clippit.Word.Assembler
                     results.AddRange(
                         AddLineBreaks(
                             FlattenResults(
-                                Transform(
-                                    parsedElement,
-                                    htmlConverterSettings,
-                                    part,
-                                    NextExpected.Run,
-                                    true
-                                )
+                                Transform(parsedElement, htmlConverterSettings, part, NextExpected.Run, true)
                             )
                         )
                     );
-                } 
+                }
             }
 
             if (results.Count == 0)
@@ -133,19 +129,19 @@ namespace Clippit.Word.Assembler
             {
                 results.Add(obj);
             }
-        
+
             return results;
         }
 
         private static List<XElement> AddLineBreaks(List<object> content)
         {
             List<XElement> result = new List<XElement>();
-            for(int i = 0; i < content.Count; i++)
+            for (int i = 0; i < content.Count; i++)
             {
                 object obj = content[i];
                 if (obj is XElement)
                 {
-                    // add a soft break between 
+                    // add a soft break between
                     if (i > 0)
                         result.Add(softBreak);
 

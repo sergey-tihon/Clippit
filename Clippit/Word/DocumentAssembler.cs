@@ -1403,7 +1403,7 @@ namespace Clippit.Word
                 }
 
                 // merge paragraph and run properties
-                foreach(XElement contentEl in content)
+                foreach (XElement contentEl in content)
                 {
                     contentEl.MergeRunProperties(currentParaRunProps, currentRunRunProps);
                 }

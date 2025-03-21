@@ -247,27 +247,36 @@ namespace Clippit.Tests.Word
             Assert.Equal("Heading1", para.Element(W.pPr).Element(W.pStyle).Attribute(W.val).Value);
             Assert.Equal("16", para.Element(W.pPr).Element(W.rPr).Element(W.sz).Attribute(W.val).Value);
             Assert.Equal("16", para.Element(W.pPr).Element(W.rPr).Element(W.szCs).Attribute(W.val).Value);
-            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
-            {
-                Assert.Equal("16", x.Element(W.sz).Attribute(W.val).Value);
-                Assert.Equal("16", x.Element(W.szCs).Attribute(W.val).Value);
-            });
+            Assert.All(
+                para.Descendants(W.r).Elements(W.rPr),
+                x =>
+                {
+                    Assert.Equal("16", x.Element(W.sz).Attribute(W.val).Value);
+                    Assert.Equal("16", x.Element(W.szCs).Attribute(W.val).Value);
+                }
+            );
 
             // Assert - Paragraph 2 Styles
             para = paras[1];
             Assert.Equal("Heading2", para.Element(W.pPr).Element(W.pStyle).Attribute(W.val).Value);
-            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
-            {
-                Assert.Equal("Heading2Char", x.Element(W.rStyle).Attribute(W.val).Value);
-            });
+            Assert.All(
+                para.Descendants(W.r).Elements(W.rPr),
+                x =>
+                {
+                    Assert.Equal("Heading2Char", x.Element(W.rStyle).Attribute(W.val).Value);
+                }
+            );
 
             // Assert - Paragraph 3 Styles
             para = paras[2];
             Assert.Equal("Heading2CDATA", para.Element(W.pPr).Element(W.pStyle).Attribute(W.val).Value);
-            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
-            {
-                Assert.Equal("538135", x.Element(W.color).Attribute(W.val).Value);
-            });
+            Assert.All(
+                para.Descendants(W.r).Elements(W.rPr),
+                x =>
+                {
+                    Assert.Equal("538135", x.Element(W.color).Attribute(W.val).Value);
+                }
+            );
 
             // Assert - Paragraph 4 Styles
             para = paras[3];
@@ -276,13 +285,16 @@ namespace Clippit.Tests.Word
             Assert.Equal("auto", para.Element(W.pPr).Element(W.rPr).Element(W.color).Attribute(W.val).Value);
             Assert.Equal("22", para.Element(W.pPr).Element(W.rPr).Element(W.sz).Attribute(W.val).Value);
             Assert.Equal("22", para.Element(W.pPr).Element(W.rPr).Element(W.szCs).Attribute(W.val).Value);
-            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
-            {
-                Assert.Equal("Algerian", x.Element(W.rFonts).Attribute(W.ascii).Value);
-                Assert.NotNull(x.Element(W.i));
-                Assert.NotNull(x.Element(W.iCs));
-                Assert.Equal("single", x.Element(W.u).Attribute(W.val).Value);
-            });
+            Assert.All(
+                para.Descendants(W.r).Elements(W.rPr),
+                x =>
+                {
+                    Assert.Equal("Algerian", x.Element(W.rFonts).Attribute(W.ascii).Value);
+                    Assert.NotNull(x.Element(W.i));
+                    Assert.NotNull(x.Element(W.iCs));
+                    Assert.Equal("single", x.Element(W.u).Attribute(W.val).Value);
+                }
+            );
 
             // Assert - Paragraph 5 Styles
             para = paras[4];
@@ -290,11 +302,14 @@ namespace Clippit.Tests.Word
             Assert.Equal("C45911", para.Element(W.pPr).Element(W.rPr).Element(W.color).Attribute(W.val).Value);
             Assert.Equal("14", para.Element(W.pPr).Element(W.rPr).Element(W.sz).Attribute(W.val).Value);
             Assert.Equal("14", para.Element(W.pPr).Element(W.rPr).Element(W.szCs).Attribute(W.val).Value);
-            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
-            {
-                Assert.Equal("14", x.Element(W.sz).Attribute(W.val).Value);
-                Assert.Equal("14", x.Element(W.szCs).Attribute(W.val).Value);
-            });
+            Assert.All(
+                para.Descendants(W.r).Elements(W.rPr),
+                x =>
+                {
+                    Assert.Equal("14", x.Element(W.sz).Attribute(W.val).Value);
+                    Assert.Equal("14", x.Element(W.szCs).Attribute(W.val).Value);
+                }
+            );
 
             // Assert - Paragraph 6 Styles
             para = paras[5];
@@ -302,11 +317,14 @@ namespace Clippit.Tests.Word
             Assert.Equal("C45911", para.Element(W.pPr).Element(W.rPr).Element(W.color).Attribute(W.val).Value);
             Assert.Equal("40", para.Element(W.pPr).Element(W.rPr).Element(W.sz).Attribute(W.val).Value);
             Assert.Equal("40", para.Element(W.pPr).Element(W.rPr).Element(W.szCs).Attribute(W.val).Value);
-            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
-            {
-                Assert.Equal("40", x.Element(W.sz).Attribute(W.val).Value);
-                Assert.Equal("40", x.Element(W.szCs).Attribute(W.val).Value);
-            });
+            Assert.All(
+                para.Descendants(W.r).Elements(W.rPr),
+                x =>
+                {
+                    Assert.Equal("40", x.Element(W.sz).Attribute(W.val).Value);
+                    Assert.Equal("40", x.Element(W.szCs).Attribute(W.val).Value);
+                }
+            );
 
             // Assert - Paragraph 7 Styles
             para = paras[6];
@@ -315,14 +333,16 @@ namespace Clippit.Tests.Word
             Assert.Equal("40", para.Element(W.pPr).Element(W.rPr).Element(W.sz).Attribute(W.val).Value);
             Assert.Equal("40", para.Element(W.pPr).Element(W.rPr).Element(W.szCs).Attribute(W.val).Value);
             Assert.Equal("Algerian", paras[6].Element(W.pPr).Element(W.rPr).Element(W.rFonts).Attribute(W.ascii).Value);
-            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
-            {
-                Assert.Equal("Algerian", x.Element(W.rFonts).Attribute(W.ascii).Value);
-                Assert.Equal("00B0F0", x.Element(W.color).Attribute(W.val).Value);
-                Assert.Equal("40", x.Element(W.sz).Attribute(W.val).Value);
-                Assert.Equal("40", x.Element(W.szCs).Attribute(W.val).Value);
-            });
-
+            Assert.All(
+                para.Descendants(W.r).Elements(W.rPr),
+                x =>
+                {
+                    Assert.Equal("Algerian", x.Element(W.rFonts).Attribute(W.ascii).Value);
+                    Assert.Equal("00B0F0", x.Element(W.color).Attribute(W.val).Value);
+                    Assert.Equal("40", x.Element(W.sz).Attribute(W.val).Value);
+                    Assert.Equal("40", x.Element(W.szCs).Attribute(W.val).Value);
+                }
+            );
 
             // Assert - Paragraph 8 Styles
             para = paras[7];
@@ -332,14 +352,16 @@ namespace Clippit.Tests.Word
             Assert.Equal("32", para.Element(W.pPr).Element(W.rPr).Element(W.szCs).Attribute(W.val).Value);
             Assert.Equal("Algerian", para.Element(W.pPr).Element(W.rPr).Element(W.rFonts).Attribute(W.ascii).Value);
             Assert.Equal("single", para.Element(W.pPr).Element(W.rPr).Element(W.u).Attribute(W.val).Value);
-            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
-            {
-                Assert.Equal("Algerian", x.Element(W.rFonts).Attribute(W.ascii).Value);
-                Assert.Equal("single", x.Element(W.u).Attribute(W.val).Value);
-                Assert.Equal("32", x.Element(W.sz).Attribute(W.val).Value);
-                Assert.Equal("32", x.Element(W.szCs).Attribute(W.val).Value);
-            });
-
+            Assert.All(
+                para.Descendants(W.r).Elements(W.rPr),
+                x =>
+                {
+                    Assert.Equal("Algerian", x.Element(W.rFonts).Attribute(W.ascii).Value);
+                    Assert.Equal("single", x.Element(W.u).Attribute(W.val).Value);
+                    Assert.Equal("32", x.Element(W.sz).Attribute(W.val).Value);
+                    Assert.Equal("32", x.Element(W.szCs).Attribute(W.val).Value);
+                }
+            );
 
             // Assert - Paragraph 9 Styles
             para = paras[8];
@@ -351,16 +373,19 @@ namespace Clippit.Tests.Word
             Assert.Equal("single", para.Element(W.pPr).Element(W.rPr).Element(W.u).Attribute(W.val).Value);
             Assert.NotNull(para.Element(W.pPr).Element(W.rPr).Element(W.i));
             Assert.NotNull(para.Element(W.pPr).Element(W.rPr).Element(W.iCs));
-            Assert.All(para.Descendants(W.r).Elements(W.rPr), x =>
-            {
-                Assert.Equal("Algerian", x.Element(W.rFonts).Attribute(W.ascii).Value);
-                Assert.Equal("538135", x.Element(W.color).Attribute(W.val).Value);
-                Assert.Equal("single", x.Element(W.u).Attribute(W.val).Value);
-                Assert.Equal("28", x.Element(W.sz).Attribute(W.val).Value);
-                Assert.Equal("28", x.Element(W.szCs).Attribute(W.val).Value);
-                Assert.NotNull(x.Element(W.i));
-                Assert.NotNull(x.Element(W.iCs));
-            });
+            Assert.All(
+                para.Descendants(W.r).Elements(W.rPr),
+                x =>
+                {
+                    Assert.Equal("Algerian", x.Element(W.rFonts).Attribute(W.ascii).Value);
+                    Assert.Equal("538135", x.Element(W.color).Attribute(W.val).Value);
+                    Assert.Equal("single", x.Element(W.u).Attribute(W.val).Value);
+                    Assert.Equal("28", x.Element(W.sz).Attribute(W.val).Value);
+                    Assert.Equal("28", x.Element(W.szCs).Attribute(W.val).Value);
+                    Assert.NotNull(x.Element(W.i));
+                    Assert.NotNull(x.Element(W.iCs));
+                }
+            );
         }
 
         [Theory]
@@ -371,11 +396,7 @@ namespace Clippit.Tests.Word
             FileInfo assembledDocx = GetOutputFile(name);
             afterAssembling.SaveAs(assembledDocx.FullName);
 
-            var brCount = afterAssembling.MainDocumentPart
-                .Element(W.body)
-                .Descendants(W.r)
-                .Elements(W.br)
-                .Count();
+            var brCount = afterAssembling.MainDocumentPart.Element(W.body).Descendants(W.r).Elements(W.br).Count();
 
             Assert.Equal(4, brCount);
         }
@@ -526,7 +547,7 @@ namespace Clippit.Tests.Word
 
             // Assert - first paragraph has 0 tabs
             Assert.True(paras.ElementAt(0).Descendants(W.tab).Count() == 0);
-            
+
             // Assert - second paragraph has a tab in the first run
             Assert.True(paras.ElementAt(1).Elements(W.r).First().Elements(W.tab).Count() == 1);
 
@@ -546,7 +567,7 @@ namespace Clippit.Tests.Word
             var afterAssembling = AssembleDocument(name, data, out bool returnedTemplateError);
             FileInfo assembledDocx = GetOutputFile(name);
             afterAssembling.SaveAs(assembledDocx.FullName);
-            
+
             // Assert - no errors
             Validate(assembledDocx);
             Assert.Equal(err, returnedTemplateError);
@@ -597,11 +618,7 @@ namespace Clippit.Tests.Word
             var xmlData = new XmlDocument();
             xmlData.Load(dataFile.FullName);
 
-            return DocumentAssembler.AssembleDocument(
-                wmlTemplate,
-                xmlData,
-                out templateError
-            );
+            return DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out templateError);
         }
 
         private FileInfo GetOutputFile(string fileName)
@@ -609,7 +626,9 @@ namespace Clippit.Tests.Word
             return new FileInfo(
                 Path.Combine(
                     TempDir,
-                    fileName.Replace(Path.GetExtension(fileName), "-processed-by-DocumentAssembler.docx")));
+                    fileName.Replace(Path.GetExtension(fileName), "-processed-by-DocumentAssembler.docx")
+                )
+            );
         }
 
         private static readonly List<string> s_expectedErrors = new()
