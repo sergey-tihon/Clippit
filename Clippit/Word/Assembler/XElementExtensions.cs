@@ -73,11 +73,14 @@ namespace Clippit.Word.Assembler
 
         private static string GetInnerXml(this XElement element)
         {
+            string result = string.Empty;
             using (var reader = element.CreateReader())
             {
                 reader.MoveToContent();
-                return reader.ReadInnerXml();
+                result = reader.ReadInnerXml();
             }
+
+            return System.Net.WebUtility.HtmlDecode(result);
         }
 
     }

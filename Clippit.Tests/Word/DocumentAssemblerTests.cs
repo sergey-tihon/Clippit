@@ -482,6 +482,64 @@ namespace Clippit.Tests.Word
         }
 
         [Theory]
+        [InlineData("DA-Ampersand+LF-Issue.docx", "DA-Ampersand+LF-Issue.xml", false)]
+        [InlineData("DA-Ampersand+LF-Issue-With-Controls.docx", "DA-Ampersand+LF-Issue.xml", false)]
+        public void DA_Ampersands_And_LineFeeds(string name, string data, bool err)
+        {
+            var afterAssembling = AssembleDocument(name, data, out bool returnedTemplateError);
+            FileInfo assembledDocx = GetOutputFile(name);
+            afterAssembling.SaveAs(assembledDocx.FullName);
+
+            // Assert - no errors
+            Validate(assembledDocx);
+            Assert.Equal(err, returnedTemplateError);
+
+            // Assert - tables is present and correct
+            XElement table = afterAssembling.MainDocumentPart.Descendants(W.tbl).SingleOrDefault();
+            Assert.NotNull(table);
+
+            // Assert - the second table cell of each table has one paragraph
+            IEnumerable<XElement> paras = table.Descendants(W.tc).ElementAt(1).Elements(W.p);
+            Assert.True(paras.Count() == 1);
+
+            // Assert - first table paragraph has 2 soft breaks
+            Assert.True(paras.ElementAt(0).Elements(W.r).Count() == 5);
+            Assert.True(paras.ElementAt(0).Elements(W.r).Elements(W.br).Count() == 2);
+        }
+
+        [Theory]
+        [InlineData("DA-Tabs-In-Text.docx", "DA-Tabs-In-Text.xml", false)]
+        [InlineData("DA-Tabs-In-Text-With-Controls.docx", "DA-Tabs-In-Text.xml", false)]
+        public void DA_Tabs_In_Text(string name, string data, bool err)
+        {
+            var afterAssembling = AssembleDocument(name, data, out bool returnedTemplateError);
+            FileInfo assembledDocx = GetOutputFile(name);
+            afterAssembling.SaveAs(assembledDocx.FullName);
+
+            // Assert - no errors
+            Validate(assembledDocx);
+            Assert.Equal(err, returnedTemplateError);
+
+            // Assert - we have four paragraphs
+            IEnumerable<XElement> paras = afterAssembling.MainDocumentPart.Descendants(W.p);
+            Assert.True(paras.Count() == 4);
+
+            // Assert - first paragraph has 0 tabs
+            Assert.True(paras.ElementAt(0).Descendants(W.tab).Count() == 0);
+            
+            // Assert - second paragraph has a tab in the first run
+            Assert.True(paras.ElementAt(1).Elements(W.r).First().Elements(W.tab).Count() == 1);
+
+            // Assert - third paragraph has a tab in the last run
+            Assert.True(paras.ElementAt(2).Elements(W.r).Last().Elements(W.tab).Count() == 1);
+
+            // Assert - fourth paragraph has a tab but not in the first or last run
+            Assert.True(paras.ElementAt(3).Descendants(W.tab).Count() == 1);
+            Assert.True(paras.ElementAt(3).Elements(W.r).First().Elements(W.tab).Count() == 0);
+            Assert.True(paras.ElementAt(3).Elements(W.r).Last().Elements(W.tab).Count() == 0);
+        }
+
+        [Theory]
         [InlineData("DA-Issue-95-Template.docx", "DA-Issue-95-Data.xml", false)]
         public void DA_Issue_95_Repro(string name, string data, bool err)
         {
@@ -518,9 +576,10 @@ namespace Clippit.Tests.Word
             Assert.True(paras.ElementAt(2).Elements(W.r).Count() == 5);
             Assert.True(paras.ElementAt(2).Elements(W.r).Elements(W.br).Count() == 2);
 
-            // Assert - fourth tables paragraph has 1 soft breaks
-            Assert.True(paras.ElementAt(3).Elements(W.r).Count() == 3);
+            // Assert - fourth tables paragraph has 1 soft breaks and two tabs
+            Assert.True(paras.ElementAt(3).Elements(W.r).Count() == 5);
             Assert.True(paras.ElementAt(3).Elements(W.r).Elements(W.br).Count() == 1);
+            Assert.True(paras.ElementAt(3).Elements(W.r).Elements(W.tab).Count() == 2);
         }
 
         private void Validate(FileInfo fi)

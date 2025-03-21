@@ -1,12 +1,10 @@
 ﻿using System.Collections;
-using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using System.Xml;
 using System.Xml.Linq;
-using System.Xml.XPath;
+
 using Clippit.Html;
 using Clippit.Internal;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Packaging;
 using SixLabors.ImageSharp;
 using NextExpected = Clippit.Html.HtmlToWmlConverterCore.NextExpected;
@@ -22,6 +20,7 @@ namespace Clippit.Word.Assembler
 
         private static readonly XElement softBreak = new XElement(W.r, new XElement(W.br));
         private static readonly XElement emptyRun = new XElement(W.r, new XElement(W.t));
+        private static readonly XElement softTab = new XElement(W.r, new XElement(W.tab));
 
         /// <summary>
         /// Method processes a string that contains inline html tags and generates a run with the necessary properties
@@ -53,7 +52,7 @@ namespace Clippit.Word.Assembler
             }
 
             // otherwise split the values if there are new line characters
-            List<object> results = new List<object>();
+            List<XElement> results = new List<XElement>();
             for(int i = 0; i < values.Length; i++)
             {
                 string value = values[i];
@@ -71,33 +70,44 @@ namespace Clippit.Word.Assembler
                 // check whether this is plain text and add runs if so
                 if (parsedElement.IsPlainText())
                 {
-                    string[] runs = parsedElement.Value
-                        .Replace("\r\n", "\n", StringComparison.OrdinalIgnoreCase)
-                        .Split('\n');
-
-                    for(int r = 0; r < runs.Length; r++)
+                    foreach (var run in parsedElement.Value.Replace("\r\n", "\n", StringComparison.OrdinalIgnoreCase)
+                                                           .SplitAndKeep('\n'))
                     {
-                        // replace empty entries with a soft-break
-                        if (string.IsNullOrEmpty(runs[r]))
-                        {
+                        if (run == "\n")
                             results.Add(softBreak);
-                        }
                         else
                         {
-                            results.Add(new XElement(W.r, new XElement(W.t, runs[r])));
+                            foreach (var splitRun in run.SplitAndKeep('\t'))
+                            {
+                                if (splitRun == "\t")
+                                    results.Add(softTab);
+                                else
+                                    results.Add(new XElement(W.r, new XElement(W.t, splitRun)));
+                            }
                         }
                     }
                 }
                 else
                 {
+                    if (i > 0 && results.Last() != softBreak)
+                    {
+                        // if this is not the first element we are processing then add a soft break before
+                        // only if our last run is not a soft-break itself!
+                        results.Add(softBreak);
+                    }
+
                     // otherwise we have XML let's process it
-                    results.Add(
-                        Transform(
-                            parsedElement,
-                            htmlConverterSettings,
-                            part,
-                            NextExpected.Run,
-                            true
+                    results.AddRange(
+                        AddLineBreaks(
+                            FlattenResults(
+                                Transform(
+                                    parsedElement,
+                                    htmlConverterSettings,
+                                    part,
+                                    NextExpected.Run,
+                                    true
+                                )
+                            )
                         )
                     );
                 } 
@@ -108,50 +118,41 @@ namespace Clippit.Word.Assembler
                 return new List<XElement> { emptyRun };
             }
 
-            return AddLineBreaks(results);
+            return results;
         }
 
-        private static List<object> FlattenResults(IEnumerable content)
+        private static List<object> FlattenResults(object obj)
         {
             // flatten the returned content
             List<object> results = new List<object>();
-            foreach (object obj in content)
+            if (obj is IEnumerable)
             {
-                if (obj is IEnumerable)
-                {
-                    results.AddRange(FlattenResults(obj as IEnumerable));
-                }
-                else
-                {
-                    results.Add(obj);
-                }
+                results.AddRange(obj as IEnumerable<object>);
             }
-
+            else
+            {
+                results.Add(obj);
+            }
+        
             return results;
         }
 
         private static List<XElement> AddLineBreaks(List<object> content)
         {
-            content = FlattenResults(content);
-
-            // flatten the returned content
             List<XElement> result = new List<XElement>();
             for(int i = 0; i < content.Count; i++)
             {
                 object obj = content[i];
                 if (obj is XElement)
                 {
+                    // add a soft break between 
+                    if (i > 0)
+                        result.Add(softBreak);
+
                     XElement element = obj as XElement;
                     IEnumerable<XElement> runs = element.DescendantsAndSelf(W.r);
                     if (runs != null && runs.Any())
                     {
-                        if (i > 0 && runs.ElementAt(0) != softBreak)
-                        {
-                            // if this is not the first element we are processing then add a soft break before
-                            // only if our first run is not a soft-break itself!
-                            result.Add(softBreak);
-                        }
-
                         foreach (var run in runs)
                         {
                             if (run.Parent != null && run.Parent.Name == W.hyperlink)
@@ -164,10 +165,6 @@ namespace Clippit.Word.Assembler
                             }
                         }
                     }
-                }
-                else
-                {
-                    result.Add(softBreak);
                 }
             }
 

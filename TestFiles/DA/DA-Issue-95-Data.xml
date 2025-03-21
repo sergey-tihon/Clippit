@@ -1,65 +1,37 @@
 <root>
-  <notes>
-    <baseMachineNoteDesc />
-    <optionNotes>Random Engine Model XYZ 2.0l Engine in-line 4 cylinders.
+	<notes>
+		<baseMachineNoteDesc/>
+		<optionNotes>Random Engine Model XYZ 2.0l Engine in-line 4 cylinders.
 
 Engine power (rated) at 2200 rpm: 150 kW (201 hp / 204 PS)
 
 Engine power (max) at 2100 rpm: 170 kW (228 hp / 231 PS)</optionNotes>
-    <subOptNotes />
-    <subOptGrpNote />
-    <optionGroupNotes />
-  </notes>
-  <notes>
-    <optionNotes>Random Cutterhead Model ABC
+		<subOptNotes/>
+		<subOptGrpNote/>
+		<optionGroupNotes/>
+	</notes>
+	<notes>
+		<optionNotes>Random Cutterhead Model ABC
 500 mm width, 600 mm diameter</optionNotes>
-    <subOptNotes />
-    <subOptGrpNote />
-    <optionGroupNotes />
-  </notes>
-  <notes>
-    <baseMachineNoteDesc />
-    <optionNotes>Random Sensor and HarvestLab Sensor Factory installed, I decal.
+		<subOptNotes/>
+		<subOptGrpNote/>
+		<optionGroupNotes/>
+	</notes>
+	<notes>
+		<baseMachineNoteDesc/>
+		<optionNotes>Random Sensor and HarvestLab Sensor Factory installed, I decal.
 Requires HarvestLab 4000, code 1234
 Display mounting rail, code 5678 can be ordered in addition, to install a second display.</optionNotes>
-    <subOptNotes />
-    <subOptGrpNote />
-    <optionGroupNotes />
-  </notes>
-  <notes>
-    <baseMachineNoteDesc />
-    <optionNotes>Required when pick-up is equipped with an auxiliary drive &amp; (2nd hydraulic drive for the pick-up reel)
-    DUAL HEADER DRIVE MUST BE ORDERED ALSO WITH THE PICK-UP! This option is also mandatory for vertical saw drives installed on a Random ProfiCut (for random seeds)</optionNotes>
-    <subOptNotes />
-    <subOptGrpNote />
-    <optionGroupNotes />
-  </notes>
-  <Testing>Standard Base Machine Features - 8R Ambulance 
-Rated Engine power PS (hp ISO): 230 hp
- 
-ENGINE: 
-Automatic Shutdown System 
-Dry Type Air Cleaner with Safety Element and Dirt Aspiration System 
-Tilt Hood Enclosure 
-Viscous Fan 
-Fuel Filter and Pre-Filter With Fuel Water Separator with Sensor 
-Self Priming and Bleeding Electronic Fuel Injection System, Governor Control with Field Cruise 
-Lockable Fuel Cap 
-
-TRANSMISSION: 
-Hydraulically Engaged Wet-Disk Clutch
-Integrated Park Brake 
-Neutral Safety Start System 
-
-STEERING &amp; BRAKES:
-Load-Sensing Hydraulic Power.Standard Base Machine Features - 8R Ambulance 
-Rated Engine power PS (hp ISO): 230 hp
- 
-ENGINE: 
-Automatic Shutdown System 
-Dry Type Air Cleaner with Safety Element and Dirt Aspiration System 
-Tilt Hood Enclosure 
-Viscous Fan 
-Fuel Filter and Pre-Filter With Fuel Water Separator with Sensor 
-Self Priming and Bleeding Electronic Fuel Injection System, Governor Control with Field Cruise</Testing>
+		<subOptNotes/>
+		<subOptGrpNote/>
+		<optionGroupNotes/>
+	</notes>
+	<notes>
+		<baseMachineNoteDesc/>
+		<optionNotes>Required when pick-up is equipped with an auxiliary drive (2nd hydraulic drive for the pick-up reel)
+		DUAL HEADER DRIVE MUST BE ORDERED ALSO WITH THE PICK-UP! This option is also mandatory for vertical saw drives installed on a Random ProfiCut (for random seeds)</optionNotes>
+		<subOptNotes/>
+		<subOptGrpNote/>
+		<optionGroupNotes/>
+	</notes>
 </root>
