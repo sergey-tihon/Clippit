@@ -651,7 +651,7 @@ namespace Clippit.Tests.Word
             "The 'http://schemas.microsoft.com/office/word/2016/wordml/cid:durableId' attribute is not declared.",
             "Attribute 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:val' should have unique value. Its current value",
             "The element has unexpected child element 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:bCs'.",
-            "The element has unexpected child element 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:rFonts'."
+            "The element has unexpected child element 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:rFonts'.",
         };
     }
 }
