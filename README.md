@@ -1,6 +1,6 @@
 # Clippit
 
-![NuGet Version](https://img.shields.io/nuget/v/Clippit) ![NuGet Downloads](https://img.shields.io/nuget/dt/Clippit) [![Build and Test](https://github.com/sergey-tihon/Clippit/actions/workflows/main.yml/badge.svg)](https://github.com/sergey-tihon/Clippit/actions/workflows/main.yml)
+![NuGet Version](https://badgen.net/nuget/v/Clippit) ![NuGet Downloads](https://badgen.net/nuget/dt/Clippit)
 
 ## Build Instructions
 
