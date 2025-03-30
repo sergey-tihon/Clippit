@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.CompilerServices;
 using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using DocumentFormat.OpenXml.Drawing;
 
 namespace Clippit.Word.Assembler
 {
     internal static class XElementExtensions
     {
+        internal static bool IsPlainText(this XElement element)
+        {
+            return element.Value == element.GetInnerXml();
+        }
+
         internal static void MergeRunProperties(
             this XElement element,
             XElement paraRunProperties,
@@ -68,6 +69,18 @@ namespace Clippit.Word.Assembler
                     }
                 }
             }
+        }
+
+        private static string GetInnerXml(this XElement element)
+        {
+            string result = string.Empty;
+            using (var reader = element.CreateReader())
+            {
+                reader.MoveToContent();
+                result = reader.ReadInnerXml();
+            }
+
+            return System.Net.WebUtility.HtmlDecode(result);
         }
     }
 }

@@ -1,0 +1,9 @@
+﻿<Doc>
+	<TestCase>Multiple Paragraphs</TestCase>
+	<EscapedHTML>Boggarts lavender robes, Hermione Granger Fantastic Beasts and Where to Find Them.
+	Bee in your bonnet Hand of Glory elder wand, spectacles House Cup Bertie Bott’s Every Flavor Beans Impedimenta.
+	Stunning spells tap-dancing spider Slytherin’s Heir mewing kittens Remus Lupin</EscapedHTML>
+	<CDATA><![CDATA[Boggarts lavender robes, Hermione Granger Fantastic Beasts and Where to Find Them.
+	Bee in your bonnet Hand of Glory elder wand, spectacles House Cup Bertie Bott’s Every Flavor Beans Impedimenta.
+	Stunning spells tap-dancing spider Slytherin’s Heir mewing kittens Remus Lupin.]]></CDATA>
+</Doc>

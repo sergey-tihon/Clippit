@@ -1,11 +1,11 @@
 ﻿using System.Collections;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using System.Xml;
 using System.Xml.Linq;
-using System.Xml.XPath;
 using Clippit.Html;
 using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;
+using SixLabors.ImageSharp;
 using NextExpected = Clippit.Html.HtmlToWmlConverterCore.NextExpected;
 
 namespace Clippit.Word.Assembler
@@ -17,6 +17,10 @@ namespace Clippit.Word.Assembler
 
         private static readonly Regex detectEntityRegEx = new Regex("^&(?:#([0-9]+)|#x([0-9a-fA-F]+)|([0-9a-zA-Z]+));");
 
+        private static readonly XElement softBreak = new XElement(W.r, new XElement(W.br));
+        private static readonly XElement emptyRun = new XElement(W.r, new XElement(W.t));
+        private static readonly XElement softTab = new XElement(W.r, new XElement(W.tab));
+
         /// <summary>
         /// Method processes a string that contains inline html tags and generates a run with the necessary properties
         /// Supported inline html tags: b, i, em, strong, u, br, a
@@ -27,7 +31,7 @@ namespace Clippit.Word.Assembler
         /// <param name="data">Data element with content.</param>
         /// <param name="pPr">The paragraph properties.</param>
         /// <param name="templateError">Error indicator.</param>
-        internal static IEnumerable<object> ProcessContentElement(
+        internal static List<XElement> ProcessContentElement(
             this XElement element,
             XElement data,
             TemplateError templateError,
@@ -43,58 +47,124 @@ namespace Clippit.Word.Assembler
             // if we no data returned then just return an empty run
             if (values.Length == 0)
             {
-                return new[] { new XElement(W.r, W.t) };
+                return new List<XElement> { emptyRun };
             }
 
             // otherwise split the values if there are new line characters
-            values = values
-                .SelectMany(x => x.Replace("\r\n", "\n", StringComparison.OrdinalIgnoreCase).Split('\n'))
-                .ToArray();
-
-            List<object> results = new List<object>();
+            List<XElement> results = new List<XElement>();
             for (int i = 0; i < values.Length; i++)
             {
-                // try processing as XML
-                XElement parsedElement = XElement.Parse($"<xhtml>{EscapeAmpersands(values[i])}</xhtml>");
+                string value = values[i];
 
-                results.Add(
-                    Transform(
-                        parsedElement,
-                        htmlConverterSettings,
-                        part,
-                        i == 0 ? NextExpected.Run : NextExpected.Paragraph,
-                        true
+                // empty and not the first element, this was a new line character and should be a soft break
+                if (i > 0 && string.IsNullOrWhiteSpace(value))
+                {
+                    results.Add(softBreak);
+                    continue;
+                }
+
+                // parse as XML
+                XElement parsedElement = XElement.Parse($"<xhtml>{EscapeAmpersands(value)}</xhtml>");
+
+                // check whether this is plain text and add runs if so
+                if (parsedElement.IsPlainText())
+                {
+                    foreach (
+                        var run in parsedElement
+                            .Value.Replace("\r\n", "\n", StringComparison.OrdinalIgnoreCase)
+                            .SplitAndKeep('\n')
                     )
-                );
-            }
+                    {
+                        if (run == "\n")
+                            results.Add(softBreak);
+                        else
+                        {
+                            foreach (var splitRun in run.SplitAndKeep('\t'))
+                            {
+                                if (splitRun == "\t")
+                                    results.Add(softTab);
+                                else
+                                    results.Add(new XElement(W.r, new XElement(W.t, splitRun)));
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (i > 0 && results.Last() != softBreak)
+                    {
+                        // if this is not the first element we are processing then add a soft break before
+                        // only if our last run is not a soft-break itself!
+                        results.Add(softBreak);
+                    }
 
-            results = FlattenResults(results);
+                    // otherwise we have XML let's process it
+                    results.AddRange(
+                        AddLineBreaks(
+                            FlattenResults(
+                                Transform(parsedElement, htmlConverterSettings, part, NextExpected.Run, true)
+                            )
+                        )
+                    );
+                }
+            }
 
             if (results.Count == 0)
             {
-                return new[] { new XElement(W.r, W.t) };
+                return new List<XElement> { emptyRun };
             }
 
             return results;
         }
 
-        private static List<object> FlattenResults(IEnumerable content)
+        private static List<object> FlattenResults(object obj)
         {
             // flatten the returned content
             List<object> results = new List<object>();
-            foreach (object obj in content)
+            if (obj is IEnumerable)
             {
-                if (obj is IEnumerable)
-                {
-                    results.AddRange(FlattenResults(obj as IEnumerable));
-                }
-                else
-                {
-                    results.Add(obj);
-                }
+                results.AddRange(obj as IEnumerable<object>);
+            }
+            else
+            {
+                results.Add(obj);
             }
 
             return results;
+        }
+
+        private static List<XElement> AddLineBreaks(List<object> content)
+        {
+            List<XElement> result = new List<XElement>();
+            for (int i = 0; i < content.Count; i++)
+            {
+                object obj = content[i];
+                if (obj is XElement)
+                {
+                    // add a soft break between
+                    if (i > 0)
+                        result.Add(softBreak);
+
+                    XElement element = obj as XElement;
+                    IEnumerable<XElement> runs = element.DescendantsAndSelf(W.r);
+                    if (runs != null && runs.Any())
+                    {
+                        foreach (var run in runs)
+                        {
+                            if (run.Parent != null && run.Parent.Name == W.hyperlink)
+                            {
+                                result.Add(run.Parent);
+                            }
+                            else
+                            {
+                                result.Add(run);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return result;
         }
 
         private static object Transform(
