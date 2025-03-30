@@ -1,0 +1,6 @@
+<root>
+  <run>Sentence with no Tabs</run>
+  <run>	Tab at start.</run>
+  <run>Tab at end.	</run>
+  <run>Tab in	between</run>
+</root>

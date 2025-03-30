@@ -1,8 +1,14 @@
 # Changelog
 
-## [3.0.0-beta02] - January 8, 2025
+## [3.0.0-beta03] - March 30, 2025
 
 - Public exposure of `IFluentPresentationBuilder` ergonomic API for the code behind `PresentationBuilder`
+
+## [2.5.1] - March 30, 2025
+
+- Issue 95 and other issues #96 by @MalcolmJohnston
+- hk: DocumentFormat.OpenXml 3.3.0
+
 ## [2.5.0] - February 7, 2025
 
 - Insert Documents or Document Templates using Document Assembler #93 by @MalcolmJohnston
