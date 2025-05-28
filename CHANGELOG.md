@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.0.0-beta03] - March 30, 2025
+
+- Public exposure of `IFluentPresentationBuilder` ergonomic API for the code behind `PresentationBuilder`
+
 ## [2.5.1] - March 30, 2025
 
 - Issue 95 and other issues #96 by @MalcolmJohnston
