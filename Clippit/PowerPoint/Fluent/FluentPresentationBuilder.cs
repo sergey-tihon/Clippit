@@ -66,6 +66,9 @@ internal sealed partial class FluentPresentationBuilder : IFluentPresentationBui
             customPropsDocument.Root?.RemoveNodes();
         }
 
+        // Fix any orphaned relationships before saving
+        FixOrphanedRelationships();
+
         foreach (var part in _newDocument.GetAllParts())
         {
             if (part.ContentType.EndsWith("+xml"))

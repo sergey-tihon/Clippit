@@ -1118,4 +1118,104 @@ internal sealed partial class FluentPresentationBuilder
 
         return newLayout;
     }
+
+    /// <summary>
+    /// Fixes orphaned relationships in the presentation by removing references to non-existent relationships.
+    /// This prevents validation errors when relationships are referenced but don't exist.
+    /// </summary>
+    private void FixOrphanedRelationships()
+    {
+        if (_newDocument.PresentationPart == null)
+            return;
+
+        // Define relationship attributes that we need to check
+        var relationshipAttributes = new[] { R.id, R.link, R.embed, R.href };
+
+        // Process all parts in the document
+        foreach (var part in _newDocument.GetAllParts())
+        {
+            if (!part.ContentType.EndsWith("+xml"))
+                continue;
+
+            var xDoc = part.GetXDocument();
+            if (xDoc?.Root == null)
+                continue;
+
+            var modified = false;
+
+            // Find all elements with relationship attributes
+            var elementsWithRelationships = xDoc.Descendants()
+                .Where(e => e.Attributes().Any(a => relationshipAttributes.Contains(a.Name)))
+                .ToList();
+
+            foreach (var element in elementsWithRelationships)
+            {
+                foreach (var attr in element.Attributes().Where(a => relationshipAttributes.Contains(a.Name)).ToList())
+                {
+                    var relId = attr.Value;
+                    if (string.IsNullOrEmpty(relId))
+                        continue;
+
+                    // Check if this relationship exists
+                    var relationshipExists = false;
+
+                    // Check internal relationships
+                    if (part.Parts.Any(p => p.RelationshipId == relId))
+                        relationshipExists = true;
+
+                    // Check hyperlink relationships
+                    if (!relationshipExists && part.HyperlinkRelationships.Any(h => h.Id == relId))
+                        relationshipExists = true;
+
+                    // Check external relationships
+                    if (!relationshipExists && part.ExternalRelationships.Any(e => e.Id == relId))
+                        relationshipExists = true;
+
+                    // Check data part reference relationships (for media)
+                    if (!relationshipExists && part.DataPartReferenceRelationships.Any(d => d.Id == relId))
+                        relationshipExists = true;
+
+                    // If relationship doesn't exist, handle it
+                    if (!relationshipExists)
+                    {
+                        // For rId1, which is commonly used for various purposes, try to determine the context
+                        if (relId == "rId1")
+                        {
+                            // Check if this is in a slide layout reference
+                            if (element.Name == P.sldLayoutId || element.Parent?.Name == P.sldLayoutIdLst)
+                            {
+                                // This is likely a slide layout reference - remove the entire element
+                                element.Remove();
+                                modified = true;
+                            }
+                            else if (element.Name == P.notesMaster || element.Name == P.handoutMaster)
+                            {
+                                // Remove references to missing notes/handout masters
+                                element.Remove();
+                                modified = true;
+                            }
+                            else
+                            {
+                                // For other cases, remove the attribute to prevent validation errors
+                                attr.Remove();
+                                modified = true;
+                            }
+                        }
+                        else
+                        {
+                            // For other relationship IDs, remove the attribute
+                            attr.Remove();
+                            modified = true;
+                        }
+                    }
+                }
+            }
+
+            // Save the document if we made changes
+            if (modified)
+            {
+                part.PutXDocument(xDoc);
+            }
+        }
+    }
 }
