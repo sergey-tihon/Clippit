@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.5.2] - June 28, 2025
+
+- fix: relationship of theme parts (#99)
+
 ## [2.5.1] - March 30, 2025
 
 - Issue 95 and other issues #96 by @MalcolmJohnston
