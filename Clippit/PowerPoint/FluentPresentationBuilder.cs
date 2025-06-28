@@ -178,6 +178,7 @@ namespace Clippit.PowerPoint
                 // Copy theme for master
                 var newThemePart = newMaster.AddNewPart<ThemePart>();
                 newThemePart.PutXDocument(new XDocument(oldMaster.ThemePart.GetXDocument()));
+                PBT.AddRelationships(oldMaster.ThemePart, newThemePart, [newThemePart.GetXDocument().Root]);
                 CopyRelatedPartsForContentParts(oldMaster.ThemePart, newThemePart, [newThemePart.GetXDocument().Root]);
 
                 // Copy master
@@ -425,6 +426,7 @@ namespace Clippit.PowerPoint
                 {
                     var newThemePart = newMaster.AddNewPart<ThemePart>();
                     newThemePart.PutXDocument(new XDocument(themePart.GetXDocument()));
+                    PBT.AddRelationships(themePart, newThemePart, [newThemePart.GetXDocument().Root]);
                     CopyRelatedPartsForContentParts(themePart, newThemePart, [newThemePart.GetXDocument().Root]);
                 }
 
@@ -1234,6 +1236,7 @@ namespace Clippit.PowerPoint
             SlideLayoutData.ScaleShapes(newThemeDoc, scaleFactor);
             newThemePart.PutXDocument(newThemeDoc);
 
+            PBT.AddRelationships(oldThemePart, newThemePart, [newThemePart.GetXDocument().Root]);
             CopyRelatedPartsForContentParts(oldThemePart, newThemePart, [newThemePart.GetXDocument().Root]);
 
             if (_newDocument.PresentationPart.ThemePart is null)
