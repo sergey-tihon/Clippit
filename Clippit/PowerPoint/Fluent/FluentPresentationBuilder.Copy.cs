@@ -128,6 +128,7 @@ internal sealed partial class FluentPresentationBuilder
             // Copy theme for master
             var newThemePart = newMaster.AddNewPart<ThemePart>();
             newThemePart.PutXDocument(new XDocument(oldMaster.ThemePart.GetXDocument()));
+            PBT.AddRelationships(oldMaster.ThemePart, newThemePart, [newThemePart.GetXDocument().Root]);
             CopyRelatedPartsForContentParts(oldMaster.ThemePart, newThemePart, [newThemePart.GetXDocument().Root]);
 
             // Copy master
@@ -263,6 +264,7 @@ internal sealed partial class FluentPresentationBuilder
             {
                 var newThemePart = newMaster.AddNewPart<ThemePart>();
                 newThemePart.PutXDocument(new XDocument(themePart.GetXDocument()));
+                PBT.AddRelationships(themePart, newThemePart, [newThemePart.GetXDocument().Root]);
                 CopyRelatedPartsForContentParts(themePart, newThemePart, [newThemePart.GetXDocument().Root]);
             }
 
@@ -1042,6 +1044,7 @@ internal sealed partial class FluentPresentationBuilder
         SlideLayoutData.ScaleShapes(newThemeDoc, scaleFactor);
         newThemePart.PutXDocument(newThemeDoc);
 
+        PBT.AddRelationships(oldThemePart, newThemePart, [newThemePart.GetXDocument().Root]);
         CopyRelatedPartsForContentParts(oldThemePart, newThemePart, [newThemePart.GetXDocument().Root]);
 
         if (_newDocument.PresentationPart.ThemePart is null)
