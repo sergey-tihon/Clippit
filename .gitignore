@@ -43,7 +43,7 @@ _ReSharper.Caches/
 
 .fake/
 .paket/
-AssemblyInfo.Generated.cs
+AssemblyInfo.g.cs
 TestFiles/PublishSlides/output/
 
 .ionide/

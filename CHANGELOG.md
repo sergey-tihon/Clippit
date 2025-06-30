@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.0.0] - June 30, 2025
+
+- Public exposure of `IFluentPresentationBuilder` ergonomic API for the code behind `PresentationBuilder`
+
 ## [2.5.2] - June 28, 2025
 
 - fix: relationship of theme parts (#99)

@@ -37,7 +37,7 @@ pipeline "build" {
 
     stage "AssemblyInfo" {
         run (fun _ ->
-            let fileName = "Clippit/Properties/AssemblyInfo.Generated.cs"
+            let fileName = "Clippit/Properties/AssemblyInfo.g.cs"
 
             AssemblyInfoFile.createCSharp
                 fileName

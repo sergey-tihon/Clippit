@@ -552,31 +552,33 @@ namespace Clippit
         }
 
 #pragma warning disable IDISP003
-        public OpenXmlPowerToolsDocument GetModifiedDocument()
+        private void ClosePackage()
         {
             _docPackage.Close();
             _docPackage = null;
+        }
+
+        public OpenXmlPowerToolsDocument GetModifiedDocument()
+        {
+            ClosePackage();
             return new OpenXmlPowerToolsDocument(_document?.FileName, _docMemoryStream);
         }
 
         public WmlDocument GetModifiedWmlDocument()
         {
-            _docPackage.Close();
-            _docPackage = null;
+            ClosePackage();
             return new WmlDocument(_document?.FileName, _docMemoryStream);
         }
 
         public SmlDocument GetModifiedSmlDocument()
         {
-            _docPackage.Close();
-            _docPackage = null;
+            ClosePackage();
             return new SmlDocument(_document?.FileName, _docMemoryStream);
         }
 
         public PmlDocument GetModifiedPmlDocument()
         {
-            _docPackage.Close();
-            _docPackage = null;
+            ClosePackage();
             return new PmlDocument(_document?.FileName, _docMemoryStream);
         }
 
