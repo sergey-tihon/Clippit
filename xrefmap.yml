@@ -1,0 +1,30 @@
+### YamlMime:XRefMap
+sorted: true
+references:
+- uid: Tutorial.Excel.SpreadsheetWriter
+  name: Write Spreadsheet
+  href: tutorials/excel/SpreadsheetWriter.html
+- uid: Tutorial.Intro
+  name: Introduction
+  href: tutorials/index.html
+- uid: Tutorial.Word.DocumentAssembler.DocumentTemplates
+  name: Inserting Documents or Document Templates into Word Files using Document Assembler
+  href: tutorials/word/DocumentAssembler_DocumentTemplates.html
+- uid: Tutorial.Word.DocumentAssembler.ImagesSupport
+  name: 'Key highlights from #31'
+  href: tutorials/word/DocumentAssembler_ImagesSupport.html
+- uid: Tutorial.Word.DocumentAssembler.InlineHtmlSupport
+  name: Inline HTML Support
+  href: tutorials/word/DocumentAssembler_InlineHtmlSupport.html
+- uid: Tutorial.Word.DocumentBuilder.ISource
+  name: Custom ISource implementation
+  href: tutorials/word/DocumentBuilder_CustomISource.html
+- uid: Tutorial.Word.DocumentBuilder.TableCellSource
+  name: Table Cell Source
+  href: tutorials/word/DocumentBuilder_TableCellSource.html
+- uid: Tutorial.Word.PresentationBuilder
+  name: Build Presentation
+  href: tutorials/powerpoint/BuildPresentation.html
+- uid: Tutorial.Word.PresentationBuilder.PublishSlides
+  name: Slide Publishing
+  href: tutorials/powerpoint/BuildPresentation_PublishSlides.html
