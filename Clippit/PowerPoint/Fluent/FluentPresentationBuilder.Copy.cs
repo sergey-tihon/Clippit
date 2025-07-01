@@ -1074,7 +1074,7 @@ internal sealed partial class FluentPresentationBuilder
         var sldLayoutIdLst = newMasterDoc.Root.Element(P.sldLayoutIdLst);
         if (sldLayoutIdLst is null)
         {
-            newMasterDoc.Root.Add(new XElement(P.sldLayoutIdLst));
+            InsertElementInSchemaOrder(newMasterDoc.Root, new XElement(P.sldLayoutIdLst), PBT.OrderSlideMaster);
         }
         else
         {
@@ -1120,5 +1120,35 @@ internal sealed partial class FluentPresentationBuilder
             );
 
         return newLayout;
+    }
+
+    /// <summary>
+    /// Inserts an element into the parent in the correct position according to the schema order.
+    /// </summary>
+    /// <param name="parent">The parent element to insert into</param>
+    /// <param name="elementToInsert">The element to insert</param>
+    /// <param name="order">Dictionary defining the correct element order</param>
+    /// <remarks> See <see href="https://www.datypic.com/sc/ooxml/e-p_sldMaster.html">Open XML schema</see> for the order of elements.</remarks>
+    private static void InsertElementInSchemaOrder(
+        XElement parent,
+        XElement elementToInsert,
+        Dictionary<XName, int> order
+    )
+    {
+        var targetOrder = order.GetValueOrDefault(elementToInsert.Name, 999);
+
+        // Find the last element that should come before our element
+        var insertAfter = parent.Elements().LastOrDefault(e => order.GetValueOrDefault(e.Name, 999) < targetOrder);
+
+        if (insertAfter != null)
+        {
+            // Insert after the found element
+            insertAfter.AddAfterSelf(elementToInsert);
+        }
+        else
+        {
+            // No elements come before this one, insert as first child
+            parent.AddFirst(elementToInsert);
+        }
     }
 }

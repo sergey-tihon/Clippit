@@ -71,6 +71,26 @@ namespace Clippit.PowerPoint.Fluent
             { P.extLst, 160 },
         };
 
+        internal static readonly Dictionary<XName, int> OrderSlideMaster = new()
+        {
+            // Common slide data (required)
+            { P.cSld, 10 },
+            // Color mapping (required)
+            { P.clrMap, 20 },
+            // Slide layout ID list (optional)
+            { P.sldLayoutIdLst, 30 },
+            // Slide transition (optional)
+            { P.transition, 40 },
+            // Slide timing (optional)
+            { P.timing, 50 },
+            // Header/footer (optional)
+            { P.hf, 60 },
+            // Text styles (optional)
+            { P.txStyles, 70 },
+            // Extension list (optional)
+            { P.extLst, 80 },
+        };
+
         private static readonly Dictionary<XName, XName[]> s_relationshipMarkup = new()
         {
             { A.audioFile, new[] { R.link } },
