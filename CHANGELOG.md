@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.0.1] - July 30, 2025
+
+- fix: incorrect insertion of sldLayoutIdLst element for SlideMaster (#100)
+
 ## [3.0.0] - June 30, 2025
 
 - Public exposure of `IFluentPresentationBuilder` ergonomic API for the code behind `PresentationBuilder`
