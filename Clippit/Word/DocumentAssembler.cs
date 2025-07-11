@@ -1632,6 +1632,22 @@ namespace Clippit.Word
                                     }
                                 }
 
+                                if (paragraph is null)
+                                {
+                                    var errorCell = new XElement(
+                                        W.tc,
+                                        tc.Elements().Where(z => z.Name != W.p),
+                                        new XElement(
+                                            W.p,
+                                            tc.Element(W.tcPr),
+                                            ErrorHandler.CreateRunErrorMessage(
+                                                "Error: No paragraph found in table cell",
+                                                templateError)
+                                        )
+                                    );
+                                    return errorCell;
+                                }
+
                                 var cellRun = paragraph.Elements(W.r).FirstOrDefault();
                                 var xPath = paragraph.Value;
                                 string[] newValues;
@@ -1654,15 +1670,25 @@ namespace Clippit.Word
                                 }
 
                                 var pPr = paragraph.Element(W.pPr);
-                                var rPr = cellRun != null ? cellRun.Element(W.rPr) : new XElement(W.rPr); //if the cell was empty there is no cellRun
+                                var rPr = cellRun != null
+                                    ? cellRun.Element(W.rPr) ?? new XElement(W.rPr)
+                                    : new XElement(W.rPr); // if the cell was empty, then there is no cellRun
+                                var runs = Assembler.HtmlConverter.ConvertTextToRunsWithMarkupSupport(newValues, part,
+                                    templateError);
+
+                                // Build paragraphs (you can keep all runs in one paragraph, or split on <w:br/> to multiple <w:p>)
+                                var paragraphContent = new XElement(W.p, pPr, runs.Select(r =>
+                                {
+                                    // Inject formatting if not present
+                                    if (r.Name == W.r && r.Element(W.rPr) == null)
+                                        r.AddFirst(new XElement(rPr));
+                                    return r;
+                                }));
+
                                 var newCell = new XElement(
                                     W.tc,
                                     tc.Elements().Where(z => z.Name != W.p),
-                                    newValues.Select(text => new XElement(
-                                        W.p,
-                                        pPr,
-                                        new XElement(W.r, rPr, new XElement(W.t, text))
-                                    ))
+                                    paragraphContent
                                 );
                                 return newCell;
                             })
