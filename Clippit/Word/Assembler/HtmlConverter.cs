@@ -117,6 +117,64 @@ namespace Clippit.Word.Assembler
             return results;
         }
 
+        internal static List<XElement> ConvertTextToRunsWithMarkupSupport(
+            string[] values,
+            OpenXmlPart part,
+            TemplateError templateError
+        )
+        {
+            List<XElement> results = new();
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                var value = values[i];
+
+                if (i > 0 && string.IsNullOrWhiteSpace(value))
+                {
+                    results.Add(softBreak);
+                    continue;
+                }
+
+                XElement parsedElement = XElement.Parse($"<xhtml>{EscapeAmpersands(value)}</xhtml>");
+
+                if (parsedElement.IsPlainText())
+                {
+                    foreach (var run in parsedElement
+                                 .Value.Replace("\r\n", "\n", StringComparison.OrdinalIgnoreCase)
+                                 .SplitAndKeep('\n'))
+                    {
+                        if (run == "\n")
+                            results.Add(softBreak);
+                        else
+                        {
+                            foreach (var splitRun in run.SplitAndKeep('\t'))
+                            {
+                                if (splitRun == "\t")
+                                    results.Add(softTab);
+                                else
+                                    results.Add(new XElement(W.r, new XElement(W.t, splitRun)));
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (i > 0 && results.LastOrDefault() != softBreak)
+                        results.Add(softBreak);
+
+                    results.AddRange(
+                        AddLineBreaks(
+                            FlattenResults(
+                                Transform(parsedElement, htmlConverterSettings, part, NextExpected.Run, true)
+                            )
+                        )
+                    );
+                }
+            }
+
+            return results.Count == 0 ? [emptyRun] : results;
+        }
+
         private static List<object> FlattenResults(object obj)
         {
             // flatten the returned content
