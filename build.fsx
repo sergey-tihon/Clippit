@@ -25,7 +25,7 @@ pipeline "build" {
         run "dotnet restore"
     }
 
-    stage "Check Formatting" { run "dotnet csharpier --check ." }
+    stage "Check Formatting" { run "dotnet csharpier check ." }
 
     stage "Clean" {
         run (fun _ ->

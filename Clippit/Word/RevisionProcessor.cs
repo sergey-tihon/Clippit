@@ -1710,7 +1710,6 @@ namespace Clippit.Word
             {
                 /// Accept inserted text, inserted paragraph marks, etc.
                 /// Collapse all w:ins elements.
-
                 if (element.Name == W.ins)
                     return element.Nodes().Select(n => AcceptAllOtherRevisionsTransform(n));
 
@@ -1720,7 +1719,6 @@ namespace Clippit.Word
                 ///   AcceptDeletedAndMoveFromParagraphMarksTransform
                 ///   AcceptParagraphEndTagsInMoveFromTransform
                 ///   AcceptMoveFromRanges
-
                 if (
                     element.Name == W.customXmlDelRangeStart
                     || element.Name == W.customXmlDelRangeEnd
@@ -1749,7 +1747,6 @@ namespace Clippit.Word
                 /// Accept deleted field code text.
                 /// Accept deleted literal text.
                 /// Accept inserted cell.
-
                 if (
                     element.Name == W.pPrChange
                     || element.Name == W.rPrChange
@@ -1847,7 +1844,6 @@ namespace Clippit.Word
         /// paragraph following.  When assembling the new paragraph, use a transform that collapses
         /// the paragraph nodes when adding content, thereby preserving custom XML and content
         /// controls.
-
         private static void AnnotateBlockContentElements(XElement contentContainer)
         {
             // For convenience, there is a ParagraphInfo annotation on the contentContainer.
@@ -2033,7 +2029,6 @@ namespace Clippit.Word
 
                 /// If the list of runs for the content control is exactly the list of runs for the paragraph, then
                 /// create the content control surrounding the paragraph, not surrounding the runs.
-
                 if (
                     commonAncestor.Name == W.p
                     && commonAncestor

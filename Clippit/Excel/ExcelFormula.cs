@@ -143,25 +143,24 @@ namespace Clippit.Excel
 
         public bool InfixTerms() /*InfixTerms: PreAndPostTerm (InfixOperator ws PreAndPostTerm)*;*/
         {
-            return And(
-                () => PreAndPostTerm() && OptRepeat(() => And(() => InfixOperator() && ws() && PreAndPostTerm()))
+            return And(() =>
+                PreAndPostTerm() && OptRepeat(() => And(() => InfixOperator() && ws() && PreAndPostTerm()))
             );
         }
 
         public bool PreAndPostTerm() /*PreAndPostTerm: (PrefixOperator ws)* Term (PostfixOperator ws)*;*/
         {
-            return And(
-                () =>
-                    OptRepeat(() => And(() => PrefixOperator() && ws()))
-                    && Term()
-                    && OptRepeat(() => And(() => PostfixOperator() && ws()))
+            return And(() =>
+                OptRepeat(() => And(() => PrefixOperator() && ws()))
+                && Term()
+                && OptRepeat(() => And(() => PostfixOperator() && ws()))
             );
         }
 
         public bool Term() /*Term: (RefInfixTerms / '(' Expression ')' / Constant) ws;*/
         {
-            return And(
-                () => (RefInfixTerms() || And(() => Char('(') && Expression() && Char(')')) || Constant()) && ws()
+            return And(() =>
+                (RefInfixTerms() || And(() => Char('(') && Expression() && Char(')')) || Constant()) && ws()
             );
         }
 
@@ -367,14 +366,13 @@ namespace Clippit.Excel
         public bool SheetRange() /*SheetRange: WorkbookIndex? SheetName ':' SheetName / '\'' WorkbookIndex? SheetNameSpecial ':' SheetNameSpecial '\'';*/
         {
             return And(() => Option(WorkbookIndex) && SheetName() && Char(':') && SheetName())
-                || And(
-                    () =>
-                        Char('\'')
-                        && Option(WorkbookIndex)
-                        && SheetNameSpecial()
-                        && Char(':')
-                        && SheetNameSpecial()
-                        && Char('\'')
+                || And(() =>
+                    Char('\'')
+                    && Option(WorkbookIndex)
+                    && SheetNameSpecial()
+                    && Char(':')
+                    && SheetNameSpecial()
+                    && Char('\'')
                 );
         }
 
@@ -401,10 +399,9 @@ namespace Clippit.Excel
             return TreeNT(
                 (int)EExcelFormula.SheetNameSpecial,
                 () =>
-                    And(
-                        () =>
-                            SheetNameBaseCharacter()
-                            && OptRepeat(() => And(() => OptRepeat(() => Char('\'', '\'')) && SheetNameBaseCharacter()))
+                    And(() =>
+                        SheetNameBaseCharacter()
+                        && OptRepeat(() => And(() => OptRepeat(() => Char('\'', '\'')) && SheetNameBaseCharacter()))
                     )
             );
         }
@@ -508,37 +505,32 @@ namespace Clippit.Excel
 
         public bool ArgumentInfixTerms() /*ArgumentInfixTerms: ArgumentPreAndPostTerm (ArgumentInfixOperator ws ArgumentPreAndPostTerm)*;*/
         {
-            return And(
-                () =>
-                    ArgumentPreAndPostTerm()
-                    && OptRepeat(() => And(() => ArgumentInfixOperator() && ws() && ArgumentPreAndPostTerm()))
+            return And(() =>
+                ArgumentPreAndPostTerm()
+                && OptRepeat(() => And(() => ArgumentInfixOperator() && ws() && ArgumentPreAndPostTerm()))
             );
         }
 
         public bool ArgumentPreAndPostTerm() /*ArgumentPreAndPostTerm: (PrefixOperator ws)* ArgumentTerm (PostfixOperator ws)*;*/
         {
-            return And(
-                () =>
-                    OptRepeat(() => And(() => PrefixOperator() && ws()))
-                    && ArgumentTerm()
-                    && OptRepeat(() => And(() => PostfixOperator() && ws()))
+            return And(() =>
+                OptRepeat(() => And(() => PrefixOperator() && ws()))
+                && ArgumentTerm()
+                && OptRepeat(() => And(() => PostfixOperator() && ws()))
             );
         }
 
         public bool ArgumentTerm() /*ArgumentTerm: (ArgumentRefInfixTerms / '(' Expression ')' / Constant) ws;*/
         {
-            return And(
-                () =>
-                    (ArgumentRefInfixTerms() || And(() => Char('(') && Expression() && Char(')')) || Constant()) && ws()
+            return And(() =>
+                (ArgumentRefInfixTerms() || And(() => Char('(') && Expression() && Char(')')) || Constant()) && ws()
             );
         }
 
         public bool ArgumentRefInfixTerms() /*ArgumentRefInfixTerms: ArgumentRefTerm (RefArgumentInfixOperator ws ArgumentRefTerm)*;*/
         {
-            return And(
-                () =>
-                    ArgumentRefTerm()
-                    && OptRepeat(() => And(() => RefArgumentInfixOperator() && ws() && ArgumentRefTerm()))
+            return And(() =>
+                ArgumentRefTerm() && OptRepeat(() => And(() => RefArgumentInfixOperator() && ws() && ArgumentRefTerm()))
             );
         }
 
@@ -655,10 +647,9 @@ namespace Clippit.Excel
 
         public bool SimpleColumnName() /*SimpleColumnName: AnyNoSpaceColumnCharacter+ (ws AnyNoSpaceColumnCharacter+)*;*/
         {
-            return And(
-                () =>
-                    PlusRepeat(AnyNoSpaceColumnCharacter)
-                    && OptRepeat(() => And(() => ws() && PlusRepeat(AnyNoSpaceColumnCharacter)))
+            return And(() =>
+                PlusRepeat(AnyNoSpaceColumnCharacter)
+                && OptRepeat(() => And(() => ws() && PlusRepeat(AnyNoSpaceColumnCharacter)))
             );
         }
 

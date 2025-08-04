@@ -435,17 +435,16 @@ namespace Clippit.Tests.Html
             var settings = HtmlToWmlConverter.GetDefaultSettings();
             settings.BaseUriForImages = Path.Combine(TempDir);
 
-            Assert.Throws<OpenXmlPowerToolsException>(
-                () =>
-                    HtmlToWmlConverter.ConvertHtmlToWml(
-                        defaultCss,
-                        usedAuthorCss,
-                        userCss,
-                        html,
-                        settings,
-                        null,
-                        s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null
-                    )
+            Assert.Throws<OpenXmlPowerToolsException>(() =>
+                HtmlToWmlConverter.ConvertHtmlToWml(
+                    defaultCss,
+                    usedAuthorCss,
+                    userCss,
+                    html,
+                    settings,
+                    null,
+                    s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null
+                )
             );
         }
 
