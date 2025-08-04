@@ -2,7 +2,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-
     <PackageId>Clippit</PackageId>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -14,6 +13,6 @@
     <PackageProjectUrl>https://github.com/sergey-tihon/Clippit</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="..\docs\images\logo.jpeg" Pack="true" PackagePath="\"/>
+    <None Include="..\docs\images\logo.jpeg" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>

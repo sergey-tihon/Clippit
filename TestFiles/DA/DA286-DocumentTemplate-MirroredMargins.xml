@@ -1,66 +1,66 @@
 <Invoices>
-  <Invoice TemplatePath="DA286-DocumentTemplate-MirroredMargins-Sub.docx">
-    <Id>1</Id>
-    <Reference>555-1</Reference>
-    <DueDate>10/05/2017</DueDate>
-    <InvoiceDate>09/05/2017</InvoiceDate>
-    <ReceiptDate>09/05/2017</ReceiptDate>
-    <Status>Paid</Status>
-    <SupplierApproved>False</SupplierApproved>
-    <Amount>£50.49</Amount>
-    <AmountPaid>£50.49</AmountPaid>
-    <AmountDue>£50.49</AmountDue>
-    <Supplier>
-      <Name>Bob's Plaice</Name>
-      <Address>Bob's Plaice, Reading</Address>
-      <Phone>01234 567890</Phone>
-      <Email>bob@thisisanemailaddress.co.uk</Email>
-    </Supplier>
-    <Items>
-      <Item>
-        <Description>Single Room</Description>
-        <BookingId>1</BookingId>
-        <UnitPrice>£50.49</UnitPrice>
-        <Units>1</Units>
-        <Amount>£50.49</Amount>
-        <UtilisationDate>01/05/2017</UtilisationDate>
-      </Item>
-    </Items>
-    <Payments>
-      <Payment>
+    <Invoice TemplatePath="DA286-DocumentTemplate-MirroredMargins-Sub.docx">
         <Id>1</Id>
+        <Reference>555-1</Reference>
+        <DueDate>10/05/2017</DueDate>
+        <InvoiceDate>09/05/2017</InvoiceDate>
+        <ReceiptDate>09/05/2017</ReceiptDate>
+        <Status>Paid</Status>
+        <SupplierApproved>False</SupplierApproved>
         <Amount>£50.49</Amount>
-        <Method>Debit Card</Method>
-        <Date>10/05/2017</Date>
-      </Payment>
-    </Payments>
-  </Invoice>
-  <Invoice TemplatePath="DA286-DocumentTemplate-MirroredMargins-Sub.docx">
-    <Id>2</Id>
-    <Reference>555-2</Reference>
-    <DueDate>20/05/2017</DueDate>
-    <InvoiceDate>29/05/2017</InvoiceDate>
-    <ReceiptDate>29/05/2017</ReceiptDate>
-    <Status>Not Paid</Status>
-    <SupplierApproved>False</SupplierApproved>
-    <Amount>£60.10</Amount>
-    <AmountPaid>£0.00</AmountPaid>
-    <AmountDue>£60.10</AmountDue>
-    <Supplier>
-      <Name>Bill's Place</Name>
-      <Address>Bill's Place, Reading</Address>
-      <Phone>09876 543210</Phone>
-      <Email>bill@thisisanemailaddress.net</Email>
-    </Supplier>
-    <Items>
-      <Item>
-        <Description>Twin Room</Description>
-        <BookingId>1</BookingId>
-        <UnitPrice>£60.10</UnitPrice>
-        <Units>1</Units>
+        <AmountPaid>£50.49</AmountPaid>
+        <AmountDue>£50.49</AmountDue>
+        <Supplier>
+            <Name>Bob's Plaice</Name>
+            <Address>Bob's Plaice, Reading</Address>
+            <Phone>01234 567890</Phone>
+            <Email>bob@thisisanemailaddress.co.uk</Email>
+        </Supplier>
+        <Items>
+            <Item>
+                <Description>Single Room</Description>
+                <BookingId>1</BookingId>
+                <UnitPrice>£50.49</UnitPrice>
+                <Units>1</Units>
+                <Amount>£50.49</Amount>
+                <UtilisationDate>01/05/2017</UtilisationDate>
+            </Item>
+        </Items>
+        <Payments>
+            <Payment>
+                <Id>1</Id>
+                <Amount>£50.49</Amount>
+                <Method>Debit Card</Method>
+                <Date>10/05/2017</Date>
+            </Payment>
+        </Payments>
+    </Invoice>
+    <Invoice TemplatePath="DA286-DocumentTemplate-MirroredMargins-Sub.docx">
+        <Id>2</Id>
+        <Reference>555-2</Reference>
+        <DueDate>20/05/2017</DueDate>
+        <InvoiceDate>29/05/2017</InvoiceDate>
+        <ReceiptDate>29/05/2017</ReceiptDate>
+        <Status>Not Paid</Status>
+        <SupplierApproved>False</SupplierApproved>
         <Amount>£60.10</Amount>
-        <UtilisationDate>01/05/2017</UtilisationDate>
-      </Item>
-    </Items>
-  </Invoice>
+        <AmountPaid>£0.00</AmountPaid>
+        <AmountDue>£60.10</AmountDue>
+        <Supplier>
+            <Name>Bill's Place</Name>
+            <Address>Bill's Place, Reading</Address>
+            <Phone>09876 543210</Phone>
+            <Email>bill@thisisanemailaddress.net</Email>
+        </Supplier>
+        <Items>
+            <Item>
+                <Description>Twin Room</Description>
+                <BookingId>1</BookingId>
+                <UnitPrice>£60.10</UnitPrice>
+                <Units>1</Units>
+                <Amount>£60.10</Amount>
+                <UtilisationDate>01/05/2017</UtilisationDate>
+            </Item>
+        </Items>
+    </Invoice>
 </Invoices>

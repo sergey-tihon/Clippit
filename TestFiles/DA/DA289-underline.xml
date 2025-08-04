@@ -1,5 +1,7 @@
 ﻿<Doc>
-	<TestCase>Underline</TestCase>
-	<EscapedHTML>&lt;p&gt;This content is escaped &lt;u&gt;HTML&lt;/u&gt;&lt;/p&gt;</EscapedHTML>
-	<CDATA><![CDATA[<p>This content comes from <u>CDATA</u></p>]]></CDATA>
+    <TestCase>Underline</TestCase>
+    <EscapedHTML>&lt;p&gt;This content is escaped &lt;u&gt;HTML&lt;/u&gt;&lt;/p&gt;</EscapedHTML>
+    <CDATA>
+        <![CDATA[<p>This content comes from <u>CDATA</u></p>]]>
+    </CDATA>
 </Doc>

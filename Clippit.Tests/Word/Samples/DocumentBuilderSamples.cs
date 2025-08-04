@@ -229,7 +229,6 @@ namespace Clippit.Tests.Word.Samples
                 Log.WriteLine("{0}:  {1}", g.Key, g.Count());
             //Environment.Exit(0);
 
-
             // validate existence of files referenced in content controls
             foreach (var f in q3.Where(g => g.Key != ".NonContentControl"))
             {

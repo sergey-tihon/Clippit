@@ -1,6 +1,8 @@
 <Doc>
-	<TestCase>1000101</TestCase>
-	<Name>TestCustomer</Name>
-	<CDATA><![CDATA[Testing Data]]></CDATA>
-	<EscapedHTML>TestURL</EscapedHTML>
+    <TestCase>1000101</TestCase>
+    <Name>TestCustomer</Name>
+    <CDATA>
+        <![CDATA[Testing Data]]>
+    </CDATA>
+    <EscapedHTML>TestURL</EscapedHTML>
 </Doc>

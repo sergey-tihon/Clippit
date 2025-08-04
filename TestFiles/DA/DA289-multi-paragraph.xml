@@ -1,5 +1,7 @@
 ﻿<Doc>
-	<TestCase>Multiple Paragraphs</TestCase>
-	<EscapedHTML>&lt;p&gt;Boggarts lavender robes, Hermione Granger &lt;i&gt;Fantastic Beasts&lt;/i&gt; and Where to Find Them.&lt;/p&gt;&lt;p&gt;Bee in your bonnet Hand of Glory elder wand, spectacles &lt;b&gt;House Cup&lt;/b&gt; Bertie Bott’s Every Flavor Beans Impedimenta.&lt;/p&gt;&lt;p&gt;Stunning spells tap-dancing spider Slytherin’s Heir &lt;u&gt;mewing kittens&lt;/u&gt; &lt;s&gt;Remus Lupin&lt;/s&gt;.&lt;/p&gt;</EscapedHTML>
-	<CDATA><![CDATA[<p>Boggarts lavender robes, Hermione Granger <i>Fantastic Beasts</i> and Where to Find Them.</p><p>Bee in your bonnet Hand of Glory elder wand, spectacles <b>House Cup</b> Bertie Bott’s Every Flavor Beans Impedimenta.</p><p>Stunning spells tap-dancing spider Slytherin’s Heir <u>mewing kittens</u> <s>Remus Lupin</s>.</p>]]></CDATA>
+    <TestCase>Multiple Paragraphs</TestCase>
+    <EscapedHTML>&lt;p&gt;Boggarts lavender robes, Hermione Granger &lt;i&gt;Fantastic Beasts&lt;/i&gt; and Where to Find Them.&lt;/p&gt;&lt;p&gt;Bee in your bonnet Hand of Glory elder wand, spectacles &lt;b&gt;House Cup&lt;/b&gt; Bertie Bott’s Every Flavor Beans Impedimenta.&lt;/p&gt;&lt;p&gt;Stunning spells tap-dancing spider Slytherin’s Heir &lt;u&gt;mewing kittens&lt;/u&gt; &lt;s&gt;Remus Lupin&lt;/s&gt;.&lt;/p&gt;</EscapedHTML>
+    <CDATA>
+        <![CDATA[<p>Boggarts lavender robes, Hermione Granger <i>Fantastic Beasts</i> and Where to Find Them.</p><p>Bee in your bonnet Hand of Glory elder wand, spectacles <b>House Cup</b> Bertie Bott’s Every Flavor Beans Impedimenta.</p><p>Stunning spells tap-dancing spider Slytherin’s Heir <u>mewing kittens</u> <s>Remus Lupin</s>.</p>]]>
+    </CDATA>
 </Doc>
