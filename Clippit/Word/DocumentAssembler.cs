@@ -1639,7 +1639,9 @@ namespace Clippit.Word
                                         tc.Elements().Where(z => z.Name != W.p),
                                         new XElement(
                                             W.p,
-                                            tc.Element(W.tcPr),
+                                        tc.Element(W.tcPr),
+                                        new XElement(
+                                            W.p,
                                             ErrorHandler.CreateRunErrorMessage(
                                                 "Error: No paragraph found in table cell",
                                                 templateError
