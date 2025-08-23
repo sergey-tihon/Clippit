@@ -1671,10 +1671,7 @@ namespace Clippit.Word
                                 }
 
                                 var pPr = paragraph.Element(W.pPr);
-                                var rPr =
-                                    cellRun != null
-                                        ? cellRun.Element(W.rPr) ?? new XElement(W.rPr)
-                                        : new XElement(W.rPr); // if the cell was empty, then there is no cellRun
+                                var rPr = cellRun?.Element(W.rPr) ?? new XElement(W.rPr);
                                 var runs = Assembler.HtmlConverter.ConvertTextToRunsWithMarkupSupport(
                                     newValues,
                                     part,
