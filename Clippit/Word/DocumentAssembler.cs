@@ -1642,7 +1642,8 @@ namespace Clippit.Word
                                             tc.Element(W.tcPr),
                                             ErrorHandler.CreateRunErrorMessage(
                                                 "Error: No paragraph found in table cell",
-                                                templateError)
+                                                templateError
+                                            )
                                         )
                                     );
                                     return errorCell;
@@ -1670,20 +1671,28 @@ namespace Clippit.Word
                                 }
 
                                 var pPr = paragraph.Element(W.pPr);
-                                var rPr = cellRun != null
-                                    ? cellRun.Element(W.rPr) ?? new XElement(W.rPr)
-                                    : new XElement(W.rPr); // if the cell was empty, then there is no cellRun
-                                var runs = Assembler.HtmlConverter.ConvertTextToRunsWithMarkupSupport(newValues, part,
-                                    templateError);
+                                var rPr =
+                                    cellRun != null
+                                        ? cellRun.Element(W.rPr) ?? new XElement(W.rPr)
+                                        : new XElement(W.rPr); // if the cell was empty, then there is no cellRun
+                                var runs = Assembler.HtmlConverter.ConvertTextToRunsWithMarkupSupport(
+                                    newValues,
+                                    part,
+                                    templateError
+                                );
 
                                 // Build paragraphs (you can keep all runs in one paragraph, or split on <w:br/> to multiple <w:p>)
-                                var paragraphContent = new XElement(W.p, pPr, runs.Select(r =>
-                                {
-                                    // Inject formatting if not present
-                                    if (r.Name == W.r && r.Element(W.rPr) == null)
-                                        r.AddFirst(new XElement(rPr));
-                                    return r;
-                                }));
+                                var paragraphContent = new XElement(
+                                    W.p,
+                                    pPr,
+                                    runs.Select(r =>
+                                    {
+                                        // Inject formatting if not present
+                                        if (r.Name == W.r && r.Element(W.rPr) == null)
+                                            r.AddFirst(new XElement(rPr));
+                                        return r;
+                                    })
+                                );
 
                                 var newCell = new XElement(
                                     W.tc,

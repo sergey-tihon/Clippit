@@ -139,9 +139,11 @@ namespace Clippit.Word.Assembler
 
                 if (parsedElement.IsPlainText())
                 {
-                    foreach (var run in parsedElement
-                                 .Value.Replace("\r\n", "\n", StringComparison.OrdinalIgnoreCase)
-                                 .SplitAndKeep('\n'))
+                    foreach (
+                        var run in parsedElement
+                            .Value.Replace("\r\n", "\n", StringComparison.OrdinalIgnoreCase)
+                            .SplitAndKeep('\n')
+                    )
                     {
                         if (run == "\n")
                             results.Add(softBreak);
