@@ -1,5 +1,7 @@
 ﻿<Doc>
-	<TestCase>Subscript</TestCase>
-	<EscapedHTML>&lt;p&gt;This content is escaped &lt;sub&gt;HTML&lt;/sub&gt;&lt;/p&gt;</EscapedHTML>
-	<CDATA><![CDATA[<p>This content comes from <sub>CDATA</sub></p>]]></CDATA>
+    <TestCase>Subscript</TestCase>
+    <EscapedHTML>&lt;p&gt;This content is escaped &lt;sub&gt;HTML&lt;/sub&gt;&lt;/p&gt;</EscapedHTML>
+    <CDATA>
+        <![CDATA[<p>This content comes from <sub>CDATA</sub></p>]]>
+    </CDATA>
 </Doc>

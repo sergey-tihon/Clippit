@@ -1,5 +1,7 @@
 ﻿<Doc>
-	<TestCase>Hyperlink and Bold</TestCase>
-	<EscapedHTML>&lt;b&gt;&lt;a href="https://www.bbc.co.uk"&gt;BBC&lt;/a&gt;&lt;/b&gt;</EscapedHTML>
-	<CDATA><![CDATA[<b><a href="https://www.bbc.co.uk">BBC</a></b>]]></CDATA>
+    <TestCase>Hyperlink and Bold</TestCase>
+    <EscapedHTML>&lt;b&gt;&lt;a href="https://www.bbc.co.uk"&gt;BBC&lt;/a&gt;&lt;/b&gt;</EscapedHTML>
+    <CDATA>
+        <![CDATA[<b><a href="https://www.bbc.co.uk">BBC</a></b>]]>
+    </CDATA>
 </Doc>

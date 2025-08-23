@@ -1,5 +1,7 @@
 ﻿<Doc>
-	<TestCase>Italic</TestCase>
-	<EscapedHTML>&lt;p&gt;This content is escaped &lt;i&gt;HTML&lt;/i&gt;&lt;/p&gt;</EscapedHTML>
-	<CDATA><![CDATA[<p>This content comes from <i>CDATA</i></p>]]></CDATA>
+    <TestCase>Italic</TestCase>
+    <EscapedHTML>&lt;p&gt;This content is escaped &lt;i&gt;HTML&lt;/i&gt;&lt;/p&gt;</EscapedHTML>
+    <CDATA>
+        <![CDATA[<p>This content comes from <i>CDATA</i></p>]]>
+    </CDATA>
 </Doc>

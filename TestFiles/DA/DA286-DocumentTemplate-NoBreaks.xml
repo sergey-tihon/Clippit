@@ -1,63 +1,63 @@
 <Authors>
-  <Author>
-    <Name>Lee Child</Name>
-    <Books TemplatePath="DA286-DocumentTemplate-NoBreaks-Sub.docx">
-      <Book>
-        <Title>Killing Floor</Title>
-        <Price>£6.99</Price>
-        <Synopsis>Killing Floor is the first book in the internationally popular series about Jack Reacher. Reacher jumps off a bus and walks fourteen miles to Margrave, Georgia, a decision he's about to regret. Reacher is the only stranger in town on the day they have had their first homicide in thirty years and they pin the blame on him. one thing is for sure. They picked the wrong guy to take the fall.</Synopsis>
-      </Book>
-      <Book>
-        <Title>Die Trying</Title>
-        <Price>£7.99</Price>
-        <Synopsis>Featuring Jack Reacher, hero of the blockbuster movie starring Tom Cruise. Jack Reacher, alone, strolling nowhere. A young woman, struggling on crutches. Chained in a dark van racing across America, Reacher doesn't know why they've been kidnapped. But at their remote destination, will raw courage be enough to overcome the hopeless odds?</Synopsis>
-      </Book>
-      <Book>
-        <Title>Tripwire</Title>
-        <Price OnOffer="True">£3.99</Price>
-        <Synopsis>Featuring Jack Reacher, hero of the blockbuster movie starring Tom Cruise.For Jack Reacher being invisible has become a habit. Then Reacher finds the guy beaten to death with his fingertips sliced off. It's time to head north and work out who is trying to find him and why.</Synopsis>
-      </Book>
-      <Book>
-        <Title>The Visitor</Title>
-        <Price>£5.99</Price>
-        <Synopsis>Featuring Jack Reacher, hero of the blockbuster movie starring Tom Cruise.Sergeant Amy Callan and Lieutenant Caroline Cooke have a lot in common. Both were aquainted with Jack Reacher. Apparent victims of an army man. A loner, a smart guy with a score to settle, a ruthless vigilante.A man just like Jack Reacher.</Synopsis>
-      </Book>
-      <Book>
-        <Title>Echo Burning</Title>
-        <Price>£6.99</Price>
-        <Synopsis>Jack Reacher, adrift in the hellish heat of a Texas summer. Looking for a lift through the vast empty landscape. A woman stops, and offers a ride. She is young, rich and beautiful. But her husband's in jail. When he comes out, he's going to kill her. Her family's hostile, she can't trust the cops, and the lawyers won't help.</Synopsis>
-      </Book>
-      <Book>
-        <Title>Without Fail</Title>
-        <Price>£7.99</Price>
-        <Synopsis>Jack Reacher walks alone. No job, no ID, no last known address. But he never turns down a plea for help. Now a woman tracks him down. A woman serving at the very heart of US power. A woman who needs Reacher's assistance in her new job. Her job? Protecting the Vice-President of the United States. Her problem? Someone wants the VP dead.</Synopsis>
-      </Book>
-    </Books>
-  </Author>
-  <Author>
-    <Name>Clive Cussler</Name>
-    <Books TemplatePath="DA286-DocumentTemplate-NoBreaks-Sub.docx">
-      <Book>
-        <Title>Sahara</Title>
-        <Price>£8.99</Price>
-        <Synopsis>Deep in the African desert, Dirk Pitt discovers that a top secret scientific installation is leaking a lethal chemical into the rivers, threatening to kill thousands of people – and to destroy all life in the world’s seas.
+    <Author>
+        <Name>Lee Child</Name>
+        <Books TemplatePath="DA286-DocumentTemplate-NoBreaks-Sub.docx">
+            <Book>
+                <Title>Killing Floor</Title>
+                <Price>£6.99</Price>
+                <Synopsis>Killing Floor is the first book in the internationally popular series about Jack Reacher. Reacher jumps off a bus and walks fourteen miles to Margrave, Georgia, a decision he's about to regret. Reacher is the only stranger in town on the day they have had their first homicide in thirty years and they pin the blame on him. one thing is for sure. They picked the wrong guy to take the fall.</Synopsis>
+            </Book>
+            <Book>
+                <Title>Die Trying</Title>
+                <Price>£7.99</Price>
+                <Synopsis>Featuring Jack Reacher, hero of the blockbuster movie starring Tom Cruise. Jack Reacher, alone, strolling nowhere. A young woman, struggling on crutches. Chained in a dark van racing across America, Reacher doesn't know why they've been kidnapped. But at their remote destination, will raw courage be enough to overcome the hopeless odds?</Synopsis>
+            </Book>
+            <Book>
+                <Title>Tripwire</Title>
+                <Price OnOffer="True">£3.99</Price>
+                <Synopsis>Featuring Jack Reacher, hero of the blockbuster movie starring Tom Cruise.For Jack Reacher being invisible has become a habit. Then Reacher finds the guy beaten to death with his fingertips sliced off. It's time to head north and work out who is trying to find him and why.</Synopsis>
+            </Book>
+            <Book>
+                <Title>The Visitor</Title>
+                <Price>£5.99</Price>
+                <Synopsis>Featuring Jack Reacher, hero of the blockbuster movie starring Tom Cruise.Sergeant Amy Callan and Lieutenant Caroline Cooke have a lot in common. Both were aquainted with Jack Reacher. Apparent victims of an army man. A loner, a smart guy with a score to settle, a ruthless vigilante.A man just like Jack Reacher.</Synopsis>
+            </Book>
+            <Book>
+                <Title>Echo Burning</Title>
+                <Price>£6.99</Price>
+                <Synopsis>Jack Reacher, adrift in the hellish heat of a Texas summer. Looking for a lift through the vast empty landscape. A woman stops, and offers a ride. She is young, rich and beautiful. But her husband's in jail. When he comes out, he's going to kill her. Her family's hostile, she can't trust the cops, and the lawyers won't help.</Synopsis>
+            </Book>
+            <Book>
+                <Title>Without Fail</Title>
+                <Price>£7.99</Price>
+                <Synopsis>Jack Reacher walks alone. No job, no ID, no last known address. But he never turns down a plea for help. Now a woman tracks him down. A woman serving at the very heart of US power. A woman who needs Reacher's assistance in her new job. Her job? Protecting the Vice-President of the United States. Her problem? Someone wants the VP dead.</Synopsis>
+            </Book>
+        </Books>
+    </Author>
+    <Author>
+        <Name>Clive Cussler</Name>
+        <Books TemplatePath="DA286-DocumentTemplate-NoBreaks-Sub.docx">
+            <Book>
+                <Title>Sahara</Title>
+                <Price>£8.99</Price>
+                <Synopsis>Deep in the African desert, Dirk Pitt discovers that a top secret scientific installation is leaking a lethal chemical into the rivers, threatening to kill thousands of people – and to destroy all life in the world’s seas.
 
 To warn the world of the catastrophe, Pitt must escape capture and death at the hands of a ruthless West African dictator and French industrialist, and undertake a long, perilous journey across the merciless Sahara…</Synopsis>
-      </Book>
-      <Book>
-        <Title>Inca Gold</Title>
-        <Price>£8.99</Price>
-        <Synopsis>A call for help from a stricken archaeological expedition brings Dirk Pitt to a sacred well, high in the Andes. There he confronts a band of ruthless art thieves, who plunder ancient sites for their precious artefacts.
+            </Book>
+            <Book>
+                <Title>Inca Gold</Title>
+                <Price>£8.99</Price>
+                <Synopsis>A call for help from a stricken archaeological expedition brings Dirk Pitt to a sacred well, high in the Andes. There he confronts a band of ruthless art thieves, who plunder ancient sites for their precious artefacts.
 
 But soon Dirk Pitt faces even graver danger, as he searches for a lost Spanish galleon and hunts for a fabulous hoard of Inca gold. And in a desperate race against time, Pitt must track down a sacred site – before the richest prize known to man is lost to the world forever…</Synopsis>
-      </Book>
-      <Book>
-        <Title>Dragon</Title>
-        <Price>£8.99</Price>
-        <Synopsis>Buried in the depths of the Pacific Ocean lies one of the greatest secrets of World War Two – a crashed B-29 Bomber that was carrying a third atomic bomb to Japan in 1945.
+            </Book>
+            <Book>
+                <Title>Dragon</Title>
+                <Price>£8.99</Price>
+                <Synopsis>Buried in the depths of the Pacific Ocean lies one of the greatest secrets of World War Two – a crashed B-29 Bomber that was carrying a third atomic bomb to Japan in 1945.
 
 Its deadly cargo, lost in the sea for nearly fifty years, could be Dirk Pitt’s only hope of stopping the conspiracy of a group of Japanese nationalist fanatics. They’re hell-bent on neutralizing and blackmailing the USA – with nuclear weapons planted strategically in the country’s major cities – and only he can stop them…</Synopsis>
-      </Book>
-    </Books>
-  </Author>
-</Authors>  
+            </Book>
+        </Books>
+    </Author>
+</Authors>

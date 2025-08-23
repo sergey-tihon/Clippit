@@ -378,7 +378,6 @@ namespace Clippit.Tests.Word
         //[InlineData("WCB-1000", "", "")]
         //[InlineData("WCB-1000", "", "")]
 
-
         public void WC002_Consolidate_Bulk_Test(string testId, string name1, string name2)
         {
             var sourceDir = new DirectoryInfo("../../../../TestFiles/");
@@ -795,7 +794,6 @@ namespace Clippit.Tests.Word
             }
 
             /************************************************************************************************************************/
-
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Open Windows Explorer

@@ -429,7 +429,6 @@ namespace Clippit
                     // why do are we dropping content???????
                     //string searchFor = "0ecb9184";
 
-
                     if (cs.CorrelationStatus == CorrelationStatus.Equal)
                     {
                         var contentAtomsBefore = cs
@@ -629,7 +628,6 @@ namespace Clippit
             // Note that this makes the basic assumption that a text box can't be nested inside of a text box, which, as far as I know, is a good assumption.
 
             // This also makes the basic assumption that an endnote / footnote can't contain a text box, which I believe is a good assumption.
-
 
             string[] currentAncestorUnids = null;
             foreach (var cua in rComparisonUnitAtomList)

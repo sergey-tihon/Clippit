@@ -4,21 +4,18 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-
     <WarningLevel>5</WarningLevel>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <AnalysisMode>All</AnalysisMode>
     <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
-
     <Authors>Sergey Tihon, Microsoft Corporation, Eric White, and others</Authors>
     <Copyright>Copyright 2012-2025</Copyright>
     <RepositoryUrl>https://github.com/sergey-tihon/Clippit</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
-    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.6" />
-    <PackageReference Include="IDisposableAnalyzers" Version="4.0.8" PrivateAssets="all"/>
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
+    <PackageReference Include="IDisposableAnalyzers" Version="4.0.8" PrivateAssets="all" />
   </ItemGroup>
 </Project>

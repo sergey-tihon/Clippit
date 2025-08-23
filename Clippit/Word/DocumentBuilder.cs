@@ -2454,7 +2454,6 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         }
 
         /// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         public static WmlDocument ExtractGlossaryDocument(WmlDocument wmlGlossaryDocument)
         {
             if (RelationshipMarkup is null)

@@ -1,5 +1,7 @@
 ﻿<Doc>
-	<TestCase>Hyperlink with No Protocol</TestCase>
-	<EscapedHTML>&lt;a href="www.bbc.co.uk"&gt;BBC&lt;/a&gt;</EscapedHTML>
-	<CDATA><![CDATA[<a href="www.bbc.co.uk">BBC</a>]]></CDATA>
+    <TestCase>Hyperlink with No Protocol</TestCase>
+    <EscapedHTML>&lt;a href="www.bbc.co.uk"&gt;BBC&lt;/a&gt;</EscapedHTML>
+    <CDATA>
+        <![CDATA[<a href="www.bbc.co.uk">BBC</a>]]>
+    </CDATA>
 </Doc>
