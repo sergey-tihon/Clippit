@@ -1,23 +1,18 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
 using System.Xml.Linq;
 using Clippit.Word;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
-using Xunit;
 
-#if !ELIDE_XUNIT_TESTS
+namespace Clippit.Tests.Word;
 
-namespace Clippit.Tests.Word
+public class MarkupSimplifierTests
 {
-    public class MarkupSimplifierTests
-    {
-        private const WordprocessingDocumentType DocumentType = WordprocessingDocumentType.Document;
-
-        private const string SmartTagDocumentTextValue = "The countries include Algeria, Botswana, and Sri Lanka.";
-        private const string SmartTagDocumentXmlString =
-            @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
+    private const WordprocessingDocumentType DocumentType = WordprocessingDocumentType.Document;
+    private const string SmartTagDocumentTextValue = "The countries include Algeria, Botswana, and Sri Lanka.";
+    private const string SmartTagDocumentXmlString =
+        @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
   <w:body>
     <w:p >
       <w:r>
@@ -53,9 +48,8 @@ namespace Clippit.Tests.Word
   </w:body>
 </w:document>
 ";
-
-        private const string SdtDocumentXmlString =
-            @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
+    private const string SdtDocumentXmlString =
+        @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
   <w:body>
     <w:sdt>
       <w:sdtPr>
@@ -71,9 +65,8 @@ namespace Clippit.Tests.Word
     </w:sdt>
   </w:body>
 </w:document>";
-
-        private const string GoBackBookmarkDocumentXmlString =
-            @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
+    private const string GoBackBookmarkDocumentXmlString =
+        @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
   <w:body>
     <w:p>
       <w:bookmarkStart w:id=""0"" w:name=""_GoBack""/>
@@ -82,71 +75,58 @@ namespace Clippit.Tests.Word
   </w:body>
 </w:document>";
 
-        [Fact]
-        public void CanRemoveSmartTags()
-        {
-            var partDocument = XDocument.Parse(SmartTagDocumentXmlString);
-            Assert.True(partDocument.Descendants(W.smartTag).Any());
+    [Test]
+    public async Task CanRemoveSmartTags()
+    {
+        var partDocument = XDocument.Parse(SmartTagDocumentXmlString);
+        await Assert.That(partDocument.Descendants(W.smartTag)).IsNotEmpty();
 
-            using var stream = new MemoryStream();
-            using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
-            var part = wordDocument.AddMainDocumentPart();
-            part.PutXDocument(partDocument);
+        using var stream = new MemoryStream();
+        using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+        var part = wordDocument.AddMainDocumentPart();
+        part.PutXDocument(partDocument);
+        var settings = new SimplifyMarkupSettings { RemoveSmartTags = true };
+        MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
+        partDocument = part.GetXDocument();
+        var t = partDocument.Descendants(W.t).First();
+        await Assert.That(partDocument.Descendants(W.smartTag)).IsEmpty();
+        await Assert.That(t.Value).IsEqualTo(SmartTagDocumentTextValue);
+    }
 
-            var settings = new SimplifyMarkupSettings { RemoveSmartTags = true };
-            MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
+    [Test]
+    public async Task CanRemoveContentControls()
+    {
+        var partDocument = XDocument.Parse(SdtDocumentXmlString);
+        await Assert.That(partDocument.Descendants(W.smartTag)).IsNotEmpty();
 
-            partDocument = part.GetXDocument();
-            var t = partDocument.Descendants(W.t).First();
+        using var stream = new MemoryStream();
+        using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+        var part = wordDocument.AddMainDocumentPart();
+        part.PutXDocument(partDocument);
+        var settings = new SimplifyMarkupSettings { RemoveContentControls = true };
+        MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
+        partDocument = part.GetXDocument();
+        var element = partDocument.Descendants(W.body).Descendants().First();
+        await Assert.That(partDocument.Descendants(W.sdt)).IsEmpty();
+        await Assert.That(element.Name).IsEqualTo(W.p);
+    }
 
-            Assert.False(partDocument.Descendants(W.smartTag).Any());
-            Assert.Equal(SmartTagDocumentTextValue, t.Value);
-        }
-
-        [Fact]
-        public void CanRemoveContentControls()
-        {
-            var partDocument = XDocument.Parse(SdtDocumentXmlString);
-            Assert.True(partDocument.Descendants(W.sdt).Any());
-
-            using var stream = new MemoryStream();
-            using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
-            var part = wordDocument.AddMainDocumentPart();
-            part.PutXDocument(partDocument);
-
-            var settings = new SimplifyMarkupSettings { RemoveContentControls = true };
-            MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
-
-            partDocument = part.GetXDocument();
-            var element = partDocument.Descendants(W.body).Descendants().First();
-
-            Assert.False(partDocument.Descendants(W.sdt).Any());
-            Assert.Equal(W.p, element.Name);
-        }
-
-        [Fact]
-        public void CanRemoveGoBackBookmarks()
-        {
-            var partDocument = XDocument.Parse(GoBackBookmarkDocumentXmlString);
-            Assert.Contains(
-                partDocument.Descendants(W.bookmarkStart),
-                e => e.Attribute(W.name).Value == "_GoBack" && e.Attribute(W.id).Value == "0"
-            );
-            Assert.Contains(partDocument.Descendants(W.bookmarkEnd), e => e.Attribute(W.id).Value == "0");
-
-            using var stream = new MemoryStream();
-            using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
-            var part = wordDocument.AddMainDocumentPart();
-            part.PutXDocument(partDocument);
-
-            var settings = new SimplifyMarkupSettings { RemoveGoBackBookmark = true };
-            MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
-
-            partDocument = part.GetXDocument();
-            Assert.False(partDocument.Descendants(W.bookmarkStart).Any());
-            Assert.False(partDocument.Descendants(W.bookmarkEnd).Any());
-        }
+    [Test]
+    public async Task CanRemoveGoBackBookmarks()
+    {
+        var partDocument = XDocument.Parse(GoBackBookmarkDocumentXmlString);
+        await Assert
+            .That(partDocument.Descendants(W.bookmarkStart))
+            .Contains(e => e.Attribute(W.name).Value == "_GoBack" && e.Attribute(W.id).Value == "0");
+        await Assert.That(partDocument.Descendants(W.bookmarkEnd)).Contains(e => e.Attribute(W.id).Value == "0");
+        using var stream = new MemoryStream();
+        using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+        var part = wordDocument.AddMainDocumentPart();
+        part.PutXDocument(partDocument);
+        var settings = new SimplifyMarkupSettings { RemoveGoBackBookmark = true };
+        MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
+        partDocument = part.GetXDocument();
+        await Assert.That(partDocument.Descendants(W.bookmarkStart)).IsEmpty();
+        await Assert.That(partDocument.Descendants(W.bookmarkEnd)).IsEmpty();
     }
 }
-
-#endif
