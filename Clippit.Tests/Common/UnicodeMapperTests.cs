@@ -48,14 +48,18 @@ public class UnicodeMapperTests
         await Assert
             .That(UnicodeMapper.RunToString(new XElement(W.softHyphen)).First())
             .IsEqualTo(UnicodeMapper.SoftHyphen);
-        await Assert.That(UnicodeMapper.RunToString(new XElement(W.tab)).First()).IsEqualTo(UnicodeMapper.SoftHyphen);
+        await Assert
+            .That(UnicodeMapper.RunToString(new XElement(W.tab)).First())
+            .IsEqualTo(UnicodeMapper.HorizontalTabulation);
     }
 
     [Test]
     public async Task CanCreateRunChildElementsFromSpecialCharacters()
     {
         await Assert.That(UnicodeMapper.CharToRunChild(UnicodeMapper.CarriageReturn).Name).IsEqualTo(W.br);
-        await Assert.That(UnicodeMapper.CharToRunChild(UnicodeMapper.NonBreakingHyphen).Name).IsEqualTo(W.softHyphen);
+        await Assert
+            .That(UnicodeMapper.CharToRunChild(UnicodeMapper.NonBreakingHyphen).Name)
+            .IsEqualTo(W.noBreakHyphen);
         await Assert.That(UnicodeMapper.CharToRunChild(UnicodeMapper.SoftHyphen).Name).IsEqualTo(W.softHyphen);
         await Assert.That(UnicodeMapper.CharToRunChild(UnicodeMapper.HorizontalTabulation).Name).IsEqualTo(W.tab);
         var element = UnicodeMapper.CharToRunChild(UnicodeMapper.FormFeed);

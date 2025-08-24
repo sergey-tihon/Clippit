@@ -30,10 +30,7 @@ public class PresentationBuilderTests : TestsBase
         var name2 = "PB001-Input2.pptx";
         var sourceDir = new DirectoryInfo("../../../../TestFiles/");
         var source2Pptx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
-        var sources = new List<SlideSource>
-        {
-            new(new PmlDocument(source2Pptx.FullName), 0, true)
-        };
+        var sources = new List<SlideSource> { new(new PmlDocument(source2Pptx.FullName), 0, true) };
         var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB002-Formatting.pptx"));
         PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
     }
@@ -97,19 +94,22 @@ public class PresentationBuilderTests : TestsBase
         var sourceDir = new DirectoryInfo("../../../../TestFiles/");
         var sourcePptx = new FileInfo(Path.Combine(sourceDir.FullName, "PP006-Videos.pptx"));
         var oldMediaDataContentTypes = GetMediaDataContentTypes(sourcePptx);
-        var sources = new List<SlideSource>
-        {
-            new(new PmlDocument(sourcePptx.FullName), true)
-        };
+        var sources = new List<SlideSource> { new(new PmlDocument(sourcePptx.FullName), true) };
         var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB006-Videos.pptx"));
         PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
         var newMediaDataContentTypes = GetMediaDataContentTypes(processedDestPptx);
-        await Assert.That(newMediaDataContentTypes).IsEqualTo(oldMediaDataContentTypes);
+        await Assert.That(newMediaDataContentTypes).IsEquivalentTo(oldMediaDataContentTypes);
     }
 
     private static string[] GetMediaDataContentTypes(FileInfo fi)
     {
         using var ptDoc = PresentationDocument.Open(fi.FullName, false);
-        return ptDoc.PresentationPart.SlideParts.SelectMany(p => p.DataPartReferenceRelationships.Select(d => d.DataPart.ContentType)).Distinct().OrderBy(m => m).ToArray();
+        return ptDoc
+            .PresentationPart.SlideParts.SelectMany(p =>
+                p.DataPartReferenceRelationships.Select(d => d.DataPart.ContentType)
+            )
+            .Distinct()
+            .OrderBy(m => m)
+            .ToArray();
     }
 }

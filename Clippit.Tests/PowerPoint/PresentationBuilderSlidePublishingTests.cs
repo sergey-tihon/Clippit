@@ -48,7 +48,7 @@ namespace Clippit.Tests.PowerPoint
                     sameTitle++;
             }
 
-            await Assert.That(sameTitle).IsBetween(0, 4);
+            await Assert.That(sameTitle).IsGreaterThanOrEqualTo(0).And.IsLessThanOrEqualTo(4);
         }
 
         [Test]

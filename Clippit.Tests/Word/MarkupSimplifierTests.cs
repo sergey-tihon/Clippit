@@ -97,7 +97,7 @@ public class MarkupSimplifierTests
     public async Task CanRemoveContentControls()
     {
         var partDocument = XDocument.Parse(SdtDocumentXmlString);
-        await Assert.That(partDocument.Descendants(W.smartTag)).IsNotEmpty();
+        await Assert.That(partDocument.Descendants(W.sdt)).IsNotEmpty();
 
         using var stream = new MemoryStream();
         using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);

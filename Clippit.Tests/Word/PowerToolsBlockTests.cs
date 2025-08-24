@@ -40,7 +40,7 @@ public class PowerToolsBlockTests : TestsBase
         var paragraphs = body.Elements<Paragraph>().ToList();
         await Assert.That(paragraphs).HasCount(2);
         await Assert.That(paragraphs[0].InnerText).IsEqualTo("Added through SDK");
-        await Assert.That(paragraphs[0].InnerText).IsEqualTo("Added through PowerTools");
+        await Assert.That(paragraphs[1].InnerText).IsEqualTo("Added through PowerTools");
     }
 
     [Test]

@@ -98,7 +98,7 @@ public class SmlToHtmlConverterTests : TestsBase
     [Arguments("SH129-FmtNumId-20.xlsx", "Sheet1", "A1:A10")]
     [Arguments("SH130-FmtNumId-21.xlsx", "Sheet1", "A1:A10")]
     [Arguments("SH131-FmtNumId-22.xlsx", "Sheet1", "A1:A10")]
-    public void SH004_ConvertRange(string name, string sheetName, string range)
+    public Task SH004_ConvertRange(string name, string sheetName, string range)
     {
         var sourceDir = new DirectoryInfo("../../../../TestFiles/");
         var sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
@@ -115,6 +115,7 @@ public class SmlToHtmlConverterTests : TestsBase
         var settings = new SmlToHtmlConverterSettings();
         var rangeXml = SmlDataRetriever.RetrieveRange(sDoc, sheetName, range);
         rangeXml.Save(dataXmlFi.FullName);
+        return Task.CompletedTask;
     }
 
     [Test]

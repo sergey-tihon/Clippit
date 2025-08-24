@@ -661,7 +661,7 @@ public class DocumentBuilderTests : TestsBase
         var paragraphStylesIds = new HashSet<string>(
             wDoc.MainDocumentPart.GetXDocument().Descendants(W.pStyle).Select(p => p.Attribute(W.val).Value)
         );
-        await Assert.That(paragraphStylesIds.IsSupersetOf(styleIds)).IsTrue();
+        await Assert.That(paragraphStylesIds.IsSubsetOf(styleIds)).IsTrue();
     }
 
     [Test]
@@ -688,7 +688,7 @@ public class DocumentBuilderTests : TestsBase
         var paragraphStylesIds = new HashSet<string>(
             wDoc.MainDocumentPart.GetXDocument().Descendants(W.pStyle).Select(p => p.Attribute(W.val).Value)
         );
-        await Assert.That(paragraphStylesIds.IsSupersetOf(styleIds)).IsTrue();
+        await Assert.That(paragraphStylesIds.IsSubsetOf(styleIds)).IsTrue();
     }
 
     [Test]
