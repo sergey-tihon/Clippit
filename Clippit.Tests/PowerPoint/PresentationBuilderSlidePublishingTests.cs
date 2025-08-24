@@ -113,7 +113,7 @@ namespace Clippit.Tests.PowerPoint
                 numberOfMasters = doc1.PresentationPart.SlideMasterParts.Count();
             }
 
-            var onlyMaster = PresentationBuilder.BuildPresentation([new(source, 0, 0, true)]);
+            var onlyMaster = PresentationBuilder.BuildPresentation([new SlideSource(source, 0, 0, true)]);
             onlyMaster.FileName = fileName.Replace(".pptx", "_masterOnly.pptx");
             onlyMaster.SaveAs(Path.Combine(TargetDirectory, onlyMaster.FileName));
             using var streamDoc = new OpenXmlMemoryStreamDocument(onlyMaster);
@@ -130,7 +130,7 @@ namespace Clippit.Tests.PowerPoint
             var file = Path.Combine(SourceDirectory, fileName);
             var presentation = new PmlDocument(file);
             // generate presentation with all masters
-            var onlyMaster = PresentationBuilder.BuildPresentation([new(presentation, 0, 0, true)]);
+            var onlyMaster = PresentationBuilder.BuildPresentation([new SlideSource(presentation, 0, 0, true)]);
             // publish slides with one-layout masters
             var slides = PresentationBuilder.PublishSlides(presentation);
             // compose them together using only master as the first source

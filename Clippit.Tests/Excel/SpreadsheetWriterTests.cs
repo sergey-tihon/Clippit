@@ -18,14 +18,14 @@ namespace Clippit.Tests.Excel
                 TableName = table,
                 ColumnHeadings =
                 [
-                    new() { Value = "Name", Bold = true },
-                    new()
+                    new CellDfn { Value = "Name", Bold = true },
+                    new CellDfn
                     {
                         Value = "Age",
                         Bold = true,
                         HorizontalCellAlignment = HorizontalCellAlignment.Left,
                     },
-                    new()
+                    new CellDfn
                     {
                         Value = "Rate",
                         Bold = true,
@@ -34,13 +34,13 @@ namespace Clippit.Tests.Excel
                 ],
                 Rows =
                 [
-                    new()
+                    new RowDfn
                     {
                         Cells =
                         [
-                            new() { CellDataType = CellDataType.String, Value = "Eric" },
-                            new() { CellDataType = CellDataType.Number, Value = 50 },
-                            new()
+                            new CellDfn { CellDataType = CellDataType.String, Value = "Eric" },
+                            new CellDfn { CellDataType = CellDataType.Number, Value = 50 },
+                            new CellDfn
                             {
                                 CellDataType = CellDataType.Number,
                                 Value = (decimal)45.00,
@@ -48,13 +48,13 @@ namespace Clippit.Tests.Excel
                             },
                         ],
                     },
-                    new()
+                    new RowDfn
                     {
                         Cells =
                         [
-                            new() { CellDataType = CellDataType.String, Value = "Bob" },
-                            new() { CellDataType = CellDataType.Number, Value = 42 },
-                            new()
+                            new CellDfn { CellDataType = CellDataType.String, Value = "Bob" },
+                            new CellDfn { CellDataType = CellDataType.Number, Value = 42 },
+                            new CellDfn
                             {
                                 CellDataType = CellDataType.Number,
                                 Value = (decimal)78.00,
@@ -66,29 +66,29 @@ namespace Clippit.Tests.Excel
             };
 
         [Test]
-        public void SaveWorkbookToFile()
+        public async Task SaveWorkbookToFile()
         {
             var wb = GetSimpleWorkbookDfn();
             var fileName = Path.Combine(TempDir, "SW001-Simple.xlsx");
-            using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+            await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
             using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            Validate(sDoc, s_spreadsheetExpectedErrors);
+            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
         }
 
         [Test]
-        public void SaveWorkbookToStream()
+        public async Task SaveWorkbookToStream()
         {
             var wb = GetSimpleWorkbookDfn();
             using var stream = new MemoryStream();
             wb.WriteTo(stream);
             stream.Position = 0;
             using var sDoc = SpreadsheetDocument.Open(stream, false);
-            Validate(sDoc, s_spreadsheetExpectedErrors);
+            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
         }
 
         [Test]
-        public void SaveWorkbookWithTwoSheets()
+        public async Task SaveWorkbookWithTwoSheets()
         {
             var wb = new WorkbookDfn
             {
@@ -99,13 +99,13 @@ namespace Clippit.Tests.Excel
                 ],
             };
             var fileName = Path.Combine(TempDir, "SW001_TwoSheets.xlsx");
-            using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+            await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
-            Validate(fileName);
+            await Validate(fileName).ConfigureAwait(false);
         }
 
         [Test]
-        public void SaveTablesWithDates()
+        public async Task SaveTablesWithDates()
         {
             WorksheetDfn GetSheet(string name, string tableName) =>
                 new()
@@ -155,23 +155,23 @@ namespace Clippit.Tests.Excel
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
             using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            Validate(fileName);
+            await Validate(fileName).ConfigureAwait(false);
         }
 
         [Test]
-        public void SaveAllDataTypes()
+        public async Task SaveAllDataTypes()
         {
             var wb = new WorkbookDfn
             {
                 Worksheets =
                 [
-                    new()
+                    new WorksheetDfn
                     {
                         Name = "MyFirstSheet",
                         ColumnHeadings =
                         [
-                            new() { Value = "DataType", Bold = true },
-                            new()
+                            new CellDfn { Value = "DataType", Bold = true },
+                            new CellDfn
                             {
                                 Value = "Value",
                                 Bold = true,
@@ -180,28 +180,28 @@ namespace Clippit.Tests.Excel
                         ],
                         Rows =
                         [
-                            new()
+                            new RowDfn
                             {
                                 Cells =
                                 [
-                                    new() { CellDataType = CellDataType.String, Value = "Boolean" },
-                                    new() { CellDataType = CellDataType.Boolean, Value = true },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "Boolean" },
+                                    new CellDfn { CellDataType = CellDataType.Boolean, Value = true },
                                 ],
                             },
-                            new()
+                            new RowDfn
                             {
                                 Cells =
                                 [
-                                    new() { CellDataType = CellDataType.String, Value = "Boolean" },
-                                    new() { CellDataType = CellDataType.Boolean, Value = false },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "Boolean" },
+                                    new CellDfn { CellDataType = CellDataType.Boolean, Value = false },
                                 ],
                             },
-                            new()
+                            new RowDfn
                             {
                                 Cells =
                                 [
-                                    new() { CellDataType = CellDataType.String, Value = "String" },
-                                    new()
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "String" },
+                                    new CellDfn
                                     {
                                         CellDataType = CellDataType.String,
                                         Value = "A String",
@@ -209,81 +209,81 @@ namespace Clippit.Tests.Excel
                                     },
                                 ],
                             },
-                            new()
+                            new RowDfn
                             {
                                 Cells =
                                 [
-                                    new() { CellDataType = CellDataType.String, Value = "int" },
-                                    new() { CellDataType = CellDataType.Number, Value = 100 },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "int" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = 100 },
                                 ],
                             },
-                            new()
+                            new RowDfn
                             {
                                 Cells =
                                 [
-                                    new() { CellDataType = CellDataType.String, Value = "int?" },
-                                    new() { CellDataType = CellDataType.Number, Value = (int?)100 },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "int?" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = (int?)100 },
                                 ],
                             },
-                            new()
+                            new RowDfn
                             {
                                 Cells =
                                 [
-                                    new() { CellDataType = CellDataType.String, Value = "int? (is null)" },
-                                    new() { CellDataType = CellDataType.Number, Value = null },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "int? (is null)" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = null },
                                 ],
                             },
-                            new()
+                            new RowDfn
                             {
                                 Cells =
                                 [
-                                    new() { CellDataType = CellDataType.String, Value = "uint" },
-                                    new() { CellDataType = CellDataType.Number, Value = (uint)101 },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "uint" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = (uint)101 },
                                 ],
                             },
-                            new()
+                            new RowDfn
                             {
                                 Cells =
                                 [
-                                    new() { CellDataType = CellDataType.String, Value = "long" },
-                                    new() { CellDataType = CellDataType.Number, Value = long.MaxValue },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "long" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = long.MaxValue },
                                 ],
                             },
-                            new()
+                            new RowDfn
                             {
                                 Cells =
                                 [
-                                    new() { CellDataType = CellDataType.String, Value = "float" },
-                                    new() { CellDataType = CellDataType.Number, Value = (float)123.45 },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "float" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = (float)123.45 },
                                 ],
                             },
-                            new()
+                            new RowDfn
                             {
                                 Cells =
                                 [
-                                    new() { CellDataType = CellDataType.String, Value = "double" },
-                                    new() { CellDataType = CellDataType.Number, Value = 123.45 },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "double" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = 123.45 },
                                 ],
                             },
-                            new()
+                            new RowDfn
                             {
                                 Cells =
                                 [
-                                    new() { CellDataType = CellDataType.String, Value = "decimal" },
-                                    new() { CellDataType = CellDataType.Number, Value = (decimal)123.45 },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "decimal" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = (decimal)123.45 },
                                 ],
                             },
-                            new()
+                            new RowDfn
                             {
                                 Cells =
                                 [
-                                    new()
+                                    new CellDfn
                                     {
                                         CellDataType = CellDataType.Date,
                                         Value = new DateTime(2012, 1, 8),
                                         FormatCode = "mm-dd-yy",
                                     },
-                                    new()
+                                    new CellDfn
                                     {
                                         CellDataType = CellDataType.Date,
                                         Value = new DateTime(2012, 1, 9),
@@ -293,17 +293,17 @@ namespace Clippit.Tests.Excel
                                     },
                                 ],
                             },
-                            new()
+                            new RowDfn
                             {
                                 Cells =
                                 [
-                                    new()
+                                    new CellDfn
                                     {
                                         CellDataType = CellDataType.Date,
                                         Value = new DateTimeOffset(new DateTime(2012, 1, 8), TimeSpan.Zero),
                                         FormatCode = "mm-dd-yy",
                                     },
-                                    new()
+                                    new CellDfn
                                     {
                                         CellDataType = CellDataType.Date,
                                         Value = new DateTimeOffset(new DateTime(2012, 1, 9), TimeSpan.Zero),
@@ -320,25 +320,25 @@ namespace Clippit.Tests.Excel
             var fileName = Path.Combine(TempDir, "SW002-DataTypes.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
-            Validate(fileName);
+            await Validate(fileName).ConfigureAwait(false);
         }
 
         [Test]
-        public void AddWorksheetToWorkbook()
+        public async Task AddWorksheetToWorkbook()
         {
             var wb = GetSimpleWorkbookDfn();
             var fileName = Path.Combine(TempDir, "AddWorksheetToWorkbook.xlsx");
-            using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+            await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
             using (var sDoc = SpreadsheetDocument.Open(fileName, true))
                 SpreadsheetWriter.AddWorksheet(sDoc, GetSimpleWorksheetDfn("MySecondSheet", "MySecondTable"));
-            Validate(fileName);
+            await Validate(fileName).ConfigureAwait(false);
         }
 
-        private void Validate(string fileName)
+        private async Task Validate(string fileName)
         {
             using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            Validate(sDoc, s_spreadsheetExpectedErrors);
+            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
         }
 
         private static readonly List<string> s_spreadsheetExpectedErrors =
