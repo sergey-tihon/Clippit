@@ -48,14 +48,14 @@ public class DocumentAssemblerSamples : TestsBase
     }
 
     private static readonly string[] s_productNames =
-    {
+    [
         "Unicycle",
         "Bicycle",
         "Tricycle",
         "Skateboard",
         "Roller Blades",
         "Hang Glider",
-    };
+    ];
 
     private static XElement GenerateDataFromDataSource(FileInfo dataFi)
     {

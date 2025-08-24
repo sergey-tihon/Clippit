@@ -1116,8 +1116,8 @@ public class WmlComparerTests : TestsBase
         }
     }
 
-    public static string[] ExpectedErrors = new string[]
-    {
+    public static string[] ExpectedErrors =
+    [
         "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstRow' attribute is not declared.",
         "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:lastRow' attribute is not declared.",
         "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstColumn' attribute is not declared.",
@@ -1143,7 +1143,7 @@ public class WmlComparerTests : TestsBase
         "The attribute 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:val' has invalid value '0'. The MinInclusive constraint failed. The value must be greater than or equal to 2.",
         "The 'urn:schemas-microsoft-com:office:office:gfxdata' attribute is not declared.",
         "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:fill' attribute is invalid - The value '0' is not valid according to any of the memberTypes of the union.",
-    };
+    ];
 }
 
 public class WordRunner

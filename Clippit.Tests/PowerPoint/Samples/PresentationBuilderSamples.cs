@@ -31,25 +31,25 @@ namespace Clippit.Tests.PowerPoint.Samples
                 new(sourceDoc, 13, 1, false), // Closing summary
             };
             PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(TempDir, "Out1.pptx"));
-            sources = new List<SlideSource>
-            {
+            sources =
+            [
                 new(new PmlDocument(source2), 2, 1, true), // Choose company
                 new(new PmlDocument(source3), false), // Content
-            };
+            ];
             PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(TempDir, "Out2.pptx"));
-            sources = new List<SlideSource>
-            {
+            sources =
+            [
                 new(new PmlDocument(source4), true),
                 new(new PmlDocument(source5), true),
                 new(new PmlDocument(source6), true),
-            };
+            ];
             PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(TempDir, "Out3.pptx"));
-            sources = new List<SlideSource>
-            {
+            sources =
+            [
                 new(new PmlDocument(contoso1), true),
                 new(new PmlDocument(contoso2), true),
                 new(new PmlDocument(contoso3), true),
-            };
+            ];
             PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(TempDir, "Out4.pptx"));
         }
 

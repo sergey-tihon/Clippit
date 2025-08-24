@@ -160,14 +160,14 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
 ";
         private static readonly string userCss = @"";
         private static readonly string[] s_productNames =
-        {
+        [
             "Unicycle",
             "Bicycle",
             "Tricycle",
             "Skateboard",
             "Roller Blades",
             "Hang Glider",
-        };
+        ];
 
         private static XElement GenerateDataFromDataSource(FileInfo dataFi, int numberOfDocumentsToGenerate)
         {

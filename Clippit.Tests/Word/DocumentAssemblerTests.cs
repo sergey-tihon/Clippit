@@ -553,7 +553,7 @@ public class DocumentAssemblerTests : TestsBase
         await Assert.That(tables).HasCount(4);
 
         // Assert - the second table cell of each table has one paragraph
-        List<XElement> paras = new List<XElement>();
+        List<XElement> paras = [];
         foreach (XElement table in tables)
         {
             paras.AddRange(table.Descendants(W.tc).ElementAt(1).Elements(W.p));
@@ -604,8 +604,8 @@ public class DocumentAssemblerTests : TestsBase
         );
     }
 
-    private static readonly List<string> s_expectedErrors = new()
-    {
+    private static readonly List<string> s_expectedErrors =
+    [
         "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenHBand' attribute is not declared.",
         "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenVBand' attribute is not declared.",
         "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstColumn' attribute is not declared.",
@@ -626,5 +626,5 @@ public class DocumentAssemblerTests : TestsBase
         "The element has unexpected child element 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:bCs'.",
         "The element has unexpected child element 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:rFonts'.",
         "The element has unexpected child element 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:kern'.",
-    };
+    ];
 }

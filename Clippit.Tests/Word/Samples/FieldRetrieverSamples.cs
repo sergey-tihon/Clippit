@@ -14,7 +14,7 @@ namespace Clippit.Tests.Word.Samples
             var scrubbedDocument = new FileInfo(Path.Combine(TempDir, "DocWithFooterScrubbed1.docx"));
             File.Copy(docWithFooter.FullName, scrubbedDocument.FullName, true);
             using var wDoc = WordprocessingDocument.Open(scrubbedDocument.FullName, true);
-            ScrubFooter(wDoc, new[] { "PAGE" });
+            ScrubFooter(wDoc, ["PAGE"]);
         }
 
         [Test]
@@ -24,7 +24,7 @@ namespace Clippit.Tests.Word.Samples
             var scrubbedDocument = new FileInfo(Path.Combine(TempDir, "DocWithFooterScrubbed2.docx"));
             File.Copy(docWithFooter.FullName, scrubbedDocument.FullName, true);
             using var wDoc = WordprocessingDocument.Open(scrubbedDocument.FullName, true);
-            ScrubFooter(wDoc, new[] { "PAGE", "DATE" });
+            ScrubFooter(wDoc, ["PAGE", "DATE"]);
         }
 
         private static void ScrubFooter(WordprocessingDocument wDoc, string[] fieldTypesToKeep)

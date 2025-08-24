@@ -9,15 +9,15 @@ namespace Clippit.Tests.Excel
     public class SpreadsheetWriterTests : TestsBase
     {
         private static WorkbookDfn GetSimpleWorkbookDfn() =>
-            new() { Worksheets = new[] { GetSimpleWorksheetDfn("MyFirstSheet", "NamesAndRates") } };
+            new() { Worksheets = [GetSimpleWorksheetDfn("MyFirstSheet", "NamesAndRates")] };
 
         private static WorksheetDfn GetSimpleWorksheetDfn(string name, string table) =>
             new()
             {
                 Name = name,
                 TableName = table,
-                ColumnHeadings = new CellDfn[]
-                {
+                ColumnHeadings =
+                [
                     new() { Value = "Name", Bold = true },
                     new()
                     {
@@ -31,13 +31,13 @@ namespace Clippit.Tests.Excel
                         Bold = true,
                         HorizontalCellAlignment = HorizontalCellAlignment.Left,
                     },
-                },
-                Rows = new RowDfn[]
-                {
+                ],
+                Rows =
+                [
                     new()
                     {
-                        Cells = new CellDfn[]
-                        {
+                        Cells =
+                        [
                             new() { CellDataType = CellDataType.String, Value = "Eric" },
                             new() { CellDataType = CellDataType.Number, Value = 50 },
                             new()
@@ -46,12 +46,12 @@ namespace Clippit.Tests.Excel
                                 Value = (decimal)45.00,
                                 FormatCode = "0.00",
                             },
-                        },
+                        ],
                     },
                     new()
                     {
-                        Cells = new CellDfn[]
-                        {
+                        Cells =
+                        [
                             new() { CellDataType = CellDataType.String, Value = "Bob" },
                             new() { CellDataType = CellDataType.Number, Value = 42 },
                             new()
@@ -60,9 +60,9 @@ namespace Clippit.Tests.Excel
                                 Value = (decimal)78.00,
                                 FormatCode = "0.00",
                             },
-                        },
+                        ],
                     },
-                },
+                ],
             };
 
         [Test]
@@ -92,11 +92,11 @@ namespace Clippit.Tests.Excel
         {
             var wb = new WorkbookDfn
             {
-                Worksheets = new[]
-                {
+                Worksheets =
+                [
                     GetSimpleWorksheetDfn("MyFirstSheet", "NamesAndRates1"),
                     GetSimpleWorksheetDfn("MySecondSheet", "NamesAndRates2"),
-                },
+                ],
             };
             var fileName = Path.Combine(TempDir, "SW001_TwoSheets.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
@@ -112,48 +112,45 @@ namespace Clippit.Tests.Excel
                 {
                     Name = name,
                     TableName = tableName,
-                    ColumnHeadings = new[]
-                    {
+                    ColumnHeadings =
+                    [
                         new CellDfn
                         {
                             CellDataType = CellDataType.String,
                             Bold = true,
                             Value = "Date",
                         },
-                    },
-                    Rows = new[]
-                    {
-                        new RowDfn { Cells = new CellDfn[] { null } },
+                    ],
+                    Rows =
+                    [
+                        new RowDfn { Cells = [null] },
                         new RowDfn
                         {
-                            Cells = new[]
-                            {
+                            Cells =
+                            [
                                 new CellDfn
                                 {
                                     CellDataType = CellDataType.Date,
                                     Value = null,
                                     FormatCode = "mm-dd-yy",
                                 },
-                            },
+                            ],
                         },
                         new RowDfn
                         {
-                            Cells = new[]
-                            {
+                            Cells =
+                            [
                                 new CellDfn
                                 {
                                     CellDataType = CellDataType.Date,
                                     Value = DateTime.Now,
                                     FormatCode = "mm-dd-yy",
                                 },
-                            },
+                            ],
                         },
-                    },
+                    ],
                 };
-            var wb = new WorkbookDfn
-            {
-                Worksheets = new[] { GetSheet("Sheet1", "Table1"), GetSheet("Sheet2", "Table2") },
-            };
+            var wb = new WorkbookDfn { Worksheets = [GetSheet("Sheet1", "Table1"), GetSheet("Sheet2", "Table2")] };
             var fileName = Path.Combine(TempDir, "SW001_TableWithDates.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
@@ -166,13 +163,13 @@ namespace Clippit.Tests.Excel
         {
             var wb = new WorkbookDfn
             {
-                Worksheets = new WorksheetDfn[]
-                {
+                Worksheets =
+                [
                     new()
                     {
                         Name = "MyFirstSheet",
-                        ColumnHeadings = new CellDfn[]
-                        {
+                        ColumnHeadings =
+                        [
                             new() { Value = "DataType", Bold = true },
                             new()
                             {
@@ -180,29 +177,29 @@ namespace Clippit.Tests.Excel
                                 Bold = true,
                                 HorizontalCellAlignment = HorizontalCellAlignment.Right,
                             },
-                        },
-                        Rows = new RowDfn[]
-                        {
+                        ],
+                        Rows =
+                        [
                             new()
                             {
-                                Cells = new CellDfn[]
-                                {
+                                Cells =
+                                [
                                     new() { CellDataType = CellDataType.String, Value = "Boolean" },
                                     new() { CellDataType = CellDataType.Boolean, Value = true },
-                                },
+                                ],
                             },
                             new()
                             {
-                                Cells = new CellDfn[]
-                                {
+                                Cells =
+                                [
                                     new() { CellDataType = CellDataType.String, Value = "Boolean" },
                                     new() { CellDataType = CellDataType.Boolean, Value = false },
-                                },
+                                ],
                             },
                             new()
                             {
-                                Cells = new CellDfn[]
-                                {
+                                Cells =
+                                [
                                     new() { CellDataType = CellDataType.String, Value = "String" },
                                     new()
                                     {
@@ -210,76 +207,76 @@ namespace Clippit.Tests.Excel
                                         Value = "A String",
                                         HorizontalCellAlignment = HorizontalCellAlignment.Right,
                                     },
-                                },
+                                ],
                             },
                             new()
                             {
-                                Cells = new CellDfn[]
-                                {
+                                Cells =
+                                [
                                     new() { CellDataType = CellDataType.String, Value = "int" },
                                     new() { CellDataType = CellDataType.Number, Value = 100 },
-                                },
+                                ],
                             },
                             new()
                             {
-                                Cells = new CellDfn[]
-                                {
+                                Cells =
+                                [
                                     new() { CellDataType = CellDataType.String, Value = "int?" },
                                     new() { CellDataType = CellDataType.Number, Value = (int?)100 },
-                                },
+                                ],
                             },
                             new()
                             {
-                                Cells = new CellDfn[]
-                                {
+                                Cells =
+                                [
                                     new() { CellDataType = CellDataType.String, Value = "int? (is null)" },
                                     new() { CellDataType = CellDataType.Number, Value = null },
-                                },
+                                ],
                             },
                             new()
                             {
-                                Cells = new CellDfn[]
-                                {
+                                Cells =
+                                [
                                     new() { CellDataType = CellDataType.String, Value = "uint" },
                                     new() { CellDataType = CellDataType.Number, Value = (uint)101 },
-                                },
+                                ],
                             },
                             new()
                             {
-                                Cells = new CellDfn[]
-                                {
+                                Cells =
+                                [
                                     new() { CellDataType = CellDataType.String, Value = "long" },
                                     new() { CellDataType = CellDataType.Number, Value = long.MaxValue },
-                                },
+                                ],
                             },
                             new()
                             {
-                                Cells = new CellDfn[]
-                                {
+                                Cells =
+                                [
                                     new() { CellDataType = CellDataType.String, Value = "float" },
                                     new() { CellDataType = CellDataType.Number, Value = (float)123.45 },
-                                },
+                                ],
                             },
                             new()
                             {
-                                Cells = new CellDfn[]
-                                {
+                                Cells =
+                                [
                                     new() { CellDataType = CellDataType.String, Value = "double" },
                                     new() { CellDataType = CellDataType.Number, Value = 123.45 },
-                                },
+                                ],
                             },
                             new()
                             {
-                                Cells = new CellDfn[]
-                                {
+                                Cells =
+                                [
                                     new() { CellDataType = CellDataType.String, Value = "decimal" },
                                     new() { CellDataType = CellDataType.Number, Value = (decimal)123.45 },
-                                },
+                                ],
                             },
                             new()
                             {
-                                Cells = new CellDfn[]
-                                {
+                                Cells =
+                                [
                                     new()
                                     {
                                         CellDataType = CellDataType.Date,
@@ -294,12 +291,12 @@ namespace Clippit.Tests.Excel
                                         Bold = true,
                                         HorizontalCellAlignment = HorizontalCellAlignment.Center,
                                     },
-                                },
+                                ],
                             },
                             new()
                             {
-                                Cells = new CellDfn[]
-                                {
+                                Cells =
+                                [
                                     new()
                                     {
                                         CellDataType = CellDataType.Date,
@@ -314,11 +311,11 @@ namespace Clippit.Tests.Excel
                                         Bold = true,
                                         HorizontalCellAlignment = HorizontalCellAlignment.Center,
                                     },
-                                },
+                                ],
                             },
-                        },
+                        ],
                     },
-                },
+                ],
             };
             var fileName = Path.Combine(TempDir, "SW002-DataTypes.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
@@ -344,10 +341,10 @@ namespace Clippit.Tests.Excel
             Validate(sDoc, s_spreadsheetExpectedErrors);
         }
 
-        private static readonly List<string> s_spreadsheetExpectedErrors = new()
-        {
+        private static readonly List<string> s_spreadsheetExpectedErrors =
+        [
             "The attribute 't' has invalid value 'd'. The Enumeration constraint failed.",
-        };
+        ];
     }
 }
 #endif

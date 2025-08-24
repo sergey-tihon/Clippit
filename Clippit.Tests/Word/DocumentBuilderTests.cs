@@ -122,33 +122,33 @@ public class DocumentBuilderTests : TestsBase
 
         // Create new document from paragraph 1, and paragraphs 5 through end of Source3.docx.
         // This effectively 'deletes' paragraphs 2-4
-        sources = new List<ISource>
-        {
+        sources =
+        [
             new Source(new WmlDocument(source3.FullName), 0, 1, false),
             new Source(new WmlDocument(source3.FullName), 4, false),
-        };
+        ];
         var out2 = new FileInfo(Path.Combine(TempDir, "DB006-Out2.docx"));
         DocumentBuilder.BuildDocument(sources, out2.FullName);
         Validate(out2);
 
         // Create a new document that consists of the entirety of Source1.docx and Source2.docx.  Use
         // the section information (headings and footers) from source1.
-        sources = new List<ISource>
-        {
+        sources =
+        [
             new Source(new WmlDocument(source1.FullName), true),
             new Source(new WmlDocument(source2.FullName), false),
-        };
+        ];
         var out3 = new FileInfo(Path.Combine(TempDir, "DB006-Out3.docx"));
         DocumentBuilder.BuildDocument(sources, out3.FullName);
         Validate(out3);
 
         // Create a new document that consists of the entirety of Source1.docx and Source2.docx.  Use
         // the section information (headings and footers) from source2.
-        sources = new List<ISource>
-        {
+        sources =
+        [
             new Source(new WmlDocument(source1.FullName), false),
             new Source(new WmlDocument(source2.FullName), true),
-        };
+        ];
         var out4 = new FileInfo(Path.Combine(TempDir, "DB006-Out4.docx"));
         DocumentBuilder.BuildDocument(sources, out4.FullName);
         Validate(out4);
@@ -156,11 +156,11 @@ public class DocumentBuilderTests : TestsBase
         // Create a new document that consists of the first 5 paragraphs of Source1.docx and the first
         // five paragraphs of Source2.docx.  This example returns a new WmlDocument, when you then can
         // serialize to a SharePoint document library, or use in some other interesting scenario.
-        sources = new List<ISource>
-        {
+        sources =
+        [
             new Source(new WmlDocument(source1.FullName), 0, 5, false),
             new Source(new WmlDocument(source2.FullName), 0, 5, true),
-        };
+        ];
         var wmlOut5 = DocumentBuilder.BuildDocument(sources);
         var out5 = new FileInfo(Path.Combine(TempDir, "DB006-Out5.docx"));
 
@@ -607,11 +607,7 @@ public class DocumentBuilderTests : TestsBase
         var source2 = new FileInfo(Path.Combine(_sourceDir.FullName, "DB011-Body-With-Shape.docx"));
         List<ISource> sources = null;
 
-        sources = new List<ISource>
-        {
-            new Source(new WmlDocument(source1.FullName)),
-            new Source(new WmlDocument(source2.FullName)),
-        };
+        sources = [new Source(new WmlDocument(source1.FullName)), new Source(new WmlDocument(source2.FullName))];
         var processedDestDocx = new FileInfo(Path.Combine(TempDir, "DB011-Body-And-Header-With-Shapes.docx"));
         DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
         Validate(processedDestDocx);
@@ -949,8 +945,8 @@ public class DocumentBuilderTests : TestsBase
         Validate(wDoc, s_expectedErrors);
     }
 
-    private static readonly List<string> s_expectedErrors = new()
-    {
+    private static readonly List<string> s_expectedErrors =
+    [
         "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenHBand' attribute is not declared.",
         "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:evenVBand' attribute is not declared.",
         "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:firstColumn' attribute is not declared.",
@@ -978,5 +974,5 @@ public class DocumentBuilderTests : TestsBase
         "http://schemas.microsoft.com/office/word/2008/9/12/wordml:",
         "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:allStyles' attribute is not declared.",
         "The 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:customStyles' attribute is not declared.",
-    };
+    ];
 }

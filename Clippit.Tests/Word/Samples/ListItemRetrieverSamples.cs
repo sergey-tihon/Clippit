@@ -33,7 +33,7 @@ namespace Clippit.Tests.Word.Samples
             var listItem = ListItemRetriever.RetrieveListItem(wDoc, firstParagraph);
             var xml = new XElement("Root");
             var current = new Stack<XmlStackItem>();
-            current.Push(new XmlStackItem { Element = xml, LevelNumbers = Array.Empty<int>() });
+            current.Push(new XmlStackItem { Element = xml, LevelNumbers = [] });
             foreach (var paragraph in xd.Descendants(W.p))
             {
                 // The following does not take into account documents that have tracked revisions.
