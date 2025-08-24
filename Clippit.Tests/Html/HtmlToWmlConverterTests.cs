@@ -29,6 +29,7 @@ namespace Clippit.Tests.Html;
 public class HtmlToWmlConverterTests : TestsBase
 {
     private static readonly bool s_ProduceAnnotatedHtml = true;
+
     // PowerShell oneliner that generates InlineData for all files in a directory
     // dir | % { '[InlineData("' + $_.Name + '")]' } | clip
     [Test]
@@ -286,12 +287,20 @@ public class HtmlToWmlConverterTests : TestsBase
 #endif
         var sourceDir = new DirectoryInfo("../../../../TestFiles/");
         var sourceHtmlFi = new FileInfo(Path.Combine(sourceDir.FullName, name));
-        var sourceImageDi = new DirectoryInfo(Path.Combine(sourceDir.FullName, sourceHtmlFi.Name.Replace(".html", "_files")));
+        var sourceImageDi = new DirectoryInfo(
+            Path.Combine(sourceDir.FullName, sourceHtmlFi.Name.Replace(".html", "_files"))
+        );
         var destImageDi = new DirectoryInfo(Path.Combine(TempDir, sourceImageDi.Name));
-        var sourceCopiedToDestHtmlFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-1-Source.html")));
+        var sourceCopiedToDestHtmlFi = new FileInfo(
+            Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-1-Source.html"))
+        );
         var destCssFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-2.css")));
-        var destDocxFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx")));
-        var annotatedHtmlFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt")));
+        var destDocxFi = new FileInfo(
+            Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx"))
+        );
+        var annotatedHtmlFi = new FileInfo(
+            Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt"))
+        );
         if (!sourceCopiedToDestHtmlFi.Exists)
         {
             Directory.CreateDirectory(sourceCopiedToDestHtmlFi.DirectoryName);
@@ -319,7 +328,9 @@ public class HtmlToWmlConverterTests : TestsBase
             }
         }
 
-        var usedAuthorCss = HtmlToWmlConverter.CleanUpCss((string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style"));
+        var usedAuthorCss = HtmlToWmlConverter.CleanUpCss(
+            (string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style")
+        );
         File.WriteAllText(destCssFi.FullName, usedAuthorCss);
         if (cssFilter != null && cssFilter.Any())
         {
@@ -354,18 +365,26 @@ public class HtmlToWmlConverterTests : TestsBase
         // image references in HTML files contain the path to the subdir that contains the images, so base URI is the name of the directory
         // that contains the HTML files
         settings.BaseUriForImages = Path.Combine(TempDir);
-        var doc = HtmlToWmlConverter.ConvertHtmlToWml(defaultCss, usedAuthorCss, userCss, html, settings, null, s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null);
+        var doc = HtmlToWmlConverter.ConvertHtmlToWml(
+            defaultCss,
+            usedAuthorCss,
+            userCss,
+            html,
+            settings,
+            null,
+            s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null
+        );
         await Assert.That(doc).IsNotNull();
         if (doc != null)
             SaveValidateAndFormatMainDocPart(destDocxFi, doc);
 #if DO_CONVERSION_VIA_WORD
-            var newAltChunkBeforeFi = new FileInfo(
-                Path.Combine(TestUtil.TempDir.FullName, name.Replace(".html", "-5-AltChunkBefore.docx"))
-            );
-            var newAltChunkAfterFi = new FileInfo(
-                Path.Combine(TestUtil.TempDir.FullName, name.Replace(".html", "-6-ConvertedViaWord.docx"))
-            );
-            WordAutomationUtilities.DoConversionViaWord(newAltChunkBeforeFi, newAltChunkAfterFi, html);
+        var newAltChunkBeforeFi = new FileInfo(
+            Path.Combine(TestUtil.TempDir.FullName, name.Replace(".html", "-5-AltChunkBefore.docx"))
+        );
+        var newAltChunkAfterFi = new FileInfo(
+            Path.Combine(TestUtil.TempDir.FullName, name.Replace(".html", "-6-ConvertedViaWord.docx"))
+        );
+        WordAutomationUtilities.DoConversionViaWord(newAltChunkBeforeFi, newAltChunkAfterFi, html);
 #endif
     }
 
@@ -376,19 +395,39 @@ public class HtmlToWmlConverterTests : TestsBase
     {
         var sourceDir = new DirectoryInfo("../../../../TestFiles/");
         var sourceHtmlFi = new FileInfo(Path.Combine(sourceDir.FullName, name));
-        var sourceImageDi = new DirectoryInfo(Path.Combine(sourceDir.FullName, sourceHtmlFi.Name.Replace(".html", "_files")));
+        var sourceImageDi = new DirectoryInfo(
+            Path.Combine(sourceDir.FullName, sourceHtmlFi.Name.Replace(".html", "_files"))
+        );
         var destImageDi = new DirectoryInfo(Path.Combine(TempDir, sourceImageDi.Name));
-        var sourceCopiedToDestHtmlFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-1-Source.html")));
+        var sourceCopiedToDestHtmlFi = new FileInfo(
+            Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-1-Source.html"))
+        );
         var destCssFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-2.css")));
-        var destDocxFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx")));
-        var annotatedHtmlFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt")));
+        var destDocxFi = new FileInfo(
+            Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx"))
+        );
+        var annotatedHtmlFi = new FileInfo(
+            Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt"))
+        );
         File.Copy(sourceHtmlFi.FullName, sourceCopiedToDestHtmlFi.FullName);
         var html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceCopiedToDestHtmlFi);
-        var usedAuthorCss = HtmlToWmlConverter.CleanUpCss((string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style"));
+        var usedAuthorCss = HtmlToWmlConverter.CleanUpCss(
+            (string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style")
+        );
         File.WriteAllText(destCssFi.FullName, usedAuthorCss);
         var settings = HtmlToWmlConverter.GetDefaultSettings();
         settings.BaseUriForImages = Path.Combine(TempDir);
-        Assert.Throws<OpenXmlPowerToolsException>(() => HtmlToWmlConverter.ConvertHtmlToWml(defaultCss, usedAuthorCss, userCss, html, settings, null, s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null));
+        Assert.Throws<OpenXmlPowerToolsException>(() =>
+            HtmlToWmlConverter.ConvertHtmlToWml(
+                defaultCss,
+                usedAuthorCss,
+                userCss,
+                html,
+                settings,
+                null,
+                s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null
+            )
+        );
     }
 
     [Test]
@@ -397,19 +436,37 @@ public class HtmlToWmlConverterTests : TestsBase
     {
         var sourceDir = new DirectoryInfo("../../../../TestFiles/");
         var sourceHtmlFi = new FileInfo(Path.Combine(sourceDir.FullName, name));
-        var sourceImageDi = new DirectoryInfo(Path.Combine(sourceDir.FullName, sourceHtmlFi.Name.Replace(".html", "_files")));
+        var sourceImageDi = new DirectoryInfo(
+            Path.Combine(sourceDir.FullName, sourceHtmlFi.Name.Replace(".html", "_files"))
+        );
         var destImageDi = new DirectoryInfo(Path.Combine(TempDir, sourceImageDi.Name));
-        var sourceCopiedToDestHtmlFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-1-Source.html")));
+        var sourceCopiedToDestHtmlFi = new FileInfo(
+            Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-1-Source.html"))
+        );
         var destCssFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-2.css")));
-        var destDocxFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx")));
-        var annotatedHtmlFi = new FileInfo(Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt")));
+        var destDocxFi = new FileInfo(
+            Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx"))
+        );
+        var annotatedHtmlFi = new FileInfo(
+            Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt"))
+        );
         File.Copy(sourceHtmlFi.FullName, sourceCopiedToDestHtmlFi.FullName);
         var html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceCopiedToDestHtmlFi);
-        var usedAuthorCss = HtmlToWmlConverter.CleanUpCss((string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style"));
+        var usedAuthorCss = HtmlToWmlConverter.CleanUpCss(
+            (string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style")
+        );
         await File.WriteAllTextAsync(destCssFi.FullName, usedAuthorCss);
         var settings = HtmlToWmlConverter.GetDefaultSettings();
         settings.BaseUriForImages = Path.Combine(TempDir);
-        var doc = HtmlToWmlConverter.ConvertHtmlToWml(defaultCss, usedAuthorCss, userCss, html, settings, null, s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null);
+        var doc = HtmlToWmlConverter.ConvertHtmlToWml(
+            defaultCss,
+            usedAuthorCss,
+            userCss,
+            html,
+            settings,
+            null,
+            s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null
+        );
         await Assert.That(doc).IsNotNull();
         if (doc != null)
             SaveValidateAndFormatMainDocPart(destDocxFi, doc);
@@ -439,7 +496,8 @@ public class HtmlToWmlConverterTests : TestsBase
         formattedDoc.SaveAs(destDocxFi.FullName);
     }
 
-    private static readonly string defaultCss = @"html, address,
+    private static readonly string defaultCss =
+        @"html, address,
 blockquote,
 body, dd, div,
 dl, dt, fieldset, form,

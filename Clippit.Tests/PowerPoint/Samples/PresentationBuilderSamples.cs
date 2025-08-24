@@ -6,7 +6,9 @@ namespace Clippit.Tests.PowerPoint.Samples
 {
     public class PresentationBuilderSamples() : Clippit.Tests.TestsBase
     {
-        private static string GetFilePath(string path) => Path.Combine("../../../PowerPoint/Samples/PresentationBuilder/", path);
+        private static string GetFilePath(string path) =>
+            Path.Combine("../../../PowerPoint/Samples/PresentationBuilder/", path);
+
         [Test]
         public void Sample1()
         {

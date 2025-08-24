@@ -8,7 +8,9 @@ namespace Clippit.Tests.Html.Samples
 {
     public class HtmlToWmlConverterSamples() : Clippit.Tests.TestsBase
     {
-        private static string GetFilePath(string path) => Path.Combine("../../../Html/Samples/HtmlToWmlConverter/", path);
+        private static string GetFilePath(string path) =>
+            Path.Combine("../../../Html/Samples/HtmlToWmlConverter/", path);
+
         [Test]
         public void Sample1()
         {
@@ -56,20 +58,35 @@ namespace Clippit.Tests.Html.Samples
             Console.WriteLine("Converting " + sourceHtmlFi.Name);
             var sourceImageDi = new DirectoryInfo(destinationDir);
             var destCssFi = new FileInfo(Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(".html", "-2.css")));
-            var destDocxFi = new FileInfo(Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx")));
-            var annotatedHtmlFi = new FileInfo(Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt")));
+            var destDocxFi = new FileInfo(
+                Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(".html", "-3-ConvertedByHtmlToWml.docx"))
+            );
+            var annotatedHtmlFi = new FileInfo(
+                Path.Combine(destinationDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt"))
+            );
             var html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceHtmlFi);
-            var usedAuthorCss = HtmlToWmlConverter.CleanUpCss((string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style"));
+            var usedAuthorCss = HtmlToWmlConverter.CleanUpCss(
+                (string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style")
+            );
             File.WriteAllText(destCssFi.FullName, usedAuthorCss);
             var settings = HtmlToWmlConverter.GetDefaultSettings();
             // image references in HTML files contain the path to the subdir that contains the images, so base URI is the name of the directory
             // that contains the HTML files
             settings.BaseUriForImages = sourceHtmlFi.DirectoryName;
-            var doc = HtmlToWmlConverter.ConvertHtmlToWml(defaultCss, usedAuthorCss, userCss, html, settings, null, s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null);
+            var doc = HtmlToWmlConverter.ConvertHtmlToWml(
+                defaultCss,
+                usedAuthorCss,
+                userCss,
+                html,
+                settings,
+                null,
+                s_ProduceAnnotatedHtml ? annotatedHtmlFi.FullName : null
+            );
             doc.SaveAs(destDocxFi.FullName);
         }
 
-        private static readonly string defaultCss = @"html, address,
+        private static readonly string defaultCss =
+            @"html, address,
 blockquote,
 body, dd, div,
 dl, dt, fieldset, form,
@@ -151,18 +168,31 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
             "Roller Blades",
             "Hang Glider",
         };
+
         private static XElement GenerateDataFromDataSource(FileInfo dataFi, int numberOfDocumentsToGenerate)
         {
             var customers = new XElement("Customers");
             var r = new Random();
             for (var i = 0; i < numberOfDocumentsToGenerate; ++i)
             {
-                var customer = new XElement("Customer", new XElement("CustomerID", i + 1), new XElement("Name", "Eric White"), new XElement("HighValueCustomer", r.Next(2) == 0 ? "True" : "False"), new XElement("Orders"));
+                var customer = new XElement(
+                    "Customer",
+                    new XElement("CustomerID", i + 1),
+                    new XElement("Name", "Eric White"),
+                    new XElement("HighValueCustomer", r.Next(2) == 0 ? "True" : "False"),
+                    new XElement("Orders")
+                );
                 var orders = customer.Element("Orders");
                 var numberOfOrders = r.Next(10) + 1;
                 for (var j = 0; j < numberOfOrders; j++)
                 {
-                    var order = new XElement("Order", new XAttribute("Number", j + 1), new XElement("ProductDescription", s_productNames[r.Next(s_productNames.Length)]), new XElement("Quantity", r.Next(10)), new XElement("OrderDate", "September 26, 2015"));
+                    var order = new XElement(
+                        "Order",
+                        new XAttribute("Number", j + 1),
+                        new XElement("ProductDescription", s_productNames[r.Next(s_productNames.Length)]),
+                        new XElement("Quantity", r.Next(10)),
+                        new XElement("OrderDate", "September 26, 2015")
+                    );
                     orders.Add(order);
                 }
 

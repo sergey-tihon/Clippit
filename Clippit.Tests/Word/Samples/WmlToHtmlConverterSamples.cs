@@ -147,7 +147,12 @@ namespace Clippit.Tests.Word.Samples
 
                     var mimeType = "image/" + extension;
                     var imageSource = $"data:{mimeType};base64,{base64}";
-                    var img = new XElement(Xhtml.img, new XAttribute(NoNamespace.src, imageSource), imageInfo.ImgStyleAttribute, imageInfo.AltText != null ? new XAttribute(NoNamespace.alt, imageInfo.AltText) : null);
+                    var img = new XElement(
+                        Xhtml.img,
+                        new XAttribute(NoNamespace.src, imageSource),
+                        imageInfo.ImgStyleAttribute,
+                        imageInfo.AltText != null ? new XAttribute(NoNamespace.alt, imageInfo.AltText) : null
+                    );
                     return img;
                 },
             };

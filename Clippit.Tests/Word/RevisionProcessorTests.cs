@@ -11,6 +11,7 @@ namespace Clippit.Tests.Word
         // perf settings
         public static bool m_CopySourceFilesToTempDir = true;
         public static bool m_OpenTempDirInExplorer = false;
+
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         [Test]
         //[InlineData("RP/RP001-Tracked-Revisions-01.docx")]
@@ -69,14 +70,22 @@ namespace Clippit.Tests.Word
         {
             var sourceDir = new DirectoryInfo("../../../../TestFiles/");
             var sourceFi = new FileInfo(Path.Combine(sourceDir.FullName, name));
-            var baselineAcceptedFi = new FileInfo(Path.Combine(sourceDir.FullName, name.Replace(".docx", "-Accepted.docx")));
-            var baselineRejectedFi = new FileInfo(Path.Combine(sourceDir.FullName, name.Replace(".docx", "-Rejected.docx")));
+            var baselineAcceptedFi = new FileInfo(
+                Path.Combine(sourceDir.FullName, name.Replace(".docx", "-Accepted.docx"))
+            );
+            var baselineRejectedFi = new FileInfo(
+                Path.Combine(sourceDir.FullName, name.Replace(".docx", "-Rejected.docx"))
+            );
             var sourceWml = new WmlDocument(sourceFi.FullName);
             var afterRejectingWml = RevisionProcessor.RejectRevisions(sourceWml);
             var afterAcceptingWml = RevisionProcessor.AcceptRevisions(sourceWml);
-            var processedAcceptedFi = new FileInfo(Path.Combine(TempDir, sourceFi.Name.Replace(".docx", "-Accepted.docx")));
+            var processedAcceptedFi = new FileInfo(
+                Path.Combine(TempDir, sourceFi.Name.Replace(".docx", "-Accepted.docx"))
+            );
             afterAcceptingWml.SaveAs(processedAcceptedFi.FullName);
-            var processedRejectedFi = new FileInfo(Path.Combine(TempDir, sourceFi.Name.Replace(".docx", "-Rejected.docx")));
+            var processedRejectedFi = new FileInfo(
+                Path.Combine(TempDir, sourceFi.Name.Replace(".docx", "-Rejected.docx"))
+            );
             afterRejectingWml.SaveAs(processedRejectedFi.FullName);
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Copy source files to temp dir
@@ -110,8 +119,18 @@ namespace Clippit.Tests.Word
                     var batchFileName = "Copy-Gen-Files-To-TestFiles.bat";
                     var batchFi = new FileInfo(Path.Combine(TempDir, batchFileName));
                     var batch = "";
-                    batch += "copy " + processedAcceptedFi.FullName + " " + baselineAcceptedFi.FullName + Environment.NewLine;
-                    batch += "copy " + processedRejectedFi.FullName + " " + baselineRejectedFi.FullName + Environment.NewLine;
+                    batch +=
+                        "copy "
+                        + processedAcceptedFi.FullName
+                        + " "
+                        + baselineAcceptedFi.FullName
+                        + Environment.NewLine;
+                    batch +=
+                        "copy "
+                        + processedRejectedFi.FullName
+                        + " "
+                        + baselineRejectedFi.FullName
+                        + Environment.NewLine;
                     if (batchFi.Exists)
                         File.AppendAllText(batchFi.FullName, batch);
                     else

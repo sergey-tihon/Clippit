@@ -6,6 +6,7 @@ namespace Clippit.Tests.Word.Samples
     public class FieldRetrieverSamples() : Clippit.Tests.TestsBase
     {
         private static string GetFilePath(string path) => Path.Combine("../../../Word/Samples/FieldRetriever/", path);
+
         [Test]
         public void Sample1()
         {
@@ -40,17 +41,31 @@ namespace Clippit.Tests.Word.Samples
         private static void RemoveAllButSpecificFields(XElement root, string[] fieldTypesToRetain)
         {
             var cachedAnnotationInformation = root.Annotation<Dictionary<int, List<XElement>>>();
-            var runsToKeep = cachedAnnotationInformation.SelectMany(item => root.Descendants().Where(d =>
-            {
-                var stack = d.Annotation<Stack<FieldRetriever.FieldElementTypeInfo>>();
-                return stack != null && stack.Any(stackItem => stackItem.Id == item.Key);
-            }).Select(d => d.AncestorsAndSelf(W.r).FirstOrDefault()).GroupAdjacent(o => o).Select(g => g.First()).ToList()).ToList();
+            var runsToKeep = cachedAnnotationInformation
+                .SelectMany(item =>
+                    root.Descendants()
+                        .Where(d =>
+                        {
+                            var stack = d.Annotation<Stack<FieldRetriever.FieldElementTypeInfo>>();
+                            return stack != null && stack.Any(stackItem => stackItem.Id == item.Key);
+                        })
+                        .Select(d => d.AncestorsAndSelf(W.r).FirstOrDefault())
+                        .GroupAdjacent(o => o)
+                        .Select(g => g.First())
+                        .ToList()
+                )
+                .ToList();
             foreach (var paragraph in root.Descendants(W.p).ToList())
             {
                 if (paragraph.Elements(W.r).Any(r => runsToKeep.Contains(r)))
                 {
                     paragraph.Elements(W.r).Where(r => !runsToKeep.Contains(r) && !r.Elements(W.tab).Any()).Remove();
-                    paragraph.Elements(W.r).Where(r => !runsToKeep.Contains(r)).Elements().Where(rc => rc.Name != W.rPr && rc.Name != W.tab).Remove();
+                    paragraph
+                        .Elements(W.r)
+                        .Where(r => !runsToKeep.Contains(r))
+                        .Elements()
+                        .Where(rc => rc.Name != W.rPr && rc.Name != W.tab)
+                        .Remove();
                 }
                 else
                 {

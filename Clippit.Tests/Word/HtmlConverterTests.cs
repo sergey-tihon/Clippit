@@ -8,11 +8,13 @@ using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Tests.Word;
+
 public class HtmlConverterTests() : Clippit.Tests.TestsBase
 {
     public static bool s_CopySourceFiles = true;
     public static bool s_CopyFormattingAssembledDocx = true;
     public static bool s_ConvertUsingWord = true;
+
     // PowerShell oneliner that generates InlineData for all files in a directory
     // dir | % { '[InlineData("' + $_.Name + '")]' } | clip
     [Test]
@@ -74,14 +76,20 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         var sourceDir = new DirectoryInfo("../../../../TestFiles/");
         var sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 #if COPY_FILES_FOR_DEBUGGING
-        var sourceCopiedToDestDocx = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-1-Source.docx")));
+        var sourceCopiedToDestDocx = new FileInfo(
+            Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-1-Source.docx"))
+        );
         if (!sourceCopiedToDestDocx.Exists)
             File.Copy(sourceDocx.FullName, sourceCopiedToDestDocx.FullName);
-        var assembledFormattingDestDocx = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-2-FormattingAssembled.docx")));
+        var assembledFormattingDestDocx = new FileInfo(
+            Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-2-FormattingAssembled.docx"))
+        );
         if (!assembledFormattingDestDocx.Exists)
             CopyFormattingAssembledDocx(sourceDocx, assembledFormattingDestDocx);
 #endif
-        var oxPtConvertedDestHtml = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-3-OxPt.html")));
+        var oxPtConvertedDestHtml = new FileInfo(
+            Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-3-OxPt.html"))
+        );
         ConvertToHtml(sourceDocx, oxPtConvertedDestHtml);
 #if DO_CONVERSION_VIA_WORD
         var wordConvertedDocHtml = new FileInfo(
@@ -97,7 +105,9 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
     {
         var sourceDir = new DirectoryInfo("../../../../TestFiles/");
         var sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
-        var oxPtConvertedDestHtml = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-5-OxPt-No-CSS-Classes.html")));
+        var oxPtConvertedDestHtml = new FileInfo(
+            Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-5-OxPt-No-CSS-Classes.html"))
+        );
         ConvertToHtmlNoCssClasses(sourceDocx, oxPtConvertedDestHtml);
     }
 
@@ -219,6 +229,7 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         var htmlString = html.ToString(SaveOptions.DisableFormatting);
         File.WriteAllText(destFileName.FullName, htmlString, Encoding.UTF8);
     }
+
 #if DO_CONVERSION_VIA_WORD
     public static void ConvertToHtmlUsingWord(FileInfo sourceFileName, FileInfo destFileName)
     {

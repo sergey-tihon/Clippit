@@ -78,7 +78,9 @@ public class WmlContentAtomListTests : TestsBase
         var sourceDir = new DirectoryInfo("../../../../TestFiles/");
         var sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 #if COPY_FILES_FOR_DEBUGGING
-        var sourceCopiedToDestDocx = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-1-Source.docx")));
+        var sourceCopiedToDestDocx = new FileInfo(
+            Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-1-Source.docx"))
+        );
         if (!sourceCopiedToDestDocx.Exists)
             File.Copy(sourceDocx.FullName, sourceCopiedToDestDocx.FullName);
         var annotatedDocx = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-2-Annotated.docx")));
@@ -101,19 +103,27 @@ public class WmlContentAtomListTests : TestsBase
         var sourceDir = new DirectoryInfo("../../../../TestFiles/");
         var sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
         var thisGuid = Guid.NewGuid().ToString().Replace("-", "");
-        var sourceCopiedToDestDocx = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", $"-{thisGuid}-1-Source.docx")));
+        var sourceCopiedToDestDocx = new FileInfo(
+            Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", $"-{thisGuid}-1-Source.docx"))
+        );
         if (!sourceCopiedToDestDocx.Exists)
             File.Copy(sourceDocx.FullName, sourceCopiedToDestDocx.FullName);
-        var coalescedDocx = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", $"-{thisGuid}-2-Coalesced.docx")));
+        var coalescedDocx = new FileInfo(
+            Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", $"-{thisGuid}-2-Coalesced.docx"))
+        );
         if (!coalescedDocx.Exists)
             File.Copy(sourceDocx.FullName, coalescedDocx.FullName);
-        var contentAtomDataFi = new FileInfo(Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", $"-{thisGuid}-3-ContentAtomData.txt")));
+        var contentAtomDataFi = new FileInfo(
+            Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", $"-{thisGuid}-3-ContentAtomData.txt"))
+        );
         using var wDoc = WordprocessingDocument.Open(coalescedDocx.FullName, true);
-        await Assert.That(() =>
-        {
-            var contentParent = wDoc.MainDocumentPart.GetXDocument().Root.Element(W.body);
-            var settings = new WmlComparerSettings();
-            WmlComparer.CreateComparisonUnitAtomList(wDoc.MainDocumentPart, contentParent, settings);
-        }).Throws<NotSupportedException>();
+        await Assert
+            .That(() =>
+            {
+                var contentParent = wDoc.MainDocumentPart.GetXDocument().Root.Element(W.body);
+                var settings = new WmlComparerSettings();
+                WmlComparer.CreateComparisonUnitAtomList(wDoc.MainDocumentPart, contentParent, settings);
+            })
+            .Throws<NotSupportedException>();
     }
 }

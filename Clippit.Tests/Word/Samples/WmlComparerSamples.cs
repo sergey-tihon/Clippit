@@ -6,11 +6,16 @@ namespace Clippit.Tests.Word.Samples
     public class WmlComparerSamples() : Clippit.Tests.TestsBase
     {
         private static string GetFilePath(string path) => Path.Combine("../../../Word/Samples/WmlComparer/", path);
+
         [Test]
         public void Sample1()
         {
             var settings = new WmlComparerSettings();
-            var result = WmlComparer.Compare(new WmlDocument(GetFilePath("Sample1/Source1.docx")), new WmlDocument(GetFilePath("Sample1/Source2.docx")), settings);
+            var result = WmlComparer.Compare(
+                new WmlDocument(GetFilePath("Sample1/Source1.docx")),
+                new WmlDocument(GetFilePath("Sample1/Source2.docx")),
+                settings
+            );
             result.SaveAs(Path.Combine(TempDir, "Compared.docx"));
             var revisions = WmlComparer.GetRevisions(result, settings);
             foreach (var rev in revisions)
