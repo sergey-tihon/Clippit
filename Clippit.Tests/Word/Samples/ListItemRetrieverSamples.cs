@@ -1,11 +1,10 @@
 ﻿using System.Xml.Linq;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
-using Xunit;
 
 namespace Clippit.Tests.Word.Samples
 {
-    public class ListItemRetrieverSamples(ITestOutputHelper log) : TestsBase(log)
+    public class ListItemRetrieverSamples() : Clippit.Tests.TestsBase
     {
         private class XmlStackItem
         {
@@ -13,27 +12,22 @@ namespace Clippit.Tests.Word.Samples
             public int[] LevelNumbers { get; init; }
         }
 
-        [Fact]
+        [Test]
         public void Sample()
         {
-            using var wDoc = WordprocessingDocument.Open(
-                "../../../Word/Samples/ListItemRetriever/NumberedListTest.docx",
-                false
-            );
+            using var wDoc = WordprocessingDocument.Open("../../../Word/Samples/ListItemRetriever/NumberedListTest.docx", false);
             var abstractNumId = 0;
             var xml = ConvertDocToXml(wDoc, abstractNumId);
-            Log.WriteLine(xml.ToString());
+            Console.WriteLine(xml.ToString());
             xml.Save(Path.Combine(TempDir, "Out.xml"));
         }
 
         private static XElement ConvertDocToXml(WordprocessingDocument wDoc, int abstractNumId)
         {
             var xd = wDoc.MainDocumentPart.GetXDocument();
-
             // First, call RetrieveListItem so that all paragraphs are initialized with ListItemInfo
             var firstParagraph = xd.Descendants(W.p).FirstOrDefault();
             var listItem = ListItemRetriever.RetrieveListItem(wDoc, firstParagraph);
-
             var xml = new XElement("Root");
             var current = new Stack<XmlStackItem>();
             current.Push(new XmlStackItem { Element = xml, LevelNumbers = Array.Empty<int>() });
@@ -50,15 +44,10 @@ namespace Clippit.Tests.Word.Samples
                     {
                         current.Pop();
                         var levelNumsForThisIndent = levelNums.LevelNumbersArray;
-                        var levelText = levelNums
-                            .LevelNumbersArray.Select(l => l + ".")
-                            .StringConcatenate()
-                            .TrimEnd('.');
+                        var levelText = levelNums.LevelNumbersArray.Select(l => l + ".").StringConcatenate().TrimEnd('.');
                         var newCurrentElement = new XElement("Indent", new XAttribute("Level", levelText));
                         current.Peek().Element.Add(newCurrentElement);
-                        current.Push(
-                            new XmlStackItem() { Element = newCurrentElement, LevelNumbers = levelNumsForThisIndent }
-                        );
+                        current.Push(new XmlStackItem() { Element = newCurrentElement, LevelNumbers = levelNumsForThisIndent });
                         current.Peek().Element.Add(new XElement("Heading", text));
                     }
                     else if (levelNums.LevelNumbersArray.Length > current.Peek().LevelNumbers.Length)
@@ -66,19 +55,10 @@ namespace Clippit.Tests.Word.Samples
                         for (var i = current.Peek().LevelNumbers.Length; i < levelNums.LevelNumbersArray.Length; i++)
                         {
                             var levelNumsForThisIndent = levelNums.LevelNumbersArray.Take(i + 1).ToArray();
-                            var levelText = levelNums
-                                .LevelNumbersArray.Select(l => l + ".")
-                                .StringConcatenate()
-                                .TrimEnd('.');
+                            var levelText = levelNums.LevelNumbersArray.Select(l => l + ".").StringConcatenate().TrimEnd('.');
                             var newCurrentElement = new XElement("Indent", new XAttribute("Level", levelText));
                             current.Peek().Element.Add(newCurrentElement);
-                            current.Push(
-                                new XmlStackItem()
-                                {
-                                    Element = newCurrentElement,
-                                    LevelNumbers = levelNumsForThisIndent,
-                                }
-                            );
+                            current.Push(new XmlStackItem() { Element = newCurrentElement, LevelNumbers = levelNumsForThisIndent, });
                             current.Peek().Element.Add(new XElement("Heading", text));
                         }
                     }
@@ -88,15 +68,10 @@ namespace Clippit.Tests.Word.Samples
                             current.Pop();
                         current.Pop();
                         var levelNumsForThisIndent = levelNums.LevelNumbersArray;
-                        var levelText = levelNums
-                            .LevelNumbersArray.Select(l => l + ".")
-                            .StringConcatenate()
-                            .TrimEnd('.');
+                        var levelText = levelNums.LevelNumbersArray.Select(l => l + ".").StringConcatenate().TrimEnd('.');
                         var newCurrentElement = new XElement("Indent", new XAttribute("Level", levelText));
                         current.Peek().Element.Add(newCurrentElement);
-                        current.Push(
-                            new XmlStackItem() { Element = newCurrentElement, LevelNumbers = levelNumsForThisIndent }
-                        );
+                        current.Push(new XmlStackItem() { Element = newCurrentElement, LevelNumbers = levelNumsForThisIndent });
                         current.Peek().Element.Add(new XElement("Heading", text));
                     }
                 }

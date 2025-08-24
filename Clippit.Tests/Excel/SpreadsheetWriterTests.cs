@@ -1,15 +1,12 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
 using Clippit.Excel;
 using DocumentFormat.OpenXml.Packaging;
-using Xunit;
 
 #if !ELIDE_XUNIT_TESTS
-
 namespace Clippit.Tests.Excel
 {
-    public class SpreadsheetWriterTests(ITestOutputHelper log) : TestsBase(log)
+    public class SpreadsheetWriterTests : TestsBase
     {
         private static WorkbookDfn GetSimpleWorkbookDfn() =>
             new() { Worksheets = new[] { GetSimpleWorksheetDfn("MyFirstSheet", "NamesAndRates") } };
@@ -68,33 +65,29 @@ namespace Clippit.Tests.Excel
                 },
             };
 
-        [Fact]
+        [Test]
         public void SaveWorkbookToFile()
         {
             var wb = GetSimpleWorkbookDfn();
-
             var fileName = Path.Combine(TempDir, "SW001-Simple.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
-
             using var sDoc = SpreadsheetDocument.Open(fileName, false);
             Validate(sDoc, s_spreadsheetExpectedErrors);
         }
 
-        [Fact]
+        [Test]
         public void SaveWorkbookToStream()
         {
             var wb = GetSimpleWorkbookDfn();
-
             using var stream = new MemoryStream();
             wb.WriteTo(stream);
             stream.Position = 0;
-
             using var sDoc = SpreadsheetDocument.Open(stream, false);
             Validate(sDoc, s_spreadsheetExpectedErrors);
         }
 
-        [Fact]
+        [Test]
         public void SaveWorkbookWithTwoSheets()
         {
             var wb = new WorkbookDfn
@@ -105,15 +98,13 @@ namespace Clippit.Tests.Excel
                     GetSimpleWorksheetDfn("MySecondSheet", "NamesAndRates2"),
                 },
             };
-
             var fileName = Path.Combine(TempDir, "SW001_TwoSheets.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
-
             Validate(fileName);
         }
 
-        [Fact]
+        [Test]
         public void SaveTablesWithDates()
         {
             WorksheetDfn GetSheet(string name, string tableName) =>
@@ -159,21 +150,18 @@ namespace Clippit.Tests.Excel
                         },
                     },
                 };
-
             var wb = new WorkbookDfn
             {
                 Worksheets = new[] { GetSheet("Sheet1", "Table1"), GetSheet("Sheet2", "Table2") },
             };
-
             var fileName = Path.Combine(TempDir, "SW001_TableWithDates.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
-
             using var sDoc = SpreadsheetDocument.Open(fileName, false);
             Validate(fileName);
         }
 
-        [Fact]
+        [Test]
         public void SaveAllDataTypes()
         {
             var wb = new WorkbookDfn
@@ -332,26 +320,21 @@ namespace Clippit.Tests.Excel
                     },
                 },
             };
-
             var fileName = Path.Combine(TempDir, "SW002-DataTypes.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
-
             Validate(fileName);
         }
 
-        [Fact]
+        [Test]
         public void AddWorksheetToWorkbook()
         {
             var wb = GetSimpleWorkbookDfn();
-
             var fileName = Path.Combine(TempDir, "AddWorksheetToWorkbook.xlsx");
             using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
-
             using (var sDoc = SpreadsheetDocument.Open(fileName, true))
                 SpreadsheetWriter.AddWorksheet(sDoc, GetSimpleWorksheetDfn("MySecondSheet", "MySecondTable"));
-
             Validate(fileName);
         }
 
@@ -367,5 +350,4 @@ namespace Clippit.Tests.Excel
         };
     }
 }
-
 #endif

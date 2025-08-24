@@ -2,7 +2,6 @@
 using System.Xml.Linq;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
-using Xunit;
 
 namespace Clippit.Tests.Html.Samples
 {
@@ -18,24 +17,23 @@ namespace Clippit.Tests.Html.Samples
     * Other than the name change of the classes themselves, the functionality
     * in WmlToHtmlConverter is identical to the old HtmlConverter class.
    ***************************************************************************/
-
-    public class HtmlConverterSamples(ITestOutputHelper log) : TestsBase(log)
+    public class HtmlConverterSamples() : Clippit.Tests.TestsBase
     {
-        [Theory]
-        [InlineData("5DayTourPlanTemplate.docx")]
-        [InlineData("Contract.docx")]
-        [InlineData("HcTest-01.docx")]
-        [InlineData("HcTest-02.docx")]
-        [InlineData("HcTest-03.docx")]
-        [InlineData("HcTest-04.docx")]
-        [InlineData("HcTest-05.docx")]
-        [InlineData("HcTest-06.docx")]
-        [InlineData("HcTest-07.docx")]
-        [InlineData("HcTest-08.docx")]
-        [InlineData("Hebrew-01.docx")]
-        [InlineData("Hebrew-02.docx")]
-        [InlineData("ResumeTemplate.docx")]
-        [InlineData("TaskPlanTemplate.docx")]
+        [Test]
+        [Arguments("5DayTourPlanTemplate.docx")]
+        [Arguments("Contract.docx")]
+        [Arguments("HcTest-01.docx")]
+        [Arguments("HcTest-02.docx")]
+        [Arguments("HcTest-03.docx")]
+        [Arguments("HcTest-04.docx")]
+        [Arguments("HcTest-05.docx")]
+        [Arguments("HcTest-06.docx")]
+        [Arguments("HcTest-07.docx")]
+        [Arguments("HcTest-08.docx")]
+        [Arguments("Hebrew-01.docx")]
+        [Arguments("Hebrew-02.docx")]
+        [Arguments("ResumeTemplate.docx")]
+        [Arguments("TaskPlanTemplate.docx")]
         /// This example loads each document into a byte array, then into a memory stream, so that the document can be opened for writing without
         /// modifying the source document.
         public void ConvertToHtml(string fileName)
@@ -47,10 +45,8 @@ namespace Clippit.Tests.Html.Samples
             using var wDoc = WordprocessingDocument.Open(memoryStream, true);
             var destFileName = new FileInfo(fi.Name.Replace(".docx", ".html"));
             destFileName = new FileInfo(Path.Combine(TempDir, destFileName.Name));
-
             var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
             var imageCounter = 0;
-
             var pageTitle = fi.FullName;
             var part = wDoc.CoreFilePropertiesPart;
             if (part != null)
@@ -74,11 +70,9 @@ namespace Clippit.Tests.Html.Samples
                 },
             };
             var htmlElement = HtmlConverter.ConvertToHtml(wDoc, settings);
-
             // Produce HTML document with <!DOCTYPE html > declaration to tell the browser
             // we are using HTML5.
             var html = new XDocument(new XDocumentType("html", null, null, null), htmlElement);
-
             // Note: the xhtml returned by ConvertToHtmlTransform contains objects of type
             // XEntity.  PtOpenXmlUtil.cs define the XEntity class.  See
             // http://blogs.msdn.com/ericwhite/archive/2010/01/21/writing-entity-references-using-linq-to-xml.aspx
@@ -86,7 +80,6 @@ namespace Clippit.Tests.Html.Samples
             //
             // If you further transform the XML tree returned by ConvertToHtmlTransform, you
             // must do it correctly, or entities will not be serialized properly.
-
             var htmlString = html.ToString(SaveOptions.DisableFormatting);
             File.WriteAllText(destFileName.FullName, htmlString, Encoding.UTF8);
         }

@@ -1,100 +1,83 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
 using Clippit.Word;
-using Xunit;
 
 #if !ELIDE_XUNIT_TESTS
-
 namespace Clippit.Tests.Word
 {
-    public class RevisionProcessorTests(ITestOutputHelper log) : TestsBase(log)
+    public class RevisionProcessorTests() : Clippit.Tests.TestsBase
     {
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // perf settings
         public static bool m_CopySourceFilesToTempDir = true;
         public static bool m_OpenTempDirInExplorer = false;
-
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        [Theory]
+        [Test]
         //[InlineData("RP/RP001-Tracked-Revisions-01.docx")]
         //[InlineData("RP/RP001-Tracked-Revisions-02.docx")]
-        [InlineData("RP/RP002-Deleted-Text.docx")]
-        [InlineData("RP/RP003-Inserted-Text.docx")]
-        [InlineData("RP/RP004-Deleted-Text-in-CC.docx")]
-        [InlineData("RP/RP005-Deleted-Paragraph-Mark.docx")]
-        [InlineData("RP/RP006-Inserted-Paragraph-Mark.docx")]
-        [InlineData("RP/RP007-Multiple-Deleted-Para-Mark.docx")]
-        [InlineData("RP/RP008-Multiple-Inserted-Para-Mark.docx")]
-        [InlineData("RP/RP009-Deleted-Table-Row.docx")]
-        [InlineData("RP/RP010-Inserted-Table-Row.docx")]
-        [InlineData("RP/RP011-Multiple-Deleted-Rows.docx")]
-        [InlineData("RP/RP012-Multiple-Inserted-Rows.docx")]
-        [InlineData("RP/RP013-Deleted-Math-Control-Char.docx")]
-        [InlineData("RP/RP014-Inserted-Math-Control-Char.docx")]
-        [InlineData("RP/RP015-MoveFrom-MoveTo.docx")]
-        [InlineData("RP/RP016-Deleted-CC.docx")]
-        [InlineData("RP/RP017-Inserted-CC.docx")]
-        [InlineData("RP/RP018-MoveFrom-MoveTo-CC.docx")]
-        [InlineData("RP/RP019-Deleted-Field-Code.docx")]
-        [InlineData("RP/RP020-Inserted-Field-Code.docx")]
-        [InlineData("RP/RP021-Inserted-Numbering-Properties.docx")]
-        [InlineData("RP/RP022-NumberingChange.docx")]
-        [InlineData("RP/RP023-NumberingChange.docx")]
-        [InlineData("RP/RP024-ParagraphMark-rPr-Change.docx")]
-        [InlineData("RP/RP025-Paragraph-Props-Change.docx")]
-        [InlineData("RP/RP026-NumberingChange.docx")]
-        [InlineData("RP/RP027-Change-Section.docx")]
-        [InlineData("RP/RP028-Table-Grid-Change.docx")]
-        [InlineData("RP/RP029-Table-Row-Props-Change.docx")]
-        [InlineData("RP/RP030-Table-Row-Props-Change.docx")]
-        [InlineData("RP/RP031-Table-Prop-Change.docx")]
-        [InlineData("RP/RP032-Table-Prop-Change.docx")]
-        [InlineData("RP/RP033-Table-Prop-Ex-Change.docx")]
-        [InlineData("RP/RP034-Deleted-Cells.docx")]
-        [InlineData("RP/RP035-Inserted-Cells.docx")]
-        [InlineData("RP/RP036-Vert-Merged-Cells.docx")]
-        [InlineData("RP/RP037-Changed-Style-Para-Props.docx")]
-        [InlineData("RP/RP038-Inserted-Paras-at-End.docx")]
-        [InlineData("RP/RP039-Inserted-Paras-at-End.docx")]
-        [InlineData("RP/RP040-Deleted-Paras-at-End.docx")]
-        [InlineData("RP/RP041-Cell-With-Empty-Paras-at-End.docx")]
-        [InlineData("RP/RP042-Deleted-Para-Mark-at-End.docx")]
-        [InlineData("RP/RP043-MERGEFORMAT-Field-Code.docx")]
-        [InlineData("RP/RP044-MERGEFORMAT-Field-Code.docx")]
-        [InlineData("RP/RP045-One-and-Half-Deleted-Lines-at-End.docx")]
-        [InlineData("RP/RP046-Consecutive-Deleted-Ranges.docx")]
-        [InlineData("RP/RP047-Inserted-and-Deleted-Paragraph-Mark.docx")]
-        [InlineData("RP/RP048-Deleted-Inserted-Para-Mark.docx")]
-        [InlineData("RP/RP049-Deleted-Para-Before-Table.docx")]
-        [InlineData("RP/RP050-Deleted-Footnote.docx")]
-        [InlineData("RP/RP052-Deleted-Para-Mark.docx")]
+        [Arguments("RP/RP002-Deleted-Text.docx")]
+        [Arguments("RP/RP003-Inserted-Text.docx")]
+        [Arguments("RP/RP004-Deleted-Text-in-CC.docx")]
+        [Arguments("RP/RP005-Deleted-Paragraph-Mark.docx")]
+        [Arguments("RP/RP006-Inserted-Paragraph-Mark.docx")]
+        [Arguments("RP/RP007-Multiple-Deleted-Para-Mark.docx")]
+        [Arguments("RP/RP008-Multiple-Inserted-Para-Mark.docx")]
+        [Arguments("RP/RP009-Deleted-Table-Row.docx")]
+        [Arguments("RP/RP010-Inserted-Table-Row.docx")]
+        [Arguments("RP/RP011-Multiple-Deleted-Rows.docx")]
+        [Arguments("RP/RP012-Multiple-Inserted-Rows.docx")]
+        [Arguments("RP/RP013-Deleted-Math-Control-Char.docx")]
+        [Arguments("RP/RP014-Inserted-Math-Control-Char.docx")]
+        [Arguments("RP/RP015-MoveFrom-MoveTo.docx")]
+        [Arguments("RP/RP016-Deleted-CC.docx")]
+        [Arguments("RP/RP017-Inserted-CC.docx")]
+        [Arguments("RP/RP018-MoveFrom-MoveTo-CC.docx")]
+        [Arguments("RP/RP019-Deleted-Field-Code.docx")]
+        [Arguments("RP/RP020-Inserted-Field-Code.docx")]
+        [Arguments("RP/RP021-Inserted-Numbering-Properties.docx")]
+        [Arguments("RP/RP022-NumberingChange.docx")]
+        [Arguments("RP/RP023-NumberingChange.docx")]
+        [Arguments("RP/RP024-ParagraphMark-rPr-Change.docx")]
+        [Arguments("RP/RP025-Paragraph-Props-Change.docx")]
+        [Arguments("RP/RP026-NumberingChange.docx")]
+        [Arguments("RP/RP027-Change-Section.docx")]
+        [Arguments("RP/RP028-Table-Grid-Change.docx")]
+        [Arguments("RP/RP029-Table-Row-Props-Change.docx")]
+        [Arguments("RP/RP030-Table-Row-Props-Change.docx")]
+        [Arguments("RP/RP031-Table-Prop-Change.docx")]
+        [Arguments("RP/RP032-Table-Prop-Change.docx")]
+        [Arguments("RP/RP033-Table-Prop-Ex-Change.docx")]
+        [Arguments("RP/RP034-Deleted-Cells.docx")]
+        [Arguments("RP/RP035-Inserted-Cells.docx")]
+        [Arguments("RP/RP036-Vert-Merged-Cells.docx")]
+        [Arguments("RP/RP037-Changed-Style-Para-Props.docx")]
+        [Arguments("RP/RP038-Inserted-Paras-at-End.docx")]
+        [Arguments("RP/RP039-Inserted-Paras-at-End.docx")]
+        [Arguments("RP/RP040-Deleted-Paras-at-End.docx")]
+        [Arguments("RP/RP041-Cell-With-Empty-Paras-at-End.docx")]
+        [Arguments("RP/RP042-Deleted-Para-Mark-at-End.docx")]
+        [Arguments("RP/RP043-MERGEFORMAT-Field-Code.docx")]
+        [Arguments("RP/RP044-MERGEFORMAT-Field-Code.docx")]
+        [Arguments("RP/RP045-One-and-Half-Deleted-Lines-at-End.docx")]
+        [Arguments("RP/RP046-Consecutive-Deleted-Ranges.docx")]
+        [Arguments("RP/RP047-Inserted-and-Deleted-Paragraph-Mark.docx")]
+        [Arguments("RP/RP048-Deleted-Inserted-Para-Mark.docx")]
+        [Arguments("RP/RP049-Deleted-Para-Before-Table.docx")]
+        [Arguments("RP/RP050-Deleted-Footnote.docx")]
+        [Arguments("RP/RP052-Deleted-Para-Mark.docx")]
         public void RP001(string name)
         {
             var sourceDir = new DirectoryInfo("../../../../TestFiles/");
             var sourceFi = new FileInfo(Path.Combine(sourceDir.FullName, name));
-            var baselineAcceptedFi = new FileInfo(
-                Path.Combine(sourceDir.FullName, name.Replace(".docx", "-Accepted.docx"))
-            );
-            var baselineRejectedFi = new FileInfo(
-                Path.Combine(sourceDir.FullName, name.Replace(".docx", "-Rejected.docx"))
-            );
-
+            var baselineAcceptedFi = new FileInfo(Path.Combine(sourceDir.FullName, name.Replace(".docx", "-Accepted.docx")));
+            var baselineRejectedFi = new FileInfo(Path.Combine(sourceDir.FullName, name.Replace(".docx", "-Rejected.docx")));
             var sourceWml = new WmlDocument(sourceFi.FullName);
             var afterRejectingWml = RevisionProcessor.RejectRevisions(sourceWml);
             var afterAcceptingWml = RevisionProcessor.AcceptRevisions(sourceWml);
-
-            var processedAcceptedFi = new FileInfo(
-                Path.Combine(TempDir, sourceFi.Name.Replace(".docx", "-Accepted.docx"))
-            );
+            var processedAcceptedFi = new FileInfo(Path.Combine(TempDir, sourceFi.Name.Replace(".docx", "-Accepted.docx")));
             afterAcceptingWml.SaveAs(processedAcceptedFi.FullName);
-
-            var processedRejectedFi = new FileInfo(
-                Path.Combine(TempDir, sourceFi.Name.Replace(".docx", "-Rejected.docx"))
-            );
+            var processedRejectedFi = new FileInfo(Path.Combine(TempDir, sourceFi.Name.Replace(".docx", "-Rejected.docx")));
             afterRejectingWml.SaveAs(processedRejectedFi.FullName);
-
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Copy source files to temp dir
             if (m_CopySourceFilesToTempDir)
@@ -127,18 +110,8 @@ namespace Clippit.Tests.Word
                     var batchFileName = "Copy-Gen-Files-To-TestFiles.bat";
                     var batchFi = new FileInfo(Path.Combine(TempDir, batchFileName));
                     var batch = "";
-                    batch +=
-                        "copy "
-                        + processedAcceptedFi.FullName
-                        + " "
-                        + baselineAcceptedFi.FullName
-                        + Environment.NewLine;
-                    batch +=
-                        "copy "
-                        + processedRejectedFi.FullName
-                        + " "
-                        + baselineRejectedFi.FullName
-                        + Environment.NewLine;
+                    batch += "copy " + processedAcceptedFi.FullName + " " + baselineAcceptedFi.FullName + Environment.NewLine;
+                    batch += "copy " + processedRejectedFi.FullName + " " + baselineRejectedFi.FullName + Environment.NewLine;
                     if (batchFi.Exists)
                         File.AppendAllText(batchFi.FullName, batch);
                     else
@@ -167,6 +140,7 @@ namespace Clippit.Tests.Word
                             File.WriteAllText(semaphorFi.FullName, "");
                             TestUtil.Explorer(new DirectoryInfo(TempDir));
                         }
+
                         //////////////////////////////////////////////////
                         break;
                     }
@@ -215,5 +189,4 @@ namespace Clippit.Tests.Word
         }
     }
 }
-
 #endif

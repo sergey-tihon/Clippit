@@ -1,16 +1,13 @@
 ﻿using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Clippit.PowerPoint;
-using Xunit;
 
 namespace Clippit.Tests.PowerPoint.Samples
 {
-    public class PresentationBuilderSamples(ITestOutputHelper log) : TestsBase(log)
+    public class PresentationBuilderSamples() : Clippit.Tests.TestsBase
     {
-        private static string GetFilePath(string path) =>
-            Path.Combine("../../../PowerPoint/Samples/PresentationBuilder/", path);
-
-        [Fact]
+        private static string GetFilePath(string path) => Path.Combine("../../../PowerPoint/Samples/PresentationBuilder/", path);
+        [Test]
         public void Sample1()
         {
             var source1 = GetFilePath("Sample1/Contoso.pptx");
@@ -22,7 +19,6 @@ namespace Clippit.Tests.PowerPoint.Samples
             var contoso1 = GetFilePath("Sample1/Contoso One.pptx");
             var contoso2 = GetFilePath("Sample1/Contoso Two.pptx");
             var contoso3 = GetFilePath("Sample1/Contoso Three.pptx");
-
             var sourceDoc = new PmlDocument(source1);
             var sources = new List<SlideSource>
             {
@@ -33,14 +29,12 @@ namespace Clippit.Tests.PowerPoint.Samples
                 new(sourceDoc, 13, 1, false), // Closing summary
             };
             PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(TempDir, "Out1.pptx"));
-
             sources = new List<SlideSource>
             {
                 new(new PmlDocument(source2), 2, 1, true), // Choose company
                 new(new PmlDocument(source3), false), // Content
             };
             PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(TempDir, "Out2.pptx"));
-
             sources = new List<SlideSource>
             {
                 new(new PmlDocument(source4), true),
@@ -48,7 +42,6 @@ namespace Clippit.Tests.PowerPoint.Samples
                 new(new PmlDocument(source6), true),
             };
             PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(TempDir, "Out3.pptx"));
-
             sources = new List<SlideSource>
             {
                 new(new PmlDocument(contoso1), true),
@@ -58,17 +51,15 @@ namespace Clippit.Tests.PowerPoint.Samples
             PresentationBuilder.BuildPresentation(sources).SaveAs(Path.Combine(TempDir, "Out4.pptx"));
         }
 
-        [Fact]
+        [Test]
         public void Sample2()
         {
             var presentation = GetFilePath("Sample2/Presentation1.pptx");
             var hiddenPresentation = GetFilePath("Sample2/HiddenPresentation.pptx");
-
             // First, load both presentations into byte arrays, simulating retrieving presentations from some source
             // such as a SharePoint server
             var baPresentation = File.ReadAllBytes(presentation);
             var baHiddenPresentation = File.ReadAllBytes(hiddenPresentation);
-
             // Next, replace "thee" with "the" in the main presentation
             var pmlMainPresentation = new PmlDocument("Main.pptx", baPresentation);
             PmlDocument modifiedMainPresentation;
@@ -87,6 +78,7 @@ namespace Clippit.Tests.PowerPoint.Samples
                         slidePart.PutXDocument();
                     }
                 }
+
                 modifiedMainPresentation = streamDoc.GetModifiedPmlDocument();
             }
 
@@ -98,7 +90,6 @@ namespace Clippit.Tests.PowerPoint.Samples
                 new(modifiedMainPresentation, 1, true),
             };
             var combinedPresentation = PresentationBuilder.BuildPresentation(slideSources);
-
             // Replace <# TRADEMARK #> with AdventureWorks (c)
             PmlDocument modifiedCombinedPresentation;
             using (var streamDoc = new OpenXmlMemoryStreamDocument(combinedPresentation))
@@ -116,6 +107,7 @@ namespace Clippit.Tests.PowerPoint.Samples
                         slidePart.PutXDocument();
                     }
                 }
+
                 modifiedCombinedPresentation = streamDoc.GetModifiedPmlDocument();
             }
 

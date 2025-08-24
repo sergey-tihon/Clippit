@@ -1,42 +1,39 @@
 ﻿using System.Globalization;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
-using Xunit;
 
 namespace Clippit.Tests.Common.Samples
 {
-    public class ChartUpdaterSamples(ITestOutputHelper log) : TestsBase(log)
+    public class ChartUpdaterSamples : TestsBase
     {
         private static string GetFilePath(string path) => Path.Combine("../../../Common/Samples/ChartUpdater/", path);
 
-        [Theory]
-        [InlineData("Chart-Cached-Data-01.docx")]
-        [InlineData("Chart-Cached-Data-02.docx")]
-        [InlineData("Chart-Cached-Data-03.docx")]
-        [InlineData("Chart-Cached-Data-04.docx")]
-        [InlineData("Chart-Cached-Data-05.docx")]
-        [InlineData("Chart-Cached-Data-06.docx")]
-        [InlineData("Chart-Cached-Data-07.docx")]
-        [InlineData("Chart-Embedded-Xlsx-01.docx")]
-        [InlineData("Chart-Embedded-Xlsx-02.docx")]
-        [InlineData("Chart-Embedded-Xlsx-03.docx")]
-        [InlineData("Chart-Embedded-Xlsx-04.docx")]
-        [InlineData("Chart-Embedded-Xlsx-05.docx")]
-        [InlineData("Chart-Embedded-Xlsx-06.docx")]
-        [InlineData("Chart-Embedded-Xlsx-07.docx")]
-        [InlineData("Chart-Embedded-Xlsx-08.docx")]
-        [InlineData("Chart-Embedded-Xlsx-10.docx")]
+        [Test]
+        [Arguments("Chart-Cached-Data-01.docx")]
+        [Arguments("Chart-Cached-Data-02.docx")]
+        [Arguments("Chart-Cached-Data-03.docx")]
+        [Arguments("Chart-Cached-Data-04.docx")]
+        [Arguments("Chart-Cached-Data-05.docx")]
+        [Arguments("Chart-Cached-Data-06.docx")]
+        [Arguments("Chart-Cached-Data-07.docx")]
+        [Arguments("Chart-Embedded-Xlsx-01.docx")]
+        [Arguments("Chart-Embedded-Xlsx-02.docx")]
+        [Arguments("Chart-Embedded-Xlsx-03.docx")]
+        [Arguments("Chart-Embedded-Xlsx-04.docx")]
+        [Arguments("Chart-Embedded-Xlsx-05.docx")]
+        [Arguments("Chart-Embedded-Xlsx-06.docx")]
+        [Arguments("Chart-Embedded-Xlsx-07.docx")]
+        [Arguments("Chart-Embedded-Xlsx-08.docx")]
+        [Arguments("Chart-Embedded-Xlsx-10.docx")]
         public void UpdateWords(string fileName)
         {
             var srcFile = new FileInfo(GetFilePath(fileName));
             var fName = Path.Combine(TempDir, srcFile.Name);
             File.Copy(srcFile.FullName, fName, true);
-
             var fi = new FileInfo(fName);
             var newFileName = "Updated-" + fi.Name;
             var fi2 = new FileInfo(Path.Combine(TempDir, newFileName));
             File.Copy(fi.FullName, fi2.FullName, true);
-
             using var wDoc = WordprocessingDocument.Open(fi2.FullName, true);
             var chart1Data = new ChartData
             {
@@ -53,7 +50,6 @@ namespace Clippit.Tests.Common.Samples
                 },
             };
             ChartUpdater.UpdateChart(wDoc, "Chart1", chart1Data);
-
             var chart2Data = new ChartData
             {
                 SeriesNames = new[] { "Series" },
@@ -62,7 +58,6 @@ namespace Clippit.Tests.Common.Samples
                 Values = new[] { new double[] { 320, 112, 64, 80 } },
             };
             ChartUpdater.UpdateChart(wDoc, "Chart2", chart2Data);
-
             var chart3Data = new ChartData
             {
                 SeriesNames = new[] { "X1", "X2", "X3", "X4", "X5", "X6" },
@@ -79,7 +74,6 @@ namespace Clippit.Tests.Common.Samples
                 },
             };
             ChartUpdater.UpdateChart(wDoc, "Chart3", chart3Data);
-
             var chart4Data = new ChartData
             {
                 SeriesNames = new[] { "Car", "Truck", "Van" },
@@ -118,20 +112,18 @@ namespace Clippit.Tests.Common.Samples
             ChartUpdater.UpdateChart(wDoc, "Chart4", chart4Data);
         }
 
-        [Theory]
-        [InlineData("Chart-Cached-Data-41.pptx")]
-        [InlineData("Chart-Embedded-Xlsx-41.pptx")]
+        [Test]
+        [Arguments("Chart-Cached-Data-41.pptx")]
+        [Arguments("Chart-Embedded-Xlsx-41.pptx")]
         public void UpdatePowerPoints(string fileName)
         {
             var srcFile = new FileInfo(GetFilePath(fileName));
             var fName = Path.Combine(TempDir, srcFile.Name);
             File.Copy(srcFile.FullName, fName, true);
-
             var fi = new FileInfo(fName);
             var newFileName = "Updated-" + srcFile.Name;
             var fi2 = new FileInfo(Path.Combine(TempDir, newFileName));
             File.Copy(fi.FullName, fi2.FullName, true);
-
             using var pDoc = PresentationDocument.Open(fi2.FullName, true);
             var chart1Data = new ChartData
             {
