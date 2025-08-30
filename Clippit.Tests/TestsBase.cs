@@ -5,14 +5,13 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using DocumentFormat.OpenXml.Wordprocessing;
-using Xunit;
 
 namespace Clippit.Tests
 {
     /// <summary>
     /// Base class for unit tests providing utility methods.
     /// </summary>
-    public class TestsBase(ITestOutputHelper log)
+    public class TestsBase
     {
         protected static void CreateEmptyWordprocessingDocument(Stream stream)
         {
@@ -21,7 +20,6 @@ namespace Clippit.Tests
             part.Document = new Document(new Body());
         }
 
-        protected readonly ITestOutputHelper Log = log;
         private readonly OpenXmlValidator _validator = new();
 
         private static readonly Lazy<string> s_tempDir = new(() =>
@@ -35,7 +33,7 @@ namespace Clippit.Tests
 
         protected static string TempDir => s_tempDir.Value;
 
-        protected void Validate(OpenXmlPackage package, List<string> expectedErrors)
+        protected async Task Validate(OpenXmlPackage package, List<string> expectedErrors)
         {
             var errors = _validator
                 .Validate(package)
@@ -48,34 +46,34 @@ namespace Clippit.Tests
 
             foreach (var item in errors)
             {
-                Log.WriteLine(item.Description);
+                Console.WriteLine(item.Description);
             }
 
-            Assert.Empty(errors);
+            await Assert.That(errors).IsEmpty();
         }
 
-        protected void ValidateUniqueDocPrIds(FileInfo fi)
+        protected async Task ValidateUniqueDocPrIds(FileInfo fi)
         {
             using var doc = WordprocessingDocument.Open(fi.FullName, false);
             var docPrIds = new HashSet<string>();
             foreach (var item in doc.MainDocumentPart.GetXDocument().Descendants(WP.docPr))
-                Assert.True(docPrIds.Add(item.Attribute(NoNamespace.id).Value));
+                await Assert.That(docPrIds.Add(item.Attribute(NoNamespace.id).Value)).IsTrue();
 
             foreach (var header in doc.MainDocumentPart.HeaderParts)
             foreach (var item in header.GetXDocument().Descendants(WP.docPr))
-                Assert.True(docPrIds.Add(item.Attribute(NoNamespace.id).Value));
+                await Assert.That(docPrIds.Add(item.Attribute(NoNamespace.id).Value)).IsTrue();
 
             foreach (var footer in doc.MainDocumentPart.FooterParts)
             foreach (var item in footer.GetXDocument().Descendants(WP.docPr))
-                Assert.True(docPrIds.Add(item.Attribute(NoNamespace.id).Value));
+                await Assert.That(docPrIds.Add(item.Attribute(NoNamespace.id).Value)).IsTrue();
 
             if (doc.MainDocumentPart.FootnotesPart is not null)
                 foreach (var item in doc.MainDocumentPart.FootnotesPart.GetXDocument().Descendants(WP.docPr))
-                    Assert.True(docPrIds.Add(item.Attribute(NoNamespace.id).Value));
+                    await Assert.That(docPrIds.Add(item.Attribute(NoNamespace.id).Value)).IsTrue();
 
             if (doc.MainDocumentPart.EndnotesPart is not null)
                 foreach (var item in doc.MainDocumentPart.EndnotesPart.GetXDocument().Descendants(WP.docPr))
-                    Assert.True(docPrIds.Add(item.Attribute(NoNamespace.id).Value));
+                    await Assert.That(docPrIds.Add(item.Attribute(NoNamespace.id).Value)).IsTrue();
         }
     }
 }

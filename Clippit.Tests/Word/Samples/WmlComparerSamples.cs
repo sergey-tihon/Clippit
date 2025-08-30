@@ -1,14 +1,13 @@
 ﻿using System.Drawing;
 using Clippit.Word;
-using Xunit;
 
 namespace Clippit.Tests.Word.Samples
 {
-    public class WmlComparerSamples(ITestOutputHelper log) : TestsBase(log)
+    public class WmlComparerSamples() : Clippit.Tests.TestsBase
     {
         private static string GetFilePath(string path) => Path.Combine("../../../Word/Samples/WmlComparer/", path);
 
-        [Fact]
+        [Test]
         public void Sample1()
         {
             var settings = new WmlComparerSettings();
@@ -18,17 +17,16 @@ namespace Clippit.Tests.Word.Samples
                 settings
             );
             result.SaveAs(Path.Combine(TempDir, "Compared.docx"));
-
             var revisions = WmlComparer.GetRevisions(result, settings);
             foreach (var rev in revisions)
             {
-                Log.WriteLine("Author: " + rev.Author);
-                Log.WriteLine("Revision type: " + rev.RevisionType);
-                Log.WriteLine("Revision text: " + rev.Text);
+                Console.WriteLine("Author: " + rev.Author);
+                Console.WriteLine("Revision type: " + rev.RevisionType);
+                Console.WriteLine("Revision text: " + rev.Text);
             }
         }
 
-        [Fact]
+        [Test]
         public void Sample2()
         {
             var originalWml = new WmlDocument(GetFilePath("Sample2/Original.docx"));
@@ -47,7 +45,6 @@ namespace Clippit.Tests.Word.Samples
                     Color = Color.LightYellow,
                 },
             };
-
             var settings = new WmlComparerSettings();
             var consolidatedWml = WmlComparer.Consolidate(originalWml, revisedDocumentInfoList, settings);
             consolidatedWml.SaveAs(Path.Combine(TempDir, "Consolidated.docx"));
