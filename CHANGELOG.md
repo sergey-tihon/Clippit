@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.0.2] - August 30, 2025
+
+- Extends `DocumentAssembler` to also apply HTML formatting on content in table cells (#101)
+
 ## [3.0.1] - July 30, 2025
 
 - fix: incorrect insertion of sldLayoutIdLst element for SlideMaster (#100)
