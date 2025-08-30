@@ -51,6 +51,15 @@ namespace Clippit.Word.Assembler
             }
 
             // otherwise split the values if there are new line characters
+            return ConvertTextToRunsWithMarkupSupport(values, part, templateError);
+        }
+
+        internal static List<XElement> ConvertTextToRunsWithMarkupSupport(
+            string[] values,
+            OpenXmlPart part,
+            TemplateError templateError
+        )
+        {
             List<XElement> results = new List<XElement>();
             for (int i = 0; i < values.Length; i++)
             {
