@@ -6,7 +6,7 @@ open Fake.IO
 open Fake.DotNet
 
 let version =
-    Changelog.GetLastVersion(__SOURCE_DIRECTORY__)
+    Changelog.GetLastVersion __SOURCE_DIRECTORY__
     |> Option.defaultWith (fun () -> failwith "Version is not found")
 
 pipeline "build" {
