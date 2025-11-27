@@ -9,7 +9,7 @@
     <ProjectReference Include="..\Clippit\Clippit.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-    <PackageReference Include="TUnit" Version="0.90.6" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageReference Include="TUnit" Version="1.2.11" />
   </ItemGroup>
 </Project>
