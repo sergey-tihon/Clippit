@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.1.0] - August 30, 2025
+
+- Build for .NET 10.0
+
 ## [3.0.2] - August 30, 2025
 
 - Extends `DocumentAssembler` to also apply HTML formatting on content in table cells (#101)

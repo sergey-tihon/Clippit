@@ -19,10 +19,12 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v2
-            - name: Setup .NET 10.0 SDK
+            - name: Setup .NET SDKs
               uses: actions/setup-dotnet@v4
               with:
-                  dotnet-version: "10.0.x"
+                  dotnet-version: |
+                      8.0.x
+                      10.0.x
             - name: Build and Test
               run: dotnet fsi build.fsx -- -p build
             - name: Upload Artifacts
@@ -38,10 +40,12 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v2
-            - name: Setup .NET 10.0 SDK
+            - name: Setup .NET SDKs
               uses: actions/setup-dotnet@v4
               with:
-                  dotnet-version: "10.0.x"
+                  dotnet-version: |
+                      8.0.x
+                      10.0.x
             - name: Build and Test
               run: dotnet fsi build.fsx -- -p build
             - name: Setup DocFX
