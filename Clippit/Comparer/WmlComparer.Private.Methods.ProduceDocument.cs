@@ -386,7 +386,7 @@ namespace Clippit
                         if (firstContentAtom == null)
                             throw new OpenXmlPowerToolsException("Internal error");
 
-                        var tr = firstContentAtom.AncestorElements.Reverse().FirstOrDefault(a => a.Name == W.tr);
+                        var tr = firstContentAtom.AncestorElements.LastOrDefault(a => a.Name == W.tr);
 
                         if (tr == null)
                             throw new OpenXmlPowerToolsException("Internal error");
@@ -2219,10 +2219,11 @@ namespace Clippit
             // if we get to here, then countCommonAtBeginning == 0
 
             var countCommonAtEnd = unknown
-                .ComparisonUnitArray1.Reverse()
+                .ComparisonUnitArray1.AsEnumerable()
+                .Reverse()
                 .Take(lengthToCompare)
                 .Zip(
-                    unknown.ComparisonUnitArray2.Reverse().Take(lengthToCompare),
+                    unknown.ComparisonUnitArray2.AsEnumerable().Reverse().Take(lengthToCompare),
                     (pu1, pu2) => new { Pu1 = pu1, Pu2 = pu2 }
                 )
                 .TakeWhile(pair => pair.Pu1.SHA1Hash == pair.Pu2.SHA1Hash)
@@ -2234,7 +2235,11 @@ namespace Clippit
                 if (countCommonAtEnd <= 1)
                     break;
 
-                var firstCommon = unknown.ComparisonUnitArray1.Reverse().Take(countCommonAtEnd).LastOrDefault();
+                var firstCommon = unknown
+                    .ComparisonUnitArray1.AsEnumerable()
+                    .Reverse()
+                    .Take(countCommonAtEnd)
+                    .LastOrDefault();
 
                 if (firstCommon is not ComparisonUnitWord firstCommonWord)
                     break;
@@ -2255,7 +2260,11 @@ namespace Clippit
             var isOnlyParagraphMark = false;
             if (countCommonAtEnd == 1)
             {
-                var firstCommon = unknown.ComparisonUnitArray1.Reverse().Take(countCommonAtEnd).LastOrDefault();
+                var firstCommon = unknown
+                    .ComparisonUnitArray1.AsEnumerable()
+                    .Reverse()
+                    .Take(countCommonAtEnd)
+                    .LastOrDefault();
 
                 if (firstCommon is ComparisonUnitWord firstCommonWord)
                 {
@@ -2273,9 +2282,17 @@ namespace Clippit
 
             if (countCommonAtEnd == 2)
             {
-                var firstCommon = unknown.ComparisonUnitArray1.Reverse().Take(countCommonAtEnd).LastOrDefault();
+                var firstCommon = unknown
+                    .ComparisonUnitArray1.AsEnumerable()
+                    .Reverse()
+                    .Take(countCommonAtEnd)
+                    .LastOrDefault();
 
-                var secondCommon = unknown.ComparisonUnitArray1.Reverse().Take(countCommonAtEnd).FirstOrDefault();
+                var secondCommon = unknown
+                    .ComparisonUnitArray1.AsEnumerable()
+                    .Reverse()
+                    .Take(countCommonAtEnd)
+                    .FirstOrDefault();
 
                 if (
                     firstCommon is ComparisonUnitWord firstCommonWord
@@ -2327,7 +2344,7 @@ namespace Clippit
                 var remainingInLeftParagraph = 0;
                 var remainingInRightParagraph = 0;
 
-                var commonEndSeq = unknown.ComparisonUnitArray1.Reverse().Take(countCommonAtEnd).Reverse().ToList();
+                var commonEndSeq = unknown.ComparisonUnitArray1.TakeLast(countCommonAtEnd).ToList();
 
                 var firstOfCommonEndSeq = commonEndSeq.First();
                 if (firstOfCommonEndSeq is ComparisonUnitWord)
@@ -2346,7 +2363,8 @@ namespace Clippit
                     )
                     {
                         remainingInLeftParagraph = unknown
-                            .ComparisonUnitArray1.Reverse()
+                            .ComparisonUnitArray1.AsEnumerable()
+                            .Reverse()
                             .Skip(countCommonAtEnd)
                             .TakeWhile(cu =>
                             {
@@ -2361,7 +2379,8 @@ namespace Clippit
                             })
                             .Count();
                         remainingInRightParagraph = unknown
-                            .ComparisonUnitArray2.Reverse()
+                            .ComparisonUnitArray2.AsEnumerable()
+                            .Reverse()
                             .Skip(countCommonAtEnd)
                             .TakeWhile(cu =>
                             {

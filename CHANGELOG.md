@@ -2,7 +2,7 @@
 
 ## [3.1.0] - August 30, 2025
 
-- Build for .NET 10.0
+- Build with .NET 10.0 and provide .NET 8 & 10 binaries (#106)
 
 ## [3.0.2] - August 30, 2025
 

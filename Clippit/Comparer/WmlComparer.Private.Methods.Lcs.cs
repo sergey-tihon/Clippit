@@ -1173,7 +1173,7 @@ namespace Clippit
                 throw new OpenXmlPowerToolsException("Internal error");
             }
 
-            var tblElement1 = firstContentAtom1.AncestorElements.Reverse().First(a => a.Name == W.tbl);
+            var tblElement1 = firstContentAtom1.AncestorElements.Last(a => a.Name == W.tbl);
 
             var firstContentAtom2 = tblGroup2.DescendantContentAtoms().FirstOrDefault();
             if (firstContentAtom2 == null)
@@ -1181,7 +1181,7 @@ namespace Clippit
                 throw new OpenXmlPowerToolsException("Internal error");
             }
 
-            var tblElement2 = firstContentAtom2.AncestorElements.Reverse().First(a => a.Name == W.tbl);
+            var tblElement2 = firstContentAtom2.AncestorElements.Last(a => a.Name == W.tbl);
 
             var leftContainsMerged = tblElement1.Descendants().Any(d => d.Name == W.vMerge || d.Name == W.gridSpan);
 
