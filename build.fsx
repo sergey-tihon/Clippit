@@ -6,7 +6,7 @@ open Fake.IO
 open Fake.DotNet
 
 let version =
-    Changelog.GetLastVersion(__SOURCE_DIRECTORY__)
+    Changelog.GetLastVersion __SOURCE_DIRECTORY__
     |> Option.defaultWith (fun () -> failwith "Version is not found")
 
 pipeline "build" {
@@ -48,7 +48,7 @@ pipeline "build" {
                   AssemblyInfo.FileVersion version.Version ])
     }
 
-    stage "Build" { run "dotnet build Clippit.sln -c Release" }
+    stage "Build" { run "dotnet build Clippit.slnx -c Release" }
 
     stage "RunTests" { run "dotnet test Clippit.Tests/" }
 
