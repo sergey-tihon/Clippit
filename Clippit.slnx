@@ -1,0 +1,13 @@
+<Solution>
+    <Project Path="Clippit/Clippit.csproj" />
+    <Project Path="Clippit.Tests/Clippit.Tests.csproj" />
+    <Folder Name="/Solution Items/">
+        <File Path="README.md" />
+        <File Path=".editorconfig" />
+        <File Path=".gitignore" />
+        <File Path="build.fsx" />
+        <File Path="CHANGELOG.md" />
+        <File Path="Directory.Build.props" />
+        <File Path="global.json" />
+    </Folder>
+</Solution>

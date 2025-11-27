@@ -10,10 +10,12 @@ using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.PowerPoint.Fluent
 {
-    internal static class PresentationBuilderTools
+    public static class PresentationBuilderTools
     {
-        internal static string GetSlideTitle(XElement slide)
+        public static string GetSlideTitle(XElement slide)
         {
+            ArgumentNullException.ThrowIfNull(slide);
+
             var titleShapes = slide
                 .Element(P.cSld)
                 .Element(P.spTree)
@@ -44,8 +46,10 @@ namespace Clippit.PowerPoint.Fluent
             return paragraphText.ToString().Trim();
         }
 
-        internal static List<string> GetSlideIdsInOrder(PresentationDocument srcDoc)
+        public static List<string> GetSlideIdsInOrder(PresentationDocument srcDoc)
         {
+            ArgumentNullException.ThrowIfNull(srcDoc);
+
             return srcDoc
                 .PresentationPart.GetXElement()
                 .Descendants(P.sldId)
