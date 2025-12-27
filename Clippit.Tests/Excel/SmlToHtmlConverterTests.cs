@@ -102,7 +102,7 @@ public class SmlToHtmlConverterTests : TestsBase
         var sourceDir = new DirectoryInfo("../../../../TestFiles/");
         var sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
         var sourceCopiedToDestXlsx = new FileInfo(
-            Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx"))
+            Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", $"-1-Source-{range.Replace(":", "")}.xlsx"))
         );
         File.Copy(sourceXlsx.FullName, sourceCopiedToDestXlsx.FullName, overwrite: true);
         var dataTemplateFileNameSuffix = $"-2-Generated-XmlData-{range.Replace(":", "")}.xml";
