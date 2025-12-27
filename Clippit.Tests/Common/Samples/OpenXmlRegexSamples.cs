@@ -1,9 +1,10 @@
-﻿using System.Text.RegularExpressions;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Tests.Common.Samples
 {
+    [NotInParallel]
     public class OpenXmlRegexSamples : TestsBase
     {
         private static string GetFilePath(string path) => Path.Combine("../../../Common/Samples/OpenXmlRegex/", path);
@@ -186,7 +187,7 @@ namespace Clippit.Tests.Common.Samples
         {
             var sourceDoc = new FileInfo(GetFilePath("TestDocument.docx"));
             var newDoc = new FileInfo(Path.Combine(TempDir, "Modified.docx"));
-            File.Copy(sourceDoc.FullName, newDoc.FullName);
+            File.Copy(sourceDoc.FullName, newDoc.FullName, overwrite: true);
             using var wDoc = WordprocessingDocument.Open(newDoc.FullName, true);
             int count;
             var xDoc = wDoc.MainDocumentPart.GetXDocument();

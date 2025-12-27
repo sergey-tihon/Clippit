@@ -1,10 +1,11 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 using Clippit.Excel;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Tests.Excel;
 
+[NotInParallel]
 public class SmlCellFormatterTests : TestsBase
 {
     [Test]

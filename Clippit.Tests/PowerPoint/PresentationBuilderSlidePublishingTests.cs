@@ -1,8 +1,9 @@
-﻿using Clippit.PowerPoint;
+using Clippit.PowerPoint;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Tests.PowerPoint
 {
+    [NotInParallel]
     public partial class PresentationBuilderSlidePublishingTests : Clippit.Tests.TestsBase
     {
         private const string SourceDirectory = "../../../../TestFiles/PublishSlides/";
@@ -32,7 +33,7 @@ namespace Clippit.Tests.PowerPoint
             if (Directory.Exists(targetDir))
                 Directory.Delete(targetDir, true);
             Directory.CreateDirectory(targetDir);
-            await using var srcStream = File.Open(sourcePath, FileMode.Open);
+            await using var srcStream = File.Open(sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             var openSettings = new OpenSettings { AutoSave = false };
             using var srcDoc = OpenXmlExtensions.OpenPresentation(srcStream, false, openSettings);
             var title = srcDoc.PackageProperties.Title ?? string.Empty;
@@ -67,7 +68,7 @@ namespace Clippit.Tests.PowerPoint
         public async Task ExtractSlideWithExtendedChart()
         {
             var sourcePath = Path.Combine(SourceDirectory, "SlideWithExtendedChart.pptx");
-            await using var srcStream = File.Open(sourcePath, FileMode.Open);
+            await using var srcStream = File.Open(sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             var openSettings = new OpenSettings { AutoSave = false };
             using var srcDoc = OpenXmlExtensions.OpenPresentation(srcStream, false, openSettings);
             ArgumentNullException.ThrowIfNull(srcDoc.PresentationPart);
