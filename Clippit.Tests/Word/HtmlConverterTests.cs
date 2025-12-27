@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 #define COPY_FILES_FOR_DEBUGGING
 // DO_CONVERSION_VIA_WORD is defined in the project Clippit.Tests.OA.csproj, but not in the Clippit.Tests.csproj
@@ -79,13 +79,11 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         var sourceCopiedToDestDocx = new FileInfo(
             Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-1-Source.docx"))
         );
-        if (!sourceCopiedToDestDocx.Exists)
-            File.Copy(sourceDocx.FullName, sourceCopiedToDestDocx.FullName);
+        File.Copy(sourceDocx.FullName, sourceCopiedToDestDocx.FullName, overwrite: true);
         var assembledFormattingDestDocx = new FileInfo(
             Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-2-FormattingAssembled.docx"))
         );
-        if (!assembledFormattingDestDocx.Exists)
-            CopyFormattingAssembledDocx(sourceDocx, assembledFormattingDestDocx);
+        CopyFormattingAssembledDocx(sourceDocx, assembledFormattingDestDocx);
 #endif
         var oxPtConvertedDestHtml = new FileInfo(
             Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-3-OxPt.html"))

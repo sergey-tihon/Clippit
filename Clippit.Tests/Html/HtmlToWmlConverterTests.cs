@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 using Clippit.Html;
 using Clippit.Word;
@@ -301,11 +301,8 @@ public class HtmlToWmlConverterTests : TestsBase
         var annotatedHtmlFi = new FileInfo(
             Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt"))
         );
-        if (!sourceCopiedToDestHtmlFi.Exists)
-        {
-            Directory.CreateDirectory(sourceCopiedToDestHtmlFi.DirectoryName);
-            File.Copy(sourceHtmlFi.FullName, sourceCopiedToDestHtmlFi.FullName);
-        }
+        Directory.CreateDirectory(sourceCopiedToDestHtmlFi.DirectoryName);
+        File.Copy(sourceHtmlFi.FullName, sourceCopiedToDestHtmlFi.FullName, overwrite: true);
 
         var html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceCopiedToDestHtmlFi);
         var htmlString = html.ToString();
@@ -357,7 +354,7 @@ public class HtmlToWmlConverterTests : TestsBase
             destImageDi.Create();
             foreach (var file in sourceImageDi.GetFiles())
             {
-                File.Copy(file.FullName, destImageDi.FullName + "/" + file.Name);
+                File.Copy(file.FullName, destImageDi.FullName + "/" + file.Name, overwrite: true);
             }
         }
 
@@ -409,7 +406,7 @@ public class HtmlToWmlConverterTests : TestsBase
         var annotatedHtmlFi = new FileInfo(
             Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt"))
         );
-        File.Copy(sourceHtmlFi.FullName, sourceCopiedToDestHtmlFi.FullName);
+        File.Copy(sourceHtmlFi.FullName, sourceCopiedToDestHtmlFi.FullName, overwrite: true);
         var html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceCopiedToDestHtmlFi);
         var usedAuthorCss = HtmlToWmlConverter.CleanUpCss(
             (string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style")
@@ -450,7 +447,7 @@ public class HtmlToWmlConverterTests : TestsBase
         var annotatedHtmlFi = new FileInfo(
             Path.Combine(TempDir, sourceHtmlFi.Name.Replace(".html", "-4-Annotated.txt"))
         );
-        File.Copy(sourceHtmlFi.FullName, sourceCopiedToDestHtmlFi.FullName);
+        File.Copy(sourceHtmlFi.FullName, sourceCopiedToDestHtmlFi.FullName, overwrite: true);
         var html = HtmlToWmlReadAsXElement.ReadAsXElement(sourceCopiedToDestHtmlFi);
         var usedAuthorCss = HtmlToWmlConverter.CleanUpCss(
             (string)html.Descendants().FirstOrDefault(d => d.Name.LocalName.ToLower() == "style")

@@ -1,4 +1,4 @@
-﻿using System.Xml.Linq;
+using System.Xml.Linq;
 using Clippit.PowerPoint;
 using Clippit.PowerPoint.Fluent;
 using DocumentFormat.OpenXml.Packaging;
@@ -16,7 +16,7 @@ public partial class PresentationBuilderSlidePublishingTests
         if (Directory.Exists(targetDir))
             Directory.Delete(targetDir, true);
         Directory.CreateDirectory(targetDir);
-        await using var srcStream = File.Open(sourcePath, FileMode.Open);
+        await using var srcStream = File.Open(sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         var openSettings = new OpenSettings { AutoSave = false };
         using var srcDoc = OpenXmlExtensions.OpenPresentation(srcStream, false, openSettings);
         ArgumentNullException.ThrowIfNull(srcDoc.PresentationPart);
