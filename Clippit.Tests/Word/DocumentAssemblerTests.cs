@@ -145,7 +145,7 @@ public class DocumentAssemblerTests : TestsBase
     public async Task DA101(string name, string data, bool err)
     {
         var afterAssembling = AssembleDocument(name, data, out var returnedTemplateError);
-        var assembledDocx = GetOutputFile(name);
+        var assembledDocx = GetOutputFile(name, data);
         afterAssembling.SaveAs(assembledDocx.FullName);
 
         await ValidateAsync(assembledDocx);
@@ -597,10 +597,16 @@ public class DocumentAssemblerTests : TestsBase
         return DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out templateError);
     }
 
-    private FileInfo GetOutputFile(string fileName)
+    private FileInfo GetOutputFile(string templateName, string dataName = null)
     {
+        var baseName = Path.GetFileNameWithoutExtension(templateName);
+        if (!string.IsNullOrEmpty(dataName))
+        {
+            var dataBaseName = Path.GetFileNameWithoutExtension(dataName);
+            baseName = $"{baseName}_{dataBaseName}";
+        }
         return new FileInfo(
-            Path.Combine(TempDir, fileName.Replace(Path.GetExtension(fileName), "-processed-by-DocumentAssembler.docx"))
+            Path.Combine(TempDir, $"{baseName}-processed-by-DocumentAssembler.docx")
         );
     }
 
