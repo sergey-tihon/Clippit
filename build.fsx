@@ -50,7 +50,7 @@ pipeline "build" {
 
     stage "Build" { run "dotnet build Clippit.slnx -c Release" }
 
-    stage "RunTests" { run "dotnet test Clippit.Tests/" }
+    stage "RunTests" { run "dotnet test --solution Clippit.slnx" }
 
     stage "NuGet" {
         run
