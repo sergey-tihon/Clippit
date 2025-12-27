@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 using Clippit.Excel;
 using DocumentFormat.OpenXml.Packaging;
@@ -47,8 +47,7 @@ public class SmlToHtmlConverterTests : TestsBase
         var sourceCopiedToDestXlsx = new FileInfo(
             Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx"))
         );
-        if (!sourceCopiedToDestXlsx.Exists)
-            File.Copy(sourceXlsx.FullName, sourceCopiedToDestXlsx.FullName);
+        File.Copy(sourceXlsx.FullName, sourceCopiedToDestXlsx.FullName, overwrite: true);
         var dataTemplateFileNameSuffix = "-2-Generated-XmlData-Entire-Sheet.xml";
         var dataXmlFi = new FileInfo(
             Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix))
@@ -105,8 +104,7 @@ public class SmlToHtmlConverterTests : TestsBase
         var sourceCopiedToDestXlsx = new FileInfo(
             Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx"))
         );
-        if (!sourceCopiedToDestXlsx.Exists)
-            File.Copy(sourceXlsx.FullName, sourceCopiedToDestXlsx.FullName);
+        File.Copy(sourceXlsx.FullName, sourceCopiedToDestXlsx.FullName, overwrite: true);
         var dataTemplateFileNameSuffix = $"-2-Generated-XmlData-{range.Replace(":", "")}.xml";
         var dataXmlFi = new FileInfo(
             Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", dataTemplateFileNameSuffix))
@@ -135,8 +133,7 @@ public class SmlToHtmlConverterTests : TestsBase
         var sourceCopiedToDestXlsx = new FileInfo(
             Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-1-Source.xlsx"))
         );
-        if (!sourceCopiedToDestXlsx.Exists)
-            File.Copy(sourceXlsx.FullName, sourceCopiedToDestXlsx.FullName);
+        File.Copy(sourceXlsx.FullName, sourceCopiedToDestXlsx.FullName, overwrite: true);
         var dataXmlFi = new FileInfo(
             Path.Combine(TempDir, sourceXlsx.Name.Replace(".xlsx", "-2-Generated-XmlData.xml"))
         );
