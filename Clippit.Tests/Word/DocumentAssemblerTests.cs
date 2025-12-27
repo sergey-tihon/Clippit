@@ -605,9 +605,7 @@ public class DocumentAssemblerTests : TestsBase
             var dataBaseName = Path.GetFileNameWithoutExtension(dataName);
             baseName = $"{baseName}_{dataBaseName}";
         }
-        return new FileInfo(
-            Path.Combine(TempDir, $"{baseName}-processed-by-DocumentAssembler.docx")
-        );
+        return new FileInfo(Path.Combine(TempDir, $"{baseName}-processed-by-DocumentAssembler.docx"));
     }
 
     private static readonly List<string> s_expectedErrors =
