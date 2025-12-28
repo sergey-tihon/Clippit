@@ -1,4 +1,4 @@
-#r "nuget: Fun.Build, 1.1.14"
+#r "nuget: Fun.Build, 1.1.17"
 #r "nuget: Fake.DotNet.AssemblyInfoFile"
 
 open Fun.Build
