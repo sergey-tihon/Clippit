@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -17,9 +17,9 @@ namespace Clippit.Word.Assembler
 
         private static readonly Regex detectEntityRegEx = new Regex("^&(?:#([0-9]+)|#x([0-9a-fA-F]+)|([0-9a-zA-Z]+));");
 
-        private static readonly XElement softBreak = new XElement(W.r, new XElement(W.br));
-        private static readonly XElement emptyRun = new XElement(W.r, new XElement(W.t));
-        private static readonly XElement softTab = new XElement(W.r, new XElement(W.tab));
+        private static XElement SoftBreak => new XElement(W.r, new XElement(W.br));
+        private static XElement EmptyRun => new XElement(W.r, new XElement(W.t));
+        private static XElement SoftTab => new XElement(W.r, new XElement(W.tab));
 
         /// <summary>
         /// Method processes a string that contains inline html tags and generates a run with the necessary properties
@@ -47,7 +47,7 @@ namespace Clippit.Word.Assembler
             // if we no data returned then just return an empty run
             if (values.Length == 0)
             {
-                return new List<XElement> { emptyRun };
+                return new List<XElement> { EmptyRun };
             }
 
             // otherwise split the values if there are new line characters
@@ -68,7 +68,7 @@ namespace Clippit.Word.Assembler
                 // empty and not the first element, this was a new line character and should be a soft break
                 if (i > 0 && string.IsNullOrWhiteSpace(value))
                 {
-                    results.Add(softBreak);
+                    results.Add(SoftBreak);
                     continue;
                 }
 
@@ -85,13 +85,13 @@ namespace Clippit.Word.Assembler
                     )
                     {
                         if (run == "\n")
-                            results.Add(softBreak);
+                            results.Add(SoftBreak);
                         else
                         {
                             foreach (var splitRun in run.SplitAndKeep('\t'))
                             {
                                 if (splitRun == "\t")
-                                    results.Add(softTab);
+                                    results.Add(SoftTab);
                                 else
                                     results.Add(new XElement(W.r, new XElement(W.t, splitRun)));
                             }
@@ -100,11 +100,11 @@ namespace Clippit.Word.Assembler
                 }
                 else
                 {
-                    if (i > 0 && results.Last() != softBreak)
+                    if (i > 0 && !IsSoftBreak(results.Last()))
                     {
                         // if this is not the first element we are processing then add a soft break before
                         // only if our last run is not a soft-break itself!
-                        results.Add(softBreak);
+                        results.Add(SoftBreak);
                     }
 
                     // otherwise we have XML let's process it
@@ -120,11 +120,14 @@ namespace Clippit.Word.Assembler
 
             if (results.Count == 0)
             {
-                return new List<XElement> { emptyRun };
+                return new List<XElement> { EmptyRun };
             }
 
             return results;
         }
+
+        private static bool IsSoftBreak(XElement element) =>
+            element.Name == W.r && element.Elements().Count() == 1 && element.Element(W.br) != null;
 
         private static List<object> FlattenResults(object obj)
         {
@@ -152,7 +155,7 @@ namespace Clippit.Word.Assembler
                 {
                     // add a soft break between
                     if (i > 0)
-                        result.Add(softBreak);
+                        result.Add(SoftBreak);
 
                     XElement element = obj as XElement;
                     IEnumerable<XElement> runs = element.DescendantsAndSelf(W.r);

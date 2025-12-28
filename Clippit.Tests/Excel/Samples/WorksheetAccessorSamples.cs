@@ -1,14 +1,13 @@
 ﻿using Clippit.Excel;
-using Xunit;
 
 namespace Clippit.Tests.Excel.Samples
 {
-    public class WorksheetAccessorSamples(ITestOutputHelper log) : TestsBase(log)
+    public class WorksheetAccessorSamples() : Clippit.Tests.TestsBase
     {
         private static string GetFilePath(string path) =>
             Path.Combine("../../../Excel/Samples/WorksheetAccessor/", path);
 
-        [Fact]
+        [Test]
         public void Formulas1()
         {
             var sourceFile = GetFilePath("Formulas1/Formulas.xlsx");
@@ -19,6 +18,7 @@ namespace Clippit.Tests.Excel.Samples
                 {
                     WorksheetAccessor.FormulaReplaceSheetName(doc, "Source", "'Source 2'");
                 }
+
                 streamDoc.GetModifiedSmlDocument().SaveAs(Path.Combine(TempDir, "FormulasUpdated.xlsx"));
             }
 
@@ -30,17 +30,17 @@ namespace Clippit.Tests.Excel.Samples
                     var sheet = WorksheetAccessor.GetWorksheet(doc, "References");
                     WorksheetAccessor.CopyCellRange(doc, sheet, 1, 1, 7, 5, 4, 8);
                 }
+
                 streamDoc.GetModifiedSmlDocument().SaveAs(Path.Combine(TempDir, "FormulasCopied.xlsx"));
             }
         }
 
-        [Fact]
+        [Test]
         public void PivotTables1()
         {
             // Update an existing pivot table
             var qs = new FileInfo(GetFilePath("PivotTables1/QuarterlySales.xlsx"));
             var qsu = new FileInfo(Path.Combine(TempDir, "QuarterlyPivot.xlsx"));
-
             var row = 1;
             using (var streamDoc = new OpenXmlMemoryStreamDocument(OpenXmlPowerToolsDocument.FromFileName(qs.FullName)))
             {
@@ -70,7 +70,6 @@ namespace Clippit.Tests.Excel.Samples
                     }
 
                     sheet.PutXDocument();
-
                     WorksheetAccessor.UpdateRangeEndRow(doc, "Sales", row - 1);
                 }
 
@@ -87,7 +86,6 @@ namespace Clippit.Tests.Excel.Samples
                     WorksheetAccessor.CreateDefaultStyles(doc);
                     var sheet = WorksheetAccessor.AddWorksheet(doc, "Range");
                     var ms = new MemorySpreadsheet();
-
 #if false
                     int font0 = WorksheetAccessor.GetFontIndex(doc, new WorksheetAccessor.Font
                     {
@@ -423,7 +421,6 @@ namespace Clippit.Tests.Excel.Samples
                             new WorksheetAccessor.ColorInfo(WorksheetAccessor.ColorInfo.ColorType.Theme, 4))
                     });
 #endif
-
                     var southIndex = WorksheetAccessor.GetStyleIndex(
                         doc,
                         0,
@@ -480,7 +477,6 @@ namespace Clippit.Tests.Excel.Samples
                         "_(\"$\"* #,##0.00_);_(\"$\"* \\(#,##0.00\\);_(\"$\"* \"-\"??_);_(@_)"
                     );
                     var amountIndex = WorksheetAccessor.GetStyleIndex(doc, 100, 0, 0, 0, null, false, false);
-
                     using (var source = new StreamReader(GetFilePath("PivotTables1/PivotData.txt")))
                     {
                         while (!source.EndOfStream)
@@ -525,7 +521,6 @@ namespace Clippit.Tests.Excel.Samples
                     WorksheetAccessor.SetRange(doc, "Sales", "Range", 1, 1, row - 1, maxColumn);
                     var pivot = WorksheetAccessor.AddWorksheet(doc, "Pivot");
                     WorksheetAccessor.CreatePivotTable(doc, "Sales", pivot);
-
                     // Configure pivot table rows, columns, data and filters
                     WorksheetAccessor.AddPivotAxis(doc, pivot, "Year", WorksheetAccessor.PivotAxis.Column);
                     WorksheetAccessor.AddPivotAxis(doc, pivot, "Quarter", WorksheetAccessor.PivotAxis.Column);
@@ -550,7 +545,6 @@ namespace Clippit.Tests.Excel.Samples
                 {
                     var pivot = WorksheetAccessor.AddWorksheet(doc, "Pivot");
                     WorksheetAccessor.CreatePivotTable(doc, "Sales", pivot);
-
                     // Configure pivot table rows, columns, data and filters
                     WorksheetAccessor.AddPivotAxis(doc, pivot, "Year", WorksheetAccessor.PivotAxis.Column);
                     WorksheetAccessor.AddPivotAxis(doc, pivot, "Quarter", WorksheetAccessor.PivotAxis.Column);

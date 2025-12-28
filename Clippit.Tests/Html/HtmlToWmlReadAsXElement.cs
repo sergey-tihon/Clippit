@@ -71,13 +71,12 @@ namespace Clippit.Tests.Html
 
         private static object ConvertToNoNamespace(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
+            if (node is XElement element)
             {
                 return new XElement(
                     element.Name.LocalName,
                     element.Attributes().Where(a => !a.IsNamespaceDeclaration),
-                    element.Nodes().Select(n => ConvertToNoNamespace(n))
+                    element.Nodes().Select(ConvertToNoNamespace)
                 );
             }
             return node;

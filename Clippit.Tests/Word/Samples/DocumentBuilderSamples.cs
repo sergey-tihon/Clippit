@@ -1,60 +1,46 @@
 ﻿using System.Xml.Linq;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
-using Xunit;
 
 namespace Clippit.Tests.Word.Samples
 {
-    public class DocumentBuilderSamples(ITestOutputHelper log) : TestsBase(log)
+    public class DocumentBuilderSamples() : Clippit.Tests.TestsBase
     {
         private static string GetFilePath(string path) => Path.Combine("../../../Word/Samples/DocumentBuilder/", path);
 
-        [Fact]
+        [Test]
         public void Sample1()
         {
             var source1 = GetFilePath("Sample1/Source1.docx");
             var source2 = GetFilePath("Sample1/Source2.docx");
             var source3 = GetFilePath("Sample1/Source3.docx");
-
             // Create new document from 10 paragraphs starting at paragraph 5 of Source1.docx
             var sources = new List<ISource> { new Source(new WmlDocument(source1), 5, 10, true) };
             DocumentBuilder.BuildDocument(sources, Path.Combine(TempDir, "Out1.docx"));
-
             // Create new document from paragraph 1, and paragraphs 5 through end of Source3.docx.
             // This effectively 'deletes' paragraphs 2-4
-            sources = new List<ISource>()
-            {
+            sources =
+            [
                 new Source(new WmlDocument(source3), 0, 1, false),
                 new Source(new WmlDocument(source3), 4, false),
-            };
+            ];
             DocumentBuilder.BuildDocument(sources, Path.Combine(TempDir, "Out2.docx"));
-
             // Create a new document that consists of the entirety of Source1.docx and Source2.docx.  Use
             // the section information (headings and footers) from source1.
-            sources = new List<ISource>()
-            {
-                new Source(new WmlDocument(source1), true),
-                new Source(new WmlDocument(source2), false),
-            };
+            sources = [new Source(new WmlDocument(source1), true), new Source(new WmlDocument(source2), false)];
             DocumentBuilder.BuildDocument(sources, Path.Combine(TempDir, "Out3.docx"));
-
             // Create a new document that consists of the entirety of Source1.docx and Source2.docx.  Use
             // the section information (headings and footers) from source2.
-            sources = new List<ISource>()
-            {
-                new Source(new WmlDocument(source1), false),
-                new Source(new WmlDocument(source2), true),
-            };
+            sources = [new Source(new WmlDocument(source1), false), new Source(new WmlDocument(source2), true)];
             DocumentBuilder.BuildDocument(sources, Path.Combine(TempDir, "Out4.docx"));
-
             // Create a new document that consists of the first 5 paragraphs of Source1.docx and the first
             // five paragraphs of Source2.docx.  This example returns a new WmlDocument, when you then can
             // serialize to a SharePoint document library, or use in some other interesting scenario.
-            sources = new List<ISource>()
-            {
+            sources =
+            [
                 new Source(new WmlDocument(source1), 0, 5, false),
                 new Source(new WmlDocument(source2), 0, 5, true),
-            };
+            ];
             var out5 = DocumentBuilder.BuildDocument(sources);
             out5.SaveAs(Path.Combine(TempDir, "Out5.docx")); // save it to the file system, but we could just as easily done something
             // else with it.
@@ -67,7 +53,7 @@ namespace Clippit.Tests.Word.Samples
             public int Count { get; init; }
         }
 
-        [Fact]
+        [Test]
         public void Sample2()
         {
             // Insert an abstract and author biography into a white paper.
@@ -79,7 +65,6 @@ namespace Clippit.Tests.Word.Samples
                 new Source(new WmlDocument(GetFilePath("Sample2/WhitePaper.docx")), 1, false),
             };
             DocumentBuilder.BuildDocument(sources, Path.Combine(TempDir, "AssembledPaper.docx"));
-
             // Delete all paragraphs with a specific style.
             using (var doc = WordprocessingDocument.Open(GetFilePath("Sample2/Notes.docx"), false))
             {
@@ -104,7 +89,6 @@ namespace Clippit.Tests.Word.Samples
             }
 
             DocumentBuilder.BuildDocument(sources, Path.Combine(TempDir, "NewNotes.docx"));
-
             // Shred a document into multiple parts for each section
             List<DocumentInfo> documentList;
             using (var doc = WordprocessingDocument.Open(GetFilePath("Sample2/Spec.docx"), false))
@@ -167,7 +151,7 @@ namespace Clippit.Tests.Word.Samples
             DocumentBuilder.BuildDocument(sources, Path.Combine(TempDir, "ReassembledSpec.docx"));
         }
 
-        [Fact]
+        [Test]
         public void Sample3()
         {
             var doc1 = new WmlDocument(GetFilePath("Sample3/Template.docx"));
@@ -186,6 +170,7 @@ namespace Clippit.Tests.Word.Samples
                     secondCell.ReplaceWith(new XElement(PtOpenXml.Insert, new XAttribute("Id", "Eric")));
                     doc.MainDocumentPart.PutXDocument();
                 }
+
                 doc1.DocumentByteArray = mem.ToArray();
             }
 
@@ -200,7 +185,7 @@ namespace Clippit.Tests.Word.Samples
             DocumentBuilder.BuildDocument(sources, outFileName);
         }
 
-        [Fact]
+        [Test]
         public void Sample4()
         {
             var solarSystemDoc = new WmlDocument(GetFilePath("Sample4/solar-system.docx"));
@@ -208,7 +193,6 @@ namespace Clippit.Tests.Word.Samples
             using var solarSystem = streamDoc.GetWordprocessingDocument();
             // get children elements of the <w:body> element
             var q1 = solarSystem.MainDocumentPart.GetXDocument().Root.Element(W.body).Elements();
-
             // project collection of tuples containing element and type
             var q2 = q1.Select(e =>
                 {
@@ -220,15 +204,12 @@ namespace Clippit.Tests.Word.Samples
                     return new { Element = e, KeyForGroupAdjacent = keyForGroupAdjacent };
                 })
                 .Where(e => e.KeyForGroupAdjacent != null);
-
             // group by type
             var q3 = q2.GroupAdjacent(e => e.KeyForGroupAdjacent);
-
             // temporary code to dump q3
             foreach (var g in q3)
-                Log.WriteLine("{0}:  {1}", g.Key, g.Count());
+                Console.WriteLine("{0}:  {1}", g.Key, g.Count());
             //Environment.Exit(0);
-
             // validate existence of files referenced in content controls
             foreach (var f in q3.Where(g => g.Key != ".NonContentControl"))
             {
@@ -236,7 +217,7 @@ namespace Clippit.Tests.Word.Samples
                 var fi = new FileInfo(filename);
                 if (!fi.Exists)
                 {
-                    Log.WriteLine("{0} doesn't exist.", filename);
+                    Console.WriteLine("{0} doesn't exist.", filename);
                     Environment.Exit(0);
                 }
             }
@@ -249,7 +230,6 @@ namespace Clippit.Tests.Word.Samples
                     ? new WmlDocument(GetFilePath("Sample4/" + g.Key + ".docx"))
                     : solarSystemDoc,
             });
-
             // project collection of OpenXml.PowerTools.Source
             var sources = q4.Select(g =>
                 {
@@ -265,7 +245,6 @@ namespace Clippit.Tests.Word.Samples
                 })
                 .Cast<ISource>()
                 .ToList();
-
             DocumentBuilder.BuildDocument(sources, Path.Combine(TempDir, "solar-system-new.docx"));
         }
     }

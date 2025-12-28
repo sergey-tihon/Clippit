@@ -1,17 +1,16 @@
 ﻿using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;
-using Xunit;
 
 namespace Clippit.Tests.Common.Samples
 {
-    public class TextReplacerSamples(ITestOutputHelper log) : TestsBase(log)
+    public class TextReplacerSamples : TestsBase
     {
         private static string GetFilePath(string path) => Path.Combine("../../../Common/Samples/TextReplacer/", path);
 
-        [Theory]
-        [InlineData("PowerPoint/Test01.pptx")]
-        [InlineData("PowerPoint/Test02.pptx")]
-        [InlineData("PowerPoint/Test03.pptx")]
+        [Test]
+        [Arguments("PowerPoint/Test01.pptx")]
+        [Arguments("PowerPoint/Test02.pptx")]
+        [Arguments("PowerPoint/Test03.pptx")]
         public void PowerPoint(string filePath)
         {
             var outFile = Path.Combine(TempDir, Path.GetFileName(filePath).Replace(".pptx", "out.pptx"));
@@ -20,16 +19,14 @@ namespace Clippit.Tests.Common.Samples
             TextReplacer.SearchAndReplace(pDoc, "Hello", "Goodbye", true);
         }
 
-        [Fact]
+        [Test]
         public void Word()
         {
             var di2 = new DirectoryInfo(GetFilePath("Word"));
             foreach (var file in di2.GetFiles("*.docx"))
                 file.CopyTo(Path.Combine(TempDir, file.Name));
-
             using (var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test01.docx"), true))
                 TextReplacer.SearchAndReplace(doc, "the", "this", false);
-
             try
             {
                 using var doc = WordprocessingDocument.Open(Path.Combine(TempDir, "Test02.docx"), true);

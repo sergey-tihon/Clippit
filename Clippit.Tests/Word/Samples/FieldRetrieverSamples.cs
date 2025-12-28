@@ -1,31 +1,30 @@
 ﻿using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using Xunit;
 
 namespace Clippit.Tests.Word.Samples
 {
-    public class FieldRetrieverSamples(ITestOutputHelper log) : TestsBase(log)
+    public class FieldRetrieverSamples() : Clippit.Tests.TestsBase
     {
         private static string GetFilePath(string path) => Path.Combine("../../../Word/Samples/FieldRetriever/", path);
 
-        [Fact]
+        [Test]
         public void Sample1()
         {
             var docWithFooter = new FileInfo(GetFilePath("DocWithFooter1.docx"));
             var scrubbedDocument = new FileInfo(Path.Combine(TempDir, "DocWithFooterScrubbed1.docx"));
             File.Copy(docWithFooter.FullName, scrubbedDocument.FullName, true);
             using var wDoc = WordprocessingDocument.Open(scrubbedDocument.FullName, true);
-            ScrubFooter(wDoc, new[] { "PAGE" });
+            ScrubFooter(wDoc, ["PAGE"]);
         }
 
-        [Fact]
+        [Test]
         public void Sample2()
         {
             var docWithFooter = new FileInfo(GetFilePath("DocWithFooter2.docx"));
             var scrubbedDocument = new FileInfo(Path.Combine(TempDir, "DocWithFooterScrubbed2.docx"));
             File.Copy(docWithFooter.FullName, scrubbedDocument.FullName, true);
             using var wDoc = WordprocessingDocument.Open(scrubbedDocument.FullName, true);
-            ScrubFooter(wDoc, new[] { "PAGE", "DATE" });
+            ScrubFooter(wDoc, ["PAGE", "DATE"]);
         }
 
         private static void ScrubFooter(WordprocessingDocument wDoc, string[] fieldTypesToKeep)
@@ -56,7 +55,6 @@ namespace Clippit.Tests.Word.Samples
                         .ToList()
                 )
                 .ToList();
-
             foreach (var paragraph in root.Descendants(W.p).ToList())
             {
                 if (paragraph.Elements(W.r).Any(r => runsToKeep.Contains(r)))

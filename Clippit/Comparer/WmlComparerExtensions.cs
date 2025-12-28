@@ -10,9 +10,8 @@ namespace Clippit
     {
         public static XElement GetMainDocumentBody(this WordprocessingDocument wordDocument)
         {
-            return wordDocument.GetMainDocumentRoot().Element(W.body) ?? throw new ArgumentException(
-                    "Invalid document."
-                );
+            return wordDocument.GetMainDocumentRoot().Element(W.body)
+                ?? throw new ArgumentException("Invalid document.");
         }
 
         public static XElement GetMainDocumentRoot(this WordprocessingDocument wordDocument)

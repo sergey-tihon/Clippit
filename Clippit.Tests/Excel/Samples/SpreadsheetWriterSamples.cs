@@ -1,11 +1,10 @@
 ﻿using Clippit.Excel;
-using Xunit;
 
 namespace Clippit.Tests.Excel.Samples
 {
-    public class SpreadsheetWriterSamples(ITestOutputHelper log) : TestsBase(log)
+    public class SpreadsheetWriterSamples() : Clippit.Tests.TestsBase
     {
-        [Fact]
+        [Test]
         public void Sample1()
         {
             var wb = new WorkbookDfn
@@ -66,13 +65,12 @@ namespace Clippit.Tests.Excel.Samples
                     },
                 ],
             };
-
             var fileName = Path.Combine(TempDir, "Sw_Example1.xlsx");
             using var stream = File.Open(fileName, FileMode.OpenOrCreate);
             wb.WriteTo(stream);
         }
 
-        [Fact]
+        [Test]
         public void Sample2()
         {
             var wb = new WorkbookDfn
@@ -211,13 +209,12 @@ namespace Clippit.Tests.Excel.Samples
                     },
                 ],
             };
-
             var fileName = Path.Combine(TempDir, "Sw_Example2.xlsx");
             using var stream = File.Open(fileName, FileMode.OpenOrCreate);
             wb.WriteTo(stream);
         }
 
-        [Fact]
+        [Test]
         public void CanEncodeInvalidXmlCharacters()
         {
             var wb = new WorkbookDfn
@@ -244,7 +241,6 @@ namespace Clippit.Tests.Excel.Samples
                     },
                 ],
             };
-
             var fileName = Path.Combine(TempDir, $"{nameof(CanEncodeInvalidXmlCharacters)}.xlsx");
             using var stream = File.Open(fileName, FileMode.OpenOrCreate);
             wb.WriteTo(stream);

@@ -1,4 +1,4 @@
-#r "nuget: Fun.Build, 1.1.14"
+#r "nuget: Fun.Build, 1.1.17"
 #r "nuget: Fake.DotNet.AssemblyInfoFile"
 
 open Fun.Build
@@ -50,7 +50,7 @@ pipeline "build" {
 
     stage "Build" { run "dotnet build Clippit.slnx -c Release" }
 
-    stage "RunTests" { run "dotnet test Clippit.Tests/" }
+    stage "RunTests" { run "dotnet test --solution Clippit.slnx" }
 
     stage "NuGet" {
         run
