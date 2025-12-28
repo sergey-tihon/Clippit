@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Build Presentation | Clippit </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Build Presentation | Clippit ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../images/logo-site.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Tutorial.Word.PresentationBuilder">
+<h1 id="build-presentation">Build Presentation</h1>
+
+<p>Namespace: <code>Clippit.PowerPoint</code></p>
+<p>Combine collection of <code>SlideSource</code>'s into one PowerPoint presentations.</p>
+<pre><code class="lang-csharp">public static class PresentationBuilder {
+    public static PmlDocument BuildPresentation(List&lt;SlideSource&gt; sources)
+    {...}
+}
+</code></pre>
+<p>Original behavior is documented at Eric's blog:</p>
+<p><a href="http://www.ericwhite.com/blog/presentationbuilder-developer-center/">http://www.ericwhite.com/blog/presentationbuilder-developer-center/</a></p>
+<h4 id="major-changes">Major changes</h4>
+<ul>
+<li><strong>Removed Custom Properties</strong>. Clippit does not copy document properties from the first <code>SlideSource</code> into result document.</li>
+<li><strong>Removed Section List</strong>. Clippit copy all slides into Default section and does not copy list of sections from first <code>SlideSource</code>.</li>
+<li><strong>Structural comparison for Theme, Master, Layout</strong>. Clippit structurally compare Themes, Masters and Layout and maintain minimal amount of these parts in target presentation to guarantee no visual artifacts on slides in the target presentation.</li>
+<li><strong>Shape auto-scale</strong>. Clippit automatically scale all shapes on the slides when you merge slides of different size.</li>
+</ul>
+<h4 id="fixes">Fixes</h4>
+<ul>
+<li>Appropriate file extentions generated for ImageParts based on ContentType (instead of <code>*.bin</code> for all images)</li>
+<li>Fixed multiple write access to the same part</li>
+<li>Optimized Stream lifetime and GC pressure</li>
+</ul>
+<h3 id="buildpresentation-sample">BuildPresentation Sample</h3>
+<pre><code class="lang-csharp">var sources = new List&lt;SlideSource&gt;()
+{
+    new SlideSource(new PmlDocument(file1), start:0, count:1, keepMaster:true),
+    new SlideSource(new PmlDocument(file2), start:9, count:3, keepMaster:false)
+};
+PresentationBuilder.BuildPresentation(sources)
+    .SaveAs(resultFile);
+</code></pre>
+<p>This code combines slides from two PowerPoint presentations:</p>
+<ul>
+<li>It takes Title slide from <code>file1</code> and copy master using by first slide (with all layouts)</li>
+<li>Then copy three slides from <code>file2</code> starting from slide 10 without master (reusing master and layouts moved from <code>file1</code>)</li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/tutorials/powerpoint/BuildPresentation.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

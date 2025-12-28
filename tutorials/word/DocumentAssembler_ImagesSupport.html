@@ -1,0 +1,171 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Key highlights from #31 | Clippit </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Key highlights from #31 | Clippit ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../images/logo-site.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Tutorial.Word.DocumentAssembler.ImagesSupport">
+<h1 id="key-highlights-from-31">Key highlights from <a href="https://github.com/sergey-tihon/Clippit/pull/31#issuecomment-874335292">#31</a></h1>
+
+<h2 id="introduction">Introduction</h2>
+<p>The Image content control works by being placed directly before an image placeholder in your Word document.  The image placeholder must be inline.</p>
+<p>Images content can be provided in your XML data using a path to a file on disk, or by using the <a href="https://en.wikipedia.org/wiki/Data_URI_scheme">data URI scheme</a>.  Example of both approaches are shown below:</p>
+<pre><code class="lang-xml">&lt;Logo&gt;../../md-logo.png&lt;/Logo&gt;
+</code></pre>
+<pre><code class="lang-xml">&lt;Image&gt;data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcetc…&lt;/Image&gt;
+</code></pre>
+<p>Document Assembler will either infer the MIME type based on the extension of the filename, or take use the MIME type passed in when using the data URI scheme.</p>
+<p>Examples below show the Image content control in action and are taken from the Document Assembler Test Files:</p>
+<h2 id="image-select">Image Select</h2>
+<p><img src="../../images/word/documentassembler/image1.jpg" alt="image1"></p>
+<h2 id="image-select-within-a-repeat">Image Select within a Repeat</h2>
+<p>Note that when using a Repeat XPATH is aware of the Context it is in and should operate on the &quot;current&quot; Node.</p>
+<p><img src="../../images/word/documentassembler/image2.png" alt="image2"></p>
+<h2 id="image-select-within-a-table">Image Select within a Table</h2>
+<p>Works in a very similar way to Repeat.</p>
+<p><img src="../../images/word/documentassembler/image3.png" alt="image3"></p>
+<h2 id="xml-data-used-in-above-examples">XML Data used in above Examples</h2>
+<pre><code class="lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;Customer&gt;
+  &lt;CustomerID&gt;1&lt;/CustomerID&gt;
+  &lt;Name&gt;Cheryl&lt;/Name&gt;
+  &lt;HighValueCustomer&gt;True&lt;/HighValueCustomer&gt;
+  &lt;CustomerLogo&gt;../../../../TestFiles/img.png&lt;/CustomerLogo&gt;
+  &lt;Header&gt;../../../../TestFiles/T0936_files/image001.png&lt;/Header&gt;
+  &lt;Orders&gt;
+    &lt;Order&gt;
+      &lt;ProductDescription&gt;Unicycle&lt;/ProductDescription&gt;
+      &lt;Quantity&gt;3&lt;/Quantity&gt;
+      &lt;OrderDate&gt;9/5/2001&lt;/OrderDate&gt;
+	  &lt;Thumbnail&gt;../../../../TestFiles/img2.png&lt;/Thumbnail&gt;
+    &lt;/Order&gt;
+    &lt;Order&gt;
+      &lt;ProductDescription&gt;Tricycle&lt;/ProductDescription&gt;
+      &lt;Quantity&gt;3&lt;/Quantity&gt;
+      &lt;OrderDate&gt;8/6/2000&lt;/OrderDate&gt;
+	  &lt;Thumbnail&gt;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMcAAACTCAYA...&lt;/Thumbnail&gt;	  
+    &lt;/Order&gt;
+  &lt;/Orders&gt;
+  &lt;TotalQuantity&gt;6&lt;/TotalQuantity&gt;
+  &lt;Description&gt;&lt;![CDATA[This
+is a multiline
+description that
+contains details about
+Cheryl.]]&gt;&lt;/Description&gt;
+&lt;/Customer&gt;
+</code></pre>
+<h2 id="further-reading">Further Reading</h2>
+<p>If you are interested in using the Image functionality in DocumentAssembler then your best bet is to look at <code>DocumentAssemblerTests.cs</code> and particularly the data files which can be found in the repository under <code>Test Files/DA</code>.</p>
+<p>Changes merged in: <a href="https://github.com/sergey-tihon/Clippit/pull/31">#31</a></p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/tutorials/word/DocumentAssembler_ImagesSupport.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>

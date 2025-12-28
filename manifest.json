@@ -1,0 +1,279 @@
+{
+  "homepages": [],
+  "source_base_path": "D:/a/Clippit/Clippit/docs",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Resource",
+      "output": {
+        "resource": {
+          "relative_path": "index.json"
+        }
+      },
+      "is_incremental": false
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/logo-site.png",
+      "output": {
+        "resource": {
+          "relative_path": "images/logo-site.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/logo.jpeg",
+      "output": {
+        "resource": {
+          "relative_path": "images/logo.jpeg"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/word/documentassembler/image1.jpg",
+      "output": {
+        "resource": {
+          "relative_path": "images/word/documentassembler/image1.jpg"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/word/documentassembler/image2.png",
+      "output": {
+        "resource": {
+          "relative_path": "images/word/documentassembler/image2.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/word/documentassembler/image3.png",
+      "output": {
+        "resource": {
+          "relative_path": "images/word/documentassembler/image3.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/word/documentassembler/inline-HTML-in-Word-example.png",
+      "output": {
+        "resource": {
+          "relative_path": "images/word/documentassembler/inline-HTML-in-Word-example.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "fHSOzfCrTNFjgVgFAQwGi0NNLPXq6q4rwKJeZ6tPPrY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "log_codes": [
+        "InvalidFileLink"
+      ],
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html",
+          "hash": "KqfhJAzOEgLClBxL0CO4T/Xk4WB+Lwrw0TilU165NlE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/excel/SpreadsheetWriter.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/excel/SpreadsheetWriter.html",
+          "hash": "FjyJmdCULVRTBLu7yiBZ1xjyuf3M62XzQiJ3aQEHEGw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/index.html",
+          "hash": "HKHc6cNb0/H/mLAocP4Z9sCoh1yRMnIPonpkFyZ+ioI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/powerpoint/BuildPresentation.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/powerpoint/BuildPresentation.html",
+          "hash": "QaHGLUKCqlIIRIC3EVaTeiIZLzdKfmK+0n/+hqth83M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/powerpoint/BuildPresentation_PublishSlides.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/powerpoint/BuildPresentation_PublishSlides.html",
+          "hash": "0yd4bu+sFi0D8blsn5uAEE+Mb038iYuH5R0vR6CI4dk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "tutorials/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/toc.html",
+          "hash": "1rq7JX+rpNnSTxtJDE/g+NXaQjqgxGcLXyPTl3JwqKc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/DocumentAssembler_DocumentTemplates.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/DocumentAssembler_DocumentTemplates.html",
+          "hash": "V46qxbFEVMntjAzc3bdS2beAZg3XnLzkFufnkdAGhFc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/DocumentAssembler_ImagesSupport.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/DocumentAssembler_ImagesSupport.html",
+          "hash": "GXLdPhb29FPrEX0gPZtJtxQgYdNSyL/xNqkZ60GXtbA="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/DocumentAssembler_InlineHtmlSupport.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/DocumentAssembler_InlineHtmlSupport.html",
+          "hash": "sj5TdIHkot4ntGyEqt8DIcADeRFq52aq6OKC0FG1MKI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/DocumentBuilder_CustomISource.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/DocumentBuilder_CustomISource.html",
+          "hash": "iWkXSyxm1ccFZPPeFcdtUB8wnU3kKjmCABtOXJV0UB0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/DocumentBuilder_TableCellSource.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/DocumentBuilder_TableCellSource.html",
+          "hash": "btJ8BIVyrp+n+A9kCfokn31iT9IZBx6SyviAO6pA5Tg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot build incrementally because last build info is missing.",
+        "incrementalPhase": "build",
+        "total_file_count": 0,
+        "skipped_file_count": 0,
+        "full_build_reason_code": "NoAvailableBuildCache"
+      },
+      "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build",
+          "total_file_count": 10,
+          "skipped_file_count": 0
+        },
+        "ResourceDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot support incremental post processing, the reason is: should not trace intermediate info.",
+        "incrementalPhase": "postProcessing",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

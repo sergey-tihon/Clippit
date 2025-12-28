@@ -1,0 +1,234 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Custom ISource implementation | Clippit </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Custom ISource implementation | Clippit ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    <meta property="docfx:rel" content="../../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../images/logo-site.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list">Search Results for <span></span></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Tutorial.Word.DocumentBuilder.ISource">
+<h1 id="custom-isource-implementation">Custom ISource implementation</h1>
+
+<p>Namespace: <code>Clippit.Word</code></p>
+<p><code>ISource</code> abstractions allow to use <code>DocumentBuild</code> with custom content selectors.</p>
+<pre><code class="lang-csharp">    public interface ISource : ICloneable
+    {
+        WmlDocument WmlDocument { get; set; }
+
+        bool KeepSections { get; set; }
+        public bool DiscardHeadersAndFootersInKeptSections { get; set; }
+
+        string InsertId { get; set; }
+
+        IEnumerable&lt;XElement&gt; GetElements(WordprocessingDocument document);
+    }
+</code></pre>
+<h3 id="recursivetablecellsource">RecursiveTableCellSource</h3>
+<p>Allow to reference tables inside tables</p>
+<pre><code class="lang-csharp">    [Serializable]
+    public class TableCellReference
+    {
+        public int TableElementIndex { get; set; }
+
+        public int RowIndex { get; set; }
+
+        public int CellIndex { get; set; }
+    }
+
+    [Serializable]
+    public class RecursiveTableCellSource : ISource
+    {
+        public WmlDocument WmlDocument
+        {
+            get =&gt; _wmlDocument;
+            set =&gt; _wmlDocument = value;
+        }
+
+        [NonSerialized] private WmlDocument _wmlDocument;
+
+
+        public bool KeepSections { get; set; }
+        public bool DiscardHeadersAndFootersInKeptSections { get; set; }
+
+        public string InsertId { get; set; }
+
+
+        public List&lt;TableCellReference&gt; TableCellReferences { get; set; }
+
+        public int Start { get; set; }
+
+        public int Count { get; set; }
+
+
+        public IEnumerable&lt;XElement&gt; GetElements(WordprocessingDocument document)
+        {
+            var body = document.MainDocumentPart.GetXDocument().Root?.Element(W.body);
+            if (body is null)
+            {
+                throw new DocumentBuilderException(
+                    &quot;Unsupported document - contains no body element in the correct namespace&quot;);
+            }
+
+            var elements = body.Elements();
+            foreach (var cellRef in TableCellReferences)
+            {
+                var table = elements.Skip(cellRef.TableElementIndex).FirstOrDefault();
+                if (table is null || table.Name != W.tbl)
+                {
+                    throw new DocumentBuilderException(
+                        $&quot;Invalid {nameof(RecursiveTableCellSource)} - element {cellRef.TableElementIndex} is '{table?.Name}' but expected {W.tbl}&quot;);
+                }
+
+                var row = table.Elements(W.tr).Skip(cellRef.RowIndex).FirstOrDefault();
+                if (row is null)
+                {
+                    throw new DocumentBuilderException(
+                        $&quot;Invalid {nameof(RecursiveTableCellSource)} - row {cellRef.RowIndex} does not exist&quot;);
+                }
+
+                var cell = row.Elements(W.tc).Skip(cellRef.CellIndex).FirstOrDefault();
+                if (cell is null)
+                {
+                    throw new DocumentBuilderException(
+                        $&quot;Invalid {nameof(RecursiveTableCellSource)} - cell {cellRef.CellIndex} in the row {cellRef.RowIndex} does not exist&quot;);
+                }
+
+                elements = cell.Elements();
+            }
+
+            return elements
+                .Skip(Start)
+                .Take(Count)
+                .ToList();
+        }
+
+        public object Clone() =&gt;
+            new RecursiveTableCellSource
+            {
+                WmlDocument = WmlDocument,
+                KeepSections = KeepSections,
+                DiscardHeadersAndFootersInKeptSections = DiscardHeadersAndFootersInKeptSections,
+                InsertId = InsertId,
+                TableCellReferences =
+                    TableCellReferences.Select(x =&gt;
+                        new TableCellReference
+                        {
+                            TableElementIndex = x.TableElementIndex,
+                            RowIndex = x.RowIndex,
+                            CellIndex = x.CellIndex,
+                        }).ToList(),
+                Start = Start,
+                Count = Count
+            };
+    }
+</code></pre>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/tutorials/word/DocumentBuilder_CustomISource.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>
