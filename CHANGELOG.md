@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.2.0] - January 25, 2026
+
+- hk: DocumentFormat.OpenXml 3.4.1
+
 ## [3.1.0] - August 30, 2025
 
 - Build with .NET 10.0 and provide .NET 8 & 10 binaries (#106)
