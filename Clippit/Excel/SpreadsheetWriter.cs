@@ -931,7 +931,6 @@ Y1Byb3BzL2FwcC54bWxQSwUGAAAAAAoACgCAAgAAKxsAAAAA";
 
     public class SpreadsheetWriterInternalException() : Exception("Internal error - unexpected content in _EmptyXlsx.");
 
-    /// </remarks>
     public class InvalidSheetNameException(string name)
         : Exception($"The supplied name ({name}) is not a valid XLSX worksheet name.");
 }
