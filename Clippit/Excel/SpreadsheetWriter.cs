@@ -361,7 +361,7 @@ namespace Clippit.Excel
                     );
                     var totalRows = numColumnHeadingRows + numRows;
                     var totalColumns = Math.Max(numColumns, numColumnsInRows);
-                    if (worksheetData.ColumnHeadings != null && worksheetData.TableName != null)
+                    if (worksheetData.ColumnHeadings != null && worksheetData.TableName != null && numRows > 0)
                     {
                         partXmlWriter.WriteEndElement();
                         var rId2 = Relationships.GetNewRelationshipId();

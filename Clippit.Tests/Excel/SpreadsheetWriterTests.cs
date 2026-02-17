@@ -323,6 +323,42 @@ namespace Clippit.Tests.Excel
             await Validate(fileName).ConfigureAwait(false);
         }
 
+        // Verifies that table definitions are NOT created when TableName is set but no data rows exist.
+        // XLSX spec requires tables to have at least one data row. Creating a table with only headers
+        // produces a malformed file that fails to open in Excel.
+        [Test]
+        public async Task SaveWorksheetWithTableNameButNoDataRows()
+        {
+            var wb = new WorkbookDfn
+            {
+                Worksheets =
+                [
+                    new WorksheetDfn
+                    {
+                        Name = "EmptySheet",
+                        TableName = "EmptyTable",
+                        ColumnHeadings =
+                        [
+                            new CellDfn { Value = "Name", Bold = true },
+                            new CellDfn { Value = "Age", Bold = true },
+                        ],
+                        Rows = [],
+                    },
+                ],
+            };
+            var fileName = Path.Combine(TempDir, "SW003-EmptyTable.xlsx");
+            await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+                wb.WriteTo(stream);
+
+            using var sDoc = SpreadsheetDocument.Open(fileName, false);
+            var worksheetPart = sDoc.WorkbookPart.WorksheetParts.First();
+            var tableDefParts = worksheetPart.GetPartsOfType<TableDefinitionPart>();
+
+            await Assert.That(tableDefParts).IsEmpty();
+
+            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
+        }
+
         [Test]
         public async Task AddWorksheetToWorkbook()
         {
