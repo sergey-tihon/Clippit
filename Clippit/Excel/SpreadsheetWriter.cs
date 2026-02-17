@@ -13,39 +13,90 @@ using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Excel
 {
-    // The classes in SpreadsheetWriter are still a work-in-progress.  While they are useful in their current state, I will be enhancing and
-    // changing them in the future.  In particular, I will be augmenting the various definition classes (WorkbookDfn, WorksheetDfn,
-    // RowDfn, and CellDfn.
-
-    // They are robust enough in their current form to be used in enterprise, mission critical.
-
+    /// <summary>
+    /// Defines the structure of an Excel workbook, serving as the root definition for spreadsheet generation.
+    /// </summary>
+    /// <remarks>
+    /// Use this class together with <see cref="WorksheetDfn"/>, <see cref="RowDfn"/>, and <see cref="CellDfn"/>
+    /// to declaratively describe a workbook
+    /// </remarks>
     public class WorkbookDfn
     {
+        /// <summary>
+        /// The worksheets
+        /// </summary>
         public IEnumerable<WorksheetDfn> Worksheets { get; set; } = [];
     }
 
+    /// <summary>
+    /// Defines the structure and content of a single worksheet within a workbook.
+    /// </summary>
+    /// <remarks>
+    /// A worksheet can include <see cref="ColumnHeadings"/> and a <see cref="TableName"/>.
+    /// When both are provided and at least one data row exists, a formal Excel table definition
+    /// is created with auto-filter and "TableStyleMedium2" styling. Sheet names must be valid
+    /// XLSX names (max 31 characters, no special characters like <c>* [ ] / \ : ?</c>).
+    /// </remarks>
     public class WorksheetDfn
     {
+        /// <summary>
+        /// The name of the worksheet.
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// The name of the table.
+        /// </summary>
+        /// <remarks>
+        /// Table definitions are only created when <see cref="ColumnHeadings"/> are provided
+        /// and at least one data row exists in <see cref="Rows"/>.
+        /// If no data rows are present, this property is ignored to prevent malformed XLSX files.
+        /// </remarks>
         public string TableName { get; set; }
+
+        /// <summary>
+        /// Optional column headings. If provided, these are written as the first row and formatted as bold.
+        /// </summary>
         public IEnumerable<CellDfn> ColumnHeadings { get; set; }
+
+        /// <summary>
+        /// The data rows of the worksheet.
+        /// </summary>
         public IEnumerable<RowDfn> Rows { get; set; }
     }
 
+    /// <summary>
+    /// Defines a single row of cells in a worksheet.
+    /// </summary>
     public class RowDfn
     {
+        /// <summary>
+        /// The cells contained in this row.
+        /// </summary>
         public IEnumerable<CellDfn> Cells { get; set; }
     }
 
-    // Value can be:
-    // - string
-    // - bool
-    // - DateTime
-    // - int32, int64, uint, double, float, etc.
-
-    // Standard formats
+    /// <summary>
+    /// Defines a single cell value along with optional formatting and data-type metadata.
+    /// </summary>
+    /// <remarks>
+    /// <para><see cref="Value"/> accepts the following CLR types:</para>
+    /// <list type="bullet">
+    ///   <item><description><see cref="string"/></description></item>
+    ///   <item><description><see cref="bool"/></description></item>
+    ///   <item><description><see cref="DateTime"/> and <see cref="DateTimeOffset"/></description></item>
+    ///   <item><description>Numeric types: <see cref="int"/>, <see cref="long"/>, <see cref="uint"/>, <see cref="double"/>, <see cref="float"/>, etc.</description></item>
+    /// </list>
+    /// <para>
+    /// Use <see cref="FormatCode"/> with a standard Excel format string (see <see cref="StandardFormats"/>)
+    /// or a custom format string to control how the value is displayed.
+    /// </para>
+    /// </remarks>
     public class CellDfn
     {
+        /// <summary>
+        /// Maps standard Excel number-format strings to their built-in format IDs.
+        /// </summary>
         public static readonly Dictionary<string, int> StandardFormats = new()
         {
             { "0", 1 },
@@ -76,14 +127,41 @@ namespace Clippit.Excel
             { "##0.0E+0", 48 },
             { "@", 49 },
         };
+
+        /// <summary>
+        /// The cell value.
+        /// </summary>
         public object Value { get; set; }
+
+        /// <summary>
+        /// Explicit data type hint written to the cell. When <see langword="null"/>, defaults to string.
+        /// </summary>
         public CellDataType? CellDataType { get; set; }
+
+        /// <summary>
+        /// Horizontal alignment of the cell content.
+        /// </summary>
         public HorizontalCellAlignment? HorizontalCellAlignment { get; set; }
+
+        /// <summary>
+        /// Whether the cell text is bold.
+        /// </summary>
         public bool? Bold { get; set; }
+
+        /// <summary>
+        /// Whether the cell text is italic.
+        /// </summary>
         public bool? Italic { get; set; }
+
+        /// <summary>
+        /// An Excel number-format string (e.g. <c>"0.00%"</c>).
+        /// </summary>
         public string FormatCode { get; set; }
     }
 
+    /// <summary>
+    /// Specifies the horizontal alignment of cell content within a spreadsheet cell.
+    /// </summary>
     public enum HorizontalCellAlignment
     {
         Left,
@@ -91,6 +169,9 @@ namespace Clippit.Excel
         Right,
     }
 
+    /// <summary>
+    /// Specifies the data type stored in a spreadsheet cell.
+    /// </summary>
     public enum CellDataType
     {
         Boolean,
@@ -850,6 +931,7 @@ Y1Byb3BzL2FwcC54bWxQSwUGAAAAAAoACgCAAgAAKxsAAAAA";
 
     public class SpreadsheetWriterInternalException() : Exception("Internal error - unexpected content in _EmptyXlsx.");
 
+    /// </remarks>
     public class InvalidSheetNameException(string name)
         : Exception($"The supplied name ({name}) is not a valid XLSX worksheet name.");
 }
