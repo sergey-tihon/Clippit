@@ -245,10 +245,11 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
             var stylesPart = mainPart.AddNewPart<StyleDefinitionsPart>();
             stylesPart.Styles = new Styles();
 
+            // Use unique, non-overlapping tokens to verify each part of the paragraph is preserved.
             var para = new Paragraph(
                 new Run(new Text("BlaBlaBlaBlaBla")),
                 new Run(new TabChar()),
-                new Run(new Text("Bla"))
+                new Run(new Text("AfterTab"))
             );
             mainPart.Document = new Document(new Body(para));
             wordDoc.Save();
@@ -257,9 +258,11 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         memoryStream.Position = 0;
         using var wDoc = WordprocessingDocument.Open(memoryStream, true);
 
+        // Use inline styles (FabricateCssClasses = false) so the positioning span's
+        // style rule can be inspected directly via the XElement tree.
         var settings = new WmlToHtmlConverterSettings
         {
-            FabricateCssClasses = true,
+            FabricateCssClasses = false,
             CssClassPrefix = "pt-",
             RestrictToSupportedLanguages = false,
             RestrictToSupportedNumberingFormats = false,
@@ -268,13 +271,24 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
         var htmlString = html.ToString(SaveOptions.DisableFormatting);
 
-        // Both text pieces must appear in the HTML
+        // Both unique text tokens must appear in the HTML output.
         await Assert.That(htmlString).Contains("BlaBlaBlaBlaBla");
-        await Assert.That(htmlString).Contains("Bla");
+        await Assert.That(htmlString).Contains("AfterTab");
 
-        // The span used to position preceding text must use min-width (not a fixed width) so that
-        // when the text is wider than the tab stop, it does not overflow and overlap subsequent content.
-        await Assert.That(htmlString).Contains("min-width");
+        // Find the specific span that wraps the pre-tab text and inspect its inline style.
+        // The span must use min-width (not a fixed width) so that when the preceding text
+        // is wider than the tab stop, it expands instead of overflowing into subsequent content.
+        var preTabSpan = html.Descendants(Xhtml.span).FirstOrDefault(s => (string)s == "BlaBlaBlaBlaBla");
+        await Assert.That(preTabSpan).IsNotNull();
+
+        var spanStyle = preTabSpan!.Attribute("style")?.Value ?? string.Empty;
+
+        // The style rule must include min-width to allow expansion beyond the tab stop.
+        await Assert.That(spanStyle).Contains("min-width:");
+
+        // The style rule must NOT include a fixed width property, which would cause overflow.
+        var styleProperties = spanStyle.Split(';').Select(p => p.Trim());
+        await Assert.That(styleProperties.Where(p => p.StartsWith("width:", StringComparison.Ordinal))).IsEmpty();
     }
 
 #if DO_CONVERSION_VIA_WORD
