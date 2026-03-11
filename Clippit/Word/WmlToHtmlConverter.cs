@@ -1235,6 +1235,11 @@ namespace Clippit.Word
                     { "min-width", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}in", totalWidth) },
                 };
                 span.AddAnnotation(spanStyle);
+
+                // Replace the preceding elements with the wrapper span so that the
+                // min-width styling takes effect on the returned content.
+                txElementsPrecedingTab.Clear();
+                txElementsPrecedingTab.Add(span);
             }
             else if (txElementsPrecedingTab.Count == 1)
             {
