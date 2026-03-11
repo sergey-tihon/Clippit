@@ -1230,7 +1230,9 @@ namespace Clippit.Word
                 {
                     { "display", "inline-block" },
                     { "text-indent", "0" },
-                    { "width", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}in", totalWidth) },
+                    // Use min-width so the span expands when text exceeds the tab stop width,
+                    // preventing text overflow and overlap with subsequent content.
+                    { "min-width", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}in", totalWidth) },
                 };
                 span.AddAnnotation(spanStyle);
             }
@@ -1243,7 +1245,7 @@ namespace Clippit.Word
                     spanStyle.AddIfMissing("display", "inline-block");
                     spanStyle.AddIfMissing("text-indent", "0");
                     spanStyle.AddIfMissing(
-                        "width",
+                        "min-width",
                         string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}in", totalWidth)
                     );
                 }

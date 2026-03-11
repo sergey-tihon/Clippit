@@ -5,7 +5,9 @@
 using System.Text;
 using System.Xml.Linq;
 using Clippit.Word;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Clippit.Tests.Word;
 
@@ -226,6 +228,53 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         // must do it correctly, or entities will not be serialized properly.
         var htmlString = html.ToString(SaveOptions.DisableFormatting);
         File.WriteAllText(destFileName.FullName, htmlString, Encoding.UTF8);
+    }
+
+    // Regression test for https://github.com/sergey-tihon/Clippit/issues/51
+    // First tab in paragraph should not cause text overflow when text precedes the tab.
+    [Test]
+    public async Task HC062_FirstTabInParagraphNotIgnored()
+    {
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            var settingsPart = mainPart.AddNewPart<DocumentSettingsPart>();
+            settingsPart.Settings = new Settings(new DefaultTabStop { Val = 720 });
+
+            var stylesPart = mainPart.AddNewPart<StyleDefinitionsPart>();
+            stylesPart.Styles = new Styles();
+
+            var para = new Paragraph(
+                new Run(new Text("BlaBlaBlaBlaBla")),
+                new Run(new TabChar()),
+                new Run(new Text("Bla"))
+            );
+            mainPart.Document = new Document(new Body(para));
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = true,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+
+        var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+        var htmlString = html.ToString(SaveOptions.DisableFormatting);
+
+        // Both text pieces must appear in the HTML
+        await Assert.That(htmlString).Contains("BlaBlaBlaBlaBla");
+        await Assert.That(htmlString).Contains("Bla");
+
+        // The span used to position preceding text must use min-width (not a fixed width) so that
+        // when the text is wider than the tab stop, it does not overflow and overlap subsequent content.
+        await Assert.That(htmlString).Contains("min-width");
     }
 
 #if DO_CONVERSION_VIA_WORD
