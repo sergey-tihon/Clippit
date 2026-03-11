@@ -22,7 +22,7 @@
 # For more information: https://github.github.com/gh-aw/introduction/overview/
 #
 # A friendly repository assistant that runs 4 times a day to support contributors and maintainers.
-# Can also be triggered on-demand via '/repo-assist <instructions>' to perform specific tasks.
+# Can also be triggered on-demand via '/clippy <instructions>' to perform specific tasks.
 # - Labels and triages open issues
 # - Comments helpfully on open issues to unblock contributors and onboard newcomers
 # - Identifies issues that can be fixed and creates draft pull requests with fixes
@@ -36,9 +36,9 @@
 #
 # Source: githubnext/agentics/workflows/repo-assist.md@346204513ecfa08b81566450d7d599556807389f
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"61f92f829400ca54b30de3e8b2e22440e66fb7e8324502c8b125359678406661","compiler_version":"v0.57.2","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"177ad362b9451fbbe09e90e10720d2ec92beecd0dc6b265c0cc0f54f7bfc3946","compiler_version":"v0.57.2","strict":true}
 
-name: "Repo Assist"
+name: "Clippy"
 "on":
   discussion:
     types:
@@ -67,7 +67,7 @@ name: "Repo Assist"
     - created
     - edited
   schedule:
-  - cron: "36 23 * * *"
+  - cron: "21 10 * * *"
   workflow_dispatch: null
 
 permissions: {}
@@ -75,7 +75,7 @@ permissions: {}
 concurrency:
   group: "gh-aw-${{ github.workflow }}-${{ github.event.issue.number || github.event.pull_request.number || github.run_id }}"
 
-run-name: "Repo Assist"
+run-name: "Clippy"
 
 jobs:
   activation:
@@ -83,16 +83,17 @@ jobs:
     if: >
       (needs.pre_activation.outputs.activated == 'true') && (((github.event_name == 'issues' || github.event_name == 'issue_comment' ||
       github.event_name == 'pull_request' || github.event_name == 'pull_request_review_comment' || github.event_name == 'discussion' ||
-      github.event_name == 'discussion_comment') && ((github.event_name == 'issues') && ((startsWith(github.event.issue.body, '/repo-assist ')) ||
-      (github.event.issue.body == '/repo-assist')) || (github.event_name == 'issue_comment') && (((startsWith(github.event.comment.body, '/repo-assist ')) ||
-      (github.event.comment.body == '/repo-assist')) && (github.event.issue.pull_request == null)) || (github.event_name == 'issue_comment') &&
-      (((startsWith(github.event.comment.body, '/repo-assist ')) || (github.event.comment.body == '/repo-assist')) &&
+      github.event_name == 'discussion_comment') && ((github.event_name == 'issues') && ((startsWith(github.event.issue.body, '/clippy ')) ||
+      (github.event.issue.body == '/clippy')) || (github.event_name == 'issue_comment') && (((startsWith(github.event.comment.body, '/clippy ')) ||
+      (github.event.comment.body == '/clippy')) && (github.event.issue.pull_request == null)) || (github.event_name == 'issue_comment') &&
+      (((startsWith(github.event.comment.body, '/clippy ')) || (github.event.comment.body == '/clippy')) &&
       (github.event.issue.pull_request != null)) || (github.event_name == 'pull_request_review_comment') &&
-      ((startsWith(github.event.comment.body, '/repo-assist ')) || (github.event.comment.body == '/repo-assist')) ||
-      (github.event_name == 'pull_request') && ((startsWith(github.event.pull_request.body, '/repo-assist ')) ||
-      (github.event.pull_request.body == '/repo-assist')) || (github.event_name == 'discussion') && ((startsWith(github.event.discussion.body, '/repo-assist ')) ||
-      (github.event.discussion.body == '/repo-assist')) || (github.event_name == 'discussion_comment') && ((startsWith(github.event.comment.body, '/repo-assist ')) ||
-      (github.event.comment.body == '/repo-assist')))) || (!(github.event_name == 'issues' || github.event_name == 'issue_comment' ||
+      ((startsWith(github.event.comment.body, '/clippy ')) || (github.event.comment.body == '/clippy')) ||
+      (github.event_name == 'pull_request') &&
+      ((startsWith(github.event.pull_request.body, '/clippy ')) || (github.event.pull_request.body == '/clippy')) ||
+      (github.event_name == 'discussion') && ((startsWith(github.event.discussion.body, '/clippy ')) || (github.event.discussion.body == '/clippy')) ||
+      (github.event_name == 'discussion_comment') && ((startsWith(github.event.comment.body, '/clippy ')) ||
+      (github.event.comment.body == '/clippy')))) || (!(github.event_name == 'issues' || github.event_name == 'issue_comment' ||
       github.event_name == 'pull_request' || github.event_name == 'pull_request_review_comment' || github.event_name == 'discussion' ||
       github.event_name == 'discussion_comment')))
     runs-on: ubuntu-slim
@@ -124,7 +125,7 @@ jobs:
           GH_AW_INFO_VERSION: ""
           GH_AW_INFO_AGENT_VERSION: "latest"
           GH_AW_INFO_CLI_VERSION: "v0.57.2"
-          GH_AW_INFO_WORKFLOW_NAME: "Repo Assist"
+          GH_AW_INFO_WORKFLOW_NAME: "Clippy"
           GH_AW_INFO_EXPERIMENTAL: "false"
           GH_AW_INFO_SUPPORTS_TOOLS_ALLOWLIST: "true"
           GH_AW_INFO_STAGED: "false"
@@ -169,7 +170,7 @@ jobs:
       - name: Check workflow file timestamps
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
-          GH_AW_WORKFLOW_FILE: "repo-assist.lock.yml"
+          GH_AW_WORKFLOW_FILE: "clippy.lock.yml"
         with:
           script: |
             const { setupGlobals } = require('/opt/gh-aw/actions/setup_globals.cjs');
@@ -256,7 +257,7 @@ jobs:
           </system>
           GH_AW_PROMPT_EOF
           cat << 'GH_AW_PROMPT_EOF'
-          {{#runtime-import .github/workflows/repo-assist.md}}
+          {{#runtime-import .github/workflows/clippy.md}}
           GH_AW_PROMPT_EOF
           } > "$GH_AW_PROMPT"
       - name: Interpolate variables and render templates
@@ -287,7 +288,7 @@ jobs:
           GH_AW_GITHUB_SERVER_URL: ${{ github.server_url }}
           GH_AW_GITHUB_WORKSPACE: ${{ github.workspace }}
           GH_AW_IS_PR_COMMENT: ${{ github.event.issue.pull_request && 'true' || '' }}
-          GH_AW_MEMORY_BRANCH_NAME: 'memory/repo-assist'
+          GH_AW_MEMORY_BRANCH_NAME: 'memory/clippy'
           GH_AW_MEMORY_CONSTRAINTS: "\n\n**Constraints:**\n- **Max File Size**: 10240 bytes (0.01 MB) per file\n- **Max File Count**: 100 files per commit\n- **Max Patch Size**: 10240 bytes (10 KB) total per push (max: 100 KB)\n"
           GH_AW_MEMORY_DESCRIPTION: ''
           GH_AW_MEMORY_DIR: '/tmp/gh-aw/repo-memory/default/'
@@ -359,7 +360,7 @@ jobs:
       GH_AW_SAFE_OUTPUTS: /opt/gh-aw/safeoutputs/outputs.jsonl
       GH_AW_SAFE_OUTPUTS_CONFIG_PATH: /opt/gh-aw/safeoutputs/config.json
       GH_AW_SAFE_OUTPUTS_TOOLS_PATH: /opt/gh-aw/safeoutputs/tools.json
-      GH_AW_WORKFLOW_ID_SANITIZED: repoassist
+      GH_AW_WORKFLOW_ID_SANITIZED: clippy
     outputs:
       checkout_pr_success: ${{ steps.checkout-pr.outputs.checkout_pr_success || 'true' }}
       detection_conclusion: ${{ steps.detection_conclusion.outputs.conclusion }}
@@ -383,14 +384,14 @@ jobs:
       - env:
           GH_TOKEN: ${{ github.token }}
         name: Fetch repo data for task weighting
-        run: "mkdir -p /tmp/gh-aw\n\n# Fetch open issues with labels (up to 500)\ngh issue list --state open --limit 500 --json number,labels > /tmp/gh-aw/issues.json\n\n# Fetch open PRs with titles (up to 200)\ngh pr list --state open --limit 200 --json number,title > /tmp/gh-aw/prs.json\n\n# Compute task weights and select two tasks for this run\npython3 - << 'EOF'\nimport json, random, os\n\nwith open('/tmp/gh-aw/issues.json') as f:\n    issues = json.load(f)\nwith open('/tmp/gh-aw/prs.json') as f:\n    prs = json.load(f)\n\nopen_issues     = len(issues)\nunlabelled      = sum(1 for i in issues if not i.get('labels'))\nrepo_assist_prs = sum(1 for p in prs if p['title'].startswith('[Repo Assist]'))\nother_prs       = sum(1 for p in prs if not p['title'].startswith('[Repo Assist]'))\n\ntask_names = {\n    1:  'Issue Labelling',\n    2:  'Issue Investigation and Comment',\n    3:  'Issue Investigation and Fix',\n    4:  'Engineering Investments',\n    5:  'Coding Improvements',\n    6:  'Maintain Repo Assist PRs',\n    7:  'Stale PR Nudges',\n    8:  'Performance Improvements',\n    9:  'Testing Improvements',\n    10: 'Take the Repository Forward',\n}\n\nweights = {\n    1:  1   + 3 * unlabelled,\n    2:  3   + 1 * open_issues,\n    3:  3   + 0.7 * open_issues,\n    4:  5   + 0.2 * open_issues,\n    5:  5   + 0.1 * open_issues,\n    6:  float(repo_assist_prs),\n    7:  0.1 * other_prs,\n    8:  3   + 0.05 * open_issues,\n    9:  3   + 0.05 * open_issues,\n    10: 3   + 0.05 * open_issues,\n}\n\n# Seed with run ID for reproducibility within a run\nrun_id = int(os.environ.get('GITHUB_RUN_ID', '0'))\nrng = random.Random(run_id)\n\ntask_ids     = list(weights.keys())\ntask_weights = [weights[t] for t in task_ids]\n\n# Weighted sample without replacement (pick 2 distinct tasks)\nchosen, seen = [], set()\nfor t in rng.choices(task_ids, weights=task_weights, k=30):\n    if t not in seen:\n        seen.add(t)\n        chosen.append(t)\n    if len(chosen) == 2:\n        break\n\nprint('=== Repo Assist Task Selection ===')\nprint(f'Open issues       : {open_issues}')\nprint(f'Unlabelled issues : {unlabelled}')\nprint(f'Repo Assist PRs   : {repo_assist_prs}')\nprint(f'Other open PRs    : {other_prs}')\nprint()\nprint('Task weights:')\nfor t, w in weights.items():\n    tag = ' <-- SELECTED' if t in chosen else ''\n    print(f'  Task {t:2d} ({task_names[t]}): weight {w:6.1f}{tag}')\nprint()\nprint(f'Selected tasks for this run: Task {chosen[0]} ({task_names[chosen[0]]}) and Task {chosen[1]} ({task_names[chosen[1]]})')\n\nresult = {\n    'open_issues': open_issues, 'unlabelled_issues': unlabelled,\n    'repo_assist_prs': repo_assist_prs, 'other_prs': other_prs,\n    'task_names': task_names,\n    'weights': {str(k): round(v, 2) for k, v in weights.items()},\n    'selected_tasks': chosen,\n}\nwith open('/tmp/gh-aw/task_selection.json', 'w') as f:\n    json.dump(result, f, indent=2)\nEOF\n"
+        run: "mkdir -p /tmp/gh-aw\n\n# Fetch open issues with labels (up to 500)\ngh issue list --state open --limit 500 --json number,labels > /tmp/gh-aw/issues.json\n\n# Fetch open PRs with titles (up to 200)\ngh pr list --state open --limit 200 --json number,title > /tmp/gh-aw/prs.json\n\n# Compute task weights and select two tasks for this run\npython3 - << 'EOF'\nimport json, random, os\n\nwith open('/tmp/gh-aw/issues.json') as f:\n    issues = json.load(f)\nwith open('/tmp/gh-aw/prs.json') as f:\n    prs = json.load(f)\n\nopen_issues     = len(issues)\nunlabelled      = sum(1 for i in issues if not i.get('labels'))\nclippy_prs = sum(1 for p in prs if p['title'].startswith('[Clippy]'))\nother_prs       = sum(1 for p in prs if not p['title'].startswith('[Clippy]'))\n\ntask_names = {\n    1:  'Issue Labelling',\n    2:  'Issue Investigation and Comment',\n    3:  'Issue Investigation and Fix',\n    4:  'Engineering Investments',\n    5:  'Coding Improvements',\n    6:  'Maintain Clippy PRs',\n    7:  'Stale PR Nudges',\n    8:  'Performance Improvements',\n    9:  'Testing Improvements',\n    10: 'Take the Repository Forward',\n}\n\nweights = {\n    1:  1   + 3 * unlabelled,\n    2:  3   + 1 * open_issues,\n    3:  3   + 0.7 * open_issues,\n    4:  5   + 0.2 * open_issues,\n    5:  5   + 0.1 * open_issues,\n    6:  float(clippy_prs),\n    7:  0.1 * other_prs,\n    8:  3   + 0.05 * open_issues,\n    9:  3   + 0.05 * open_issues,\n    10: 3   + 0.05 * open_issues,\n}\n\n# Seed with run ID for reproducibility within a run\nrun_id = int(os.environ.get('GITHUB_RUN_ID', '0'))\nrng = random.Random(run_id)\n\ntask_ids     = list(weights.keys())\ntask_weights = [weights[t] for t in task_ids]\n\n# Weighted sample without replacement (pick 2 distinct tasks)\nchosen, seen = [], set()\nfor t in rng.choices(task_ids, weights=task_weights, k=30):\n    if t not in seen:\n        seen.add(t)\n        chosen.append(t)\n    if len(chosen) == 2:\n        break\n\nprint('=== Clippy Task Selection ===')\nprint(f'Open issues       : {open_issues}')\nprint(f'Unlabelled issues : {unlabelled}')\nprint(f'Clippy PRs   : {clippy_prs}')\nprint(f'Other open PRs    : {other_prs}')\nprint()\nprint('Task weights:')\nfor t, w in weights.items():\n    tag = ' <-- SELECTED' if t in chosen else ''\n    print(f'  Task {t:2d} ({task_names[t]}): weight {w:6.1f}{tag}')\nprint()\nprint(f'Selected tasks for this run: Task {chosen[0]} ({task_names[chosen[0]]}) and Task {chosen[1]} ({task_names[chosen[1]]})')\n\nresult = {\n    'open_issues': open_issues, 'unlabelled_issues': unlabelled,\n    'clippy_prs': clippy_prs, 'other_prs': other_prs,\n    'task_names': task_names,\n    'weights': {str(k): round(v, 2) for k, v in weights.items()},\n    'selected_tasks': chosen,\n}\nwith open('/tmp/gh-aw/task_selection.json', 'w') as f:\n    json.dump(result, f, indent=2)\nEOF\n"
 
       # Repo memory git-based storage configuration from frontmatter processed below
       - name: Clone repo-memory branch (default)
         env:
           GH_TOKEN: ${{ github.token }}
           GITHUB_SERVER_URL: ${{ github.server_url }}
-          BRANCH_NAME: memory/repo-assist
+          BRANCH_NAME: memory/clippy
           TARGET_REPO: ${{ github.repository }}
           MEMORY_DIR: /tmp/gh-aw/repo-memory/default
           CREATE_ORPHAN: true
@@ -443,12 +444,12 @@ jobs:
           mkdir -p /tmp/gh-aw/safeoutputs
           mkdir -p /tmp/gh-aw/mcp-logs/safeoutputs
           cat > /opt/gh-aw/safeoutputs/config.json << 'GH_AW_SAFE_OUTPUTS_CONFIG_EOF'
-          {"add_comment":{"max":10,"target":"*"},"add_labels":{"allowed":["bug","enhancement","help wanted","good first issue","spam","off topic","documentation","question","duplicate","wontfix","needs triage","needs investigation","breaking change","performance","security","refactor"],"max":30,"target":"*"},"create_issue":{"max":4},"create_pull_request":{"draft":true,"max":4,"title_prefix":"[Repo Assist] "},"missing_data":{},"missing_tool":{},"noop":{"max":1},"push_repo_memory":{"memories":[{"dir":"/tmp/gh-aw/repo-memory/default","id":"default","max_file_count":100,"max_file_size":10240,"max_patch_size":10240}]},"push_to_pull_request_branch":{"max":4,"target":"*"},"remove_labels":{"allowed":["bug","enhancement","help wanted","good first issue","spam","off topic","documentation","question","duplicate","wontfix","needs triage","needs investigation","breaking change","performance","security","refactor"],"max":5},"update_issue":{"max":1}}
+          {"add_comment":{"max":10,"target":"*"},"add_labels":{"allowed":["bug","enhancement","help wanted","good first issue","spam","off topic","documentation","question","duplicate","wontfix","needs triage","needs investigation","breaking change","performance","security","refactor"],"max":30,"target":"*"},"create_issue":{"max":4},"create_pull_request":{"draft":true,"max":4,"title_prefix":"[Clippy] "},"missing_data":{},"missing_tool":{},"noop":{"max":1},"push_repo_memory":{"memories":[{"dir":"/tmp/gh-aw/repo-memory/default","id":"default","max_file_count":100,"max_file_size":10240,"max_patch_size":10240}]},"push_to_pull_request_branch":{"max":4,"target":"*"},"remove_labels":{"allowed":["bug","enhancement","help wanted","good first issue","spam","off topic","documentation","question","duplicate","wontfix","needs triage","needs investigation","breaking change","performance","security","refactor"],"max":5},"update_issue":{"max":1}}
           GH_AW_SAFE_OUTPUTS_CONFIG_EOF
           cat > /opt/gh-aw/safeoutputs/tools.json << 'GH_AW_SAFE_OUTPUTS_TOOLS_EOF'
           [
             {
-              "description": "Create a new GitHub issue for tracking bugs, feature requests, or tasks. Use this for actionable work items that need assignment, labeling, and status tracking. For reports, announcements, or status updates that don't require task tracking, use create_discussion instead. CONSTRAINTS: Maximum 4 issue(s) can be created. Title will be prefixed with \"[Repo Assist] \". Labels [\"automation\" \"repo-assist\"] will be automatically added.",
+              "description": "Create a new GitHub issue for tracking bugs, feature requests, or tasks. Use this for actionable work items that need assignment, labeling, and status tracking. For reports, announcements, or status updates that don't require task tracking, use create_discussion instead. CONSTRAINTS: Maximum 4 issue(s) can be created. Title will be prefixed with \"[Clippy] \". Labels [\"automation\" \"clippy\"] will be automatically added.",
               "inputSchema": {
                 "additionalProperties": false,
                 "properties": {
@@ -534,7 +535,7 @@ jobs:
               "name": "add_comment"
             },
             {
-              "description": "Create a new GitHub pull request to propose code changes. Use this after making file edits to submit them for review and merging. The PR will be created from the current branch with your committed changes. For code review comments on an existing PR, use create_pull_request_review_comment instead. CONSTRAINTS: Maximum 4 pull request(s) can be created. Title will be prefixed with \"[Repo Assist] \". Labels [\"automation\" \"repo-assist\"] will be automatically added. PRs will be created as drafts.",
+              "description": "Create a new GitHub pull request to propose code changes. Use this after making file edits to submit them for review and merging. The PR will be created from the current branch with your committed changes. For code review comments on an existing PR, use create_pull_request_review_comment instead. CONSTRAINTS: Maximum 4 pull request(s) can be created. Title will be prefixed with \"[Clippy] \". Labels [\"automation\" \"clippy\"] will be automatically added. PRs will be created as drafts.",
               "inputSchema": {
                 "additionalProperties": false,
                 "properties": {
@@ -644,7 +645,7 @@ jobs:
               "name": "remove_labels"
             },
             {
-              "description": "Update an existing GitHub issue's title, body, labels, assignees, or milestone WITHOUT closing it. This tool is primarily for editing issue metadata and content. While it supports changing status between 'open' and 'closed', use close_issue instead when you want to close an issue with a closing comment. Body updates support replacing, appending to, prepending content, or updating a per-run \"island\" section. CONSTRAINTS: Maximum 1 issue(s) can be updated. Target: *. The target issue title must start with \"[Repo Assist] \".",
+              "description": "Update an existing GitHub issue's title, body, labels, assignees, or milestone WITHOUT closing it. This tool is primarily for editing issue metadata and content. While it supports changing status between 'open' and 'closed', use close_issue instead when you want to close an issue with a closing comment. Body updates support replacing, appending to, prepending content, or updating a per-run \"island\" section. CONSTRAINTS: Maximum 1 issue(s) can be updated. Target: *. The target issue title must start with \"[Clippy] \".",
               "inputSchema": {
                 "additionalProperties": false,
                 "properties": {
@@ -716,7 +717,7 @@ jobs:
               "name": "update_issue"
             },
             {
-              "description": "Push committed changes to a pull request's branch. Use this to add follow-up commits to an existing PR, such as addressing review feedback or fixing issues. Changes must be committed locally before calling this tool. CONSTRAINTS: Maximum 4 push(es) can be made. The target pull request title must start with \"[Repo Assist] \".",
+              "description": "Push committed changes to a pull request's branch. Use this to add follow-up commits to an existing PR, such as addressing review feedback or fixing issues. Changes must be committed locally before calling this tool. CONSTRAINTS: Maximum 4 push(es) can be made. The target pull request title must start with \"[Clippy] \".",
               "inputSchema": {
                 "additionalProperties": false,
                 "properties": {
@@ -1331,7 +1332,7 @@ jobs:
           GH_AW_ALLOWED_DOMAINS: "*.jsr.io,*.pythonhosted.org,*.vsblob.vsassets.io,adoptium.net,anaconda.org,api.adoptium.net,api.business.githubcopilot.com,api.enterprise.githubcopilot.com,api.foojay.io,api.github.com,api.githubcopilot.com,api.individual.githubcopilot.com,api.npms.io,api.nuget.org,api.snapcraft.io,archive.apache.org,archive.ubuntu.com,azure.archive.ubuntu.com,azuresearch-usnc.nuget.org,azuresearch-ussc.nuget.org,binstar.org,bootstrap.pypa.io,builds.dotnet.microsoft.com,bun.sh,cdn.azul.com,cdn.jsdelivr.net,central.sonatype.com,ci.dot.net,conda.anaconda.org,conda.binstar.org,crates.io,crl.geotrust.com,crl.globalsign.com,crl.identrust.com,crl.sectigo.com,crl.thawte.com,crl.usertrust.com,crl.verisign.com,crl3.digicert.com,crl4.digicert.com,crls.ssl.com,dc.services.visualstudio.com,deb.nodesource.com,deno.land,dist.nuget.org,dl.google.com,dlcdn.apache.org,dot.net,dotnet.microsoft.com,dotnetcli.blob.core.windows.net,download.eclipse.org,download.java.net,download.oracle.com,downloads.gradle-dn.com,esm.sh,files.pythonhosted.org,get.pnpm.io,github.com,googleapis.deno.dev,googlechromelabs.github.io,gradle.org,host.docker.internal,index.crates.io,jcenter.bintray.com,jdk.java.net,json-schema.org,json.schemastore.org,jsr.io,keyserver.ubuntu.com,maven.apache.org,maven.google.com,maven.oracle.com,maven.pkg.github.com,nodejs.org,npm.pkg.github.com,npmjs.com,npmjs.org,nuget.org,nuget.pkg.github.com,nugetregistryv2prod.blob.core.windows.net,ocsp.digicert.com,ocsp.geotrust.com,ocsp.globalsign.com,ocsp.identrust.com,ocsp.sectigo.com,ocsp.ssl.com,ocsp.thawte.com,ocsp.usertrust.com,ocsp.verisign.com,oneocsp.microsoft.com,packagecloud.io,packages.cloud.google.com,packages.microsoft.com,pip.pypa.io,pkgs.dev.azure.com,plugins-artifacts.gradle.org,plugins.gradle.org,ppa.launchpad.net,pypi.org,pypi.python.org,raw.githubusercontent.com,registry.bower.io,registry.npmjs.com,registry.npmjs.org,registry.yarnpkg.com,repo.anaconda.com,repo.continuum.io,repo.gradle.org,repo.grails.org,repo.maven.apache.org,repo.spring.io,repo.yarnpkg.com,repo1.maven.org,s.symcb.com,s.symcd.com,security.ubuntu.com,services.gradle.org,sh.rustup.rs,skimdb.npmjs.com,static.crates.io,static.rust-lang.org,storage.googleapis.com,telemetry.enterprise.githubcopilot.com,telemetry.vercel.com,ts-crl.ws.symantec.com,ts-ocsp.ws.symantec.com,www.java.com,www.microsoft.com,www.npmjs.com,www.npmjs.org,yarnpkg.com"
           GITHUB_SERVER_URL: ${{ github.server_url }}
           GITHUB_API_URL: ${{ github.api_url }}
-          GH_AW_COMMAND: repo-assist
+          GH_AW_COMMAND: clippy
         with:
           script: |
             const { setupGlobals } = require('/opt/gh-aw/actions/setup_globals.cjs');
@@ -1447,8 +1448,8 @@ jobs:
         if: always() && steps.detection_guard.outputs.run_detection == 'true'
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
-          WORKFLOW_NAME: "Repo Assist"
-          WORKFLOW_DESCRIPTION: "A friendly repository assistant that runs 4 times a day to support contributors and maintainers.\nCan also be triggered on-demand via '/repo-assist <instructions>' to perform specific tasks.\n- Labels and triages open issues\n- Comments helpfully on open issues to unblock contributors and onboard newcomers\n- Identifies issues that can be fixed and creates draft pull requests with fixes\n- Improves performance, testing, and code quality via PRs\n- Makes engineering investments: dependency updates, CI improvements, tooling\n- Updates its own PRs when CI fails or merge conflicts arise\n- Nudges stale PRs waiting for author response\n- Takes the repository forward with proactive improvements\n- Maintains a persistent memory of work done and what remains\nAlways polite, constructive, and mindful of the project's goals."
+          WORKFLOW_NAME: "Clippy"
+          WORKFLOW_DESCRIPTION: "A friendly repository assistant that runs 4 times a day to support contributors and maintainers.\nCan also be triggered on-demand via '/clippy <instructions>' to perform specific tasks.\n- Labels and triages open issues\n- Comments helpfully on open issues to unblock contributors and onboard newcomers\n- Identifies issues that can be fixed and creates draft pull requests with fixes\n- Improves performance, testing, and code quality via PRs\n- Makes engineering investments: dependency updates, CI improvements, tooling\n- Updates its own PRs when CI fails or merge conflicts arise\n- Nudges stale PRs waiting for author response\n- Takes the repository forward with proactive improvements\n- Maintains a persistent memory of work done and what remains\nAlways polite, constructive, and mindful of the project's goals."
           HAS_PATCH: ${{ steps.collect_output.outputs.has_patch }}
         with:
           script: |
@@ -1550,7 +1551,7 @@ jobs:
       issues: write
       pull-requests: write
     concurrency:
-      group: "gh-aw-conclusion-repo-assist"
+      group: "gh-aw-conclusion-clippy"
       cancel-in-progress: false
     outputs:
       noop_message: ${{ steps.noop.outputs.noop_message }}
@@ -1580,7 +1581,7 @@ jobs:
         env:
           GH_AW_AGENT_OUTPUT: ${{ env.GH_AW_AGENT_OUTPUT }}
           GH_AW_NOOP_MAX: "1"
-          GH_AW_WORKFLOW_NAME: "Repo Assist"
+          GH_AW_WORKFLOW_NAME: "Clippy"
           GH_AW_WORKFLOW_SOURCE: "githubnext/agentics/workflows/repo-assist.md@346204513ecfa08b81566450d7d599556807389f"
           GH_AW_WORKFLOW_SOURCE_URL: "${{ github.server_url }}/githubnext/agentics/tree/346204513ecfa08b81566450d7d599556807389f/workflows/repo-assist.md"
         with:
@@ -1595,7 +1596,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           GH_AW_AGENT_OUTPUT: ${{ env.GH_AW_AGENT_OUTPUT }}
-          GH_AW_WORKFLOW_NAME: "Repo Assist"
+          GH_AW_WORKFLOW_NAME: "Clippy"
           GH_AW_WORKFLOW_SOURCE: "githubnext/agentics/workflows/repo-assist.md@346204513ecfa08b81566450d7d599556807389f"
           GH_AW_WORKFLOW_SOURCE_URL: "${{ github.server_url }}/githubnext/agentics/tree/346204513ecfa08b81566450d7d599556807389f/workflows/repo-assist.md"
         with:
@@ -1610,12 +1611,12 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           GH_AW_AGENT_OUTPUT: ${{ env.GH_AW_AGENT_OUTPUT }}
-          GH_AW_WORKFLOW_NAME: "Repo Assist"
+          GH_AW_WORKFLOW_NAME: "Clippy"
           GH_AW_WORKFLOW_SOURCE: "githubnext/agentics/workflows/repo-assist.md@346204513ecfa08b81566450d7d599556807389f"
           GH_AW_WORKFLOW_SOURCE_URL: "${{ github.server_url }}/githubnext/agentics/tree/346204513ecfa08b81566450d7d599556807389f/workflows/repo-assist.md"
           GH_AW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           GH_AW_AGENT_CONCLUSION: ${{ needs.agent.result }}
-          GH_AW_WORKFLOW_ID: "repo-assist"
+          GH_AW_WORKFLOW_ID: "clippy"
           GH_AW_SECRET_VERIFICATION_RESULT: ${{ needs.activation.outputs.secret_verification_result }}
           GH_AW_CHECKOUT_PR_SUCCESS: ${{ needs.agent.outputs.checkout_pr_success }}
           GH_AW_INFERENCE_ACCESS_ERROR: ${{ needs.agent.outputs.inference_access_error }}
@@ -1640,7 +1641,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           GH_AW_AGENT_OUTPUT: ${{ env.GH_AW_AGENT_OUTPUT }}
-          GH_AW_WORKFLOW_NAME: "Repo Assist"
+          GH_AW_WORKFLOW_NAME: "Clippy"
           GH_AW_WORKFLOW_SOURCE: "githubnext/agentics/workflows/repo-assist.md@346204513ecfa08b81566450d7d599556807389f"
           GH_AW_WORKFLOW_SOURCE_URL: "${{ github.server_url }}/githubnext/agentics/tree/346204513ecfa08b81566450d7d599556807389f/workflows/repo-assist.md"
           GH_AW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -1659,7 +1660,7 @@ jobs:
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
           GH_AW_AGENT_OUTPUT: ${{ env.GH_AW_AGENT_OUTPUT }}
-          GH_AW_WORKFLOW_NAME: "Repo Assist"
+          GH_AW_WORKFLOW_NAME: "Clippy"
           GH_AW_WORKFLOW_SOURCE: "githubnext/agentics/workflows/repo-assist.md@346204513ecfa08b81566450d7d599556807389f"
           GH_AW_WORKFLOW_SOURCE_URL: "${{ github.server_url }}/githubnext/agentics/tree/346204513ecfa08b81566450d7d599556807389f/workflows/repo-assist.md"
           GH_AW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -1675,16 +1676,16 @@ jobs:
     if: >
       ((github.event_name == 'issues' || github.event_name == 'issue_comment' || github.event_name == 'pull_request' ||
       github.event_name == 'pull_request_review_comment' || github.event_name == 'discussion' || github.event_name == 'discussion_comment') &&
-      ((github.event_name == 'issues') && ((startsWith(github.event.issue.body, '/repo-assist ')) || (github.event.issue.body == '/repo-assist')) ||
-      (github.event_name == 'issue_comment') && (((startsWith(github.event.comment.body, '/repo-assist ')) ||
-      (github.event.comment.body == '/repo-assist')) && (github.event.issue.pull_request == null)) || (github.event_name == 'issue_comment') &&
-      (((startsWith(github.event.comment.body, '/repo-assist ')) || (github.event.comment.body == '/repo-assist')) &&
-      (github.event.issue.pull_request != null)) || (github.event_name == 'pull_request_review_comment') &&
-      ((startsWith(github.event.comment.body, '/repo-assist ')) || (github.event.comment.body == '/repo-assist')) ||
-      (github.event_name == 'pull_request') && ((startsWith(github.event.pull_request.body, '/repo-assist ')) ||
-      (github.event.pull_request.body == '/repo-assist')) || (github.event_name == 'discussion') && ((startsWith(github.event.discussion.body, '/repo-assist ')) ||
-      (github.event.discussion.body == '/repo-assist')) || (github.event_name == 'discussion_comment') && ((startsWith(github.event.comment.body, '/repo-assist ')) ||
-      (github.event.comment.body == '/repo-assist')))) || (!(github.event_name == 'issues' || github.event_name == 'issue_comment' ||
+      ((github.event_name == 'issues') && ((startsWith(github.event.issue.body, '/clippy ')) || (github.event.issue.body == '/clippy')) ||
+      (github.event_name == 'issue_comment') && (((startsWith(github.event.comment.body, '/clippy ')) || (github.event.comment.body == '/clippy')) &&
+      (github.event.issue.pull_request == null)) || (github.event_name == 'issue_comment') && (((startsWith(github.event.comment.body, '/clippy ')) ||
+      (github.event.comment.body == '/clippy')) && (github.event.issue.pull_request != null)) || (github.event_name == 'pull_request_review_comment') &&
+      ((startsWith(github.event.comment.body, '/clippy ')) || (github.event.comment.body == '/clippy')) ||
+      (github.event_name == 'pull_request') &&
+      ((startsWith(github.event.pull_request.body, '/clippy ')) || (github.event.pull_request.body == '/clippy')) ||
+      (github.event_name == 'discussion') && ((startsWith(github.event.discussion.body, '/clippy ')) || (github.event.discussion.body == '/clippy')) ||
+      (github.event_name == 'discussion_comment') && ((startsWith(github.event.comment.body, '/clippy ')) ||
+      (github.event.comment.body == '/clippy')))) || (!(github.event_name == 'issues' || github.event_name == 'issue_comment' ||
       github.event_name == 'pull_request' || github.event_name == 'pull_request_review_comment' || github.event_name == 'discussion' ||
       github.event_name == 'discussion_comment'))
     runs-on: ubuntu-slim
@@ -1712,7 +1713,7 @@ jobs:
         id: check_command_position
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
-          GH_AW_COMMANDS: "[\"repo-assist\"]"
+          GH_AW_COMMANDS: "[\"clippy\"]"
         with:
           script: |
             const { setupGlobals } = require('/opt/gh-aw/actions/setup_globals.cjs');
@@ -1772,7 +1773,7 @@ jobs:
           ARTIFACT_DIR: /tmp/gh-aw/repo-memory/default
           MEMORY_ID: default
           TARGET_REPO: ${{ github.repository }}
-          BRANCH_NAME: memory/repo-assist
+          BRANCH_NAME: memory/clippy
           MAX_FILE_SIZE: 10240
           MAX_FILE_COUNT: 100
           MAX_PATCH_SIZE: 10240
@@ -1797,10 +1798,10 @@ jobs:
       pull-requests: write
     timeout-minutes: 15
     env:
-      GH_AW_CALLER_WORKFLOW_ID: "${{ github.repository }}/repo-assist"
+      GH_AW_CALLER_WORKFLOW_ID: "${{ github.repository }}/clippy"
       GH_AW_ENGINE_ID: "copilot"
-      GH_AW_WORKFLOW_ID: "repo-assist"
-      GH_AW_WORKFLOW_NAME: "Repo Assist"
+      GH_AW_WORKFLOW_ID: "clippy"
+      GH_AW_WORKFLOW_NAME: "Clippy"
       GH_AW_WORKFLOW_SOURCE: "githubnext/agentics/workflows/repo-assist.md@346204513ecfa08b81566450d7d599556807389f"
       GH_AW_WORKFLOW_SOURCE_URL: "${{ github.server_url }}/githubnext/agentics/tree/346204513ecfa08b81566450d7d599556807389f/workflows/repo-assist.md"
     outputs:
@@ -1872,7 +1873,7 @@ jobs:
           GH_AW_ALLOWED_DOMAINS: "*.jsr.io,*.pythonhosted.org,*.vsblob.vsassets.io,adoptium.net,anaconda.org,api.adoptium.net,api.business.githubcopilot.com,api.enterprise.githubcopilot.com,api.foojay.io,api.github.com,api.githubcopilot.com,api.individual.githubcopilot.com,api.npms.io,api.nuget.org,api.snapcraft.io,archive.apache.org,archive.ubuntu.com,azure.archive.ubuntu.com,azuresearch-usnc.nuget.org,azuresearch-ussc.nuget.org,binstar.org,bootstrap.pypa.io,builds.dotnet.microsoft.com,bun.sh,cdn.azul.com,cdn.jsdelivr.net,central.sonatype.com,ci.dot.net,conda.anaconda.org,conda.binstar.org,crates.io,crl.geotrust.com,crl.globalsign.com,crl.identrust.com,crl.sectigo.com,crl.thawte.com,crl.usertrust.com,crl.verisign.com,crl3.digicert.com,crl4.digicert.com,crls.ssl.com,dc.services.visualstudio.com,deb.nodesource.com,deno.land,dist.nuget.org,dl.google.com,dlcdn.apache.org,dot.net,dotnet.microsoft.com,dotnetcli.blob.core.windows.net,download.eclipse.org,download.java.net,download.oracle.com,downloads.gradle-dn.com,esm.sh,files.pythonhosted.org,get.pnpm.io,github.com,googleapis.deno.dev,googlechromelabs.github.io,gradle.org,host.docker.internal,index.crates.io,jcenter.bintray.com,jdk.java.net,json-schema.org,json.schemastore.org,jsr.io,keyserver.ubuntu.com,maven.apache.org,maven.google.com,maven.oracle.com,maven.pkg.github.com,nodejs.org,npm.pkg.github.com,npmjs.com,npmjs.org,nuget.org,nuget.pkg.github.com,nugetregistryv2prod.blob.core.windows.net,ocsp.digicert.com,ocsp.geotrust.com,ocsp.globalsign.com,ocsp.identrust.com,ocsp.sectigo.com,ocsp.ssl.com,ocsp.thawte.com,ocsp.usertrust.com,ocsp.verisign.com,oneocsp.microsoft.com,packagecloud.io,packages.cloud.google.com,packages.microsoft.com,pip.pypa.io,pkgs.dev.azure.com,plugins-artifacts.gradle.org,plugins.gradle.org,ppa.launchpad.net,pypi.org,pypi.python.org,raw.githubusercontent.com,registry.bower.io,registry.npmjs.com,registry.npmjs.org,registry.yarnpkg.com,repo.anaconda.com,repo.continuum.io,repo.gradle.org,repo.grails.org,repo.maven.apache.org,repo.spring.io,repo.yarnpkg.com,repo1.maven.org,s.symcb.com,s.symcd.com,security.ubuntu.com,services.gradle.org,sh.rustup.rs,skimdb.npmjs.com,static.crates.io,static.rust-lang.org,storage.googleapis.com,telemetry.enterprise.githubcopilot.com,telemetry.vercel.com,ts-crl.ws.symantec.com,ts-ocsp.ws.symantec.com,www.java.com,www.microsoft.com,www.npmjs.com,www.npmjs.org,yarnpkg.com"
           GITHUB_SERVER_URL: ${{ github.server_url }}
           GITHUB_API_URL: ${{ github.api_url }}
-          GH_AW_SAFE_OUTPUTS_HANDLER_CONFIG: "{\"add_comment\":{\"hide_older_comments\":true,\"max\":10,\"target\":\"*\"},\"add_labels\":{\"allowed\":[\"bug\",\"enhancement\",\"help wanted\",\"good first issue\",\"spam\",\"off topic\",\"documentation\",\"question\",\"duplicate\",\"wontfix\",\"needs triage\",\"needs investigation\",\"breaking change\",\"performance\",\"security\",\"refactor\"],\"max\":30,\"target\":\"*\"},\"create_issue\":{\"labels\":[\"automation\",\"repo-assist\"],\"max\":4,\"title_prefix\":\"[Repo Assist] \"},\"create_pull_request\":{\"draft\":true,\"labels\":[\"automation\",\"repo-assist\"],\"max\":4,\"max_patch_size\":1024,\"protected_files\":[\"package.json\",\"bun.lockb\",\"bunfig.toml\",\"deno.json\",\"deno.jsonc\",\"deno.lock\",\"global.json\",\"NuGet.Config\",\"Directory.Packages.props\",\"mix.exs\",\"mix.lock\",\"go.mod\",\"go.sum\",\"stack.yaml\",\"stack.yaml.lock\",\"pom.xml\",\"build.gradle\",\"build.gradle.kts\",\"settings.gradle\",\"settings.gradle.kts\",\"gradle.properties\",\"package-lock.json\",\"yarn.lock\",\"pnpm-lock.yaml\",\"npm-shrinkwrap.json\",\"requirements.txt\",\"Pipfile\",\"Pipfile.lock\",\"pyproject.toml\",\"setup.py\",\"setup.cfg\",\"Gemfile\",\"Gemfile.lock\",\"uv.lock\",\"AGENTS.md\"],\"protected_files_policy\":\"fallback-to-issue\",\"protected_path_prefixes\":[\".github/\",\".agents/\"],\"title_prefix\":\"[Repo Assist] \"},\"missing_data\":{},\"missing_tool\":{},\"push_to_pull_request_branch\":{\"if_no_changes\":\"warn\",\"max\":4,\"max_patch_size\":1024,\"protected_files\":[\"package.json\",\"bun.lockb\",\"bunfig.toml\",\"deno.json\",\"deno.jsonc\",\"deno.lock\",\"global.json\",\"NuGet.Config\",\"Directory.Packages.props\",\"mix.exs\",\"mix.lock\",\"go.mod\",\"go.sum\",\"stack.yaml\",\"stack.yaml.lock\",\"pom.xml\",\"build.gradle\",\"build.gradle.kts\",\"settings.gradle\",\"settings.gradle.kts\",\"gradle.properties\",\"package-lock.json\",\"yarn.lock\",\"pnpm-lock.yaml\",\"npm-shrinkwrap.json\",\"requirements.txt\",\"Pipfile\",\"Pipfile.lock\",\"pyproject.toml\",\"setup.py\",\"setup.cfg\",\"Gemfile\",\"Gemfile.lock\",\"uv.lock\",\"AGENTS.md\"],\"protected_path_prefixes\":[\".github/\",\".agents/\"],\"target\":\"*\",\"title_prefix\":\"[Repo Assist] \"},\"remove_labels\":{\"allowed\":[\"bug\",\"enhancement\",\"help wanted\",\"good first issue\",\"spam\",\"off topic\",\"documentation\",\"question\",\"duplicate\",\"wontfix\",\"needs triage\",\"needs investigation\",\"breaking change\",\"performance\",\"security\",\"refactor\"],\"max\":5,\"target\":\"*\"},\"update_issue\":{\"allow_body\":true,\"max\":1,\"target\":\"*\",\"title_prefix\":\"[Repo Assist] \"}}"
+          GH_AW_SAFE_OUTPUTS_HANDLER_CONFIG: "{\"add_comment\":{\"hide_older_comments\":true,\"max\":10,\"target\":\"*\"},\"add_labels\":{\"allowed\":[\"bug\",\"enhancement\",\"help wanted\",\"good first issue\",\"spam\",\"off topic\",\"documentation\",\"question\",\"duplicate\",\"wontfix\",\"needs triage\",\"needs investigation\",\"breaking change\",\"performance\",\"security\",\"refactor\"],\"max\":30,\"target\":\"*\"},\"create_issue\":{\"labels\":[\"automation\",\"clippy\"],\"max\":4,\"title_prefix\":\"[Clippy] \"},\"create_pull_request\":{\"draft\":true,\"labels\":[\"automation\",\"clippy\"],\"max\":4,\"max_patch_size\":1024,\"protected_files\":[\"package.json\",\"bun.lockb\",\"bunfig.toml\",\"deno.json\",\"deno.jsonc\",\"deno.lock\",\"global.json\",\"NuGet.Config\",\"Directory.Packages.props\",\"mix.exs\",\"mix.lock\",\"go.mod\",\"go.sum\",\"stack.yaml\",\"stack.yaml.lock\",\"pom.xml\",\"build.gradle\",\"build.gradle.kts\",\"settings.gradle\",\"settings.gradle.kts\",\"gradle.properties\",\"package-lock.json\",\"yarn.lock\",\"pnpm-lock.yaml\",\"npm-shrinkwrap.json\",\"requirements.txt\",\"Pipfile\",\"Pipfile.lock\",\"pyproject.toml\",\"setup.py\",\"setup.cfg\",\"Gemfile\",\"Gemfile.lock\",\"uv.lock\",\"AGENTS.md\"],\"protected_files_policy\":\"fallback-to-issue\",\"protected_path_prefixes\":[\".github/\",\".agents/\"],\"title_prefix\":\"[Clippy] \"},\"missing_data\":{},\"missing_tool\":{},\"push_to_pull_request_branch\":{\"if_no_changes\":\"warn\",\"max\":4,\"max_patch_size\":1024,\"protected_files\":[\"package.json\",\"bun.lockb\",\"bunfig.toml\",\"deno.json\",\"deno.jsonc\",\"deno.lock\",\"global.json\",\"NuGet.Config\",\"Directory.Packages.props\",\"mix.exs\",\"mix.lock\",\"go.mod\",\"go.sum\",\"stack.yaml\",\"stack.yaml.lock\",\"pom.xml\",\"build.gradle\",\"build.gradle.kts\",\"settings.gradle\",\"settings.gradle.kts\",\"gradle.properties\",\"package-lock.json\",\"yarn.lock\",\"pnpm-lock.yaml\",\"npm-shrinkwrap.json\",\"requirements.txt\",\"Pipfile\",\"Pipfile.lock\",\"pyproject.toml\",\"setup.py\",\"setup.cfg\",\"Gemfile\",\"Gemfile.lock\",\"uv.lock\",\"AGENTS.md\"],\"protected_path_prefixes\":[\".github/\",\".agents/\"],\"target\":\"*\",\"title_prefix\":\"[Clippy] \"},\"remove_labels\":{\"allowed\":[\"bug\",\"enhancement\",\"help wanted\",\"good first issue\",\"spam\",\"off topic\",\"documentation\",\"question\",\"duplicate\",\"wontfix\",\"needs triage\",\"needs investigation\",\"breaking change\",\"performance\",\"security\",\"refactor\"],\"max\":5,\"target\":\"*\"},\"update_issue\":{\"allow_body\":true,\"max\":1,\"target\":\"*\",\"title_prefix\":\"[Clippy] \"}}"
           GH_AW_CI_TRIGGER_TOKEN: ${{ secrets.GH_AW_CI_TRIGGER_TOKEN }}
         with:
           github-token: ${{ secrets.GH_AW_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
