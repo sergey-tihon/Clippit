@@ -1,3 +1,4 @@
+using System.Xml.Linq;
 using Clippit.PowerPoint;
 using DocumentFormat.OpenXml.Packaging;
 
@@ -159,6 +160,62 @@ namespace Clippit.Tests.PowerPoint
             var result = PresentationBuilder.BuildPresentation(sources);
             var resultFile = Path.Combine(TempDir, "MergedDeck.pptx");
             result.SaveAs(resultFile);
+        }
+
+        /// <summary>
+        /// Regression test for https://github.com/sergey-tihon/Clippit/issues/42 —
+        /// PublishSlides must update docProps/app.xml so that each published slide
+        /// reports Slides=1 and its own slide title, not the original deck metadata.
+        /// </summary>
+        [Test]
+        [Arguments("BRK3066.pptx")]
+        public async Task PublishSlides_UpdatesExtendedFileProperties(string fileName)
+        {
+            var file = Path.Combine(SourceDirectory, fileName);
+            var document = new PmlDocument(file);
+            var slides = PresentationBuilder.PublishSlides(document).ToList();
+
+            await Assert.That(slides).IsNotEmpty();
+
+            foreach (var slide in slides)
+            {
+                using var streamDoc = new OpenXmlMemoryStreamDocument(slide);
+                using var pptx = streamDoc.GetPresentationDocument(new OpenSettings { AutoSave = false });
+
+                var extPart = pptx.ExtendedFilePropertiesPart;
+                await Assert.That(extPart).IsNotNull();
+
+                var root = extPart!.GetXDocument().Root!;
+
+                // ep:Slides must be 1
+                var slidesCount = (int?)root.Element(EP.Slides);
+                await Assert.That(slidesCount).IsEqualTo(1);
+
+                // TitlesOfParts size must equal the sum of HeadingPairs counts
+                var headingPairsVector = root.Elements(EP.HeadingPairs).Elements(VT.vector).FirstOrDefault();
+                var titlesVector = root.Elements(EP.TitlesOfParts).Elements(VT.vector).FirstOrDefault();
+
+                if (headingPairsVector is not null && titlesVector is not null)
+                {
+                    var variants = headingPairsVector.Elements(VT.variant).ToList();
+                    var expectedTotal = 0;
+                    for (var i = 1; i < variants.Count; i += 2)
+                        expectedTotal += (int?)variants[i].Element(VT.i4) ?? 0;
+
+                    var actualSize = (int?)titlesVector.Attribute("size") ?? 0;
+                    await Assert.That(actualSize).IsEqualTo(expectedTotal);
+
+                    // "Slide Titles" count in HeadingPairs must be 1
+                    for (var i = 0; i + 1 < variants.Count; i += 2)
+                    {
+                        if (variants[i].Element(VT.lpstr)?.Value == "Slide Titles")
+                        {
+                            var slideTitleCount = (int?)variants[i + 1].Element(VT.i4);
+                            await Assert.That(slideTitleCount).IsEqualTo(1);
+                        }
+                    }
+                }
+            }
         }
     }
 }
