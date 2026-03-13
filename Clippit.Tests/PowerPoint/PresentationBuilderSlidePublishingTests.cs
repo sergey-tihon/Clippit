@@ -205,15 +205,18 @@ namespace Clippit.Tests.PowerPoint
                     var actualSize = (int?)titlesVector.Attribute("size") ?? 0;
                     await Assert.That(actualSize).IsEqualTo(expectedTotal);
 
-                    // "Slide Titles" count in HeadingPairs must be 1
+                    // "Slide Titles" count in HeadingPairs must be 1, and the entry must exist
+                    var slideTitlesFound = false;
                     for (var i = 0; i + 1 < variants.Count; i += 2)
                     {
                         if (variants[i].Element(VT.lpstr)?.Value == "Slide Titles")
                         {
+                            slideTitlesFound = true;
                             var slideTitleCount = (int?)variants[i + 1].Element(VT.i4);
                             await Assert.That(slideTitleCount).IsEqualTo(1);
                         }
                     }
+                    await Assert.That(slideTitlesFound).IsTrue();
                 }
             }
         }

@@ -129,7 +129,7 @@ public static partial class PresentationBuilder
         }
 
         titlesVector.RemoveNodes();
-        titlesVector.SetAttributeValue("size", newTitles.Count.ToString());
+        titlesVector.SetAttributeValue(NoNamespace.size, newTitles.Count);
         foreach (var t in newTitles)
             titlesVector.Add(new XElement(VT.lpstr, t));
 
