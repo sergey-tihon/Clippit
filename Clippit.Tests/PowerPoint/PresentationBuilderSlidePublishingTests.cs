@@ -198,6 +198,8 @@ namespace Clippit.Tests.PowerPoint
                 if (headingPairsVector is not null && titlesVector is not null)
                 {
                     var variants = headingPairsVector.Elements(VT.variant).ToList();
+                    var allTitles = titlesVector.Elements(VT.lpstr).ToList();
+
                     var expectedTotal = 0;
                     for (var i = 1; i < variants.Count; i += 2)
                         expectedTotal += (int?)variants[i].Element(VT.i4) ?? 0;
@@ -205,16 +207,24 @@ namespace Clippit.Tests.PowerPoint
                     var actualSize = (int?)titlesVector.Attribute("size") ?? 0;
                     await Assert.That(actualSize).IsEqualTo(expectedTotal);
 
-                    // "Slide Titles" count in HeadingPairs must be 1, and the entry must exist
+                    // "Slide Titles" count in HeadingPairs must be 1, the entry must exist,
+                    // and the TitlesOfParts entry must match the slide's own title
                     var slideTitlesFound = false;
+                    var offset = 0;
                     for (var i = 0; i + 1 < variants.Count; i += 2)
                     {
+                        var count = (int?)variants[i + 1].Element(VT.i4) ?? 0;
                         if (variants[i].Element(VT.lpstr)?.Value == "Slide Titles")
                         {
                             slideTitlesFound = true;
-                            var slideTitleCount = (int?)variants[i + 1].Element(VT.i4);
-                            await Assert.That(slideTitleCount).IsEqualTo(1);
+                            await Assert.That(count).IsEqualTo(1);
+
+                            // The single TitlesOfParts entry must match the slide's own title
+                            var expectedTitle = pptx.PackageProperties.Title;
+                            var actualSlideTitle = allTitles.Skip(offset).FirstOrDefault()?.Value;
+                            await Assert.That(actualSlideTitle).IsEqualTo(expectedTitle);
                         }
+                        offset += count;
                     }
                     await Assert.That(slideTitlesFound).IsTrue();
                 }
