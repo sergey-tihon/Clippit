@@ -185,7 +185,7 @@
 
 ## [1.7.1] - Aug 18, 2021
 
-- Resolving bug with nested rowspans [335](https://github.com/sergey-tihon/Clippit/pull/35)
+- Resolving bug with nested rowspans [#35](https://github.com/sergey-tihon/Clippit/pull/35)
 
 ## [1.7.0] - Aug 15, 2021
 
@@ -211,7 +211,7 @@
 
 ## [1.4.0] - Feb 10, 2021
 
-- DocumentBuilder: Added ISource and TableCellSource] - [#17](https://github.com/sergey-tihon/Clippit/pull/17)
+- DocumentBuilder: Added ISource and TableCellSource - [#17](https://github.com/sergey-tihon/Clippit/pull/17)
 - DocumentFormat.OpenXml (2.12.1)
 - Added dependency on System.IO.Packaging
 - Fixed DateTime/DateTimeOffset serialisation format to Excel
