@@ -23,10 +23,10 @@ Key features:
 
 Most of existing content about Open-Xml-PowerTools is still relevant:
 
-- [DocumentBuilder Resource Center](http://www.ericwhite.com/blog/documentbuilder-developer-center/)
-- [PresentationBuilder Resource Center](http://www.ericwhite.com/blog/presentationbuilder-developer-center/)
-- [WmlToHtmlConverter Resource Center](http://www.ericwhite.com/blog/wmltohtmlconverter-developer-center/)
-- [DocumentAssembler Resource Center](http://www.ericwhite.com/blog/documentassembler-developer-center/)
+- [DocumentBuilder Resource Center](https://www.ericwhite.com/blog/documentbuilder-developer-center/)
+- [PresentationBuilder Resource Center](https://www.ericwhite.com/blog/presentationbuilder-developer-center/)
+- [WmlToHtmlConverter Resource Center](https://www.ericwhite.com/blog/wmltohtmlconverter-developer-center/)
+- [DocumentAssembler Resource Center](https://www.ericwhite.com/blog/documentassembler-developer-center/)
 
 ## About Open-XML-PowerTools
 
