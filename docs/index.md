@@ -12,7 +12,7 @@ Key highlights:
 
 - Shipped as new [NuGet package](https://www.nuget.org/packages/Clippit) published from latest `master`.
 - Targets `net8.0` and `net10.0` and uses latest `C#` language features.
-- Continuously tested on Windows, macOS and Linux.
+- Continuously tested on Windows and Linux.
 - Can be used side-by-side with any existing Open-Xml-PowerTools assembly.
 
 Key features:
