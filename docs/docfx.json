@@ -4,12 +4,15 @@
       "src": [
         {
           "files": [
-            "OpenXmlPowerTools/**.csproj"
+            "Clippit/**.csproj"
           ],
           "src": "../"
         }
       ],
       "dest": "api",
+      "properties": {
+        "TargetFramework": "net10.0"
+      },
       "disableGitFeatures": false,
       "disableDefaultFilter": false
     }
