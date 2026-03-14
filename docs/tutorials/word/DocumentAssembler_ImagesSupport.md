@@ -1,8 +1,11 @@
 ---
 uid: Tutorial.Word.DocumentAssembler.ImagesSupport
 ---
+# Images Support
 
-# Key highlights from [#31](https://github.com/sergey-tihon/Clippit/pull/31#issuecomment-874335292)
+Namespace: `Clippit.Word`
+
+Key highlights from [#31](https://github.com/sergey-tihon/Clippit/pull/31#issuecomment-874335292).
 
 ## Introduction
 
@@ -72,6 +75,6 @@ Cheryl.]]></Description>
 
 ## Further Reading
 
-If you are interested in using the Image functionality in DocumentAssembler then your best bet is to look at `DocumentAssemblerTests.cs` and particularly the data files which can be found in the repository under `Test Files/DA`.
+If you are interested in using the Image functionality in DocumentAssembler then your best bet is to look at `DocumentAssemblerTests.cs` and particularly the data files which can be found in the repository under `TestFiles/DA`.
 
 Changes merged in: [#31](https://github.com/sergey-tihon/Clippit/pull/31)

@@ -7,25 +7,27 @@ Clippit is a .NET library providing OpenXml PowerTools for Word, Excel, and Powe
 
 ### Quick Reference
 
-| Task | Command |
-|------|---------|
-| Full build pipeline | `./build.sh` (Unix) or `.\build.cmd` (Windows) |
-| Build only | `dotnet build Clippit.slnx -c Release` |
-| Restore tools | `dotnet tool restore` |
-| Lint check | `dotnet csharpier check .` |
-| Lint fix | `dotnet csharpier .` |
-| Test all | `dotnet test --project Clippit.Tests/` |
-| Single test | `dotnet test --project Clippit.Tests/ --treenode-filter "/*/*/*/MethodName**"` |
-| Tests in class | `dotnet test --project Clippit.Tests/ --treenode-filter "/*/*/ClassName/**"` |
-| Check outdated deps | `dotnet outdated` |
+| Task                | Command                                                                        |
+| ------------------- | ------------------------------------------------------------------------------ |
+| Full build pipeline | `./build.sh` (Unix) or `.\build.cmd` (Windows)                                 |
+| Build only          | `dotnet build Clippit.slnx -c Release`                                         |
+| Restore tools       | `dotnet tool restore`                                                          |
+| Lint check          | `dotnet csharpier check .`                                                     |
+| Lint fix            | `dotnet csharpier .`                                                           |
+| Test all            | `dotnet test --project Clippit.Tests/`                                         |
+| Single test         | `dotnet test --project Clippit.Tests/ --treenode-filter "/*/*/*/MethodName**"` |
+| Tests in class      | `dotnet test --project Clippit.Tests/ --treenode-filter "/*/*/ClassName/**"`   |
+| Check outdated deps | `dotnet outdated`                                                              |
 
 ### Build Pipeline
 
-The full build script (`build.sh`/`build.cmd`) runs these stages in order:
+The full build script (`build.sh`/`build.cmd`) calls `dotnet fsi build.fsx -- -p build`,
+which runs these stages in order:
+
 1. `dotnet tool restore` and `dotnet restore`
 2. `dotnet csharpier check .` (formatting check — build fails if violated)
 3. `dotnet clean` and clean `bin/`
-4. Generate `Clippit/Properties/AssemblyInfo.g.cs`
+4. Generate `Clippit/Properties/AssemblyInfo.g.cs` (version from `CHANGELOG.md`)
 5. `dotnet build Clippit.slnx -c Release`
 6. `dotnet test --solution Clippit.slnx`
 7. `dotnet pack Clippit/Clippit.csproj -o bin/`
@@ -45,12 +47,14 @@ filter syntax — the pattern `/*/*/*/MethodName**` matches any test method star
 ```
 Clippit/                    Main library (targets net8.0 + net10.0)
   Word/                     Word/DOCX: DocumentBuilder, DocumentAssembler, WmlComparer, HtmlConverter
+    Assembler/              DocumentAssembler helpers (templates, extensions)
   PowerPoint/               PPTX: PresentationBuilder, Fluent API
   Excel/                    XLSX: SpreadsheetWriter, SmlDataRetriever
-  Html/                     HTML-to-WML conversion
-  Comparer/                 WmlComparer (partial classes split across many files)
+  Html/                     HTML-to-WML conversion (CssParser, CssApplier)
+  Comparer/                 WmlComparer (partial classes split across ~26 files by concern)
   Core/                     PowerToolsBlock, StronglyTypedBlock
   Internal/                 ColorParser, TextReplacer, Relationships
+  Properties/               AssemblyInfo.cs (InternalsVisibleTo), AssemblyInfo.g.cs (generated)
 Clippit.Tests/              Test project (targets net10.0)
   Word/ PowerPoint/ Excel/ Html/ Common/    Mirror library structure
   */Samples/                                Sample/integration tests
@@ -84,14 +88,14 @@ Directory.Build.props       Shared MSBuild props (nullable, implicit usings, lan
 
 ### Naming Conventions
 
-| Symbol | Convention | Example |
-|--------|-----------|---------|
-| Types, methods, properties | PascalCase | `DocumentBuilder`, `GetMetrics()` |
-| Constants, enum members | PascalCase | `MaxRetries`, `Landscape` |
-| Local functions | PascalCase | `ProcessElement()` |
-| Private static fields | `s_` + camelCase | `s_tempDir`, `s_maxId` |
-| Private instance fields | `_` + camelCase | `_package`, `_validator` |
-| Locals, parameters | camelCase | `sourceDoc`, `partUri` |
+| Symbol                     | Convention       | Example                           |
+| -------------------------- | ---------------- | --------------------------------- |
+| Types, methods, properties | PascalCase       | `DocumentBuilder`, `GetMetrics()` |
+| Constants, enum members    | PascalCase       | `MaxRetries`, `Landscape`         |
+| Local functions            | PascalCase       | `ProcessElement()`                |
+| Private static fields      | `s_` + camelCase | `s_tempDir`, `s_maxId`            |
+| Private instance fields    | `_` + camelCase  | `_package`, `_validator`          |
+| Locals, parameters         | camelCase        | `sourceDoc`, `partUri`            |
 
 Avoid `this.` qualification for field/property/method access.
 
@@ -105,6 +109,7 @@ Avoid `this.` qualification for field/property/method access.
 ### Modern C# Patterns
 
 Prefer modern C# idioms wherever applicable:
+
 - Object and collection initializers
 - Null coalescing (`??`) and null propagation (`?.`)
 - Pattern matching (`is`, `switch` expressions) over `as` + null check
@@ -115,9 +120,10 @@ Prefer modern C# idioms wherever applicable:
 
 ### Error Handling
 
-- Warnings are **not** treated as errors (`TreatWarningsAsErrors: false`)
+- `AnalysisMode` is `All` but warnings are **not** treated as errors
 - Use project-specific exceptions: `OpenXmlPowerToolsException`,
-  `PowerToolsDocumentException`, `InvalidOpenXmlDocumentException`
+  `PowerToolsDocumentException`, `InvalidOpenXmlDocumentException`,
+  `DocumentBuilderException`, `PresentationBuilderException`
 - Guard clauses: prefer `ArgumentNullException.ThrowIfNull(param)` for null checks
 - No logging framework — the library does not log; tests use `Console.WriteLine`
 
@@ -132,12 +138,13 @@ Prefer modern C# idioms wherever applicable:
 
 - Testing framework: **TUnit** — use `[Test]` and `[Arguments]` attributes
 - Assertions are async and fluent:
-  ```csharp
-  await Assert.That(errors).IsEmpty();
-  await Assert.That(value).IsEqualTo(expected);
-  await Assert.That(collection).HasCount(5);
-  await Assert.That(() => action).Throws<OpenXmlPowerToolsException>();
-  ```
+
+    ```csharp
+    await Assert.That(errors).IsEmpty();
+    await Assert.That(value).IsEqualTo(expected);
+    await Assert.That(collection).HasCount(5);
+    await Assert.That(() => action).Throws<OpenXmlPowerToolsException>();
+    ```
 
 ### Test Structure
 
@@ -156,9 +163,10 @@ Prefer modern C# idioms wherever applicable:
 
 ## Key Architecture Notes
 
-- **Partial classes**: `WmlComparer` is split across many files by concern
-  (e.g., `WmlComparer.Private.Methods.Hashing.cs`)
+- **Partial classes**: `WmlComparer` is split across ~26 files by concern
+  (e.g., `WmlComparer.Public.Methods.Compare.cs`, `WmlComparer.Private.Methods.Hashing.cs`)
 - **Extension methods**: `PtOpenXmlExtensions`, `PtExtensions` extend OpenXml SDK types
 - **XNamespace constants**: `W`, `WP`, `M`, `MC`, etc. in `PtOpenXmlUtil.cs` define
   all XML namespace constants used throughout the library
+- **Versioning**: version is derived from `CHANGELOG.md` by the build script
 - **No new dependencies** without clear justification — the project values minimal deps

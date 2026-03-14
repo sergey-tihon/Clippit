@@ -45,7 +45,9 @@ pipeline "build" {
                   AssemblyInfo.Product "Clippit"
                   AssemblyInfo.Description "Fresh PowerTools for OpenXml"
                   AssemblyInfo.Version version.Version
-                  AssemblyInfo.FileVersion version.Version ])
+                  AssemblyInfo.FileVersion version.Version ]
+
+            Shell.copyFile "docs/api/CHANGELOG.md" "CHANGELOG.md")
     }
 
     stage "Build" { run "dotnet build Clippit.slnx -c Release" }

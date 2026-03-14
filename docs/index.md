@@ -1,54 +1,93 @@
-# Clippit - fresh PowerTools for OpenXml
+# Clippit — Fresh PowerTools for OpenXml
 
-[![NuGet Badge](https://buildstats.info/nuget/Clippit)](https://www.nuget.org/packages/Clippit) [![Build Status](https://github.com/sergey-tihon/Clippit/workflows/Build%20and%20Test/badge.svg?branch=master)](https://github.com/sergey-tihon/Clippit/actions?query=branch%3Amaster)
+![NuGet Version](https://badgen.net/nuget/v/Clippit) ![NuGet Downloads](https://badgen.net/nuget/dt/Clippit)
 
 <img style="float: right;" src="images/logo.jpeg">
 
-## Why Clippit?
+Clippit is a .NET library for programmatically creating, modifying, and converting
+Word (DOCX), Excel (XLSX), and PowerPoint (PPTX) documents. Built on top of the
+[Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), it provides high-level
+APIs that handle the complexity of the Open XML format so you can focus on your content.
 
-Clippit is a fork of [Open-Xml-PowerTools](https://github.com/EricWhiteDev/Open-Xml-PowerTools) (currently owned by Eric White) with new features, fixes and performance optimizations.
+## Getting Started
 
-Key highlights:
+Install from NuGet:
 
-- Shipped as new [NuGet package](https://www.nuget.org/packages/Clippit) published from latest `master`.
-- Targets `net8.0` and `net10.0` and uses latest `C#` language features.
-- Continuously tested on Windows and Linux.
-- Can be used side-by-side with any existing Open-Xml-PowerTools assembly.
+```bash
+dotnet add package Clippit
+```
 
-Key features:
+Split a PowerPoint presentation into individual slides:
 
-- Provides optimized [slide publishing API](xref:Tutorial.Word.PresentationBuilder.PublishSlides) and improved [PresentationBuilder](xref:Tutorial.Word.PresentationBuilder)
-- [ISource extensibility model](xref:Tutorial.Word.DocumentBuilder.ISource) for DocumentBuilder and new [TableCellSource](xref:Tutorial.Word.DocumentBuilder.TableCellSource).
-- [SpreadsheetWriter](xref:Tutorial.Excel.SpreadsheetWriter) that is able to generate multi-spreadsheet Excel files with data formatted as table and compatible with Power BI.
+```csharp
+using Clippit.PowerPoint;
 
-Most of existing content about Open-Xml-PowerTools is still relevant:
+var presentation = new PmlDocument("conference-deck.pptx");
+var slides = PresentationBuilder.PublishSlides(presentation);
 
-- [DocumentBuilder Resource Center](http://www.ericwhite.com/blog/documentbuilder-developer-center/)
-- [PresentationBuilder Resource Center](http://www.ericwhite.com/blog/presentationbuilder-developer-center/)
-- [WmlToHtmlConverter Resource Center](http://www.ericwhite.com/blog/wmltohtmlconverter-developer-center/)
-- [DocumentAssembler Resource Center](http://www.ericwhite.com/blog/documentassembler-developer-center/)
+foreach (var slide in slides)
+{
+    slide.SaveAs(Path.Combine("output", slide.FileName));
+}
+```
 
-## About Open-XML-PowerTools
+## Features
 
-The Open XML PowerTools provides guidance and example code for programming with Open XML
-Documents (DOCX, XLSX, and PPTX). It is based on, and extends the functionality
-of the [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK).
+Clippit covers a broad range of document processing scenarios across all three
+Office formats. Every feature listed below has a dedicated tutorial with API
+signatures and code samples.
 
-It supports scenarios such as:
+### Word
 
-- Splitting DOCX/PPTX files into multiple files.
-- Combining multiple DOCX/PPTX files into a single file.
-- Populating content in template DOCX files with data from XML.
-- High-fidelity conversion of DOCX to HTML/CSS.
-- High-fidelity conversion of HTML/CSS to DOCX.
-- Searching and replacing content in DOCX/PPTX using regular expressions.
-- Managing tracked-revisions, including detecting tracked revisions, and accepting tracked revisions.
-- Updating Charts in DOCX/PPTX files, including updating cached data, as well as the embedded XLSX.
-- Comparing two DOCX files, producing a DOCX with revision tracking markup, and enabling retrieving a list of revisions.
-- Retrieving metrics from DOCX files, including the hierarchy of styles used, the languages used, and the fonts used.
-- Writing XLSX files using far simpler code than directly writing the markup, including a streaming approach that
-  enables writing XLSX files with millions of rows.
-- Extracting data (along with formatting) from spreadsheets.
+| Feature                                                                     | Description                                                                                                                                                                                      |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [DocumentAssembler](xref:Tutorial.Word.DocumentAssembler.DocumentTemplates) | Populate DOCX templates with data from XML, including [images](xref:Tutorial.Word.DocumentAssembler.ImagesSupport) and [inline HTML](xref:Tutorial.Word.DocumentAssembler.InlineHtmlSupport)     |
+| [DocumentBuilder](xref:Tutorial.Word.DocumentBuilder.ISource)               | Merge, split, and reorganize DOCX files with an [extensible ISource model](xref:Tutorial.Word.DocumentBuilder.ISource) and [TableCellSource](xref:Tutorial.Word.DocumentBuilder.TableCellSource) |
+| [WmlComparer](xref:Tutorial.Word.WmlComparer)                               | Compare two DOCX files and produce a diff with revision tracking markup                                                                                                                          |
+| [WmlToHtmlConverter](xref:Tutorial.Word.WmlToHtmlConverter)                 | High-fidelity conversion from DOCX to HTML/CSS                                                                                                                                                   |
+| [HtmlToWmlConverter](xref:Tutorial.Word.HtmlToWmlConverter)                 | Convert HTML/CSS back into a properly structured DOCX                                                                                                                                            |
+| [RevisionProcessor](xref:Tutorial.Word.RevisionProcessor)                   | Accept or reject tracked revisions programmatically                                                                                                                                              |
+| [MarkupSimplifier](xref:Tutorial.Word.MarkupSimplifier)                     | Clean up and normalize DOCX markup for easier processing                                                                                                                                         |
+
+### Excel
+
+| Feature                                                    | Description                                                                                                                   |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| [SpreadsheetWriter](xref:Tutorial.Excel.SpreadsheetWriter) | Generate multi-sheet XLSX files with formatted tables, streaming support for millions of rows, and a concise Cell Builder API |
+| [SmlDataRetriever](xref:Tutorial.Excel.SmlDataRetriever)   | Extract data and formatting from existing spreadsheets as structured XML                                                      |
+
+### PowerPoint
+
+| Feature                                                             | Description                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [PresentationBuilder](xref:Tutorial.PowerPoint.PresentationBuilder) | Merge and split PPTX files, with a [Fluent API](xref:Tutorial.PowerPoint.BuildPresentation.FluentApi) for ergonomic slide composition and optimized [slide publishing](xref:Tutorial.PowerPoint.PresentationBuilder.PublishSlides) |
+
+### Common
+
+| Feature                                             | Description                                                             |
+| --------------------------------------------------- | ----------------------------------------------------------------------- |
+| [OpenXmlRegex](xref:Tutorial.Common.OpenXmlRegex)   | Search and replace content across DOCX/PPTX using regular expressions   |
+| [MetricsGetter](xref:Tutorial.Common.MetricsGetter) | Retrieve document metrics — style hierarchy, languages, fonts, and more |
+
+## Compatibility
+
+- **Targets:** `net8.0` and `net10.0`
+- **Dependency:** [DocumentFormat.OpenXml](https://www.nuget.org/packages/DocumentFormat.OpenXml) (Open XML SDK)
+- **Platforms:** Windows and Linux (continuously tested on both)
+- **Side-by-side:** Can coexist with the original Open-Xml-PowerTools assembly
+
+## Heritage
+
+Clippit originated as a fork of [Open-Xml-PowerTools](https://github.com/EricWhiteDev/Open-Xml-PowerTools)
+and has since evolved into an independently maintained library with new features,
+performance improvements, and modern .NET support. See the
+[Changelog](api/CHANGELOG.md) for the full release history.
+
+## Questions and Contributing
+
+Have a question or idea? Start a [GitHub Discussion](https://github.com/sergey-tihon/Clippit/discussions).
+
+Found a bug or want to request a feature? Open an [Issue](https://github.com/sergey-tihon/Clippit/issues).
 
 ```
 Copyright (c) Microsoft Corporation 2012-2017
@@ -56,4 +95,3 @@ Portions Copyright (c) Eric White Inc 2018-2019
 Portions Copyright (c) Sergey Tihon 2019-2026
 Licensed under the MIT License.
 ```
-

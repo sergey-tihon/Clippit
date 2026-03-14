@@ -1,2 +1,4 @@
+- name: SmlDataRetriever
+  href: SmlDataRetriever.md
 - name: SpreadsheetWriter
   href: SpreadsheetWriter.md

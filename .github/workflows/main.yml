@@ -49,6 +49,8 @@ jobs:
               run: dotnet tool restore
             - name: Restore
               run: dotnet restore
+            - name: Copy CHANGELOG to docs
+              run: cp CHANGELOG.md docs/api/CHANGELOG.md
             - name: DocFX Build
               working-directory: docs
               run: dotnet docfx docfx.json

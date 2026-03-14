@@ -1,125 +1,86 @@
 ---
 uid: Tutorial.Word.DocumentBuilder.ISource
 ---
-# Custom ISource implementation
+# Custom ISource Implementation
 
 Namespace: `Clippit.Word`
 
-`ISource` abstractions allow to use `DocumentBuild` with custom content selectors.
+The `ISource` interface allows using `DocumentBuilder` with custom content selectors.
+Implement this interface to define your own logic for selecting which elements from a
+source document should be included in the built document.
 
 ```csharp
-    public interface ISource : ICloneable
-    {
-        WmlDocument WmlDocument { get; set; }
+public interface ISource : ICloneable
+{
+    WmlDocument WmlDocument { get; set; }
+    bool KeepSections { get; set; }
+    bool DiscardHeadersAndFootersInKeptSections { get; set; }
+    string InsertId { get; set; }
 
-        bool KeepSections { get; set; }
-        public bool DiscardHeadersAndFootersInKeptSections { get; set; }
-
-        string InsertId { get; set; }
-
-        IEnumerable<XElement> GetElements(WordprocessingDocument document);
-    }
+    IEnumerable<XElement> GetElements(WordprocessingDocument document);
+}
 ```
 
-### RecursiveTableCellSource
+The `GetElements` method is called by `DocumentBuilder` to retrieve the content elements
+from the source document. Your implementation controls which elements are returned.
 
-Allow to reference tables inside tables
+## RecursiveTableCellSource
+
+`RecursiveTableCellSource` is an example custom `ISource` implementation that allows
+referencing content inside nested tables (tables within tables).
+
+### TableCellReference
+
+Each `TableCellReference` specifies one level of table nesting:
 
 ```csharp
-    [Serializable]
-    public class TableCellReference
+public class TableCellReference
+{
+    public int TableElementIndex { get; set; }  // Index of table in current context
+    public int RowIndex { get; set; }           // Row within the table
+    public int CellIndex { get; set; }          // Cell within the row
+}
+```
+
+### RecursiveTableCellSource Class
+
+```csharp
+public class RecursiveTableCellSource : ISource
+{
+    public WmlDocument WmlDocument { get; set; }
+    public bool KeepSections { get; set; }
+    public bool DiscardHeadersAndFootersInKeptSections { get; set; }
+    public string InsertId { get; set; }
+
+    // Navigation path through nested tables
+    public List<TableCellReference> TableCellReferences { get; set; }
+
+    // Content range within the final cell
+    public int Start { get; set; }
+    public int Count { get; set; }
+}
+```
+
+### RecursiveTableCellSource Sample
+
+```csharp
+var document = new WmlDocument("nested-tables.docx");
+
+// Navigate to: body -> table[0] -> row[1] -> cell[2] -> table[0] -> row[0] -> cell[1]
+// Then extract 3 elements starting from element 0
+var source = new RecursiveTableCellSource
+{
+    WmlDocument = document,
+    TableCellReferences = new List<TableCellReference>
     {
-        public int TableElementIndex { get; set; }
+        new() { TableElementIndex = 0, RowIndex = 1, CellIndex = 2 },  // Outer table
+        new() { TableElementIndex = 0, RowIndex = 0, CellIndex = 1 }   // Inner table
+    },
+    Start = 0,
+    Count = 3
+};
 
-        public int RowIndex { get; set; }
-
-        public int CellIndex { get; set; }
-    }
-
-    [Serializable]
-    public class RecursiveTableCellSource : ISource
-    {
-        public WmlDocument WmlDocument
-        {
-            get => _wmlDocument;
-            set => _wmlDocument = value;
-        }
-
-        [NonSerialized] private WmlDocument _wmlDocument;
-
-
-        public bool KeepSections { get; set; }
-        public bool DiscardHeadersAndFootersInKeptSections { get; set; }
-
-        public string InsertId { get; set; }
-
-
-        public List<TableCellReference> TableCellReferences { get; set; }
-
-        public int Start { get; set; }
-
-        public int Count { get; set; }
-
-
-        public IEnumerable<XElement> GetElements(WordprocessingDocument document)
-        {
-            var body = document.MainDocumentPart.GetXDocument().Root?.Element(W.body);
-            if (body is null)
-            {
-                throw new DocumentBuilderException(
-                    "Unsupported document - contains no body element in the correct namespace");
-            }
-
-            var elements = body.Elements();
-            foreach (var cellRef in TableCellReferences)
-            {
-                var table = elements.Skip(cellRef.TableElementIndex).FirstOrDefault();
-                if (table is null || table.Name != W.tbl)
-                {
-                    throw new DocumentBuilderException(
-                        $"Invalid {nameof(RecursiveTableCellSource)} - element {cellRef.TableElementIndex} is '{table?.Name}' but expected {W.tbl}");
-                }
-
-                var row = table.Elements(W.tr).Skip(cellRef.RowIndex).FirstOrDefault();
-                if (row is null)
-                {
-                    throw new DocumentBuilderException(
-                        $"Invalid {nameof(RecursiveTableCellSource)} - row {cellRef.RowIndex} does not exist");
-                }
-
-                var cell = row.Elements(W.tc).Skip(cellRef.CellIndex).FirstOrDefault();
-                if (cell is null)
-                {
-                    throw new DocumentBuilderException(
-                        $"Invalid {nameof(RecursiveTableCellSource)} - cell {cellRef.CellIndex} in the row {cellRef.RowIndex} does not exist");
-                }
-
-                elements = cell.Elements();
-            }
-
-            return elements
-                .Skip(Start)
-                .Take(Count)
-                .ToList();
-        }
-
-        public object Clone() =>
-            new RecursiveTableCellSource
-            {
-                WmlDocument = WmlDocument,
-                KeepSections = KeepSections,
-                DiscardHeadersAndFootersInKeptSections = DiscardHeadersAndFootersInKeptSections,
-                InsertId = InsertId,
-                TableCellReferences =
-                    TableCellReferences.Select(x =>
-                        new TableCellReference
-                        {
-                            TableElementIndex = x.TableElementIndex,
-                            RowIndex = x.RowIndex,
-                            CellIndex = x.CellIndex,
-                        }).ToList(),
-                Start = Start,
-                Count = Count
-            };
-    }
+var sources = new List<ISource> { source };
+var result = DocumentBuilder.BuildDocument(sources);
+result.SaveAs("extracted-content.docx");
 ```

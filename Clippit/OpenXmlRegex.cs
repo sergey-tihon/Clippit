@@ -68,15 +68,15 @@ namespace Clippit
         }
 
         /// <summary>
-        /// If replacement == "new content" && callback == null
-        ///     Then replaces all matches
-        /// If replacement == "" && callback == null)
-        ///     Then deletes all matches
-        /// If replacement == "new content" && callback != null)
-        ///     Then the callback can return true / false to indicate whether to replace or not
+        /// If replacement == "new content" and callback == null,
+        ///     then replaces all matches.
+        /// If replacement == "" and callback == null,
+        ///     then deletes all matches.
+        /// If replacement == "new content" and callback != null,
+        ///     then the callback can return true / false to indicate whether to replace or not.
         /// If the callback returns true once, and false on all subsequent calls, then this method replaces only the first found.
-        /// If replacement == "" && callback != null)
-        ///     Then the callback can return true / false to indicate whether to delete or not
+        /// If replacement == "" and callback != null,
+        ///     then the callback can return true / false to indicate whether to delete or not.
         /// </summary>
         public static int Replace(
             IEnumerable<XElement> content,
@@ -103,19 +103,19 @@ namespace Clippit
         }
 
         /// <summary>
-        /// If replacement == "new content" && callback == null
-        ///     Then replaces all matches
-        /// If replacement == "" && callback == null)
-        ///     Then deletes all matches
-        /// If replacement == "new content" && callback != null)
-        ///     Then the callback can return true / false to indicate whether to replace or not
+        /// If replacement == "new content" and callback == null,
+        ///     then replaces all matches.
+        /// If replacement == "" and callback == null,
+        ///     then deletes all matches.
+        /// If replacement == "new content" and callback != null,
+        ///     then the callback can return true / false to indicate whether to replace or not.
         /// If the callback returns true once, and false on all subsequent calls, then this method replaces only the first found.
-        /// If replacement == "" && callback != null)
-        ///     Then the callback can return true / false to indicate whether to delete or not
-        /// If trackRevisions == true
-        ///     Then replacement is done using revision tracking markup, with author as the revision tracking author
-        /// If trackRevisions == true for a PPTX
-        ///     Then code throws an exception
+        /// If replacement == "" and callback != null,
+        ///     then the callback can return true / false to indicate whether to delete or not.
+        /// If trackRevisions == true,
+        ///     then replacement is done using revision tracking markup, with author as the revision tracking author.
+        /// If trackRevisions == true for a PPTX,
+        ///     then code throws an exception.
         /// </summary>
         public static int Replace(
             IEnumerable<XElement> content,
