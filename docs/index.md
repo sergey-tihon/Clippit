@@ -11,8 +11,8 @@ Clippit is a fork of [Open-Xml-PowerTools](https://github.com/EricWhiteDev/Open-
 Key highlights:
 
 - Shipped as new [NuGet package](https://www.nuget.org/packages/Clippit) published from latest `master`.
-- Target `netstandard2.0` and uses latest `C#` language features.
-- Continuously tested on Windows, macOS and Linux.
+- Targets `net8.0` and `net10.0` and uses latest `C#` language features.
+- Continuously tested on Windows and Linux.
 - Can be used side-by-side with any existing Open-Xml-PowerTools assembly.
 
 Key features:
@@ -53,7 +53,7 @@ It supports scenarios such as:
 ```
 Copyright (c) Microsoft Corporation 2012-2017
 Portions Copyright (c) Eric White Inc 2018-2019
-Portions Copyright (c) Sergey Tihon 2019-2025
+Portions Copyright (c) Sergey Tihon 2019-2026
 Licensed under the MIT License.
 ```
 
