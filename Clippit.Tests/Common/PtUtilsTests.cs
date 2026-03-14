@@ -35,6 +35,8 @@ public class PtUtilsTests
         await Assert.That(PtUtils.MakeValidXml(string.Empty)).IsEqualTo(string.Empty);
     }
 
+    // Control chars (< 0x20) are encoded as _X_ where X is the unpadded uppercase
+    // hex code-point: e.g. \x01 → "_1_", \x0A → "_A_", \x1F → "_1F_".
     [Test]
     [Arguments("\x01", "_1_")]
     [Arguments("\x0A", "_A_")]
