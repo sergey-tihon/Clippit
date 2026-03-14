@@ -5,7 +5,7 @@ uid: Tutorial.PowerPoint.PresentationBuilder.PublishSlides
 
 Namespace: `Clippit.PowerPoint`
 
-Split PowerPoint presentation (`PmlDocument`) into lazy sequence of one-slide presentations.
+Split PowerPoint presentation (`PmlDocument`) into a list of one-slide presentations.
 
 ```csharp
 public static class PresentationBuilder {

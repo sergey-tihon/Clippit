@@ -43,10 +43,10 @@ all document parts (main document, headers, footers, footnotes, endnotes, and st
 - **Part-level control** -- accept revisions for individual parts or XML elements
 - **Detection** -- check whether a document or part contains tracked revisions
 
-An instance method is also available directly on `WmlDocument`:
+You can call the static API on `RevisionProcessor`:
 
 ```csharp
-var cleanDoc = wmlDoc.AcceptRevisions();
+var cleanDoc = RevisionProcessor.AcceptRevisions(wmlDoc);
 ```
 
 ### AcceptRevisions Sample
@@ -54,7 +54,7 @@ var cleanDoc = wmlDoc.AcceptRevisions();
 ```csharp
 var wmlDoc = new WmlDocument("document_with_revisions.docx");
 
-if (wmlDoc.HasTrackedRevisions())
+if (RevisionProcessor.HasTrackedRevisions(wmlDoc))
 {
     var accepted = RevisionProcessor.AcceptRevisions(wmlDoc);
     accepted.SaveAs("document_clean.docx");
