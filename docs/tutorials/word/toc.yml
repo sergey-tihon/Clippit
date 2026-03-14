@@ -1,9 +1,3 @@
-- name: DocumentBuilder
-  items:
-  - name: Custom ISource
-    href: DocumentBuilder_CustomISource.md
-  - name: TableCellSource
-    href: DocumentBuilder_TableCellSource.md
 - name: DocumentAssembler
   items:
   - name: Images Support
@@ -12,3 +6,19 @@
     href: DocumentAssembler_InlineHtmlSupport.md
   - name: Processing Documents and Document Templates
     href: DocumentAssembler_DocumentTemplates.md
+- name: DocumentBuilder
+  items:
+  - name: Custom ISource
+    href: DocumentBuilder_CustomISource.md
+  - name: TableCellSource
+    href: DocumentBuilder_TableCellSource.md
+- name: HtmlToWmlConverter
+  href: HtmlToWmlConverter.md
+- name: MarkupSimplifier
+  href: MarkupSimplifier.md
+- name: RevisionProcessor
+  href: RevisionProcessor.md
+- name: WmlComparer
+  href: WmlComparer.md
+- name: WmlToHtmlConverter
+  href: WmlToHtmlConverter.md

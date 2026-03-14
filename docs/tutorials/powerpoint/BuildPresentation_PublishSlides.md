@@ -1,5 +1,5 @@
 ---
-uid: Tutorial.Word.PresentationBuilder.PublishSlides
+uid: Tutorial.PowerPoint.PresentationBuilder.PublishSlides
 ---
 # Slide Publishing
 

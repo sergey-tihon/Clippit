@@ -18,7 +18,55 @@ public static class SpreadsheetWriter {
 
 - Added API to save to stream.
 
-### SpreadsheetWriter Sample
+### Cell Builder
+
+The `Clippit.Excel.Builder` namespace provides a `Cell` static class with factory methods
+for concise cell creation:
+
+| Method | Returns | Description |
+|---|---|---|
+| `Cell.Headers(params string[])` | `CellDfn[]` | Bold string cells for column headings |
+| `Cell.String(string, bool bold = false)` | `CellDfn` | String cell (auto-strips invalid XML chars) |
+| `Cell.Number(int)` / `Cell.Number(long)` | `CellDfn` | Numeric cell |
+| `Cell.Bool(bool?)` | `CellDfn` | Boolean cell |
+| `Cell.Date(DateTime?)` | `CellDfn` | Date cell with `mm-dd-yy` format |
+
+### SpreadsheetWriter Sample (Cell Builder)
+
+```csharp
+using Clippit.Excel;
+using Clippit.Excel.Builder;
+
+var wb = new WorkbookDfn
+{
+    Worksheets =
+    [
+        new WorksheetDfn
+        {
+            Name = "MyFirstSheet",
+            TableName = "NamesAndRates",
+            ColumnHeadings = Cell.Headers("Name", "Age", "Rate"),
+            Rows =
+            [
+                new RowDfn
+                {
+                    Cells = [Cell.String("Eric"), Cell.Number(50), Cell.Number(45)]
+                },
+                new RowDfn
+                {
+                    Cells = [Cell.String("Bob"), Cell.Number(42), Cell.Number(78)]
+                },
+            ]
+        }
+    ]
+};
+
+using var stream = new MemoryStream();
+wb.WriteTo(stream);
+var bytes = stream.ToArray();
+```
+
+### SpreadsheetWriter Sample (Object Initializers)
 
 ```csharp 
 var wb = new WorkbookDfn()

@@ -1,5 +1,5 @@
 ---
-uid: Tutorial.Word.PresentationBuilder
+uid: Tutorial.PowerPoint.PresentationBuilder
 ---
 # Build Presentation
 

@@ -1,8 +1,11 @@
 ---
 uid: Tutorial.Word.DocumentAssembler.ImagesSupport
 ---
+# Images Support
 
-# Key highlights from [#31](https://github.com/sergey-tihon/Clippit/pull/31#issuecomment-874335292)
+Namespace: `Clippit.Word`
+
+Key highlights from [#31](https://github.com/sergey-tihon/Clippit/pull/31#issuecomment-874335292).
 
 ## Introduction
 

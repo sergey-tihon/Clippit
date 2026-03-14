@@ -5,9 +5,40 @@ uid: Tutorial.Word.DocumentBuilder.TableCellSource
 
 Namespace: `Clippit.Word`
 
-`TableCellSource` allow to reference content of table cells.
+`TableCellSource` allows extracting content from a specific table cell and including it
+in the document being built.
 
-### Document Builder sample
+```csharp
+public class TableCellSource : ISource
+{
+    public TableCellSource() {...}
+    public TableCellSource(WmlDocument source) {...}
+
+    public WmlDocument WmlDocument { get; set; }
+    public bool KeepSections { get; set; }
+    public bool DiscardHeadersAndFootersInKeptSections { get; set; }
+    public string InsertId { get; set; }
+
+    // Table cell location
+    public int TableElementIndex { get; set; }
+    public int RowIndex { get; set; }
+    public int CellIndex { get; set; }
+
+    // Content range within the cell
+    public int CellContentStart { get; set; }
+    public int CellContentCount { get; set; }
+}
+```
+
+| Property | Description |
+|---|---|
+| `TableElementIndex` | Zero-based index of the table element in the document body |
+| `RowIndex` | Zero-based index of the row within the table |
+| `CellIndex` | Zero-based index of the cell within the row |
+| `CellContentStart` | Zero-based index of the first element to extract from the cell |
+| `CellContentCount` | Number of elements to extract from the cell |
+
+### DocumentBuilder Sample
 
 ```csharp {highlight:[12]}
     var document = new WmlDocument(sourceFilePath);
