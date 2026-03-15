@@ -413,7 +413,7 @@ namespace Clippit.Tests.Excel
                                     {
                                         CellDataType = CellDataType.Number,
                                         Value = 0.75,
-                                        FormatCode = "0.00%",
+                                        FormatCode = "\"Rate:\" 0.00%",
                                     },
                                 ],
                             },
