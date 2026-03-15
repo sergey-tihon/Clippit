@@ -691,6 +691,8 @@ namespace Clippit.Excel
                 new XAttribute(SSNoNamespace.formatCode, formatCode)
             );
             numFmts.Add(numFmt);
+            var existingCount = (int?)numFmts.Attribute(SSNoNamespace.count) ?? 0;
+            numFmts.SetAttributeValue(SSNoNamespace.count, existingCount + 1);
             return xfNumber;
         }
 

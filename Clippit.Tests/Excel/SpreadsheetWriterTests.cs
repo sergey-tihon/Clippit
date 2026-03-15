@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+using Clippit;
 using Clippit.Excel;
 using DocumentFormat.OpenXml.Packaging;
 
@@ -369,6 +370,73 @@ namespace Clippit.Tests.Excel
             using (var sDoc = SpreadsheetDocument.Open(fileName, true))
                 SpreadsheetWriter.AddWorksheet(sDoc, GetSimpleWorksheetDfn("MySecondSheet", "MySecondTable"));
             await Validate(fileName).ConfigureAwait(false);
+        }
+
+        // Verifies that numFmts count attribute stays in sync when multiple distinct custom
+        // format codes are registered across worksheets (previously the count was not incremented
+        // after the first custom numFmt was added, leaving stale count="1" regardless of how
+        // many custom formats had been registered).
+        [Test]
+        public async Task SW004_MultipleCustomFormatCodes_NumFmtsCountIsCorrect()
+        {
+            var wb = new WorkbookDfn
+            {
+                Worksheets =
+                [
+                    new WorksheetDfn
+                    {
+                        Name = "StringSheet",
+                        Rows =
+                        [
+                            new RowDfn
+                            {
+                                Cells = [new CellDfn { CellDataType = CellDataType.String, Value = "Hello" }],
+                            },
+                        ],
+                    },
+                    new WorksheetDfn
+                    {
+                        Name = "FormattedSheet",
+                        Rows =
+                        [
+                            new RowDfn
+                            {
+                                Cells =
+                                [
+                                    new CellDfn
+                                    {
+                                        CellDataType = CellDataType.Number,
+                                        Value = 1234.5,
+                                        FormatCode = "#,##0.000",
+                                    },
+                                    new CellDfn
+                                    {
+                                        CellDataType = CellDataType.Number,
+                                        Value = 0.75,
+                                        FormatCode = "0.00%",
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            var fileName = Path.Combine(TempDir, "SW004-MultipleCustomFormats.xlsx");
+            await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+                wb.WriteTo(stream);
+
+            using var sDoc = SpreadsheetDocument.Open(fileName, false);
+            var stylesXDoc = sDoc.WorkbookPart.WorkbookStylesPart.GetXDocument();
+
+            var numFmtsEl = stylesXDoc.Root.Element(S.numFmts);
+            await Assert.That(numFmtsEl).IsNotNull();
+
+            var declaredCount = (int)numFmtsEl.Attribute("count");
+            var actualCount = numFmtsEl.Elements().Count();
+            await Assert.That(declaredCount).IsEqualTo(actualCount);
+
+            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
         }
 
         private async Task Validate(string fileName)
