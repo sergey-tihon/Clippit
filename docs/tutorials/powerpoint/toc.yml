@@ -1,5 +1,7 @@
 - name: BuildPresentation
   href: BuildPresentation.md
   items:
+  - name: Fluent API
+    href: BuildPresentation_FluentApi.md
   - name: Publish Slides
     href: BuildPresentation_PublishSlides.md

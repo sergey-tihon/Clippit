@@ -1,5 +1,7 @@
 - name: Introduction
   href: index.md
+- name: Common
+  href: common/toc.yml
 - name: Excel
   href: excel/toc.yml
 - name: PowerPoint

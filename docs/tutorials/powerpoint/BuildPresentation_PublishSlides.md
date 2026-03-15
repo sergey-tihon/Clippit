@@ -1,15 +1,15 @@
 ---
-uid: Tutorial.Word.PresentationBuilder.PublishSlides
+uid: Tutorial.PowerPoint.PresentationBuilder.PublishSlides
 ---
 # Slide Publishing
 
 Namespace: `Clippit.PowerPoint`
 
-Split PowerPoint presentation (`PmlDocument`) into lazy sequence of one-slide presentations.
+Split PowerPoint presentation (`PmlDocument`) into a list of one-slide presentations.
 
 ```csharp
 public static class PresentationBuilder {
-    public static IEnumerable<PmlDocument> PublishSlides(PmlDocument src)
+    public static IList<PmlDocument> PublishSlides(PmlDocument src)
     {...}
 }
 ```
@@ -27,7 +27,7 @@ This is fully managed alternative of [Presentation.PublishSlides](https://docs.m
 
 ```csharp {highlight:[2]}
 var presentation = new PmlDocument(sourcePath);
-var slides = PresentationBuilder.PublishSlides(presentation)
+var slides = PresentationBuilder.PublishSlides(presentation);
 foreach (var slide in slides)
 {
     var targetPath = Path.Combine(targetDir, Path.GetFileName(slide.FileName))

@@ -1,8 +1,9 @@
 ---
 uid: Tutorial.Word.DocumentAssembler.DocumentTemplates
 ---
+# Document and DocumentTemplate Elements
 
-# Inserting Documents or Document Templates into Word Files using Document Assembler
+Namespace: `Clippit.Word`
 
 ## Introduction
 
@@ -43,9 +44,9 @@ For example say we had the following XML document:
        <amount>£40.00</amount>
       </line-item>
       <line-item>
-        <description>T-Shirt<description>
+        <description>T-Shirt</description>
         <amount>£15.00</amount>
-      <line-item>
+      </line-item>
     </line-items>
     <total>
       <amount>£55.00</amount>

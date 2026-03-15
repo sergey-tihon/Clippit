@@ -1,5 +1,5 @@
 ---
-uid: Tutorial.Word.PresentationBuilder
+uid: Tutorial.PowerPoint.PresentationBuilder
 ---
 # Build Presentation
 
@@ -16,7 +16,7 @@ public static class PresentationBuilder {
 
 Original behavior is documented at Eric's blog:
 
-http://www.ericwhite.com/blog/presentationbuilder-developer-center/
+https://www.ericwhite.com/blog/presentationbuilder-developer-center/
 
 #### Major changes
 

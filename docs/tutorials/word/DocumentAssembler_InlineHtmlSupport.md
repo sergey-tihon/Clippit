@@ -1,8 +1,9 @@
 ---
 uid: Tutorial.Word.DocumentAssembler.InlineHtmlSupport
 ---
-
 # Inline HTML Support
+
+Namespace: `Clippit.Word`
 
 ## Introduction
 
@@ -31,7 +32,7 @@ Then Document Assembler would render this in Word as:
 
 ## Supported HTML tags
 
-Currently the following HTMl tags are supported.
+Currently the following HTML tags are supported.
 
 ### Block Tags
 
@@ -55,7 +56,7 @@ Inline HTML formatting is supported by default, you do not need to change your `
 
 ## Future Developments
 
-Inline HTML support is in it's infancy but it would make sense to add support for:
+Inline HTML support is in its infancy but it would make sense to add support for:
 
 * Ordered lists <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol" target="_blank">`ol`</a>
 * Unordered lists <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ul" target="_blank">`ul`</a>
