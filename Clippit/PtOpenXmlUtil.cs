@@ -1843,10 +1843,44 @@ listSeparator
         public string RelationshipId { get; set; }
     }
 
+    /// <summary>
+    /// A non-allocating key struct for <see cref="ContentData"/> that compares by content type
+    /// and raw hash bytes, avoiding hex-string materialisation on every dictionary lookup.
+    /// </summary>
+    internal readonly struct ContentDataKey : IEquatable<ContentDataKey>
+    {
+        private readonly string _contentType;
+        private readonly byte[] _hash;
+
+        public ContentDataKey(string contentType, byte[] hash)
+        {
+            ArgumentNullException.ThrowIfNull(contentType);
+            ArgumentNullException.ThrowIfNull(hash);
+            _contentType = contentType;
+            _hash = hash;
+        }
+
+        public bool Equals(ContentDataKey other) =>
+            _contentType == other._contentType && _hash.AsSpan().SequenceEqual(other._hash);
+
+        public override bool Equals(object obj) => obj is ContentDataKey other && Equals(other);
+
+        public override int GetHashCode()
+        {
+            var hc = new HashCode();
+            hc.Add(_contentType);
+            hc.AddBytes(_hash);
+            return hc.ToHashCode();
+        }
+    }
+
     abstract class ContentData
     {
-        protected string ContentType { get; set; }
-        protected byte[] Hash { get; set; }
+        protected string ContentType { get; init; }
+        protected byte[] Hash { get; init; }
+
+        // O(1) key for dictionary-based deduplication caches – no allocation on lookup
+        internal ContentDataKey Key => new(ContentType, Hash);
 
         public List<ContentPartRelTypeIdTuple> ContentPartRelTypeIdList = new();
 
