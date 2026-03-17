@@ -27,7 +27,7 @@ public class AssemblerInternalsTests
     public async Task EvaluateXPath_NullXPath_ReturnsEmptyArray()
     {
         var element = new XElement("root");
-        var result = element.EvaluateXPath(null, optional: false);
+        var result = element.EvaluateXPath(null!, optional: false);
         await Assert.That(result).IsEmpty();
     }
 
