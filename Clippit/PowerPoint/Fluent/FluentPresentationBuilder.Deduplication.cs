@@ -7,7 +7,7 @@ namespace Clippit.PowerPoint.Fluent;
 
 internal partial class FluentPresentationBuilder
 {
-    private readonly Dictionary<string, ContentData> _mediaCache = [];
+    private readonly Dictionary<ContentDataKey, ContentData> _mediaCache = [];
     private readonly Dictionary<SlideMasterPart, SlideMasterData> _slideMasters = [];
     private SlideSize _slideSize;
 
@@ -51,7 +51,7 @@ internal partial class FluentPresentationBuilder
     private T GetOrAddCachedMedia<T>(T contentData)
         where T : ContentData
     {
-        var key = contentData.CacheKey;
+        var key = contentData.Key;
         if (_mediaCache.TryGetValue(key, out var existing))
             return (T)existing;
 
