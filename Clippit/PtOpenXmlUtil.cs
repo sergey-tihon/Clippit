@@ -1849,27 +1849,27 @@ listSeparator
     /// </summary>
     internal readonly struct ContentDataKey : IEquatable<ContentDataKey>
     {
-        public string ContentType { get; }
-        public byte[] Hash { get; }
+        private readonly string _contentType;
+        private readonly byte[] _hash;
 
         public ContentDataKey(string contentType, byte[] hash)
         {
             ArgumentNullException.ThrowIfNull(contentType);
             ArgumentNullException.ThrowIfNull(hash);
-            ContentType = contentType;
-            Hash = hash;
+            _contentType = contentType;
+            _hash = hash;
         }
 
         public bool Equals(ContentDataKey other) =>
-            ContentType == other.ContentType && Hash.AsSpan().SequenceEqual(other.Hash);
+            _contentType == other._contentType && _hash.AsSpan().SequenceEqual(other._hash);
 
         public override bool Equals(object obj) => obj is ContentDataKey other && Equals(other);
 
         public override int GetHashCode()
         {
             var hc = new HashCode();
-            hc.Add(ContentType);
-            hc.AddBytes(Hash);
+            hc.Add(_contentType);
+            hc.AddBytes(_hash);
             return hc.ToHashCode();
         }
     }
