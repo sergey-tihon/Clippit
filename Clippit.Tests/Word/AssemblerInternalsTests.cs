@@ -63,7 +63,7 @@ public class AssemblerInternalsTests
     [Test]
     public async Task EvaluateXPath_BooleanXPathExpression_ReturnsBooleanAsString()
     {
-        var element = new XElement("root", new XElement("count", "5"));
+        var element = new XElement("root");
         // A boolean XPath expression returns a non-IEnumerable result.
         var result = element.EvaluateXPath("count(Item) > 0", optional: true);
         await Assert.That(result).HasCount(1);
