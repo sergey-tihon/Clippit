@@ -154,8 +154,16 @@ public class AssemblerInternalsTests
 
         var rPr = run.Element(W.rPr);
         await Assert.That(rPr).IsNotNull();
-        await Assert.That((string)rPr!.Element(W.color)!.Attribute(W.val)).IsEqualTo("FF0000");
-        await Assert.That((string)rPr.Element(W.highlight)!.Attribute(W.val)).IsEqualTo("yellow");
+        var colorEl = rPr!.Element(W.color);
+        await Assert.That(colorEl).IsNotNull();
+        var colorValAttr = colorEl!.Attribute(W.val);
+        await Assert.That(colorValAttr).IsNotNull();
+        await Assert.That((string)colorValAttr!).IsEqualTo("FF0000");
+        var highlightEl = rPr.Element(W.highlight);
+        await Assert.That(highlightEl).IsNotNull();
+        var highlightValAttr = highlightEl!.Attribute(W.val);
+        await Assert.That(highlightValAttr).IsNotNull();
+        await Assert.That((string)highlightValAttr!).IsEqualTo("yellow");
 
         var textEl = run.Element(W.t);
         await Assert.That(textEl).IsNotNull();
