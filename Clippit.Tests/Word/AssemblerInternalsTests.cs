@@ -104,11 +104,18 @@ public class AssemblerInternalsTests
     // ── XPathExtensions.EvaluateXPathToString ─────────────────────────────
 
     [Test]
-    public async Task EvaluateXPathToString_BlankXPath_ReturnsEmptyString()
+    public async Task EvaluateXPathToString_BlankXPathOptional_ReturnsEmptyString()
     {
         var element = new XElement("root", new XElement("Name", "Alice"));
         var result = element.EvaluateXPathToString("   ", optional: true);
         await Assert.That(result).IsEqualTo(string.Empty);
+    }
+
+    [Test]
+    public async Task EvaluateXPathToString_BlankXPathNonOptional_ThrowsXPathException()
+    {
+        var element = new XElement("root", new XElement("Name", "Alice"));
+        await Assert.That(() => element.EvaluateXPathToString("   ", optional: false)).Throws<XPathException>();
     }
 
     [Test]
