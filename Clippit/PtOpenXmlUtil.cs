@@ -1845,11 +1845,13 @@ listSeparator
 
     abstract class ContentData
     {
-        protected string ContentType { get; set; }
-        protected byte[] Hash { get; set; }
+        protected string ContentType { get; init; }
+        protected byte[] Hash { get; init; }
+
+        private string _cacheKey;
 
         // O(1) key for dictionary-based deduplication caches
-        internal string CacheKey => $"{ContentType}:{Convert.ToHexString(Hash)}";
+        internal string CacheKey => _cacheKey ??= $"{ContentType}:{Convert.ToHexString(Hash)}";
 
         public List<ContentPartRelTypeIdTuple> ContentPartRelTypeIdList = new();
 
