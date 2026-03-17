@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Presentation;
 
@@ -8,7 +7,7 @@ namespace Clippit.PowerPoint.Fluent;
 
 internal partial class FluentPresentationBuilder
 {
-    private readonly List<ContentData> _mediaCache = [];
+    private readonly Dictionary<string, ContentData> _mediaCache = [];
     private readonly Dictionary<SlideMasterPart, SlideMasterData> _slideMasters = [];
     private SlideSize _slideSize;
 
@@ -52,13 +51,11 @@ internal partial class FluentPresentationBuilder
     private T GetOrAddCachedMedia<T>(T contentData)
         where T : ContentData
     {
-        var duplicateItem = _mediaCache.FirstOrDefault(x => x.Compare(contentData));
-        if (duplicateItem != null)
-        {
-            return (T)duplicateItem;
-        }
+        var key = contentData.CacheKey;
+        if (_mediaCache.TryGetValue(key, out var existing))
+            return (T)existing;
 
-        _mediaCache.Add(contentData);
+        _mediaCache[key] = contentData;
         return contentData;
     }
 

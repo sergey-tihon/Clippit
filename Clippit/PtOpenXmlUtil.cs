@@ -1848,6 +1848,9 @@ listSeparator
         protected string ContentType { get; set; }
         protected byte[] Hash { get; set; }
 
+        // O(1) key for dictionary-based deduplication caches
+        internal string CacheKey => $"{ContentType}:{Convert.ToHexString(Hash)}";
+
         public List<ContentPartRelTypeIdTuple> ContentPartRelTypeIdList = new();
 
         public void AddContentPartRelTypeResourceIdTupple(
