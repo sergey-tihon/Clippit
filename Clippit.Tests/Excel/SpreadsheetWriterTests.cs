@@ -505,7 +505,7 @@ namespace Clippit.Tests.Excel
             // String-first, date-second (the failing order from issue #64)
             var wb = new WorkbookDfn { Worksheets = [MakeStringSheet("StringSheet"), MakeDateSheet("DateSheet")] };
             var fileName = Path.Combine(TempDir, "SW005-StringFirst-DateSecond.xlsx");
-            await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+            await using (var stream = File.Open(fileName, FileMode.Create))
                 wb.WriteTo(stream);
 
             using var sDoc = SpreadsheetDocument.Open(fileName, false);

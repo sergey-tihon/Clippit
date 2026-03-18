@@ -670,16 +670,29 @@ namespace Clippit.Excel
             // Return the existing ID if this formatCode is already registered and already in the custom range.
             if (numFmts != null)
             {
-                existing = numFmts
+                var matchingNumFmts = numFmts
                     .Elements(S.numFmt)
-                    .FirstOrDefault(nf => (string)nf.Attribute(SSNoNamespace.formatCode) == formatCode);
+                    .Where(nf => (string)nf.Attribute(SSNoNamespace.formatCode) == formatCode);
+
+                // Prefer an existing matching numFmt that already has a custom-range ID (>= 164).
+                var existingCustom = matchingNumFmts
+                    .Select(nf => new
+                    {
+                        Element = nf,
+                        Id = (int?)nf.Attribute(SSNoNamespace.numFmtId),
+                    })
+                    .FirstOrDefault(x => x.Id.HasValue && x.Id.Value >= CustomNumFmtIdStart);
+
+                if (existingCustom != null)
+                {
+                    return existingCustom.Id!.Value;
+                }
+
+                // No existing custom-range entry; fall back to the first matching numFmt (if any).
+                existing = matchingNumFmts.FirstOrDefault();
                 if (existing != null)
                 {
                     existingId = (int?)existing.Attribute(SSNoNamespace.numFmtId);
-                    if (existingId.HasValue && existingId.Value >= CustomNumFmtIdStart)
-                    {
-                        return existingId.Value;
-                    }
                 }
             }
 
