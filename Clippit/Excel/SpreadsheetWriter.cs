@@ -656,21 +656,31 @@ namespace Clippit.Excel
             return count;
         }
 
+        // ECMA-376 §18.8.30: built-in numFmt IDs occupy 0–163; custom IDs must start at 164.
+        private const int CustomNumFmtIdStart = 164;
+
         private static int GetNumFmtId(XDocument sXDoc, string formatCode)
         {
-            var xfNumber = 81;
-            while (true)
-            {
-                if (
-                    !sXDoc
-                        .Root.Elements(S.numFmts)
-                        .Elements(S.numFmt)
-                        .Any(nf => (int)nf.Attribute(SSNoNamespace.numFmtId) == xfNumber)
-                )
-                    break;
-                ++xfNumber;
-            }
             var numFmts = sXDoc.Root.Element(S.numFmts);
+
+            // Return the existing ID if this formatCode is already registered.
+            if (numFmts != null)
+            {
+                var existing = numFmts
+                    .Elements(S.numFmt)
+                    .FirstOrDefault(nf => (string)nf.Attribute(SSNoNamespace.formatCode) == formatCode);
+                if (existing != null)
+                    return (int)existing.Attribute(SSNoNamespace.numFmtId);
+            }
+
+            // Find the next unused ID in the custom range (>= 164).
+            var xfNumber = CustomNumFmtIdStart;
+            while (
+                numFmts != null
+                && numFmts.Elements(S.numFmt).Any(nf => (int)nf.Attribute(SSNoNamespace.numFmtId) == xfNumber)
+            )
+                ++xfNumber;
+
             if (numFmts == null)
             {
                 numFmts = new XElement(
@@ -685,12 +695,14 @@ namespace Clippit.Excel
                 sXDoc.Root.AddFirst(numFmts);
                 return xfNumber;
             }
-            var numFmt = new XElement(
-                S.numFmt,
-                new XAttribute(SSNoNamespace.numFmtId, xfNumber),
-                new XAttribute(SSNoNamespace.formatCode, formatCode)
+
+            numFmts.Add(
+                new XElement(
+                    S.numFmt,
+                    new XAttribute(SSNoNamespace.numFmtId, xfNumber),
+                    new XAttribute(SSNoNamespace.formatCode, formatCode)
+                )
             );
-            numFmts.Add(numFmt);
             var existingCount = (int?)numFmts.Attribute(SSNoNamespace.count) ?? 0;
             numFmts.SetAttributeValue(SSNoNamespace.count, existingCount + 1);
             return xfNumber;
