@@ -508,10 +508,7 @@ namespace Clippit.Tests.Excel
                 };
 
             // String-first, date-second (the failing order from issue #64)
-            var wb = new WorkbookDfn
-            {
-                Worksheets = [MakeStringSheet("StringSheet"), MakeDateSheet("DateSheet")],
-            };
+            var wb = new WorkbookDfn { Worksheets = [MakeStringSheet("StringSheet"), MakeDateSheet("DateSheet")] };
             var fileName = Path.Combine(TempDir, "SW005-StringFirst-DateSecond.xlsx");
             await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
                 wb.WriteTo(stream);
@@ -528,10 +525,7 @@ namespace Clippit.Tests.Excel
                 await Assert.That(id).IsGreaterThanOrEqualTo(164);
 
             // The same FormatCode used on both sheets must not produce duplicate numFmt entries.
-            var formatCodes = numFmtsEl
-                .Elements(S.numFmt)
-                .Select(e => (string)e.Attribute("formatCode"))
-                .ToList();
+            var formatCodes = numFmtsEl.Elements(S.numFmt).Select(e => (string)e.Attribute("formatCode")).ToList();
             await Assert.That(formatCodes.Distinct().Count()).IsEqualTo(formatCodes.Count);
 
             // Specifically, there should be exactly one numFmt entry for the custom format code used ("dd-MM-yyyy").
