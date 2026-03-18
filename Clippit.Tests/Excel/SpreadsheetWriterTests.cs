@@ -464,6 +464,19 @@ namespace Clippit.Tests.Excel
                                 new CellDfn { CellDataType = CellDataType.String, Value = "world" },
                             ],
                         },
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn
+                                {
+                                    CellDataType = CellDataType.Date,
+                                    Value = new DateTime(2023, 4, 20),
+                                    FormatCode = "dd-MM-yyyy",
+                                },
+                                new CellDfn { CellDataType = CellDataType.String, Value = "another" },
+                            ],
+                        },
                     ],
                 };
 
@@ -521,9 +534,15 @@ namespace Clippit.Tests.Excel
                 .ToList();
             await Assert.That(formatCodes.Distinct().Count()).IsEqualTo(formatCodes.Count);
 
-            // count attribute must match actual element count.
+            // Specifically, there should be exactly one numFmt entry for the custom format code used ("dd-MM-yyyy").
+            const string targetFormatCode = "dd-MM-yyyy";
+            var targetFormatCodeCount = formatCodes.Count(fc => fc == targetFormatCode);
+            await Assert.That(targetFormatCodeCount).IsEqualTo(1);
+
+            // count attribute must match actual element count, and remain 1 for this workbook.
             var declaredCount = (int)numFmtsEl.Attribute("count");
             await Assert.That(declaredCount).IsEqualTo(numFmtsEl.Elements().Count());
+            await Assert.That(declaredCount).IsEqualTo(1);
 
             await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
         }

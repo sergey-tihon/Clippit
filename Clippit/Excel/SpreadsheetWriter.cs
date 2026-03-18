@@ -4,13 +4,13 @@
 #undef DisplayWorkingSet
 
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;
-
 namespace Clippit.Excel
 {
     /// <summary>
@@ -663,14 +663,23 @@ namespace Clippit.Excel
         {
             var numFmts = sXDoc.Root.Element(S.numFmts);
 
-            // Return the existing ID if this formatCode is already registered.
+            XElement? existing = null;
+            int? existingId = null;
+
+            // Return the existing ID if this formatCode is already registered and already in the custom range.
             if (numFmts != null)
             {
-                var existing = numFmts
+                existing = numFmts
                     .Elements(S.numFmt)
                     .FirstOrDefault(nf => (string)nf.Attribute(SSNoNamespace.formatCode) == formatCode);
                 if (existing != null)
-                    return (int)existing.Attribute(SSNoNamespace.numFmtId);
+                {
+                    existingId = (int?)existing.Attribute(SSNoNamespace.numFmtId);
+                    if (existingId.HasValue && existingId.Value >= CustomNumFmtIdStart)
+                    {
+                        return existingId.Value;
+                    }
+                }
             }
 
             // Find the next unused ID in the custom range (>= 164).
@@ -679,7 +688,9 @@ namespace Clippit.Excel
                 numFmts != null
                 && numFmts.Elements(S.numFmt).Any(nf => (int)nf.Attribute(SSNoNamespace.numFmtId) == xfNumber)
             )
+            {
                 ++xfNumber;
+            }
 
             if (numFmts == null)
             {
@@ -696,6 +707,13 @@ namespace Clippit.Excel
                 return xfNumber;
             }
 
+            // If we found an existing entry with an out-of-range ID, migrate it to the new valid ID.
+            if (existing != null && existingId.HasValue && existingId.Value < CustomNumFmtIdStart)
+            {
+                existing.SetAttributeValue(SSNoNamespace.numFmtId, xfNumber);
+                return xfNumber;
+            }
+
             numFmts.Add(
                 new XElement(
                     S.numFmt,
@@ -703,8 +721,8 @@ namespace Clippit.Excel
                     new XAttribute(SSNoNamespace.formatCode, formatCode)
                 )
             );
-            var existingCount = (int?)numFmts.Attribute(SSNoNamespace.count) ?? 0;
-            numFmts.SetAttributeValue(SSNoNamespace.count, existingCount + 1);
+            // Ensure the count attribute reflects the actual number of <numFmt> children.
+            numFmts.SetAttributeValue(SSNoNamespace.count, numFmts.Elements(S.numFmt).Count());
             return xfNumber;
         }
 
