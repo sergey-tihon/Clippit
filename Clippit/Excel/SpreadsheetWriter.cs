@@ -11,6 +11,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;
+
 namespace Clippit.Excel
 {
     /// <summary>
