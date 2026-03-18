@@ -4,6 +4,7 @@
 #undef DisplayWorkingSet
 
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -656,21 +657,51 @@ namespace Clippit.Excel
             return count;
         }
 
+        // ECMA-376 §18.8.30: built-in numFmt IDs occupy 0–163; custom IDs must start at 164.
+        private const int CustomNumFmtIdStart = 164;
+
         private static int GetNumFmtId(XDocument sXDoc, string formatCode)
         {
-            var xfNumber = 81;
-            while (true)
+            var numFmts = sXDoc.Root.Element(S.numFmts);
+
+            XElement? existing = null;
+            int? existingId = null;
+
+            // Return the existing ID if this formatCode is already registered and already in the custom range.
+            if (numFmts != null)
             {
-                if (
-                    !sXDoc
-                        .Root.Elements(S.numFmts)
-                        .Elements(S.numFmt)
-                        .Any(nf => (int)nf.Attribute(SSNoNamespace.numFmtId) == xfNumber)
-                )
-                    break;
+                var matchingNumFmts = numFmts
+                    .Elements(S.numFmt)
+                    .Where(nf => (string)nf.Attribute(SSNoNamespace.formatCode) == formatCode);
+
+                // Prefer an existing matching numFmt that already has a custom-range ID (>= 164).
+                var existingCustom = matchingNumFmts
+                    .Select(nf => new { Element = nf, Id = (int?)nf.Attribute(SSNoNamespace.numFmtId) })
+                    .FirstOrDefault(x => x.Id.HasValue && x.Id.Value >= CustomNumFmtIdStart);
+
+                if (existingCustom != null)
+                {
+                    return existingCustom.Id!.Value;
+                }
+
+                // No existing custom-range entry; fall back to the first matching numFmt (if any).
+                existing = matchingNumFmts.FirstOrDefault();
+                if (existing != null)
+                {
+                    existingId = (int?)existing.Attribute(SSNoNamespace.numFmtId);
+                }
+            }
+
+            // Find the next unused ID in the custom range (>= 164).
+            var xfNumber = CustomNumFmtIdStart;
+            while (
+                numFmts != null
+                && numFmts.Elements(S.numFmt).Any(nf => (int)nf.Attribute(SSNoNamespace.numFmtId) == xfNumber)
+            )
+            {
                 ++xfNumber;
             }
-            var numFmts = sXDoc.Root.Element(S.numFmts);
+
             if (numFmts == null)
             {
                 numFmts = new XElement(
@@ -685,14 +716,33 @@ namespace Clippit.Excel
                 sXDoc.Root.AddFirst(numFmts);
                 return xfNumber;
             }
-            var numFmt = new XElement(
-                S.numFmt,
-                new XAttribute(SSNoNamespace.numFmtId, xfNumber),
-                new XAttribute(SSNoNamespace.formatCode, formatCode)
+
+            // If we found an existing entry with an out-of-range ID, do not change it in place.
+            // Leave the existing numFmt (and any existing xf references) untouched, and instead
+            // create a new numFmt entry with a valid custom ID for use by new styles.
+            if (existing != null && existingId.HasValue && existingId.Value < CustomNumFmtIdStart)
+            {
+                numFmts.Add(
+                    new XElement(
+                        S.numFmt,
+                        new XAttribute(SSNoNamespace.numFmtId, xfNumber),
+                        new XAttribute(SSNoNamespace.formatCode, formatCode)
+                    )
+                );
+                // Ensure the count attribute reflects the actual number of <numFmt> children.
+                numFmts.SetAttributeValue(SSNoNamespace.count, numFmts.Elements(S.numFmt).Count());
+                return xfNumber;
+            }
+
+            numFmts.Add(
+                new XElement(
+                    S.numFmt,
+                    new XAttribute(SSNoNamespace.numFmtId, xfNumber),
+                    new XAttribute(SSNoNamespace.formatCode, formatCode)
+                )
             );
-            numFmts.Add(numFmt);
-            var existingCount = (int?)numFmts.Attribute(SSNoNamespace.count) ?? 0;
-            numFmts.SetAttributeValue(SSNoNamespace.count, existingCount + 1);
+            // Ensure the count attribute reflects the actual number of <numFmt> children.
+            numFmts.SetAttributeValue(SSNoNamespace.count, numFmts.Elements(S.numFmt).Count());
             return xfNumber;
         }
 

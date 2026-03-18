@@ -439,6 +439,103 @@ namespace Clippit.Tests.Excel
             await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
         }
 
+        // Reproduces issue #64: string sheet first, date sheet second must produce a valid workbook.
+        // Also verifies that custom numFmt IDs are >= 164 (ECMA-376 §18.8.30 reserves 0–163 for
+        // built-in formats) and that repeating the same FormatCode does not allocate a duplicate entry.
+        [Test]
+        public async Task SW005_StringSheetFirst_DateSheetSecond_CustomFormatId()
+        {
+            static WorksheetDfn MakeStringSheet(string name) =>
+                new()
+                {
+                    Name = name,
+                    ColumnHeadings =
+                    [
+                        new CellDfn { Value = "col1_string", Bold = true },
+                        new CellDfn { Value = "col2_string", Bold = true },
+                    ],
+                    Rows =
+                    [
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn { CellDataType = CellDataType.String, Value = "Hello" },
+                                new CellDfn { CellDataType = CellDataType.String, Value = "world" },
+                            ],
+                        },
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn { CellDataType = CellDataType.String, Value = "Goodbye" },
+                                new CellDfn { CellDataType = CellDataType.String, Value = "another" },
+                            ],
+                        },
+                    ],
+                };
+
+            static WorksheetDfn MakeDateSheet(string name) =>
+                new()
+                {
+                    Name = name,
+                    ColumnHeadings =
+                    [
+                        new CellDfn { Value = "col1_date", Bold = true },
+                        new CellDfn { Value = "col2_int", Bold = true },
+                    ],
+                    Rows =
+                    [
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn
+                                {
+                                    CellDataType = CellDataType.Date,
+                                    Value = new DateTime(2023, 4, 19),
+                                    FormatCode = "dd-MM-yyyy",
+                                },
+                                new CellDfn { CellDataType = CellDataType.Number, Value = -1 },
+                            ],
+                        },
+                    ],
+                };
+
+            // String-first, date-second (the failing order from issue #64)
+            var wb = new WorkbookDfn { Worksheets = [MakeStringSheet("StringSheet"), MakeDateSheet("DateSheet")] };
+            var fileName = Path.Combine(TempDir, "SW005-StringFirst-DateSecond.xlsx");
+            await using (var stream = File.Open(fileName, FileMode.Create))
+                wb.WriteTo(stream);
+
+            using var sDoc = SpreadsheetDocument.Open(fileName, false);
+            var stylesXDoc = sDoc.WorkbookPart.WorkbookStylesPart.GetXDocument();
+
+            var numFmtsEl = stylesXDoc.Root.Element(S.numFmts);
+            await Assert.That(numFmtsEl).IsNotNull();
+
+            // All custom numFmt IDs must be in the user-defined range (>= 164).
+            var customIds = numFmtsEl.Elements(S.numFmt).Select(e => (int)e.Attribute("numFmtId")).ToList();
+            foreach (var id in customIds)
+                await Assert.That(id).IsGreaterThanOrEqualTo(164);
+
+            // The same FormatCode used on both sheets must not produce duplicate numFmt entries.
+            var formatCodes = numFmtsEl.Elements(S.numFmt).Select(e => (string)e.Attribute("formatCode")).ToList();
+            await Assert.That(formatCodes.Distinct().Count()).IsEqualTo(formatCodes.Count);
+
+            // Specifically, there should be exactly one numFmt entry for the custom format code used ("dd-MM-yyyy").
+            const string targetFormatCode = "dd-MM-yyyy";
+            var targetFormatCodeCount = formatCodes.Count(fc => fc == targetFormatCode);
+            await Assert.That(targetFormatCodeCount).IsEqualTo(1);
+
+            // count attribute must match actual element count, and remain 1 for this workbook.
+            var declaredCount = (int)numFmtsEl.Attribute("count");
+            await Assert.That(declaredCount).IsEqualTo(numFmtsEl.Elements().Count());
+            await Assert.That(declaredCount).IsEqualTo(1);
+
+            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
+        }
+
         private async Task Validate(string fileName)
         {
             using var sDoc = SpreadsheetDocument.Open(fileName, false);
