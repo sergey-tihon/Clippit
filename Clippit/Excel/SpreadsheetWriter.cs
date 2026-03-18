@@ -676,11 +676,7 @@ namespace Clippit.Excel
 
                 // Prefer an existing matching numFmt that already has a custom-range ID (>= 164).
                 var existingCustom = matchingNumFmts
-                    .Select(nf => new
-                    {
-                        Element = nf,
-                        Id = (int?)nf.Attribute(SSNoNamespace.numFmtId),
-                    })
+                    .Select(nf => new { Element = nf, Id = (int?)nf.Attribute(SSNoNamespace.numFmtId) })
                     .FirstOrDefault(x => x.Id.HasValue && x.Id.Value >= CustomNumFmtIdStart);
 
                 if (existingCustom != null)
