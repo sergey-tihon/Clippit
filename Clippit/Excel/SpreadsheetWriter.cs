@@ -708,10 +708,20 @@ namespace Clippit.Excel
                 return xfNumber;
             }
 
-            // If we found an existing entry with an out-of-range ID, migrate it to the new valid ID.
+            // If we found an existing entry with an out-of-range ID, do not change it in place.
+            // Leave the existing numFmt (and any existing xf references) untouched, and instead
+            // create a new numFmt entry with a valid custom ID for use by new styles.
             if (existing != null && existingId.HasValue && existingId.Value < CustomNumFmtIdStart)
             {
-                existing.SetAttributeValue(SSNoNamespace.numFmtId, xfNumber);
+                numFmts.Add(
+                    new XElement(
+                        S.numFmt,
+                        new XAttribute(SSNoNamespace.numFmtId, xfNumber),
+                        new XAttribute(SSNoNamespace.formatCode, formatCode)
+                    )
+                );
+                // Ensure the count attribute reflects the actual number of <numFmt> children.
+                numFmts.SetAttributeValue(SSNoNamespace.count, numFmts.Elements(S.numFmt).Count());
                 return xfNumber;
             }
 

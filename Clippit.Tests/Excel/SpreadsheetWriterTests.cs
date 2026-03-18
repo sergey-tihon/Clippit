@@ -468,12 +468,7 @@ namespace Clippit.Tests.Excel
                         {
                             Cells =
                             [
-                                new CellDfn
-                                {
-                                    CellDataType = CellDataType.Date,
-                                    Value = new DateTime(2023, 4, 20),
-                                    FormatCode = "dd-MM-yyyy",
-                                },
+                                new CellDfn { CellDataType = CellDataType.String, Value = "Goodbye" },
                                 new CellDfn { CellDataType = CellDataType.String, Value = "another" },
                             ],
                         },
