@@ -26,7 +26,15 @@ namespace Clippit.Internal
                     newElement.AddAnnotation(element.Annotation<MatchSemaphore>());
                 return newElement;
             }
-            return node is XText text ? new XText(text.Value) : node;
+            if (node is XCData cdata)
+                return new XCData(cdata.Value);
+            if (node is XText text)
+                return new XText(text.Value);
+            if (node is XComment comment)
+                return new XComment(comment.Value);
+            if (node is XProcessingInstruction pi)
+                return new XProcessingInstruction(pi.Target, pi.Data);
+            return node;
         }
 
         private static object WmlSearchAndReplaceTransform(XNode node, string search, string replace, bool matchCase)
