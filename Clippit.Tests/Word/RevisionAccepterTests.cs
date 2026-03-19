@@ -60,10 +60,9 @@ public class RevisionAccepterTests : TestsBase
         var sourceDocx = new FileInfo(Path.Combine(sourceDir.FullName, name));
 
         using var doc = WordprocessingDocument.Open(sourceDocx.FullName, false);
-        var mainXDoc = doc.MainDocumentPart!.GetXDocument();
-        var trackedChangeCount = mainXDoc.Descendants().Count(e => s_trackedChangeElements.Contains(e.Name));
+        var hasTrackedRevisions = RevisionAccepter.HasTrackedRevisions(doc);
 
         // Verify the source documents actually have tracked changes to accept.
-        await Assert.That(trackedChangeCount).IsGreaterThan(0);
+        await Assert.That(hasTrackedRevisions).IsTrue();
     }
 }
