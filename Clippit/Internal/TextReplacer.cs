@@ -19,15 +19,14 @@ namespace Clippit.Internal
         {
             if (node is XElement element)
             {
-                var newElement = new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(CloneWithAnnotation)
-                );
+                var newElement = new XElement(element.Name, element.Attributes());
+                foreach (var child in element.Nodes())
+                    newElement.Add(CloneWithAnnotation(child));
                 if (element.Annotation<MatchSemaphore>() != null)
                     newElement.AddAnnotation(element.Annotation<MatchSemaphore>());
+                return newElement;
             }
-            return node;
+            return node is XText text ? new XText(text.Value) : node;
         }
 
         private static object WmlSearchAndReplaceTransform(XNode node, string search, string replace, bool matchCase)
