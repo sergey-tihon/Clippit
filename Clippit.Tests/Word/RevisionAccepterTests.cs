@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.Xml.Linq;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 
@@ -9,18 +8,6 @@ namespace Clippit.Tests.Word;
 
 public class RevisionAccepterTests : TestsBase
 {
-    private static readonly XName[] s_trackedChangeElements =
-    [
-        W.ins,
-        W.del,
-        W.rPrChange,
-        W.pPrChange,
-        W.sectPrChange,
-        W.tblPrChange,
-        W.tcPrChange,
-        W.trPrChange,
-    ];
-
     [Test]
     [Arguments("RA001-Tracked-Revisions-01.docx")]
     [Arguments("RA001-Tracked-Revisions-02.docx")]
@@ -39,16 +26,11 @@ public class RevisionAccepterTests : TestsBase
         // Verify the output is a well-formed Word document that can be opened.
         using var doc = WordprocessingDocument.Open(processedDestDocx.FullName, false);
 
-        // The output must contain no tracked-change markup anywhere in the main document part.
-        var mainXDoc = doc.MainDocumentPart!.GetXDocument();
-        var remaining = mainXDoc
-            .Descendants()
-            .Where(e => s_trackedChangeElements.Contains(e.Name))
-            .Select(e => e.Name.LocalName)
-            .Distinct()
-            .ToList();
+        // The output must contain no tracked-change markup anywhere in the main document part,
+        // using the library's own canonical definition of tracked revisions.
+        var hasTrackedRevisions = RevisionAccepter.PartHasTrackedRevisions(doc.MainDocumentPart!);
 
-        await Assert.That(remaining).IsEmpty();
+        await Assert.That(hasTrackedRevisions).IsFalse();
     }
 
     [Test]
