@@ -9,7 +9,6 @@ using System.Xml.XPath;
 using Clippit.Internal;
 using Clippit.Word.Assembler;
 using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.InkML;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using SixLabors.ImageSharp;
@@ -61,7 +60,7 @@ namespace Clippit.Word
         private static WmlDocument ProcessEmbeddedDocuments(byte[] docData)
         {
             // use document builder named sources to deal with embedded documents initialise a list of sources
-            List<ISource> sources = new List<ISource>();
+            List<ISource> sources = [];
 
             // replace <Document> sdt source with PtOpenXml.Insert elements and add <Document> data to source list
             int counter = 0;
@@ -74,7 +73,7 @@ namespace Clippit.Word
                     {
                         XDocument doc = part.GetXDocument();
 
-                        Dictionary<int, XElement> insertId2replacement = new Dictionary<int, XElement>();
+                        Dictionary<int, XElement> insertId2replacement = [];
                         foreach (XElement e in doc.Root.Descendants(W.sdt))
                         {
                             // try to parse a <Document> element
@@ -113,7 +112,7 @@ namespace Clippit.Word
                                     }
                                 }
                             }
-                            catch
+                            catch (Exception)
                             {
                                 // if we cannot parse the document then just ignore it
                                 continue;
@@ -603,7 +602,7 @@ namespace Clippit.Word
                 }
                 if (paraContents.Contains("<#"))
                 {
-                    var runReplacementInfo = new List<RunReplacementInfo>();
+                    List<RunReplacementInfo> runReplacementInfo = [];
                     var thisGuid = Guid.NewGuid().ToString();
                     var r = new Regex("<#.*?#>");
                     XElement xml;
@@ -705,7 +704,7 @@ namespace Clippit.Word
                 }
                 if (paraContents.Contains("<#"))
                 {
-                    var runReplacementInfo = new List<RunReplacementInfo>();
+                    List<RunReplacementInfo> runReplacementInfo = [];
                     var thisGuid = Guid.NewGuid().ToString();
                     var r = new Regex("<#.*?#>");
                     XElement xml;
@@ -832,7 +831,7 @@ namespace Clippit.Word
             return message;
         }
 
-        private static readonly Dictionary<XName, PASchemaSet> s_paSchemaSets = new Dictionary<XName, PASchemaSet>
+        private static readonly Dictionary<XName, PASchemaSet> s_paSchemaSets = new()
         {
             {
                 PA.Content,
@@ -954,7 +953,7 @@ namespace Clippit.Word
         /// <returns>System.Decimal.</returns>
         private static decimal GetMaxDocPrId(WordprocessingDocument wordDoc)
         {
-            var idsList = new List<string>();
+            List<string> idsList = [];
             foreach (var part in wordDoc.ContentParts())
             {
                 idsList.AddRange(
@@ -1239,7 +1238,7 @@ namespace Clippit.Word
                 {
                     stream = File.Open(inputImage, FileMode.Open, FileAccess.Read, FileShare.Read);
                 }
-                catch
+                catch (Exception)
                 {
                     imagePartType = default;
                     error = "Invalid Image path";
