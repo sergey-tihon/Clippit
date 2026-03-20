@@ -19,14 +19,21 @@ namespace Clippit.Internal
         {
             if (node is XElement element)
             {
-                var newElement = new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(CloneWithAnnotation)
-                );
+                var newElement = new XElement(element.Name, element.Attributes());
+                foreach (var child in element.Nodes())
+                    newElement.Add(CloneWithAnnotation(child));
                 if (element.Annotation<MatchSemaphore>() != null)
                     newElement.AddAnnotation(element.Annotation<MatchSemaphore>());
+                return newElement;
             }
+            if (node is XCData cdata)
+                return new XCData(cdata.Value);
+            if (node is XText text)
+                return new XText(text.Value);
+            if (node is XComment comment)
+                return new XComment(comment.Value);
+            if (node is XProcessingInstruction pi)
+                return new XProcessingInstruction(pi.Target, pi.Data);
             return node;
         }
 
