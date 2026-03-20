@@ -137,12 +137,7 @@ internal sealed partial class FluentPresentationBuilder : IFluentPresentationBui
 
         var scaleFactor = GetScaleFactor(sourceDocument);
 
-        // TODO: Maintain it globally on the builder level, instead of calculating it for each slide add operation
-        var newPresentation = _newDocument.PresentationPart.GetXDocument();
-        uint newId = 256;
-        var ids = newPresentation.Root.Descendants(P.sldId).Select(f => (uint)f.Attribute(NoNamespace.id)).ToList();
-        if (ids.Count != 0)
-            newId = ids.Max() + 1;
+        var newId = _nextSlideId++;
 
         var newSlide = _newDocument.PresentationPart.AddNewPart<SlidePart>();
         using (var sourceStream = slidePart.GetStream())
@@ -176,7 +171,7 @@ internal sealed partial class FluentPresentationBuilder : IFluentPresentationBui
         if (slidePart.SlideCommentsPart is not null)
             CopyComments(sourceDocument, slidePart, newSlide);
 
-        newPresentation = _newDocument.PresentationPart.GetXDocument();
+        var newPresentation = _newDocument.PresentationPart.GetXDocument();
         newPresentation
             .Root.Element(P.sldIdLst)
             .Add(

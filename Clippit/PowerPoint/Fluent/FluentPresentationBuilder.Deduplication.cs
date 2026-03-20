@@ -10,6 +10,7 @@ internal partial class FluentPresentationBuilder
     private readonly Dictionary<ContentDataKey, ContentData> _mediaCache = [];
     private readonly Dictionary<SlideMasterPart, SlideMasterData> _slideMasters = [];
     private SlideSize _slideSize;
+    private uint _nextSlideId;
 
     private void InitializeCaches()
     {
@@ -26,6 +27,13 @@ internal partial class FluentPresentationBuilder
 
         // TODO: enumerate all images, media, master and layouts
         _slideSize = presentation.Presentation.SlideSize;
+
+        var existingSlideIds = presentation
+            .GetXDocument()
+            ?.Root?.Descendants(P.sldId)
+            .Select(f => (uint)f.Attribute(NoNamespace.id))
+            .ToList() ?? [];
+        _nextSlideId = existingSlideIds.Count > 0 ? existingSlideIds.Max() + 1 : 256;
     }
 
     private double GetScaleFactor(PresentationDocument sourceDocument)
