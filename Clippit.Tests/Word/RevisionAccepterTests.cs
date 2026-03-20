@@ -27,10 +27,16 @@ public class RevisionAccepterTests : TestsBase
         using var doc = WordprocessingDocument.Open(processedDestDocx.FullName, false);
 
         // The output must contain no tracked-change markup in any part
-        // (main document, headers, footers, endnotes, footnotes).
+        // (main document, headers, footers, endnotes, footnotes, styles).
         var hasTrackedRevisions = RevisionAccepter.HasTrackedRevisions(doc);
-
         await Assert.That(hasTrackedRevisions).IsFalse();
+
+        var stylePart = doc.MainDocumentPart?.StyleDefinitionsPart;
+        if (stylePart is not null)
+        {
+            var stylesHaveTrackedRevisions = RevisionAccepter.PartHasTrackedRevisions(stylePart);
+            await Assert.That(stylesHaveTrackedRevisions).IsFalse();
+        }
     }
 
     [Test]
