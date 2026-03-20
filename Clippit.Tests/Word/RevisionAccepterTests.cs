@@ -26,9 +26,9 @@ public class RevisionAccepterTests : TestsBase
         // Verify the output is a well-formed Word document that can be opened.
         using var doc = WordprocessingDocument.Open(processedDestDocx.FullName, false);
 
-        // The output must contain no tracked-change markup anywhere in the main document part,
-        // using the library's own canonical definition of tracked revisions.
-        var hasTrackedRevisions = RevisionAccepter.PartHasTrackedRevisions(doc.MainDocumentPart!);
+        // The output must contain no tracked-change markup in any part
+        // (main document, headers, footers, endnotes, footnotes).
+        var hasTrackedRevisions = RevisionAccepter.HasTrackedRevisions(doc);
 
         await Assert.That(hasTrackedRevisions).IsFalse();
     }
