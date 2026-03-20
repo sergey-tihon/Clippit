@@ -23,11 +23,17 @@ public static partial class PresentationBuilder
 
         var slideNameRegex = SlideNameRegex();
         var slideNumber = 0;
-        foreach (var memoryStream in PublishSlides(srcDoc))
+        foreach (var slideId in PresentationBuilderTools.GetSlideIdsInOrder(srcDoc))
         {
+            var srcSlidePart = (SlidePart)srcDoc.PresentationPart.GetPartById(slideId);
+            var slideName = slideNameRegex.Replace(fileName, $"_{++slideNumber:000}.pptx");
+
+            var memoryStream = new MemoryStream();
             try
             {
-                var slideName = slideNameRegex.Replace(fileName, $"_{++slideNumber:000}.pptx");
+                PublishSlideToStream(srcSlidePart, memoryStream);
+                srcSlidePart.RemoveAnnotations<XDocument>();
+                srcSlidePart.UnloadRootElement();
                 yield return new PmlDocument(slideName, memoryStream);
             }
             finally
@@ -37,38 +43,108 @@ public static partial class PresentationBuilder
         }
     }
 
-    private static IEnumerable<MemoryStream> PublishSlides(PresentationDocument srcDoc)
+    /// <summary>
+    /// Extracts every slide from a presentation file directly to individual .pptx files on disk.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This overload is optimised for large presentations (1 GB+) and slides containing large
+    /// embedded media (videos, audio).  Unlike <see cref="PublishSlides(PmlDocument)"/>, which
+    /// requires the entire source document to be loaded into a byte array, this method opens the
+    /// source file directly from disk via <see cref="PresentationDocument.Open(string, bool)"/>
+    /// and writes each output slide directly to a <see cref="FileStream"/>, so peak memory usage
+    /// stays proportional to one slide rather than the whole presentation.
+    /// </para>
+    /// </remarks>
+    /// <param name="srcPath">Path to the source .pptx file.</param>
+    /// <param name="outputDirectory">
+    /// Directory where the per-slide files will be written.  Created if it does not exist.
+    /// </param>
+    /// <returns>
+    /// The full path of each written slide file, yielded in slide order.  The iterator is lazy:
+    /// each slide file is written on demand as the caller advances the enumerator, so you can
+    /// stop early without processing the whole presentation.
+    /// </returns>
+    public static IEnumerable<string> PublishSlides(string srcPath, string outputDirectory)
     {
-        var slidesIds = PresentationBuilderTools.GetSlideIdsInOrder(srcDoc);
-        foreach (var slideId in slidesIds)
+        ArgumentNullException.ThrowIfNull(srcPath);
+        ArgumentNullException.ThrowIfNull(outputDirectory);
+        Directory.CreateDirectory(outputDirectory);
+
+        // Open directly from disk — avoids loading the entire file into a MemoryStream.
+        using var srcDoc = PresentationDocument.Open(srcPath, isEditable: false);
+        var fileName = Path.GetFileName(srcPath);
+        foreach (var outputPath in PublishSlides(srcDoc, fileName, outputDirectory))
+            yield return outputPath;
+    }
+
+    /// <summary>
+    /// Extracts every slide from an already-open presentation to individual .pptx files on disk.
+    /// </summary>
+    /// <remarks>
+    /// Each slide is written directly to a <see cref="FileStream"/>, so slides with large
+    /// embedded media (1 GB+ videos) do not require an equivalently large heap allocation.
+    /// </remarks>
+    /// <param name="srcDoc">The open source presentation.</param>
+    /// <param name="fileName">
+    /// Base file name used to derive per-slide names (e.g. <c>deck.pptx</c> → <c>deck_001.pptx</c>).
+    /// </param>
+    /// <param name="outputDirectory">
+    /// Directory where the per-slide files will be written.  Created if it does not exist.
+    /// </param>
+    /// <returns>
+    /// The full path of each written slide file, yielded in slide order.
+    /// </returns>
+    public static IEnumerable<string> PublishSlides(
+        PresentationDocument srcDoc,
+        string fileName,
+        string outputDirectory
+    )
+    {
+        ArgumentNullException.ThrowIfNull(srcDoc);
+        ArgumentNullException.ThrowIfNull(outputDirectory);
+        Directory.CreateDirectory(outputDirectory);
+
+        fileName ??= string.Empty;
+        var slideNameRegex = SlideNameRegex();
+        var slideNumber = 0;
+
+        foreach (var slideId in PresentationBuilderTools.GetSlideIdsInOrder(srcDoc))
         {
             var srcSlidePart = (SlidePart)srcDoc.PresentationPart.GetPartById(slideId);
+            var slideName = slideNameRegex.Replace(fileName, $"_{++slideNumber:000}.pptx");
+            var outputPath = Path.Combine(outputDirectory, slideName);
 
-            var memoryStream = new MemoryStream();
-            using (var output = NewDocument(memoryStream))
-            {
-                using (var builder = Create(output))
-                {
-                    var newSlidePart = builder.AddSlidePart(srcSlidePart);
-
-                    // Remove the show attribute from the slide element (if it exists)
-                    var slideDocument = newSlidePart.GetXDocument();
-                    slideDocument.Root?.Attribute(NoNamespace.show)?.Remove();
-                }
-
-                // Set the title of the new presentation to the title of the slide
-                var title = PresentationBuilderTools.GetSlideTitle(srcSlidePart.GetXElement());
-                output.PackageProperties.Title = title;
-
-                // Update docProps/app.xml to reflect single-slide metadata
-                UpdateExtendedFileProperties(output, title);
-            }
+            // Write directly to a FileStream — no large MemoryStream on the heap.
+            using (var fileStream = new FileStream(outputPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None))
+                PublishSlideToStream(srcSlidePart, fileStream);
 
             srcSlidePart.RemoveAnnotations<XDocument>();
             srcSlidePart.UnloadRootElement();
 
-            yield return memoryStream;
+            yield return outputPath;
         }
+    }
+
+    /// <summary>Builds a single-slide presentation from <paramref name="srcSlidePart"/> and writes it to <paramref name="outputStream"/>.</summary>
+    private static void PublishSlideToStream(SlidePart srcSlidePart, Stream outputStream)
+    {
+        using var output = NewDocument(outputStream);
+        using (var builder = Create(output))
+        {
+            var newSlidePart = builder.AddSlidePart(srcSlidePart);
+
+            // Remove the show attribute from the slide element (if it exists)
+            var slideDocument = newSlidePart.GetXDocument();
+            slideDocument.Root?.Attribute(NoNamespace.show)?.Remove();
+        }
+
+        // Set the title of the new presentation to the title of the slide
+        var title = PresentationBuilderTools.GetSlideTitle(srcSlidePart.GetXElement());
+        output.PackageProperties.Title = title;
+
+        // Update docProps/app.xml to reflect single-slide metadata
+        UpdateExtendedFileProperties(output, title);
     }
 
     [GeneratedRegex(".pptx", RegexOptions.IgnoreCase, "en-US")]
