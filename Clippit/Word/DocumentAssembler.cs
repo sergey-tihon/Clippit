@@ -1734,6 +1734,58 @@ namespace Clippit.Word
                 }
                 return null;
             }
+            // Special case: VML v:textpath has a `string` attribute that can contain <#...#> template
+            // directives (e.g. Word watermarks). TransformToMetadata only scans text nodes, so this
+            // attribute is never pre-processed — we resolve it here on the fly.
+            if (element.Name == VML.textpath)
+            {
+                var stringAttr = element.Attribute(NoNamespace._string);
+                if (stringAttr != null)
+                {
+                    var attrValue = stringAttr.Value;
+                    var match = Regex.Match(attrValue, @"<#(.*?)#>", RegexOptions.Singleline);
+                    if (match.Success)
+                    {
+                        var xmlText = match.Groups[1].Value.Trim().Replace('\u201c', '"').Replace('\u201d', '"');
+                        string replacement;
+                        try
+                        {
+                            var directive = XElement.Parse(xmlText);
+                            if (directive.Name == PA.Content)
+                            {
+                                var xPath = (string)directive.Attribute(PA.Select);
+                                var optional = string.Equals(
+                                    (string)directive.Attribute(PA.Optional),
+                                    "true",
+                                    StringComparison.OrdinalIgnoreCase
+                                );
+                                replacement = data.EvaluateXPathToString(xPath, optional);
+                            }
+                            else
+                            {
+                                replacement = match.Value;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            templateError.HasError = true;
+                            replacement = $"[Template error: {ex.Message}]";
+                        }
+                        var newValue =
+                            attrValue[..match.Index] + replacement + attrValue[(match.Index + match.Length)..];
+                        return new XElement(
+                            element.Name,
+                            element
+                                .Attributes()
+                                .Select(a =>
+                                    a.Name == NoNamespace._string ? new XAttribute(NoNamespace._string, newValue) : a
+                                ),
+                            element.Nodes().Select(n => ContentReplacementTransform(n, data, templateError, part))
+                        );
+                    }
+                }
+            }
+
             return new XElement(
                 element.Name,
                 element.Attributes(),
