@@ -16,7 +16,7 @@ using Path = System.IO.Path;
 
 namespace Clippit.Word
 {
-    public static class DocumentAssembler
+    public static partial class DocumentAssembler
     {
         public static WmlDocument AssembleDocument(WmlDocument templateDoc, XmlDocument data, out bool templateError)
         {
@@ -515,6 +515,9 @@ namespace Clippit.Word
             }
         }
 
+        [GeneratedRegex("<#.*?#>")]
+        private static partial Regex TemplateDirectiveRegex();
+
         private static readonly List<string> s_aliasList = new()
         {
             "Image",
@@ -604,11 +607,10 @@ namespace Clippit.Word
                 {
                     List<RunReplacementInfo> runReplacementInfo = [];
                     var thisGuid = Guid.NewGuid().ToString();
-                    var r = new Regex("<#.*?#>");
                     XElement xml;
                     OpenXmlRegex.Replace(
                         new[] { element },
-                        r,
+                        TemplateDirectiveRegex(),
                         thisGuid,
                         (_, match) =>
                         {
@@ -706,11 +708,10 @@ namespace Clippit.Word
                 {
                     List<RunReplacementInfo> runReplacementInfo = [];
                     var thisGuid = Guid.NewGuid().ToString();
-                    var r = new Regex("<#.*?#>");
                     XElement xml;
                     OpenXmlRegex.Replace(
                         new[] { element },
-                        r,
+                        TemplateDirectiveRegex(),
                         thisGuid,
                         (_, match) =>
                         {

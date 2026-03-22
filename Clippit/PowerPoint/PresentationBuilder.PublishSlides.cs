@@ -95,8 +95,8 @@ public static partial class PresentationBuilder
 
         root.Element(EP.Slides)?.SetValue("1");
 
-        var headingPairsVector = root.Elements(EP.HeadingPairs).Elements(VT.vector).FirstOrDefault();
-        var titlesVector = root.Elements(EP.TitlesOfParts).Elements(VT.vector).FirstOrDefault();
+        var headingPairsVector = root.Element(EP.HeadingPairs)?.Element(VT.vector);
+        var titlesVector = root.Element(EP.TitlesOfParts)?.Element(VT.vector);
 
         if (headingPairsVector is null || titlesVector is null)
         {

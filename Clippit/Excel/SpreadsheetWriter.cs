@@ -181,8 +181,11 @@ namespace Clippit.Excel
         String,
     }
 
-    public static class SpreadsheetWriter
+    public static partial class SpreadsheetWriter
     {
+        [GeneratedRegex(@"^[^'*\[\]/\\:?][^*\[\]/\\:?]{0,30}$")]
+        private static partial Regex ValidSheetNameRegex();
+
         [Obsolete("Use WorkbookDfn.WriteTo(Stream) extension method")]
         public static void Write(string fileName, WorkbookDfn workbook)
         {
@@ -281,8 +284,7 @@ namespace Clippit.Excel
 
         public static void AddWorksheet(SpreadsheetDocument sDoc, WorksheetDfn worksheetData)
         {
-            var validSheetName = new Regex(@"^[^'*\[\]/\\:?][^*\[\]/\\:?]{0,30}$");
-            if (!validSheetName.IsMatch(worksheetData.Name))
+            if (!ValidSheetNameRegex().IsMatch(worksheetData.Name))
                 throw new InvalidSheetNameException(worksheetData.Name);
 
             // throw WorksheetAlreadyExistsException if a sheet with the same name (case-insensitive) already exists in the workbook
