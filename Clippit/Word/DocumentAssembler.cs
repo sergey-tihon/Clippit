@@ -1735,6 +1735,70 @@ namespace Clippit.Word
                 }
                 return null;
             }
+            // Special case: VML v:textpath has a `string` attribute that can contain <#...#> template
+            // directives (e.g. Word watermarks). TransformToMetadata only scans text nodes, so this
+            // attribute is never pre-processed — we resolve it here on the fly.
+            if (element.Name == VML.textpath)
+            {
+                var stringAttr = element.Attribute(NoNamespace._string);
+                if (stringAttr != null)
+                {
+                    var attrValue = stringAttr.Value;
+                    var match = Regex.Match(attrValue, @"<#(.*?)#>", RegexOptions.Singleline);
+                    if (match.Success)
+                    {
+                        var newValue = Regex.Replace(
+                            attrValue,
+                            @"<#(.*?)#>",
+                            m =>
+                            {
+                                var xmlText = m.Groups[1].Value.Trim().Replace('\u201c', '"').Replace('\u201d', '"');
+                                try
+                                {
+                                    var directive = XElement.Parse(xmlText);
+                                    if (directive.Name == PA.Content)
+                                    {
+                                        var schemaError = ValidatePerSchema(directive);
+                                        if (schemaError is not null)
+                                        {
+                                            templateError.HasError = true;
+                                            return $"[Template error: Schema Validation Error: {schemaError}]";
+                                        }
+
+                                        var xPath = (string)directive.Attribute(PA.Select);
+                                        var optional = string.Equals(
+                                            (string)directive.Attribute(PA.Optional),
+                                            "true",
+                                            StringComparison.OrdinalIgnoreCase
+                                        );
+                                        return data.EvaluateXPathToString(xPath, optional);
+                                    }
+
+                                    // For non-PA.Content directives, leave the original text unchanged.
+                                    return m.Value;
+                                }
+                                catch (Exception ex)
+                                {
+                                    templateError.HasError = true;
+                                    return $"[Template error: {ex.Message}]";
+                                }
+                            },
+                            RegexOptions.Singleline
+                        );
+
+                        return new XElement(
+                            element.Name,
+                            element
+                                .Attributes()
+                                .Select(a =>
+                                    a.Name == NoNamespace._string ? new XAttribute(NoNamespace._string, newValue) : a
+                                ),
+                            element.Nodes().Select(n => ContentReplacementTransform(n, data, templateError, part))
+                        );
+                    }
+                }
+            }
+
             return new XElement(
                 element.Name,
                 element.Attributes(),

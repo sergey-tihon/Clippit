@@ -579,6 +579,143 @@ public class DocumentAssemblerTests : TestsBase
         await Assert.That(paras.ElementAt(3).Elements(W.r).Elements(W.tab)).HasCount(2);
     }
 
+    /// <summary>
+    /// Regression test for issue #62: <c>v:textpath/@string</c> attributes that contain a
+    /// <c>&lt;#&lt;Content Select="..."/&gt;#&gt;</c> template directive were never substituted
+    /// because <see cref="DocumentAssembler"/> only scanned text nodes, not XML attributes.
+    /// </summary>
+    [Test]
+    public async Task DA_VmlTextpath_WatermarkSubstitution()
+    {
+        // Arrange — build a minimal DOCX in memory whose body contains a paragraph with a
+        // VML shape carrying the watermark template directive in v:textpath/@string.
+        const string watermarkText = "CONFIDENTIAL";
+        const string xmlDataStr = "<Data><WaterMark>CONFIDENTIAL</WaterMark></Data>";
+
+        XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+        XNamespace vml = "urn:schemas-microsoft-com:vml";
+
+        // The paragraph reproduces the real watermark XML produced by Word:
+        //   <w:p><w:pict><v:shape><v:textpath string="<#<Content Select=&quot;./WaterMark&quot;/>#>"/></v:shape></w:pict></w:p>
+        var bodyXml = new XElement(
+            w + "body",
+            new XElement(
+                w + "p",
+                new XElement(
+                    w + "pict",
+                    new XElement(
+                        vml + "shape",
+                        new XElement(
+                            vml + "textpath",
+                            new XAttribute("string", "<#<Content Select=\"./WaterMark\"/>#>"),
+                            new XAttribute("style", "font-family:Calibri;font-size:1pt")
+                        )
+                    )
+                )
+            ),
+            new XElement(w + "sectPr")
+        );
+
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                mainPart.PutXDocument(new XDocument(new XElement(w + "document", bodyXml)));
+            }
+            docxBytes = ms.ToArray();
+        }
+
+        var wmlTemplate = new WmlDocument("watermark-template.docx", docxBytes);
+        var xmlData = XElement.Parse(xmlDataStr);
+
+        // Act
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        // Assert
+        await Assert.That(hasError).IsFalse();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        var resultBody = resultDoc.MainDocumentPart.GetXDocument().Root?.Element(w + "body");
+        var textpathAttr = resultBody?.Descendants(vml + "textpath").FirstOrDefault()?.Attribute("string");
+        await Assert.That(textpathAttr).IsNotNull();
+        await Assert.That(textpathAttr!.Value).IsEqualTo(watermarkText);
+    }
+
+    /// <summary>
+    /// Negative tests for <c>v:textpath/@string</c> substitution: verifies that malformed
+    /// directives set <c>hasError = true</c> and leave a descriptive placeholder in the attribute.
+    /// </summary>
+    [Test]
+    [Arguments("<#not-valid-xml#>", "<Data><WaterMark>CONFIDENTIAL</WaterMark></Data>")]
+    [Arguments("<#<Content Select=\"./Missing\"/>#>", "<Data><WaterMark>CONFIDENTIAL</WaterMark></Data>")]
+    [Arguments("<#<Content Select=\"./Item\"/>#>", "<Data><Item>A</Item><Item>B</Item></Data>")]
+    [Arguments("<#<Content Optional=\"true\"/>#>", "<Data><WaterMark>CONFIDENTIAL</WaterMark></Data>")]
+    public async Task DA_VmlTextpath_ErrorDirective_SetsHasError(string stringAttrValue, string xmlDataStr)
+    {
+        XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+        XNamespace vml = "urn:schemas-microsoft-com:vml";
+
+        var bodyXml = new XElement(
+            w + "body",
+            new XElement(
+                w + "p",
+                new XElement(
+                    w + "pict",
+                    new XElement(
+                        vml + "shape",
+                        new XElement(
+                            vml + "textpath",
+                            new XAttribute("string", stringAttrValue),
+                            new XAttribute("style", "font-family:Calibri;font-size:1pt")
+                        )
+                    )
+                )
+            ),
+            new XElement(w + "sectPr")
+        );
+
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                mainPart.PutXDocument(new XDocument(new XElement(w + "document", bodyXml)));
+            }
+            docxBytes = ms.ToArray();
+        }
+
+        var wmlTemplate = new WmlDocument("watermark-error-template.docx", docxBytes);
+        var xmlData = XElement.Parse(xmlDataStr);
+
+        // Act
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        // Assert — any directive error must surface via hasError
+        await Assert.That(hasError).IsTrue();
+
+        // The attribute value should contain the error placeholder, not the original directive.
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        var resultBody = resultDoc.MainDocumentPart!.GetXDocument().Root?.Element(w + "body");
+        var textpathAttr = resultBody?.Descendants(vml + "textpath").FirstOrDefault()?.Attribute("string");
+        await Assert.That(textpathAttr).IsNotNull();
+        await Assert.That(textpathAttr!.Value).Contains("[Template error:");
+    }
+
     private async Task ValidateAsync(FileInfo fi)
     {
         using var wDoc = WordprocessingDocument.Open(fi.FullName, false);

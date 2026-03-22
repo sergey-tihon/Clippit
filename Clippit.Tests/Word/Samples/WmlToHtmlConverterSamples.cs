@@ -12,9 +12,11 @@ namespace Clippit.Tests.Word.Samples
         [Test]
         public void Sample1()
         {
+            var outputDir = Path.Combine(TempDir, "Sample1");
+            Directory.CreateDirectory(outputDir);
             foreach (var file in Directory.GetFiles(RootFolder, "*.docx"))
             {
-                ConvertToHtmlWithExternalFiles(file, TempDir);
+                ConvertToHtmlWithExternalFiles(file, outputDir);
             }
         }
 
@@ -80,9 +82,11 @@ namespace Clippit.Tests.Word.Samples
         [Test]
         public void Sample2()
         {
+            var outputDir = Path.Combine(TempDir, "Sample2");
+            Directory.CreateDirectory(outputDir);
             foreach (var file in Directory.GetFiles(RootFolder, "*.docx"))
             {
-                ConvertToHtmlWithEmbeddedImages(file, TempDir);
+                ConvertToHtmlWithEmbeddedImages(file, outputDir);
             }
         }
 
