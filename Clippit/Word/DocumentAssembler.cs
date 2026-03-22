@@ -1748,46 +1748,47 @@ namespace Clippit.Word
                     {
                         var xmlText = match.Groups[1].Value.Trim().Replace('\u201c', '"').Replace('\u201d', '"');
                         string replacement;
-                        try
+                    var newValue = Regex.Replace(
+                        attrValue,
+                        @"<#(.*?)#>",
+                        match =>
                         {
-                            var directive = XElement.Parse(xmlText);
-                            if (directive.Name == PA.Content)
+                            var xmlText = match.Groups[1].Value.Trim().Replace('\u201c', '"').Replace('\u201d', '"');
+                            try
                             {
-                                var xPath = (string)directive.Attribute(PA.Select);
-                                var optional = string.Equals(
-                                    (string)directive.Attribute(PA.Optional),
-                                    "true",
-                                    StringComparison.OrdinalIgnoreCase
-                                );
-                                replacement = data.EvaluateXPathToString(xPath, optional);
+                                var directive = XElement.Parse(xmlText);
+                                if (directive.Name == PA.Content)
+                                {
+                                    var xPath = (string)directive.Attribute(PA.Select);
+                                    var optional = string.Equals(
+                                        (string)directive.Attribute(PA.Optional),
+                                        "true",
+                                        StringComparison.OrdinalIgnoreCase
+                                    );
+                                    return data.EvaluateXPathToString(xPath, optional);
+                                }
+
+                                // For non-PA.Content directives, leave the original text unchanged.
+                                return match.Value;
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                replacement = match.Value;
+                                templateError.HasError = true;
+                                return $"[Template error: {ex.Message}]";
                             }
-                        }
-                        catch (XmlException ex)
-                        {
-                            templateError.HasError = true;
-                            replacement = $"[Template error: {ex.Message}]";
-                        }
-                        catch (XPathException ex)
-                        {
-                            templateError.HasError = true;
-                            replacement = $"[Template error: {ex.Message}]";
-                        }
-                        var newValue =
-                            attrValue[..match.Index] + replacement + attrValue[(match.Index + match.Length)..];
-                        return new XElement(
-                            element.Name,
-                            element
-                                .Attributes()
-                                .Select(a =>
-                                    a.Name == NoNamespace._string ? new XAttribute(NoNamespace._string, newValue) : a
-                                ),
-                            element.Nodes().Select(n => ContentReplacementTransform(n, data, templateError, part))
-                        );
-                    }
+                        },
+                        RegexOptions.Singleline
+                    );
+
+                    return new XElement(
+                        element.Name,
+                        element
+                            .Attributes()
+                            .Select(a =>
+                                a.Name == NoNamespace._string ? new XAttribute(NoNamespace._string, newValue) : a
+                            ),
+                        element.Nodes().Select(n => ContentReplacementTransform(n, data, templateError, part))
+                    );
                 }
             }
 
