@@ -2045,7 +2045,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             foreach (var font in fromFontTable.Root.Elements(W.font))
             {
                 var name = font.Attribute(W.name).Value;
-                if (toFontTable.Root.Elements(W.font).Where(o => o.Attribute(W.name).Value == name).Count() == 0)
+                if (!toFontTable.Root.Elements(W.font).Any(o => o.Attribute(W.name).Value == name))
                     toFontTable.Root.Add(new XElement(font));
             }
         }
@@ -4182,12 +4182,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             foreach (var start in newContent.DescendantsAndSelf(startElement))
             {
                 var rangeId = start.Attribute(idAttribute).Value;
-                if (
-                    newContent
-                        .DescendantsAndSelf(endElement)
-                        .Where(e => e.Attribute(idAttribute).Value == rangeId)
-                        .Count() == 0
-                )
+                if (!newContent.DescendantsAndSelf(endElement).Any(e => e.Attribute(idAttribute).Value == rangeId))
                 {
                     var end = sourceDocument
                         .Descendants(endElement)
@@ -4207,12 +4202,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             foreach (var end in newContent.Elements(endElement))
             {
                 var rangeId = end.Attribute(idAttribute).Value;
-                if (
-                    newContent
-                        .DescendantsAndSelf(startElement)
-                        .Where(s => s.Attribute(idAttribute).Value == rangeId)
-                        .Count() == 0
-                )
+                if (!newContent.DescendantsAndSelf(startElement).Any(s => s.Attribute(idAttribute).Value == rangeId))
                 {
                     var start = sourceDocument
                         .Descendants(startElement)

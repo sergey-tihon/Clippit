@@ -515,6 +515,8 @@ namespace Clippit.Word
             }
         }
 
+        private static readonly Regex s_templateDirectiveRegex = new("<#.*?#>", RegexOptions.Compiled);
+
         private static readonly List<string> s_aliasList = new()
         {
             "Image",
@@ -604,11 +606,10 @@ namespace Clippit.Word
                 {
                     List<RunReplacementInfo> runReplacementInfo = [];
                     var thisGuid = Guid.NewGuid().ToString();
-                    var r = new Regex("<#.*?#>");
                     XElement xml;
                     OpenXmlRegex.Replace(
                         new[] { element },
-                        r,
+                        s_templateDirectiveRegex,
                         thisGuid,
                         (_, match) =>
                         {
@@ -706,11 +707,10 @@ namespace Clippit.Word
                 {
                     List<RunReplacementInfo> runReplacementInfo = [];
                     var thisGuid = Guid.NewGuid().ToString();
-                    var r = new Regex("<#.*?#>");
                     XElement xml;
                     OpenXmlRegex.Replace(
                         new[] { element },
-                        r,
+                        s_templateDirectiveRegex,
                         thisGuid,
                         (_, match) =>
                         {
