@@ -1766,7 +1766,12 @@ namespace Clippit.Word
                                 replacement = match.Value;
                             }
                         }
-                        catch (Exception ex)
+                        catch (XmlException ex)
+                        {
+                            templateError.HasError = true;
+                            replacement = $"[Template error: {ex.Message}]";
+                        }
+                        catch (XPathException ex)
                         {
                             templateError.HasError = true;
                             replacement = $"[Template error: {ex.Message}]";
