@@ -184,9 +184,10 @@ namespace Clippit.Word
         }
     }
 
-    public static class WmlToXml
+    public static partial class WmlToXml
     {
-        private static readonly Regex s_listItemRegex = new("[A-F0-9.]+$", RegexOptions.Compiled);
+        [GeneratedRegex("[A-F0-9.]+$")]
+        private static partial Regex ListItemRegex();
 
         public static WmlDocument ApplyContentTypes(WmlDocument document, WmlToXmlSettings settings)
         {
@@ -776,7 +777,7 @@ namespace Clippit.Word
                         lastFldCharRunText.Value = lastFldCharRunText.Value + sepCharsString;
                     }
 
-                    var m = s_listItemRegex.Match(listItemText);
+                    var m = ListItemRegex().Match(listItemText);
                     string matchedValue = null;
                     if (m.Success)
                     {
