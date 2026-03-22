@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.3.0] - March 22, 2026
+
+- fix: prevent malformed XLSX when worksheet has no data rows (#108)
+- fix: use min-width for tab-preceding span to prevent text overflow (#110)
+- fix: update docProps/app.xml metadata in PublishSlides output (#114)
+- fix: update numFmts count attribute when adding custom number formats (#124)
+- fix: custom numFmt IDs must start at 164 per ECMA-376 (#131)
+- fix: TextReplacer.CloneWithAnnotation now returns the clone, not the original (#135)
+- perf: `O(1)` dictionary lookup for media deduplication cache in FluentPresentationBuilder (#128)
+- perf: cache next slide ID in FluentPresentationBuilder to avoid `O(n²)` scan (#140)
+- perf: cache compiled Regex, use `Any()` over `Count() == 0`, use `Element()` over `Elements().First()` (#143)
+- refactor: modernise assembler helper classes (#118)
+- refactor: modernize DocumentAssembler.cs with collection expressions and catch cleanup (#138)
+- hk: DocumentFormat.OpenXml 3.5.1, TUnit 1.20.0 (#146)
+- hk: Modernize CI workflow and update dependencies (#121)
+
 ## [3.2.0] - January 25, 2026
 
 - hk: DocumentFormat.OpenXml 3.4.1

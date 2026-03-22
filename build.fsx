@@ -55,8 +55,23 @@ pipeline "build" {
     stage "RunTests" { run "dotnet test --solution Clippit.slnx" }
 
     stage "NuGet" {
-        run
-            $"dotnet pack Clippit/Clippit.csproj -o bin/ -p:PackageVersion={version.Version} -p:PackageReleaseNotes=\"{version.ReleaseNotes}\""
+        run (fun ctx ->
+            let releaseNotes = version.ReleaseNotes.Trim()
+            let targetsPath = "Clippit/Directory.Build.targets"
+
+            System.IO.File.WriteAllText(
+                targetsPath,
+                $"""<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes><![CDATA[{releaseNotes}]]></PackageReleaseNotes>
+  </PropertyGroup>
+</Project>"""
+            )
+
+            try
+                ctx.RunCommand $"dotnet pack Clippit/Clippit.csproj -o bin/ -p:PackageVersion={version.Version}"
+            finally
+                System.IO.File.Delete(targetsPath))
     }
 
     runIfOnlySpecified
