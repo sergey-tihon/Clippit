@@ -657,6 +657,7 @@ public class DocumentAssemblerTests : TestsBase
     [Arguments("<#not-valid-xml#>", "<Data><WaterMark>CONFIDENTIAL</WaterMark></Data>")]
     [Arguments("<#<Content Select=\"./Missing\"/>#>", "<Data><WaterMark>CONFIDENTIAL</WaterMark></Data>")]
     [Arguments("<#<Content Select=\"./Item\"/>#>", "<Data><Item>A</Item><Item>B</Item></Data>")]
+    [Arguments("<#<Content Optional=\"true\"/>#>", "<Data><WaterMark>CONFIDENTIAL</WaterMark></Data>")]
     public async Task DA_VmlTextpath_ErrorDirective_SetsHasError(string stringAttrValue, string xmlDataStr)
     {
         XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";

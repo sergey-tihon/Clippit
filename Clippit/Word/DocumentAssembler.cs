@@ -1757,6 +1757,13 @@ namespace Clippit.Word
                                     var directive = XElement.Parse(xmlText);
                                     if (directive.Name == PA.Content)
                                     {
+                                        var schemaError = ValidatePerSchema(directive);
+                                        if (schemaError is not null)
+                                        {
+                                            templateError.HasError = true;
+                                            return $"[Template error: Schema Validation Error: {schemaError}]";
+                                        }
+
                                         var xPath = (string)directive.Attribute(PA.Select);
                                         var optional = string.Equals(
                                             (string)directive.Attribute(PA.Optional),
