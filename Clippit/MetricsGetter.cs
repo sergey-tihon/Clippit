@@ -387,7 +387,7 @@ namespace Clippit
         )
         {
             var validator = new OpenXmlValidator(versionToValidateAgainst);
-            var errors = validator.Validate(wDoc);
+            var errors = validator.Validate(wDoc).Take(3).ToList();
             var valid = !errors.Any();
             if (!valid)
             {
@@ -429,7 +429,7 @@ namespace Clippit
         )
         {
             var validator = new OpenXmlValidator(versionToValidateAgainst);
-            var errors = validator.Validate(sDoc);
+            var errors = validator.Validate(sDoc).Take(3).ToList();
             var valid = !errors.Any();
             if (!valid)
             {
@@ -471,7 +471,7 @@ namespace Clippit
         )
         {
             var validator = new OpenXmlValidator(versionToValidateAgainst);
-            var errors = validator.Validate(pDoc);
+            var errors = validator.Validate(pDoc).Take(3).ToList();
             var valid = !errors.Any();
             if (!valid)
             {
