@@ -1746,49 +1746,48 @@ namespace Clippit.Word
                     var match = Regex.Match(attrValue, @"<#(.*?)#>", RegexOptions.Singleline);
                     if (match.Success)
                     {
-                        var xmlText = match.Groups[1].Value.Trim().Replace('\u201c', '"').Replace('\u201d', '"');
-                        string replacement;
-                    var newValue = Regex.Replace(
-                        attrValue,
-                        @"<#(.*?)#>",
-                        match =>
-                        {
-                            var xmlText = match.Groups[1].Value.Trim().Replace('\u201c', '"').Replace('\u201d', '"');
-                            try
+                        var newValue = Regex.Replace(
+                            attrValue,
+                            @"<#(.*?)#>",
+                            m =>
                             {
-                                var directive = XElement.Parse(xmlText);
-                                if (directive.Name == PA.Content)
+                                var xmlText = m.Groups[1].Value.Trim().Replace('\u201c', '"').Replace('\u201d', '"');
+                                try
                                 {
-                                    var xPath = (string)directive.Attribute(PA.Select);
-                                    var optional = string.Equals(
-                                        (string)directive.Attribute(PA.Optional),
-                                        "true",
-                                        StringComparison.OrdinalIgnoreCase
-                                    );
-                                    return data.EvaluateXPathToString(xPath, optional);
+                                    var directive = XElement.Parse(xmlText);
+                                    if (directive.Name == PA.Content)
+                                    {
+                                        var xPath = (string)directive.Attribute(PA.Select);
+                                        var optional = string.Equals(
+                                            (string)directive.Attribute(PA.Optional),
+                                            "true",
+                                            StringComparison.OrdinalIgnoreCase
+                                        );
+                                        return data.EvaluateXPathToString(xPath, optional);
+                                    }
+
+                                    // For non-PA.Content directives, leave the original text unchanged.
+                                    return m.Value;
                                 }
+                                catch (Exception ex)
+                                {
+                                    templateError.HasError = true;
+                                    return $"[Template error: {ex.Message}]";
+                                }
+                            },
+                            RegexOptions.Singleline
+                        );
 
-                                // For non-PA.Content directives, leave the original text unchanged.
-                                return match.Value;
-                            }
-                            catch (Exception ex)
-                            {
-                                templateError.HasError = true;
-                                return $"[Template error: {ex.Message}]";
-                            }
-                        },
-                        RegexOptions.Singleline
-                    );
-
-                    return new XElement(
-                        element.Name,
-                        element
-                            .Attributes()
-                            .Select(a =>
-                                a.Name == NoNamespace._string ? new XAttribute(NoNamespace._string, newValue) : a
-                            ),
-                        element.Nodes().Select(n => ContentReplacementTransform(n, data, templateError, part))
-                    );
+                        return new XElement(
+                            element.Name,
+                            element
+                                .Attributes()
+                                .Select(a =>
+                                    a.Name == NoNamespace._string ? new XAttribute(NoNamespace._string, newValue) : a
+                                ),
+                            element.Nodes().Select(n => ContentReplacementTransform(n, data, templateError, part))
+                        );
+                    }
                 }
             }
 
