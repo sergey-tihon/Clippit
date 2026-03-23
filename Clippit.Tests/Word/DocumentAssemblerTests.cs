@@ -893,6 +893,15 @@ public class DocumentAssemblerTests : TestsBase
         var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
 
         await Assert.That(hasError).IsTrue();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        var documentText = resultDoc
+            .MainDocumentPart!.GetXDocument()
+            .Descendants(w + "t")
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
+        await Assert.That(documentText).Contains("Table Select returned no data");
     }
 
     private async Task ValidateAsync(FileInfo fi)
