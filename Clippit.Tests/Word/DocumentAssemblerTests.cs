@@ -142,6 +142,10 @@ public class DocumentAssemblerTests : TestsBase
     [Arguments("DA285-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
     [Arguments("DA285A-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
     [Arguments("DA-I0038-TemplateWithMultipleXPathResults.docx", "DA-I0038-Data.xml", false)]
+    [Arguments("DA291-Table-Optional-NoData.docx", "DA-Data.xml", false)]
+    [Arguments("DA291A-Table-Optional-NoData.docx", "DA-Data.xml", false)]
+    [Arguments("DA292-Table-Optional-WithData.docx", "DA-Data.xml", false)]
+    [Arguments("DA292A-Table-Optional-WithData.docx", "DA-Data.xml", false)]
     public async Task DA101(string name, string data, bool err)
     {
         var afterAssembling = AssembleDocument(name, data, out var returnedTemplateError);
@@ -717,22 +721,24 @@ public class DocumentAssemblerTests : TestsBase
     }
 
     /// <summary>
-    /// Regression test for issue #85: <c>&lt;Table Select="..." Optional="true"/&gt;</c>
+    /// Regression test for issue #85: <c>&lt;Table Select="..." Optional="true|1"/&gt;</c>
     /// should suppress the "Table Select returned no data" error and remove the table
-    /// when the XPath expression returns no matching elements.
+    /// when the XPath expression returns no matching elements. Both XSD boolean forms
+    /// (<c>true</c> and <c>1</c>) are accepted.
     /// </summary>
     [Test]
-    public async Task DA_Table_OptionalTrue_NoDataRemovesTable()
+    [Arguments("true")]
+    [Arguments("1")]
+    public async Task DA_Table_Optional_NoDataRemovesTable(string optionalValue)
     {
-        // Arrange — build a minimal DOCX in memory with a Table content control whose
-        // Select XPath points to a node that is absent from the data document.
         XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 
-        // Table directive: <# <Table Select="Orders" Optional="true" /> #>
-        // followed by the actual w:tbl (header row + prototype row)
         var directiveParagraph = new XElement(
             w + "p",
-            new XElement(w + "r", new XElement(w + "t", @"<# <Table Select=""Orders"" Optional=""true"" /> #>"))
+            new XElement(
+                w + "r",
+                new XElement(w + "t", $@"<# <Table Select=""Orders"" Optional=""{optionalValue}"" /> #>")
+            )
         );
 
         var tableXml = new XElement(
@@ -766,47 +772,48 @@ public class DocumentAssemblerTests : TestsBase
             docxBytes = ms.ToArray();
         }
 
-        var wmlTemplate = new WmlDocument("optional-table-template.docx", docxBytes);
-        var xmlData = XElement.Parse("<Data></Data>"); // no Orders element
+        var wmlTemplate = new WmlDocument($"optional-{optionalValue}-table-template.docx", docxBytes);
+        var xmlData = XElement.Parse("<Data/>");
 
-        // Act
         var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
 
-        // Assert — no error, table should be removed from the output
         await Assert.That(hasError).IsFalse();
 
         using var resultStream = new MemoryStream(result.DocumentByteArray);
         using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
         var resultBody = resultDoc.MainDocumentPart!.GetXDocument().Root?.Element(w + "body");
         var tables = resultBody?.Elements(w + "tbl").ToList();
         await Assert.That(tables).IsEmpty();
     }
 
     /// <summary>
-    /// Verifies that <c>&lt;Table Select="..." Optional="1"/&gt;</c> (XSD numeric boolean)
-    /// behaves the same as <c>Optional="true"</c> and removes the table when no data is found.
+    /// Verifies that <c>&lt;Table Select="..." Optional="true"/&gt;</c> populates the table
+    /// normally when the XPath expression returns matching elements.
     /// </summary>
     [Test]
-    public async Task DA_Table_OptionalOne_NoDataRemovesTable()
+    public async Task DA_Table_Optional_WithDataPopulatesTable()
     {
         XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 
-        // Table directive using numeric XSD boolean: Optional="1"
         var directiveParagraph = new XElement(
             w + "p",
-            new XElement(w + "r", new XElement(w + "t", @"<# <Table Select=""Orders"" Optional=""1"" /> #>"))
+            new XElement(w + "r", new XElement(w + "t", @"<# <Table Select=""Items/Item"" Optional=""true"" /> #>"))
         );
 
         var tableXml = new XElement(
             w + "tbl",
             new XElement(w + "tblPr"),
+            new XElement(w + "tblGrid", new XElement(w + "gridCol", new XAttribute(w + "w", "9216"))),
+            // Header row
             new XElement(
                 w + "tr",
-                new XElement(w + "tc", new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", "Header"))))
+                new XElement(w + "tc", new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", "Name"))))
             ),
+            // Prototype row: cells contain XPath expressions as raw text
             new XElement(
                 w + "tr",
-                new XElement(w + "tc", new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", "Row"))))
+                new XElement(w + "tc", new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", "./Name"))))
             )
         );
 
@@ -828,8 +835,10 @@ public class DocumentAssemblerTests : TestsBase
             docxBytes = ms.ToArray();
         }
 
-        var wmlTemplate = new WmlDocument("optional-one-table-template.docx", docxBytes);
-        var xmlData = XElement.Parse("<Data></Data>"); // no Orders element
+        var wmlTemplate = new WmlDocument("optional-table-with-data.docx", docxBytes);
+        var xmlData = XElement.Parse(
+            "<Data><Items><Item><Name>Apple</Name></Item><Item><Name>Banana</Name></Item></Items></Data>"
+        );
 
         var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
 
@@ -837,9 +846,18 @@ public class DocumentAssemblerTests : TestsBase
 
         using var resultStream = new MemoryStream(result.DocumentByteArray);
         using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
         var resultBody = resultDoc.MainDocumentPart!.GetXDocument().Root?.Element(w + "body");
         var tables = resultBody?.Elements(w + "tbl").ToList();
-        await Assert.That(tables).IsEmpty();
+        await Assert.That(tables).IsNotEmpty();
+        var dataRows = tables![0].Elements(w + "tr").Skip(1).ToList(); // skip header row
+        await Assert.That(dataRows).HasCount(2);
+        var rowText = dataRows
+            .SelectMany(r => r.Descendants(w + "t"))
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
+        await Assert.That(rowText).Contains("Apple");
+        await Assert.That(rowText).Contains("Banana");
     }
 
     /// <summary>
@@ -888,7 +906,7 @@ public class DocumentAssemblerTests : TestsBase
         }
 
         var wmlTemplate = new WmlDocument("non-optional-table-template.docx", docxBytes);
-        var xmlData = XElement.Parse("<Data></Data>");
+        var xmlData = XElement.Parse("<Data/>");
 
         var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
 
