@@ -717,7 +717,7 @@ public class DocumentAssemblerTests : TestsBase
     }
 
     /// <summary>
-    /// Regression test for issue #85: <c>&lt;Table Select="..." Optional="True"/&gt;</c>
+    /// Regression test for issue #85: <c>&lt;Table Select="..." Optional="true"/&gt;</c>
     /// should suppress the "Table Select returned no data" error and remove the table
     /// when the XPath expression returns no matching elements.
     /// </summary>
@@ -728,7 +728,7 @@ public class DocumentAssemblerTests : TestsBase
         // Select XPath points to a node that is absent from the data document.
         XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 
-        // Table directive: <# <Table Select="Orders" Optional="True" /> #>
+        // Table directive: <# <Table Select="Orders" Optional="true" /> #>
         // followed by the actual w:tbl (header row + prototype row)
         var directiveParagraph = new XElement(
             w + "p",
@@ -783,7 +783,7 @@ public class DocumentAssemblerTests : TestsBase
     }
 
     /// <summary>
-    /// Verifies that <c>&lt;Table Select="..."/&gt;</c> without <c>Optional="True"</c>
+    /// Verifies that <c>&lt;Table Select="..."/&gt;</c> without <c>Optional="true"</c>
     /// still returns an error when no data is found (existing behaviour preserved).
     /// </summary>
     [Test]
