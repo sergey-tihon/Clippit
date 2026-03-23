@@ -1284,8 +1284,7 @@ namespace Clippit.Word
         private static object ProcessAParagraph(XElement element, XElement data, TemplateError templateError)
         {
             var xPath = (string)element.Attribute(PA.Select);
-            var optionalString = (string)element.Attribute(PA.Optional);
-            var optional = (optionalString != null && optionalString.ToLower() == "true");
+            var optional = (bool?)element.Attribute(PA.Optional) ?? false;
 
             string[] newValues;
             try
@@ -1529,8 +1528,7 @@ namespace Clippit.Word
             if (element.Name == PA.Repeat)
             {
                 var selector = (string)element.Attribute(PA.Select);
-                var optionalString = (string)element.Attribute(PA.Optional);
-                var optional = (optionalString != null && optionalString.ToLower() == "true");
+                var optional = (bool?)element.Attribute(PA.Optional) ?? false;
                 var alignmentOption = (string)element.Attribute(PA.Align) ?? "vertical";
 
                 IList<XElement> repeatingData;
@@ -1586,8 +1584,7 @@ namespace Clippit.Word
             }
             if (element.Name == PA.Table)
             {
-                var optionalString = (string)element.Attribute(PA.Optional);
-                var optional = optionalString != null && optionalString.ToLower() == "true";
+                var optional = (bool?)element.Attribute(PA.Optional) ?? false;
 
                 IList<XElement> tableData;
                 try
@@ -1774,11 +1771,7 @@ namespace Clippit.Word
                                         }
 
                                         var xPath = (string)directive.Attribute(PA.Select);
-                                        var optional = string.Equals(
-                                            (string)directive.Attribute(PA.Optional),
-                                            "true",
-                                            StringComparison.OrdinalIgnoreCase
-                                        );
+                                        var optional = (bool?)directive.Attribute(PA.Optional) ?? false;
                                         return data.EvaluateXPathToString(xPath, optional);
                                     }
 

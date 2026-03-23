@@ -783,6 +783,66 @@ public class DocumentAssemblerTests : TestsBase
     }
 
     /// <summary>
+    /// Verifies that <c>&lt;Table Select="..." Optional="1"/&gt;</c> (XSD numeric boolean)
+    /// behaves the same as <c>Optional="true"</c> and removes the table when no data is found.
+    /// </summary>
+    [Test]
+    public async Task DA_Table_OptionalOne_NoDataRemovesTable()
+    {
+        XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+
+        // Table directive using numeric XSD boolean: Optional="1"
+        var directiveParagraph = new XElement(
+            w + "p",
+            new XElement(w + "r", new XElement(w + "t", @"<# <Table Select=""Orders"" Optional=""1"" /> #>"))
+        );
+
+        var tableXml = new XElement(
+            w + "tbl",
+            new XElement(w + "tblPr"),
+            new XElement(
+                w + "tr",
+                new XElement(w + "tc", new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", "Header"))))
+            ),
+            new XElement(
+                w + "tr",
+                new XElement(w + "tc", new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", "Row"))))
+            )
+        );
+
+        var bodyXml = new XElement(w + "body", directiveParagraph, tableXml, new XElement(w + "sectPr"));
+
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                mainPart.PutXDocument(new XDocument(new XElement(w + "document", bodyXml)));
+            }
+            docxBytes = ms.ToArray();
+        }
+
+        var wmlTemplate = new WmlDocument("optional-one-table-template.docx", docxBytes);
+        var xmlData = XElement.Parse("<Data></Data>"); // no Orders element
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        var resultBody = resultDoc.MainDocumentPart!.GetXDocument().Root?.Element(w + "body");
+        var tables = resultBody?.Elements(w + "tbl").ToList();
+        await Assert.That(tables).IsEmpty();
+    }
+
+    /// <summary>
     /// Verifies that <c>&lt;Table Select="..."/&gt;</c> without <c>Optional="true"</c>
     /// still returns an error when no data is found (existing behaviour preserved).
     /// </summary>
