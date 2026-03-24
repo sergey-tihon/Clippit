@@ -17,7 +17,7 @@ public partial class PresentationBuilderSlidePublishingTests
     [Arguments("externalData")]
     public async Task AddSlidePart_WithDanglingOleObjOrExternalDataRelationship_DoesNotThrow(string elementLocalName)
     {
-        const string sourcePath = "../../../../TestFiles/PublishSlides/BRK3066.pptx";
+        var sourcePath = Path.Combine(SourceDirectory, "BRK3066.pptx");
         var openSettings = new OpenSettings { AutoSave = false };
 
         // Copy the source file into a writable memory stream so we can inject a dangling reference.
