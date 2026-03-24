@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.3.1] - March 24, 2026
+
+- fix: handle dangling r:id on p:oleObj/p:externalData — KeyNotFoundException in slide publishing (#156)
+- fix: resolve Content directives in v:textpath/`@string` for VML watermarks (#141)
+
 ## [3.3.0] - March 22, 2026
 
 - fix: prevent malformed XLSX when worksheet has no data rows (#108)
