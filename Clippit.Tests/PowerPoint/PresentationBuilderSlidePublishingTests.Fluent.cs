@@ -13,7 +13,9 @@ public partial class PresentationBuilderSlidePublishingTests
     /// or p:externalData element whose r:id is not found as either a part or an external relationship.
     /// </summary>
     [Test]
-    public async Task AddSlidePart_WithDanglingOleObjRelationship_DoesNotThrow()
+    [Arguments("oleObj")]
+    [Arguments("externalData")]
+    public async Task AddSlidePart_WithDanglingRelationship_DoesNotThrow(string elementLocalName)
     {
         const string sourcePath = "../../../../TestFiles/PublishSlides/BRK3066.pptx";
         var openSettings = new OpenSettings { AutoSave = false };
@@ -30,20 +32,13 @@ public partial class PresentationBuilderSlidePublishingTests
         var firstSlideId = PresentationBuilderTools.GetSlideIdsInOrder(srcDoc).First();
         var srcSlidePart = (SlidePart)srcDoc.PresentationPart.GetPartById(firstSlideId);
 
-        // Inject a p:oleObj element with a relationship ID that doesn't exist as a part or external relationship.
+        // Inject the element with a relationship ID that doesn't exist as a part or external relationship.
         // This simulates a slide produced by third-party software with a dangling reference.
         XNamespace pns = "http://schemas.openxmlformats.org/presentationml/2006/main";
         XNamespace rns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
         var slideXDoc = srcSlidePart.GetXDocument();
         var spTree = slideXDoc.Descendants(pns + "spTree").FirstOrDefault();
-        spTree?.Add(
-            new XElement(
-                pns + "oleObj",
-                new XAttribute(rns + "id", "rId_dangling_999"),
-                new XAttribute("progId", "Package"),
-                new XAttribute("dvAspect", "DVASPECT_CONTENT")
-            )
-        );
+        spTree?.Add(new XElement(pns + elementLocalName, new XAttribute(rns + "id", "rId_dangling_999")));
         srcSlidePart.PutXDocument(slideXDoc);
 
         // Should not throw KeyNotFoundException
