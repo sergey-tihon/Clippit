@@ -15,7 +15,7 @@ public partial class PresentationBuilderSlidePublishingTests
     [Test]
     [Arguments("oleObj")]
     [Arguments("externalData")]
-    public async Task AddSlidePart_WithDanglingRelationship_DoesNotThrow(string elementLocalName)
+    public async Task AddSlidePart_WithDanglingOleObjOrExternalDataRelationship_DoesNotThrow(string elementLocalName)
     {
         const string sourcePath = "../../../../TestFiles/PublishSlides/BRK3066.pptx";
         var openSettings = new OpenSettings { AutoSave = false };
@@ -38,7 +38,8 @@ public partial class PresentationBuilderSlidePublishingTests
         XNamespace rns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
         var slideXDoc = srcSlidePart.GetXDocument();
         var spTree = slideXDoc.Descendants(pns + "spTree").FirstOrDefault();
-        spTree?.Add(new XElement(pns + elementLocalName, new XAttribute(rns + "id", "rId_dangling_999")));
+        ArgumentNullException.ThrowIfNull(spTree);
+        spTree.Add(new XElement(pns + elementLocalName, new XAttribute(rns + "id", "rId_dangling_999")));
         srcSlidePart.PutXDocument(slideXDoc);
 
         // Should not throw KeyNotFoundException
