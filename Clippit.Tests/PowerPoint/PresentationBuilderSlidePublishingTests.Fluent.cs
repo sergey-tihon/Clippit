@@ -7,6 +7,56 @@ namespace Clippit.Tests.PowerPoint;
 
 public partial class PresentationBuilderSlidePublishingTests
 {
+    /// <summary>
+    /// Regression test for https://github.com/sergey-tihon/Clippit/issues/155 —
+    /// AddSlidePart must not throw KeyNotFoundException when a slide contains a p:oleObj
+    /// or p:externalData element whose r:id is not found as either a part or an external relationship.
+    /// </summary>
+    [Test]
+    public async Task AddSlidePart_WithDanglingOleObjRelationship_DoesNotThrow()
+    {
+        const string sourcePath = "../../../../TestFiles/PublishSlides/BRK3066.pptx";
+        var openSettings = new OpenSettings { AutoSave = false };
+
+        // Copy the source file into a writable memory stream so we can inject a dangling reference.
+        using var srcMemory = new MemoryStream();
+        await using (var fs = File.OpenRead(sourcePath))
+            await fs.CopyToAsync(srcMemory);
+        srcMemory.Position = 0;
+
+        using var srcDoc = PresentationDocument.Open(srcMemory, true, openSettings);
+        ArgumentNullException.ThrowIfNull(srcDoc.PresentationPart);
+
+        var firstSlideId = PresentationBuilderTools.GetSlideIdsInOrder(srcDoc).First();
+        var srcSlidePart = (SlidePart)srcDoc.PresentationPart.GetPartById(firstSlideId);
+
+        // Inject a p:oleObj element with a relationship ID that doesn't exist as a part or external relationship.
+        // This simulates a slide produced by third-party software with a dangling reference.
+        XNamespace pns = "http://schemas.openxmlformats.org/presentationml/2006/main";
+        XNamespace rns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+        var slideXDoc = srcSlidePart.GetXDocument();
+        var spTree = slideXDoc.Descendants(pns + "spTree").FirstOrDefault();
+        spTree?.Add(
+            new XElement(
+                pns + "oleObj",
+                new XAttribute(rns + "id", "rId_dangling_999"),
+                new XAttribute("progId", "Package"),
+                new XAttribute("dvAspect", "DVASPECT_CONTENT")
+            )
+        );
+        srcSlidePart.PutXDocument(slideXDoc);
+
+        // Should not throw KeyNotFoundException
+        using var destStream = new MemoryStream();
+        using (var destDoc = PresentationBuilder.NewDocument(destStream))
+        using (var builder = PresentationBuilder.Create(destDoc))
+        {
+            builder.AddSlidePart(srcSlidePart);
+        }
+
+        await Assert.That(destStream.Length).IsGreaterThan(0);
+    }
+
     [Test]
     [MethodDataSource(typeof(PublishingTestData), nameof(PublishingTestData.Files))]
     public async Task PublishUsingMemDocs(string sourcePath, CancellationToken cancellationToken)

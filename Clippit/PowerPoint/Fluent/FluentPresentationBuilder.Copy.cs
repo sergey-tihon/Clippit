@@ -570,9 +570,12 @@ internal sealed partial class FluentPresentationBuilder
             }
             else
             {
-                var er = oldContentPart.GetExternalRelationship(relId);
-                var newEr = newContentPart.AddExternalRelationship(er.RelationshipType, er.Uri);
-                oleReference.Attribute(R.id).Set(newEr.Id);
+                var er = oldContentPart.ExternalRelationships.FirstOrDefault(r => r.Id == relId);
+                if (er is not null)
+                {
+                    var newEr = newContentPart.AddExternalRelationship(er.RelationshipType, er.Uri);
+                    oleReference.Attribute(R.id).Set(newEr.Id);
+                }
             }
         }
 
