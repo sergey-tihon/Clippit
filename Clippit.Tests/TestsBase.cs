@@ -42,6 +42,11 @@ namespace Clippit.Tests
             await Assert.That(errors).IsEmpty();
         }
 
+        protected async Task Validate(OpenXmlPackage package)
+        {
+            await Validate(package, []);
+        }
+
         protected async Task Validate(OpenXmlPackage package, List<string> expectedErrors)
         {
             var errors = _validator
@@ -59,6 +64,7 @@ namespace Clippit.Tests
             }
 
             await Assert.That(errors).IsEmpty();
+            await ValidateRelationships(package);
         }
 
         protected async Task ValidateUniqueDocPrIds(FileInfo fi)
