@@ -97,6 +97,9 @@ namespace Clippit.Tests.PowerPoint
             var newDocument = PresentationBuilder.BuildPresentation(sources);
             newDocument.FileName = fileName.Replace(".pptx", "_reassembled.pptx");
             newDocument.SaveAs(Path.Combine(TargetDirectory, newDocument.FileName));
+            using var ms = new MemoryStream(newDocument.DocumentByteArray);
+            using var presentationDoc = PresentationDocument.Open(ms, false);
+            await ValidateRelationships(presentationDoc);
             var baseSize = document.DocumentByteArray.Length;
             await Assert
                 .That(newDocument.DocumentByteArray.Length)

@@ -2,3 +2,5 @@
   href: MetricsGetter.md
 - name: OpenXmlRegex
   href: OpenXmlRegex.md
+- name: RelationshipValidator
+  href: RelationshipValidator.md

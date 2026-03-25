@@ -69,6 +69,14 @@ public static class RelationshipValidator
     /// A sequence of <see cref="RelationshipValidationError"/> items describing each
     /// unresolvable relationship reference; empty when the package is clean.
     /// </returns>
+    /// <example>
+    /// <code>
+    /// using var doc = PresentationDocument.Open("deck.pptx", false);
+    /// var errors = RelationshipValidator.Validate(doc).ToList();
+    /// foreach (var e in errors)
+    ///     Console.WriteLine(e.Description);
+    /// </code>
+    /// </example>
     public static IEnumerable<RelationshipValidationError> Validate(OpenXmlPackage package)
     {
         ArgumentNullException.ThrowIfNull(package);
@@ -125,6 +133,18 @@ public static class RelationshipValidator
     /// <summary>
     /// Returns <see langword="true"/> when no dangling relationship references are found.
     /// </summary>
+    /// <param name="package">The package to validate.</param>
+    /// <returns>
+    /// <see langword="true"/> if every relationship attribute value in every XML part resolves
+    /// to a registered relationship; <see langword="false"/> if any dangling references exist.
+    /// </returns>
+    /// <example>
+    /// <code>
+    /// using var doc = WordprocessingDocument.Open("document.docx", false);
+    /// if (!RelationshipValidator.IsValid(doc))
+    ///     throw new InvalidOperationException("Document contains dangling relationship references.");
+    /// </code>
+    /// </example>
     public static bool IsValid(OpenXmlPackage package) => !Validate(package).Any();
 
     private static HashSet<string> BuildRegisteredRelationshipIds(OpenXmlPart part)
