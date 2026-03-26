@@ -839,8 +839,10 @@ namespace Clippit.Html
             {
                 if (element.Name == XhtmlNoNamespace.a)
                 {
-                    var rId = Relationships.GetNewRelationshipId();
                     var href = (string)element.Attribute(NoNamespace.href);
+                    var rId = href is not null
+                        ? Relationships.GetNewRelationshipId($"{wDoc.MainDocumentPart.Uri}|{href}")
+                        : Relationships.GetNewRelationshipId($"{wDoc.MainDocumentPart.Uri}|anchor|{element.Value}");
                     if (href != null)
                     {
                         Uri uri = null;
@@ -857,7 +859,8 @@ namespace Clippit.Html
 
                         if (uri != null)
                         {
-                            wDoc.MainDocumentPart.AddHyperlinkRelationship(uri, true, rId);
+                            if (wDoc.MainDocumentPart.HyperlinkRelationships.All(h => h.Id != rId))
+                                wDoc.MainDocumentPart.AddHyperlinkRelationship(uri, true, rId);
                             if (element.Element(XhtmlNoNamespace.img) != null)
                             {
                                 var imageTransformed = element
@@ -2364,7 +2367,7 @@ namespace Clippit.Html
             }
 
             var mdp = wDoc.MainDocumentPart;
-            var rId = Relationships.GetNewRelationshipId();
+            var rId = Relationships.GetNewRelationshipId(ba);
             var ipt = ImagePartType.Png;
             var newPart = mdp.AddImagePart(ipt, rId);
             using (var s = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))

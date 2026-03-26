@@ -192,8 +192,10 @@ namespace Clippit.Word.Assembler
             {
                 if (element.Name == XhtmlNoNamespace.a)
                 {
-                    var rId = Relationships.GetNewRelationshipId();
                     var href = (string)element.Attribute(NoNamespace.href);
+                    var rId = href is not null
+                        ? Relationships.GetNewRelationshipId($"{part.Uri}|{href}")
+                        : Relationships.GetNewRelationshipId($"{part.Uri}|anchor|{element.Value}");
                     if (href != null)
                     {
                         Uri uri = null;
@@ -210,7 +212,8 @@ namespace Clippit.Word.Assembler
 
                         if (uri != null)
                         {
-                            part.AddHyperlinkRelationship(uri, true, rId);
+                            if (part.HyperlinkRelationships.All(h => h.Id != rId))
+                                part.AddHyperlinkRelationship(uri, true, rId);
                             if (element.Element(XhtmlNoNamespace.img) != null)
                             {
                                 var imageTransformed = element

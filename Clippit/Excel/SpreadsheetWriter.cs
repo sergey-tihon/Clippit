@@ -321,7 +321,7 @@ namespace Clippit.Excel
             }
 
             var workbook = sDoc.WorkbookPart;
-            var rId = Relationships.GetNewRelationshipId();
+            var rId = Relationships.GetNewRelationshipId($"worksheet|{worksheetData.Name}");
             var worksheetPart = workbook.AddNewPart<WorksheetPart>(rId);
 
             var wbXDoc = workbook.GetXDocument();
@@ -367,7 +367,9 @@ namespace Clippit.Excel
                     if (worksheetData.ColumnHeadings != null && worksheetData.TableName != null && numRows > 0)
                     {
                         partXmlWriter.WriteEndElement();
-                        var rId2 = Relationships.GetNewRelationshipId();
+                        var rId2 = Relationships.GetNewRelationshipId(
+                            $"tablepart|{worksheetData.Name}|{worksheetData.TableName}"
+                        );
                         partXmlWriter.WriteStartElement("tableParts", ws);
                         partXmlWriter.WriteStartAttribute("count");
                         partXmlWriter.WriteValue(1);

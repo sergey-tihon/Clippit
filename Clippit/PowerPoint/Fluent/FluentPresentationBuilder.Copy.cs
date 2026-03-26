@@ -235,7 +235,7 @@ internal sealed partial class FluentPresentationBuilder
             _ => FontPartType.FontOdttf,
         };
 
-        var newFontPartId = Relationships.GetNewRelationshipId();
+        var newFontPartId = Relationships.GetNewRelationshipId($"{oldFontPart.Uri}|{oldFontPart.ContentType}");
         var newFontPart = _newDocument.PresentationPart.AddFontPart(fontPartType, newFontPartId);
         using (var stream = oldFontPart.GetStream())
             newFontPart.FeedData(stream);
@@ -672,7 +672,9 @@ internal sealed partial class FluentPresentationBuilder
                     )
                 )
                 {
-                    var newId2 = Relationships.GetNewRelationshipId();
+                    var newId2 = Relationships.GetNewRelationshipId(
+                        $"{oldPartIdPair9.OpenXmlPart.Uri}|{itemProps.OpenXmlPart.ContentType}"
+                    );
                     var cxpp = newPart.AddNewPart<CustomXmlPropertiesPart>(
                         "application/vnd.openxmlformats-officedocument.customXmlProperties+xml",
                         newId2
@@ -680,7 +682,7 @@ internal sealed partial class FluentPresentationBuilder
                     using var stream = itemProps.OpenXmlPart.GetStream();
                     cxpp.FeedData(stream);
                 }
-                var newId = Relationships.GetNewRelationshipId();
+                var newId = Relationships.GetNewRelationshipId($"{oldContentPart.Uri}|{relId}|customXml");
                 newContentPart.CreateRelationshipToPart(newPart, newId);
                 custData.Attribute(R.id).Value = newId;
             }

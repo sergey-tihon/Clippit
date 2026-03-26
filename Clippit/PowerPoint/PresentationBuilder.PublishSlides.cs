@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using Clippit.Internal;
 using Clippit.PowerPoint.Fluent;
 using DocumentFormat.OpenXml.Packaging;
 
@@ -67,8 +70,89 @@ public static partial class PresentationBuilder
             srcSlidePart.RemoveAnnotations<XDocument>();
             srcSlidePart.UnloadRootElement();
 
-            yield return memoryStream;
+            // Normalize all relationship IDs in the output ZIP so that IDs are stable
+            // (deterministic) across runs. The OpenXML SDK generates GUID-based IDs for
+            // parts added via AddNewPart<T>(), which would otherwise vary each invocation.
+            yield return NormalizeRelationshipIds(memoryStream);
+            memoryStream.Dispose();
         }
+    }
+
+    private static readonly XNamespace s_packageRelNs = "http://schemas.openxmlformats.org/package/2006/relationships";
+
+    private static readonly DateTimeOffset s_zipEpoch = new(1980, 1, 1, 0, 0, 0, TimeSpan.Zero);
+
+    /// <summary>
+    /// Rewrites the OOXML ZIP package so that every relationship ID is a stable, deterministic
+    /// value derived from SHA-256 of the relationship type and target URI, rather than the
+    /// random GUID the OpenXML SDK assigns when creating parts with AddNewPart&lt;T&gt;().
+    /// Entry timestamps are also normalised to the ZIP epoch so the output is byte-for-byte
+    /// identical across invocations with the same input.
+    /// </summary>
+    private static MemoryStream NormalizeRelationshipIds(MemoryStream input)
+    {
+        input.Position = 0;
+
+        // Pass 1: read every .rels file and build a mapping old-id → stable-id.
+        // The stable ID is derived from the .rels entry path, relationship type, and target,
+        // which are all fixed for a given source document.
+        var allMappings = new Dictionary<string, string>(); // old-id → new-id (across all parts)
+
+        using (var inZip = new ZipArchive(input, ZipArchiveMode.Read, leaveOpen: true))
+        {
+            foreach (var entry in inZip.Entries.Where(e => e.FullName.EndsWith(".rels")))
+            {
+                using var stream = entry.Open();
+                var doc = XDocument.Load(stream);
+                if (doc.Root is null)
+                    continue;
+
+                foreach (var rel in doc.Root.Elements(s_packageRelNs + "Relationship"))
+                {
+                    var oldId = (string)rel.Attribute("Id")!;
+                    var relType = (string)rel.Attribute("Type")!;
+                    var target = (string)rel.Attribute("Target")!;
+                    // Namespace by the .rels path so that identical (type, target) pairs in
+                    // different .rels files are still independent.
+                    var newId = Relationships.GetNewRelationshipId($"{entry.FullName}|{relType}|{target}");
+                    allMappings[oldId] = newId;
+                }
+            }
+        }
+
+        // Pass 2: rewrite the ZIP with updated IDs and normalised entry timestamps.
+        var output = new MemoryStream();
+        input.Position = 0;
+
+        using (var inZip = new ZipArchive(input, ZipArchiveMode.Read, leaveOpen: true))
+        using (var outZip = new ZipArchive(output, ZipArchiveMode.Create, leaveOpen: true))
+        {
+            // Process entries in a stable order so the ZIP layout is deterministic.
+            foreach (var entry in inZip.Entries.OrderBy(e => e.FullName, StringComparer.Ordinal))
+            {
+                var newEntry = outZip.CreateEntry(entry.FullName);
+                newEntry.LastWriteTime = s_zipEpoch;
+
+                using var inStream = entry.Open();
+                using var outStream = newEntry.Open();
+
+                if (entry.FullName.EndsWith(".rels") || entry.FullName.EndsWith(".xml"))
+                {
+                    var text = new StreamReader(inStream, Encoding.UTF8).ReadToEnd();
+                    foreach (var (oldId, newId) in allMappings)
+                        text = text.Replace($"=\"{oldId}\"", $"=\"{newId}\"");
+                    var bytes = Encoding.UTF8.GetBytes(text);
+                    outStream.Write(bytes);
+                }
+                else
+                {
+                    inStream.CopyTo(outStream);
+                }
+            }
+        }
+
+        output.Position = 0;
+        return output;
     }
 
     [GeneratedRegex(".pptx", RegexOptions.IgnoreCase, "en-US")]

@@ -233,5 +233,27 @@ namespace Clippit.Tests.PowerPoint
                 }
             }
         }
+
+        /// <summary>
+        /// Regression test for https://github.com/sergey-tihon/Clippit/issues/40 —
+        /// PublishSlides must produce identical byte output across multiple runs
+        /// (i.e. relationship IDs must be deterministic, not GUID-based).
+        /// </summary>
+        [Test]
+        [Arguments("BRK3066.pptx")]
+        public async Task PublishSlides_IsDeterministic(string fileName)
+        {
+            var document = new PmlDocument(Path.Combine(SourceDirectory, fileName));
+
+            var firstRun = PresentationBuilder.PublishSlides(document).ToList();
+            var secondRun = PresentationBuilder.PublishSlides(document).ToList();
+
+            await Assert.That(firstRun).HasCount(secondRun.Count);
+
+            for (var i = 0; i < firstRun.Count; i++)
+            {
+                await Assert.That(firstRun[i].DocumentByteArray).IsEquivalentTo(secondRun[i].DocumentByteArray);
+            }
+        }
     }
 }

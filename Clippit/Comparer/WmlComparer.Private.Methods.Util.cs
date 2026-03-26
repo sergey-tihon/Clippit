@@ -77,7 +77,9 @@ namespace Clippit
                         oldPartStream.CopyTo(newPartStream);
                     }
 
-                    var newRid = Relationships.GetNewRelationshipId();
+                    var newRid = Relationships.GetNewRelationshipId(
+                        $"{newPart.Uri}|{relationshipForDeletedPart.RelationshipType}"
+                    );
                     partInNewDocument.Relationships.Create(
                         newPart.Uri,
                         TargetMode.Internal,
