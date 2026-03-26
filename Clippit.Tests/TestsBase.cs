@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Clippit.Core;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
@@ -33,6 +34,19 @@ namespace Clippit.Tests
 
         protected static string TempDir => s_tempDir.Value;
 
+        protected async Task ValidateRelationships(OpenXmlPackage package)
+        {
+            var errors = RelationshipValidator.Validate(package).ToList();
+            foreach (var error in errors)
+                Console.WriteLine(error.Description);
+            await Assert.That(errors).IsEmpty();
+        }
+
+        protected async Task Validate(OpenXmlPackage package)
+        {
+            await Validate(package, []);
+        }
+
         protected async Task Validate(OpenXmlPackage package, List<string> expectedErrors)
         {
             var errors = _validator
@@ -50,6 +64,7 @@ namespace Clippit.Tests
             }
 
             await Assert.That(errors).IsEmpty();
+            await ValidateRelationships(package);
         }
 
         protected async Task ValidateUniqueDocPrIds(FileInfo fi)

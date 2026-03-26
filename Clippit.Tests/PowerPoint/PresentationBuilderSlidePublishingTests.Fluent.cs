@@ -85,6 +85,7 @@ public partial class PresentationBuilderSlidePublishingTests
 
                 // Set the title of the new presentation to the title of the slide
                 newDocument.PackageProperties.Title = title;
+                await ValidateRelationships(newDocument);
             }
 
             var slideFileName = string.Concat(fileName, $"_{++slideNumber:000}.pptx");
