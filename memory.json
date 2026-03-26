@@ -1,1 +1,37 @@
-{"lr":"2026-03-25","rid":"23536637831","c":{"19":"2026-03-25","28":"2026-03-21","40":"2026-03-12","42":"2026-03-12","43":"2026-03-18","47":"2026-03-20","48":"2026-03-20","54":"2026-03-12","62":"2026-03-21","65":"2026-03-16","66":"2026-03-23","67":"2026-03-17","77":"2026-03-14","85":"2026-03-23","103":"2026-03-15","105":"2026-03-15","155":"2026-03-24"},"prs":["fix-issue-85-optional-table-tag","improve-relationship-validator-2026-03-25"],"merged":["fix-assembler-vml-textpath-watermark","perf-cache-regex-patterns","eng-update-deps-2026-03-22","fix-issue-155-external-relationship-not-found","eng-update-tunit-1.21.6-2026-03-24"],"cur":19,"notes":"PR#150 pending review. RelationshipValidator PR pending. All issues commented. Next: RegisterCustomHandler (#66), deterministic rIds (#40)."}
+{
+  "lr": "2026-03-26",
+  "rid": "23582236523",
+  "c": {
+    "19": "2026-03-25",
+    "28": "2026-03-21",
+    "40": "2026-03-12",
+    "42": "2026-03-12",
+    "43": "2026-03-18",
+    "47": "2026-03-20",
+    "48": "2026-03-20",
+    "54": "2026-03-12",
+    "62": "2026-03-21",
+    "65": "2026-03-16",
+    "66": "2026-03-23",
+    "67": "2026-03-17",
+    "77": "2026-03-14",
+    "85": "2026-03-23",
+    "103": "2026-03-15",
+    "105": "2026-03-15",
+    "155": "2026-03-24"
+  },
+  "prs": [
+    "fix-issue-85-optional-table-tag",
+    "improve-relationship-validator-2026-03-25",
+    "fix-issue-40-deterministic-relids"
+  ],
+  "merged": [
+    "fix-assembler-vml-textpath-watermark",
+    "perf-cache-regex-patterns",
+    "eng-update-deps-2026-03-22",
+    "fix-issue-155-external-relationship-not-found",
+    "eng-update-tunit-1.21.6-2026-03-24"
+  ],
+  "cur": 19,
+  "notes": "PR #40 fix created (deterministic relIds). Three open PRs: #150 (optional table tag), #160 (RelationshipValidator), and new #40 fix. Next: RegisterCustomHandler (#66)."
+}
