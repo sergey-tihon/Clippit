@@ -768,4 +768,212 @@ public class DocumentAssemblerTests : TestsBase
         "The element has unexpected child element 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:rFonts'.",
         "The element has unexpected child element 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:kern'.",
     ];
+
+    // ── Custom handler tests ──────────────────────────────────────────────────────────────
+
+    private static byte[] BuildMinimalDocxWithDirective(string directiveXml)
+    {
+        XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+        var bodyXml = new XElement(
+            w + "body",
+            new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", directiveXml))),
+            new XElement(w + "sectPr")
+        );
+        using var ms = new MemoryStream();
+        using (
+            var wordDoc = WordprocessingDocument.Create(ms, DocumentFormat.OpenXml.WordprocessingDocumentType.Document)
+        )
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.PutXDocument(new XDocument(new XElement(w + "document", bodyXml)));
+        }
+        return ms.ToArray();
+    }
+
+    /// <summary>DA500 — a registered custom handler is invoked and its return value replaces the directive.</summary>
+    [Test]
+    public async Task DA500_CustomHandler_RegisterAndInvoke()
+    {
+        const string elementName = "DA500_Greeting";
+        try
+        {
+            XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+
+            DocumentAssembler.RegisterCustomHandler(
+                elementName,
+                schemaXsd: null,
+                handler: (directive, data, part) =>
+                {
+                    var name = (string)data.Element("Name") ?? "World";
+                    return new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", $"Hello, {name}!")));
+                }
+            );
+
+            var directive = $"<#<{elementName}/>#>";
+            var docxBytes = BuildMinimalDocxWithDirective(directive);
+            var wmlTemplate = new WmlDocument("test500.docx", docxBytes);
+            var xmlData = XElement.Parse("<Root><Name>Alice</Name></Root>");
+
+            var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+            await Assert.That(hasError).IsFalse();
+
+            using var resultStream = new MemoryStream(result.DocumentByteArray);
+            using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+            var text = resultDoc
+                .MainDocumentPart!.GetXDocument()
+                .Descendants(w + "t")
+                .Select(t => (string)t)
+                .StringConcatenate();
+            await Assert.That(text).Contains("Hello, Alice!");
+        }
+        finally
+        {
+            DocumentAssembler.UnregisterCustomHandler(elementName);
+        }
+    }
+
+    /// <summary>DA501 — a custom handler that throws maps to a template error.</summary>
+    [Test]
+    public async Task DA501_CustomHandler_ExceptionSetsTemplateError()
+    {
+        const string elementName = "DA501_BrokenHandler";
+        try
+        {
+            DocumentAssembler.RegisterCustomHandler(
+                elementName,
+                schemaXsd: null,
+                handler: (_, _, _) => throw new InvalidOperationException("Simulated handler failure")
+            );
+
+            var directive = $"<#<{elementName}/>#>";
+            var docxBytes = BuildMinimalDocxWithDirective(directive);
+            var wmlTemplate = new WmlDocument("test501.docx", docxBytes);
+            var xmlData = XElement.Parse("<Root/>");
+
+            var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+            await Assert.That(hasError).IsTrue();
+
+            using var resultStream = new MemoryStream(result.DocumentByteArray);
+            using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+            XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+            var allText = resultDoc
+                .MainDocumentPart!.GetXDocument()
+                .Descendants(w + "t")
+                .Select(t => (string)t)
+                .StringConcatenate();
+            await Assert.That(allText).Contains("Simulated handler failure");
+        }
+        finally
+        {
+            DocumentAssembler.UnregisterCustomHandler(elementName);
+        }
+    }
+
+    /// <summary>DA502 — a handler returning null silently removes the element.</summary>
+    [Test]
+    public async Task DA502_CustomHandler_NullReturnRemovesElement()
+    {
+        const string elementName = "DA502_NullHandler";
+        try
+        {
+            DocumentAssembler.RegisterCustomHandler(elementName, schemaXsd: null, handler: (_, _, _) => null);
+
+            var directive = $"<#<{elementName}/>#>";
+            var docxBytes = BuildMinimalDocxWithDirective(directive);
+            var wmlTemplate = new WmlDocument("test502.docx", docxBytes);
+            var xmlData = XElement.Parse("<Root/>");
+
+            var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+            await Assert.That(hasError).IsFalse();
+
+            using var resultStream = new MemoryStream(result.DocumentByteArray);
+            using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+            XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+            var allText = resultDoc
+                .MainDocumentPart!.GetXDocument()
+                .Descendants(w + "t")
+                .Select(t => (string)t)
+                .StringConcatenate()
+                .Trim();
+            await Assert.That(allText).IsEqualTo(string.Empty);
+        }
+        finally
+        {
+            DocumentAssembler.UnregisterCustomHandler(elementName);
+        }
+    }
+
+    /// <summary>DA503 — after UnregisterCustomHandler the element is treated as invalid XML.</summary>
+    [Test]
+    public async Task DA503_CustomHandler_AfterUnregisterTreatedAsError()
+    {
+        const string elementName = "DA503_TempHandler";
+
+        DocumentAssembler.RegisterCustomHandler(elementName, schemaXsd: null, handler: (_, _, _) => null);
+        DocumentAssembler.UnregisterCustomHandler(elementName);
+
+        var directive = $"<#<{elementName}/>#>";
+        var docxBytes = BuildMinimalDocxWithDirective(directive);
+        var wmlTemplate = new WmlDocument("test503.docx", docxBytes);
+        var xmlData = XElement.Parse("<Root/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsTrue();
+    }
+
+    /// <summary>DA504 — a custom handler with a schema validates directive attributes.</summary>
+    [Test]
+    public async Task DA504_CustomHandler_SchemaValidationRejectsInvalidAttributes()
+    {
+        const string elementName = "DA504_SchemaHandler";
+        const string schema =
+            @"<xs:schema attributeFormDefault='unqualified' elementFormDefault='qualified'
+                xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+              <xs:element name='DA504_SchemaHandler'>
+                <xs:complexType>
+                  <xs:attribute name='Select' type='xs:string' use='required' />
+                </xs:complexType>
+              </xs:element>
+            </xs:schema>";
+        try
+        {
+            DocumentAssembler.RegisterCustomHandler(
+                elementName,
+                schemaXsd: schema,
+                handler: (directive, data, part) =>
+                {
+                    var value = (string)data.XPathSelectElement((string)directive.Attribute("Select"));
+                    XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+                    return new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", value ?? "")));
+                }
+            );
+
+            // Valid: has required Select attribute
+            var validDirective = $"<#<{elementName} Select=\"./Name\"/>#>";
+            var docxBytes = BuildMinimalDocxWithDirective(validDirective);
+            var wmlTemplate = new WmlDocument("test504.docx", docxBytes);
+            var xmlData = XElement.Parse("<Root><Name>Schema Test</Name></Root>");
+
+            var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+            await Assert.That(hasError).IsFalse();
+
+            XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+            using var resultStream = new MemoryStream(result.DocumentByteArray);
+            using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+            var text = resultDoc
+                .MainDocumentPart!.GetXDocument()
+                .Descendants(w + "t")
+                .Select(t => (string)t)
+                .StringConcatenate();
+            await Assert.That(text).Contains("Schema Test");
+        }
+        finally
+        {
+            DocumentAssembler.UnregisterCustomHandler(elementName);
+        }
+    }
 }
