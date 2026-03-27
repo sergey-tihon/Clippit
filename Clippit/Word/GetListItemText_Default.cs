@@ -5,40 +5,6 @@ namespace Clippit.Word
 {
     internal class ListItemTextGetter_Default
     {
-        private static readonly string[] RomanOnes = { "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" };
-
-        private static readonly string[] RomanTens = { "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC" };
-
-        private static readonly string[] RomanHundreds =
-        {
-            "",
-            "C",
-            "CC",
-            "CCC",
-            "CD",
-            "D",
-            "DC",
-            "DCC",
-            "DCCC",
-            "CM",
-            "M",
-        };
-
-        private static readonly string[] RomanThousands =
-        {
-            "",
-            "M",
-            "MM",
-            "MMM",
-            "MMMM",
-            "MMMMM",
-            "MMMMMM",
-            "MMMMMMM",
-            "MMMMMMMM",
-            "MMMMMMMMM",
-            "MMMMMMMMMM",
-        };
-
         private static readonly string[] OneThroughNineteen =
         {
             "one",
@@ -124,23 +90,9 @@ namespace Clippit.Word
                 case "decimalZero":
                     return levelNumber.ToString();
                 case "upperRoman":
-                {
-                    var ones = levelNumber % 10;
-                    var tens = (levelNumber % 100) / 10;
-                    var hundreds = (levelNumber % 1000) / 100;
-                    var thousands = levelNumber / 1000;
-                    return RomanThousands[thousands] + RomanHundreds[hundreds] + RomanTens[tens] + RomanOnes[ones];
-                }
+                    return RomanNumeralUtil.ToUpperRoman(levelNumber);
                 case "lowerRoman":
-                {
-                    var ones = levelNumber % 10;
-                    var tens = (levelNumber % 100) / 10;
-                    var hundreds = (levelNumber % 1000) / 100;
-                    var thousands = levelNumber / 1000;
-                    return (
-                        RomanThousands[thousands] + RomanHundreds[hundreds] + RomanTens[tens] + RomanOnes[ones]
-                    ).ToLower();
-                }
+                    return RomanNumeralUtil.ToLowerRoman(levelNumber);
                 case "upperLetter":
                 {
                     var levelNumber2 = levelNumber % 780;

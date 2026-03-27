@@ -5,40 +5,6 @@ namespace Clippit.Word
 {
     public class ListItemTextGetter_tr_TR
     {
-        private static readonly string[] RomanOnes = { "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" };
-
-        private static readonly string[] RomanTens = { "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC" };
-
-        private static readonly string[] RomanHundreds =
-        {
-            "",
-            "C",
-            "CC",
-            "CCC",
-            "CD",
-            "D",
-            "DC",
-            "DCC",
-            "DCCC",
-            "CM",
-            "M",
-        };
-
-        private static readonly string[] RomanThousands =
-        {
-            "",
-            "M",
-            "MM",
-            "MMM",
-            "MMMM",
-            "MMMMM",
-            "MMMMMM",
-            "MMMMMMM",
-            "MMMMMMMM",
-            "MMMMMMMMM",
-            "MMMMMMMMMM",
-        };
-
         private static readonly string[] OneThroughNineteen =
         {
             "bir",
@@ -150,21 +116,11 @@ namespace Clippit.Word
             }
             if (numFmt == "upperRoman")
             {
-                var ones = levelNumber % 10;
-                var tens = (levelNumber % 100) / 10;
-                var hundreds = (levelNumber % 1000) / 100;
-                var thousands = levelNumber / 1000;
-                return RomanThousands[thousands] + RomanHundreds[hundreds] + RomanTens[tens] + RomanOnes[ones];
+                return RomanNumeralUtil.ToUpperRoman(levelNumber);
             }
             if (numFmt == "lowerRoman")
             {
-                var ones = levelNumber % 10;
-                var tens = (levelNumber % 100) / 10;
-                var hundreds = (levelNumber % 1000) / 100;
-                var thousands = levelNumber / 1000;
-                return (
-                    RomanThousands[thousands] + RomanHundreds[hundreds] + RomanTens[tens] + RomanOnes[ones]
-                ).ToLower();
+                return RomanNumeralUtil.ToLowerRoman(levelNumber);
             }
             if (numFmt == "upperLetter")
             {
