@@ -32,5 +32,5 @@ internal static class RomanNumeralUtil
         return s_thousands[thousands] + s_hundreds[hundreds] + s_tens[tens] + s_ones[ones];
     }
 
-    public static string ToLowerRoman(int number) => ToUpperRoman(number).ToLower();
+    public static string ToLowerRoman(int number) => ToUpperRoman(number).ToLowerInvariant();
 }
