@@ -25,6 +25,12 @@ internal static class RomanNumeralUtil
 
     public static string ToUpperRoman(int number)
     {
+        if (number < 1 || number > 10999)
+            throw new ArgumentOutOfRangeException(
+                nameof(number),
+                number,
+                "Roman numeral value must be between 1 and 10999."
+            );
         var ones = number % 10;
         var tens = (number % 100) / 10;
         var hundreds = (number % 1000) / 100;
