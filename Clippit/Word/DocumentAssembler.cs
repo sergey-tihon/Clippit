@@ -1012,14 +1012,13 @@ namespace Clippit.Word
         /// </summary>
         /// <param name="part">The part.</param>
         /// <param name="imagePartType">Type of the image part.</param>
-        /// <param name="relationshipId">The relationship identifier.</param>
         /// <returns>ImagePart.</returns>
-        private static ImagePart GetImagePart(OpenXmlPart part, PartTypeInfo imagePartType, string relationshipId) =>
+        private static ImagePart GetImagePart(OpenXmlPart part, PartTypeInfo imagePartType) =>
             part switch
             {
-                MainDocumentPart mainDocumentPart => mainDocumentPart.AddImagePart(imagePartType, relationshipId),
-                HeaderPart headerPart => headerPart.AddImagePart(imagePartType, relationshipId),
-                FooterPart footerPart => footerPart.AddImagePart(imagePartType, relationshipId),
+                MainDocumentPart mainDocumentPart => mainDocumentPart.AddImagePart(imagePartType),
+                HeaderPart headerPart => headerPart.AddImagePart(imagePartType),
+                FooterPart footerPart => footerPart.AddImagePart(imagePartType),
                 _ => null,
             };
 
@@ -1063,8 +1062,6 @@ namespace Clippit.Word
             // assign unique image and paragraph ids. Image id is document property Id  (wp:docPr)
             // and relationship id is rId. Their numbering is different.
             const string imageId = InvalidImageId; // Ids will be replaced with real ones later, after transform is done
-
-            var relationshipId = Relationships.GetNewRelationshipId();
 
             var inline = para.Descendants(W.drawing).Descendants(WP.inline).FirstOrDefault();
             if (inline == null)
@@ -1135,17 +1132,19 @@ namespace Clippit.Word
                 return para;
 
             // Add the image to main document part
+            string relationshipId = null;
             using (var stream = Image2Stream(imagePath, out var imagePartType, out var error))
             {
                 if (stream is not null)
                 {
-                    var ip = GetImagePart(part, imagePartType, relationshipId);
+                    var ip = GetImagePart(part, imagePartType);
                     if (ip is null)
                     {
                         error = "Failed to get image part";
                         return element.CreateContextErrorMessage(string.Concat("Image: ", error), templateError);
                     }
 
+                    relationshipId = part.GetIdOfPart(ip);
                     ip.FeedData(stream);
                     stream.Close();
 

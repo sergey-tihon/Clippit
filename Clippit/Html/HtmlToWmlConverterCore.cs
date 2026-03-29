@@ -840,7 +840,6 @@ namespace Clippit.Html
                 if (element.Name == XhtmlNoNamespace.a)
                 {
                     var href = (string)element.Attribute(NoNamespace.href);
-                    var rId = Relationships.GetNewRelationshipId();
                     if (href != null)
                     {
                         Uri uri = null;
@@ -857,7 +856,7 @@ namespace Clippit.Html
 
                         if (uri != null)
                         {
-                            wDoc.MainDocumentPart.AddHyperlinkRelationship(uri, true, rId);
+                            var newRel = wDoc.MainDocumentPart.AddHyperlinkRelationship(uri, true);
                             if (element.Element(XhtmlNoNamespace.img) != null)
                             {
                                 var imageTransformed = element
@@ -879,7 +878,7 @@ namespace Clippit.Html
                                             {
                                                 var hlinkClick = new XElement(
                                                     A.hlinkClick,
-                                                    new XAttribute(R.id, rId),
+                                                    new XAttribute(R.id, newRel.Id),
                                                     new XAttribute(XNamespace.Xmlns + "a", A.a.NamespaceName)
                                                 );
                                                 docPr.Add(hlinkClick);
@@ -895,7 +894,7 @@ namespace Clippit.Html
                             var rPr = GetRunProperties(element, settings);
                             var hyperlink = new XElement(
                                 W.hyperlink,
-                                new XAttribute(R.id, rId),
+                                new XAttribute(R.id, newRel.Id),
                                 new XElement(W.r, rPr, new XElement(W.t, element.Value))
                             );
                             return new[] { hyperlink };
@@ -2376,9 +2375,9 @@ namespace Clippit.Html
             }
             if (!imageMap.TryGetValue(hashKey, out var rId))
             {
-                rId = Relationships.GetNewRelationshipId();
+                var newPart = mdp.AddImagePart(ipt);
+                rId = mdp.GetIdOfPart(newPart);
                 imageMap[hashKey] = rId;
-                var newPart = mdp.AddImagePart(ipt, rId);
                 using (var s = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
                     s.Write(ba, 0, ba.GetUpperBound(0) + 1);
             }

@@ -78,15 +78,13 @@ namespace Clippit
                     }
 
                     // WmlComparer uses GUID-based part URIs which guarantee uniqueness.
-                    // Use original GUID-based relationship ID generation.
-                    var newRid = Relationships.GetNewRelationshipId();
-                    partInNewDocument.Relationships.Create(
+                    // Use SDK to generate relationship ID.
+                    var newRel = partInNewDocument.Relationships.Create(
                         newPart.Uri,
                         TargetMode.Internal,
-                        relationshipForDeletedPart.RelationshipType,
-                        newRid
+                        relationshipForDeletedPart.RelationshipType
                     );
-                    att.Value = newRid;
+                    att.Value = newRel.Id;
 
                     if (newPart.ContentType.EndsWith("xml"))
                     {
