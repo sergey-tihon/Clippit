@@ -84,8 +84,7 @@ internal static class RelationshipIdGeneratorExtensions
     /// For hot loops that add many IDs to the same part without SDK interleaving, call
     /// <see cref="GetCachedRelationshipIdGenerator"/> instead.
     /// </summary>
-    internal static RelationshipIdGenerator GetRelationshipIdGenerator(this OpenXmlPart part) =>
-        new(part);
+    internal static RelationshipIdGenerator GetRelationshipIdGenerator(this OpenXmlPart part) => new(part);
 
     /// <summary>
     /// Returns a cached <see cref="RelationshipIdGenerator"/> for <paramref name="part"/>,

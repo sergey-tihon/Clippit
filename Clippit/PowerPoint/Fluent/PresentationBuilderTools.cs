@@ -147,10 +147,7 @@ namespace Clippit.PowerPoint.Fluent
                         case EmbeddedPackagePart oldPart:
                         {
                             var newPartId = gen.Next();
-                            var newPart = newChart.AddNewPart<EmbeddedPackagePart>(
-                                oldPart.ContentType,
-                                newPartId
-                            );
+                            var newPart = newChart.AddNewPart<EmbeddedPackagePart>(oldPart.ContentType, newPartId);
                             using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
                                 newPart.FeedData(oldObject);
@@ -250,10 +247,7 @@ namespace Clippit.PowerPoint.Fluent
                         case EmbeddedPackagePart oldPart:
                         {
                             var newPartId = gen.Next();
-                            var newPart = newChart.AddNewPart<EmbeddedPackagePart>(
-                                oldPart.ContentType,
-                                newPartId
-                            );
+                            var newPart = newChart.AddNewPart<EmbeddedPackagePart>(oldPart.ContentType, newPartId);
                             using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
                                 newPart.FeedData(oldObject);
