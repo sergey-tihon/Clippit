@@ -1,6 +1,5 @@
 ﻿using System.Xml;
 using System.Xml.Linq;
-using Clippit.Internal;
 using DocumentFormat.OpenXml.Experimental;
 using DocumentFormat.OpenXml.Features;
 using DocumentFormat.OpenXml.Packaging;
@@ -248,11 +247,10 @@ internal sealed partial class FluentPresentationBuilder
         if (existingFontRel != default)
             return new XElement(fontXName, new XAttribute(R.id, existingFontRel.RelationshipId));
 
-        var newFontPartId = _newDocument.PresentationPart.GetRelationshipIdGenerator().Next();
-        var newFontPart = _newDocument.PresentationPart.AddFontPart(fontPartType, newFontPartId);
+        var newFontPart = _newDocument.PresentationPart.AddFontPart(fontPartType);
         using (var stream = oldFontPart.GetStream())
             newFontPart.FeedData(stream);
-        return new XElement(fontXName, new XAttribute(R.id, newFontPartId));
+        return new XElement(fontXName, new XAttribute(R.id, _newDocument.PresentationPart.GetIdOfPart(newFontPart)));
     }
 
     // Copies notes master and notesSz element from presentation
@@ -685,16 +683,13 @@ internal sealed partial class FluentPresentationBuilder
                     )
                 )
                 {
-                    var newId2 = newPart.GetRelationshipIdGenerator().Next();
                     var cxpp = newPart.AddNewPart<CustomXmlPropertiesPart>(
-                        "application/vnd.openxmlformats-officedocument.customXmlProperties+xml",
-                        newId2
+                        "application/vnd.openxmlformats-officedocument.customXmlProperties+xml"
                     );
                     using var stream = itemProps.OpenXmlPart.GetStream();
                     cxpp.FeedData(stream);
                 }
-                var newId = newContentPart.GetRelationshipIdGenerator().Next();
-                newContentPart.CreateRelationshipToPart(newPart, newId);
+                var newId = newContentPart.GetIdOfPart(newPart);
                 custData.Attribute(R.id).Value = newId;
             }
         }
