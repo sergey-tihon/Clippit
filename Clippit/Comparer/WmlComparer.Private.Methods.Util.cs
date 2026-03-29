@@ -77,9 +77,9 @@ namespace Clippit
                         oldPartStream.CopyTo(newPartStream);
                     }
 
-                    var newRid = Relationships.GetNewRelationshipId(
-                        $"{newPart.Uri}|{relationshipForDeletedPart.RelationshipType}"
-                    );
+                    // WmlComparer uses GUID-based part URIs which guarantee uniqueness.
+                    // Use original GUID-based relationship ID generation.
+                    var newRid = Relationships.GetNewRelationshipId();
                     partInNewDocument.Relationships.Create(
                         newPart.Uri,
                         TargetMode.Internal,

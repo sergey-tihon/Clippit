@@ -2778,11 +2778,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     if (oldHyperlink == null)
                         continue;
                     //throw new DocumentBuilderInternalException("Internal Error 0002");
-                    var newRid = Relationships.GetNewRelationshipId(
-                        $"hyperlink|{oldHyperlink.Uri}|{oldHyperlink.IsExternal}"
-                    );
-                    if (newPart.HyperlinkRelationships.All(h => h.Id != newRid))
-                        newPart.AddHyperlinkRelationship(oldHyperlink.Uri, oldHyperlink.IsExternal, newRid);
+                    var newRid = Relationships.GetNewRelationshipId();
+                    newPart.AddHyperlinkRelationship(oldHyperlink.Uri, oldHyperlink.IsExternal, newRid);
                     UpdateContent(newContent, e.Name, relId, newRid);
                 }
                 if (e.Name == W.attachedTemplate || e.Name == W.saveThroughXslt)
@@ -2795,9 +2792,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                         throw new DocumentBuilderInternalException(
                             "Source {0} is invalid document - hyperlink contains invalid references"
                         );
-                    var newRid = Relationships.GetNewRelationshipId($"external|{oldRel.RelationshipType}|{oldRel.Uri}");
-                    if (newPart.ExternalRelationships.All(h => h.Id != newRid))
-                        newPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
+                    var newRid = Relationships.GetNewRelationshipId();
+                    newPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     UpdateContent(newContent, e.Name, relId, newRid);
                 }
                 if (e.Name == A.hlinkClick || e.Name == A.hlinkHover || e.Name == A.hlinkMouseOver)
@@ -2808,11 +2804,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     var oldHyperlink = oldPart.HyperlinkRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldHyperlink == null)
                         continue;
-                    var newRid = Relationships.GetNewRelationshipId(
-                        $"hyperlink|{oldHyperlink.Uri}|{oldHyperlink.IsExternal}"
-                    );
-                    if (newPart.HyperlinkRelationships.All(h => h.Id != newRid))
-                        newPart.AddHyperlinkRelationship(oldHyperlink.Uri, oldHyperlink.IsExternal, newRid);
+                    var newRid = Relationships.GetNewRelationshipId();
+                    newPart.AddHyperlinkRelationship(oldHyperlink.Uri, oldHyperlink.IsExternal, newRid);
                     UpdateContent(newContent, e.Name, relId, newRid);
                 }
                 if (e.Name == VML.imagedata)
@@ -2823,9 +2816,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     var oldRel = oldPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldRel == null)
                         throw new DocumentBuilderInternalException("Internal Error 0006");
-                    var newRid = Relationships.GetNewRelationshipId($"external|{oldRel.RelationshipType}|{oldRel.Uri}");
-                    if (newPart.ExternalRelationships.All(h => h.Id != newRid))
-                        newPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
+                    var newRid = Relationships.GetNewRelationshipId();
+                    newPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     UpdateContent(newContent, e.Name, relId, newRid);
                 }
                 if (e.Name == A.blip)
@@ -2839,9 +2831,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     var oldRel = oldPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldRel == null)
                         continue;
-                    var newRid = Relationships.GetNewRelationshipId($"external|{oldRel.RelationshipType}|{oldRel.Uri}");
-                    if (newPart.ExternalRelationships.All(h => h.Id != newRid))
-                        newPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
+                    var newRid = Relationships.GetNewRelationshipId();
+                    newPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     UpdateContent(newContent, e.Name, relId, newRid);
                 }
             }
@@ -3424,9 +3415,17 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                         );
                         return;
                     }
-                    var newId = Relationships.GetNewRelationshipId($"{oldContentPart.Uri}|{relId}|imageRef");
-                    newContentPart.CreateRelationshipToPart(temp.ImagePart, newId);
-                    imageReference.SetAttributeValue(R.id, newId);
+                    var existingRel = newContentPart.Parts.FirstOrDefault(p => p.OpenXmlPart == temp.ImagePart);
+                    if (existingRel != default)
+                    {
+                        imageReference.SetAttributeValue(R.id, existingRel.RelationshipId);
+                    }
+                    else
+                    {
+                        var newId = Relationships.GetNewRelationshipId();
+                        newContentPart.CreateRelationshipToPart(temp.ImagePart, newId);
+                        imageReference.SetAttributeValue(R.id, newId);
+                    }
                 }
             }
             else

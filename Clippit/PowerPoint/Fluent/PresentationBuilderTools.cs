@@ -130,6 +130,11 @@ namespace Clippit.PowerPoint.Fluent
 
         internal static void CopyChartObjects(ChartPart oldChart, ChartPart newChart)
         {
+            // Use a single generator for all relationship IDs in this function so that
+            // explicit assignments (external relationships, AddNewPart) and SDK-auto-assigned
+            // IDs never conflict with each other.
+            var gen = newChart.GetRelationshipIdGenerator();
+
             foreach (var dataReference in newChart.GetXDocument().Descendants(C.externalData))
             {
                 var relId = dataReference.Attribute(R.id).Value;
@@ -141,24 +146,31 @@ namespace Clippit.PowerPoint.Fluent
                     {
                         case EmbeddedPackagePart oldPart:
                         {
-                            var newPart = newChart.AddEmbeddedPackagePart(oldPart.ContentType);
+                            var newPartId = gen.Next();
+                            var newPart = newChart.AddNewPart<EmbeddedPackagePart>(
+                                oldPart.ContentType,
+                                newPartId
+                            );
                             using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
                                 newPart.FeedData(oldObject);
                             }
-                            dataReference.Attribute(R.id).Set(newChart.GetIdOfPart(newPart));
+                            dataReference.Attribute(R.id).Set(newPartId);
                             continue;
                         }
                         case EmbeddedObjectPart oldEmbeddedObjectPart:
                         {
-                            var newPart = newChart.AddEmbeddedPackagePart(oldEmbeddedObjectPart.ContentType);
+                            var newPartId = gen.Next();
+                            var newPart = newChart.AddNewPart<EmbeddedPackagePart>(
+                                oldEmbeddedObjectPart.ContentType,
+                                newPartId
+                            );
                             using (var oldObject = oldEmbeddedObjectPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
                                 newPart.FeedData(oldObject);
                             }
 
-                            var rId = newChart.GetIdOfPart(newPart);
-                            dataReference.Attribute(R.id).Set(rId);
+                            dataReference.Attribute(R.id).Set(newPartId);
 
                             // following is a hack to fix the package because the Open XML SDK does not let us create
                             // a relationship from a chart with the oleObject relationship type.
@@ -167,15 +179,15 @@ namespace Clippit.PowerPoint.Fluent
                             var fromPart = pkg.GetParts().FirstOrDefault(p => p.Uri == newChart.Uri);
                             if (fromPart is not null)
                             {
-                                var rel = fromPart.Relationships.FirstOrDefault(p => p.Id == rId);
+                                var rel = fromPart.Relationships.FirstOrDefault(p => p.Id == newPartId);
                                 var targetUri = rel?.TargetUri;
 
-                                fromPart.Relationships.Remove(rId);
+                                fromPart.Relationships.Remove(newPartId);
                                 fromPart.Relationships.Create(
                                     targetUri,
                                     System.IO.Packaging.TargetMode.Internal,
                                     "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject",
-                                    rId
+                                    newPartId
                                 );
                             }
 
@@ -189,9 +201,8 @@ namespace Clippit.PowerPoint.Fluent
                     var oldRel =
                         oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId)
                         ?? throw new PresentationBuilderInternalException("Internal Error 0007");
-                    var newRid = Relationships.GetNewRelationshipId($"external|{oldRel.RelationshipType}|{oldRel.Uri}");
-                    if (newChart.ExternalRelationships.All(h => h.Id != newRid))
-                        newChart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
+                    var newRid = gen.Next();
+                    newChart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     dataReference.Attribute(R.id).Set(newRid);
                 }
             }
@@ -215,7 +226,7 @@ namespace Clippit.PowerPoint.Fluent
             void CopyPart<T>(T oldPart)
                 where T : OpenXmlPart
             {
-                var newRid = Relationships.GetNewRelationshipId($"{oldPart.Uri}|{oldPart.ContentType}");
+                var newRid = gen.Next();
                 var newPart = newChart.AddNewPart<T>(oldPart.ContentType, newRid);
 
                 using var oldStream = oldPart.GetStream(FileMode.Open, FileAccess.Read);
@@ -225,6 +236,8 @@ namespace Clippit.PowerPoint.Fluent
 
         internal static void CopyExtendedChartObjects(ExtendedChartPart oldChart, ExtendedChartPart newChart)
         {
+            var gen = newChart.GetRelationshipIdGenerator();
+
             foreach (var dataReference in newChart.GetXDocument().Descendants(Cx.externalData))
             {
                 var relId = dataReference.Attribute(R.id).Value;
@@ -236,24 +249,31 @@ namespace Clippit.PowerPoint.Fluent
                     {
                         case EmbeddedPackagePart oldPart:
                         {
-                            var newPart = newChart.AddEmbeddedPackagePart(oldPart.ContentType);
+                            var newPartId = gen.Next();
+                            var newPart = newChart.AddNewPart<EmbeddedPackagePart>(
+                                oldPart.ContentType,
+                                newPartId
+                            );
                             using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
                                 newPart.FeedData(oldObject);
                             }
-                            dataReference.Attribute(R.id).Set(newChart.GetIdOfPart(newPart));
+                            dataReference.Attribute(R.id).Set(newPartId);
                             continue;
                         }
                         case EmbeddedObjectPart oldEmbeddedObjectPart:
                         {
-                            var newPart = newChart.AddEmbeddedPackagePart(oldEmbeddedObjectPart.ContentType);
+                            var newPartId = gen.Next();
+                            var newPart = newChart.AddNewPart<EmbeddedPackagePart>(
+                                oldEmbeddedObjectPart.ContentType,
+                                newPartId
+                            );
                             using (var oldObject = oldEmbeddedObjectPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
                                 newPart.FeedData(oldObject);
                             }
 
-                            var rId = newChart.GetIdOfPart(newPart);
-                            dataReference.Attribute(R.id).Set(rId);
+                            dataReference.Attribute(R.id).Set(newPartId);
 
                             // following is a hack to fix the package because the Open XML SDK does not let us create
                             // a relationship from a chart with the oleObject relationship type.
@@ -262,15 +282,15 @@ namespace Clippit.PowerPoint.Fluent
                             var fromPart = pkg.GetParts().FirstOrDefault(p => p.Uri == newChart.Uri);
                             if (fromPart is not null)
                             {
-                                var rel = fromPart.Relationships.FirstOrDefault(p => p.Id == rId);
+                                var rel = fromPart.Relationships.FirstOrDefault(p => p.Id == newPartId);
                                 var targetUri = rel?.TargetUri;
 
-                                fromPart.Relationships.Remove(rId);
+                                fromPart.Relationships.Remove(newPartId);
                                 fromPart.Relationships.Create(
                                     targetUri,
                                     System.IO.Packaging.TargetMode.Internal,
                                     "http://schemas.openxmlformats.org/officeDocument/2006/relationships/oleObject",
-                                    rId
+                                    newPartId
                                 );
                             }
 
@@ -284,9 +304,8 @@ namespace Clippit.PowerPoint.Fluent
                     var oldRel =
                         oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId)
                         ?? throw new PresentationBuilderInternalException("Internal Error 0007");
-                    var newRid = Relationships.GetNewRelationshipId($"external|{oldRel.RelationshipType}|{oldRel.Uri}");
-                    if (newChart.ExternalRelationships.All(h => h.Id != newRid))
-                        newChart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
+                    var newRid = gen.Next();
+                    newChart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     dataReference.Attribute(R.id).Set(newRid);
                 }
             }
@@ -310,7 +329,7 @@ namespace Clippit.PowerPoint.Fluent
             void CopyPart<T>(T oldPart)
                 where T : OpenXmlPart
             {
-                var newRid = Relationships.GetNewRelationshipId($"{oldPart.Uri}|{oldPart.ContentType}");
+                var newRid = gen.Next();
                 var newPart = newChart.AddNewPart<T>(oldPart.ContentType, newRid);
 
                 using var oldStream = oldPart.GetStream(FileMode.Open, FileAccess.Read);
@@ -387,11 +406,8 @@ namespace Clippit.PowerPoint.Fluent
                         RemoveContent(newContent, e.Name, relId);
                         continue;
                     }
-                    var newRid = Relationships.GetNewRelationshipId(
-                        $"hyperlink|{oldHyperlink.Uri}|{oldHyperlink.IsExternal}"
-                    );
-                    if (newPart.HyperlinkRelationships.All(h => h.Id != newRid))
-                        newPart.AddHyperlinkRelationship(oldHyperlink.Uri, oldHyperlink.IsExternal, newRid);
+                    var newRid = newPart.GetCachedRelationshipIdGenerator().Next();
+                    newPart.AddHyperlinkRelationship(oldHyperlink.Uri, oldHyperlink.IsExternal, newRid);
                     UpdateContent(newContent, e.Name, relId, newRid);
                 }
                 else if (e.Name == VML.imagedata)
@@ -404,9 +420,8 @@ namespace Clippit.PowerPoint.Fluent
                     var oldRel =
                         oldPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId)
                         ?? throw new PresentationBuilderInternalException("Internal Error 0006");
-                    var newRid = Relationships.GetNewRelationshipId($"external|{oldRel.RelationshipType}|{oldRel.Uri}");
-                    if (newPart.ExternalRelationships.All(h => h.Id != newRid))
-                        newPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
+                    var newRid = newPart.GetCachedRelationshipIdGenerator().Next();
+                    newPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     UpdateContent(newContent, e.Name, relId, newRid);
                 }
                 else if (
@@ -425,9 +440,8 @@ namespace Clippit.PowerPoint.Fluent
                     var oldRel = oldPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
                     if (oldRel is null)
                         continue;
-                    var newRid = Relationships.GetNewRelationshipId($"external|{oldRel.RelationshipType}|{oldRel.Uri}");
-                    if (newPart.ExternalRelationships.All(h => h.Id != newRid))
-                        newPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
+                    var newRid = newPart.GetCachedRelationshipIdGenerator().Next();
+                    newPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     UpdateContent(newContent, e.Name, relId, newRid);
                 }
             }
@@ -448,9 +462,8 @@ namespace Clippit.PowerPoint.Fluent
             if (oldRel is null)
                 return;
 
-            var newId = Relationships.GetNewRelationshipId($"external|{oldRel.RelationshipType}|{oldRel.Uri}");
-            if (newContentPart.ExternalRelationships.All(er => er.Id != newId))
-                newContentPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newId);
+            var newId = newContentPart.GetRelationshipIdGenerator().Next();
+            newContentPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newId);
 
             imageReference.Attribute(attributeName).Set(newId);
         }
@@ -468,7 +481,7 @@ namespace Clippit.PowerPoint.Fluent
 
             var oldPart = oldContentPart.GetPartById(relId);
 
-            var newId = Relationships.GetNewRelationshipId($"{oldContentPart.Uri}|{relId}");
+            var newId = newContentPart.GetRelationshipIdGenerator().Next();
             var newPart = newContentPart.AddNewPart<CustomXmlPart>("application/inkml+xml", newId);
 
             using (var stream = oldPart.GetStream())
@@ -489,7 +502,7 @@ namespace Clippit.PowerPoint.Fluent
 
             var oldPart = oldContentPart.GetPartById(relId);
 
-            var newId = Relationships.GetNewRelationshipId($"{oldContentPart.Uri}|{relId}|activeX");
+            var newId = newContentPart.GetRelationshipIdGenerator().Next();
             var newPart = newContentPart.AddNewPart<EmbeddedControlPersistencePart>(
                 "application/vnd.ms-office.activeX+xml",
                 newId
@@ -506,7 +519,7 @@ namespace Clippit.PowerPoint.Fluent
                 {
                     var oldPersistencePart = oldPart.GetPartById(attr.Value);
 
-                    var newId2 = Relationships.GetNewRelationshipId($"{oldContentPart.Uri}|{relId}|activeXBin");
+                    var newId2 = newPart.GetRelationshipIdGenerator().Next();
                     var newPersistencePart = newPart.AddNewPart<EmbeddedControlPersistenceBinaryDataPart>(
                         "application/vnd.ms-office.activeX",
                         newId2
@@ -532,7 +545,7 @@ namespace Clippit.PowerPoint.Fluent
 
             var oldPart = oldContentPart.GetPartById(relId);
 
-            var newId = Relationships.GetNewRelationshipId($"{oldContentPart.Uri}|{relId}|legacyDiagram");
+            var newId = newContentPart.GetRelationshipIdGenerator().Next();
             var newPart = newContentPart.AddNewPart<LegacyDiagramTextPart>(newId);
 
             using (var stream = oldPart.GetStream())

@@ -73,8 +73,9 @@ public static partial class PresentationBuilder
             // Normalize all relationship IDs in the output ZIP so that IDs are stable
             // (deterministic) across runs. The OpenXML SDK generates GUID-based IDs for
             // parts added via AddNewPart<T>(), which would otherwise vary each invocation.
-            yield return NormalizeRelationshipIds(memoryStream);
+            var normalizedStream = NormalizeRelationshipIds(memoryStream);
             memoryStream.Dispose();
+            yield return normalizedStream;
         }
     }
 
@@ -93,10 +94,11 @@ public static partial class PresentationBuilder
     {
         input.Position = 0;
 
-        // Pass 1: read every .rels file and build a mapping old-id → stable-id.
-        // The stable ID is derived from the .rels entry path, relationship type, and target,
-        // which are all fixed for a given source document.
-        var allMappings = new Dictionary<string, string>(); // old-id → new-id (across all parts)
+        // Pass 1: read every .rels file and build a mapping scoped by .rels entry path.
+        // Keys are (relsEntryPath, oldId) so that identical old IDs like "rId1" in different
+        // .rels files remain independent and don't overwrite each other.
+        // Also build a lookup from .rels path → the set of XML entry paths it governs.
+        var scopedMappings = new Dictionary<string, Dictionary<string, string>>();
 
         using (var inZip = new ZipArchive(input, ZipArchiveMode.Read, leaveOpen: true))
         {
@@ -107,16 +109,39 @@ public static partial class PresentationBuilder
                 if (doc.Root is null)
                     continue;
 
+                // Assign rId1, rId2, … in document order within each .rels file.
+                var gen = new RelationshipIdGenerator();
+                var mappings = new Dictionary<string, string>();
                 foreach (var rel in doc.Root.Elements(s_packageRelNs + "Relationship"))
                 {
                     var oldId = (string)rel.Attribute("Id")!;
-                    var relType = (string)rel.Attribute("Type")!;
-                    var target = (string)rel.Attribute("Target")!;
-                    // Namespace by the .rels path so that identical (type, target) pairs in
-                    // different .rels files are still independent.
-                    var newId = Relationships.GetNewRelationshipId($"{entry.FullName}|{relType}|{target}");
-                    allMappings[oldId] = newId;
+                    mappings[oldId] = gen.Next();
                 }
+
+                scopedMappings[entry.FullName] = mappings;
+            }
+        }
+
+        // Build a map from each XML/rels entry → the set of .rels files whose mappings apply.
+        // A .rels file at "_rels/.rels" governs root-level entries; a .rels file at
+        // "ppt/slides/_rels/slide1.xml.rels" governs "ppt/slides/slide1.xml", etc.
+        // Each .rels always governs itself, plus the owner part it describes.
+        var entryToMappings = new Dictionary<string, Dictionary<string, string>>(StringComparer.Ordinal);
+
+        foreach (var (relsPath, mappings) in scopedMappings)
+        {
+            // The .rels file itself needs rewriting
+            AddMappingsForEntry(entryToMappings, relsPath, mappings);
+
+            // Derive the owner part path:
+            // "_rels/.rels" → "" (package-level)
+            // "ppt/_rels/presentation.xml.rels" → "ppt/presentation.xml"
+            // "ppt/slides/_rels/slide1.xml.rels" → "ppt/slides/slide1.xml"
+            var relsDir = relsPath.Replace("_rels/", "");
+            var ownerPath = relsDir.EndsWith(".rels") ? relsDir[..^".rels".Length] : relsDir;
+            if (ownerPath.Length > 0)
+            {
+                AddMappingsForEntry(entryToMappings, ownerPath, mappings);
             }
         }
 
@@ -136,13 +161,17 @@ public static partial class PresentationBuilder
                 using var inStream = entry.Open();
                 using var outStream = newEntry.Open();
 
-                if (entry.FullName.EndsWith(".rels") || entry.FullName.EndsWith(".xml"))
+                if (
+                    (entry.FullName.EndsWith(".rels") || entry.FullName.EndsWith(".xml"))
+                    && entryToMappings.TryGetValue(entry.FullName, out var applicableMappings)
+                )
                 {
                     var text = new StreamReader(inStream, Encoding.UTF8).ReadToEnd();
-                    foreach (var (oldId, newId) in allMappings)
+                    foreach (var (oldId, newId) in applicableMappings)
+                    {
                         text = text.Replace($"=\"{oldId}\"", $"=\"{newId}\"");
-                    var bytes = Encoding.UTF8.GetBytes(text);
-                    outStream.Write(bytes);
+                    }
+                    outStream.Write(Encoding.UTF8.GetBytes(text));
                 }
                 else
                 {
@@ -153,6 +182,24 @@ public static partial class PresentationBuilder
 
         output.Position = 0;
         return output;
+    }
+
+    private static void AddMappingsForEntry(
+        Dictionary<string, Dictionary<string, string>> entryToMappings,
+        string entryPath,
+        Dictionary<string, string> mappings
+    )
+    {
+        if (!entryToMappings.TryGetValue(entryPath, out var existing))
+        {
+            existing = new Dictionary<string, string>();
+            entryToMappings[entryPath] = existing;
+        }
+
+        foreach (var (key, value) in mappings)
+        {
+            existing[key] = value;
+        }
     }
 
     [GeneratedRegex(".pptx", RegexOptions.IgnoreCase, "en-US")]

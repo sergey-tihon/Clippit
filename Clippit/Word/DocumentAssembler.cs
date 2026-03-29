@@ -1063,7 +1063,8 @@ namespace Clippit.Word
             // assign unique image and paragraph ids. Image id is document property Id  (wp:docPr)
             // and relationship id is rId. Their numbering is different.
             const string imageId = InvalidImageId; // Ids will be replaced with real ones later, after transform is done
-            var relationshipId = Relationships.GetNewRelationshipId($"{part.Uri}|{imagePath}");
+
+            var relationshipId = Relationships.GetNewRelationshipId();
 
             var inline = para.Descendants(W.drawing).Descendants(WP.inline).FirstOrDefault();
             if (inline == null)
