@@ -291,6 +291,138 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         await Assert.That(styleProperties.Where(p => p.StartsWith("width:", StringComparison.Ordinal))).IsEmpty();
     }
 
+    [Test]
+    public async Task HC063_TextBoxRenderedAsDiv()
+    {
+        // Build a minimal DOCX that contains a floating text box with known text content
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
+            mainPart.AddNewPart<DocumentSettingsPart>().Settings = new Settings();
+
+            // Inject a w:drawing containing a wps:wsp text box via raw XML on the document part
+            const string wNs = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+            const string wpNs = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
+            const string aNs = "http://schemas.openxmlformats.org/drawingml/2006/main";
+            const string wpsNs = "http://schemas.microsoft.com/office/word/2010/wordprocessingShape";
+
+            XNamespace w = wNs;
+            XNamespace wp = wpNs;
+            XNamespace a = aNs;
+            XNamespace wps = wpsNs;
+
+            var textBoxParagraph = new XElement(
+                w + "p",
+                new XElement(
+                    w + "r",
+                    new XElement(
+                        w + "drawing",
+                        new XElement(
+                            wp + "anchor",
+                            new XAttribute("distT", "0"),
+                            new XAttribute("distB", "0"),
+                            new XAttribute("distL", "114300"),
+                            new XAttribute("distR", "114300"),
+                            new XAttribute("simplePos", "0"),
+                            new XAttribute("relativeHeight", "251658240"),
+                            new XAttribute("behindDoc", "0"),
+                            new XAttribute("locked", "0"),
+                            new XAttribute("layoutInCell", "1"),
+                            new XAttribute("allowOverlap", "1"),
+                            new XElement(wp + "simplePos", new XAttribute("x", "0"), new XAttribute("y", "0")),
+                            new XElement(
+                                wp + "positionH",
+                                new XAttribute("relativeFrom", "column"),
+                                new XElement(wp + "posOffset", "0")
+                            ),
+                            new XElement(
+                                wp + "positionV",
+                                new XAttribute("relativeFrom", "paragraph"),
+                                new XElement(wp + "posOffset", "0")
+                            ),
+                            new XElement(
+                                wp + "extent",
+                                new XAttribute("cx", "1828800"),
+                                new XAttribute("cy", "914400")
+                            ),
+                            new XElement(wp + "wrapNone"),
+                            new XElement(wp + "docPr", new XAttribute("id", "1"), new XAttribute("name", "Text Box 1")),
+                            new XElement(
+                                a + "graphic",
+                                new XAttribute(XNamespace.Xmlns + "a", aNs),
+                                new XElement(
+                                    a + "graphicData",
+                                    new XAttribute(
+                                        "uri",
+                                        "http://schemas.microsoft.com/office/word/2010/wordprocessingShape"
+                                    ),
+                                    new XElement(
+                                        wps + "wsp",
+                                        new XAttribute(XNamespace.Xmlns + "wps", wpsNs),
+                                        new XElement(wps + "cNvSpPr", new XAttribute("txbx", "1")),
+                                        new XElement(wps + "spPr"),
+                                        new XElement(
+                                            wps + "txbx",
+                                            new XElement(
+                                                w + "txbxContent",
+                                                new XElement(
+                                                    w + "p",
+                                                    new XElement(w + "r", new XElement(w + "t", "TextBoxContent"))
+                                                )
+                                            )
+                                        ),
+                                        new XElement(wps + "bodyPr")
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+
+            var bodyXml = new XElement(
+                w + "body",
+                textBoxParagraph,
+                new XElement(w + "p") // required trailing paragraph
+            );
+            var docXml = new XDocument(new XElement(w + "document", bodyXml));
+            mainPart.PutXDocument(docXml);
+
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = false,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+
+        var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+        var htmlString = html.ToString(SaveOptions.DisableFormatting);
+
+        // The text box content must appear in the HTML output
+        await Assert.That(htmlString).Contains("TextBoxContent");
+
+        // The text box must be rendered as a div (not silently dropped)
+        var divs = html.Descendants(Xhtml.div).ToList();
+        await Assert.That(divs).IsNotEmpty();
+
+        // Find the specific text box div: it must have display:inline-block and contain the text
+        var textBoxDiv = divs.FirstOrDefault(d => d.Attribute("style")?.Value?.Contains("inline-block") == true);
+        await Assert.That(textBoxDiv).IsNotNull();
+        var divStyle = textBoxDiv!.Attribute("style")?.Value ?? string.Empty;
+        await Assert.That(divStyle).Contains("width:");
+        await Assert.That(divStyle).Contains("min-height:");
+        await Assert.That(divStyle).Contains("float: left");
+    }
+
 #if DO_CONVERSION_VIA_WORD
     public static void ConvertToHtmlUsingWord(FileInfo sourceFileName, FileInfo destFileName)
     {
