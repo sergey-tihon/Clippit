@@ -3412,12 +3412,12 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     var existingRel = newContentPart.Parts.FirstOrDefault(p => p.OpenXmlPart == temp.ImagePart);
                     if (existingRel != default)
                     {
-                        imageReference.SetAttributeValue(R.id, existingRel.RelationshipId);
+                        imageReference.SetAttributeValue(attributeName, existingRel.RelationshipId);
                     }
                     else
                     {
                         var newId = newContentPart.CreateRelationshipToPart(temp.ImagePart);
-                        imageReference.SetAttributeValue(R.id, newId);
+                        imageReference.SetAttributeValue(attributeName, newId);
                     }
                 }
             }
@@ -3427,7 +3427,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 if (er != null)
                 {
                     var newEr = newContentPart.AddExternalRelationship(er.RelationshipType, er.Uri);
-                    imageReference.SetAttributeValue(R.id, newEr.Id);
+                    imageReference.SetAttributeValue(attributeName, newEr.Id);
                     return;
                 }
                 throw new DocumentBuilderInternalException(
