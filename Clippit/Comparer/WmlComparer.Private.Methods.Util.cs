@@ -77,8 +77,6 @@ namespace Clippit
                         oldPartStream.CopyTo(newPartStream);
                     }
 
-                    // WmlComparer uses GUID-based part URIs which guarantee uniqueness.
-                    // Use SDK to generate relationship ID.
                     var newRel = partInNewDocument.Relationships.Create(
                         newPart.Uri,
                         TargetMode.Internal,

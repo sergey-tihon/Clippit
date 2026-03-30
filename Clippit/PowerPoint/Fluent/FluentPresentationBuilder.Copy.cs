@@ -234,19 +234,6 @@ internal sealed partial class FluentPresentationBuilder
             _ => FontPartType.FontOdttf,
         };
 
-        // Dedup: if a FontPart with matching content type was already copied from the same source URI,
-        // reuse its relationship ID rather than adding a duplicate.
-        var existingFontRel = _newDocument.PresentationPart.Parts.FirstOrDefault(p =>
-            p.OpenXmlPart is FontPart
-            && p.OpenXmlPart.ContentType == oldFontPart.ContentType
-            && p.OpenXmlPart.Uri.OriginalString.EndsWith(
-                System.IO.Path.GetFileName(oldFontPart.Uri.OriginalString),
-                StringComparison.OrdinalIgnoreCase
-            )
-        );
-        if (existingFontRel != default)
-            return new XElement(fontXName, new XAttribute(R.id, existingFontRel.RelationshipId));
-
         var newFontPart = _newDocument.PresentationPart.AddFontPart(fontPartType);
         using (var stream = oldFontPart.GetStream())
             newFontPart.FeedData(stream);
@@ -689,7 +676,7 @@ internal sealed partial class FluentPresentationBuilder
                     using var stream = itemProps.OpenXmlPart.GetStream();
                     cxpp.FeedData(stream);
                 }
-                var newId = newContentPart.GetIdOfPart(newPart);
+                var newId = newContentPart.CreateRelationshipToPart(newPart);
                 custData.Attribute(R.id).Value = newId;
             }
         }

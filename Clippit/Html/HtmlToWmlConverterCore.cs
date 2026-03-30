@@ -2364,23 +2364,10 @@ namespace Clippit.Html
 
             var mdp = wDoc.MainDocumentPart;
             var ipt = ImagePartType.Png;
-
-            // Content-addressable dedup: look up existing image by SHA-256 hash of bytes.
-            var hashKey = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(ba));
-            var imageMap = wDoc.Annotation<Dictionary<string, string>>();
-            if (imageMap is null)
-            {
-                imageMap = [];
-                wDoc.AddAnnotation(imageMap);
-            }
-            if (!imageMap.TryGetValue(hashKey, out var rId))
-            {
-                var newPart = mdp.AddImagePart(ipt);
-                rId = mdp.GetIdOfPart(newPart);
-                imageMap[hashKey] = rId;
-                using (var s = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
-                    s.Write(ba, 0, ba.GetUpperBound(0) + 1);
-            }
+            var newPart = mdp.AddImagePart(ipt);
+            var rId = mdp.GetIdOfPart(newPart);
+            using (var s = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
+                s.Write(ba, 0, ba.GetUpperBound(0) + 1);
 
             var pid = wDoc.Annotation<PictureId>();
             if (pid == null)
