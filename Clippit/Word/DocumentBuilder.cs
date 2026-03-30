@@ -5,7 +5,6 @@
 #define MergeStylesWithSameNames
 
 using System.Xml.Linq;
-using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Word
@@ -3417,8 +3416,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     }
                     else
                     {
-                        var newId = Relationships.GetNewRelationshipId();
-                        newContentPart.CreateRelationshipToPart(temp.ImagePart, newId);
+                        var newId = newContentPart.CreateRelationshipToPart(temp.ImagePart);
                         imageReference.SetAttributeValue(R.id, newId);
                     }
                 }
