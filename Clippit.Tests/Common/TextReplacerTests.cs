@@ -4,9 +4,7 @@
 using System.Xml.Linq;
 using Clippit.Internal;
 using Clippit.Word;
-using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Clippit.Tests.Common;
 
