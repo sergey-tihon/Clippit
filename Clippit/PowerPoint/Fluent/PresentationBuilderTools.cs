@@ -150,9 +150,7 @@ namespace Clippit.PowerPoint.Fluent
                         }
                         case EmbeddedObjectPart oldEmbeddedObjectPart:
                         {
-                            var newPart = newChart.AddNewPart<EmbeddedPackagePart>(
-                                oldEmbeddedObjectPart.ContentType
-                            );
+                            var newPart = newChart.AddNewPart<EmbeddedPackagePart>(oldEmbeddedObjectPart.ContentType);
                             using (var oldObject = oldEmbeddedObjectPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
                                 newPart.FeedData(oldObject);
@@ -222,7 +220,6 @@ namespace Clippit.PowerPoint.Fluent
 
         internal static void CopyExtendedChartObjects(ExtendedChartPart oldChart, ExtendedChartPart newChart)
         {
-
             foreach (var dataReference in newChart.GetXDocument().Descendants(Cx.externalData))
             {
                 var relId = dataReference.Attribute(R.id).Value;
@@ -244,9 +241,7 @@ namespace Clippit.PowerPoint.Fluent
                         }
                         case EmbeddedObjectPart oldEmbeddedObjectPart:
                         {
-                            var newPart = newChart.AddNewPart<EmbeddedPackagePart>(
-                                oldEmbeddedObjectPart.ContentType
-                            );
+                            var newPart = newChart.AddNewPart<EmbeddedPackagePart>(oldEmbeddedObjectPart.ContentType);
                             using (var oldObject = oldEmbeddedObjectPart.GetStream(FileMode.Open, FileAccess.Read))
                             {
                                 newPart.FeedData(oldObject);
