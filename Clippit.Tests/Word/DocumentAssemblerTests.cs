@@ -736,13 +736,10 @@ public class DocumentAssemblerTests : TestsBase
     {
         var directiveParagraph = new XElement(
             W.p,
-            new XElement(
-                W.r,
-                new XElement(W.t, $@"<# <Table Select=""Orders"" Optional=""{optionalValue}"" /> #>")
-            )
+            new XElement(W.r, new XElement(W.t, $@"<# <Table Select=""Orders"" Optional=""{optionalValue}"" /> #>"))
         );
 
-        if(useSdt)
+        if (useSdt)
         {
             directiveParagraph = GetSdtFromMetadata(directiveParagraph);
         }
@@ -750,14 +747,8 @@ public class DocumentAssemblerTests : TestsBase
         var tableXml = new XElement(
             W.tbl,
             new XElement(W.tblPr),
-            new XElement(
-                W.tr,
-                new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header"))))
-            ),
-            new XElement(
-                W.tr,
-                new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Row"))))
-            )
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Row")))))
         );
 
         var bodyXml = new XElement(W.body, directiveParagraph, tableXml, new XElement(W.sectPr));
@@ -818,15 +809,9 @@ public class DocumentAssemblerTests : TestsBase
             new XElement(W.tblPr),
             new XElement(W.tblGrid, new XElement(W.gridCol, new XAttribute(W._w, "9216"))),
             // Header row
-            new XElement(
-                W.tr,
-                new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Name"))))
-            ),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Name"))))),
             // Prototype row: cells contain XPath expressions as raw text
-            new XElement(
-                W.tr,
-                new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "./Name"))))
-            )
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "./Name")))))
         );
 
         var bodyXml = new XElement(W.body, directiveParagraph, tableXml, new XElement(W.sectPr));
@@ -882,7 +867,6 @@ public class DocumentAssemblerTests : TestsBase
     [Test]
     [Arguments(true)]
     [Arguments(false)]
-
     public async Task DA_Table_NoOptional_NoDataReturnsError(bool useSdt)
     {
         var directiveParagraph = new XElement(
@@ -898,14 +882,8 @@ public class DocumentAssemblerTests : TestsBase
         var tableXml = new XElement(
             W.tbl,
             new XElement(W.tblPr),
-            new XElement(
-                W.tr,
-                new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header"))))
-            ),
-            new XElement(
-                W.tr,
-                new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Row"))))
-            )
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Row")))))
         );
 
         var bodyXml = new XElement(W.body, directiveParagraph, tableXml, new XElement(W.sectPr));
