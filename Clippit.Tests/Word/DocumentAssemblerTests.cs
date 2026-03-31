@@ -921,6 +921,67 @@ public class DocumentAssemblerTests : TestsBase
         await Assert.That(documentText).Contains("Table Select returned no data");
     }
 
+    /// <summary>
+    /// Verifies that an invalid <c>Optional</c> attribute value produces a template error
+    /// instead of throwing a <see cref="FormatException"/>.
+    /// </summary>
+    [Test]
+    public async Task DA_Table_InvalidOptionalValueReturnsError()
+    {
+        // Build a template that contains a metadata element with an invalid Optional value,
+        // placed directly at the body level (bypassing ValidatePerSchema) to simulate
+        // a template where metadata elements already exist without going through text parsing.
+        // PA.Table = "Table", PA.Select = "Select", PA.Optional = "Optional" (no namespace).
+        var tableDirective = new XElement(
+            "Table",
+            new XAttribute("Select", "Orders"),
+            new XAttribute("Optional", "yes")
+        ); // invalid XSD boolean — not true/false/1/0
+
+        var tableXml = new XElement(
+            W.tbl,
+            new XElement(W.tblPr),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Row")))))
+        );
+
+        // Place the Table directive and the table at body level so NormalizeTablesRepeatAndConditional
+        // can move the w:tbl inside the directive, as it does in a normal assembled document.
+        var bodyXml = new XElement(W.body, tableDirective, tableXml, new XElement(W.sectPr));
+
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                mainPart.PutXDocument(new XDocument(new XElement(W.document, bodyXml)));
+            }
+            docxBytes = ms.ToArray();
+        }
+
+        var wmlTemplate = new WmlDocument("invalid-optional-table-template.docx", docxBytes);
+        var xmlData = XElement.Parse("<Data/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsTrue();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        var documentText = resultDoc
+            .MainDocumentPart!.GetXDocument()
+            .Descendants(W.t)
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
+        await Assert.That(documentText).Contains("Invalid value for Optional attribute");
+    }
+
     private async Task ValidateAsync(FileInfo fi)
     {
         using var wDoc = WordprocessingDocument.Open(fi.FullName, false);

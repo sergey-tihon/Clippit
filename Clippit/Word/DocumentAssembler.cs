@@ -1584,7 +1584,18 @@ namespace Clippit.Word
             }
             if (element.Name == PA.Table)
             {
-                var optional = (bool?)element.Attribute(PA.Optional) ?? false;
+                bool optional;
+                try
+                {
+                    optional = (bool?)element.Attribute(PA.Optional) ?? false;
+                }
+                catch (FormatException)
+                {
+                    return element.CreateContextErrorMessage(
+                        $"Table: Invalid value for Optional attribute '{(string)element.Attribute(PA.Optional)}'; expected true, false, 1, or 0",
+                        templateError
+                    );
+                }
 
                 IList<XElement> tableData;
                 try
