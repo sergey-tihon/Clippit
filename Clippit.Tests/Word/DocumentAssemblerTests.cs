@@ -942,7 +942,16 @@ public class DocumentAssemblerTests : TestsBase
     private static XElement GetSdtFromMetadata(XElement element)
     {
         var Wt = element.Descendants(W.t).First();
-        Wt.Value = Wt.Value.Replace("<# ", string.Empty).Replace(" #>", string.Empty);
+        var text = Wt.Value?.Trim() ?? string.Empty;
+        if (text.StartsWith("<#"))
+        {
+            text = text.Substring(2);
+        }
+        if (text.EndsWith("#>"))
+        {
+            text = text.Substring(0, text.Length - 2);
+        }
+        Wt.Value = text.Trim();
 
         return new XElement(W.sdt, new XElement(W.sdtContent, element));
     }
