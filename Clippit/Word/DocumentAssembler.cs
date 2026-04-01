@@ -881,6 +881,7 @@ namespace Clippit.Word
                         <xs:element name='Table'>
                         <xs:complexType>
                             <xs:attribute name='Select' type='xs:string' use='required' />
+                            <xs:attribute name='Optional' type='xs:boolean' use='optional' />
                         </xs:complexType>
                         </xs:element>
                     </xs:schema>"
@@ -1283,8 +1284,7 @@ namespace Clippit.Word
         private static object ProcessAParagraph(XElement element, XElement data, TemplateError templateError)
         {
             var xPath = (string)element.Attribute(PA.Select);
-            var optionalString = (string)element.Attribute(PA.Optional);
-            var optional = (optionalString != null && optionalString.ToLower() == "true");
+            var optional = (bool?)element.Attribute(PA.Optional) ?? false;
 
             string[] newValues;
             try
@@ -1528,8 +1528,7 @@ namespace Clippit.Word
             if (element.Name == PA.Repeat)
             {
                 var selector = (string)element.Attribute(PA.Select);
-                var optionalString = (string)element.Attribute(PA.Optional);
-                var optional = (optionalString != null && optionalString.ToLower() == "true");
+                var optional = (bool?)element.Attribute(PA.Optional) ?? false;
                 var alignmentOption = (string)element.Attribute(PA.Align) ?? "vertical";
 
                 IList<XElement> repeatingData;
@@ -1585,6 +1584,19 @@ namespace Clippit.Word
             }
             if (element.Name == PA.Table)
             {
+                bool optional;
+                try
+                {
+                    optional = (bool?)element.Attribute(PA.Optional) ?? false;
+                }
+                catch (FormatException)
+                {
+                    return element.CreateContextErrorMessage(
+                        $"Table: Invalid value for Optional attribute '{(string)element.Attribute(PA.Optional)}'; expected true, false, 1, or 0",
+                        templateError
+                    );
+                }
+
                 IList<XElement> tableData;
                 try
                 {
@@ -1595,7 +1607,11 @@ namespace Clippit.Word
                     return element.CreateContextErrorMessage("XPathException: " + e.Message, templateError);
                 }
                 if (!tableData.Any())
+                {
+                    if (optional)
+                        return null;
                     return element.CreateContextErrorMessage("Table Select returned no data", templateError);
+                }
                 var table = element.Element(W.tbl);
                 var protoRow = table.Elements(W.tr).Skip(1).FirstOrDefault();
                 var footerRowsBeforeTransform = table.Elements(W.tr).Skip(2).ToList();
@@ -1766,11 +1782,7 @@ namespace Clippit.Word
                                         }
 
                                         var xPath = (string)directive.Attribute(PA.Select);
-                                        var optional = string.Equals(
-                                            (string)directive.Attribute(PA.Optional),
-                                            "true",
-                                            StringComparison.OrdinalIgnoreCase
-                                        );
+                                        var optional = (bool?)directive.Attribute(PA.Optional) ?? false;
                                         return data.EvaluateXPathToString(xPath, optional);
                                     }
 

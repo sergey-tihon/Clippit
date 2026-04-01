@@ -4,6 +4,8 @@
     href: DocumentAssembler_ImagesSupport.md
   - name: Inline HTML Support
     href: DocumentAssembler_InlineHtmlSupport.md
+  - name: Optional Table Directive
+    href: DocumentAssembler_OptionalTable.md
   - name: Processing Documents and Document Templates
     href: DocumentAssembler_DocumentTemplates.md
 - name: DocumentBuilder

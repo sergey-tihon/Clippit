@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft. All rights reserved.
+﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Xml;
@@ -142,6 +142,10 @@ public class DocumentAssemblerTests : TestsBase
     [Arguments("DA285-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
     [Arguments("DA285A-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
     [Arguments("DA-I0038-TemplateWithMultipleXPathResults.docx", "DA-I0038-Data.xml", false)]
+    [Arguments("DA291-Table-Optional-NoData.docx", "DA-Data.xml", false)]
+    [Arguments("DA291A-Table-Optional-NoData.docx", "DA-Data.xml", false)]
+    [Arguments("DA292-Table-Optional-WithData.docx", "DA-Data.xml", false)]
+    [Arguments("DA292A-Table-Optional-WithData.docx", "DA-Data.xml", false)]
     public async Task DA101(string name, string data, bool err)
     {
         var afterAssembling = AssembleDocument(name, data, out var returnedTemplateError);
@@ -598,11 +602,11 @@ public class DocumentAssemblerTests : TestsBase
         // The paragraph reproduces the real watermark XML produced by Word:
         //   <w:p><w:pict><v:shape><v:textpath string="<#<Content Select=&quot;./WaterMark&quot;/>#>"/></v:shape></w:pict></w:p>
         var bodyXml = new XElement(
-            w + "body",
+            W.body,
             new XElement(
-                w + "p",
+                W.p,
                 new XElement(
-                    w + "pict",
+                    W.pict,
                     new XElement(
                         vml + "shape",
                         new XElement(
@@ -613,7 +617,7 @@ public class DocumentAssemblerTests : TestsBase
                     )
                 )
             ),
-            new XElement(w + "sectPr")
+            new XElement(W.sectPr)
         );
 
         byte[] docxBytes;
@@ -627,7 +631,7 @@ public class DocumentAssemblerTests : TestsBase
             )
             {
                 var mainPart = wordDoc.AddMainDocumentPart();
-                mainPart.PutXDocument(new XDocument(new XElement(w + "document", bodyXml)));
+                mainPart.PutXDocument(new XDocument(new XElement(W.document, bodyXml)));
             }
             docxBytes = ms.ToArray();
         }
@@ -643,7 +647,7 @@ public class DocumentAssemblerTests : TestsBase
 
         using var resultStream = new MemoryStream(result.DocumentByteArray);
         using var resultDoc = WordprocessingDocument.Open(resultStream, false);
-        var resultBody = resultDoc.MainDocumentPart.GetXDocument().Root?.Element(w + "body");
+        var resultBody = resultDoc.MainDocumentPart.GetXDocument().Root?.Element(W.body);
         var textpathAttr = resultBody?.Descendants(vml + "textpath").FirstOrDefault()?.Attribute("string");
         await Assert.That(textpathAttr).IsNotNull();
         await Assert.That(textpathAttr!.Value).IsEqualTo(watermarkText);
@@ -660,15 +664,14 @@ public class DocumentAssemblerTests : TestsBase
     [Arguments("<#<Content Optional=\"true\"/>#>", "<Data><WaterMark>CONFIDENTIAL</WaterMark></Data>")]
     public async Task DA_VmlTextpath_ErrorDirective_SetsHasError(string stringAttrValue, string xmlDataStr)
     {
-        XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
         XNamespace vml = "urn:schemas-microsoft-com:vml";
 
         var bodyXml = new XElement(
-            w + "body",
+            W.body,
             new XElement(
-                w + "p",
+                W.p,
                 new XElement(
-                    w + "pict",
+                    W.pict,
                     new XElement(
                         vml + "shape",
                         new XElement(
@@ -679,7 +682,7 @@ public class DocumentAssemblerTests : TestsBase
                     )
                 )
             ),
-            new XElement(w + "sectPr")
+            new XElement(W.sectPr)
         );
 
         byte[] docxBytes;
@@ -693,7 +696,7 @@ public class DocumentAssemblerTests : TestsBase
             )
             {
                 var mainPart = wordDoc.AddMainDocumentPart();
-                mainPart.PutXDocument(new XDocument(new XElement(w + "document", bodyXml)));
+                mainPart.PutXDocument(new XDocument(new XElement(W.document, bodyXml)));
             }
             docxBytes = ms.ToArray();
         }
@@ -710,10 +713,273 @@ public class DocumentAssemblerTests : TestsBase
         // The attribute value should contain the error placeholder, not the original directive.
         using var resultStream = new MemoryStream(result.DocumentByteArray);
         using var resultDoc = WordprocessingDocument.Open(resultStream, false);
-        var resultBody = resultDoc.MainDocumentPart!.GetXDocument().Root?.Element(w + "body");
+
+        var resultBody = resultDoc.MainDocumentPart!.GetXDocument().Root?.Element(W.body);
         var textpathAttr = resultBody?.Descendants(vml + "textpath").FirstOrDefault()?.Attribute("string");
+
         await Assert.That(textpathAttr).IsNotNull();
         await Assert.That(textpathAttr!.Value).Contains("[Template error:");
+    }
+
+    /// <summary>
+    /// Regression test for issue #85: <c>&lt;Table Select="..." Optional="true|1"/&gt;</c>
+    /// should suppress the "Table Select returned no data" error and remove the table
+    /// when the XPath expression returns no matching elements. Both XSD boolean forms
+    /// (<c>true</c> and <c>1</c>) are accepted.
+    /// </summary>
+    [Test]
+    [Arguments("true", true)]
+    [Arguments("1", true)]
+    [Arguments("true", false)]
+    [Arguments("1", false)]
+    public async Task DA_Table_Optional_NoDataRemovesTable(string optionalValue, bool useSdt)
+    {
+        var directiveParagraph = new XElement(
+            W.p,
+            new XElement(W.r, new XElement(W.t, $@"<# <Table Select=""Orders"" Optional=""{optionalValue}"" /> #>"))
+        );
+
+        if (useSdt)
+        {
+            directiveParagraph = GetSdtFromMetadata(directiveParagraph);
+        }
+
+        var tableXml = new XElement(
+            W.tbl,
+            new XElement(W.tblPr),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Row")))))
+        );
+
+        var bodyXml = new XElement(W.body, directiveParagraph, tableXml, new XElement(W.sectPr));
+
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                mainPart.PutXDocument(new XDocument(new XElement(W.document, bodyXml)));
+            }
+            docxBytes = ms.ToArray();
+        }
+
+        var wmlTemplate = new WmlDocument($"optional-{optionalValue}-table-template.docx", docxBytes);
+        var xmlData = XElement.Parse("<Data/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+
+        var resultBody = resultDoc.MainDocumentPart!.GetXDocument().Root?.Element(W.body);
+        var tables = resultBody?.Elements(W.tbl).ToList();
+        await Assert.That(tables).IsEmpty();
+    }
+
+    /// <summary>
+    /// Verifies that <c>&lt;Table Select="..." Optional="true"/&gt;</c> populates the table
+    /// normally when the XPath expression returns matching elements.
+    /// </summary>
+    [Test]
+    [Arguments(true)]
+    [Arguments(false)]
+    public async Task DA_Table_Optional_WithDataPopulatesTable(bool useSdt)
+    {
+        var directiveParagraph = new XElement(
+            W.p,
+            new XElement(W.r, new XElement(W.t, @"<# <Table Select=""Items/Item"" Optional=""true"" /> #>"))
+        );
+
+        if (useSdt)
+        {
+            directiveParagraph = GetSdtFromMetadata(directiveParagraph);
+        }
+
+        var tableXml = new XElement(
+            W.tbl,
+            new XElement(W.tblPr),
+            new XElement(W.tblGrid, new XElement(W.gridCol, new XAttribute(W._w, "9216"))),
+            // Header row
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Name"))))),
+            // Prototype row: cells contain XPath expressions as raw text
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "./Name")))))
+        );
+
+        var bodyXml = new XElement(W.body, directiveParagraph, tableXml, new XElement(W.sectPr));
+
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                mainPart.PutXDocument(new XDocument(new XElement(W.document, bodyXml)));
+            }
+            docxBytes = ms.ToArray();
+        }
+
+        var wmlTemplate = new WmlDocument("optional-table-with-data.docx", docxBytes);
+        var xmlData = XElement.Parse(
+            "<Data><Items><Item><Name>Apple</Name></Item><Item><Name>Banana</Name></Item></Items></Data>"
+        );
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+
+        var resultBody = resultDoc.MainDocumentPart!.GetXDocument().Root?.Element(W.body);
+        var tables = resultBody?.Elements(W.tbl).ToList();
+        await Assert.That(tables).IsNotEmpty();
+
+        var dataRows = tables![0].Elements(W.tr).Skip(1).ToList(); // skip header row
+        await Assert.That(dataRows).HasCount(2);
+
+        var rowText = dataRows
+            .SelectMany(r => r.Descendants(W.t))
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
+        await Assert.That(rowText).Contains("Apple");
+        await Assert.That(rowText).Contains("Banana");
+    }
+
+    /// <summary>
+    /// Verifies that <c>&lt;Table Select="..."/&gt;</c> without <c>Optional="true"</c>
+    /// still returns an error when no data is found (existing behaviour preserved).
+    /// </summary>
+    [Test]
+    [Arguments(true)]
+    [Arguments(false)]
+    public async Task DA_Table_NoOptional_NoDataReturnsError(bool useSdt)
+    {
+        var directiveParagraph = new XElement(
+            W.p,
+            new XElement(W.r, new XElement(W.t, @"<# <Table Select=""Orders"" /> #>"))
+        );
+
+        if (useSdt)
+        {
+            directiveParagraph = GetSdtFromMetadata(directiveParagraph);
+        }
+
+        var tableXml = new XElement(
+            W.tbl,
+            new XElement(W.tblPr),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Row")))))
+        );
+
+        var bodyXml = new XElement(W.body, directiveParagraph, tableXml, new XElement(W.sectPr));
+
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                mainPart.PutXDocument(new XDocument(new XElement(W.document, bodyXml)));
+            }
+            docxBytes = ms.ToArray();
+        }
+
+        var wmlTemplate = new WmlDocument("non-optional-table-template.docx", docxBytes);
+        var xmlData = XElement.Parse("<Data/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsTrue();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        var documentText = resultDoc
+            .MainDocumentPart!.GetXDocument()
+            .Descendants(W.t)
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
+        await Assert.That(documentText).Contains("Table Select returned no data");
+    }
+
+    /// <summary>
+    /// Verifies that an invalid <c>Optional</c> attribute value produces a template error
+    /// instead of throwing a <see cref="FormatException"/>.
+    /// </summary>
+    [Test]
+    public async Task DA_Table_InvalidOptionalValueReturnsError()
+    {
+        // Build a template that contains a metadata element with an invalid Optional value,
+        // placed directly at the body level (bypassing ValidatePerSchema) to simulate
+        // a template where metadata elements already exist without going through text parsing.
+        // PA.Table = "Table", PA.Select = "Select", PA.Optional = "Optional" (no namespace).
+        var tableDirective = new XElement(
+            "Table",
+            new XAttribute("Select", "Orders"),
+            new XAttribute("Optional", "yes")
+        ); // invalid XSD boolean — not true/false/1/0
+
+        var tableXml = new XElement(
+            W.tbl,
+            new XElement(W.tblPr),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Row")))))
+        );
+
+        // Place the Table directive and the table at body level so NormalizeTablesRepeatAndConditional
+        // can move the w:tbl inside the directive, as it does in a normal assembled document.
+        var bodyXml = new XElement(W.body, tableDirective, tableXml, new XElement(W.sectPr));
+
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                mainPart.PutXDocument(new XDocument(new XElement(W.document, bodyXml)));
+            }
+            docxBytes = ms.ToArray();
+        }
+
+        var wmlTemplate = new WmlDocument("invalid-optional-table-template.docx", docxBytes);
+        var xmlData = XElement.Parse("<Data/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsTrue();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        var documentText = resultDoc
+            .MainDocumentPart!.GetXDocument()
+            .Descendants(W.t)
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
+        await Assert.That(documentText).Contains("Invalid value for Optional attribute");
     }
 
     private async Task ValidateAsync(FileInfo fi)
@@ -732,6 +998,23 @@ public class DocumentAssemblerTests : TestsBase
         xmlData.Load(dataFile.FullName);
 
         return DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out templateError);
+    }
+
+    private static XElement GetSdtFromMetadata(XElement element)
+    {
+        var Wt = element.Descendants(W.t).First();
+        var text = Wt.Value?.Trim() ?? string.Empty;
+        if (text.StartsWith("<#"))
+        {
+            text = text.Substring(2);
+        }
+        if (text.EndsWith("#>"))
+        {
+            text = text.Substring(0, text.Length - 2);
+        }
+        Wt.Value = text.Trim();
+
+        return new XElement(W.sdt, new XElement(W.sdtContent, element));
     }
 
     private FileInfo GetOutputFile(string templateName, string dataName = null)
