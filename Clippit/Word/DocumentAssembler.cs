@@ -1203,7 +1203,7 @@ namespace Clippit.Word
                         if (keepSourceImageAspect)
                         {
                             var ratio = height / (width * 1.0);
-                            if (!int.TryParse(extent.Attribute(NoNamespace.cx).Value, out width))
+                            if (!long.TryParse(extent.Attribute(NoNamespace.cx)?.Value, out var cxLong))
                             {
                                 return element.CreateContextErrorMessage(
                                     "Image: Invalid image attributes",
@@ -1211,24 +1211,24 @@ namespace Clippit.Word
                                 );
                             }
 
-                            height = (int)(width * ratio);
+                            var cyLong = (long)(cxLong * ratio);
 
                             // replace attributes
-                            extent.SetAttributeValue(NoNamespace.cy, height);
-                            pictureExtent.SetAttributeValue(NoNamespace.cx, width);
-                            pictureExtent.SetAttributeValue(NoNamespace.cy, height);
+                            extent.SetAttributeValue(NoNamespace.cy, cyLong);
+                            pictureExtent.SetAttributeValue(NoNamespace.cx, cxLong);
+                            pictureExtent.SetAttributeValue(NoNamespace.cy, cyLong);
                         }
 
                         if (keepOriginalImageSize)
                         {
-                            width = image.Width * pixelInEMU;
-                            height = image.Height * pixelInEMU;
+                            var widthEmu = (long)image.Width * pixelInEMU;
+                            var heightEmu = (long)image.Height * pixelInEMU;
 
                             // replace attributes
-                            extent.SetAttributeValue(NoNamespace.cx, width);
-                            extent.SetAttributeValue(NoNamespace.cy, height);
-                            pictureExtent.SetAttributeValue(NoNamespace.cx, width);
-                            pictureExtent.SetAttributeValue(NoNamespace.cy, height);
+                            extent.SetAttributeValue(NoNamespace.cx, widthEmu);
+                            extent.SetAttributeValue(NoNamespace.cy, heightEmu);
+                            pictureExtent.SetAttributeValue(NoNamespace.cx, widthEmu);
+                            pictureExtent.SetAttributeValue(NoNamespace.cy, heightEmu);
                         }
                     }
                 }
