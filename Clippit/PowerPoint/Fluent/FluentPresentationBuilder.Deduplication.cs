@@ -8,6 +8,13 @@ namespace Clippit.PowerPoint.Fluent;
 internal partial class FluentPresentationBuilder
 {
     private readonly Dictionary<ContentDataKey, ContentData> _mediaCache = [];
+
+    // Identity-keyed caches: if the same OpenXmlPart instance is encountered again
+    // (e.g. a 1 GB video embedded on multiple slides) we reuse the already-computed
+    // ContentData directly, avoiding a second expensive stream read + SHA-256.
+    private readonly Dictionary<ImagePart, ContentData> _imagePartCache = new(ReferenceEqualityComparer.Instance);
+    private readonly Dictionary<DataPart, ContentData> _dataPartCache = new(ReferenceEqualityComparer.Instance);
+
     private readonly Dictionary<SlideMasterPart, SlideMasterData> _slideMasters = [];
     private SlideSize _slideSize;
     private uint _nextSlideId;
@@ -49,13 +56,23 @@ internal partial class FluentPresentationBuilder
     // General function for handling images that tries to use an existing image if they are the same
     private ImageData GetOrAddImageCopy(ImagePart oldImage)
     {
-        return GetOrAddCachedMedia(new ImageData(oldImage));
+        if (_imagePartCache.TryGetValue(oldImage, out var cached))
+            return (ImageData)cached;
+
+        var imageData = GetOrAddCachedMedia(new ImageData(oldImage));
+        _imagePartCache[oldImage] = imageData;
+        return imageData;
     }
 
     // General function for handling media that tries to use an existing media item if they are the same
     private MediaData GetOrAddMediaCopy(DataPart oldMedia)
     {
-        return GetOrAddCachedMedia(new MediaData(oldMedia));
+        if (_dataPartCache.TryGetValue(oldMedia, out var cached))
+            return (MediaData)cached;
+
+        var mediaData = GetOrAddCachedMedia(new MediaData(oldMedia));
+        _dataPartCache[oldMedia] = mediaData;
+        return mediaData;
     }
 
     private T GetOrAddCachedMedia<T>(T contentData)
