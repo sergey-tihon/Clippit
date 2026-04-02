@@ -938,6 +938,7 @@ namespace Clippit.Word
                         <xs:element name='Image'>
                             <xs:complexType>
                                 <xs:attribute name='Select' type='xs:string' use='required' />
+                                <xs:attribute name='FitWithin' type='xs:boolean' use='optional' />
                             </xs:complexType>
                         </xs:element>
                     </xs:schema>"
@@ -1090,6 +1091,9 @@ namespace Clippit.Word
                 }
             }
 
+            var fitWithinStr = ((string)element.Attribute(PA.FitWithin))?.ToLowerInvariant();
+            var fitWithin = fitWithinStr is "true" or "1";
+
             // get extent
             var extent = inline.Descendants(WP.extent).FirstOrDefault();
             var pictureExtent = inline
@@ -1158,32 +1162,74 @@ namespace Clippit.Word
                     var width = image.Width;
                     var height = image.Height;
 
-                    if (keepSourceImageAspect)
+                    if (fitWithin)
                     {
-                        var ratio = height / (width * 1.0);
-                        if (!int.TryParse(extent.Attribute(NoNamespace.cx).Value, out width))
+                        // FitWithin: keep original size if image fits within template bounds;
+                        // scale down proportionally if either dimension exceeds the bounds.
+                        var imageCxEmu = (long)image.Width * pixelInEMU;
+                        var imageCyEmu = (long)image.Height * pixelInEMU;
+
+                        if (
+                            !long.TryParse(extent.Attribute(NoNamespace.cx)?.Value, out var maxCx)
+                            || !long.TryParse(extent.Attribute(NoNamespace.cy)?.Value, out var maxCy)
+                        )
                         {
                             return element.CreateContextErrorMessage("Image: Invalid image attributes", templateError);
                         }
 
-                        height = (int)(width * ratio);
+                        long finalCx,
+                            finalCy;
+                        if (imageCxEmu <= maxCx && imageCyEmu <= maxCy)
+                        {
+                            finalCx = imageCxEmu;
+                            finalCy = imageCyEmu;
+                        }
+                        else
+                        {
+                            var scaleX = (double)maxCx / imageCxEmu;
+                            var scaleY = (double)maxCy / imageCyEmu;
+                            var scale = Math.Min(scaleX, scaleY);
+                            finalCx = (long)(imageCxEmu * scale);
+                            finalCy = (long)(imageCyEmu * scale);
+                        }
 
-                        // replace attributes
-                        extent.SetAttributeValue(NoNamespace.cy, height);
-                        pictureExtent.SetAttributeValue(NoNamespace.cx, width);
-                        pictureExtent.SetAttributeValue(NoNamespace.cy, height);
+                        extent.SetAttributeValue(NoNamespace.cx, finalCx);
+                        extent.SetAttributeValue(NoNamespace.cy, finalCy);
+                        pictureExtent.SetAttributeValue(NoNamespace.cx, finalCx);
+                        pictureExtent.SetAttributeValue(NoNamespace.cy, finalCy);
                     }
-
-                    if (keepOriginalImageSize)
+                    else
                     {
-                        width = image.Width * pixelInEMU;
-                        height = image.Height * pixelInEMU;
+                        if (keepSourceImageAspect)
+                        {
+                            var ratio = height / (width * 1.0);
+                            if (!long.TryParse(extent.Attribute(NoNamespace.cx)?.Value, out var cxLong))
+                            {
+                                return element.CreateContextErrorMessage(
+                                    "Image: Invalid image attributes",
+                                    templateError
+                                );
+                            }
 
-                        // replace attributes
-                        extent.SetAttributeValue(NoNamespace.cx, width);
-                        extent.SetAttributeValue(NoNamespace.cy, height);
-                        pictureExtent.SetAttributeValue(NoNamespace.cx, width);
-                        pictureExtent.SetAttributeValue(NoNamespace.cy, height);
+                            var cyLong = (long)(cxLong * ratio);
+
+                            // replace attributes
+                            extent.SetAttributeValue(NoNamespace.cy, cyLong);
+                            pictureExtent.SetAttributeValue(NoNamespace.cx, cxLong);
+                            pictureExtent.SetAttributeValue(NoNamespace.cy, cyLong);
+                        }
+
+                        if (keepOriginalImageSize)
+                        {
+                            var widthEmu = (long)image.Width * pixelInEMU;
+                            var heightEmu = (long)image.Height * pixelInEMU;
+
+                            // replace attributes
+                            extent.SetAttributeValue(NoNamespace.cx, widthEmu);
+                            extent.SetAttributeValue(NoNamespace.cy, heightEmu);
+                            pictureExtent.SetAttributeValue(NoNamespace.cx, widthEmu);
+                            pictureExtent.SetAttributeValue(NoNamespace.cy, heightEmu);
+                        }
                     }
                 }
                 else

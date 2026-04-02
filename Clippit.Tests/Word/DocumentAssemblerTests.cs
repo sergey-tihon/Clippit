@@ -721,6 +721,252 @@ public class DocumentAssemblerTests : TestsBase
         await Assert.That(textpathAttr!.Value).Contains("[Template error:");
     }
 
+    [Test]
+    public async Task DA291_Image_FitWithin_SmallImage_KeepsOriginalSize()
+    {
+        // Template has a 200x200 px equivalent placeholder (1905000 x 1905000 EMUs)
+        // Input image is 50x50 px → fits within bounds → output should be 50x50 px in EMUs
+        const int pixelInEmu = 914400 / 96; // 9525
+        const long templateSizeEmu = 200L * pixelInEmu; // 1905000
+        const int imageWidth = 50,
+            imageHeight = 50;
+
+        var templateBytes = BuildImageFitWithinTemplate(templateSizeEmu, templateSizeEmu);
+        var imageBytes = BuildTestPng(imageWidth, imageHeight);
+        var base64 = Convert.ToBase64String(imageBytes);
+        var xmlData = XElement.Parse($"<Root><Photo>data:image/png;base64,{base64}</Photo></Root>");
+
+        var wml = new WmlDocument("test.docx", templateBytes);
+        var result = DocumentAssembler.AssembleDocument(wml, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+
+        using var ms = new MemoryStream(result.DocumentByteArray);
+        using var doc = WordprocessingDocument.Open(ms, false);
+        var xDoc = doc.MainDocumentPart!.GetXDocument();
+        XNamespace wp = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
+        XNamespace a = "http://schemas.openxmlformats.org/drawingml/2006/main";
+        var extent = xDoc.Descendants(wp + "extent").FirstOrDefault();
+        var xfrmExt = xDoc.Descendants(a + "xfrm").Elements(a + "ext").FirstOrDefault();
+
+        await Assert.That(extent).IsNotNull();
+        await Assert.That(xfrmExt).IsNotNull();
+        var expectedEmu = (long)imageWidth * pixelInEmu; // 476250
+        await Assert.That(long.Parse(extent!.Attribute("cx")!.Value)).IsEqualTo(expectedEmu);
+        await Assert.That(long.Parse(extent!.Attribute("cy")!.Value)).IsEqualTo(expectedEmu);
+        await Assert.That(long.Parse(xfrmExt!.Attribute("cx")!.Value)).IsEqualTo(expectedEmu);
+        await Assert.That(long.Parse(xfrmExt!.Attribute("cy")!.Value)).IsEqualTo(expectedEmu);
+    }
+
+    [Test]
+    public async Task DA292_Image_FitWithin_LargeImage_ScalesDownProportionally()
+    {
+        // Template has a 200x200 px equivalent placeholder (1905000 x 1905000 EMUs)
+        // Input image is 400x200 px (wider than tall) → scale down to fit
+        // Expected: scale = min(200/400, 200/200) = 0.5 → finalCx=200px, finalCy=100px in EMUs
+        const int pixelInEmu = 914400 / 96; // 9525
+        const long templateSizeEmu = 200L * pixelInEmu; // 1905000
+        const int imageWidth = 400,
+            imageHeight = 200;
+
+        var templateBytes = BuildImageFitWithinTemplate(templateSizeEmu, templateSizeEmu);
+        var imageBytes = BuildTestPng(imageWidth, imageHeight);
+        var base64 = Convert.ToBase64String(imageBytes);
+        var xmlData = XElement.Parse($"<Root><Photo>data:image/png;base64,{base64}</Photo></Root>");
+
+        var wml = new WmlDocument("test.docx", templateBytes);
+        var result = DocumentAssembler.AssembleDocument(wml, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+
+        using var ms = new MemoryStream(result.DocumentByteArray);
+        using var doc = WordprocessingDocument.Open(ms, false);
+        var xDoc = doc.MainDocumentPart!.GetXDocument();
+        XNamespace wp = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
+        XNamespace a = "http://schemas.openxmlformats.org/drawingml/2006/main";
+        var extent = xDoc.Descendants(wp + "extent").FirstOrDefault();
+        var xfrmExt = xDoc.Descendants(a + "xfrm").Elements(a + "ext").FirstOrDefault();
+
+        await Assert.That(extent).IsNotNull();
+        await Assert.That(xfrmExt).IsNotNull();
+        // scale = 200/400 = 0.5; finalCx = 400*0.5*9525 = 1905000; finalCy = 200*0.5*9525 = 952500
+        long expectedCx = templateSizeEmu; // 1905000 — scales to exactly the max width
+        long expectedCy = (long)(imageHeight * 0.5 * pixelInEmu); // 952500
+        await Assert.That(long.Parse(extent!.Attribute("cx")!.Value)).IsEqualTo(expectedCx);
+        await Assert.That(long.Parse(extent!.Attribute("cy")!.Value)).IsEqualTo(expectedCy);
+        await Assert.That(long.Parse(xfrmExt!.Attribute("cx")!.Value)).IsEqualTo(expectedCx);
+        await Assert.That(long.Parse(xfrmExt!.Attribute("cy")!.Value)).IsEqualTo(expectedCy);
+    }
+
+    /// <summary>
+    /// Creates a minimal DOCX template with an Image directive using FitWithin="true"
+    /// and an image placeholder with the specified extent dimensions.
+    /// </summary>
+    private static byte[] BuildImageFitWithinTemplate(long extentCx, long extentCy)
+    {
+        XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+        XNamespace wp = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
+        XNamespace a = "http://schemas.openxmlformats.org/drawingml/2006/main";
+        XNamespace pic = "http://schemas.openxmlformats.org/drawingml/2006/picture";
+        XNamespace r = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+
+        // The image directive content control text (split across runs so concatenation = "<Image .../>")
+        var directiveSdt = new XElement(
+            w + "sdt",
+            new XElement(w + "sdtPr", new XElement(w + "text")),
+            new XElement(w + "sdtEndPr"),
+            new XElement(
+                w + "sdtContent",
+                new XElement(w + "r", new XElement(w + "t", "<")),
+                new XElement(w + "r", new XElement(w + "t", "Image Select=\"./Photo\" FitWithin=\"true\"")),
+                new XElement(w + "r", new XElement(w + "t", "/>"))
+            )
+        );
+
+        // The image placeholder content control with the drawing element
+        var imagePlaceholderSdt = new XElement(
+            w + "sdt",
+            new XElement(w + "sdtPr", new XElement(w + "picture")),
+            new XElement(w + "sdtEndPr"),
+            new XElement(
+                w + "sdtContent",
+                new XElement(
+                    w + "p",
+                    new XElement(
+                        w + "r",
+                        new XElement(
+                            w + "drawing",
+                            new XElement(
+                                wp + "inline",
+                                new XAttribute("distT", "0"),
+                                new XAttribute("distB", "0"),
+                                new XAttribute("distL", "0"),
+                                new XAttribute("distR", "0"),
+                                new XElement(
+                                    wp + "extent",
+                                    new XAttribute("cx", extentCx),
+                                    new XAttribute("cy", extentCy)
+                                ),
+                                new XElement(
+                                    wp + "docPr",
+                                    new XAttribute("id", "1"),
+                                    new XAttribute("name", "Image 1")
+                                ),
+                                new XElement(
+                                    wp + "cNvGraphicFramePr",
+                                    new XElement(
+                                        a + "graphicFrameLocks",
+                                        new XAttribute(
+                                            XNamespace.Xmlns + "a",
+                                            "http://schemas.openxmlformats.org/drawingml/2006/main"
+                                        ),
+                                        new XAttribute("noChangeAspect", "1")
+                                    )
+                                ),
+                                new XElement(
+                                    a + "graphic",
+                                    new XAttribute(
+                                        XNamespace.Xmlns + "a",
+                                        "http://schemas.openxmlformats.org/drawingml/2006/main"
+                                    ),
+                                    new XElement(
+                                        a + "graphicData",
+                                        new XAttribute(
+                                            "uri",
+                                            "http://schemas.openxmlformats.org/drawingml/2006/picture"
+                                        ),
+                                        new XElement(
+                                            pic + "pic",
+                                            new XAttribute(
+                                                XNamespace.Xmlns + "pic",
+                                                "http://schemas.openxmlformats.org/drawingml/2006/picture"
+                                            ),
+                                            new XElement(
+                                                pic + "nvPicPr",
+                                                new XElement(
+                                                    pic + "cNvPr",
+                                                    new XAttribute("id", "0"),
+                                                    new XAttribute("name", "Image 1")
+                                                ),
+                                                new XElement(pic + "cNvPicPr")
+                                            ),
+                                            new XElement(
+                                                pic + "blipFill",
+                                                new XElement(a + "blip", new XAttribute(r + "embed", "rId1")),
+                                                new XElement(a + "stretch", new XElement(a + "fillRect"))
+                                            ),
+                                            new XElement(
+                                                pic + "spPr",
+                                                new XElement(
+                                                    a + "xfrm",
+                                                    new XElement(
+                                                        a + "off",
+                                                        new XAttribute("x", "0"),
+                                                        new XAttribute("y", "0")
+                                                    ),
+                                                    new XElement(
+                                                        a + "ext",
+                                                        new XAttribute("cx", extentCx),
+                                                        new XAttribute("cy", extentCy)
+                                                    )
+                                                ),
+                                                new XElement(
+                                                    a + "prstGeom",
+                                                    new XAttribute("prst", "rect"),
+                                                    new XElement(a + "avLst")
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        );
+
+        var bodyXml = new XElement(
+            w + "body",
+            new XElement(w + "p", directiveSdt),
+            imagePlaceholderSdt,
+            new XElement(w + "sectPr")
+        );
+
+        using var ms = new MemoryStream();
+        using (
+            var wordDoc = WordprocessingDocument.Create(ms, DocumentFormat.OpenXml.WordprocessingDocumentType.Document)
+        )
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.PutXDocument(new XDocument(new XElement(w + "document", bodyXml)));
+
+            // Add a 1x1 placeholder image so the template is valid
+            var imagePart = mainPart.AddImagePart(DocumentFormat.OpenXml.Packaging.ImagePartType.Png, "rId1");
+            imagePart.FeedData(new MemoryStream(BuildTestPng(1, 1)));
+        }
+
+        return ms.ToArray();
+    }
+
+    /// <summary>Creates a minimal solid-color PNG of the given dimensions.</summary>
+    private static byte[] BuildTestPng(int width, int height)
+    {
+        using var newImage = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(width, height);
+        newImage.ProcessPixelRows(accessor =>
+        {
+            for (var y = 0; y < accessor.Height; y++)
+            {
+                var row = accessor.GetRowSpan(y);
+                for (var x = 0; x < row.Length; x++)
+                    row[x] = new SixLabors.ImageSharp.PixelFormats.Rgba32(100, 149, 237, 255); // cornflower blue
+            }
+        });
+        using var outMs = new MemoryStream();
+        newImage.Save(outMs, new SixLabors.ImageSharp.Formats.Png.PngEncoder());
+        return outMs.ToArray();
+    }
+
     /// <summary>
     /// Regression test for issue #85: <c>&lt;Table Select="..." Optional="true|1"/&gt;</c>
     /// should suppress the "Table Select returned no data" error and remove the table

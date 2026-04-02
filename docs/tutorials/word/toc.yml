@@ -1,5 +1,7 @@
 - name: DocumentAssembler
   items:
+  - name: FitWithin Image Sizing
+    href: DocumentAssembler_FitWithin.md
   - name: Images Support
     href: DocumentAssembler_ImagesSupport.md
   - name: Inline HTML Support
