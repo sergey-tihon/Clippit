@@ -71,5 +71,3 @@ When `FitWithin="true"` is specified, it takes priority over the other sizing mo
 
 - For template testing and examples, see `DocumentAssemblerTests.cs` in the test project, particularly the `DA291_Image_FitWithin_*` and `DA292_Image_FitWithin_*` test methods.
 - The `Image` directive reference describes all supported attributes.
-
-Changes merged in: [#168](https://github.com/sergey-tihon/Clippit/pull/168)

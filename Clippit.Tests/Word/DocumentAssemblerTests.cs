@@ -810,7 +810,7 @@ public class DocumentAssemblerTests : TestsBase
         XNamespace pic = "http://schemas.openxmlformats.org/drawingml/2006/picture";
         XNamespace r = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 
-        // The image directive content control text (split across runs so concatenation = "<Image .../>"
+        // The image directive content control text (split across runs so concatenation = "<Image .../>")
         var directiveSdt = new XElement(
             w + "sdt",
             new XElement(w + "sdtPr", new XElement(w + "text")),
