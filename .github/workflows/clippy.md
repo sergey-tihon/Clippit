@@ -57,6 +57,7 @@ safe-outputs:
     target: "*"
     title-prefix: "[Clippy] "
     max: 4
+    protected-files: fallback-to-issue
   create-issue:
     title-prefix: "[Clippy] "
     labels: [automation, clippy]
