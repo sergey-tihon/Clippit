@@ -1091,7 +1091,7 @@ namespace Clippit.Word
                 }
             }
 
-            var fitWithinStr = (string)element.Attribute(PA.FitWithin);
+            var fitWithinStr = ((string)element.Attribute(PA.FitWithin))?.ToLowerInvariant();
             var fitWithin = fitWithinStr is "true" or "1";
 
             // get extent

@@ -745,12 +745,17 @@ public class DocumentAssemblerTests : TestsBase
         using var doc = WordprocessingDocument.Open(ms, false);
         var xDoc = doc.MainDocumentPart!.GetXDocument();
         XNamespace wp = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
+        XNamespace a = "http://schemas.openxmlformats.org/drawingml/2006/main";
         var extent = xDoc.Descendants(wp + "extent").FirstOrDefault();
+        var xfrmExt = xDoc.Descendants(a + "xfrm").Elements(a + "ext").FirstOrDefault();
 
         await Assert.That(extent).IsNotNull();
+        await Assert.That(xfrmExt).IsNotNull();
         var expectedEmu = (long)imageWidth * pixelInEmu; // 476250
         await Assert.That(long.Parse(extent!.Attribute("cx")!.Value)).IsEqualTo(expectedEmu);
         await Assert.That(long.Parse(extent!.Attribute("cy")!.Value)).IsEqualTo(expectedEmu);
+        await Assert.That(long.Parse(xfrmExt!.Attribute("cx")!.Value)).IsEqualTo(expectedEmu);
+        await Assert.That(long.Parse(xfrmExt!.Attribute("cy")!.Value)).IsEqualTo(expectedEmu);
     }
 
     [Test]
@@ -778,14 +783,19 @@ public class DocumentAssemblerTests : TestsBase
         using var doc = WordprocessingDocument.Open(ms, false);
         var xDoc = doc.MainDocumentPart!.GetXDocument();
         XNamespace wp = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
+        XNamespace a = "http://schemas.openxmlformats.org/drawingml/2006/main";
         var extent = xDoc.Descendants(wp + "extent").FirstOrDefault();
+        var xfrmExt = xDoc.Descendants(a + "xfrm").Elements(a + "ext").FirstOrDefault();
 
         await Assert.That(extent).IsNotNull();
+        await Assert.That(xfrmExt).IsNotNull();
         // scale = 200/400 = 0.5; finalCx = 400*0.5*9525 = 1905000; finalCy = 200*0.5*9525 = 952500
         long expectedCx = templateSizeEmu; // 1905000 — scales to exactly the max width
         long expectedCy = (long)(imageHeight * 0.5 * pixelInEmu); // 952500
         await Assert.That(long.Parse(extent!.Attribute("cx")!.Value)).IsEqualTo(expectedCx);
         await Assert.That(long.Parse(extent!.Attribute("cy")!.Value)).IsEqualTo(expectedCy);
+        await Assert.That(long.Parse(xfrmExt!.Attribute("cx")!.Value)).IsEqualTo(expectedCx);
+        await Assert.That(long.Parse(xfrmExt!.Attribute("cy")!.Value)).IsEqualTo(expectedCy);
     }
 
     /// <summary>
