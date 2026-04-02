@@ -839,7 +839,6 @@ namespace Clippit.Html
             {
                 if (element.Name == XhtmlNoNamespace.a)
                 {
-                    var rId = Relationships.GetNewRelationshipId();
                     var href = (string)element.Attribute(NoNamespace.href);
                     if (href != null)
                     {
@@ -857,7 +856,7 @@ namespace Clippit.Html
 
                         if (uri != null)
                         {
-                            wDoc.MainDocumentPart.AddHyperlinkRelationship(uri, true, rId);
+                            var newRel = wDoc.MainDocumentPart.AddHyperlinkRelationship(uri, true);
                             if (element.Element(XhtmlNoNamespace.img) != null)
                             {
                                 var imageTransformed = element
@@ -879,7 +878,7 @@ namespace Clippit.Html
                                             {
                                                 var hlinkClick = new XElement(
                                                     A.hlinkClick,
-                                                    new XAttribute(R.id, rId),
+                                                    new XAttribute(R.id, newRel.Id),
                                                     new XAttribute(XNamespace.Xmlns + "a", A.a.NamespaceName)
                                                 );
                                                 docPr.Add(hlinkClick);
@@ -895,7 +894,7 @@ namespace Clippit.Html
                             var rPr = GetRunProperties(element, settings);
                             var hyperlink = new XElement(
                                 W.hyperlink,
-                                new XAttribute(R.id, rId),
+                                new XAttribute(R.id, newRel.Id),
                                 new XElement(W.r, rPr, new XElement(W.t, element.Value))
                             );
                             return new[] { hyperlink };
@@ -2364,9 +2363,9 @@ namespace Clippit.Html
             }
 
             var mdp = wDoc.MainDocumentPart;
-            var rId = Relationships.GetNewRelationshipId();
             var ipt = ImagePartType.Png;
-            var newPart = mdp.AddImagePart(ipt, rId);
+            var newPart = mdp.AddImagePart(ipt);
+            var rId = mdp.GetIdOfPart(newPart);
             using (var s = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
                 s.Write(ba, 0, ba.GetUpperBound(0) + 1);
 
