@@ -9,11 +9,12 @@ internal partial class FluentPresentationBuilder
 {
     private readonly Dictionary<ContentDataKey, ContentData> _mediaCache = [];
 
-    // Identity-keyed caches: if the same OpenXmlPart instance is encountered again
+    // Identity-keyed cache: if the same part instance is encountered again
     // (e.g. a 1 GB video embedded on multiple slides) we reuse the already-computed
     // ContentData directly, avoiding a second expensive stream read + SHA-256.
-    private readonly Dictionary<ImagePart, ContentData> _imagePartCache = new(ReferenceEqualityComparer.Instance);
-    private readonly Dictionary<DataPart, ContentData> _dataPartCache = new(ReferenceEqualityComparer.Instance);
+    // Keyed by object because ImagePart : OpenXmlPart and DataPart : object share no
+    // common base more specific than object.
+    private readonly Dictionary<object, ContentData> _partCache = new(ReferenceEqualityComparer.Instance);
 
     private readonly Dictionary<SlideMasterPart, SlideMasterData> _slideMasters = [];
     private SlideSize _slideSize;
@@ -56,22 +57,22 @@ internal partial class FluentPresentationBuilder
     // General function for handling images that tries to use an existing image if they are the same
     private ImageData GetOrAddImageCopy(ImagePart oldImage)
     {
-        if (_imagePartCache.TryGetValue(oldImage, out var cached))
+        if (_partCache.TryGetValue(oldImage, out var cached))
             return (ImageData)cached;
 
         var imageData = GetOrAddCachedMedia(new ImageData(oldImage));
-        _imagePartCache[oldImage] = imageData;
+        _partCache[oldImage] = imageData;
         return imageData;
     }
 
     // General function for handling media that tries to use an existing media item if they are the same
     private MediaData GetOrAddMediaCopy(DataPart oldMedia)
     {
-        if (_dataPartCache.TryGetValue(oldMedia, out var cached))
+        if (_partCache.TryGetValue(oldMedia, out var cached))
             return (MediaData)cached;
 
         var mediaData = GetOrAddCachedMedia(new MediaData(oldMedia));
-        _dataPartCache[oldMedia] = mediaData;
+        _partCache[oldMedia] = mediaData;
         return mediaData;
     }
 
