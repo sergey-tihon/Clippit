@@ -66,16 +66,19 @@ internal sealed partial class FluentPresentationBuilder : IFluentPresentationBui
             customPropsDocument.Root?.RemoveNodes();
         }
 
+        // Only flush parts that were actually loaded during building.
+        // Calling GetXDocument() on every +xml part forces all slide XML into memory at once,
+        // which is prohibitive for large presentations. Parts not touched during building
+        // retain their original ZIP bytes (including any pre-existing smtClean attributes),
+        // which is acceptable since smtClean is a non-semantic attribute.
         foreach (var part in _newDocument.GetAllParts())
         {
-            if (part.ContentType.EndsWith("+xml"))
+            if (part.Annotation<XDocument>() is { } xd)
             {
-                var xd = part.GetXDocument();
-                xd.Descendants().Attributes("smtClean").Remove();
+                if (part.ContentType.EndsWith("+xml"))
+                    xd.Descendants().Attributes("smtClean").Remove();
                 part.PutXDocument();
             }
-            else if (part.Annotation<XDocument>() is not null)
-                part.PutXDocument();
         }
     }
 
