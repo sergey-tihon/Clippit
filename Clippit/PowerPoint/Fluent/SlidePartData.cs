@@ -21,16 +21,16 @@ internal abstract class SlidePartData<T> : IComparable<SlidePartData<T>>
     protected abstract string GetShapeDescriptor(T part);
 
     /// <summary>
-    /// Normalize an XElement for shape comparison. The element must be a pre-cloned copy;
-    /// it is modified in place (attributes stripped, dimensions scaled).
-    /// This avoids the OuterXml→string→XDocument.Parse round-trip when the caller can
-    /// supply a cloned XElement directly from an already-loaded XDocument.
+    /// Normalize an XElement for shape comparison.
+    /// Deep-clones <paramref name="element"/>, strips noise attributes, scales dimensions,
+    /// and returns the canonical XML string. The original element is not modified.
     /// </summary>
     protected string NormalizeXml(XElement element)
     {
-        CleanUpAttributes(element);
-        ScaleShapes(element, ScaleFactor);
-        return element.ToString();
+        var clone = new XElement(element);
+        CleanUpAttributes(clone);
+        ScaleShapes(clone, ScaleFactor);
+        return clone.ToString();
     }
 
     public virtual int CompareTo(SlidePartData<T> other)
@@ -118,10 +118,10 @@ internal class SlideLayoutData(SlideLayoutPart slideLayout, double scaleFactor)
     {
         var root = slideLayout.GetXDocument().Root!;
         var cSld = root.Element(P.cSld)!;
-        var descriptor = NormalizeXml(new XElement(cSld.Element(P.spTree)!));
-        if (cSld.Element(P.bg) is { } bg)
-            descriptor += NormalizeXml(new XElement(bg));
-        return descriptor;
+        var bg = cSld.Element(P.bg);
+        return bg is not null
+            ? string.Concat(NormalizeXml(cSld.Element(P.spTree)!), NormalizeXml(bg))
+            : NormalizeXml(cSld.Element(P.spTree)!);
     }
 }
 
@@ -129,7 +129,7 @@ internal class SlideLayoutData(SlideLayoutPart slideLayout, double scaleFactor)
 internal class ThemeData(ThemePart themePart, double scaleFactor) : SlidePartData<ThemePart>(themePart, scaleFactor)
 {
     protected override string GetShapeDescriptor(ThemePart themePart) =>
-        NormalizeXml(new XElement(themePart.GetXDocument().Root!.Element(A.themeElements)!));
+        NormalizeXml(themePart.GetXDocument().Root!.Element(A.themeElements)!);
 }
 
 // This class is used to prevent duplication of masters and handle content modification
@@ -143,11 +143,14 @@ internal class SlideMasterData(SlideMasterPart slideMaster, double scaleFactor)
     {
         var root = slideMaster.GetXDocument().Root!;
         var cSld = root.Element(P.cSld)!;
-        var descriptor = NormalizeXml(new XElement(cSld.Element(P.spTree)!));
-        if (cSld.Element(P.bg) is { } bg)
-            descriptor += NormalizeXml(new XElement(bg));
-        descriptor += NormalizeXml(new XElement(root.Element(P.clrMap)!));
-        return descriptor;
+        var bg = cSld.Element(P.bg);
+        return bg is not null
+            ? string.Concat(
+                NormalizeXml(cSld.Element(P.spTree)!),
+                NormalizeXml(bg),
+                NormalizeXml(root.Element(P.clrMap)!)
+            )
+            : string.Concat(NormalizeXml(cSld.Element(P.spTree)!), NormalizeXml(root.Element(P.clrMap)!));
     }
 
     public override int CompareTo(SlidePartData<SlideMasterPart> other)
