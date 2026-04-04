@@ -502,7 +502,12 @@ namespace Clippit.Word
                 return ProcessTableCell(wordDoc, settings, element);
             }
 
-            // Transform images and text boxes
+            // Transform images and text boxes.
+            // Known limitation: w:drawing can appear inside a w:r (run) within a w:p (paragraph).
+            // ProcessTextBoxDrawing returns a block-level <div>, which is technically invalid HTML
+            // when nested under <p>/<span>. Hoisting the div to a block-level sibling of the paragraph
+            // would be the proper structural fix but requires significant refactoring of the paragraph
+            // transform pipeline.
             if (element.Name == W.drawing || element.Name == W.pict || element.Name == W._object)
             {
                 // Text boxes in w:drawing (wps:wsp/wps:txbx) must be handled before image processing
@@ -3234,9 +3239,11 @@ namespace Clippit.Word
             if (containerElement.Name == WP.anchor)
                 style.AddIfMissing("float", "left");
 
+            // Text boxes have independent layout — reset the outer paragraph margin so that list/indent
+            // offsets from the surrounding context do not incorrectly bleed into the text box interior.
             var content = txbxContent
                 .Elements()
-                .Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, currentMarginLeft))
+                .Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, 0m))
                 .ToList();
 
             var div = new XElement(Xhtml.div, content);

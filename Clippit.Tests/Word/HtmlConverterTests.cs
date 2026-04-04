@@ -415,7 +415,9 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         await Assert.That(divs).IsNotEmpty();
 
         // Find the specific text box div: it must have display:inline-block and contain the text
-        var textBoxDiv = divs.FirstOrDefault(d => d.Attribute("style")?.Value?.Contains("inline-block") == true);
+        var textBoxDiv = divs.FirstOrDefault(d =>
+            d.Attribute("style")?.Value?.Contains("inline-block") == true && d.Value.Contains("TextBoxContent")
+        );
         await Assert.That(textBoxDiv).IsNotNull();
         var divStyle = textBoxDiv!.Attribute("style")?.Value ?? string.Empty;
         await Assert.That(divStyle).Contains("width:");
