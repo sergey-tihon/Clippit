@@ -119,10 +119,8 @@ internal class SlideLayoutData(SlideLayoutPart slideLayout, double scaleFactor)
         var root = slideLayout.GetXDocument().Root!;
         var cSld = root.Element(P.cSld)!;
         var normalizedSpTree = NormalizeXml(cSld.Element(P.spTree)!);
-        var bg = cSld.Element(P.bg);
-        return bg is not null
-            ? string.Concat(normalizedSpTree, NormalizeXml(bg))
-            : normalizedSpTree;
+        var normalizedBg = cSld.Element(P.bg) is { } bg ? NormalizeXml(bg) : null;
+        return string.Concat(normalizedSpTree, normalizedBg);
     }
 }
 
@@ -146,10 +144,8 @@ internal class SlideMasterData(SlideMasterPart slideMaster, double scaleFactor)
         var cSld = root.Element(P.cSld)!;
         var normalizedSpTree = NormalizeXml(cSld.Element(P.spTree)!);
         var normalizedClrMap = NormalizeXml(root.Element(P.clrMap)!);
-        var bg = cSld.Element(P.bg);
-        return bg is not null
-            ? string.Concat(normalizedSpTree, NormalizeXml(bg), normalizedClrMap)
-            : string.Concat(normalizedSpTree, normalizedClrMap);
+        var normalizedBg = cSld.Element(P.bg) is { } bg ? NormalizeXml(bg) : null;
+        return string.Concat(normalizedSpTree, normalizedBg, normalizedClrMap);
     }
 
     public override int CompareTo(SlidePartData<SlideMasterPart> other)
