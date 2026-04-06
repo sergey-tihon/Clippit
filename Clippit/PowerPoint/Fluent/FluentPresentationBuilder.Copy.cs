@@ -417,9 +417,17 @@ internal sealed partial class FluentPresentationBuilder
             || (oldContentPart is WorksheetPart && newContentPart is WorksheetPart);
 
         // Single pass over the entire element tree dispatches all relationship-copying work.
-        // The previous implementation traversed DescendantsAndSelf() up to 16 separate times.
-        // A single dispatch loop reduces tree visits from O(16N) to O(N) and eliminates
-        // intermediate List<XElement> allocations, which matters for slides with large XML trees.
+        // The previous implementation traversed DescendantsAndSelf() up to 16 separate times
+        // (once per element-type group). A single dispatch loop reduces tree visits from O(16N)
+        // to O(N) and eliminates intermediate List<XElement> allocations.
+        //
+        // Ordering note: elements are now visited in document order rather than per-type-group
+        // order. This is safe because every copy helper is independent and idempotent:
+        //   - Each helper operates on a single element's relationship attribute.
+        //   - No helper produces a side-effect that another element type's helper depends on.
+        //   - Duplicate-copy guards (HasRelationship / DataPartReferenceRelationships.Any)
+        //     prevent double-processing if the same relId appears more than once in the tree.
+        // Within each element type, document order is preserved just as in the original code.
         foreach (var element in newContent.DescendantsAndSelf())
         {
             var name = element.Name;
