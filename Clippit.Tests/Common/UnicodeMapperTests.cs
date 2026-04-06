@@ -76,7 +76,7 @@ public class UnicodeMapperTests
         var textRuns = UnicodeMapper.StringToCoalescedRunList(TextString, null);
         var mixedRuns = UnicodeMapper.StringToCoalescedRunList(MixedString, null);
         await Assert.That(textRuns).HasSingleItem();
-        await Assert.That(mixedRuns).HasCount(5);
+        await Assert.That(mixedRuns).Count().IsEqualTo(5);
         await Assert.That(mixedRuns.Elements(W.t).Skip(0).First().Value).IsEqualTo("First");
         await Assert.That(mixedRuns.Elements(W.t).Skip(1).First().Value).IsEqualTo("Second");
         await Assert.That(mixedRuns.Elements(W.t).Skip(2).First().Value).IsEqualTo("Third");
