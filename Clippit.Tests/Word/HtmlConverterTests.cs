@@ -347,7 +347,7 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
                                 new XAttribute("cx", "1828800"),
                                 new XAttribute("cy", "914400")
                             ),
-                            new XElement(wp + "wrapNone"),
+                            new XElement(wp + "wrapSquare", new XAttribute("wrapText", "bothSides")),
                             new XElement(wp + "docPr", new XAttribute("id", "1"), new XAttribute("name", "Text Box 1")),
                             new XElement(
                                 a + "graphic",

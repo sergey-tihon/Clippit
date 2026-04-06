@@ -513,7 +513,7 @@ namespace Clippit.Word
                 // Text boxes in w:drawing (wps:wsp/wps:txbx) must be handled before image processing
                 if (element.Name == W.drawing)
                 {
-                    var textBoxResult = ProcessTextBoxDrawing(wordDoc, settings, element, currentMarginLeft);
+                    var textBoxResult = ProcessTextBoxDrawing(wordDoc, settings, element);
                     if (textBoxResult != null)
                         return textBoxResult;
                 }
@@ -3194,8 +3194,7 @@ namespace Clippit.Word
         private static XElement ProcessTextBoxDrawing(
             WordprocessingDocument wordDoc,
             WmlToHtmlConverterSettings settings,
-            XElement drawingElement,
-            decimal currentMarginLeft
+            XElement drawingElement
         )
         {
             var containerElement = drawingElement
@@ -3235,9 +3234,17 @@ namespace Clippit.Word
                     string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", (float)extentCy / ImageInfo.EmusPerInch)
                 );
 
-            // Floating text boxes: flow alongside text
+            // Only float anchored text boxes when the wrap mode implies surrounding text should flow
+            // around the shape. wp:wrapNone means no text wrap (overlap), and wp:wrapTopAndBottom
+            // pushes the shape to its own line — neither needs float.
             if (containerElement.Name == WP.anchor)
-                style.AddIfMissing("float", "left");
+            {
+                var hasTextWrapping = containerElement
+                    .Elements()
+                    .Any(e => e.Name == WP.wrapSquare || e.Name == WP.wrapTight || e.Name == WP.wrapThrough);
+                if (hasTextWrapping)
+                    style.AddIfMissing("float", "left");
+            }
 
             // Text boxes have independent layout — reset the outer paragraph margin so that list/indent
             // offsets from the surrounding context do not incorrectly bleed into the text box interior.
