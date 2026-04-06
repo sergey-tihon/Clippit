@@ -37,7 +37,7 @@ public class StronglyTypedBlockTests : TestsBase
         // Assert that we can see the paragraphs added through the PowerTools and the SDK.
         content = part.GetXDocument();
         var paragraphElements = content.Descendants(W.p).ToList();
-        await Assert.That(paragraphElements).HasCount(2);
+        await Assert.That(paragraphElements).Count().IsEqualTo(2);
         await Assert.That(paragraphElements[0].Value).IsEqualTo("Added through PowerTools");
         await Assert.That(paragraphElements[1].Value).IsEqualTo("Added through SDK");
     }

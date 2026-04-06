@@ -38,7 +38,7 @@ public class PowerToolsBlockTests : TestsBase
         // we should see both paragraphs.
         body = part.Document.Body;
         var paragraphs = body.Elements<Paragraph>().ToList();
-        await Assert.That(paragraphs).HasCount(2);
+        await Assert.That(paragraphs).Count().IsEqualTo(2);
         await Assert.That(paragraphs[0].InnerText).IsEqualTo("Added through SDK");
         await Assert.That(paragraphs[1].InnerText).IsEqualTo("Added through PowerTools");
     }

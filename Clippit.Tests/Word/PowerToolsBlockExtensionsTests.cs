@@ -66,7 +66,7 @@ public class PowerToolsBlockExtensionsTests : TestsBase
         // We should now see both paragraphs.
         content = part.GetXDocument();
         paragraphElements = content.Descendants(W.p).ToList();
-        await Assert.That(paragraphElements).HasCount(2);
+        await Assert.That(paragraphElements).Count().IsEqualTo(2);
         await Assert.That(paragraphElements[0].Value).IsEqualTo("First");
         await Assert.That(paragraphElements[1].Value).IsEqualTo("Second");
     }
@@ -113,7 +113,7 @@ public class PowerToolsBlockExtensionsTests : TestsBase
         // we should now see both paragraphs.
         body = part.Document.Body;
         paragraphs = body.Elements<Paragraph>().ToList();
-        await Assert.That(paragraphs).HasCount(2);
+        await Assert.That(paragraphs).Count().IsEqualTo(2);
         await Assert.That(paragraphs[0].InnerText).IsEqualTo("Added through SDK");
         await Assert.That(paragraphs[1].InnerText).IsEqualTo("Added through PowerTools");
     }
