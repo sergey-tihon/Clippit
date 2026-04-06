@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
@@ -21,6 +20,19 @@ internal abstract class SlidePartData<T> : IComparable<SlidePartData<T>>
 
     protected abstract string GetShapeDescriptor(T part);
 
+    /// <summary>
+    /// Normalize an XElement for shape comparison.
+    /// Deep-clones <paramref name="element"/>, strips noise attributes, scales dimensions,
+    /// and returns the canonical XML string. The original element is not modified.
+    /// </summary>
+    protected string NormalizeXml(XElement element)
+    {
+        var clone = new XElement(element);
+        CleanUpAttributes(clone);
+        ScaleShapes(clone, ScaleFactor);
+        return clone.ToString();
+    }
+
     public virtual int CompareTo(SlidePartData<T> other)
     {
         if (ReferenceEquals(this, other))
@@ -28,14 +40,6 @@ internal abstract class SlidePartData<T> : IComparable<SlidePartData<T>>
         if (other is null)
             return 1;
         return string.Compare(ShapeXml, other.ShapeXml, StringComparison.Ordinal);
-    }
-
-    protected string NormalizeXml(string xml)
-    {
-        var doc = XDocument.Parse(xml);
-        CleanUpAttributes(doc.Root);
-        ScaleShapes(doc, ScaleFactor);
-        return doc.ToString();
     }
 
     private static readonly XNamespace s_relNs = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
@@ -78,12 +82,12 @@ internal abstract class SlidePartData<T> : IComparable<SlidePartData<T>>
         { A.tr, ["h"] }, // <a:tr h="229849">
     };
 
-    public static void ScaleShapes(XDocument openXmlPart, double scale)
+    public static void ScaleShapes(XElement root, double scale)
     {
         if (Math.Abs(scale - 1.0) < 1.0e-5)
             return;
 
-        foreach (var element in openXmlPart.Descendants())
+        foreach (var element in root.DescendantsAndSelf())
         {
             if (!s_resizableAttributes.TryGetValue(element.Name, out var attrNames))
                 continue;
@@ -101,6 +105,9 @@ internal abstract class SlidePartData<T> : IComparable<SlidePartData<T>>
             }
         }
     }
+
+    /// <summary>Overload for callers that hold an XDocument (scales the root element).</summary>
+    public static void ScaleShapes(XDocument openXmlPart, double scale) => ScaleShapes(openXmlPart.Root!, scale);
 }
 
 // This class is used to prevent duplication of layouts and handle content modification
@@ -109,12 +116,11 @@ internal class SlideLayoutData(SlideLayoutPart slideLayout, double scaleFactor)
 {
     protected override string GetShapeDescriptor(SlideLayoutPart slideLayout)
     {
-        var sb = new StringBuilder();
-        var cSld = slideLayout.SlideLayout.CommonSlideData;
-        sb.Append(NormalizeXml(cSld.ShapeTree.OuterXml));
-        if (cSld.Background is not null)
-            sb.Append(NormalizeXml(cSld.Background.OuterXml));
-        return sb.ToString();
+        var root = slideLayout.GetXDocument().Root!;
+        var cSld = root.Element(P.cSld)!;
+        var normalizedSpTree = NormalizeXml(cSld.Element(P.spTree)!);
+        var normalizedBg = cSld.Element(P.bg) is { } bg ? NormalizeXml(bg) : null;
+        return string.Concat(normalizedSpTree, normalizedBg);
     }
 }
 
@@ -122,7 +128,7 @@ internal class SlideLayoutData(SlideLayoutPart slideLayout, double scaleFactor)
 internal class ThemeData(ThemePart themePart, double scaleFactor) : SlidePartData<ThemePart>(themePart, scaleFactor)
 {
     protected override string GetShapeDescriptor(ThemePart themePart) =>
-        NormalizeXml(themePart.Theme.ThemeElements.OuterXml);
+        NormalizeXml(themePart.GetXDocument().Root!.Element(A.themeElements)!);
 }
 
 // This class is used to prevent duplication of masters and handle content modification
@@ -134,14 +140,12 @@ internal class SlideMasterData(SlideMasterPart slideMaster, double scaleFactor)
 
     protected override string GetShapeDescriptor(SlideMasterPart slideMaster)
     {
-        var sb = new StringBuilder();
-        var cSld = slideMaster.SlideMaster.CommonSlideData;
-        sb.Append(NormalizeXml(cSld.ShapeTree.OuterXml));
-        if (cSld.Background is not null)
-            sb.Append(NormalizeXml(cSld.Background.OuterXml));
-
-        sb.Append(NormalizeXml(slideMaster.SlideMaster.ColorMap.OuterXml));
-        return sb.ToString();
+        var root = slideMaster.GetXDocument().Root!;
+        var cSld = root.Element(P.cSld)!;
+        var normalizedSpTree = NormalizeXml(cSld.Element(P.spTree)!);
+        var normalizedClrMap = NormalizeXml(root.Element(P.clrMap)!);
+        var normalizedBg = cSld.Element(P.bg) is { } bg ? NormalizeXml(bg) : null;
+        return string.Concat(normalizedSpTree, normalizedBg, normalizedClrMap);
     }
 
     public override int CompareTo(SlidePartData<SlideMasterPart> other)
