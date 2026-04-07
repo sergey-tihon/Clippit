@@ -378,9 +378,7 @@ namespace Clippit.Excel
                         partXmlWriter.WriteValue(rId2);
                         var tXDoc = tdp.GetXDocument();
 
-                        var tableCount = sDoc.WorkbookPart!.WorksheetParts.Sum(wp =>
-                            wp.TableDefinitionParts.Count()
-                        );
+                        var tableCount = sDoc.WorkbookPart!.WorksheetParts.Sum(wp => wp.TableDefinitionParts.Count());
 
                         var table = new XElement(
                             S.table,
