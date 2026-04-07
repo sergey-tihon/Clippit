@@ -32,8 +32,7 @@ namespace Clippit
             if (stream.CanSeek)
                 stream.SetLength(stream.Length);
 
-            using var hashAlgo = System.Security.Cryptography.SHA256.Create();
-            return hashAlgo.ComputeHash(stream);
+            return System.Security.Cryptography.SHA256.HashData(stream);
         }
     }
 
