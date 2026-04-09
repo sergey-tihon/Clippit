@@ -152,13 +152,16 @@ public class ListItemTextRuRuTests
         await Assert.That(result).IsEqualTo(expected);
     }
 
-    // ordinalText: exact thousands 1000–9000
+    // ordinalText: exact thousands 1000–19000
     [Test]
     [Arguments(1000, "Тысячный")]
     [Arguments(2000, "Двухтысячный")]
     [Arguments(3000, "Трёхтысячный")]
     [Arguments(5000, "Пятитысячный")]
     [Arguments(9000, "Девятитысячный")]
+    [Arguments(10000, "Десятитысячный")]
+    [Arguments(11000, "Одиннадцатитысячный")]
+    [Arguments(19000, "Девятнадцатитысячный")]
     public async Task LRU012_OrdinalText_ExactThousands(int number, string expected)
     {
         var result = ListItemTextGetter_ru_RU.GetListItemText("ru-RU", number, "ordinalText");
