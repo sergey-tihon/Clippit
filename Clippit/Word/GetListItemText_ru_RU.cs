@@ -28,9 +28,10 @@ namespace Clippit.Word
             "девятнадцать",
         };
 
+        // Tens for 20–90 (index 0 = двадцать, index 7 = девяносто).
+        // Used with x = z/10 where z ∈ [20,99]: Tens[x - 2].
         private static readonly string[] Tens =
         {
-            "десять",
             "двадцать",
             "тридцать",
             "сорок",
@@ -39,6 +40,21 @@ namespace Clippit.Word
             "семьдесят",
             "восемьдесят",
             "девяносто",
+        };
+
+        // Hundreds for 100–900 (index 0 = сто, index 8 = девятьсот).
+        // Used with h1 ∈ [1,9]: Hundreds[h1 - 1].
+        private static readonly string[] Hundreds =
+        {
+            "сто",
+            "двести",
+            "триста",
+            "четыреста",
+            "пятьсот",
+            "шестьсот",
+            "семьсот",
+            "восемьсот",
+            "девятьсот",
         };
 
         private static readonly string[] OrdinalOneThroughNineteen =
@@ -64,9 +80,10 @@ namespace Clippit.Word
             "девятнадцатый",
         };
 
-        private static readonly string[] OrdinalTenths =
+        // Ordinal tens for 20th–90th (index 0 = двадцатый, index 7 = девяностый).
+        // Used with x = z/10 where z ∈ [20,99] and z%10 == 0: OrdinalTens[x - 2].
+        private static readonly string[] OrdinalTens =
         {
-            "десятый",
             "двадцатый",
             "тридцатый",
             "сороковой",
@@ -77,7 +94,44 @@ namespace Clippit.Word
             "девяностый",
         };
 
-        // TODO this is not correct for values above 99
+        // Ordinal hundreds for 100th–900th (index 0 = сотый, index 8 = девятисотый).
+        // Used with h1 ∈ [1,9]: OrdinalHundreds[h1 - 1].
+        private static readonly string[] OrdinalHundreds =
+        {
+            "сотый",
+            "двухсотый",
+            "трёхсотый",
+            "четырёхсотый",
+            "пятисотый",
+            "шестисотый",
+            "семисотый",
+            "восьмисотый",
+            "девятисотый",
+        };
+
+        private static string CardinalThousands(int t1) =>
+            t1 switch
+            {
+                1 => "одна тысяча",
+                2 => "две тысячи",
+                3 or 4 => OneThroughNineteen[t1 - 1] + " тысячи",
+                _ => OneThroughNineteen[t1 - 1] + " тысяч",
+            };
+
+        private static string OrdinalThousands(int t1) =>
+            t1 switch
+            {
+                1 => "тысячный",
+                2 => "двухтысячный",
+                3 => "трёхтысячный",
+                4 => "четырёхтысячный",
+                5 => "пятитысячный",
+                6 => "шеститысячный",
+                7 => "семитысячный",
+                8 => "восьмитысячный",
+                9 => "девятитысячный",
+                _ => OneThroughNineteen[t1 - 1] + "тысячный",
+            };
 
         public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
         {
@@ -87,7 +141,7 @@ namespace Clippit.Word
                 var t1 = levelNumber / 1000;
                 var t2 = levelNumber % 1000;
                 if (t1 >= 1)
-                    result += OneThroughNineteen[t1 - 1] + " thousand";
+                    result += CardinalThousands(t1);
                 if (t1 >= 1 && t2 == 0)
                     return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 if (t1 >= 1)
@@ -95,7 +149,7 @@ namespace Clippit.Word
                 var h1 = (levelNumber % 1000) / 100;
                 var h2 = levelNumber % 100;
                 if (h1 >= 1)
-                    result += OneThroughNineteen[h1 - 1] + " hundred";
+                    result += Hundreds[h1 - 1];
                 if (h1 >= 1 && h2 == 0)
                     return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 if (h1 >= 1)
@@ -107,9 +161,9 @@ namespace Clippit.Word
                 {
                     var x = z / 10;
                     var r = z % 10;
-                    result += Tens[x - 1];
+                    result += Tens[x - 2];
                     if (r >= 1)
-                        result += "-" + OneThroughNineteen[r - 1];
+                        result += " " + OneThroughNineteen[r - 1];
                 }
                 return result.Substring(0, 1).ToUpper() + result.Substring(1);
             }
@@ -119,10 +173,10 @@ namespace Clippit.Word
                 var t1 = levelNumber / 1000;
                 var t2 = levelNumber % 1000;
                 if (t1 >= 1 && t2 != 0)
-                    result += OneThroughNineteen[t1 - 1] + " thousand";
+                    result += CardinalThousands(t1);
                 if (t1 >= 1 && t2 == 0)
                 {
-                    result += OneThroughNineteen[t1 - 1] + " thousandth";
+                    result += OrdinalThousands(t1);
                     return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
                 if (t1 >= 1)
@@ -130,10 +184,10 @@ namespace Clippit.Word
                 var h1 = (levelNumber % 1000) / 100;
                 var h2 = levelNumber % 100;
                 if (h1 >= 1 && h2 != 0)
-                    result += OneThroughNineteen[h1 - 1] + " hundred";
+                    result += Hundreds[h1 - 1];
                 if (h1 >= 1 && h2 == 0)
                 {
-                    result += OneThroughNineteen[h1 - 1] + " hundredth";
+                    result += OrdinalHundreds[h1 - 1];
                     return result.Substring(0, 1).ToUpper() + result.Substring(1);
                 }
                 if (h1 >= 1)
@@ -146,9 +200,9 @@ namespace Clippit.Word
                     var x = z / 10;
                     var r = z % 10;
                     if (r == 0)
-                        result += OrdinalTenths[x - 1];
+                        result += OrdinalTens[x - 2];
                     else
-                        result += Tens[x - 1];
+                        result += Tens[x - 2];
                     if (r >= 1)
                         result += " " + OrdinalOneThroughNineteen[r - 1];
                 }
