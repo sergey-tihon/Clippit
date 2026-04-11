@@ -36,7 +36,7 @@
 #
 # Source: githubnext/agentics/workflows/repo-assist.md@1f672aef974f4246124860fc532f82fe8a93a57e
 #
-# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"ad0ee77cf9a22b19618937e0d1aa78521a65229b915f4613d2ce20c0e63cb2ac","compiler_version":"v0.57.2","strict":true}
+# gh-aw-metadata: {"schema_version":"v2","frontmatter_hash":"81b8a2912bb775357965baef39b0fb167c081b11e9173a70c45f8dad8d4671bf","compiler_version":"v0.57.2","strict":true}
 
 name: "Clippy"
 "on":
