@@ -2,7 +2,7 @@
 
 namespace Clippit.Excel.Builder
 {
-    public static class Cell
+    public static partial class Cell
     {
         public static CellDfn[] Headers(params string[] headers) =>
             headers.Select(value => String(value, true)).ToArray();
@@ -37,17 +37,15 @@ namespace Clippit.Excel.Builder
         // From xml spec valid chars:
         // #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]
         // any Unicode character, excluding the surrogate blocks, FFFE, and FFFF.
-        private static readonly Regex s_xmlInvalidSymbolsRegex = new(
-            @"[^\x09\x0A\x0D\x20-\xD7FF\xE000-\xFFFD\x10000-x10FFFF]",
-            RegexOptions.Compiled
-        );
+        [GeneratedRegex(@"[^\x09\x0A\x0D\x20-\xD7FF\uD800-\uDFFF\xE000-\xFFFD]")]
+        private static partial Regex XmlInvalidSymbolsRegex();
 
         private static string RemoveForbiddenChars(string strInput)
         {
             if (string.IsNullOrWhiteSpace(strInput))
                 return strInput;
 
-            return s_xmlInvalidSymbolsRegex.Replace(strInput, string.Empty);
+            return XmlInvalidSymbolsRegex().Replace(strInput, string.Empty);
         }
     }
 }
