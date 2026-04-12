@@ -196,6 +196,8 @@ public class ListItemTextDefaultTests
     }
 
     // ── bullet ───────────────────────────────────────────────────────────────
+    // For "bullet" numFmt the actual bullet character is defined by <w:lvlText>,
+    // not by the counter; GetListItemText therefore returns "" for this format.
 
     [Test]
     public async Task LDef012_Bullet_ReturnsEmpty()
