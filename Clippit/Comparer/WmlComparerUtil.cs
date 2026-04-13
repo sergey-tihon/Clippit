@@ -9,7 +9,8 @@ namespace Clippit
     internal static class WmlComparerUtil
     {
         // Maximum UTF-8 byte count for which we use stackalloc to avoid heap allocations
-        // for the input buffer. 4096 bytes covers strings up to ~1365 UTF-8 characters.
+        // for the input buffer. In the worst case, 4096 bytes is only about 1024 UTF-8
+        // characters, and the actual stackalloc check uses Encoding.UTF8.GetMaxByteCount.
         private const int MaxStackallocUtf8Bytes = 4096;
 
         public static string HexStringFromBytes(byte[] bytes) =>
