@@ -159,6 +159,18 @@ public class ListItemTextDefaultTests
         await Assert.That(result).IsEqualTo(expected);
     }
 
+    [Test]
+    [Arguments(0, "0")]
+    [Arguments(-1, "-1")]
+    [Arguments(20000, "20000")]
+    [Arguments(99999, "99999")]
+    public async Task LDef009b_CardinalText_OutOfRange_FallsBackToDecimal(int number, string expected)
+    {
+        // levelNumber == 0 and levelNumber >= 20000 previously caused IndexOutOfRangeException
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", number, "cardinalText");
+        await Assert.That(result).IsEqualTo(expected);
+    }
+
     // ── ordinalText ──────────────────────────────────────────────────────────
 
     [Test]
@@ -177,6 +189,18 @@ public class ListItemTextDefaultTests
     [Arguments(2000, "Two thousandth")]
     public async Task LDef010_OrdinalText_EnglishOrdinalWords(int number, string expected)
     {
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", number, "ordinalText");
+        await Assert.That(result).IsEqualTo(expected);
+    }
+
+    [Test]
+    [Arguments(0, "0")]
+    [Arguments(-1, "-1")]
+    [Arguments(20000, "20000")]
+    [Arguments(99999, "99999")]
+    public async Task LDef010b_OrdinalText_OutOfRange_FallsBackToDecimal(int number, string expected)
+    {
+        // levelNumber == 0 and levelNumber >= 20000 previously caused IndexOutOfRangeException
         var result = ListItemTextGetter_Default.GetListItemText("en-US", number, "ordinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
