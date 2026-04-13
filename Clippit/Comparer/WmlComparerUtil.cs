@@ -36,14 +36,14 @@ namespace Clippit
                 Span<byte> hashBuffer = stackalloc byte[SHA1.HashSizeInBytes];
                 if (!SHA1.TryHashData(inputBuffer[..actualBytes], hashBuffer, out _))
                     throw new CryptographicException("SHA1.TryHashData failed unexpectedly.");
-                return HexStringFromBytes((ReadOnlySpan<byte>)hashBuffer);
+                return HexStringFromBytes(hashBuffer);
             }
 
             var utf8Bytes = Encoding.UTF8.GetBytes(s);
             Span<byte> longStringHashBuffer = stackalloc byte[SHA1.HashSizeInBytes];
             if (!SHA1.TryHashData(utf8Bytes, longStringHashBuffer, out _))
                 throw new CryptographicException("SHA1.TryHashData failed unexpectedly.");
-            return HexStringFromBytes((ReadOnlySpan<byte>)longStringHashBuffer);
+            return HexStringFromBytes(longStringHashBuffer);
         }
 
         public static string SHA1HashStringForByteArray(byte[] bytes)
@@ -51,7 +51,7 @@ namespace Clippit
             Span<byte> hashBuffer = stackalloc byte[SHA1.HashSizeInBytes];
             if (!SHA1.TryHashData(bytes, hashBuffer, out _))
                 throw new CryptographicException("SHA1.TryHashData failed unexpectedly.");
-            return HexStringFromBytes((ReadOnlySpan<byte>)hashBuffer);
+            return HexStringFromBytes(hashBuffer);
         }
 
         public static ComparisonUnitGroupType ComparisonUnitGroupTypeFromLocalName(string localName) =>
