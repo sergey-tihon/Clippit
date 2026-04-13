@@ -13,7 +13,9 @@ namespace Clippit
         // characters, and the actual stackalloc check uses Encoding.UTF8.GetMaxByteCount.
         private const int MaxStackallocUtf8Bytes = 4096;
 
-        public static string HexStringFromBytes(byte[] bytes) =>
+        public static string HexStringFromBytes(byte[] bytes) => HexStringFromBytes((ReadOnlySpan<byte>)bytes);
+
+        public static string HexStringFromBytes(ReadOnlySpan<byte> bytes) =>
 #if NET9_0_OR_GREATER
             Convert.ToHexStringLower(bytes);
 #else
@@ -34,22 +36,14 @@ namespace Clippit
                 Span<byte> hashBuffer = stackalloc byte[SHA1.HashSizeInBytes];
                 if (!SHA1.TryHashData(inputBuffer[..actualBytes], hashBuffer, out _))
                     throw new CryptographicException("SHA1.TryHashData failed unexpectedly.");
-#if NET9_0_OR_GREATER
-                return Convert.ToHexStringLower(hashBuffer);
-#else
-                return Convert.ToHexString(hashBuffer).ToLowerInvariant();
-#endif
+                return HexStringFromBytes((ReadOnlySpan<byte>)hashBuffer);
             }
 
             var utf8Bytes = Encoding.UTF8.GetBytes(s);
             Span<byte> longStringHashBuffer = stackalloc byte[SHA1.HashSizeInBytes];
             if (!SHA1.TryHashData(utf8Bytes, longStringHashBuffer, out _))
                 throw new CryptographicException("SHA1.TryHashData failed unexpectedly.");
-#if NET9_0_OR_GREATER
-            return Convert.ToHexStringLower(longStringHashBuffer);
-#else
-            return Convert.ToHexString(longStringHashBuffer).ToLowerInvariant();
-#endif
+            return HexStringFromBytes((ReadOnlySpan<byte>)longStringHashBuffer);
         }
 
         public static string SHA1HashStringForByteArray(byte[] bytes)
@@ -57,11 +51,7 @@ namespace Clippit
             Span<byte> hashBuffer = stackalloc byte[SHA1.HashSizeInBytes];
             if (!SHA1.TryHashData(bytes, hashBuffer, out _))
                 throw new CryptographicException("SHA1.TryHashData failed unexpectedly.");
-#if NET9_0_OR_GREATER
-            return Convert.ToHexStringLower(hashBuffer);
-#else
-            return Convert.ToHexString(hashBuffer).ToLowerInvariant();
-#endif
+            return HexStringFromBytes((ReadOnlySpan<byte>)hashBuffer);
         }
 
         public static ComparisonUnitGroupType ComparisonUnitGroupTypeFromLocalName(string localName) =>
