@@ -52,7 +52,7 @@ namespace Clippit
 
         public static string SHA1HashStringForByteArray(byte[] bytes)
         {
-            System.ArgumentNullException.ThrowIfNull(bytes);
+            ArgumentNullException.ThrowIfNull(bytes);
             Span<byte> hashBuffer = stackalloc byte[SHA1.HashSizeInBytes];
             if (!SHA1.TryHashData(bytes, hashBuffer, out _))
                 throw new CryptographicException("SHA1.TryHashData failed unexpectedly.");
