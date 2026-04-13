@@ -8,6 +8,10 @@ namespace Clippit
 {
     internal static class WmlComparerUtil
     {
+        // Maximum UTF-8 byte count for which we use stackalloc to avoid heap allocations
+        // for the input buffer. 4096 bytes covers strings up to ~1365 UTF-8 characters.
+        private const int MaxStackallocUtf8Bytes = 4096;
+
         public static string HexStringFromBytes(byte[] bytes) =>
 #if NET9_0_OR_GREATER
             Convert.ToHexStringLower(bytes);
@@ -16,30 +20,42 @@ namespace Clippit
 #endif
 
         // Hot path in WmlComparer: called for every comparison unit atom.
-        // Uses stackalloc for both the UTF-8 byte buffer and the 20-byte SHA-1 output
-        // to avoid heap allocations for the common case of short strings.
+        // Uses stackalloc for both the UTF-8 input buffer and the 20-byte SHA-1 output buffer
+        // to avoid heap-allocating those temporary byte[] buffers for the common case of
+        // short strings. The returned hex string is still allocated.
         public static string SHA1HashStringForUTF8String(string s)
         {
             var maxByteCount = Encoding.UTF8.GetMaxByteCount(s.Length);
-            if (maxByteCount <= 4096)
+            if (maxByteCount <= MaxStackallocUtf8Bytes)
             {
                 Span<byte> inputBuffer = stackalloc byte[maxByteCount];
                 var actualBytes = Encoding.UTF8.GetBytes(s, inputBuffer);
                 Span<byte> hashBuffer = stackalloc byte[SHA1.HashSizeInBytes];
-                SHA1.TryHashData(inputBuffer[..actualBytes], hashBuffer, out _);
+                if (!SHA1.TryHashData(inputBuffer[..actualBytes], hashBuffer, out _))
+                    throw new CryptographicException("SHA1.TryHashData failed unexpectedly.");
 #if NET9_0_OR_GREATER
                 return Convert.ToHexStringLower(hashBuffer);
 #else
                 return Convert.ToHexString(hashBuffer).ToLowerInvariant();
 #endif
             }
-            return HexStringFromBytes(SHA1.HashData(Encoding.UTF8.GetBytes(s)));
+
+            var utf8Bytes = Encoding.UTF8.GetBytes(s);
+            Span<byte> longStringHashBuffer = stackalloc byte[SHA1.HashSizeInBytes];
+            if (!SHA1.TryHashData(utf8Bytes, longStringHashBuffer, out _))
+                throw new CryptographicException("SHA1.TryHashData failed unexpectedly.");
+#if NET9_0_OR_GREATER
+            return Convert.ToHexStringLower(longStringHashBuffer);
+#else
+            return Convert.ToHexString(longStringHashBuffer).ToLowerInvariant();
+#endif
         }
 
         public static string SHA1HashStringForByteArray(byte[] bytes)
         {
             Span<byte> hashBuffer = stackalloc byte[SHA1.HashSizeInBytes];
-            SHA1.TryHashData(bytes, hashBuffer, out _);
+            if (!SHA1.TryHashData(bytes, hashBuffer, out _))
+                throw new CryptographicException("SHA1.TryHashData failed unexpectedly.");
 #if NET9_0_OR_GREATER
             return Convert.ToHexStringLower(hashBuffer);
 #else
