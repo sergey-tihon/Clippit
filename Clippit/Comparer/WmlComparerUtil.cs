@@ -13,7 +13,11 @@ namespace Clippit
         // characters, and the actual stackalloc check uses Encoding.UTF8.GetMaxByteCount.
         private const int MaxStackallocUtf8Bytes = 4096;
 
-        public static string HexStringFromBytes(byte[] bytes) => HexStringFromBytes((ReadOnlySpan<byte>)bytes);
+        public static string HexStringFromBytes(byte[] bytes)
+        {
+            ArgumentNullException.ThrowIfNull(bytes);
+            return HexStringFromBytes((ReadOnlySpan<byte>)bytes);
+        }
 
         public static string HexStringFromBytes(ReadOnlySpan<byte> bytes) =>
 #if NET9_0_OR_GREATER
@@ -48,6 +52,7 @@ namespace Clippit
 
         public static string SHA1HashStringForByteArray(byte[] bytes)
         {
+            System.ArgumentNullException.ThrowIfNull(bytes);
             Span<byte> hashBuffer = stackalloc byte[SHA1.HashSizeInBytes];
             if (!SHA1.TryHashData(bytes, hashBuffer, out _))
                 throw new CryptographicException("SHA1.TryHashData failed unexpectedly.");
