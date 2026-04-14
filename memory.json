@@ -1,6 +1,6 @@
 {
-  "lr": "2026-04-13",
-  "rid": "24345689068",
+  "lr": "2026-04-14",
+  "rid": "24401363870",
   "m_issue": 170,
   "m_month": "2026-04",
   "comments": {
@@ -19,10 +19,9 @@
     "165": "ExcelAssembler",
     "166": "html textboxes",
     "180": "html floating tables",
-    "perf-sha1-stackalloc": "perf(comparer): reduce heap allocations in WmlComparerUtil SHA-1 hashing (branch: clippy/perf-wmlcomparer-sha1-stackalloc-20260413)",
-    "fix-listitemtext-bounds": "fix(word): guard cardinalText/ordinalText against out-of-range levelNumber (branch: clippy/fix-listitemtext-bounds-20260413)"
+    "fix-tr-TR-bounds": "fix(word): guard cardinalText/ordinalText OOB in ListItemTextGetter_tr_TR (branch: clippy/fix-listitemtext-tr-TR-bounds-20260414)"
   },
-  "notes": "PRs 175,178,177,181,183,184,185,196,197,198 merged. PR 174 closed without merge. Issue 179 closed by maintainer. ExcelAssembler row-rep future. RelErrorRewriter not in SDK 3.5.1. All open issues have Clippy comments, no new human activity. 2026-04-13: created perf PR (stackalloc sha1) and fix PR (listitemtext bounds OOB) -- PR numbers pending workflow completion.",
+  "notes": "PRs 175,177,178,181,183,184,185,196,197,198,199,200 merged. PR 174 closed without merge. Issue 179 closed by maintainer. ExcelAssembler row-rep future. RelErrorRewriter not in SDK 3.5.1. All open issues have Clippy comments, no new human activity. 2026-04-14: created fix PR for tr_TR OOB (same bug as PR #200 for Default locale) -- PR number pending workflow completion.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0"
