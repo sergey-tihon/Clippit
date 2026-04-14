@@ -158,6 +158,8 @@ namespace Clippit.Word
             }
             if (numFmt == "cardinalText")
             {
+                if (levelNumber <= 0 || levelNumber > 19999)
+                    return levelNumber.ToString();
                 var result = "";
                 var t1 = levelNumber / 1000;
                 var t2 = levelNumber % 1000;
@@ -192,6 +194,8 @@ namespace Clippit.Word
             #endregion
             if (numFmt == "ordinalText")
             {
+                if (levelNumber <= 0 || levelNumber > 19999)
+                    return levelNumber.ToString();
                 var result = "";
                 var t1 = levelNumber / 1000;
                 var t2 = levelNumber % 1000;
