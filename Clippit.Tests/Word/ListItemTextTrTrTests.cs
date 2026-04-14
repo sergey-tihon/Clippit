@@ -24,14 +24,20 @@ public class ListItemTextTrTrTests
     }
 
     // ── cardinalText — basic values ──────────────────────────────────────────
-    // Note: only tests values whose first character ToUpper() is culture-invariant.
 
     [Test]
     [Arguments(1, "Bir")]
+    [Arguments(2, "İki")]
     [Arguments(10, "On")]
     [Arguments(19, "Ondokuz")]
     [Arguments(20, "Yirmi")]
     [Arguments(21, "Yirmibir")]
+    [Arguments(100, "Bir yüz")]
+    [Arguments(101, "Bir yüz bir")]
+    [Arguments(1000, "Bir bin")]
+    [Arguments(1001, "Bir bin bir")]
+    [Arguments(1100, "Bir bin bir yüz")]
+    [Arguments(2000, "İki bin")]
     public async Task LTrTr002_CardinalText_TypicalValues_ReturnsExpected(int number, string expected)
     {
         var result = ListItemTextGetter_tr_TR.GetListItemText("tr-TR", number, "cardinalText");
@@ -52,13 +58,19 @@ public class ListItemTextTrTrTests
     }
 
     // ── ordinalText — basic values ───────────────────────────────────────────
-    // Note: only tests values whose first character ToUpper() is culture-invariant.
 
     [Test]
     [Arguments(1, "Birinci")]
+    [Arguments(2, "İkinci")]
     [Arguments(10, "Onuncu")]
     [Arguments(19, "Ondokuzuncu")]
     [Arguments(20, "Yirminci")]
+    [Arguments(100, "Yüzüncü")]
+    [Arguments(101, "Yüzbirinci")]
+    [Arguments(1000, "Bininci")]
+    [Arguments(1001, "Binbirinci")]
+    [Arguments(1100, "Binyüzüncü")]
+    [Arguments(2000, "İkibininci")]
     public async Task LTrTr004_OrdinalText_TypicalValues_ReturnsExpected(int number, string expected)
     {
         var result = ListItemTextGetter_tr_TR.GetListItemText("tr-TR", number, "ordinalText");
