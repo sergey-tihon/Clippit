@@ -20,16 +20,12 @@ public class ListItemTextSvSeTests
     }
 
     [Test]
-    public async Task LSvSe002_CardinalText_NegativeNumber_Throws()
+    [Arguments(-1)]
+    [Arguments(-5)]
+    public async Task LSvSe002_CardinalText_NegativeNumber_Throws(int number)
     {
-        await Assert.That(() => ListItemTextGetter_sv_SE.GetListItemText("sv-SE", -1, "cardinalText"))
-            .Throws<ArgumentOutOfRangeException>();
-    }
-
-    [Test]
-    public async Task LSvSe003_CardinalText_Negative_Throws()
-    {
-        await Assert.That(() => ListItemTextGetter_sv_SE.GetListItemText("sv-SE", -5, "cardinalText"))
+        await Assert
+            .That(() => ListItemTextGetter_sv_SE.GetListItemText("sv-SE", number, "cardinalText"))
             .Throws<ArgumentOutOfRangeException>();
     }
 
@@ -81,14 +77,16 @@ public class ListItemTextSvSeTests
     [Test]
     public async Task LSvSe007_OrdinalText_Zero_Throws()
     {
-        await Assert.That(() => ListItemTextGetter_sv_SE.GetListItemText("sv-SE", 0, "ordinalText"))
+        await Assert
+            .That(() => ListItemTextGetter_sv_SE.GetListItemText("sv-SE", 0, "ordinalText"))
             .Throws<ArgumentOutOfRangeException>();
     }
 
     [Test]
     public async Task LSvSe008_OrdinalText_TooLarge_Throws()
     {
-        await Assert.That(() => ListItemTextGetter_sv_SE.GetListItemText("sv-SE", 10000, "ordinalText"))
+        await Assert
+            .That(() => ListItemTextGetter_sv_SE.GetListItemText("sv-SE", 10000, "ordinalText"))
             .Throws<ArgumentOutOfRangeException>();
     }
 
