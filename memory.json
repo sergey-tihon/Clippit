@@ -1,6 +1,6 @@
 {
   "lr": "2026-04-15",
-  "rid": "24458916009",
+  "rid": "24474081299",
   "m_issue": 170,
   "m_month": "2026-04",
   "comments": {
@@ -19,10 +19,10 @@
     "165": "ExcelAssembler",
     "166": "html textboxes",
     "180": "html floating tables",
-    "tunit-1.33": "chore(deps): update TUnit 1.32.0→1.33.0 (branch: clippy/eng-tunit-1.33.0-20260415)",
-    "locale-tests": "test(word): add unit tests for fr_FR, sv_SE, zh_CN (branch: clippy/test-locale-fr-sv-zh-20260415)"
+    "ru-out-of-range": "fix(word): guard out-of-range levelNumber in ru_RU (branch: clippy/fix-ru-RU-out-of-range-20260415)",
+    "linq-patterns": "refactor: simplify LINQ patterns (branch: clippy/improve-linq-patterns-20260415)"
   },
-  "notes": "PRs 175,177,178,181,183,184,185,196,197,198,199,200 merged. PR 174 closed without merge. Issue 179 closed. 2026-04-15: created TUnit 1.32→1.33 PR and locale tests PR (fr_FR/sv_SE/zh_CN, 128 tests). All open issues have Clippy comments. No new human activity on issues.",
+  "notes": "PRs 175,177,178,181,183,184,185,196,197,198,199,200,201,205,206 merged. PR 174 closed without merge. Issue 179 closed. 2026-04-15 run2: created fix PR for ru_RU out-of-range IndexOutOfRangeException (same pattern as tr_TR fix #201), and LINQ patterns refactor PR. All open issues have Clippy comments. No new human activity.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0"
