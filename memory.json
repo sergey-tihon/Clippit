@@ -1,6 +1,6 @@
 {
-  "lr": "2026-04-14",
-  "rid": "24401363870",
+  "lr": "2026-04-15",
+  "rid": "24458916009",
   "m_issue": 170,
   "m_month": "2026-04",
   "comments": {
@@ -19,9 +19,10 @@
     "165": "ExcelAssembler",
     "166": "html textboxes",
     "180": "html floating tables",
-    "fix-tr-TR-bounds": "fix(word): guard cardinalText/ordinalText OOB in ListItemTextGetter_tr_TR (branch: clippy/fix-listitemtext-tr-TR-bounds-20260414)"
+    "tunit-1.33": "chore(deps): update TUnit 1.32.0→1.33.0 (branch: clippy/eng-tunit-1.33.0-20260415)",
+    "locale-tests": "test(word): add unit tests for fr_FR, sv_SE, zh_CN (branch: clippy/test-locale-fr-sv-zh-20260415)"
   },
-  "notes": "PRs 175,177,178,181,183,184,185,196,197,198,199,200 merged. PR 174 closed without merge. Issue 179 closed by maintainer. ExcelAssembler row-rep future. RelErrorRewriter not in SDK 3.5.1. All open issues have Clippy comments, no new human activity. 2026-04-14: created fix PR for tr_TR OOB (same bug as PR #200 for Default locale) -- PR number pending workflow completion.",
+  "notes": "PRs 175,177,178,181,183,184,185,196,197,198,199,200 merged. PR 174 closed without merge. Issue 179 closed. 2026-04-15: created TUnit 1.32→1.33 PR and locale tests PR (fr_FR/sv_SE/zh_CN, 128 tests). All open issues have Clippy comments. No new human activity on issues.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0"
