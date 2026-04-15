@@ -3395,7 +3395,7 @@ namespace Clippit.Html
                 new XElement(W.bottom, GetBorderAttributes(element, "bottom")),
                 new XElement(W.right, GetBorderAttributes(element, "right"))
             );
-            if (borders.Elements().Attributes(W.val).Where(v => (string)v == "none").Count() == 4)
+            if (borders.Elements().Attributes(W.val).Count(v => (string)v == "none") == 4)
                 return null;
             return borders;
         }
