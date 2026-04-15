@@ -145,6 +145,9 @@ namespace Clippit.Word
 
         public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
         {
+            if (levelNumber <= 0 || levelNumber > 19999)
+                return levelNumber.ToString();
+
             if (numFmt == "cardinalText")
             {
                 var result = "";
