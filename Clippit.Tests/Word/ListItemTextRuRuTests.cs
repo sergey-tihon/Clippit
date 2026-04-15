@@ -7,6 +7,38 @@ namespace Clippit.Tests.Word;
 
 public class ListItemTextRuRuTests
 {
+    // out-of-range guard — falls back to decimal string
+    [Test]
+    [Arguments(0, "0")]
+    [Arguments(-1, "-1")]
+    [Arguments(20000, "20000")]
+    [Arguments(99999, "99999")]
+    public async Task LRU000_OutOfRange_FallsBackToDecimal_CardinalText(int number, string expected)
+    {
+        var result = ListItemTextGetter_ru_RU.GetListItemText("ru-RU", number, "cardinalText");
+        await Assert.That(result).IsEqualTo(expected);
+    }
+
+    [Test]
+    [Arguments(0, "0")]
+    [Arguments(-1, "-1")]
+    [Arguments(20000, "20000")]
+    public async Task LRU000b_OutOfRange_FallsBackToDecimal_OrdinalText(int number, string expected)
+    {
+        var result = ListItemTextGetter_ru_RU.GetListItemText("ru-RU", number, "ordinalText");
+        await Assert.That(result).IsEqualTo(expected);
+    }
+
+    [Test]
+    [Arguments(0)]
+    [Arguments(-1)]
+    [Arguments(20000)]
+    public async Task LRU000c_OutOfRange_UnsupportedNumFmt_ReturnsNull(int number)
+    {
+        var result = ListItemTextGetter_ru_RU.GetListItemText("ru-RU", number, "unsupportedFormat");
+        await Assert.That(result).IsNull();
+    }
+
     // cardinalText: 1–19 (OneThroughNineteen)
     [Test]
     [Arguments(1, "Один")]
