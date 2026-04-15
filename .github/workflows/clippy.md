@@ -79,7 +79,7 @@ tools:
   web-fetch:
   github:
     toolsets: [all]
-    repos: all
+    allowed-repos: all
     min-integrity: none # This workflow is allowed to examine and comment on any issues or PRs
   bash: true
   repo-memory: true
