@@ -626,7 +626,7 @@ namespace Clippit
             // must be revisited.
             // TODO: Revisit.
             var runText =
-                string.Concat(r.DescendantsTrimmed(W.txbxContent).Where(e => e.Name == W.t).Select(t => (string)t))
+                r.DescendantsTrimmed(W.txbxContent).Where(e => e.Name == W.t).Select(t => (string)t).StringConcatenate()
                 + " ";
 
             if (runText.Length == 0 && tabLength == 0)
@@ -771,12 +771,11 @@ namespace Clippit
                                        dateInsString +
                                        authorDel +
                                        dateDelString +
-                                       string.Concat(
-                                           ce.Elements(W.del)
-                                               .Elements(W.r)
-                                               .Elements(W.rPr)
-                                               .Select(rPr => rPr.ToString(SaveOptions.None))
-                                       );
+                                       ce.Elements(W.del)
+                                           .Elements(W.r)
+                                           .Elements(W.rPr)
+                                           .Select(rPr => rPr.ToString(SaveOptions.None))
+                                           .StringConcatenate();
 #endif
                         }
 
@@ -798,9 +797,10 @@ namespace Clippit
                             + authorIns2
                             + dateInsString2
                             + idIns2
-                            + string.Concat(
-                                ce.Elements().Elements(W.rPr).Select(rPr => rPr.ToString(SaveOptions.None))
-                            );
+                            + ce.Elements()
+                                .Elements(W.rPr)
+                                .Select(rPr => rPr.ToString(SaveOptions.None))
+                                .StringConcatenate();
                     }
 
                     if (ce.Name == W.del)
@@ -819,9 +819,10 @@ namespace Clippit
                         return "Wdel"
                             + authorDel2
                             + dateDelString2
-                            + string.Concat(
-                                ce.Elements(W.r).Elements(W.rPr).Select(rPr => rPr.ToString(SaveOptions.None))
-                            );
+                            + ce.Elements(W.r)
+                                .Elements(W.rPr)
+                                .Select(rPr => rPr.ToString(SaveOptions.None))
+                                .StringConcatenate();
                     }
 
                     return dontConsolidate;
@@ -835,15 +836,13 @@ namespace Clippit
                     if (g.Key == dontConsolidate)
                         return (object)g;
 
-                    var textValue = string.Concat(
-                        g.Select(r =>
-                            string.Concat(
-                                r.Descendants()
-                                    .Where(d => (d.Name == W.t) || (d.Name == W.delText) || (d.Name == W.instrText))
-                                    .Select(d => d.Value)
-                            )
+                    var textValue = g.Select(r =>
+                            r.Descendants()
+                                .Where(d => (d.Name == W.t) || (d.Name == W.delText) || (d.Name == W.instrText))
+                                .Select(d => d.Value)
+                                .StringConcatenate()
                         )
-                    );
+                        .StringConcatenate();
                     var xs = XmlUtil.GetXmlSpaceAttribute(textValue);
 
                     if (g.First().Name == W.r)

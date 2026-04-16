@@ -24,7 +24,9 @@ namespace Clippit
 
         public static string MakeValidXml(string p)
         {
-            return p.Any(c => c < 0x20) ? string.Concat(p.Select(c => c < 0x20 ? $"_{(int)c:X}_" : c.ToString())) : p;
+            return p.Any(c => c < 0x20)
+                ? p.Select(c => c < 0x20 ? $"_{(int)c:X}_" : c.ToString()).StringConcatenate()
+                : p;
         }
 
         public static void AddElementIfMissing(XDocument partXDoc, XElement existing, string newElement)
@@ -145,9 +147,10 @@ namespace Clippit
 
                     var blankLinesAtBeginning = rp.Skip(partPriamble.Length).TakeWhile(l => l == "").Count();
 
-                    var partText = string.Concat(
-                        rp.Skip(partPriamble.Length).Skip(blankLinesAtBeginning).Select(l => l + Environment.NewLine)
-                    );
+                    var partText = rp.Skip(partPriamble.Length)
+                        .Skip(blankLinesAtBeginning)
+                        .Select(l => l + Environment.NewLine)
+                        .StringConcatenate();
 
                     if (partContentType != null && partContentType.Contains(";"))
                     {
@@ -498,10 +501,11 @@ namespace Clippit
             return xmlDoc;
         }
 
-        public static string StringConcatenate(this IEnumerable<string> source) => string.Concat(source);
+        public static string StringConcatenate(this IEnumerable<string> source) =>
+            source.Aggregate(new StringBuilder(), (sb, s) => sb.Append(s), sb => sb.ToString());
 
         public static string StringConcatenate<T>(this IEnumerable<T> source, Func<T, string> projectionFunc) =>
-            string.Concat(source.Select(projectionFunc));
+            source.Aggregate(new StringBuilder(), (sb, i) => sb.Append(projectionFunc(i)), sb => sb.ToString());
 
         public static IEnumerable<TResult> PtZip<TFirst, TSecond, TResult>(
             this IEnumerable<TFirst> first,
