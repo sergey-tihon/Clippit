@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
   "metadata": [
     {
       "src": [
@@ -55,6 +56,7 @@
     "dest": "_site",
     "globalMetadata": {
       "_appTitle": "Clippit",
+      "_appName": "Clippit",
       "_enableSearch": true,
       "_appLogoPath": "images/logo-site.png",
       "_appFaviconPath": "images/logo-site.png",
@@ -72,7 +74,9 @@
       "default",
       "modern"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "ExtractSearchIndex"
+    ],
     "markdownEngineName": "markdig",
     "noLangKeyword": false,
     "keepFileLink": false,
