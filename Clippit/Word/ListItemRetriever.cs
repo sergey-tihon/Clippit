@@ -1106,7 +1106,7 @@ namespace Clippit.Word
                         return levelText;
                     }
                 )
-                .Aggregate(string.Empty, (acc, s) => acc + s);
+                .StringConcatenate();
             return listItem;
         }
 

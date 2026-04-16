@@ -482,9 +482,7 @@ public class HtmlToWmlConverterTests : TestsBase
                 document.MainDocumentPart.PutXDocumentWithFormatting();
                 var validator = new OpenXmlValidator();
                 var errors = validator.Validate(document);
-                var errorsString = errors
-                    .Select(e => e.Description + Environment.NewLine)
-                    .Aggregate(string.Empty, (acc, s) => acc + s);
+                var errorsString = errors.Select(e => e.Description + Environment.NewLine).StringConcatenate();
                 // Assert that there were no errors in the generated document.
                 await Assert.That(errorsString).IsEqualTo("");
             }

@@ -343,7 +343,7 @@ namespace Clippit
                             {
                                 var revisorList = urList
                                     .Select(ur => ur.Revisor + " : ")
-                                    .Aggregate(string.Empty, (acc, s) => acc + s)
+                                    .StringConcatenate()
                                     .TrimEnd(' ', ':');
                                 sb.Append("Revisors: " + revisorList + NewLine);
                                 var str = RevisionToLogFormTransform(urList.First().RevisionElement, 0, false);
@@ -440,7 +440,7 @@ namespace Clippit
                                 foreach (var urList in uniqueRevisions)
                                 {
                                     var revisorList =
- urList.Select(ur => ur.Revisor + " : ").Aggregate(string.Empty, (acc, s) => acc + s).TrimEnd(' ', ':');
+ urList.Select(ur => ur.Revisor + " : ").StringConcatenate().TrimEnd(' ', ':');
                                     sb.Append("Revisors: " + revisorList + nl);
                                     var str = RevisionToLogFormTransform(urList.First().RevisionElement, 0, false);
                                     sb.Append(str);
@@ -621,14 +621,14 @@ namespace Clippit
                     + element
                         .Elements()
                         .Select(e => RevisionToLogFormTransform(e, depth + 2, false))
-                        .Aggregate(string.Empty, (acc, s) => acc + s);
+                        .StringConcatenate();
             if (element.Name == W.pPr || element.Name == W.rPr)
                 return "";
             if (element.Name == W.r)
                 return element
                     .Elements()
                     .Select(e => RevisionToLogFormTransform(e, depth, inserting))
-                    .Aggregate(string.Empty, (acc, s) => acc + s);
+                    .StringConcatenate();
 
             if (element.Name == W.t)
             {
@@ -641,15 +641,9 @@ namespace Clippit
             if (element.Name == W.delText)
                 return "".PadRight(depth) + "Deleted Text:" + QuoteIt((string)element) + NewLine;
             if (element.Name == W.ins)
-                return element
-                    .Elements()
-                    .Select(e => RevisionToLogFormTransform(e, depth, true))
-                    .Aggregate(string.Empty, (acc, s) => acc + s);
+                return element.Elements().Select(e => RevisionToLogFormTransform(e, depth, true)).StringConcatenate();
             if (element.Name == W.del)
-                return element
-                    .Elements()
-                    .Select(e => RevisionToLogFormTransform(e, depth, false))
-                    .Aggregate(string.Empty, (acc, s) => acc + s);
+                return element.Elements().Select(e => RevisionToLogFormTransform(e, depth, false)).StringConcatenate();
 
             return "";
         }

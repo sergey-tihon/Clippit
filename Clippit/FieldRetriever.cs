@@ -61,7 +61,7 @@ namespace Clippit
                                     return e.Value;
                                 return "";
                             })
-                            .Aggregate(string.Empty, (acc, s) => acc + s);
+                            .StringConcatenate();
                     }
                     else
                     {
@@ -72,7 +72,7 @@ namespace Clippit
                         return InstrText(root, subFieldId);
                     }
                 })
-                .Aggregate(string.Empty, (acc, s) => acc + s);
+                .StringConcatenate();
 
             return "{" + instrText + "}";
         }

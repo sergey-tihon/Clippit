@@ -56,7 +56,7 @@ namespace Clippit
         public static string RunToString(XElement element)
         {
             if (element.Name == W.r && (element.Parent == null || element.Parent.Name != W.del))
-                return element.Elements().Select(RunToString).Aggregate(string.Empty, (acc, s) => acc + s);
+                return element.Elements().Select(RunToString).StringConcatenate();
 
             // We need to ignore run properties.
             if (element.Name == W.rPr)
@@ -258,10 +258,7 @@ namespace Clippit
                 .GroupAdjacent(e => e.Name == W.t)
                 .SelectMany(grouping =>
                     grouping.Key
-                        ? StringToSingleRunList(
-                            grouping.Select(t => (string)t).Aggregate(string.Empty, (acc, s) => acc + s),
-                            runProperties
-                        )
+                        ? StringToSingleRunList(grouping.Select(t => (string)t).StringConcatenate(), runProperties)
                         : grouping.Select(e => new XElement(W.r, runProperties, e))
                 )
                 .ToList();

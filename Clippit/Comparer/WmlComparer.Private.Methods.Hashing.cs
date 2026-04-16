@@ -128,7 +128,7 @@ namespace Clippit
                         {
                             if (g.Key)
                             {
-                                var text = g.Select(t => t.Value).Aggregate(string.Empty, (acc, s) => acc + s);
+                                var text = g.Select(t => t.Value).StringConcatenate();
                                 if (settings.CaseInsensitive)
                                     text = text.ToUpper(settings.CultureInfo);
                                 var newRun = (object)new XElement(W.r, new XElement(W.t, text));

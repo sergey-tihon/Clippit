@@ -231,7 +231,7 @@ namespace Clippit.Word
                         .Elements(W.r)
                         .Elements(W.t)
                         .Select(t => (string)t)
-                        .Aggregate(string.Empty, (acc, s) => acc + s)
+                        .StringConcatenate()
                         .Trim();
                     if (otherTextInParagraph != "")
                     {
@@ -552,7 +552,7 @@ namespace Clippit.Word
                         .DescendantsTrimmed(W.txbxContent)
                         .Where(e => e.Name == W.t)
                         .Select(t => (string)t)
-                        .Aggregate(string.Empty, (acc, s) => acc + s)
+                        .StringConcatenate()
                         .Trim()
                         .Replace('“', '"')
                         .Replace('”', '"');
@@ -598,7 +598,7 @@ namespace Clippit.Word
                     .DescendantsTrimmed(W.txbxContent)
                     .Where(e => e.Name == A.t)
                     .Select(t => (string)t)
-                    .Aggregate(string.Empty, (acc, s) => acc + s)
+                    .StringConcatenate()
                     .Trim();
                 var occurrences = paraContents
                     .Select((_, i) => paraContents.Substring(i))
@@ -699,7 +699,7 @@ namespace Clippit.Word
                     .DescendantsTrimmed(W.txbxContent)
                     .Where(e => e.Name == W.t)
                     .Select(t => (string)t)
-                    .Aggregate(string.Empty, (acc, s) => acc + s)
+                    .StringConcatenate()
                     .Trim();
                 var occurrences = paraContents
                     .Select((_, i) => paraContents.Substring(i))

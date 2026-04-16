@@ -2751,8 +2751,7 @@ namespace Clippit
                         var newChildElements = groupedChildren
                             .Select(gc =>
                             {
-                                var textOfTextElement = gc.Select(gce => gce.ContentElement.Value)
-                                    .Aggregate(string.Empty, (acc, s) => acc + s);
+                                var textOfTextElement = gc.Select(gce => gce.ContentElement.Value).StringConcatenate();
                                 var del = gc.First().CorrelationStatus == CorrelationStatus.Deleted;
                                 var ins = gc.First().CorrelationStatus == CorrelationStatus.Inserted;
                                 if (del)

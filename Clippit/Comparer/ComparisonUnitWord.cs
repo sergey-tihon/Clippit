@@ -60,7 +60,7 @@ namespace Clippit
         public ComparisonUnitWord(IEnumerable<ComparisonUnitAtom> comparisonUnitAtomList)
         {
             Contents = comparisonUnitAtomList.OfType<ComparisonUnit>().ToList();
-            var sha1String = Contents.Select(c => c.SHA1Hash).Aggregate(string.Empty, (acc, s) => acc + s);
+            var sha1String = Contents.Select(c => c.SHA1Hash).StringConcatenate();
             SHA1Hash = WmlComparerUtil.SHA1HashStringForUTF8String(sha1String);
         }
 

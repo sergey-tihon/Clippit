@@ -749,10 +749,8 @@ namespace Clippit.Word
 
                     var listItemText = para.Elements(W.r)
                         .TakeWhile(e => e != elementAfter)
-                        .Select(r1 =>
-                            r1.Descendants(W.t).Select(t => (string)t).Aggregate(string.Empty, (acc, s) => acc + s)
-                        )
-                        .Aggregate(string.Empty, (acc, s) => acc + s)
+                        .Select(r1 => r1.Descendants(W.t).Select(t => (string)t).StringConcatenate())
+                        .StringConcatenate()
                         .Trim();
 
                     var nextRun = lastFldCharRun.ElementsAfterSelf(W.r).FirstOrDefault(nr => nr.Element(W.t) != null);
@@ -854,7 +852,7 @@ namespace Clippit.Word
                         nextRunText = nextRunText.Substring(sepChars.Count());
                         nextRunTextElement.Value = nextRunText;
 
-                        lastRunText = lastRunTextElement.Value + sepChars.Select(ch => ch.ToString()).Aggregate(string.Empty, (acc, s) => acc + s);
+                        lastRunText = lastRunTextElement.Value + sepChars.Select(ch => ch.ToString()).StringConcatenate();
                         lastRunTextElement.Value = lastRunText;
                     }
 
@@ -913,16 +911,9 @@ namespace Clippit.Word
 
                     // we have to do some funny business here because Word puts the ". " as part of the text following the fldSimple, and we want that text to be part of the list item.
                     var runAfter = fldSimple.ElementsAfterSelf(W.r).FirstOrDefault();
-                    var runAfterText = runAfter
-                        .Elements(W.t)
-                        .Select(t => (string)t)
-                        .Aggregate(string.Empty, (acc, s) => acc + s);
+                    var runAfterText = runAfter.Elements(W.t).Select(t => (string)t).StringConcatenate();
                     var runAfterTextTrimmed = runAfterText.TrimStart('.', ' ');
-                    var listItemNum = fldSimple
-                        .Elements(W.r)
-                        .Elements(W.t)
-                        .Select(t => (string)t)
-                        .Aggregate(string.Empty, (acc, s) => acc + s);
+                    var listItemNum = fldSimple.Elements(W.r).Elements(W.t).Select(t => (string)t).StringConcatenate();
                     var runsBefore = element
                         .Elements()
                         .TakeWhile(fs =>
@@ -1382,10 +1373,10 @@ namespace Clippit.Word
                 //    .Except(contentTypeList)
                 //    .ToList();
 
-                //var s10 = codeGenWithoutRules.Select(m => m + Environment.NewLine).Aggregate(string.Empty, (acc, s) => acc + s);
+                //var s10 = codeGenWithoutRules.Select(m => m + Environment.NewLine).StringConcatenate();
                 //Console.WriteLine(s10);
 
-                //var s9 = contentTypeList.Select(m => m + Environment.NewLine).Aggregate(string.Empty, (acc, s) => acc + s);
+                //var s9 = contentTypeList.Select(m => m + Environment.NewLine).StringConcatenate();
                 //Console.WriteLine(s9);
 
                 // Apply the Document rules first, then apply the DocumentType rules, then apply the Global rules.  First one that matches, wins.

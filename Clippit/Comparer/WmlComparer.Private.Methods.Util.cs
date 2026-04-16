@@ -46,7 +46,7 @@ namespace Clippit
                     if (last.Length == 2)
                     {
                         uriString =
-                            uriSplit.SkipLast(1).Select(p => p + "/").Aggregate(string.Empty, (acc, s) => acc + s)
+                            uriSplit.SkipLast(1).Select(p => p + "/").StringConcatenate()
                             + "P"
                             + Guid.NewGuid().ToString().Replace("-", "")
                             + "."
@@ -55,7 +55,7 @@ namespace Clippit
                     else
                     {
                         uriString =
-                            uriSplit.SkipLast(1).Select(p => p + "/").Aggregate(string.Empty, (acc, s) => acc + s)
+                            uriSplit.SkipLast(1).Select(p => p + "/").StringConcatenate()
                             + "P"
                             + Guid.NewGuid().ToString().Replace("-", "");
                     }

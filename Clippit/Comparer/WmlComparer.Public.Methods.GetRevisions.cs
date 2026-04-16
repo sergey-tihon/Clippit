@@ -96,7 +96,7 @@ namespace Clippit
                         rev.Text = rg.Select(rgc =>
                                 rgc.ContentElement.Name == W.pPr ? NewLine : rgc.ContentElement.Value
                             )
-                            .Aggregate(string.Empty, (acc, s) => acc + s);
+                            .StringConcatenate();
                     }
 
                     return rev;
@@ -204,7 +204,7 @@ namespace Clippit
                         rev.Text = rg.Select(rgc =>
                                 rgc.ContentElement.Name == W.pPr ? NewLine : rgc.ContentElement.Value
                             )
-                            .Aggregate(string.Empty, (acc, s) => acc + s);
+                            .StringConcatenate();
                     }
 
                     return rev;

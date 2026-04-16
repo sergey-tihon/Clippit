@@ -244,7 +244,7 @@ namespace Clippit
                     .DescendantsTrimmed(W.txbxContent)
                     .Where(d => d.Name == W.r && (d.Parent == null || d.Parent.Name != W.del))
                     .Select(UnicodeMapper.RunToString)
-                    .Aggregate(string.Empty, (acc, s) => acc + s);
+                    .StringConcatenate();
                 if (regex.IsMatch(preliminaryContent))
                 {
                     var paragraphWithSplitRuns = new XElement(
@@ -275,7 +275,7 @@ namespace Clippit
                     var content = charsAndRuns
                         // each run should take some space in content to be able to be covered by regex and replaced/deleted
                         .Select(t => string.IsNullOrEmpty(t.Ch) ? " " : t.Ch)
-                        .Aggregate(string.Empty, (acc, s) => acc + s);
+                        .StringConcatenate();
                     var alignedRuns = charsAndRuns.Select(t => t.r).ToArray();
 
                     var matchCollection = regex.Matches(content);
@@ -543,10 +543,7 @@ namespace Clippit
             if (element.Name == A.p)
             {
                 var paragraph = element;
-                var contents = element
-                    .Descendants(A.t)
-                    .Select(t => (string)t)
-                    .Aggregate(string.Empty, (acc, s) => acc + s);
+                var contents = element.Descendants(A.t).Select(t => (string)t).StringConcatenate();
                 if (!regex.IsMatch(contents))
                     return new XElement(element.Name, element.Attributes(), element.Nodes());
 
@@ -564,7 +561,7 @@ namespace Clippit
                     .Select(r => r.Element(A.t) != null ? new { Ch = r.Element(A.t).Value, r } : new { Ch = "\x01", r })
                     .ToList();
 
-                var content = charsAndRuns.Select(t => t.Ch).Aggregate(string.Empty, (acc, s) => acc + s);
+                var content = charsAndRuns.Select(t => t.Ch).StringConcatenate();
                 var alignedRuns = charsAndRuns.Select(t => t.r).ToArray();
 
                 var matchCollection = regex.Matches(content);
@@ -628,8 +625,7 @@ namespace Clippit
                             if (g.Key == DontConsolidate)
                                 return (object)g;
 
-                            var textValue = g.Select(r => r.Element(A.t).Value)
-                                .Aggregate(string.Empty, (acc, s) => acc + s);
+                            var textValue = g.Select(r => r.Element(A.t).Value).StringConcatenate();
                             var xs = XmlUtil.GetXmlSpaceAttribute(textValue);
                             return new XElement(A.r, g.First().Elements(A.rPr), new XElement(A.t, xs, textValue));
                         })

@@ -450,7 +450,7 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
                     return true;
                 })
                 .Select(l => l + Environment.NewLine)
-                .Aggregate(string.Empty, (acc, s) => acc + s);
+                .StringConcatenate();
             return cleanCss;
         }
     }

@@ -565,7 +565,7 @@ namespace Clippit
             }
             if (numFmtList.Any())
             {
-                var nfls = numFmtList.Select(s => s + ",").Aggregate(string.Empty, (acc, s) => acc + s).TrimEnd(',');
+                var nfls = numFmtList.StringConcatenate(s => s + ",").TrimEnd(',');
                 metrics.Add(new XElement(H.NumberingFormatList, new XAttribute(H.Val, PtUtils.MakeValidXml(nfls))));
             }
         }
@@ -648,10 +648,7 @@ namespace Clippit
 
             if (formattingMetrics.Languages.Any())
             {
-                var uls = formattingMetrics
-                    .Languages.Select(s => s + ",")
-                    .Aggregate(string.Empty, (acc, s) => acc + s)
-                    .TrimEnd(',');
+                var uls = formattingMetrics.Languages.StringConcatenate(s => s + ",").TrimEnd(',');
                 metrics.Add(new XElement(H.Languages, new XAttribute(H.Val, PtUtils.MakeValidXml(uls))));
             }
         }
@@ -667,7 +664,7 @@ namespace Clippit
             var runText = run.Elements()
                 .Where(e => e.Name == W.t || e.Name == W.delText)
                 .Select(t => (string)t)
-                .Aggregate(string.Empty, (acc, s) => acc + s);
+                .StringConcatenate();
             if (runText.Length == 0)
             {
                 formattingMetrics.ZeroLengthText++;
