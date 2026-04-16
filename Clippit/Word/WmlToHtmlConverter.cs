@@ -265,7 +265,9 @@ namespace Clippit.Word
                         p.Styles,
                         StylesString = p.Element.Name.LocalName
                             + "|"
-                            + p.Styles.OrderBy(k => k.Key).Select(s => $"{s.Key}: {s.Value};").StringConcatenate(),
+                            + p.Styles.OrderBy(k => k.Key)
+                                .Select(s => $"{s.Key}: {s.Value};")
+                                .Aggregate(string.Empty, (acc, s) => acc + s),
                     })
                     .GroupBy(p => p.StylesString)
                     .ToList();
@@ -326,7 +328,7 @@ namespace Clippit.Word
                         .Where(p => p.Key != "PtStyleName")
                         .OrderBy(p => p.Key)
                         .Select(e => $"{e.Key}: {e.Value};")
-                        .StringConcatenate();
+                        .Aggregate(string.Empty, (acc, s) => acc + s);
                     var st = new XAttribute("style", styleValue);
                     if (d.Attribute("style") != null)
                         d.Attribute("style").Value += styleValue;
@@ -2137,7 +2139,7 @@ namespace Clippit.Word
                         var textAfterTab = textElementsToMeasure
                             .Where(z => z.Name == W.t)
                             .Select(t => (string)t)
-                            .StringConcatenate();
+                            .Aggregate(string.Empty, (acc, s) => acc + s);
 
                         var dummyRun2 = new XElement(
                             W.r,
@@ -2181,7 +2183,7 @@ namespace Clippit.Word
                         var textAfterTab = textElementsToMeasure
                             .Where(z => z.Name == W.t)
                             .Select(t => (string)t)
-                            .StringConcatenate();
+                            .Aggregate(string.Empty, (acc, s) => acc + s);
 
                         if (textAfterTab.Contains("."))
                         {
@@ -2278,7 +2280,7 @@ namespace Clippit.Word
                         var textAfterTab = textElementsToMeasure
                             .Where(z => z.Name == W.t)
                             .Select(t => (string)t)
-                            .StringConcatenate();
+                            .Aggregate(string.Empty, (acc, s) => acc + s);
 
                         var dummyRun4 = new XElement(
                             W.r,

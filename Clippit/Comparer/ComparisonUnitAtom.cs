@@ -174,7 +174,7 @@ namespace Clippit
         {
             var s = sr
                 .AncestorElements.Select(p => p.Name.LocalName + GetUnid(p) + "/")
-                .StringConcatenate()
+                .Aggregate(string.Empty, (acc, s) => acc + s)
                 .TrimEnd('/');
 
             sb.Append("Ancestors:" + s);
@@ -189,7 +189,7 @@ namespace Clippit
 
             var s = zipped
                 .Select(p => p.AncestorElement.Name.LocalName + "[" + p.AncestorUnid.Substring(0, 8) + "]/")
-                .StringConcatenate()
+                .Aggregate(string.Empty, (acc, s) => acc + s)
                 .TrimEnd('/');
 
             sb.Append("Ancestors:" + s);

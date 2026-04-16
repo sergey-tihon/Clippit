@@ -353,7 +353,9 @@ namespace Clippit
                 {
                     sb.Append(
                         "Grouping Array: "
-                            + @group.HierarchicalGroupingArray.Select(gam => gam + " - ").StringConcatenate()
+                            + @group
+                                .HierarchicalGroupingArray.Select(gam => gam + " - ")
+                                .Aggregate(string.Empty, (acc, s) => acc + s)
                             + Environment.NewLine
                     );
                     foreach (var gc in @group.ComparisonUnitWord.Contents)

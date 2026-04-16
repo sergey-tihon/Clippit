@@ -201,12 +201,12 @@ public class OpenXmlRegexTests : TestsBase
         return e.Descendants(W.r)
             .Where(r => r.Parent.Name != W.del)
             .Select(UnicodeMapper.RunToString)
-            .StringConcatenate();
+            .Aggregate(string.Empty, (acc, s) => acc + s);
     }
 
     private static string InnerDelText(XContainer e)
     {
-        return e.Descendants(W.delText).Select(delText => delText.Value).StringConcatenate();
+        return e.Descendants(W.delText).Select(delText => delText.Value).Aggregate(string.Empty, (acc, s) => acc + s);
     }
 
     [Test]

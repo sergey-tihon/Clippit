@@ -471,7 +471,7 @@ public class DocumentBuilderTests : TestsBase
                         });
                         if (errors.Count() != 0)
                         {
-                            var message = errors.Select(e => e.Description + Environment.NewLine).StringConcatenate();
+                            var message = errors.Select(e => e.Description + Environment.NewLine).Aggregate(string.Empty, (acc, s) => acc + s);
                             Assert.True(false, message);
                         }
                     }

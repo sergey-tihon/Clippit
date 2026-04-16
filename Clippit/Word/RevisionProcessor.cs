@@ -1942,7 +1942,7 @@ namespace Clippit.Word
             {
                 // old version
                 //e.Add(new XAttribute(PT.RunIds,
-                //    e.Descendants(W.r).Select(r => r.Attribute(PT.UniqueId).Value).StringConcatenate(s => s + ",").Trim(',')),
+                //    e.Descendants(W.r).Select(r => r.Attribute(PT.UniqueId).Value).Select(s => s + ",").Aggregate(string.Empty, (acc, s) => acc + s).Trim(',')),
                 //    new XAttribute(PT.UniqueId, sdtId++));
                 e.Add(
                     new XAttribute(
@@ -1950,7 +1950,8 @@ namespace Clippit.Word
                         e.DescendantsTrimmed(W.txbxContent)
                             .Where(d => d.Name == W.r)
                             .Select(r => r.Attribute(PT.UniqueId).Value)
-                            .StringConcatenate(s => s + ",")
+                            .Select(s => s + ",")
+                            .Aggregate(string.Empty, (acc, s) => acc + s)
                             .Trim(',')
                     ),
                     new XAttribute(PT.UniqueId, sdtId++)

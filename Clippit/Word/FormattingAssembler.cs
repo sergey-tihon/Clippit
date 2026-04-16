@@ -298,7 +298,7 @@ namespace Clippit.Word
                         var levelNumsString = levelNums
                             .LevelNumbersArray.Take(paragraphLevel + 1)
                             .Select(i => i + ".")
-                            .StringConcatenate()
+                            .Aggregate(string.Empty, (acc, s) => acc + s)
                             .TrimEnd('.');
 
                         var listItemRun = new XElement(

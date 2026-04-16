@@ -306,7 +306,8 @@ namespace Clippit.Excel
                             .Skip((int)cell.Element(s + "v"))
                             .First()
                             .Descendants(s + "t")
-                            .StringConcatenate(e => (string)e)
+                            .Select(e => (string)e)
+                            .Aggregate(string.Empty, (acc, s) => acc + s)
                         : null;
                 var column = (string)cell.Attribute("r");
                 var columnAddress = column.Split('0', '1', '2', '3', '4', '5', '6', '7', '8', '9').First();

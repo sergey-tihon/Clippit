@@ -272,7 +272,7 @@ namespace Clippit.Word
                             // If .doc files are converted to .docx by the Binary to Open XML Translator,
                             // the w:instrText elements might be empty, in which case newInstrText would
                             // be an empty string.
-                            var newInstrText = g.Select(i => (string)i).StringConcatenate();
+                            var newInstrText = g.Select(i => (string)i).Aggregate(string.Empty, (acc, s) => acc + s);
                             if (string.IsNullOrEmpty(newInstrText))
                                 return new XElement(W.instrText);
 
@@ -663,7 +663,7 @@ namespace Clippit.Word
                     {
                         if (g.Key)
                         {
-                            var s = g.Select(t => (string)t).StringConcatenate();
+                            var s = g.Select(t => (string)t).Aggregate(string.Empty, (acc, s) => acc + s);
                             return s.Select(c => new XElement(
                                 W.r,
                                 element.Elements(W.rPr),

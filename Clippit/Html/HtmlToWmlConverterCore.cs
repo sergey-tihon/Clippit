@@ -373,7 +373,7 @@ namespace Clippit.Html
                 {
                     if (g.Key)
                         return (object)(new XElement(XhtmlNoNamespace.br));
-                    var x = g.Select(c => c.ToString()).StringConcatenate();
+                    var x = g.Select(c => c.ToString()).Aggregate(string.Empty, (acc, s) => acc + s);
                     return new XText(x);
                 });
                 return newNodes;
@@ -703,7 +703,7 @@ namespace Clippit.Html
                 var pPr = p != null ? p.Element(W.pPr) : null;
                 var rPr = run.Element(W.rPr);
                 var rFonts = rPr != null ? rPr.Element(W.rFonts) : null;
-                var str = run.Descendants(W.t).Select(t => (string)t).StringConcatenate();
+                var str = run.Descendants(W.t).Select(t => (string)t).Aggregate(string.Empty, (acc, s) => acc + s);
                 if ((pPr == null) || (rPr == null) || (rFonts == null) || (str == ""))
                     continue;
 
@@ -1144,7 +1144,7 @@ namespace Clippit.Html
                         .DescendantNodes()
                         .OfType<XText>()
                         .Select(t => t.Value)
-                        .StringConcatenate()
+                        .Aggregate(string.Empty, (acc, s) => acc + s)
                         .Trim();
                     var hasOtherThanSpansAndParas = element
                         .Descendants()
@@ -3206,10 +3206,10 @@ namespace Clippit.Html
                 {
                     if (g.Key)
                         return " ";
-                    var x = g.Select(c => c.ToString()).StringConcatenate();
+                    var x = g.Select(c => c.ToString()).Aggregate(string.Empty, (acc, s) => acc + s);
                     return x;
                 })
-                .StringConcatenate();
+                .Aggregate(string.Empty, (acc, s) => acc + s);
             if (!preserveWhiteSpace)
             {
                 if (isFirst)
@@ -4317,7 +4317,10 @@ namespace Clippit.Html
         {
             if (fontFamily == null)
                 return null;
-            var fullFontFamily = fontFamily.Terms.Select(t => t + " ").StringConcatenate().Trim();
+            var fullFontFamily = fontFamily
+                .Terms.Select(t => t + " ")
+                .Aggregate(string.Empty, (acc, s) => acc + s)
+                .Trim();
             var lcfont = fullFontFamily.ToLower();
             if (InstalledFonts.ContainsKey(lcfont))
                 return InstalledFonts[lcfont];

@@ -43,7 +43,10 @@ namespace Clippit.Internal
             {
                 if (element.Name == W.p)
                 {
-                    var contents = element.Descendants(W.t).Select(t => (string)t).StringConcatenate();
+                    var contents = element
+                        .Descendants(W.t)
+                        .Select(t => (string)t)
+                        .Aggregate(string.Empty, (acc, s) => acc + s);
                     if (
                         contents.Contains(search)
                         || (!matchCase && contents.Contains(search, System.StringComparison.CurrentCultureIgnoreCase))
@@ -143,7 +146,8 @@ namespace Clippit.Internal
                             {
                                 if (g.Key == "DontConsolidate")
                                     return (object)g;
-                                var textValue = g.Select(r => r.Element(W.t).Value).StringConcatenate();
+                                var textValue = g.Select(r => r.Element(W.t).Value)
+                                    .Aggregate(string.Empty, (acc, s) => acc + s);
                                 XAttribute xs = null;
                                 if (textValue[0] == ' ' || textValue[^1] == ' ')
                                     xs = new XAttribute(XNamespace.Xml + "space", "preserve");
@@ -267,7 +271,10 @@ namespace Clippit.Internal
             {
                 if (element.Name == A.p)
                 {
-                    var contents = element.Descendants(A.t).Select(t => (string)t).StringConcatenate();
+                    var contents = element
+                        .Descendants(A.t)
+                        .Select(t => (string)t)
+                        .Aggregate(string.Empty, (acc, s) => acc + s);
                     if (
                         contents.Contains(search)
                         || (!matchCase && contents.Contains(search, System.StringComparison.CurrentCultureIgnoreCase))
@@ -368,7 +375,8 @@ namespace Clippit.Internal
                             {
                                 if (g.Key == "DontConsolidate")
                                     return (object)g;
-                                var textValue = g.Select(r => r.Element(A.t).Value).StringConcatenate();
+                                var textValue = g.Select(r => r.Element(A.t).Value)
+                                    .Aggregate(string.Empty, (acc, s) => acc + s);
                                 return new XElement(A.r, g.First().Elements(A.rPr), new XElement(A.t, textValue));
                             })
                         );

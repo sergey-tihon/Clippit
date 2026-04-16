@@ -123,7 +123,9 @@ namespace Clippit.Excel
                         p.Styles,
                         StylesString = p.Element.Name.LocalName
                             + "|"
-                            + p.Styles.OrderBy(k => k.Key).Select(s => $"{s.Key}: {s.Value};").StringConcatenate(),
+                            + p.Styles.OrderBy(k => k.Key)
+                                .Select(s => $"{s.Key}: {s.Value};")
+                                .Aggregate(string.Empty, (acc, s) => acc + s),
                     })
                     .GroupBy(p => p.StylesString)
                     .ToList();
@@ -184,7 +186,7 @@ namespace Clippit.Excel
                         .Where(p => p.Key != "PtStyleName")
                         .OrderBy(p => p.Key)
                         .Select(e => $"{e.Key}: {e.Value};")
-                        .StringConcatenate();
+                        .Aggregate(string.Empty, (acc, s) => acc + s);
                     var st = new XAttribute("style", styleValue);
                     if (d.Attribute("style") != null)
                         d.Attribute("style").Value += styleValue;

@@ -38,7 +38,10 @@ namespace Clippit.Tests.Word.Samples
             {
                 // The following does not take into account documents that have tracked revisions.
                 // As necessary, call RevisionAccepter.AcceptRevisions before converting to XML.
-                var text = paragraph.Descendants(W.t).Select(t => (string)t).StringConcatenate();
+                var text = paragraph
+                    .Descendants(W.t)
+                    .Select(t => (string)t)
+                    .Aggregate(string.Empty, (acc, s) => acc + s);
                 var lii = paragraph.Annotation<ListItemRetriever.ListItemInfo>();
                 if (lii.IsListItem && lii.AbstractNumId == abstractNumId)
                 {
@@ -49,7 +52,7 @@ namespace Clippit.Tests.Word.Samples
                         var levelNumsForThisIndent = levelNums.LevelNumbersArray;
                         var levelText = levelNums
                             .LevelNumbersArray.Select(l => l + ".")
-                            .StringConcatenate()
+                            .Aggregate(string.Empty, (acc, s) => acc + s)
                             .TrimEnd('.');
                         var newCurrentElement = new XElement("Indent", new XAttribute("Level", levelText));
                         current.Peek().Element.Add(newCurrentElement);
@@ -65,7 +68,7 @@ namespace Clippit.Tests.Word.Samples
                             var levelNumsForThisIndent = levelNums.LevelNumbersArray.Take(i + 1).ToArray();
                             var levelText = levelNums
                                 .LevelNumbersArray.Select(l => l + ".")
-                                .StringConcatenate()
+                                .Aggregate(string.Empty, (acc, s) => acc + s)
                                 .TrimEnd('.');
                             var newCurrentElement = new XElement("Indent", new XAttribute("Level", levelText));
                             current.Peek().Element.Add(newCurrentElement);
@@ -87,7 +90,7 @@ namespace Clippit.Tests.Word.Samples
                         var levelNumsForThisIndent = levelNums.LevelNumbersArray;
                         var levelText = levelNums
                             .LevelNumbersArray.Select(l => l + ".")
-                            .StringConcatenate()
+                            .Aggregate(string.Empty, (acc, s) => acc + s)
                             .TrimEnd('.');
                         var newCurrentElement = new XElement("Indent", new XAttribute("Level", levelText));
                         current.Peek().Element.Add(newCurrentElement);

@@ -176,7 +176,10 @@ namespace Clippit.Excel
                                     throw new FileFormatException(
                                         "Invalid spreadsheet.  Shared string reference not valid."
                                     );
-                                sharedString = sharedStringElement.Descendants(S.t).StringConcatenate(e => (string)e);
+                                sharedString = sharedStringElement
+                                    .Descendants(S.t)
+                                    .Select(e => (string)e)
+                                    .Aggregate(string.Empty, (acc, s) => acc + s);
                             }
 
                             if (sharedString != null)

@@ -498,11 +498,6 @@ namespace Clippit
             return xmlDoc;
         }
 
-        public static string StringConcatenate(this IEnumerable<string> source) => string.Concat(source);
-
-        public static string StringConcatenate<T>(this IEnumerable<T> source, Func<T, string> projectionFunc) =>
-            string.Concat(source.Select(projectionFunc));
-
         public static IEnumerable<TResult> PtZip<TFirst, TSecond, TResult>(
             this IEnumerable<TFirst> first,
             IEnumerable<TSecond> second,
