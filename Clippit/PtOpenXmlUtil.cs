@@ -295,8 +295,7 @@ namespace Clippit
             else
             {
                 using var str = part.GetStream();
-                var byteArray = new byte[(int)str.Length];
-                str.ReadExactly(byteArray);
+                var byteArray = str.ReadToArray();
                 var base64String = Base64.ChunkBase64(Convert.ToBase64String(byteArray), appendTrailingNewline: true);
                 return new XElement(
                     pkg + "part",
