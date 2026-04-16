@@ -1,0 +1,30 @@
+{
+    "lr": "2026-04-16",
+    "rid": "24523654240",
+    "m_issue": 170,
+    "m_month": "2026-04",
+    "comments": {
+        "66": "2026-03-26",
+        "47": "2026-03-20",
+        "67": "2026-03-17",
+        "103": "2026-03-15",
+        "77": "2026-03-14",
+        "54": "2026-04-03",
+        "28": "2026-03-28",
+        "65": "2026-03-29"
+    },
+    "cursor": "103",
+    "prs": {
+        "163": "RegisterCustomHandler",
+        "165": "ExcelAssembler",
+        "166": "html textboxes",
+        "180": "html floating tables",
+        "209": "perf: base64 chunking (branch: clippy/perf-base64-chunking-20260416)",
+        "211": "docs: modern DocFX theme (branch: clippy/modern-docfx-theme-210)"
+    },
+    "notes": "PRs 175,177,178,181,183,184,185,196,197,198,199,200,201,205,206,207,208 merged. PR 174 closed without merge. Issue 179 closed. 2026-04-16 run1: created perf PR #209 for base64 chunking. 2026-04-16 run2 (command mode): implemented modern DocFX theme per issue #210 (/clippy implement this), created PR #211. Uses [default,modern] template combo — default processes Conceptual/ManagedReference/Toc, modern overrides CSS/JS assets.",
+    "checked_off": {
+        "196": "source-gen-regex",
+        "tunit132": "TUnit-1.32.0"
+    }
+}
