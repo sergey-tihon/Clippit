@@ -1,6 +1,6 @@
 {
-    "lr": "2026-04-16",
-    "rid": "24512659578",
+    "lr": "2026-04-17",
+    "rid": "24567270306",
     "m_issue": 170,
     "m_month": "2026-04",
     "comments": {
@@ -19,9 +19,11 @@
         "165": "ExcelAssembler",
         "166": "html textboxes",
         "180": "html floating tables",
-        "base64-chunking": "perf: eliminate per-character heap allocations in base64 chunking (branch: clippy/perf-base64-chunking-20260416)"
+        "209": "perf: base64 chunking (merged 2026-04-16)",
+        "211": "docs: modern DocFX theme (merged 2026-04-16)",
+        "212": "release-3.4.0: CHANGELOG + TUnit 1.35.2 (branch: clippy/release-3.4.0-20260417)"
     },
-    "notes": "PRs 175,177,178,181,183,184,185,196,197,198,199,200,201,205,206,207,208 merged. PR 174 closed without merge. Issue 179 closed. 2026-04-16 run: created perf PR for base64 chunking in FlatOpc/Base64 (removed FlatOpcTupple, replaced LINQ GroupBy with pre-sized StringBuilder loop). All open issues have Clippy comments. No new human activity on issues.",
+    "notes": "PRs 175,177,178,181,183,184,185,196,197,198,199,200,201,205,206,207,208,209,211 merged. PR 174 closed. Issue 179 closed. 2026-04-17 run: created release-3.4.0 PR (CHANGELOG + TUnit 1.33.0->1.35.2, 40 commits since 3.3.1). All open issues have Clippy comments. No new human activity on issues. Task 1: nothing to label (0 unlabelled).",
     "checked_off": {
         "196": "source-gen-regex",
         "tunit132": "TUnit-1.32.0"
