@@ -1,5 +1,43 @@
 # Changelog
 
+## [3.4.0] - April 17, 2026
+
+### New Features
+- feat: add `Optional="true"` support to `<Table>` directive in DocumentAssembler (#150)
+- feat: add `FitWithin` image sizing mode to DocumentAssembler (#168)
+- feat: add `RelationshipValidator` to detect dangling `r:id` references in OpenXml parts (#160)
+- feat: extract shared `RomanNumeralUtil` with `ToUpperRoman`/`ToLowerRoman` helpers (#164)
+
+### Bug Fixes
+- fix(word): correct Russian list item text for values ≥ 100 (#187)
+- fix(word): guard `cardinalText`/`ordinalText` against out-of-range `levelNumber` in multiple locales (#200, #201, #208)
+
+### Performance
+- perf(pptx): single-pass dispatch in `CopyRelatedPartsForContentParts` + lazy `SaveAndCleanup` (#175)
+- perf(pptx): avoid `OuterXml`→`Parse` roundtrip in `SlidePartData.GetShapeDescriptor` (#178)
+- perf: convert `Regex` instances to source-generated `[GeneratedRegex]` in several modules (#196)
+- perf(comparer): reduce heap allocations in `WmlComparerUtil` SHA-1 hashing (#199)
+- perf: modernize SHA1/SHA256 hashing — use `SHA1.HashData()`, `SHA256.HashData()`, `Convert.ToHexString()` (#184)
+- perf: eliminate per-character heap allocations in base64 chunking (FlatOpc / Base64) (#209)
+
+### Code Quality
+- refactor: remove custom relationship ID generator — delegate to OpenXML SDK APIs (#161)
+- refactor: simplify LINQ patterns across Excel, Word, and Html modules (#207)
+
+### Documentation
+- docs: improve README with NuGet badges, project overview, quick-start, and docs link (#183)
+- docs: switch DocFX documentation site to modern Bootstrap-based theme (#211)
+
+### Tests
+- test: add unit tests for `ListItemTextGetter_Default`, fr_FR, sv_SE, zh_CN, tr_TR, ru_RU locales (#198, #206)
+- test(excel): add `ParseFormula` and `XlsxTables` cell-address utility tests (#169, #185)
+- test(common): add `TextReplacer` unit tests (#167)
+
+### Dependencies
+- hk: TUnit 1.33.0 → 1.35.2
+- hk: Microsoft.NET.Test.Sdk 18.3 → 18.4
+- hk: Actions bumps (checkout v6, setup-dotnet v5, upload-artifact v7, download-artifact v8)
+
 ## [3.3.1] - March 24, 2026
 
 - fix: handle dangling r:id on p:oleObj/p:externalData — KeyNotFoundException in slide publishing (#156)
