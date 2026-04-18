@@ -1,6 +1,6 @@
 {
-    "lr": "2026-04-17",
-    "rid": "24567270306",
+    "lr": "2026-04-18",
+    "rid": "24605564128",
     "m_issue": 170,
     "m_month": "2026-04",
     "comments": {
@@ -19,11 +19,10 @@
         "165": "ExcelAssembler",
         "166": "html textboxes",
         "180": "html floating tables",
-        "209": "perf: base64 chunking (merged 2026-04-16)",
-        "211": "docs: modern DocFX theme (merged 2026-04-16)",
-        "212": "release-3.4.0: CHANGELOG + TUnit 1.35.2 (branch: clippy/release-3.4.0-20260417)"
+        "212": "release-3.4.0: CHANGELOG + TUnit 1.35.2 (branch: clippy/release-3.4.0-20260417)",
+        "new_testing": "test: MarkupSimplifier MS004-MS009 (branch: clippy/test-markup-simplifier-20260418)"
     },
-    "notes": "PRs 175,177,178,181,183,184,185,196,197,198,199,200,201,205,206,207,208,209,211 merged. PR 174 closed. Issue 179 closed. 2026-04-17 run: created release-3.4.0 PR (CHANGELOG + TUnit 1.33.0->1.35.2, 40 commits since 3.3.1). All open issues have Clippy comments. No new human activity on issues. Task 1: nothing to label (0 unlabelled).",
+    "notes": "PRs 175,177,178,181,183,184,185,196,197,198,199,200,201,205,206,207,208,209,211 merged. PR 174 closed. Issue 179 closed. 2026-04-17 run: created release-3.4.0 PR. 2026-04-18 run (Task 6): merged master into PR branches 163, 165, 166, 180 (all 30-39 commits behind, no conflicts). (Task 9): added 6 new MarkupSimplifier tests MS004-MS009 (RemoveComments, RemoveBookmarks, RemoveProof, RemoveRsidInfo, ReplaceTabsWithSpaces, RemoveHyperlinks); new PR on branch clippy/test-markup-simplifier-20260418. All open issues have Clippy comments.",
     "checked_off": {
         "196": "source-gen-regex",
         "tunit132": "TUnit-1.32.0"
