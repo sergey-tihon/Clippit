@@ -503,31 +503,14 @@ namespace Clippit.Word
             }
 
             // Transform images and text boxes.
-            // w:drawing can appear inside a w:r (run) within a w:p (paragraph). ProcessTextBoxDrawing
-            // builds a <div> internally for layout, but returning a block-level element from here would
-            // produce invalid HTML (e.g. <span><div>…</div></span>) when ConvertRun later wraps the run
-            // in a <span>. To keep output structurally valid, the <div> is re-tagged as a <span> while
-            // preserving all attributes and content. Hoisting to a block-level sibling of the paragraph
-            // would be more faithful to Word layout but requires significant pipeline refactoring.
             if (element.Name == W.drawing || element.Name == W.pict || element.Name == W._object)
             {
                 // Text boxes in w:drawing (wps:wsp/wps:txbx) must be handled before image processing.
-                // Normalize the resulting <div> to <span> so it is safe at run/inline level.
                 if (element.Name == W.drawing)
                 {
                     var textBoxResult = ProcessTextBoxDrawing(wordDoc, settings, element);
                     if (textBoxResult != null)
-                    {
-                        // ProcessTextBoxDrawing builds a <div> for layout, but w:drawing commonly
-                        // appears inside a w:r so returning a block element here would produce
-                        // invalid HTML (e.g. <span><div>…</div></span>). Re-tag as <span> while
-                        // preserving attributes, content, and the style annotation.
-                        var span = new XElement(Xhtml.span, textBoxResult.Attributes(), textBoxResult.Nodes());
-                        var annotation = textBoxResult.Annotation<Dictionary<string, string>>();
-                        if (annotation != null)
-                            span.AddAnnotation(annotation);
-                        return span;
-                    }
+                        return textBoxResult;
                 }
                 return ProcessImage(wordDoc, element, settings.ImageHandler);
             }
@@ -1568,6 +1551,11 @@ namespace Clippit.Word
 
             if (style.Any() || langAttribute != null || runStartMark != null)
             {
+                // If content is already a block-level <div> (e.g. a text box), skip the <span>
+                // wrapper — wrapping a <div> in a <span> produces invalid HTML.
+                if (content is XElement divContent && divContent.Name == Xhtml.div)
+                    return content;
+
                 style.AddIfMissing("margin", "0");
                 style.AddIfMissing("padding", "0");
                 var xe = new XElement(Xhtml.span, langAttribute, runStartMark, content, runEndMark);
@@ -3260,73 +3248,14 @@ namespace Clippit.Word
 
             // Text boxes have independent layout — reset the outer paragraph margin so that list/indent
             // offsets from the surrounding context do not incorrectly bleed into the text box interior.
-            // Block-level elements (p, h1–h6) produced by paragraph conversion are re-tagged as
-            // display:block spans so the text box container can later be safely re-tagged as a <span>
-            // at the call site without producing invalid HTML like <span><p>…</p></span>.
             var content = txbxContent
                 .Elements()
                 .Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, 0m))
-                .Select(NormalizeBlockToBlockSpan)
                 .ToList();
 
             var div = new XElement(Xhtml.div, content);
             div.AddAnnotation(style);
             return div;
-        }
-
-        // Maps XHTML element names that are invalid inside a phrasing-level <span> to the CSS
-        // display value that preserves their visual role when re-tagged as <span>. The full table
-        // subtree is included so browsers do not implicitly re-create table structure from orphaned
-        // tr/td elements.
-        private static readonly Dictionary<XName, string> s_blockElementDisplayMap = new()
-        {
-            [Xhtml.p] = "block",
-            [Xhtml.div] = "block",
-            [Xhtml.table] = "table",
-            [Xhtml.tr] = "table-row",
-            [Xhtml.td] = "table-cell",
-            [Xhtml.xhtml + "h1"] = "block",
-            [Xhtml.xhtml + "h2"] = "block",
-            [Xhtml.xhtml + "h3"] = "block",
-            [Xhtml.xhtml + "h4"] = "block",
-            [Xhtml.xhtml + "h5"] = "block",
-            [Xhtml.xhtml + "h6"] = "block",
-        };
-
-        // Re-tags XHTML elements that are invalid inside a phrasing-level <span> as <span>s with
-        // an equivalent CSS display value, so the text box container can be safely emitted as a
-        // <span>. Covers the full table subtree (table/tr/td) so browsers do not need to repair
-        // invalid markup. Applied recursively. For non-block elements the original element is
-        // mutated in place (children replaced) to preserve its style annotation and attributes.
-        private static object NormalizeBlockToBlockSpan(object node)
-        {
-            if (node is not XElement element)
-                return node;
-
-            // Recursively normalize descendants first
-            var normalizedNodes = element.Nodes().Select(NormalizeBlockToBlockSpan).ToList();
-
-            if (!s_blockElementDisplayMap.TryGetValue(element.Name, out var display))
-            {
-                // Not a block element — mutate in place to preserve the style annotation
-                element.ReplaceNodes(normalizedNodes);
-                return element;
-            }
-
-            var span = new XElement(Xhtml.span, element.Attributes(), normalizedNodes);
-            var annotation = element.Annotation<Dictionary<string, string>>();
-            if (annotation != null)
-            {
-                // Copy so the original dict is not mutated
-                var merged = new Dictionary<string, string>(annotation);
-                merged.AddIfMissing("display", display);
-                span.AddAnnotation(merged);
-            }
-            else
-            {
-                span.AddAnnotation(new Dictionary<string, string> { ["display"] = display });
-            }
-            return span;
         }
 
         #endregion

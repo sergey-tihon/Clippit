@@ -339,21 +339,20 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         // The text box content must appear in the HTML output
         await Assert.That(htmlString).Contains("TextBoxContent");
 
-        // The text box must be rendered as a phrasing-safe <span> with inline-block style (not silently dropped,
-        // and not as a block <div> which would be invalid HTML when nested inside <p>/<span>).
-        var textBoxSpan = html.Descendants(Xhtml.span)
+        // The text box must be rendered as a <div> with inline-block style — a block element
+        // is valid at this position because ConvertRun skips the <span> wrapper for <div> content.
+        var textBoxDiv = html.Descendants(Xhtml.div)
             .FirstOrDefault(s =>
                 s.Attribute("style")?.Value?.Contains("inline-block") == true && s.Value.Contains("TextBoxContent")
             );
-        await Assert.That(textBoxSpan).IsNotNull();
-        var spanStyle = textBoxSpan!.Attribute("style")?.Value ?? string.Empty;
+        await Assert.That(textBoxDiv).IsNotNull();
+        var spanStyle = textBoxDiv!.Attribute("style")?.Value ?? string.Empty;
         await Assert.That(spanStyle).Contains("width:");
         await Assert.That(spanStyle).Contains("min-height:");
         await Assert.That(spanStyle).Contains("float: left");
 
-        // Inner w:p elements must be converted to display:block <span>s, not <p>s.
-        // A <p> inside a <span> is invalid HTML and causes browsers to implicitly close the outer element.
-        await Assert.That(textBoxSpan.Descendants(Xhtml.p).ToList()).IsEmpty();
+        // Inner w:p elements are converted to <p> elements — valid inside a <div>.
+        await Assert.That(textBoxDiv.Descendants(Xhtml.p).ToList()).IsNotEmpty();
     }
 
     [Test]
@@ -400,12 +399,12 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
 
         var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
 
-        var textBoxSpan = html.Descendants(Xhtml.span)
+        var textBoxDiv = html.Descendants(Xhtml.div)
             .FirstOrDefault(s =>
                 s.Attribute("style")?.Value?.Contains("inline-block") == true && s.Value.Contains("TextBoxNoFloat")
             );
-        await Assert.That(textBoxSpan).IsNotNull();
-        var spanStyle = textBoxSpan!.Attribute("style")?.Value ?? string.Empty;
+        await Assert.That(textBoxDiv).IsNotNull();
+        var spanStyle = textBoxDiv!.Attribute("style")?.Value ?? string.Empty;
         await Assert.That(spanStyle).Contains("width:");
         await Assert.That(spanStyle).Contains("min-height:");
         // wrapNone means no text flow around the shape — float must not be applied
@@ -413,11 +412,10 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
     }
 
     [Test]
-    public async Task HC065_TextBoxWithTableContentIsNormalized()
+    public async Task HC065_TextBoxWithTableContentRendersTable()
     {
-        // Regression test: w:txbxContent may contain a w:tbl, which normally converts to an HTML
-        // <table>. Since the text box container is emitted as a <span>, a <table> child would produce
-        // invalid HTML. The normalization must re-tag it as a display:block <span>.
+        // Regression test: w:txbxContent may contain a w:tbl. Since the text box container is
+        // emitted as a <div>, a <table> child is valid HTML and must be preserved as-is.
         using var memoryStream = new MemoryStream();
         using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
         {
@@ -480,19 +478,14 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
 
         await Assert.That(html.ToString(SaveOptions.DisableFormatting)).Contains("CellText");
 
-        var textBoxSpan = html.Descendants(Xhtml.span)
+        var textBoxDiv = html.Descendants(Xhtml.div)
             .FirstOrDefault(s =>
                 s.Attribute("style")?.Value?.Contains("inline-block") == true && s.Value.Contains("CellText")
             );
-        await Assert.That(textBoxSpan).IsNotNull();
+        await Assert.That(textBoxDiv).IsNotNull();
 
-        // No block-level or table-structure HTML elements must appear as descendants of the inline
-        // text box span — they must all have been re-tagged as display:* <span>s
-        await Assert.That(textBoxSpan!.Descendants(Xhtml.p).ToList()).IsEmpty();
-        await Assert.That(textBoxSpan.Descendants(Xhtml.div).ToList()).IsEmpty();
-        await Assert.That(textBoxSpan.Descendants(Xhtml.table).ToList()).IsEmpty();
-        await Assert.That(textBoxSpan.Descendants(Xhtml.tr).ToList()).IsEmpty();
-        await Assert.That(textBoxSpan.Descendants(Xhtml.td).ToList()).IsEmpty();
+        // The table must be preserved as a real <table> — it is valid HTML inside a <div>.
+        await Assert.That(textBoxDiv!.Descendants(Xhtml.table).ToList()).IsNotEmpty();
     }
 
     private static XElement BuildTextBoxParagraph(
