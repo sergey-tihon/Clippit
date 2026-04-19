@@ -486,10 +486,13 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
             );
         await Assert.That(textBoxSpan).IsNotNull();
 
-        // No block-level HTML elements must appear as descendants of the inline text box span
+        // No block-level or table-structure HTML elements must appear as descendants of the inline
+        // text box span — they must all have been re-tagged as display:* <span>s
         await Assert.That(textBoxSpan!.Descendants(Xhtml.p).ToList()).IsEmpty();
         await Assert.That(textBoxSpan.Descendants(Xhtml.div).ToList()).IsEmpty();
         await Assert.That(textBoxSpan.Descendants(Xhtml.table).ToList()).IsEmpty();
+        await Assert.That(textBoxSpan.Descendants(Xhtml.tr).ToList()).IsEmpty();
+        await Assert.That(textBoxSpan.Descendants(Xhtml.td).ToList()).IsEmpty();
     }
 
     private static XElement BuildTextBoxParagraph(

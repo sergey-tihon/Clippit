@@ -3274,45 +3274,57 @@ namespace Clippit.Word
             return div;
         }
 
-        private static readonly HashSet<XName> s_blockLevelHtmlElements =
-        [
-            Xhtml.p,
-            Xhtml.div,
-            Xhtml.table,
-            Xhtml.xhtml + "h1",
-            Xhtml.xhtml + "h2",
-            Xhtml.xhtml + "h3",
-            Xhtml.xhtml + "h4",
-            Xhtml.xhtml + "h5",
-            Xhtml.xhtml + "h6",
-        ];
+        // Maps XHTML element names that are invalid inside a phrasing-level <span> to the CSS
+        // display value that preserves their visual role when re-tagged as <span>. The full table
+        // subtree is included so browsers do not implicitly re-create table structure from orphaned
+        // tr/td elements.
+        private static readonly Dictionary<XName, string> s_blockElementDisplayMap = new()
+        {
+            [Xhtml.p] = "block",
+            [Xhtml.div] = "block",
+            [Xhtml.table] = "table",
+            [Xhtml.tr] = "table-row",
+            [Xhtml.td] = "table-cell",
+            [Xhtml.xhtml + "h1"] = "block",
+            [Xhtml.xhtml + "h2"] = "block",
+            [Xhtml.xhtml + "h3"] = "block",
+            [Xhtml.xhtml + "h4"] = "block",
+            [Xhtml.xhtml + "h5"] = "block",
+            [Xhtml.xhtml + "h6"] = "block",
+        };
 
-        // Re-tags block-level XHTML elements (p, div, table, h1–h6) produced inside a text box as
-        // display:block <span>s so they remain valid phrasing content when the text box container is
-        // emitted as a <span>. Applied recursively so that block elements nested inside a converted
-        // table or div are also normalized. Style annotations and all attributes/children are preserved.
+        // Re-tags XHTML elements that are invalid inside a phrasing-level <span> as <span>s with
+        // an equivalent CSS display value, so the text box container can be safely emitted as a
+        // <span>. Covers the full table subtree (table/tr/td) so browsers do not need to repair
+        // invalid markup. Applied recursively. For non-block elements the original element is
+        // mutated in place (children replaced) to preserve its style annotation and attributes.
         private static object NormalizeBlockToBlockSpan(object node)
         {
             if (node is not XElement element)
                 return node;
 
-            // Recursively normalize descendants first so inner <p>s inside tables etc. are covered
+            // Recursively normalize descendants first
             var normalizedNodes = element.Nodes().Select(NormalizeBlockToBlockSpan).ToList();
 
-            if (!s_blockLevelHtmlElements.Contains(element.Name))
-                return new XElement(element.Name, element.Attributes(), normalizedNodes);
+            if (!s_blockElementDisplayMap.TryGetValue(element.Name, out var display))
+            {
+                // Not a block element — mutate in place to preserve the style annotation
+                element.ReplaceNodes(normalizedNodes);
+                return element;
+            }
 
             var span = new XElement(Xhtml.span, element.Attributes(), normalizedNodes);
             var annotation = element.Annotation<Dictionary<string, string>>();
             if (annotation != null)
             {
-                annotation.AddIfMissing("display", "block");
-                span.AddAnnotation(annotation);
+                // Copy so the original dict is not mutated
+                var merged = new Dictionary<string, string>(annotation);
+                merged.AddIfMissing("display", display);
+                span.AddAnnotation(merged);
             }
             else
             {
-                var blockStyle = new Dictionary<string, string> { ["display"] = "block" };
-                span.AddAnnotation(blockStyle);
+                span.AddAnnotation(new Dictionary<string, string> { ["display"] = display });
             }
             return span;
         }
