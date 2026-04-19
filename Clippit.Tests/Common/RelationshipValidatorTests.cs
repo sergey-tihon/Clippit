@@ -111,7 +111,7 @@ public class RelationshipValidatorTests : TestsBase
 
         var errors = RelationshipValidator.Validate(docRead).ToList();
 
-        await Assert.That(errors).HasCount().GreaterThan(0);
+        await Assert.That(errors).Count().IsGreaterThan(0);
         await Assert.That(errors[0].RelationshipId).IsEqualTo("rId999");
         await Assert.That(RelationshipValidator.IsValid(docRead)).IsFalse();
     }

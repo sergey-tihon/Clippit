@@ -10,12 +10,13 @@ using NextExpected = Clippit.Html.HtmlToWmlConverterCore.NextExpected;
 
 namespace Clippit.Word.Assembler
 {
-    internal static class HtmlConverter
+    internal static partial class HtmlConverter
     {
         private static readonly HtmlToWmlConverterSettings htmlConverterSettings =
             HtmlToWmlConverter.GetDefaultSettings();
 
-        private static readonly Regex detectEntityRegEx = new Regex("^&(?:#([0-9]+)|#x([0-9a-fA-F]+)|([0-9a-zA-Z]+));");
+        [GeneratedRegex(@"^&(?:#([0-9]+)|#x([0-9a-fA-F]+)|([0-9a-zA-Z]+));")]
+        private static partial Regex DetectEntityRegex();
 
         private static XElement SoftBreak => new XElement(W.r, new XElement(W.br));
         private static XElement EmptyRun => new XElement(W.r, new XElement(W.t));
@@ -440,7 +441,7 @@ namespace Clippit.Word.Assembler
                     value = value.Substring(ampIndex);
 
                     // now check whether ampersand we have found is the start of an entity
-                    Match m = detectEntityRegEx.Match(value);
+                    Match m = DetectEntityRegex().Match(value);
                     if (m.Success)
                     {
                         // if this is an entity then add to result

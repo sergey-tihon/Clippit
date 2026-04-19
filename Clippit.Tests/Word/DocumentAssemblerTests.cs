@@ -204,9 +204,9 @@ public class DocumentAssemblerTests : TestsBase
             //   Empty paragraph (1 line)
             //   Escaped HTML paragraph (potential multi-line)
             //   CDATA paragraph (potential multi-line)
-            await Assert.That(targetParas).HasCount(sourceParas.Count);
+            await Assert.That(targetParas).Count().IsEqualTo(sourceParas.Count);
             int expectedBreaks = (parasInContent - 1) * 2;
-            await Assert.That(targetBreaks).HasCount(expectedBreaks);
+            await Assert.That(targetBreaks).Count().IsEqualTo(expectedBreaks);
 
             var equalityComparer = new XNodeEqualityComparer();
             int paraOffset = 0;
@@ -237,7 +237,7 @@ public class DocumentAssemblerTests : TestsBase
 
         // Assert - para count is expected
         List<XElement> paras = afterAssembling.MainDocumentPart.Element(W.body).Descendants(W.p).ToList();
-        await Assert.That(paras).HasCount(9);
+        await Assert.That(paras).Count().IsEqualTo(9);
 
         // Assert - Paragraph 1 Styles
         XElement para = paras[0];
@@ -504,8 +504,8 @@ public class DocumentAssemblerTests : TestsBase
         await Assert.That(paras).HasSingleItem();
 
         // Assert - first table paragraph has 2 soft breaks
-        await Assert.That(paras.ElementAt(0).Elements(W.r)).HasCount(5);
-        await Assert.That(paras.ElementAt(0).Elements(W.r).Elements(W.br)).HasCount(2);
+        await Assert.That(paras.ElementAt(0).Elements(W.r)).Count().IsEqualTo(5);
+        await Assert.That(paras.ElementAt(0).Elements(W.r).Elements(W.br)).Count().IsEqualTo(2);
     }
 
     [Test]
@@ -523,7 +523,7 @@ public class DocumentAssemblerTests : TestsBase
 
         // Assert - we have four paragraphs
         IEnumerable<XElement> paras = afterAssembling.MainDocumentPart.Descendants(W.p);
-        await Assert.That(paras).HasCount(4);
+        await Assert.That(paras).Count().IsEqualTo(4);
 
         // Assert - first paragraph has 0 tabs
         await Assert.That(paras.ElementAt(0).Descendants(W.tab)).IsEmpty();
@@ -554,7 +554,7 @@ public class DocumentAssemblerTests : TestsBase
 
         // Assert - tables are present and correct
         IEnumerable<XElement> tables = afterAssembling.MainDocumentPart.Descendants(W.tbl);
-        await Assert.That(tables).HasCount(4);
+        await Assert.That(tables).Count().IsEqualTo(4);
 
         // Assert - the second table cell of each table has one paragraph
         List<XElement> paras = [];
@@ -563,24 +563,24 @@ public class DocumentAssemblerTests : TestsBase
             paras.AddRange(table.Descendants(W.tc).ElementAt(1).Elements(W.p));
         }
 
-        await Assert.That(tables).HasCount(paras.Count);
+        await Assert.That(tables).Count().IsEqualTo(paras.Count);
 
         // Assert - first tables paragraph has 4 soft breaks
-        await Assert.That(paras.ElementAt(0).Elements(W.r)).HasCount(7);
-        await Assert.That(paras.ElementAt(0).Elements(W.r).Elements(W.br)).HasCount(4);
+        await Assert.That(paras.ElementAt(0).Elements(W.r)).Count().IsEqualTo(7);
+        await Assert.That(paras.ElementAt(0).Elements(W.r).Elements(W.br)).Count().IsEqualTo(4);
 
         // Assert - second tables paragraph has 1 soft breaks
-        await Assert.That(paras.ElementAt(1).Elements(W.r)).HasCount(3);
+        await Assert.That(paras.ElementAt(1).Elements(W.r)).Count().IsEqualTo(3);
         await Assert.That(paras.ElementAt(1).Elements(W.r).Elements(W.br)).HasSingleItem();
 
         // Assert - third tables paragraph has 2 soft breaks
-        await Assert.That(paras.ElementAt(2).Elements(W.r)).HasCount(5);
-        await Assert.That(paras.ElementAt(2).Elements(W.r).Elements(W.br)).HasCount(2);
+        await Assert.That(paras.ElementAt(2).Elements(W.r)).Count().IsEqualTo(5);
+        await Assert.That(paras.ElementAt(2).Elements(W.r).Elements(W.br)).Count().IsEqualTo(2);
 
         // Assert - fourth tables paragraph has 1 soft breaks and two tabs
-        await Assert.That(paras.ElementAt(3).Elements(W.r)).HasCount(5);
+        await Assert.That(paras.ElementAt(3).Elements(W.r)).Count().IsEqualTo(5);
         await Assert.That(paras.ElementAt(3).Elements(W.r).Elements(W.br)).HasSingleItem();
-        await Assert.That(paras.ElementAt(3).Elements(W.r).Elements(W.tab)).HasCount(2);
+        await Assert.That(paras.ElementAt(3).Elements(W.r).Elements(W.tab)).Count().IsEqualTo(2);
     }
 
     /// <summary>
@@ -1096,7 +1096,7 @@ public class DocumentAssemblerTests : TestsBase
         await Assert.That(tables).IsNotEmpty();
 
         var dataRows = tables![0].Elements(W.tr).Skip(1).ToList(); // skip header row
-        await Assert.That(dataRows).HasCount(2);
+        await Assert.That(dataRows).Count().IsEqualTo(2);
 
         var rowText = dataRows
             .SelectMany(r => r.Descendants(W.t))

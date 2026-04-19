@@ -478,7 +478,7 @@ namespace Clippit.Word
 
         private static bool FirstRunIsEmptySectionBreak(XElement paragraph)
         {
-            var firstRun = paragraph.DescendantsTrimmed(W.txbxContent).Where(d => d.Name == W.r).FirstOrDefault();
+            var firstRun = paragraph.DescendantsTrimmed(W.txbxContent).FirstOrDefault(d => d.Name == W.r);
 
             var hasTextElement = paragraph
                 .DescendantsTrimmed(W.txbxContent)

@@ -402,289 +402,8 @@ internal sealed partial class FluentPresentationBuilder
         IEnumerable<XElement> newContent
     )
     {
-        var relevantElements = newContent
-            .DescendantsAndSelf()
-            .Where(d =>
-                d.Name == VML.imagedata
-                || d.Name == VML.fill
-                || d.Name == VML.stroke
-                || d.Name == A.blip
-                || d.Name == SVG.svgBlip
-            )
-            .ToList();
-        foreach (var imageReference in relevantElements)
-        {
-            CopyRelatedImage(oldContentPart, newContentPart, imageReference, R.embed);
-            CopyRelatedImage(oldContentPart, newContentPart, imageReference, R.pict);
-            CopyRelatedImage(oldContentPart, newContentPart, imageReference, R.id);
-            CopyRelatedImage(oldContentPart, newContentPart, imageReference, O.relid);
-        }
-
-        relevantElements = newContent
-            .DescendantsAndSelf()
-            .Where(d => d.Name == A.videoFile || d.Name == A.quickTimeFile)
-            .ToList();
-        foreach (var imageReference in relevantElements)
-        {
-            CopyRelatedMedia(oldContentPart, newContentPart, imageReference, R.link, "video");
-        }
-
-        relevantElements = newContent
-            .DescendantsAndSelf()
-            .Where(d => d.Name == P14.media || d.Name == PAV.srcMedia)
-            .ToList();
-        foreach (var imageReference in relevantElements)
-        {
-            CopyRelatedMedia(oldContentPart, newContentPart, imageReference, R.embed, "media");
-            PBT.CopyRelatedMediaExternalRelationship(oldContentPart, newContentPart, imageReference, R.link);
-        }
-
-        foreach (var extendedReference in newContent.DescendantsAndSelf(A14.imgLayer))
-        {
-            PBT.CopyExtendedPart(oldContentPart, newContentPart, extendedReference, R.embed);
-        }
-
-        foreach (var contentPartReference in newContent.DescendantsAndSelf(P.contentPart))
-        {
-            PBT.CopyInkPart(oldContentPart, newContentPart, contentPartReference, R.id);
-        }
-
-        foreach (var contentPartReference in newContent.DescendantsAndSelf(P.control))
-        {
-            PBT.CopyActiveXPart(oldContentPart, newContentPart, contentPartReference, R.id);
-        }
-
-        foreach (var contentPartReference in newContent.DescendantsAndSelf(Plegacy.textdata))
-        {
-            PBT.CopyLegacyDiagramText(oldContentPart, newContentPart, contentPartReference, "id");
-        }
-
-        foreach (
-            var diagramReference in newContent
-                .DescendantsAndSelf()
-                .Where(d => d.Name == DGM.relIds || d.Name == A.relIds)
-        )
-        {
-            // dm attribute
-            var relId = diagramReference.Attribute(R.dm).Value;
-            if (newContentPart.HasRelationship(relId))
-                continue;
-
-            var oldPart = oldContentPart.GetPartById(relId);
-            OpenXmlPart newPart = newContentPart.AddNewPart<DiagramDataPart>();
-            newPart.GetXDocument().Add(oldPart.GetXDocument().Root);
-            diagramReference.Attribute(R.dm).Value = newContentPart.GetIdOfPart(newPart);
-            PBT.AddRelationships(oldPart, newPart, [newPart.GetXDocument().Root]);
-            CopyRelatedPartsForContentParts(oldPart, newPart, [newPart.GetXDocument().Root]);
-
-            // lo attribute
-            relId = diagramReference.Attribute(R.lo).Value;
-            if (newContentPart.HasRelationship(relId))
-                continue;
-
-            oldPart = oldContentPart.GetPartById(relId);
-            newPart = newContentPart.AddNewPart<DiagramLayoutDefinitionPart>();
-            newPart.GetXDocument().Add(oldPart.GetXDocument().Root);
-            diagramReference.Attribute(R.lo).Value = newContentPart.GetIdOfPart(newPart);
-            PBT.AddRelationships(oldPart, newPart, [newPart.GetXDocument().Root]);
-            CopyRelatedPartsForContentParts(oldPart, newPart, [newPart.GetXDocument().Root]);
-
-            // qs attribute
-            relId = diagramReference.Attribute(R.qs).Value;
-            if (newContentPart.HasRelationship(relId))
-                continue;
-
-            oldPart = oldContentPart.GetPartById(relId);
-            newPart = newContentPart.AddNewPart<DiagramStylePart>();
-            newPart.GetXDocument().Add(oldPart.GetXDocument().Root);
-            diagramReference.Attribute(R.qs).Value = newContentPart.GetIdOfPart(newPart);
-            PBT.AddRelationships(oldPart, newPart, [newPart.GetXDocument().Root]);
-            CopyRelatedPartsForContentParts(oldPart, newPart, [newPart.GetXDocument().Root]);
-
-            // cs attribute
-            relId = diagramReference.Attribute(R.cs).Value;
-            if (newContentPart.HasRelationship(relId))
-                continue;
-
-            oldPart = oldContentPart.GetPartById(relId);
-            newPart = newContentPart.AddNewPart<DiagramColorsPart>();
-            newPart.GetXDocument().Add(oldPart.GetXDocument().Root);
-            diagramReference.Attribute(R.cs).Value = newContentPart.GetIdOfPart(newPart);
-            PBT.AddRelationships(oldPart, newPart, [newPart.GetXDocument().Root]);
-            CopyRelatedPartsForContentParts(oldPart, newPart, [newPart.GetXDocument().Root]);
-        }
-
-        foreach (
-            var oleReference in newContent
-                .DescendantsAndSelf()
-                .Where(d => d.Name == P.oleObj || d.Name == P.externalData)
-        )
-        {
-            var relId = oleReference.Attribute(R.id).Value;
-
-            // First look to see if this relId has already been added to the new document.
-            // This is necessary for those parts that get processed with both old and new ids, such as the comments
-            // part.  This is not necessary for parts such as the main document part, but this code won't malfunction
-            // in that case.
-            if (newContentPart.HasRelationship(relId))
-                continue;
-
-            var oldPartIdPair = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-            if (oldPartIdPair != default)
-            {
-                var oldPart = oldPartIdPair.OpenXmlPart;
-                OpenXmlPart newPart = null;
-                newPart = oldPart switch
-                {
-                    EmbeddedObjectPart => newContentPart switch
-                    {
-                        DialogsheetPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
-                        HandoutMasterPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
-                        NotesMasterPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
-                        NotesSlidePart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
-                        SlideLayoutPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
-                        SlideMasterPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
-                        SlidePart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
-                        _ => newPart,
-                    },
-                    EmbeddedPackagePart => newContentPart switch
-                    {
-                        ChartPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
-                        HandoutMasterPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
-                        NotesMasterPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
-                        NotesSlidePart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
-                        SlideLayoutPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
-                        SlideMasterPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
-                        SlidePart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
-                        _ => newPart,
-                    },
-                    _ => newPart,
-                };
-                using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
-                {
-                    newPart.FeedData(oldObject);
-                }
-                oleReference.Attribute(R.id).Value = newContentPart.GetIdOfPart(newPart);
-            }
-            else
-            {
-                var er = oldContentPart.ExternalRelationships.FirstOrDefault(r => r.Id == relId);
-                if (er is not null)
-                {
-                    var newEr = newContentPart.AddExternalRelationship(er.RelationshipType, er.Uri);
-                    oleReference.Attribute(R.id).Set(newEr.Id);
-                }
-            }
-        }
-
-        foreach (var chartReference in newContent.DescendantsAndSelf(C.chart))
-        {
-            var relId = (string)chartReference.Attribute(R.id);
-            if (newContentPart.HasRelationship(relId))
-                continue;
-
-            var oldPartIdPair2 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-            if (oldPartIdPair2.OpenXmlPart is ChartPart oldPart)
-            {
-                var oldChart = oldPart.GetXDocument();
-                var newPart = newContentPart.AddNewPart<ChartPart>();
-                var newChart = newPart.GetXDocument();
-                newChart.Add(oldChart.Root);
-                chartReference.Attribute(R.id).Value = newContentPart.GetIdOfPart(newPart);
-                PBT.CopyChartObjects(oldPart, newPart);
-                CopyRelatedPartsForContentParts(oldPart, newPart, [newChart.Root]);
-            }
-        }
-
-        foreach (var chartReference in newContent.DescendantsAndSelf(Cx.chart))
-        {
-            var relId = (string)chartReference.Attribute(R.id);
-            if (newContentPart.HasRelationship(relId))
-                continue;
-
-            var oldPartIdPair2 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-            if (oldPartIdPair2.OpenXmlPart is ExtendedChartPart oldPart)
-            {
-                var oldChart = oldPart.GetXDocument();
-                var newPart = newContentPart.AddNewPart<ExtendedChartPart>();
-                var newChart = newPart.GetXDocument();
-                newChart.Add(oldChart.Root);
-                chartReference.Attribute(R.id).Value = newContentPart.GetIdOfPart(newPart);
-                PBT.CopyExtendedChartObjects(oldPart, newPart);
-                CopyRelatedPartsForContentParts(oldPart, newPart, [newChart.Root]);
-            }
-        }
-
-        foreach (var userShape in newContent.DescendantsAndSelf(C.userShapes))
-        {
-            var relId = (string)userShape.Attribute(R.id);
-            if (newContentPart.HasRelationship(relId))
-                continue;
-
-            var oldPartIdPair3 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-            if (oldPartIdPair3.OpenXmlPart is ChartDrawingPart oldPart)
-            {
-                var oldXDoc = oldPart.GetXDocument();
-                var newPart = newContentPart.AddNewPart<ChartDrawingPart>();
-                var newXDoc = newPart.GetXDocument();
-                newXDoc.Add(oldXDoc.Root);
-                userShape.Attribute(R.id).Value = newContentPart.GetIdOfPart(newPart);
-                PBT.AddRelationships(oldPart, newPart, newContent);
-                CopyRelatedPartsForContentParts(oldPart, newPart, [newXDoc.Root]);
-            }
-        }
-
-        foreach (var tags in newContent.DescendantsAndSelf(P.tags))
-        {
-            var relId = (string)tags.Attribute(R.id);
-            if (newContentPart.HasRelationship(relId))
-                continue;
-
-            var oldPartIdPair4 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-            if (oldPartIdPair4.OpenXmlPart is UserDefinedTagsPart oldPart)
-            {
-                var oldXDoc = oldPart.GetXDocument();
-                var newPart = newContentPart.AddNewPart<UserDefinedTagsPart>();
-                var newXDoc = newPart.GetXDocument();
-                newXDoc.Add(oldXDoc.Root);
-                tags.Attribute(R.id).Value = newContentPart.GetIdOfPart(newPart);
-            }
-        }
-
-        foreach (var custData in newContent.DescendantsAndSelf(P.custData))
-        {
-            var relId = (string)custData.Attribute(R.id);
-            if (string.IsNullOrEmpty(relId) || newContentPart.Parts.Any(p => p.RelationshipId == relId))
-                continue;
-
-            var oldPartIdPair9 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
-            if (oldPartIdPair9 != default)
-            {
-                var newPart = _newDocument.PresentationPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
-                using (var stream = oldPartIdPair9.OpenXmlPart.GetStream())
-                    newPart.FeedData(stream);
-                foreach (
-                    var itemProps in oldPartIdPair9.OpenXmlPart.Parts.Where(p =>
-                        p.OpenXmlPart.ContentType
-                        == "application/vnd.openxmlformats-officedocument.customXmlProperties+xml"
-                    )
-                )
-                {
-                    var cxpp = newPart.AddNewPart<CustomXmlPropertiesPart>(
-                        "application/vnd.openxmlformats-officedocument.customXmlProperties+xml"
-                    );
-                    using var stream = itemProps.OpenXmlPart.GetStream();
-                    cxpp.FeedData(stream);
-                }
-                var newId = newContentPart.CreateRelationshipToPart(newPart);
-                custData.Attribute(R.id).Value = newId;
-            }
-        }
-
-        foreach (var soundReference in newContent.DescendantsAndSelf().Where(d => d.Name == A.audioFile))
-            PBT.CopyRelatedSound(_newDocument, oldContentPart, newContentPart, soundReference, R.link);
-
-        if (
+        // Determine if this content part type has VML drawing capabilities (for embedded sound copying).
+        var isVmlPart =
             (oldContentPart is ChartsheetPart && newContentPart is ChartsheetPart)
             || (oldContentPart is DialogsheetPart && newContentPart is DialogsheetPart)
             || (oldContentPart is HandoutMasterPart && newContentPart is HandoutMasterPart)
@@ -695,83 +414,350 @@ internal sealed partial class FluentPresentationBuilder
             || (oldContentPart is SlideLayoutPart && newContentPart is SlideLayoutPart)
             || (oldContentPart is SlideMasterPart && newContentPart is SlideMasterPart)
             || (oldContentPart is SlidePart && newContentPart is SlidePart)
-            || (oldContentPart is WorksheetPart && newContentPart is WorksheetPart)
-        )
-        {
-            foreach (
-                var soundReference in newContent
-                    .DescendantsAndSelf()
-                    .Where(d =>
-                        d.Name == P.snd
-                        || d.Name == P.sndTgt
-                        || d.Name == A.wavAudioFile
-                        || d.Name == A.snd
-                        || d.Name == PAV.srcMedia
-                    )
-            )
-                PBT.CopyRelatedSound(_newDocument, oldContentPart, newContentPart, soundReference, R.embed);
+            || (oldContentPart is WorksheetPart && newContentPart is WorksheetPart);
 
-            var vmlDrawingParts = oldContentPart switch
+        // Single pass over the entire element tree dispatches all relationship-copying work.
+        // The previous implementation traversed DescendantsAndSelf() up to 16 separate times
+        // (once per element-type group). A single dispatch loop reduces tree visits from O(16N)
+        // to O(N) and eliminates intermediate List<XElement> allocations.
+        //
+        // Ordering note: elements are now visited in document order rather than per-type-group
+        // order. This is safe because every copy helper is independent and idempotent:
+        //   - Each helper operates on a single element's relationship attribute.
+        //   - No helper produces a side-effect that another element type's helper depends on.
+        //   - Duplicate-copy guards (HasRelationship / DataPartReferenceRelationships.Any)
+        //     prevent double-processing if the same relId appears more than once in the tree.
+        // Within each element type, document order is preserved just as in the original code.
+        foreach (var element in newContent.DescendantsAndSelf())
+        {
+            var name = element.Name;
+
+            if (
+                name == VML.imagedata
+                || name == VML.fill
+                || name == VML.stroke
+                || name == A.blip
+                || name == SVG.svgBlip
+            )
             {
-                ChartsheetPart part => part.VmlDrawingParts,
-                DialogsheetPart part => part.VmlDrawingParts,
-                HandoutMasterPart part => part.VmlDrawingParts,
-                InternationalMacroSheetPart part => part.VmlDrawingParts,
-                MacroSheetPart part => part.VmlDrawingParts,
-                NotesMasterPart part => part.VmlDrawingParts,
-                NotesSlidePart part => part.VmlDrawingParts,
-                SlideLayoutPart part => part.VmlDrawingParts,
-                SlideMasterPart part => part.VmlDrawingParts,
-                SlidePart part => part.VmlDrawingParts,
-                WorksheetPart part => part.VmlDrawingParts,
+                CopyRelatedImage(oldContentPart, newContentPart, element, R.embed);
+                CopyRelatedImage(oldContentPart, newContentPart, element, R.pict);
+                CopyRelatedImage(oldContentPart, newContentPart, element, R.id);
+                CopyRelatedImage(oldContentPart, newContentPart, element, O.relid);
+            }
+            else if (name == A.videoFile || name == A.quickTimeFile)
+            {
+                CopyRelatedMedia(oldContentPart, newContentPart, element, R.link, "video");
+            }
+            else if (name == P14.media)
+            {
+                CopyRelatedMedia(oldContentPart, newContentPart, element, R.embed, "media");
+                PBT.CopyRelatedMediaExternalRelationship(oldContentPart, newContentPart, element, R.link);
+            }
+            else if (name == PAV.srcMedia)
+            {
+                CopyRelatedMedia(oldContentPart, newContentPart, element, R.embed, "media");
+                PBT.CopyRelatedMediaExternalRelationship(oldContentPart, newContentPart, element, R.link);
+                if (isVmlPart)
+                    PBT.CopyRelatedSound(_newDocument, oldContentPart, newContentPart, element, R.embed);
+            }
+            else if (name == A14.imgLayer)
+            {
+                PBT.CopyExtendedPart(oldContentPart, newContentPart, element, R.embed);
+            }
+            else if (name == P.contentPart)
+            {
+                PBT.CopyInkPart(oldContentPart, newContentPart, element, R.id);
+            }
+            else if (name == P.control)
+            {
+                PBT.CopyActiveXPart(oldContentPart, newContentPart, element, R.id);
+            }
+            else if (name == Plegacy.textdata)
+            {
+                PBT.CopyLegacyDiagramText(oldContentPart, newContentPart, element, "id");
+            }
+            else if (name == DGM.relIds || name == A.relIds)
+            {
+                // dm attribute
+                var relId = element.Attribute(R.dm).Value;
+                if (newContentPart.HasRelationship(relId))
+                    continue;
+
+                var oldPart = oldContentPart.GetPartById(relId);
+                OpenXmlPart newPart = newContentPart.AddNewPart<DiagramDataPart>();
+                newPart.GetXDocument().Add(oldPart.GetXDocument().Root);
+                element.Attribute(R.dm).Value = newContentPart.GetIdOfPart(newPart);
+                PBT.AddRelationships(oldPart, newPart, [newPart.GetXDocument().Root]);
+                CopyRelatedPartsForContentParts(oldPart, newPart, [newPart.GetXDocument().Root]);
+
+                // lo attribute
+                relId = element.Attribute(R.lo).Value;
+                if (newContentPart.HasRelationship(relId))
+                    continue;
+
+                oldPart = oldContentPart.GetPartById(relId);
+                newPart = newContentPart.AddNewPart<DiagramLayoutDefinitionPart>();
+                newPart.GetXDocument().Add(oldPart.GetXDocument().Root);
+                element.Attribute(R.lo).Value = newContentPart.GetIdOfPart(newPart);
+                PBT.AddRelationships(oldPart, newPart, [newPart.GetXDocument().Root]);
+                CopyRelatedPartsForContentParts(oldPart, newPart, [newPart.GetXDocument().Root]);
+
+                // qs attribute
+                relId = element.Attribute(R.qs).Value;
+                if (newContentPart.HasRelationship(relId))
+                    continue;
+
+                oldPart = oldContentPart.GetPartById(relId);
+                newPart = newContentPart.AddNewPart<DiagramStylePart>();
+                newPart.GetXDocument().Add(oldPart.GetXDocument().Root);
+                element.Attribute(R.qs).Value = newContentPart.GetIdOfPart(newPart);
+                PBT.AddRelationships(oldPart, newPart, [newPart.GetXDocument().Root]);
+                CopyRelatedPartsForContentParts(oldPart, newPart, [newPart.GetXDocument().Root]);
+
+                // cs attribute
+                relId = element.Attribute(R.cs).Value;
+                if (newContentPart.HasRelationship(relId))
+                    continue;
+
+                oldPart = oldContentPart.GetPartById(relId);
+                newPart = newContentPart.AddNewPart<DiagramColorsPart>();
+                newPart.GetXDocument().Add(oldPart.GetXDocument().Root);
+                element.Attribute(R.cs).Value = newContentPart.GetIdOfPart(newPart);
+                PBT.AddRelationships(oldPart, newPart, [newPart.GetXDocument().Root]);
+                CopyRelatedPartsForContentParts(oldPart, newPart, [newPart.GetXDocument().Root]);
+            }
+            else if (name == P.oleObj || name == P.externalData)
+            {
+                var relId = element.Attribute(R.id).Value;
+
+                // First look to see if this relId has already been added to the new document.
+                // This is necessary for those parts that get processed with both old and new ids, such as the comments
+                // part.  This is not necessary for parts such as the main document part, but this code won't malfunction
+                // in that case.
+                if (newContentPart.HasRelationship(relId))
+                    continue;
+
+                var oldPartIdPair = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
+                if (oldPartIdPair != default)
+                {
+                    var oldPart = oldPartIdPair.OpenXmlPart;
+                    OpenXmlPart newPart = null;
+                    newPart = oldPart switch
+                    {
+                        EmbeddedObjectPart => newContentPart switch
+                        {
+                            DialogsheetPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
+                            HandoutMasterPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
+                            NotesMasterPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
+                            NotesSlidePart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
+                            SlideLayoutPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
+                            SlideMasterPart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
+                            SlidePart part => part.AddEmbeddedObjectPart(oldPart.ContentType),
+                            _ => newPart,
+                        },
+                        EmbeddedPackagePart => newContentPart switch
+                        {
+                            ChartPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
+                            HandoutMasterPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
+                            NotesMasterPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
+                            NotesSlidePart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
+                            SlideLayoutPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
+                            SlideMasterPart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
+                            SlidePart part => part.AddEmbeddedPackagePart(oldPart.ContentType),
+                            _ => newPart,
+                        },
+                        _ => newPart,
+                    };
+                    using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
+                    {
+                        newPart.FeedData(oldObject);
+                    }
+                    element.Attribute(R.id).Value = newContentPart.GetIdOfPart(newPart);
+                }
+                else
+                {
+                    var er = oldContentPart.ExternalRelationships.FirstOrDefault(r => r.Id == relId);
+                    if (er is not null)
+                    {
+                        var newEr = newContentPart.AddExternalRelationship(er.RelationshipType, er.Uri);
+                        element.Attribute(R.id).Set(newEr.Id);
+                    }
+                }
+            }
+            else if (name == C.chart)
+            {
+                var relId = (string)element.Attribute(R.id);
+                if (newContentPart.HasRelationship(relId))
+                    continue;
+
+                var oldPartIdPair2 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
+                if (oldPartIdPair2.OpenXmlPart is ChartPart oldPart)
+                {
+                    var oldChart = oldPart.GetXDocument();
+                    var newPart = newContentPart.AddNewPart<ChartPart>();
+                    var newChart = newPart.GetXDocument();
+                    newChart.Add(oldChart.Root);
+                    element.Attribute(R.id).Value = newContentPart.GetIdOfPart(newPart);
+                    PBT.CopyChartObjects(oldPart, newPart);
+                    CopyRelatedPartsForContentParts(oldPart, newPart, [newChart.Root]);
+                }
+            }
+            else if (name == Cx.chart)
+            {
+                var relId = (string)element.Attribute(R.id);
+                if (newContentPart.HasRelationship(relId))
+                    continue;
+
+                var oldPartIdPair2 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
+                if (oldPartIdPair2.OpenXmlPart is ExtendedChartPart oldPart)
+                {
+                    var oldChart = oldPart.GetXDocument();
+                    var newPart = newContentPart.AddNewPart<ExtendedChartPart>();
+                    var newChart = newPart.GetXDocument();
+                    newChart.Add(oldChart.Root);
+                    element.Attribute(R.id).Value = newContentPart.GetIdOfPart(newPart);
+                    PBT.CopyExtendedChartObjects(oldPart, newPart);
+                    CopyRelatedPartsForContentParts(oldPart, newPart, [newChart.Root]);
+                }
+            }
+            else if (name == C.userShapes)
+            {
+                var relId = (string)element.Attribute(R.id);
+                if (newContentPart.HasRelationship(relId))
+                    continue;
+
+                var oldPartIdPair3 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
+                if (oldPartIdPair3.OpenXmlPart is ChartDrawingPart oldPart)
+                {
+                    var oldXDoc = oldPart.GetXDocument();
+                    var newPart = newContentPart.AddNewPart<ChartDrawingPart>();
+                    var newXDoc = newPart.GetXDocument();
+                    newXDoc.Add(oldXDoc.Root);
+                    element.Attribute(R.id).Value = newContentPart.GetIdOfPart(newPart);
+                    PBT.AddRelationships(oldPart, newPart, newContent);
+                    CopyRelatedPartsForContentParts(oldPart, newPart, [newXDoc.Root]);
+                }
+            }
+            else if (name == P.tags)
+            {
+                var relId = (string)element.Attribute(R.id);
+                if (newContentPart.HasRelationship(relId))
+                    continue;
+
+                var oldPartIdPair4 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
+                if (oldPartIdPair4.OpenXmlPart is UserDefinedTagsPart oldPart)
+                {
+                    var oldXDoc = oldPart.GetXDocument();
+                    var newPart = newContentPart.AddNewPart<UserDefinedTagsPart>();
+                    var newXDoc = newPart.GetXDocument();
+                    newXDoc.Add(oldXDoc.Root);
+                    element.Attribute(R.id).Value = newContentPart.GetIdOfPart(newPart);
+                }
+            }
+            else if (name == P.custData)
+            {
+                var relId = (string)element.Attribute(R.id);
+                if (string.IsNullOrEmpty(relId) || newContentPart.Parts.Any(p => p.RelationshipId == relId))
+                    continue;
+
+                var oldPartIdPair9 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
+                if (oldPartIdPair9 != default)
+                {
+                    var newPart = _newDocument.PresentationPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
+                    using (var stream = oldPartIdPair9.OpenXmlPart.GetStream())
+                        newPart.FeedData(stream);
+                    foreach (
+                        var itemProps in oldPartIdPair9.OpenXmlPart.Parts.Where(p =>
+                            p.OpenXmlPart.ContentType
+                            == "application/vnd.openxmlformats-officedocument.customXmlProperties+xml"
+                        )
+                    )
+                    {
+                        var cxpp = newPart.AddNewPart<CustomXmlPropertiesPart>(
+                            "application/vnd.openxmlformats-officedocument.customXmlProperties+xml"
+                        );
+                        using var stream = itemProps.OpenXmlPart.GetStream();
+                        cxpp.FeedData(stream);
+                    }
+                    var newId = newContentPart.CreateRelationshipToPart(newPart);
+                    element.Attribute(R.id).Value = newId;
+                }
+            }
+            else if (name == A.audioFile)
+            {
+                PBT.CopyRelatedSound(_newDocument, oldContentPart, newContentPart, element, R.link);
+            }
+            else if (isVmlPart && (name == P.snd || name == P.sndTgt || name == A.wavAudioFile || name == A.snd))
+            {
+                PBT.CopyRelatedSound(_newDocument, oldContentPart, newContentPart, element, R.embed);
+            }
+        }
+
+        // VML drawing parts use implicit relationships (not element-based) and are handled separately.
+        if (!isVmlPart)
+            return;
+
+        var vmlDrawingParts = oldContentPart switch
+        {
+            ChartsheetPart part => part.VmlDrawingParts,
+            DialogsheetPart part => part.VmlDrawingParts,
+            HandoutMasterPart part => part.VmlDrawingParts,
+            InternationalMacroSheetPart part => part.VmlDrawingParts,
+            MacroSheetPart part => part.VmlDrawingParts,
+            NotesMasterPart part => part.VmlDrawingParts,
+            NotesSlidePart part => part.VmlDrawingParts,
+            SlideLayoutPart part => part.VmlDrawingParts,
+            SlideMasterPart part => part.VmlDrawingParts,
+            SlidePart part => part.VmlDrawingParts,
+            WorksheetPart part => part.VmlDrawingParts,
+            _ => null,
+        };
+
+        if (vmlDrawingParts is null)
+            return;
+
+        // Transitional: Copy VML Drawing parts, implicit relationship
+        foreach (var vmlPart in vmlDrawingParts)
+        {
+            var newVmlPart = newContentPart switch
+            {
+                ChartsheetPart part => part.AddNewPart<VmlDrawingPart>(),
+                DialogsheetPart part => part.AddNewPart<VmlDrawingPart>(),
+                HandoutMasterPart part => part.AddNewPart<VmlDrawingPart>(),
+                InternationalMacroSheetPart part => part.AddNewPart<VmlDrawingPart>(),
+                MacroSheetPart part => part.AddNewPart<VmlDrawingPart>(),
+                NotesMasterPart part => part.AddNewPart<VmlDrawingPart>(),
+                NotesSlidePart part => part.AddNewPart<VmlDrawingPart>(),
+                SlideLayoutPart part => part.AddNewPart<VmlDrawingPart>(),
+                SlideMasterPart part => part.AddNewPart<VmlDrawingPart>(),
+                SlidePart part => part.AddNewPart<VmlDrawingPart>(),
+                WorksheetPart part => part.AddNewPart<VmlDrawingPart>(),
                 _ => null,
             };
 
-            if (vmlDrawingParts is not null)
+            try
             {
-                // Transitional: Copy VML Drawing parts, implicit relationship
-                foreach (var vmlPart in vmlDrawingParts)
+                var xd = new XDocument(vmlPart.GetXDocument());
+                foreach (var item in xd.Descendants(O.ink))
                 {
-                    var newVmlPart = newContentPart switch
+                    if (item.Attribute("i") is { } attr)
                     {
-                        ChartsheetPart part => part.AddNewPart<VmlDrawingPart>(),
-                        DialogsheetPart part => part.AddNewPart<VmlDrawingPart>(),
-                        HandoutMasterPart part => part.AddNewPart<VmlDrawingPart>(),
-                        InternationalMacroSheetPart part => part.AddNewPart<VmlDrawingPart>(),
-                        MacroSheetPart part => part.AddNewPart<VmlDrawingPart>(),
-                        NotesMasterPart part => part.AddNewPart<VmlDrawingPart>(),
-                        NotesSlidePart part => part.AddNewPart<VmlDrawingPart>(),
-                        SlideLayoutPart part => part.AddNewPart<VmlDrawingPart>(),
-                        SlideMasterPart part => part.AddNewPart<VmlDrawingPart>(),
-                        SlidePart part => part.AddNewPart<VmlDrawingPart>(),
-                        WorksheetPart part => part.AddNewPart<VmlDrawingPart>(),
-                        _ => null,
-                    };
-
-                    try
-                    {
-                        var xd = new XDocument(vmlPart.GetXDocument());
-                        foreach (var item in xd.Descendants(O.ink))
-                        {
-                            if (item.Attribute("i") is { } attr)
-                            {
-                                var i = attr.Value;
-                                i = i.Replace(" ", "\r\n");
-                                attr.Value = i;
-                            }
-                        }
-                        newVmlPart.PutXDocument(xd);
-
-                        PBT.AddRelationships(vmlPart, newVmlPart, [newVmlPart.GetXDocument().Root]);
-                        CopyRelatedPartsForContentParts(vmlPart, newVmlPart, [newVmlPart.GetXDocument().Root]);
-                    }
-                    catch (XmlException)
-                    {
-                        using var srcStream = vmlPart.GetStream();
-                        using var dstStream = newVmlPart.GetStream(FileMode.Create, FileAccess.Write);
-                        srcStream.CopyTo(dstStream);
+                        var i = attr.Value;
+                        i = i.Replace(" ", "\r\n");
+                        attr.Value = i;
                     }
                 }
+                newVmlPart.PutXDocument(xd);
+
+                PBT.AddRelationships(vmlPart, newVmlPart, [newVmlPart.GetXDocument().Root]);
+                CopyRelatedPartsForContentParts(vmlPart, newVmlPart, [newVmlPart.GetXDocument().Root]);
+            }
+            catch (XmlException)
+            {
+                using var srcStream = vmlPart.GetStream();
+                using var dstStream = newVmlPart.GetStream(FileMode.Create, FileAccess.Write);
+                srcStream.CopyTo(dstStream);
             }
         }
     }

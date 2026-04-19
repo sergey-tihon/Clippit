@@ -518,6 +518,15 @@ namespace Clippit.Word
         [GeneratedRegex("<#.*?#>")]
         private static partial Regex TemplateDirectiveRegex();
 
+        [GeneratedRegex(@"data:image/(?<type>.+?);")]
+        private static partial Regex DataImageTypeRegex();
+
+        [GeneratedRegex(@"data:image/(?<type>.+?),(?<data>.+)")]
+        private static partial Regex DataImageDataRegex();
+
+        [GeneratedRegex(@"<#(.*?)#>", RegexOptions.Singleline)]
+        private static partial Regex TemplateDirectiveSinglelineRegex();
+
         private static readonly List<string> s_aliasList = new()
         {
             "Image",
@@ -1261,8 +1270,8 @@ namespace Clippit.Word
                 // assume the image is base64 encoded format. See https://en.wikipedia.org/wiki/Data_URI_scheme
 
                 // get the image type and data
-                imageType = Regex.Match(inputImage, @"data:image/(?<type>.+?);").Groups["type"].Value;
-                var base64Data = Regex.Match(inputImage, @"data:image/(?<type>.+?),(?<data>.+)").Groups["data"].Value;
+                imageType = DataImageTypeRegex().Match(inputImage).Groups["type"].Value;
+                var base64Data = DataImageDataRegex().Match(inputImage).Groups["data"].Value;
 
                 try
                 {
@@ -1806,43 +1815,45 @@ namespace Clippit.Word
                 if (stringAttr != null)
                 {
                     var attrValue = stringAttr.Value;
-                    var match = Regex.Match(attrValue, @"<#(.*?)#>", RegexOptions.Singleline);
+                    var match = TemplateDirectiveSinglelineRegex().Match(attrValue);
                     if (match.Success)
                     {
-                        var newValue = Regex.Replace(
-                            attrValue,
-                            @"<#(.*?)#>",
-                            m =>
-                            {
-                                var xmlText = m.Groups[1].Value.Trim().Replace('\u201c', '"').Replace('\u201d', '"');
-                                try
+                        var newValue = TemplateDirectiveSinglelineRegex()
+                            .Replace(
+                                attrValue,
+                                m =>
                                 {
-                                    var directive = XElement.Parse(xmlText);
-                                    if (directive.Name == PA.Content)
+                                    var xmlText = m.Groups[1]
+                                        .Value.Trim()
+                                        .Replace('\u201c', '"')
+                                        .Replace('\u201d', '"');
+                                    try
                                     {
-                                        var schemaError = ValidatePerSchema(directive);
-                                        if (schemaError is not null)
+                                        var directive = XElement.Parse(xmlText);
+                                        if (directive.Name == PA.Content)
                                         {
-                                            templateError.HasError = true;
-                                            return $"[Template error: Schema Validation Error: {schemaError}]";
+                                            var schemaError = ValidatePerSchema(directive);
+                                            if (schemaError is not null)
+                                            {
+                                                templateError.HasError = true;
+                                                return $"[Template error: Schema Validation Error: {schemaError}]";
+                                            }
+
+                                            var xPath = (string)directive.Attribute(PA.Select);
+                                            var optional = (bool?)directive.Attribute(PA.Optional) ?? false;
+                                            return data.EvaluateXPathToString(xPath, optional);
                                         }
 
-                                        var xPath = (string)directive.Attribute(PA.Select);
-                                        var optional = (bool?)directive.Attribute(PA.Optional) ?? false;
-                                        return data.EvaluateXPathToString(xPath, optional);
+                                        // For non-PA.Content directives, leave the original text unchanged.
+                                        return m.Value;
                                     }
-
-                                    // For non-PA.Content directives, leave the original text unchanged.
-                                    return m.Value;
+                                    catch (Exception ex)
+                                    {
+                                        templateError.HasError = true;
+                                        return $"[Template error: {ex.Message}]";
+                                    }
                                 }
-                                catch (Exception ex)
-                                {
-                                    templateError.HasError = true;
-                                    return $"[Template error: {ex.Message}]";
-                                }
-                            },
-                            RegexOptions.Singleline
-                        );
+                            );
 
                         return new XElement(
                             element.Name,
