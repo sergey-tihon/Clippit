@@ -412,6 +412,86 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         await Assert.That(spanStyle.Contains("float")).IsFalse();
     }
 
+    [Test]
+    public async Task HC065_TextBoxWithTableContentIsNormalized()
+    {
+        // Regression test: w:txbxContent may contain a w:tbl, which normally converts to an HTML
+        // <table>. Since the text box container is emitted as a <span>, a <table> child would produce
+        // invalid HTML. The normalization must re-tag it as a display:block <span>.
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
+            mainPart.AddNewPart<DocumentSettingsPart>().Settings = new Settings();
+
+            XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+            XNamespace wp = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
+            XNamespace a = "http://schemas.openxmlformats.org/drawingml/2006/main";
+            XNamespace wps = "http://schemas.microsoft.com/office/word/2010/wordprocessingShape";
+
+            // Build a text box whose content is a single-cell table instead of a paragraph
+            var table = new XElement(
+                w + "tbl",
+                new XElement(w + "tblPr"),
+                new XElement(w + "tblGrid", new XElement(w + "gridCol", new XAttribute(w + "w", "2400"))),
+                new XElement(
+                    w + "tr",
+                    new XElement(
+                        w + "tc",
+                        new XElement(
+                            w + "tcPr",
+                            new XElement(w + "tcW", new XAttribute(w + "w", "2400"), new XAttribute(w + "type", "dxa"))
+                        ),
+                        new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", "CellText")))
+                    )
+                )
+            );
+
+            var textBoxParagraph = BuildTextBoxParagraph(
+                w,
+                wp,
+                a,
+                wps,
+                wrapElement: new XElement(wp + "wrapSquare", new XAttribute("wrapText", "bothSides")),
+                text: "placeholder",
+                docPrId: "3"
+            );
+
+            // Replace the placeholder paragraph inside txbxContent with the table
+            textBoxParagraph.Descendants(w + "txbxContent").First().ReplaceNodes(table);
+
+            var bodyXml = new XElement(w + "body", textBoxParagraph, new XElement(w + "p"));
+            mainPart.PutXDocument(new XDocument(new XElement(w + "document", bodyXml)));
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = false,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+
+        var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+
+        await Assert.That(html.ToString(SaveOptions.DisableFormatting)).Contains("CellText");
+
+        var textBoxSpan = html.Descendants(Xhtml.span)
+            .FirstOrDefault(s =>
+                s.Attribute("style")?.Value?.Contains("inline-block") == true && s.Value.Contains("CellText")
+            );
+        await Assert.That(textBoxSpan).IsNotNull();
+
+        // No block-level HTML elements must appear as descendants of the inline text box span
+        await Assert.That(textBoxSpan!.Descendants(Xhtml.p).ToList()).IsEmpty();
+        await Assert.That(textBoxSpan.Descendants(Xhtml.div).ToList()).IsEmpty();
+        await Assert.That(textBoxSpan.Descendants(Xhtml.table).ToList()).IsEmpty();
+    }
+
     private static XElement BuildTextBoxParagraph(
         XNamespace w,
         XNamespace wp,

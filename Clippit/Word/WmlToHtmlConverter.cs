@@ -3266,7 +3266,7 @@ namespace Clippit.Word
             var content = txbxContent
                 .Elements()
                 .Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, 0m))
-                .Select(NormalizeBlockToInlineBlock)
+                .Select(NormalizeBlockToBlockSpan)
                 .ToList();
 
             var div = new XElement(Xhtml.div, content);
@@ -3277,6 +3277,8 @@ namespace Clippit.Word
         private static readonly HashSet<XName> s_blockLevelHtmlElements =
         [
             Xhtml.p,
+            Xhtml.div,
+            Xhtml.table,
             Xhtml.xhtml + "h1",
             Xhtml.xhtml + "h2",
             Xhtml.xhtml + "h3",
@@ -3285,15 +3287,22 @@ namespace Clippit.Word
             Xhtml.xhtml + "h6",
         ];
 
-        // Re-tags block-level XHTML elements produced inside a text box as display:block spans so
-        // they remain valid phrasing content when the text box container is emitted as a <span>.
-        // The style annotation and all other attributes/children are preserved intact.
-        private static object NormalizeBlockToInlineBlock(object node)
+        // Re-tags block-level XHTML elements (p, div, table, h1–h6) produced inside a text box as
+        // display:block <span>s so they remain valid phrasing content when the text box container is
+        // emitted as a <span>. Applied recursively so that block elements nested inside a converted
+        // table or div are also normalized. Style annotations and all attributes/children are preserved.
+        private static object NormalizeBlockToBlockSpan(object node)
         {
-            if (node is not XElement element || !s_blockLevelHtmlElements.Contains(element.Name))
+            if (node is not XElement element)
                 return node;
 
-            var span = new XElement(Xhtml.span, element.Attributes(), element.Nodes());
+            // Recursively normalize descendants first so inner <p>s inside tables etc. are covered
+            var normalizedNodes = element.Nodes().Select(NormalizeBlockToBlockSpan).ToList();
+
+            if (!s_blockLevelHtmlElements.Contains(element.Name))
+                return new XElement(element.Name, element.Attributes(), normalizedNodes);
+
+            var span = new XElement(Xhtml.span, element.Attributes(), normalizedNodes);
             var annotation = element.Annotation<Dictionary<string, string>>();
             if (annotation != null)
             {
