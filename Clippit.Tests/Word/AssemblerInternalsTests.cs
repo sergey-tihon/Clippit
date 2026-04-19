@@ -66,7 +66,7 @@ public class AssemblerInternalsTests
         var element = new XElement("root");
         // A boolean XPath expression returns a non-IEnumerable result.
         var result = element.EvaluateXPath("count(Item) > 0", optional: true);
-        await Assert.That(result).HasCount(1);
+        await Assert.That(result).Count().IsEqualTo(1);
         await Assert.That(result[0]).IsEqualTo("False");
     }
 
@@ -75,7 +75,7 @@ public class AssemblerInternalsTests
     {
         var element = new XElement("root", new XElement("Item", "a"), new XElement("Item", "b"));
         var result = element.EvaluateXPath("count(Item)", optional: false);
-        await Assert.That(result).HasCount(1);
+        await Assert.That(result).Count().IsEqualTo(1);
         await Assert.That(result[0]).IsEqualTo("2");
     }
 

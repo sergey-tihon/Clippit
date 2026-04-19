@@ -518,6 +518,15 @@ namespace Clippit.Word
         [GeneratedRegex("<#.*?#>")]
         private static partial Regex TemplateDirectiveRegex();
 
+        [GeneratedRegex(@"data:image/(?<type>.+?);")]
+        private static partial Regex DataImageTypeRegex();
+
+        [GeneratedRegex(@"data:image/(?<type>.+?),(?<data>.+)")]
+        private static partial Regex DataImageDataRegex();
+
+        [GeneratedRegex(@"<#(.*?)#>", RegexOptions.Singleline)]
+        private static partial Regex TemplateDirectiveSinglelineRegex();
+
         private static readonly List<string> s_aliasList = new()
         {
             "Image",
@@ -881,6 +890,7 @@ namespace Clippit.Word
                         <xs:element name='Table'>
                         <xs:complexType>
                             <xs:attribute name='Select' type='xs:string' use='required' />
+                            <xs:attribute name='Optional' type='xs:boolean' use='optional' />
                         </xs:complexType>
                         </xs:element>
                     </xs:schema>"
@@ -937,6 +947,7 @@ namespace Clippit.Word
                         <xs:element name='Image'>
                             <xs:complexType>
                                 <xs:attribute name='Select' type='xs:string' use='required' />
+                                <xs:attribute name='FitWithin' type='xs:boolean' use='optional' />
                             </xs:complexType>
                         </xs:element>
                     </xs:schema>"
@@ -1012,14 +1023,13 @@ namespace Clippit.Word
         /// </summary>
         /// <param name="part">The part.</param>
         /// <param name="imagePartType">Type of the image part.</param>
-        /// <param name="relationshipId">The relationship identifier.</param>
         /// <returns>ImagePart.</returns>
-        private static ImagePart GetImagePart(OpenXmlPart part, PartTypeInfo imagePartType, string relationshipId) =>
+        private static ImagePart GetImagePart(OpenXmlPart part, PartTypeInfo imagePartType) =>
             part switch
             {
-                MainDocumentPart mainDocumentPart => mainDocumentPart.AddImagePart(imagePartType, relationshipId),
-                HeaderPart headerPart => headerPart.AddImagePart(imagePartType, relationshipId),
-                FooterPart footerPart => footerPart.AddImagePart(imagePartType, relationshipId),
+                MainDocumentPart mainDocumentPart => mainDocumentPart.AddImagePart(imagePartType),
+                HeaderPart headerPart => headerPart.AddImagePart(imagePartType),
+                FooterPart footerPart => footerPart.AddImagePart(imagePartType),
                 _ => null,
             };
 
@@ -1063,7 +1073,6 @@ namespace Clippit.Word
             // assign unique image and paragraph ids. Image id is document property Id  (wp:docPr)
             // and relationship id is rId. Their numbering is different.
             const string imageId = InvalidImageId; // Ids will be replaced with real ones later, after transform is done
-            var relationshipId = Relationships.GetNewRelationshipId();
 
             var inline = para.Descendants(W.drawing).Descendants(WP.inline).FirstOrDefault();
             if (inline == null)
@@ -1090,6 +1099,9 @@ namespace Clippit.Word
                     keepOriginalImageSize = attr.Value == "0";
                 }
             }
+
+            var fitWithinStr = ((string)element.Attribute(PA.FitWithin))?.ToLowerInvariant();
+            var fitWithin = fitWithinStr is "true" or "1";
 
             // get extent
             var extent = inline.Descendants(WP.extent).FirstOrDefault();
@@ -1134,17 +1146,19 @@ namespace Clippit.Word
                 return para;
 
             // Add the image to main document part
+            string relationshipId = null;
             using (var stream = Image2Stream(imagePath, out var imagePartType, out var error))
             {
                 if (stream is not null)
                 {
-                    var ip = GetImagePart(part, imagePartType, relationshipId);
+                    var ip = GetImagePart(part, imagePartType);
                     if (ip is null)
                     {
                         error = "Failed to get image part";
                         return element.CreateContextErrorMessage(string.Concat("Image: ", error), templateError);
                     }
 
+                    relationshipId = part.GetIdOfPart(ip);
                     ip.FeedData(stream);
                     stream.Close();
 
@@ -1157,32 +1171,74 @@ namespace Clippit.Word
                     var width = image.Width;
                     var height = image.Height;
 
-                    if (keepSourceImageAspect)
+                    if (fitWithin)
                     {
-                        var ratio = height / (width * 1.0);
-                        if (!int.TryParse(extent.Attribute(NoNamespace.cx).Value, out width))
+                        // FitWithin: keep original size if image fits within template bounds;
+                        // scale down proportionally if either dimension exceeds the bounds.
+                        var imageCxEmu = (long)image.Width * pixelInEMU;
+                        var imageCyEmu = (long)image.Height * pixelInEMU;
+
+                        if (
+                            !long.TryParse(extent.Attribute(NoNamespace.cx)?.Value, out var maxCx)
+                            || !long.TryParse(extent.Attribute(NoNamespace.cy)?.Value, out var maxCy)
+                        )
                         {
                             return element.CreateContextErrorMessage("Image: Invalid image attributes", templateError);
                         }
 
-                        height = (int)(width * ratio);
+                        long finalCx,
+                            finalCy;
+                        if (imageCxEmu <= maxCx && imageCyEmu <= maxCy)
+                        {
+                            finalCx = imageCxEmu;
+                            finalCy = imageCyEmu;
+                        }
+                        else
+                        {
+                            var scaleX = (double)maxCx / imageCxEmu;
+                            var scaleY = (double)maxCy / imageCyEmu;
+                            var scale = Math.Min(scaleX, scaleY);
+                            finalCx = (long)(imageCxEmu * scale);
+                            finalCy = (long)(imageCyEmu * scale);
+                        }
 
-                        // replace attributes
-                        extent.SetAttributeValue(NoNamespace.cy, height);
-                        pictureExtent.SetAttributeValue(NoNamespace.cx, width);
-                        pictureExtent.SetAttributeValue(NoNamespace.cy, height);
+                        extent.SetAttributeValue(NoNamespace.cx, finalCx);
+                        extent.SetAttributeValue(NoNamespace.cy, finalCy);
+                        pictureExtent.SetAttributeValue(NoNamespace.cx, finalCx);
+                        pictureExtent.SetAttributeValue(NoNamespace.cy, finalCy);
                     }
-
-                    if (keepOriginalImageSize)
+                    else
                     {
-                        width = image.Width * pixelInEMU;
-                        height = image.Height * pixelInEMU;
+                        if (keepSourceImageAspect)
+                        {
+                            var ratio = height / (width * 1.0);
+                            if (!long.TryParse(extent.Attribute(NoNamespace.cx)?.Value, out var cxLong))
+                            {
+                                return element.CreateContextErrorMessage(
+                                    "Image: Invalid image attributes",
+                                    templateError
+                                );
+                            }
 
-                        // replace attributes
-                        extent.SetAttributeValue(NoNamespace.cx, width);
-                        extent.SetAttributeValue(NoNamespace.cy, height);
-                        pictureExtent.SetAttributeValue(NoNamespace.cx, width);
-                        pictureExtent.SetAttributeValue(NoNamespace.cy, height);
+                            var cyLong = (long)(cxLong * ratio);
+
+                            // replace attributes
+                            extent.SetAttributeValue(NoNamespace.cy, cyLong);
+                            pictureExtent.SetAttributeValue(NoNamespace.cx, cxLong);
+                            pictureExtent.SetAttributeValue(NoNamespace.cy, cyLong);
+                        }
+
+                        if (keepOriginalImageSize)
+                        {
+                            var widthEmu = (long)image.Width * pixelInEMU;
+                            var heightEmu = (long)image.Height * pixelInEMU;
+
+                            // replace attributes
+                            extent.SetAttributeValue(NoNamespace.cx, widthEmu);
+                            extent.SetAttributeValue(NoNamespace.cy, heightEmu);
+                            pictureExtent.SetAttributeValue(NoNamespace.cx, widthEmu);
+                            pictureExtent.SetAttributeValue(NoNamespace.cy, heightEmu);
+                        }
                     }
                 }
                 else
@@ -1214,8 +1270,8 @@ namespace Clippit.Word
                 // assume the image is base64 encoded format. See https://en.wikipedia.org/wiki/Data_URI_scheme
 
                 // get the image type and data
-                imageType = Regex.Match(inputImage, @"data:image/(?<type>.+?);").Groups["type"].Value;
-                var base64Data = Regex.Match(inputImage, @"data:image/(?<type>.+?),(?<data>.+)").Groups["data"].Value;
+                imageType = DataImageTypeRegex().Match(inputImage).Groups["type"].Value;
+                var base64Data = DataImageDataRegex().Match(inputImage).Groups["data"].Value;
 
                 try
                 {
@@ -1283,8 +1339,7 @@ namespace Clippit.Word
         private static object ProcessAParagraph(XElement element, XElement data, TemplateError templateError)
         {
             var xPath = (string)element.Attribute(PA.Select);
-            var optionalString = (string)element.Attribute(PA.Optional);
-            var optional = (optionalString != null && optionalString.ToLower() == "true");
+            var optional = (bool?)element.Attribute(PA.Optional) ?? false;
 
             string[] newValues;
             try
@@ -1528,8 +1583,7 @@ namespace Clippit.Word
             if (element.Name == PA.Repeat)
             {
                 var selector = (string)element.Attribute(PA.Select);
-                var optionalString = (string)element.Attribute(PA.Optional);
-                var optional = (optionalString != null && optionalString.ToLower() == "true");
+                var optional = (bool?)element.Attribute(PA.Optional) ?? false;
                 var alignmentOption = (string)element.Attribute(PA.Align) ?? "vertical";
 
                 IList<XElement> repeatingData;
@@ -1585,6 +1639,19 @@ namespace Clippit.Word
             }
             if (element.Name == PA.Table)
             {
+                bool optional;
+                try
+                {
+                    optional = (bool?)element.Attribute(PA.Optional) ?? false;
+                }
+                catch (FormatException)
+                {
+                    return element.CreateContextErrorMessage(
+                        $"Table: Invalid value for Optional attribute '{(string)element.Attribute(PA.Optional)}'; expected true, false, 1, or 0",
+                        templateError
+                    );
+                }
+
                 IList<XElement> tableData;
                 try
                 {
@@ -1595,7 +1662,11 @@ namespace Clippit.Word
                     return element.CreateContextErrorMessage("XPathException: " + e.Message, templateError);
                 }
                 if (!tableData.Any())
+                {
+                    if (optional)
+                        return null;
                     return element.CreateContextErrorMessage("Table Select returned no data", templateError);
+                }
                 var table = element.Element(W.tbl);
                 var protoRow = table.Elements(W.tr).Skip(1).FirstOrDefault();
                 var footerRowsBeforeTransform = table.Elements(W.tr).Skip(2).ToList();
@@ -1744,47 +1815,45 @@ namespace Clippit.Word
                 if (stringAttr != null)
                 {
                     var attrValue = stringAttr.Value;
-                    var match = Regex.Match(attrValue, @"<#(.*?)#>", RegexOptions.Singleline);
+                    var match = TemplateDirectiveSinglelineRegex().Match(attrValue);
                     if (match.Success)
                     {
-                        var newValue = Regex.Replace(
-                            attrValue,
-                            @"<#(.*?)#>",
-                            m =>
-                            {
-                                var xmlText = m.Groups[1].Value.Trim().Replace('\u201c', '"').Replace('\u201d', '"');
-                                try
+                        var newValue = TemplateDirectiveSinglelineRegex()
+                            .Replace(
+                                attrValue,
+                                m =>
                                 {
-                                    var directive = XElement.Parse(xmlText);
-                                    if (directive.Name == PA.Content)
+                                    var xmlText = m.Groups[1]
+                                        .Value.Trim()
+                                        .Replace('\u201c', '"')
+                                        .Replace('\u201d', '"');
+                                    try
                                     {
-                                        var schemaError = ValidatePerSchema(directive);
-                                        if (schemaError is not null)
+                                        var directive = XElement.Parse(xmlText);
+                                        if (directive.Name == PA.Content)
                                         {
-                                            templateError.HasError = true;
-                                            return $"[Template error: Schema Validation Error: {schemaError}]";
+                                            var schemaError = ValidatePerSchema(directive);
+                                            if (schemaError is not null)
+                                            {
+                                                templateError.HasError = true;
+                                                return $"[Template error: Schema Validation Error: {schemaError}]";
+                                            }
+
+                                            var xPath = (string)directive.Attribute(PA.Select);
+                                            var optional = (bool?)directive.Attribute(PA.Optional) ?? false;
+                                            return data.EvaluateXPathToString(xPath, optional);
                                         }
 
-                                        var xPath = (string)directive.Attribute(PA.Select);
-                                        var optional = string.Equals(
-                                            (string)directive.Attribute(PA.Optional),
-                                            "true",
-                                            StringComparison.OrdinalIgnoreCase
-                                        );
-                                        return data.EvaluateXPathToString(xPath, optional);
+                                        // For non-PA.Content directives, leave the original text unchanged.
+                                        return m.Value;
                                     }
-
-                                    // For non-PA.Content directives, leave the original text unchanged.
-                                    return m.Value;
+                                    catch (Exception ex)
+                                    {
+                                        templateError.HasError = true;
+                                        return $"[Template error: {ex.Message}]";
+                                    }
                                 }
-                                catch (Exception ex)
-                                {
-                                    templateError.HasError = true;
-                                    return $"[Template error: {ex.Message}]";
-                                }
-                            },
-                            RegexOptions.Singleline
-                        );
+                            );
 
                         return new XElement(
                             element.Name,

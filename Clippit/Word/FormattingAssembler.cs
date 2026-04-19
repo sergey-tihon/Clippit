@@ -991,7 +991,7 @@ namespace Clippit.Word
             var cellCnf = cell.Elements(W.tcPr).Elements(W.cnfStyle).FirstOrDefault();
             if (cellCnf != null && cellCnf.Attribute(attName).ToBoolean() == true)
             {
-                var o = style.Elements(W.tblStylePr).Where(tsp => (string)tsp.Attribute(W.type) == ot).FirstOrDefault();
+                var o = style.Elements(W.tblStylePr).FirstOrDefault(tsp => (string)tsp.Attribute(W.type) == ot);
                 if (o != null)
                 {
                     var tcPrPtExists = false;

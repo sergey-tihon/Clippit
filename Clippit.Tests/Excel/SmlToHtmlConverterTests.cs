@@ -151,7 +151,7 @@ public class SmlToHtmlConverterTests : TestsBase
         var sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
         using var sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false);
         var sheetNames = SmlDataRetriever.SheetNames(sDoc);
-        await Assert.That(sheetNames).HasCount(numberOfSheets);
+        await Assert.That(sheetNames).Count().IsEqualTo(numberOfSheets);
     }
 
     [Test]
@@ -163,6 +163,6 @@ public class SmlToHtmlConverterTests : TestsBase
         var sourceXlsx = new FileInfo(Path.Combine(sourceDir.FullName, name));
         using var sDoc = SpreadsheetDocument.Open(sourceXlsx.FullName, false);
         var table = SmlDataRetriever.TableNames(sDoc);
-        await Assert.That(table).HasCount(numberOfTables);
+        await Assert.That(table).Count().IsEqualTo(numberOfTables);
     }
 }

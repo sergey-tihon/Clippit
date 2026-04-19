@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Clippit.Excel
 {
-    public class SmlCellFormatter
+    public partial class SmlCellFormatter
     {
         private enum CellType
         {
@@ -105,7 +105,8 @@ namespace Clippit.Excel
             return value;
         }
 
-        private static readonly Regex UnderRegex = new("_.");
+        [GeneratedRegex(@"_.")]
+        private static partial Regex UnderRegex();
 
         // The following Regex transforms currency specifies into a character / string
         // that string.Format can use to properly produce the correct text.
@@ -113,7 +114,8 @@ namespace Clippit.Excel
         // "[$€-2]"      => "€"
         // "[$¥-804]"    => "¥
         // "[$CHF-100C]" => "CHF"
-        private static readonly string s_CurrRegex = @"\[\$(?<curr>.*-).*\]";
+        [GeneratedRegex(@"\[\$(?<curr>.*-).*\]")]
+        private static partial Regex CurrencyRegex();
 
         private static string ConvertFormatCode(string formatCode)
         {
@@ -126,12 +128,9 @@ namespace Clippit.Excel
                 .Replace("m/", "M/")
                 .Replace("*", "")
                 .Replace("?", "#");
-            var withTrimmedUnderscores = UnderRegex.Replace(newFormatCode, "");
-            var withTransformedCurrency = Regex.Replace(
-                withTrimmedUnderscores,
-                s_CurrRegex,
-                m => m.Groups[1].Value.TrimEnd('-')
-            );
+            var withTrimmedUnderscores = UnderRegex().Replace(newFormatCode, "");
+            var withTransformedCurrency = CurrencyRegex()
+                .Replace(withTrimmedUnderscores, m => m.Groups[1].Value.TrimEnd('-'));
             return withTransformedCurrency;
         }
 

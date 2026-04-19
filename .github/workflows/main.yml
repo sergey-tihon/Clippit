@@ -21,15 +21,15 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
             - name: Setup .NET SDK
-              uses: actions/setup-dotnet@v4
+              uses: actions/setup-dotnet@v5
               with:
                   global-json-file: global.json
             - name: Build and Test
               run: dotnet fsi build.fsx -- -p build
             - name: Upload Artifacts
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v7
               with:
                   name: bin-${{matrix.os}}
                   path: bin/*.*
@@ -40,9 +40,9 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
             - name: Setup .NET SDK
-              uses: actions/setup-dotnet@v4
+              uses: actions/setup-dotnet@v5
               with:
                   global-json-file: global.json
             - name: Restore Tools

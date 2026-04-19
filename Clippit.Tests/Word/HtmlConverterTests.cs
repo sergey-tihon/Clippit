@@ -291,6 +291,441 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         await Assert.That(styleProperties.Where(p => p.StartsWith("width:", StringComparison.Ordinal))).IsEmpty();
     }
 
+    // Regression test for https://github.com/sergey-tihon/Clippit/issues/65
+    // Floating tables (w:tblpPr) should produce a div with CSS float and margin-from-text properties.
+    [Test]
+    public async Task HC066_FloatingTableRenderedWithFloat()
+    {
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+
+            var settingsPart = mainPart.AddNewPart<DocumentSettingsPart>();
+            settingsPart.Settings = new Settings();
+
+            var stylesPart = mainPart.AddNewPart<StyleDefinitionsPart>();
+            stylesPart.Styles = new Styles();
+
+            mainPart.Document = new Document(
+                new Body(
+                    new Paragraph(new Run(new Text("Before table"))),
+                    new Table(
+                        new TableProperties(
+                            new TablePositionProperties
+                            {
+                                HorizontalAnchor = HorizontalAnchorValues.Margin,
+                                VerticalAnchor = VerticalAnchorValues.Margin,
+                                TablePositionXAlignment = HorizontalAlignmentValues.Left,
+                                LeftFromText = 144, // 144 twips = 7.2pt
+                                RightFromText = 288, // 288 twips = 14.4pt
+                            }
+                        ),
+                        new TableRow(new TableCell(new Paragraph(new Run(new Text("Cell content")))))
+                    ),
+                    new Paragraph(new Run(new Text("After table")))
+                )
+            );
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = false,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+
+        var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+        var htmlString = html.ToString(SaveOptions.DisableFormatting);
+
+        // Cell content and surrounding text must appear in output.
+        await Assert.That(htmlString).Contains("Cell content");
+        await Assert.That(htmlString).Contains("Before table");
+        await Assert.That(htmlString).Contains("After table");
+
+        // The div wrapping the table must carry float: left.
+        var tableDivs = html.Descendants(Xhtml.div).Where(d => d.Descendants(Xhtml.table).Any()).ToList();
+        await Assert.That(tableDivs).IsNotEmpty();
+        var floatDiv = tableDivs.FirstOrDefault(d => (d.Attribute("style")?.Value ?? string.Empty).Contains("float:"));
+        await Assert.That(floatDiv).IsNotNull();
+
+        var divStyle = floatDiv!.Attribute("style")?.Value ?? string.Empty;
+        await Assert.That(divStyle).Contains("float: left");
+        await Assert.That(divStyle).Contains("margin-left: 7.2pt");
+        await Assert.That(divStyle).Contains("margin-right: 14.4pt");
+    }
+
+    // Regression test for https://github.com/sergey-tihon/Clippit/issues/65
+    // tblpXSpec="right" must produce float: right.
+    [Test]
+    public async Task HC067_FloatingTableRightAlignedRendersFloatRight()
+    {
+        var html = ConvertFloatingTableToHtml(
+            xAlignment: HorizontalAlignmentValues.Right,
+            leftFromText: 200,
+            rightFromText: 100
+        );
+
+        var floatDiv = html.Descendants(Xhtml.div)
+            .Where(d => d.Descendants(Xhtml.table).Any())
+            .FirstOrDefault(d => (d.Attribute("style")?.Value ?? string.Empty).Contains("float:"));
+        await Assert.That(floatDiv).IsNotNull();
+
+        var divStyle = floatDiv!.Attribute("style")?.Value ?? string.Empty;
+        await Assert.That(divStyle).Contains("float: right");
+        await Assert.That(divStyle).Contains("margin-left: 10pt");
+        await Assert.That(divStyle).Contains("margin-right: 5pt");
+    }
+
+    // Regression test for https://github.com/sergey-tihon/Clippit/issues/65
+    // tblpXSpec="center" has no CSS float equivalent — float must be omitted, but the
+    // *FromText margins must still be honored so the table renders with appropriate spacing.
+    [Test]
+    public async Task HC068_FloatingTableCenterAlignedHasMarginsButNoFloat()
+    {
+        var html = ConvertFloatingTableToHtml(
+            xAlignment: HorizontalAlignmentValues.Center,
+            leftFromText: 144,
+            rightFromText: 288
+        );
+
+        var tableDiv = html.Descendants(Xhtml.div)
+            .Where(d => d.Descendants(Xhtml.table).Any())
+            .FirstOrDefault(d => (d.Attribute("style")?.Value ?? string.Empty).Contains("margin-left:"));
+        await Assert.That(tableDiv).IsNotNull();
+
+        var divStyle = tableDiv!.Attribute("style")?.Value ?? string.Empty;
+        // Margins are still emitted from leftFromText/rightFromText
+        await Assert.That(divStyle).Contains("margin-left: 7.2pt");
+        await Assert.That(divStyle).Contains("margin-right: 14.4pt");
+        // float must NOT be applied for center alignment
+        await Assert.That(divStyle.Contains("float")).IsFalse();
+    }
+
+    private static XElement ConvertFloatingTableToHtml(
+        HorizontalAlignmentValues xAlignment,
+        short leftFromText,
+        short rightFromText
+    )
+    {
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.AddNewPart<DocumentSettingsPart>().Settings = new Settings();
+            mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
+
+            mainPart.Document = new Document(
+                new Body(
+                    new Paragraph(new Run(new Text("Before table"))),
+                    new Table(
+                        new TableProperties(
+                            new TablePositionProperties
+                            {
+                                HorizontalAnchor = HorizontalAnchorValues.Margin,
+                                VerticalAnchor = VerticalAnchorValues.Margin,
+                                TablePositionXAlignment = xAlignment,
+                                LeftFromText = leftFromText,
+                                RightFromText = rightFromText,
+                            }
+                        ),
+                        new TableRow(new TableCell(new Paragraph(new Run(new Text("Cell content")))))
+                    ),
+                    new Paragraph(new Run(new Text("After table")))
+                )
+            );
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = false,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+        return WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+    }
+
+    [Test]
+    public async Task HC063_TextBoxRenderedAsInlineBlock()
+    {
+        // Build a minimal DOCX that contains a floating text box (wrapSquare) with known text content.
+        // The text box is anchored and should produce display:inline-block + float:left.
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
+            mainPart.AddNewPart<DocumentSettingsPart>().Settings = new Settings();
+
+            XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+            XNamespace wp = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
+            XNamespace a = "http://schemas.openxmlformats.org/drawingml/2006/main";
+            XNamespace wps = "http://schemas.microsoft.com/office/word/2010/wordprocessingShape";
+
+            var textBoxParagraph = BuildTextBoxParagraph(
+                w,
+                wp,
+                a,
+                wps,
+                wrapElement: new XElement(wp + "wrapSquare", new XAttribute("wrapText", "bothSides")),
+                text: "TextBoxContent",
+                docPrId: "1"
+            );
+
+            var bodyXml = new XElement(w + "body", textBoxParagraph, new XElement(w + "p"));
+            mainPart.PutXDocument(new XDocument(new XElement(w + "document", bodyXml)));
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = false,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+
+        var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+        var htmlString = html.ToString(SaveOptions.DisableFormatting);
+
+        // The text box content must appear in the HTML output
+        await Assert.That(htmlString).Contains("TextBoxContent");
+
+        // The text box must be rendered as a <div> with inline-block style — a block element
+        // is valid at this position because ConvertRun skips the <span> wrapper for <div> content.
+        var textBoxDiv = html.Descendants(Xhtml.div)
+            .FirstOrDefault(s =>
+                s.Attribute("style")?.Value?.Contains("inline-block") == true && s.Value.Contains("TextBoxContent")
+            );
+        await Assert.That(textBoxDiv).IsNotNull();
+        var spanStyle = textBoxDiv!.Attribute("style")?.Value ?? string.Empty;
+        await Assert.That(spanStyle).Contains("width:");
+        await Assert.That(spanStyle).Contains("min-height:");
+        await Assert.That(spanStyle).Contains("float: left");
+
+        // The text box <div> must not be wrapped in a <span> — ConvertRun must skip the wrapper.
+        await Assert.That(textBoxDiv.Parent?.Name).IsNotEqualTo(Xhtml.span);
+
+        // Inner w:p elements are converted to <p> elements — valid inside a <div>.
+        await Assert.That(textBoxDiv.Descendants(Xhtml.p).ToList()).IsNotEmpty();
+    }
+
+    [Test]
+    public async Task HC064_NonWrappingTextBoxHasNoFloat()
+    {
+        // A text box with wp:wrapNone (no text wrap / overlap) must not get float:left
+        // because floating it would change layout semantics.
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
+            mainPart.AddNewPart<DocumentSettingsPart>().Settings = new Settings();
+
+            XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+            XNamespace wp = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
+            XNamespace a = "http://schemas.openxmlformats.org/drawingml/2006/main";
+            XNamespace wps = "http://schemas.microsoft.com/office/word/2010/wordprocessingShape";
+
+            var textBoxParagraph = BuildTextBoxParagraph(
+                w,
+                wp,
+                a,
+                wps,
+                wrapElement: new XElement(wp + "wrapNone"),
+                text: "TextBoxNoFloat",
+                docPrId: "2"
+            );
+
+            var bodyXml = new XElement(w + "body", textBoxParagraph, new XElement(w + "p"));
+            mainPart.PutXDocument(new XDocument(new XElement(w + "document", bodyXml)));
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = false,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+
+        var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+
+        var textBoxDiv = html.Descendants(Xhtml.div)
+            .FirstOrDefault(s =>
+                s.Attribute("style")?.Value?.Contains("inline-block") == true && s.Value.Contains("TextBoxNoFloat")
+            );
+        await Assert.That(textBoxDiv).IsNotNull();
+        var spanStyle = textBoxDiv!.Attribute("style")?.Value ?? string.Empty;
+        await Assert.That(spanStyle).Contains("width:");
+        await Assert.That(spanStyle).Contains("min-height:");
+        // wrapNone means no text flow around the shape — float must not be applied
+        await Assert.That(spanStyle.Contains("float")).IsFalse();
+    }
+
+    [Test]
+    public async Task HC065_TextBoxWithTableContentRendersTable()
+    {
+        // Regression test: w:txbxContent may contain a w:tbl. Since the text box container is
+        // emitted as a <div>, a <table> child is valid HTML and must be preserved as-is.
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
+            mainPart.AddNewPart<DocumentSettingsPart>().Settings = new Settings();
+
+            XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+            XNamespace wp = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
+            XNamespace a = "http://schemas.openxmlformats.org/drawingml/2006/main";
+            XNamespace wps = "http://schemas.microsoft.com/office/word/2010/wordprocessingShape";
+
+            // Build a text box whose content is a single-cell table instead of a paragraph
+            var table = new XElement(
+                w + "tbl",
+                new XElement(w + "tblPr"),
+                new XElement(w + "tblGrid", new XElement(w + "gridCol", new XAttribute(w + "w", "2400"))),
+                new XElement(
+                    w + "tr",
+                    new XElement(
+                        w + "tc",
+                        new XElement(
+                            w + "tcPr",
+                            new XElement(w + "tcW", new XAttribute(w + "w", "2400"), new XAttribute(w + "type", "dxa"))
+                        ),
+                        new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", "CellText")))
+                    )
+                )
+            );
+
+            var textBoxParagraph = BuildTextBoxParagraph(
+                w,
+                wp,
+                a,
+                wps,
+                wrapElement: new XElement(wp + "wrapSquare", new XAttribute("wrapText", "bothSides")),
+                text: "placeholder",
+                docPrId: "3"
+            );
+
+            // Replace the placeholder paragraph inside txbxContent with the table
+            textBoxParagraph.Descendants(w + "txbxContent").First().ReplaceNodes(table);
+
+            var bodyXml = new XElement(w + "body", textBoxParagraph, new XElement(w + "p"));
+            mainPart.PutXDocument(new XDocument(new XElement(w + "document", bodyXml)));
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = false,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+
+        var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+
+        await Assert.That(html.ToString(SaveOptions.DisableFormatting)).Contains("CellText");
+
+        var textBoxDiv = html.Descendants(Xhtml.div)
+            .FirstOrDefault(s =>
+                s.Attribute("style")?.Value?.Contains("inline-block") == true && s.Value.Contains("CellText")
+            );
+        await Assert.That(textBoxDiv).IsNotNull();
+
+        // The table must be preserved as a real <table> — it is valid HTML inside a <div>.
+        await Assert.That(textBoxDiv!.Descendants(Xhtml.table).ToList()).IsNotEmpty();
+    }
+
+    private static XElement BuildTextBoxParagraph(
+        XNamespace w,
+        XNamespace wp,
+        XNamespace a,
+        XNamespace wps,
+        XElement wrapElement,
+        string text,
+        string docPrId
+    )
+    {
+        var aNs = a.NamespaceName;
+        var wpsNs = wps.NamespaceName;
+        return new XElement(
+            w + "p",
+            new XElement(
+                w + "r",
+                new XElement(
+                    w + "drawing",
+                    new XElement(
+                        wp + "anchor",
+                        new XAttribute("distT", "0"),
+                        new XAttribute("distB", "0"),
+                        new XAttribute("distL", "114300"),
+                        new XAttribute("distR", "114300"),
+                        new XAttribute("simplePos", "0"),
+                        new XAttribute("relativeHeight", "251658240"),
+                        new XAttribute("behindDoc", "0"),
+                        new XAttribute("locked", "0"),
+                        new XAttribute("layoutInCell", "1"),
+                        new XAttribute("allowOverlap", "1"),
+                        new XElement(wp + "simplePos", new XAttribute("x", "0"), new XAttribute("y", "0")),
+                        new XElement(
+                            wp + "positionH",
+                            new XAttribute("relativeFrom", "column"),
+                            new XElement(wp + "posOffset", "0")
+                        ),
+                        new XElement(
+                            wp + "positionV",
+                            new XAttribute("relativeFrom", "paragraph"),
+                            new XElement(wp + "posOffset", "0")
+                        ),
+                        new XElement(wp + "extent", new XAttribute("cx", "1828800"), new XAttribute("cy", "914400")),
+                        wrapElement,
+                        new XElement(wp + "docPr", new XAttribute("id", docPrId), new XAttribute("name", "Text Box")),
+                        new XElement(
+                            a + "graphic",
+                            new XAttribute(XNamespace.Xmlns + "a", aNs),
+                            new XElement(
+                                a + "graphicData",
+                                new XAttribute("uri", wpsNs),
+                                new XElement(
+                                    wps + "wsp",
+                                    new XAttribute(XNamespace.Xmlns + "wps", wpsNs),
+                                    new XElement(wps + "cNvSpPr", new XAttribute("txbx", "1")),
+                                    new XElement(wps + "spPr"),
+                                    new XElement(
+                                        wps + "txbx",
+                                        new XElement(
+                                            w + "txbxContent",
+                                            new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", text)))
+                                        )
+                                    ),
+                                    new XElement(wps + "bodyPr")
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        );
+    }
+
 #if DO_CONVERSION_VIA_WORD
     public static void ConvertToHtmlUsingWord(FileInfo sourceFileName, FileInfo destFileName)
     {

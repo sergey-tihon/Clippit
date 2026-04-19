@@ -32,8 +32,7 @@ namespace Clippit
             if (stream.CanSeek)
                 stream.SetLength(stream.Length);
 
-            using var hashAlgo = System.Security.Cryptography.SHA256.Create();
-            return hashAlgo.ComputeHash(stream);
+            return System.Security.Cryptography.SHA256.HashData(stream);
         }
     }
 
@@ -277,12 +276,6 @@ namespace Clippit
 
     public static class FlatOpc
     {
-        private class FlatOpcTupple
-        {
-            public char FoCharacter;
-            public int FoChunk;
-        }
-
         private static XElement GetContentsAsXml(PackagePart part)
         {
             XNamespace pkg = "http://schemas.microsoft.com/office/2006/xmlPackage";
@@ -302,27 +295,8 @@ namespace Clippit
             else
             {
                 using var str = part.GetStream();
-                using var binaryReader = new BinaryReader(str);
-                var len = (int)binaryReader.BaseStream.Length;
-                var byteArray = binaryReader.ReadBytes(len);
-                // the following expression creates the base64String, then chunks
-                // it to lines of 76 characters long
-                var base64String = (Convert.ToBase64String(byteArray))
-                    .Select((c, i) => new FlatOpcTupple() { FoCharacter = c, FoChunk = i / 76 })
-                    .GroupBy(c => c.FoChunk)
-                    .Aggregate(
-                        new StringBuilder(),
-                        (s, i) =>
-                            s.Append(
-                                    i.Aggregate(
-                                        new StringBuilder(),
-                                        (seed, it) => seed.Append(it.FoCharacter),
-                                        sb => sb.ToString()
-                                    )
-                                )
-                                .Append(Environment.NewLine),
-                        s => s.ToString()
-                    );
+                var byteArray = str.ReadToArray();
+                var base64String = Base64.ChunkBase64(Convert.ToBase64String(byteArray), appendTrailingNewline: true);
                 return new XElement(
                     pkg + "part",
                     new XAttribute(pkg + "name", part.Uri),
@@ -548,28 +522,7 @@ namespace Clippit
         public static string ConvertToBase64(string fileName)
         {
             var ba = File.ReadAllBytes(fileName);
-            var base64String = (Convert.ToBase64String(ba))
-                .Select((c, i) => new { Chunk = i / 76, Character = c })
-                .GroupBy(c => c.Chunk)
-                .Aggregate(
-                    new StringBuilder(),
-                    (s, i) =>
-                        s.Append(
-                                i.Aggregate(
-                                    new StringBuilder(),
-                                    (seed, it) => seed.Append(it.Character),
-                                    sb => sb.ToString()
-                                )
-                            )
-                            .Append(Environment.NewLine),
-                    s =>
-                    {
-                        s.Length -= Environment.NewLine.Length;
-                        return s.ToString();
-                    }
-                );
-
-            return base64String;
+            return ChunkBase64(Convert.ToBase64String(ba), appendTrailingNewline: false);
         }
 
         public static byte[] ConvertFromBase64(string fileName, string b64)
@@ -577,6 +530,25 @@ namespace Clippit
             var b64b = b64.Replace("\r\n", "");
             var ba = Convert.FromBase64String(b64b);
             return ba;
+        }
+
+        /// <summary>
+        /// Splits a flat base64 string into 76-character lines separated by <see cref="Environment.NewLine"/>.
+        /// Avoids per-character object allocations by iterating the string directly.
+        /// </summary>
+        internal static string ChunkBase64(string base64, bool appendTrailingNewline)
+        {
+            const int lineWidth = 76;
+            var newline = Environment.NewLine;
+            var lineCount = (base64.Length + lineWidth - 1) / lineWidth;
+            var sb = new StringBuilder(base64.Length + lineCount * newline.Length);
+            for (var i = 0; i < base64.Length; i += lineWidth)
+            {
+                sb.Append(base64, i, Math.Min(lineWidth, base64.Length - i));
+                if (appendTrailingNewline || i + lineWidth < base64.Length)
+                    sb.Append(newline);
+            }
+            return sb.ToString();
         }
     }
 

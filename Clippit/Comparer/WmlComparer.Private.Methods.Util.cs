@@ -77,14 +77,12 @@ namespace Clippit
                         oldPartStream.CopyTo(newPartStream);
                     }
 
-                    var newRid = Relationships.GetNewRelationshipId();
-                    partInNewDocument.Relationships.Create(
+                    var newRel = partInNewDocument.Relationships.Create(
                         newPart.Uri,
                         TargetMode.Internal,
-                        relationshipForDeletedPart.RelationshipType,
-                        newRid
+                        relationshipForDeletedPart.RelationshipType
                     );
-                    att.Value = newRid;
+                    att.Value = newRel.Id;
 
                     if (newPart.ContentType.EndsWith("xml"))
                     {
