@@ -23,5 +23,6 @@ namespace Clippit.Word.Assembler
         public static XName Path = "Path";
         public static XName Data = "Data";
         public static XName PageBreakAfter = "PageBreakAfter";
+        public static XName FitWithin = "FitWithin";
     }
 }

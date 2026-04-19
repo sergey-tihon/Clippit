@@ -1,44 +1,12 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Globalization;
+
 namespace Clippit.Word
 {
     public class ListItemTextGetter_tr_TR
     {
-        private static readonly string[] RomanOnes = { "", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" };
-
-        private static readonly string[] RomanTens = { "", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC" };
-
-        private static readonly string[] RomanHundreds =
-        {
-            "",
-            "C",
-            "CC",
-            "CCC",
-            "CD",
-            "D",
-            "DC",
-            "DCC",
-            "DCCC",
-            "CM",
-            "M",
-        };
-
-        private static readonly string[] RomanThousands =
-        {
-            "",
-            "M",
-            "MM",
-            "MMM",
-            "MMMM",
-            "MMMMM",
-            "MMMMMM",
-            "MMMMMMM",
-            "MMMMMMMM",
-            "MMMMMMMMM",
-            "MMMMMMMMMM",
-        };
-
         private static readonly string[] OneThroughNineteen =
         {
             "bir",
@@ -134,6 +102,8 @@ namespace Clippit.Word
             "doksanıncı",
         };
 
+        private static readonly TextInfo s_trTRTextInfo = CultureInfo.GetCultureInfo("tr-TR").TextInfo;
+
         public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
         {
             #region
@@ -150,21 +120,11 @@ namespace Clippit.Word
             }
             if (numFmt == "upperRoman")
             {
-                var ones = levelNumber % 10;
-                var tens = (levelNumber % 100) / 10;
-                var hundreds = (levelNumber % 1000) / 100;
-                var thousands = levelNumber / 1000;
-                return RomanThousands[thousands] + RomanHundreds[hundreds] + RomanTens[tens] + RomanOnes[ones];
+                return RomanNumeralUtil.ToUpperRoman(levelNumber);
             }
             if (numFmt == "lowerRoman")
             {
-                var ones = levelNumber % 10;
-                var tens = (levelNumber % 100) / 10;
-                var hundreds = (levelNumber % 1000) / 100;
-                var thousands = levelNumber / 1000;
-                return (
-                    RomanThousands[thousands] + RomanHundreds[hundreds] + RomanTens[tens] + RomanOnes[ones]
-                ).ToLower();
+                return RomanNumeralUtil.ToLowerRoman(levelNumber);
             }
             if (numFmt == "upperLetter")
             {
@@ -202,21 +162,23 @@ namespace Clippit.Word
             }
             if (numFmt == "cardinalText")
             {
+                if (levelNumber <= 0 || levelNumber > 19999)
+                    return levelNumber.ToString();
                 var result = "";
                 var t1 = levelNumber / 1000;
                 var t2 = levelNumber % 1000;
                 if (t1 >= 1)
-                    result += OneThroughNineteen[t1 - 1] + " yüz";
+                    result += OneThroughNineteen[t1 - 1] + " bin";
                 if (t1 >= 1 && t2 == 0)
-                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
+                    return s_trTRTextInfo.ToUpper(result[0]) + result.Substring(1);
                 if (t1 >= 1)
                     result += " ";
                 var h1 = (levelNumber % 1000) / 100;
                 var h2 = levelNumber % 100;
                 if (h1 >= 1)
-                    result += OneThroughNineteen[h1 - 1] + " bin";
+                    result += OneThroughNineteen[h1 - 1] + " yüz";
                 if (h1 >= 1 && h2 == 0)
-                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
+                    return s_trTRTextInfo.ToUpper(result[0]) + result.Substring(1);
                 if (h1 >= 1)
                     result += " ";
                 var z = levelNumber % 100;
@@ -231,11 +193,13 @@ namespace Clippit.Word
                         result += /*"-" + */
                         OneThroughNineteen[r - 1];
                 }
-                return result.Substring(0, 1).ToUpper() + result.Substring(1);
+                return s_trTRTextInfo.ToUpper(result[0]) + result.Substring(1);
             }
             #endregion
             if (numFmt == "ordinalText")
             {
+                if (levelNumber <= 0 || levelNumber > 19999)
+                    return levelNumber.ToString();
                 var result = "";
                 var t1 = levelNumber / 1000;
                 var t2 = levelNumber % 1000;
@@ -244,7 +208,7 @@ namespace Clippit.Word
                 if (t1 >= 1 && t2 == 0)
                 {
                     result += TwoThroughNineteen[t1 - 1] + "bininci";
-                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
+                    return s_trTRTextInfo.ToUpper(result[0]) + result.Substring(1);
                 }
                 //if (t1 >= 1)
                 //    result += " ";
@@ -255,7 +219,7 @@ namespace Clippit.Word
                 if (h1 >= 1 && h2 == 0)
                 {
                     result += TwoThroughNineteen[h1 - 1] + "yüzüncü";
-                    return result.Substring(0, 1).ToUpper() + result.Substring(1);
+                    return s_trTRTextInfo.ToUpper(result[0]) + result.Substring(1);
                 }
                 //if (h1 >= 1)
                 //    result += " ";
@@ -273,7 +237,7 @@ namespace Clippit.Word
                     if (r >= 1)
                         result += OrdinalOneThroughNineteen[r - 1]; //result += "-" + OrdinalOneThroughNineteen[r - 1];
                 }
-                return result.Substring(0, 1).ToUpper() + result.Substring(1);
+                return s_trTRTextInfo.ToUpper(result[0]) + result.Substring(1);
             }
             if (numFmt == "0001, 0002, 0003, ...")
             {

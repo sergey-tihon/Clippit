@@ -10,12 +10,13 @@ using NextExpected = Clippit.Html.HtmlToWmlConverterCore.NextExpected;
 
 namespace Clippit.Word.Assembler
 {
-    internal static class HtmlConverter
+    internal static partial class HtmlConverter
     {
         private static readonly HtmlToWmlConverterSettings htmlConverterSettings =
             HtmlToWmlConverter.GetDefaultSettings();
 
-        private static readonly Regex detectEntityRegEx = new Regex("^&(?:#([0-9]+)|#x([0-9a-fA-F]+)|([0-9a-zA-Z]+));");
+        [GeneratedRegex(@"^&(?:#([0-9]+)|#x([0-9a-fA-F]+)|([0-9a-zA-Z]+));")]
+        private static partial Regex DetectEntityRegex();
 
         private static XElement SoftBreak => new XElement(W.r, new XElement(W.br));
         private static XElement EmptyRun => new XElement(W.r, new XElement(W.t));
@@ -192,7 +193,6 @@ namespace Clippit.Word.Assembler
             {
                 if (element.Name == XhtmlNoNamespace.a)
                 {
-                    var rId = Relationships.GetNewRelationshipId();
                     var href = (string)element.Attribute(NoNamespace.href);
                     if (href != null)
                     {
@@ -210,7 +210,7 @@ namespace Clippit.Word.Assembler
 
                         if (uri != null)
                         {
-                            part.AddHyperlinkRelationship(uri, true, rId);
+                            var newRel = part.AddHyperlinkRelationship(uri, true);
                             if (element.Element(XhtmlNoNamespace.img) != null)
                             {
                                 var imageTransformed = element
@@ -232,7 +232,7 @@ namespace Clippit.Word.Assembler
                                             {
                                                 var hlinkClick = new XElement(
                                                     A.hlinkClick,
-                                                    new XAttribute(R.id, rId),
+                                                    new XAttribute(R.id, newRel.Id),
                                                     new XAttribute(XNamespace.Xmlns + "a", A.a.NamespaceName)
                                                 );
                                                 docPr.Add(hlinkClick);
@@ -249,7 +249,7 @@ namespace Clippit.Word.Assembler
 
                             var hyperlink = new XElement(
                                 W.hyperlink,
-                                new XAttribute(R.id, rId),
+                                new XAttribute(R.id, newRel.Id),
                                 new XElement(W.r, rPr, new XElement(W.t, element.Value))
                             );
 
@@ -441,7 +441,7 @@ namespace Clippit.Word.Assembler
                     value = value.Substring(ampIndex);
 
                     // now check whether ampersand we have found is the start of an entity
-                    Match m = detectEntityRegEx.Match(value);
+                    Match m = DetectEntityRegex().Match(value);
                     if (m.Success)
                     {
                         // if this is an entity then add to result

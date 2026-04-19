@@ -321,8 +321,8 @@ namespace Clippit.Excel
             }
 
             var workbook = sDoc.WorkbookPart;
-            var rId = Relationships.GetNewRelationshipId();
-            var worksheetPart = workbook.AddNewPart<WorksheetPart>(rId);
+            var worksheetPart = workbook.AddNewPart<WorksheetPart>();
+            var rId = workbook.GetIdOfPart(worksheetPart);
 
             var wbXDoc = workbook.GetXDocument();
             var sheets = wbXDoc.Descendants(S.sheets).FirstOrDefault();
@@ -367,7 +367,8 @@ namespace Clippit.Excel
                     if (worksheetData.ColumnHeadings != null && worksheetData.TableName != null && numRows > 0)
                     {
                         partXmlWriter.WriteEndElement();
-                        var rId2 = Relationships.GetNewRelationshipId();
+                        var tdp = worksheetPart.AddNewPart<TableDefinitionPart>();
+                        var rId2 = worksheetPart.GetIdOfPart(tdp);
                         partXmlWriter.WriteStartElement("tableParts", ws);
                         partXmlWriter.WriteStartAttribute("count");
                         partXmlWriter.WriteValue(1);
@@ -375,17 +376,9 @@ namespace Clippit.Excel
                         partXmlWriter.WriteStartElement("tablePart", ws);
                         partXmlWriter.WriteStartAttribute("id", relns);
                         partXmlWriter.WriteValue(rId2);
-                        var tdp = worksheetPart.AddNewPart<TableDefinitionPart>(rId2);
                         var tXDoc = tdp.GetXDocument();
 
-                        // TODO: Optimize
-                        var tableCount = sDoc
-                            .Parts.SelectMany(x => x.OpenXmlPart.Parts)
-                            .SelectMany(x => x.OpenXmlPart.Parts)
-                            .Where(x => x.OpenXmlPart is TableDefinitionPart)
-                            .Select(x => x.OpenXmlPart.Uri)
-                            .Distinct()
-                            .Count();
+                        var tableCount = sDoc.WorkbookPart!.WorksheetParts.Sum(wp => wp.TableDefinitionParts.Count());
 
                         var table = new XElement(
                             S.table,

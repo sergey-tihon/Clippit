@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft. All rights reserved.
+﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Xml;
@@ -142,6 +142,10 @@ public class DocumentAssemblerTests : TestsBase
     [Arguments("DA285-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
     [Arguments("DA285A-ImageSelectNoParagraphFollowedAfterMetadata.docx", "DA-Data-WithImages.xml", true)]
     [Arguments("DA-I0038-TemplateWithMultipleXPathResults.docx", "DA-I0038-Data.xml", false)]
+    [Arguments("DA291-Table-Optional-NoData.docx", "DA-Data.xml", false)]
+    [Arguments("DA291A-Table-Optional-NoData.docx", "DA-Data.xml", false)]
+    [Arguments("DA292-Table-Optional-WithData.docx", "DA-Data.xml", false)]
+    [Arguments("DA292A-Table-Optional-WithData.docx", "DA-Data.xml", false)]
     public async Task DA101(string name, string data, bool err)
     {
         var afterAssembling = AssembleDocument(name, data, out var returnedTemplateError);
@@ -200,9 +204,9 @@ public class DocumentAssemblerTests : TestsBase
             //   Empty paragraph (1 line)
             //   Escaped HTML paragraph (potential multi-line)
             //   CDATA paragraph (potential multi-line)
-            await Assert.That(targetParas).HasCount(sourceParas.Count);
+            await Assert.That(targetParas).Count().IsEqualTo(sourceParas.Count);
             int expectedBreaks = (parasInContent - 1) * 2;
-            await Assert.That(targetBreaks).HasCount(expectedBreaks);
+            await Assert.That(targetBreaks).Count().IsEqualTo(expectedBreaks);
 
             var equalityComparer = new XNodeEqualityComparer();
             int paraOffset = 0;
@@ -233,7 +237,7 @@ public class DocumentAssemblerTests : TestsBase
 
         // Assert - para count is expected
         List<XElement> paras = afterAssembling.MainDocumentPart.Element(W.body).Descendants(W.p).ToList();
-        await Assert.That(paras).HasCount(9);
+        await Assert.That(paras).Count().IsEqualTo(9);
 
         // Assert - Paragraph 1 Styles
         XElement para = paras[0];
@@ -500,8 +504,8 @@ public class DocumentAssemblerTests : TestsBase
         await Assert.That(paras).HasSingleItem();
 
         // Assert - first table paragraph has 2 soft breaks
-        await Assert.That(paras.ElementAt(0).Elements(W.r)).HasCount(5);
-        await Assert.That(paras.ElementAt(0).Elements(W.r).Elements(W.br)).HasCount(2);
+        await Assert.That(paras.ElementAt(0).Elements(W.r)).Count().IsEqualTo(5);
+        await Assert.That(paras.ElementAt(0).Elements(W.r).Elements(W.br)).Count().IsEqualTo(2);
     }
 
     [Test]
@@ -519,7 +523,7 @@ public class DocumentAssemblerTests : TestsBase
 
         // Assert - we have four paragraphs
         IEnumerable<XElement> paras = afterAssembling.MainDocumentPart.Descendants(W.p);
-        await Assert.That(paras).HasCount(4);
+        await Assert.That(paras).Count().IsEqualTo(4);
 
         // Assert - first paragraph has 0 tabs
         await Assert.That(paras.ElementAt(0).Descendants(W.tab)).IsEmpty();
@@ -550,7 +554,7 @@ public class DocumentAssemblerTests : TestsBase
 
         // Assert - tables are present and correct
         IEnumerable<XElement> tables = afterAssembling.MainDocumentPart.Descendants(W.tbl);
-        await Assert.That(tables).HasCount(4);
+        await Assert.That(tables).Count().IsEqualTo(4);
 
         // Assert - the second table cell of each table has one paragraph
         List<XElement> paras = [];
@@ -559,24 +563,24 @@ public class DocumentAssemblerTests : TestsBase
             paras.AddRange(table.Descendants(W.tc).ElementAt(1).Elements(W.p));
         }
 
-        await Assert.That(tables).HasCount(paras.Count);
+        await Assert.That(tables).Count().IsEqualTo(paras.Count);
 
         // Assert - first tables paragraph has 4 soft breaks
-        await Assert.That(paras.ElementAt(0).Elements(W.r)).HasCount(7);
-        await Assert.That(paras.ElementAt(0).Elements(W.r).Elements(W.br)).HasCount(4);
+        await Assert.That(paras.ElementAt(0).Elements(W.r)).Count().IsEqualTo(7);
+        await Assert.That(paras.ElementAt(0).Elements(W.r).Elements(W.br)).Count().IsEqualTo(4);
 
         // Assert - second tables paragraph has 1 soft breaks
-        await Assert.That(paras.ElementAt(1).Elements(W.r)).HasCount(3);
+        await Assert.That(paras.ElementAt(1).Elements(W.r)).Count().IsEqualTo(3);
         await Assert.That(paras.ElementAt(1).Elements(W.r).Elements(W.br)).HasSingleItem();
 
         // Assert - third tables paragraph has 2 soft breaks
-        await Assert.That(paras.ElementAt(2).Elements(W.r)).HasCount(5);
-        await Assert.That(paras.ElementAt(2).Elements(W.r).Elements(W.br)).HasCount(2);
+        await Assert.That(paras.ElementAt(2).Elements(W.r)).Count().IsEqualTo(5);
+        await Assert.That(paras.ElementAt(2).Elements(W.r).Elements(W.br)).Count().IsEqualTo(2);
 
         // Assert - fourth tables paragraph has 1 soft breaks and two tabs
-        await Assert.That(paras.ElementAt(3).Elements(W.r)).HasCount(5);
+        await Assert.That(paras.ElementAt(3).Elements(W.r)).Count().IsEqualTo(5);
         await Assert.That(paras.ElementAt(3).Elements(W.r).Elements(W.br)).HasSingleItem();
-        await Assert.That(paras.ElementAt(3).Elements(W.r).Elements(W.tab)).HasCount(2);
+        await Assert.That(paras.ElementAt(3).Elements(W.r).Elements(W.tab)).Count().IsEqualTo(2);
     }
 
     /// <summary>
@@ -598,11 +602,11 @@ public class DocumentAssemblerTests : TestsBase
         // The paragraph reproduces the real watermark XML produced by Word:
         //   <w:p><w:pict><v:shape><v:textpath string="<#<Content Select=&quot;./WaterMark&quot;/>#>"/></v:shape></w:pict></w:p>
         var bodyXml = new XElement(
-            w + "body",
+            W.body,
             new XElement(
-                w + "p",
+                W.p,
                 new XElement(
-                    w + "pict",
+                    W.pict,
                     new XElement(
                         vml + "shape",
                         new XElement(
@@ -613,7 +617,7 @@ public class DocumentAssemblerTests : TestsBase
                     )
                 )
             ),
-            new XElement(w + "sectPr")
+            new XElement(W.sectPr)
         );
 
         byte[] docxBytes;
@@ -627,7 +631,7 @@ public class DocumentAssemblerTests : TestsBase
             )
             {
                 var mainPart = wordDoc.AddMainDocumentPart();
-                mainPart.PutXDocument(new XDocument(new XElement(w + "document", bodyXml)));
+                mainPart.PutXDocument(new XDocument(new XElement(W.document, bodyXml)));
             }
             docxBytes = ms.ToArray();
         }
@@ -643,7 +647,7 @@ public class DocumentAssemblerTests : TestsBase
 
         using var resultStream = new MemoryStream(result.DocumentByteArray);
         using var resultDoc = WordprocessingDocument.Open(resultStream, false);
-        var resultBody = resultDoc.MainDocumentPart.GetXDocument().Root?.Element(w + "body");
+        var resultBody = resultDoc.MainDocumentPart.GetXDocument().Root?.Element(W.body);
         var textpathAttr = resultBody?.Descendants(vml + "textpath").FirstOrDefault()?.Attribute("string");
         await Assert.That(textpathAttr).IsNotNull();
         await Assert.That(textpathAttr!.Value).IsEqualTo(watermarkText);
@@ -660,15 +664,14 @@ public class DocumentAssemblerTests : TestsBase
     [Arguments("<#<Content Optional=\"true\"/>#>", "<Data><WaterMark>CONFIDENTIAL</WaterMark></Data>")]
     public async Task DA_VmlTextpath_ErrorDirective_SetsHasError(string stringAttrValue, string xmlDataStr)
     {
-        XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
         XNamespace vml = "urn:schemas-microsoft-com:vml";
 
         var bodyXml = new XElement(
-            w + "body",
+            W.body,
             new XElement(
-                w + "p",
+                W.p,
                 new XElement(
-                    w + "pict",
+                    W.pict,
                     new XElement(
                         vml + "shape",
                         new XElement(
@@ -679,7 +682,7 @@ public class DocumentAssemblerTests : TestsBase
                     )
                 )
             ),
-            new XElement(w + "sectPr")
+            new XElement(W.sectPr)
         );
 
         byte[] docxBytes;
@@ -693,7 +696,7 @@ public class DocumentAssemblerTests : TestsBase
             )
             {
                 var mainPart = wordDoc.AddMainDocumentPart();
-                mainPart.PutXDocument(new XDocument(new XElement(w + "document", bodyXml)));
+                mainPart.PutXDocument(new XDocument(new XElement(W.document, bodyXml)));
             }
             docxBytes = ms.ToArray();
         }
@@ -710,10 +713,519 @@ public class DocumentAssemblerTests : TestsBase
         // The attribute value should contain the error placeholder, not the original directive.
         using var resultStream = new MemoryStream(result.DocumentByteArray);
         using var resultDoc = WordprocessingDocument.Open(resultStream, false);
-        var resultBody = resultDoc.MainDocumentPart!.GetXDocument().Root?.Element(w + "body");
+
+        var resultBody = resultDoc.MainDocumentPart!.GetXDocument().Root?.Element(W.body);
         var textpathAttr = resultBody?.Descendants(vml + "textpath").FirstOrDefault()?.Attribute("string");
+
         await Assert.That(textpathAttr).IsNotNull();
         await Assert.That(textpathAttr!.Value).Contains("[Template error:");
+    }
+
+    [Test]
+    public async Task DA291_Image_FitWithin_SmallImage_KeepsOriginalSize()
+    {
+        // Template has a 200x200 px equivalent placeholder (1905000 x 1905000 EMUs)
+        // Input image is 50x50 px → fits within bounds → output should be 50x50 px in EMUs
+        const int pixelInEmu = 914400 / 96; // 9525
+        const long templateSizeEmu = 200L * pixelInEmu; // 1905000
+        const int imageWidth = 50,
+            imageHeight = 50;
+
+        var templateBytes = BuildImageFitWithinTemplate(templateSizeEmu, templateSizeEmu);
+        var imageBytes = BuildTestPng(imageWidth, imageHeight);
+        var base64 = Convert.ToBase64String(imageBytes);
+        var xmlData = XElement.Parse($"<Root><Photo>data:image/png;base64,{base64}</Photo></Root>");
+
+        var wml = new WmlDocument("test.docx", templateBytes);
+        var result = DocumentAssembler.AssembleDocument(wml, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+
+        using var ms = new MemoryStream(result.DocumentByteArray);
+        using var doc = WordprocessingDocument.Open(ms, false);
+        var xDoc = doc.MainDocumentPart!.GetXDocument();
+        XNamespace wp = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
+        XNamespace a = "http://schemas.openxmlformats.org/drawingml/2006/main";
+        var extent = xDoc.Descendants(wp + "extent").FirstOrDefault();
+        var xfrmExt = xDoc.Descendants(a + "xfrm").Elements(a + "ext").FirstOrDefault();
+
+        await Assert.That(extent).IsNotNull();
+        await Assert.That(xfrmExt).IsNotNull();
+        var expectedEmu = (long)imageWidth * pixelInEmu; // 476250
+        await Assert.That(long.Parse(extent!.Attribute("cx")!.Value)).IsEqualTo(expectedEmu);
+        await Assert.That(long.Parse(extent!.Attribute("cy")!.Value)).IsEqualTo(expectedEmu);
+        await Assert.That(long.Parse(xfrmExt!.Attribute("cx")!.Value)).IsEqualTo(expectedEmu);
+        await Assert.That(long.Parse(xfrmExt!.Attribute("cy")!.Value)).IsEqualTo(expectedEmu);
+    }
+
+    [Test]
+    public async Task DA292_Image_FitWithin_LargeImage_ScalesDownProportionally()
+    {
+        // Template has a 200x200 px equivalent placeholder (1905000 x 1905000 EMUs)
+        // Input image is 400x200 px (wider than tall) → scale down to fit
+        // Expected: scale = min(200/400, 200/200) = 0.5 → finalCx=200px, finalCy=100px in EMUs
+        const int pixelInEmu = 914400 / 96; // 9525
+        const long templateSizeEmu = 200L * pixelInEmu; // 1905000
+        const int imageWidth = 400,
+            imageHeight = 200;
+
+        var templateBytes = BuildImageFitWithinTemplate(templateSizeEmu, templateSizeEmu);
+        var imageBytes = BuildTestPng(imageWidth, imageHeight);
+        var base64 = Convert.ToBase64String(imageBytes);
+        var xmlData = XElement.Parse($"<Root><Photo>data:image/png;base64,{base64}</Photo></Root>");
+
+        var wml = new WmlDocument("test.docx", templateBytes);
+        var result = DocumentAssembler.AssembleDocument(wml, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+
+        using var ms = new MemoryStream(result.DocumentByteArray);
+        using var doc = WordprocessingDocument.Open(ms, false);
+        var xDoc = doc.MainDocumentPart!.GetXDocument();
+        XNamespace wp = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
+        XNamespace a = "http://schemas.openxmlformats.org/drawingml/2006/main";
+        var extent = xDoc.Descendants(wp + "extent").FirstOrDefault();
+        var xfrmExt = xDoc.Descendants(a + "xfrm").Elements(a + "ext").FirstOrDefault();
+
+        await Assert.That(extent).IsNotNull();
+        await Assert.That(xfrmExt).IsNotNull();
+        // scale = 200/400 = 0.5; finalCx = 400*0.5*9525 = 1905000; finalCy = 200*0.5*9525 = 952500
+        long expectedCx = templateSizeEmu; // 1905000 — scales to exactly the max width
+        long expectedCy = (long)(imageHeight * 0.5 * pixelInEmu); // 952500
+        await Assert.That(long.Parse(extent!.Attribute("cx")!.Value)).IsEqualTo(expectedCx);
+        await Assert.That(long.Parse(extent!.Attribute("cy")!.Value)).IsEqualTo(expectedCy);
+        await Assert.That(long.Parse(xfrmExt!.Attribute("cx")!.Value)).IsEqualTo(expectedCx);
+        await Assert.That(long.Parse(xfrmExt!.Attribute("cy")!.Value)).IsEqualTo(expectedCy);
+    }
+
+    /// <summary>
+    /// Creates a minimal DOCX template with an Image directive using FitWithin="true"
+    /// and an image placeholder with the specified extent dimensions.
+    /// </summary>
+    private static byte[] BuildImageFitWithinTemplate(long extentCx, long extentCy)
+    {
+        XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+        XNamespace wp = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
+        XNamespace a = "http://schemas.openxmlformats.org/drawingml/2006/main";
+        XNamespace pic = "http://schemas.openxmlformats.org/drawingml/2006/picture";
+        XNamespace r = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+
+        // The image directive content control text (split across runs so concatenation = "<Image .../>")
+        var directiveSdt = new XElement(
+            w + "sdt",
+            new XElement(w + "sdtPr", new XElement(w + "text")),
+            new XElement(w + "sdtEndPr"),
+            new XElement(
+                w + "sdtContent",
+                new XElement(w + "r", new XElement(w + "t", "<")),
+                new XElement(w + "r", new XElement(w + "t", "Image Select=\"./Photo\" FitWithin=\"true\"")),
+                new XElement(w + "r", new XElement(w + "t", "/>"))
+            )
+        );
+
+        // The image placeholder content control with the drawing element
+        var imagePlaceholderSdt = new XElement(
+            w + "sdt",
+            new XElement(w + "sdtPr", new XElement(w + "picture")),
+            new XElement(w + "sdtEndPr"),
+            new XElement(
+                w + "sdtContent",
+                new XElement(
+                    w + "p",
+                    new XElement(
+                        w + "r",
+                        new XElement(
+                            w + "drawing",
+                            new XElement(
+                                wp + "inline",
+                                new XAttribute("distT", "0"),
+                                new XAttribute("distB", "0"),
+                                new XAttribute("distL", "0"),
+                                new XAttribute("distR", "0"),
+                                new XElement(
+                                    wp + "extent",
+                                    new XAttribute("cx", extentCx),
+                                    new XAttribute("cy", extentCy)
+                                ),
+                                new XElement(
+                                    wp + "docPr",
+                                    new XAttribute("id", "1"),
+                                    new XAttribute("name", "Image 1")
+                                ),
+                                new XElement(
+                                    wp + "cNvGraphicFramePr",
+                                    new XElement(
+                                        a + "graphicFrameLocks",
+                                        new XAttribute(
+                                            XNamespace.Xmlns + "a",
+                                            "http://schemas.openxmlformats.org/drawingml/2006/main"
+                                        ),
+                                        new XAttribute("noChangeAspect", "1")
+                                    )
+                                ),
+                                new XElement(
+                                    a + "graphic",
+                                    new XAttribute(
+                                        XNamespace.Xmlns + "a",
+                                        "http://schemas.openxmlformats.org/drawingml/2006/main"
+                                    ),
+                                    new XElement(
+                                        a + "graphicData",
+                                        new XAttribute(
+                                            "uri",
+                                            "http://schemas.openxmlformats.org/drawingml/2006/picture"
+                                        ),
+                                        new XElement(
+                                            pic + "pic",
+                                            new XAttribute(
+                                                XNamespace.Xmlns + "pic",
+                                                "http://schemas.openxmlformats.org/drawingml/2006/picture"
+                                            ),
+                                            new XElement(
+                                                pic + "nvPicPr",
+                                                new XElement(
+                                                    pic + "cNvPr",
+                                                    new XAttribute("id", "0"),
+                                                    new XAttribute("name", "Image 1")
+                                                ),
+                                                new XElement(pic + "cNvPicPr")
+                                            ),
+                                            new XElement(
+                                                pic + "blipFill",
+                                                new XElement(a + "blip", new XAttribute(r + "embed", "rId1")),
+                                                new XElement(a + "stretch", new XElement(a + "fillRect"))
+                                            ),
+                                            new XElement(
+                                                pic + "spPr",
+                                                new XElement(
+                                                    a + "xfrm",
+                                                    new XElement(
+                                                        a + "off",
+                                                        new XAttribute("x", "0"),
+                                                        new XAttribute("y", "0")
+                                                    ),
+                                                    new XElement(
+                                                        a + "ext",
+                                                        new XAttribute("cx", extentCx),
+                                                        new XAttribute("cy", extentCy)
+                                                    )
+                                                ),
+                                                new XElement(
+                                                    a + "prstGeom",
+                                                    new XAttribute("prst", "rect"),
+                                                    new XElement(a + "avLst")
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        );
+
+        var bodyXml = new XElement(
+            w + "body",
+            new XElement(w + "p", directiveSdt),
+            imagePlaceholderSdt,
+            new XElement(w + "sectPr")
+        );
+
+        using var ms = new MemoryStream();
+        using (
+            var wordDoc = WordprocessingDocument.Create(ms, DocumentFormat.OpenXml.WordprocessingDocumentType.Document)
+        )
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.PutXDocument(new XDocument(new XElement(w + "document", bodyXml)));
+
+            // Add a 1x1 placeholder image so the template is valid
+            var imagePart = mainPart.AddImagePart(DocumentFormat.OpenXml.Packaging.ImagePartType.Png, "rId1");
+            imagePart.FeedData(new MemoryStream(BuildTestPng(1, 1)));
+        }
+
+        return ms.ToArray();
+    }
+
+    /// <summary>Creates a minimal solid-color PNG of the given dimensions.</summary>
+    private static byte[] BuildTestPng(int width, int height)
+    {
+        using var newImage = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(width, height);
+        newImage.ProcessPixelRows(accessor =>
+        {
+            for (var y = 0; y < accessor.Height; y++)
+            {
+                var row = accessor.GetRowSpan(y);
+                for (var x = 0; x < row.Length; x++)
+                    row[x] = new SixLabors.ImageSharp.PixelFormats.Rgba32(100, 149, 237, 255); // cornflower blue
+            }
+        });
+        using var outMs = new MemoryStream();
+        newImage.Save(outMs, new SixLabors.ImageSharp.Formats.Png.PngEncoder());
+        return outMs.ToArray();
+    }
+
+    /// <summary>
+    /// Regression test for issue #85: <c>&lt;Table Select="..." Optional="true|1"/&gt;</c>
+    /// should suppress the "Table Select returned no data" error and remove the table
+    /// when the XPath expression returns no matching elements. Both XSD boolean forms
+    /// (<c>true</c> and <c>1</c>) are accepted.
+    /// </summary>
+    [Test]
+    [Arguments("true", true)]
+    [Arguments("1", true)]
+    [Arguments("true", false)]
+    [Arguments("1", false)]
+    public async Task DA_Table_Optional_NoDataRemovesTable(string optionalValue, bool useSdt)
+    {
+        var directiveParagraph = new XElement(
+            W.p,
+            new XElement(W.r, new XElement(W.t, $@"<# <Table Select=""Orders"" Optional=""{optionalValue}"" /> #>"))
+        );
+
+        if (useSdt)
+        {
+            directiveParagraph = GetSdtFromMetadata(directiveParagraph);
+        }
+
+        var tableXml = new XElement(
+            W.tbl,
+            new XElement(W.tblPr),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Row")))))
+        );
+
+        var bodyXml = new XElement(W.body, directiveParagraph, tableXml, new XElement(W.sectPr));
+
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                mainPart.PutXDocument(new XDocument(new XElement(W.document, bodyXml)));
+            }
+            docxBytes = ms.ToArray();
+        }
+
+        var wmlTemplate = new WmlDocument($"optional-{optionalValue}-table-template.docx", docxBytes);
+        var xmlData = XElement.Parse("<Data/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+
+        var resultBody = resultDoc.MainDocumentPart!.GetXDocument().Root?.Element(W.body);
+        var tables = resultBody?.Elements(W.tbl).ToList();
+        await Assert.That(tables).IsEmpty();
+    }
+
+    /// <summary>
+    /// Verifies that <c>&lt;Table Select="..." Optional="true"/&gt;</c> populates the table
+    /// normally when the XPath expression returns matching elements.
+    /// </summary>
+    [Test]
+    [Arguments(true)]
+    [Arguments(false)]
+    public async Task DA_Table_Optional_WithDataPopulatesTable(bool useSdt)
+    {
+        var directiveParagraph = new XElement(
+            W.p,
+            new XElement(W.r, new XElement(W.t, @"<# <Table Select=""Items/Item"" Optional=""true"" /> #>"))
+        );
+
+        if (useSdt)
+        {
+            directiveParagraph = GetSdtFromMetadata(directiveParagraph);
+        }
+
+        var tableXml = new XElement(
+            W.tbl,
+            new XElement(W.tblPr),
+            new XElement(W.tblGrid, new XElement(W.gridCol, new XAttribute(W._w, "9216"))),
+            // Header row
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Name"))))),
+            // Prototype row: cells contain XPath expressions as raw text
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "./Name")))))
+        );
+
+        var bodyXml = new XElement(W.body, directiveParagraph, tableXml, new XElement(W.sectPr));
+
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                mainPart.PutXDocument(new XDocument(new XElement(W.document, bodyXml)));
+            }
+            docxBytes = ms.ToArray();
+        }
+
+        var wmlTemplate = new WmlDocument("optional-table-with-data.docx", docxBytes);
+        var xmlData = XElement.Parse(
+            "<Data><Items><Item><Name>Apple</Name></Item><Item><Name>Banana</Name></Item></Items></Data>"
+        );
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+
+        var resultBody = resultDoc.MainDocumentPart!.GetXDocument().Root?.Element(W.body);
+        var tables = resultBody?.Elements(W.tbl).ToList();
+        await Assert.That(tables).IsNotEmpty();
+
+        var dataRows = tables![0].Elements(W.tr).Skip(1).ToList(); // skip header row
+        await Assert.That(dataRows).Count().IsEqualTo(2);
+
+        var rowText = dataRows
+            .SelectMany(r => r.Descendants(W.t))
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
+        await Assert.That(rowText).Contains("Apple");
+        await Assert.That(rowText).Contains("Banana");
+    }
+
+    /// <summary>
+    /// Verifies that <c>&lt;Table Select="..."/&gt;</c> without <c>Optional="true"</c>
+    /// still returns an error when no data is found (existing behaviour preserved).
+    /// </summary>
+    [Test]
+    [Arguments(true)]
+    [Arguments(false)]
+    public async Task DA_Table_NoOptional_NoDataReturnsError(bool useSdt)
+    {
+        var directiveParagraph = new XElement(
+            W.p,
+            new XElement(W.r, new XElement(W.t, @"<# <Table Select=""Orders"" /> #>"))
+        );
+
+        if (useSdt)
+        {
+            directiveParagraph = GetSdtFromMetadata(directiveParagraph);
+        }
+
+        var tableXml = new XElement(
+            W.tbl,
+            new XElement(W.tblPr),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Row")))))
+        );
+
+        var bodyXml = new XElement(W.body, directiveParagraph, tableXml, new XElement(W.sectPr));
+
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                mainPart.PutXDocument(new XDocument(new XElement(W.document, bodyXml)));
+            }
+            docxBytes = ms.ToArray();
+        }
+
+        var wmlTemplate = new WmlDocument("non-optional-table-template.docx", docxBytes);
+        var xmlData = XElement.Parse("<Data/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsTrue();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        var documentText = resultDoc
+            .MainDocumentPart!.GetXDocument()
+            .Descendants(W.t)
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
+        await Assert.That(documentText).Contains("Table Select returned no data");
+    }
+
+    /// <summary>
+    /// Verifies that an invalid <c>Optional</c> attribute value produces a template error
+    /// instead of throwing a <see cref="FormatException"/>.
+    /// </summary>
+    [Test]
+    public async Task DA_Table_InvalidOptionalValueReturnsError()
+    {
+        // Build a template that contains a metadata element with an invalid Optional value,
+        // placed directly at the body level (bypassing ValidatePerSchema) to simulate
+        // a template where metadata elements already exist without going through text parsing.
+        // PA.Table = "Table", PA.Select = "Select", PA.Optional = "Optional" (no namespace).
+        var tableDirective = new XElement(
+            "Table",
+            new XAttribute("Select", "Orders"),
+            new XAttribute("Optional", "yes")
+        ); // invalid XSD boolean — not true/false/1/0
+
+        var tableXml = new XElement(
+            W.tbl,
+            new XElement(W.tblPr),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Row")))))
+        );
+
+        // Place the Table directive and the table at body level so NormalizeTablesRepeatAndConditional
+        // can move the w:tbl inside the directive, as it does in a normal assembled document.
+        var bodyXml = new XElement(W.body, tableDirective, tableXml, new XElement(W.sectPr));
+
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                mainPart.PutXDocument(new XDocument(new XElement(W.document, bodyXml)));
+            }
+            docxBytes = ms.ToArray();
+        }
+
+        var wmlTemplate = new WmlDocument("invalid-optional-table-template.docx", docxBytes);
+        var xmlData = XElement.Parse("<Data/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsTrue();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        var documentText = resultDoc
+            .MainDocumentPart!.GetXDocument()
+            .Descendants(W.t)
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
+        await Assert.That(documentText).Contains("Invalid value for Optional attribute");
     }
 
     private async Task ValidateAsync(FileInfo fi)
@@ -732,6 +1244,23 @@ public class DocumentAssemblerTests : TestsBase
         xmlData.Load(dataFile.FullName);
 
         return DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out templateError);
+    }
+
+    private static XElement GetSdtFromMetadata(XElement element)
+    {
+        var Wt = element.Descendants(W.t).First();
+        var text = Wt.Value?.Trim() ?? string.Empty;
+        if (text.StartsWith("<#"))
+        {
+            text = text.Substring(2);
+        }
+        if (text.EndsWith("#>"))
+        {
+            text = text.Substring(0, text.Length - 2);
+        }
+        Wt.Value = text.Trim();
+
+        return new XElement(W.sdt, new XElement(W.sdtContent, element));
     }
 
     private FileInfo GetOutputFile(string templateName, string dataName = null)

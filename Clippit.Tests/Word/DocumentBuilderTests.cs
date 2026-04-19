@@ -630,7 +630,7 @@ public class DocumentBuilderTests : TestsBase
 
         using var wDoc = WordprocessingDocument.Open(processedDestDocx.FullName, false);
         var numberingRoot = wDoc.MainDocumentPart.NumberingDefinitionsPart.GetXDocument().Root;
-        await Assert.That(numberingRoot.Elements(W.num)).HasCount(3);
+        await Assert.That(numberingRoot.Elements(W.num)).Count().IsEqualTo(3);
     }
 
     [Test]
@@ -700,8 +700,8 @@ public class DocumentBuilderTests : TestsBase
         using var wDoc = WordprocessingDocument.Open(processedDestDocx.FullName, false);
 
         await Assert.That(wDoc.WebExTaskpanesPart).IsNotNull();
-        await Assert.That(wDoc.WebExTaskpanesPart.Taskpanes.ChildElements.ToList()).HasCount(2);
-        await Assert.That(wDoc.WebExTaskpanesPart.WebExtensionParts).HasCount(2);
+        await Assert.That(wDoc.WebExTaskpanesPart.Taskpanes.ChildElements.ToList()).Count().IsEqualTo(2);
+        await Assert.That(wDoc.WebExTaskpanesPart.WebExtensionParts).Count().IsEqualTo(2);
     }
 
     [Test]

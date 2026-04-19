@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Clippit.PowerPoint.Fluent;
@@ -12,6 +11,8 @@ public static partial class PresentationBuilder
 {
     public static IList<PmlDocument> PublishSlides(PmlDocument src)
     {
+        ArgumentNullException.ThrowIfNull(src);
+
         using var streamSrcDoc = new OpenXmlMemoryStreamDocument(src);
         using var srcDoc = streamSrcDoc.GetPresentationDocument(new OpenSettings { AutoSave = false });
         return PublishSlides(srcDoc, src.FileName).ToList();
@@ -19,6 +20,8 @@ public static partial class PresentationBuilder
 
     public static IEnumerable<PmlDocument> PublishSlides(PresentationDocument srcDoc, string fileName)
     {
+        ArgumentNullException.ThrowIfNull(srcDoc);
+
         fileName ??= string.Empty;
 
         var slideNameRegex = SlideNameRegex();
@@ -42,7 +45,7 @@ public static partial class PresentationBuilder
         var slidesIds = PresentationBuilderTools.GetSlideIdsInOrder(srcDoc);
         foreach (var slideId in slidesIds)
         {
-            var srcSlidePart = (SlidePart)srcDoc.PresentationPart.GetPartById(slideId);
+            var srcSlidePart = (SlidePart)srcDoc.PresentationPart!.GetPartById(slideId);
 
             var memoryStream = new MemoryStream();
             using (var output = NewDocument(memoryStream))
@@ -67,6 +70,7 @@ public static partial class PresentationBuilder
             srcSlidePart.RemoveAnnotations<XDocument>();
             srcSlidePart.UnloadRootElement();
 
+            memoryStream.Position = 0;
             yield return memoryStream;
         }
     }
