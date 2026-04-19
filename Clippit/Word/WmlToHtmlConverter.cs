@@ -830,7 +830,7 @@ namespace Clippit.Word
 
             // Handle floating table (w:tblpPr): apply CSS float/margin so surrounding text flows around the table.
             var tblpPr = element.Elements(W.tblPr).Elements(W.tblpPr).FirstOrDefault();
-            var wrapperDivStyle = new Dictionary<string, string>();
+            Dictionary<string, string>? wrapperDivStyle = null;
             if (tblpPr != null)
             {
                 var xSpec = (string)tblpPr.Attribute(W.tblpXSpec);
@@ -842,6 +842,7 @@ namespace Clippit.Word
                 };
                 if (floatValue != null)
                 {
+                    wrapperDivStyle ??= new Dictionary<string, string>();
                     wrapperDivStyle["float"] = floatValue;
                 }
 
@@ -856,13 +857,25 @@ namespace Clippit.Word
                 var marginBottom = TwipsToPoints(tblpPr.Attribute(W.bottomFromText));
 
                 if (marginLeft != null)
+                {
+                    wrapperDivStyle ??= new Dictionary<string, string>();
                     wrapperDivStyle["margin-left"] = marginLeft;
+                }
                 if (marginRight != null)
+                {
+                    wrapperDivStyle ??= new Dictionary<string, string>();
                     wrapperDivStyle["margin-right"] = marginRight;
+                }
                 if (marginTop != null)
+                {
+                    wrapperDivStyle ??= new Dictionary<string, string>();
                     wrapperDivStyle["margin-top"] = marginTop;
+                }
                 if (marginBottom != null)
+                {
+                    wrapperDivStyle ??= new Dictionary<string, string>();
                     wrapperDivStyle["margin-bottom"] = marginBottom;
+                }
             }
 
             var table = new XElement(
@@ -894,7 +907,7 @@ namespace Clippit.Word
                 jcToUse = new XAttribute("align", jc);
             }
             var tableDiv = new XElement(Xhtml.div, dir, jcToUse, table);
-            if (wrapperDivStyle.Count > 0)
+            if (wrapperDivStyle is not null)
             {
                 tableDiv.AddAnnotation(wrapperDivStyle);
             }

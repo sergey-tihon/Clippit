@@ -318,7 +318,7 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
                                 VerticalAnchor = VerticalAnchorValues.Margin,
                                 TablePositionXAlignment = HorizontalAlignmentValues.Left,
                                 LeftFromText = 144, // 144 twips = 7.2pt
-                                RightFromText = 144,
+                                RightFromText = 288, // 288 twips = 14.4pt
                             }
                         ),
                         new TableRow(new TableCell(new Paragraph(new Run(new Text("Cell content")))))
@@ -356,8 +356,8 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
 
         var divStyle = floatDiv!.Attribute("style")?.Value ?? string.Empty;
         await Assert.That(divStyle).Contains("float: left");
-        await Assert.That(divStyle).Contains("margin-left:");
-        await Assert.That(divStyle).Contains("margin-right:");
+        await Assert.That(divStyle).Contains("margin-left: 7.2pt");
+        await Assert.That(divStyle).Contains("margin-right: 14.4pt");
     }
 
 #if DO_CONVERSION_VIA_WORD
