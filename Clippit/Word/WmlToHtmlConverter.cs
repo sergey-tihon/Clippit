@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics.CodeAnalysis;
@@ -502,9 +502,16 @@ namespace Clippit.Word
                 return ProcessTableCell(wordDoc, settings, element);
             }
 
-            // Transform images
+            // Transform images and text boxes.
             if (element.Name == W.drawing || element.Name == W.pict || element.Name == W._object)
             {
+                // Text boxes in w:drawing (wps:wsp/wps:txbx) must be handled before image processing.
+                if (element.Name == W.drawing)
+                {
+                    var textBoxResult = ProcessTextBoxDrawing(wordDoc, settings, element);
+                    if (textBoxResult != null)
+                        return textBoxResult;
+                }
                 return ProcessImage(wordDoc, element, settings.ImageHandler);
             }
 
@@ -827,6 +834,61 @@ namespace Clippit.Word
             }
             var tableDirection = bidiVisual != null ? new XAttribute("dir", "rtl") : new XAttribute("dir", "ltr");
             style.AddIfMissing("margin-bottom", ".001pt");
+
+            // Handle floating table (w:tblpPr): apply CSS float/margin so surrounding text flows around the table.
+            var tblpPr = element.Elements(W.tblPr).Elements(W.tblpPr).FirstOrDefault();
+            Dictionary<string, string>? wrapperDivStyle = null;
+            if (tblpPr != null)
+            {
+                // Map w:tblpXSpec to a CSS float value. CSS float has no clean equivalent for "center",
+                // and absolute positioning (w:tblpX/w:tblpY) cannot be expressed with float at all —
+                // in those cases we intentionally omit float but still honor the *FromText margins so
+                // the table at least renders with appropriate spacing.
+                var xSpec = (string)tblpPr.Attribute(W.tblpXSpec);
+                var floatValue = xSpec switch
+                {
+                    "left" => "left",
+                    "right" => "right",
+                    _ => null,
+                };
+                if (floatValue != null)
+                {
+                    wrapperDivStyle ??= new Dictionary<string, string>();
+                    wrapperDivStyle["float"] = floatValue;
+                }
+
+                static string? TwipsToPoints(XAttribute attr) =>
+                    attr != null && decimal.TryParse((string)attr, out var v)
+                        ? string.Format(NumberFormatInfo.InvariantInfo, "{0:0.##}pt", v / 20m)
+                        : null;
+
+                var marginLeft = TwipsToPoints(tblpPr.Attribute(W.leftFromText));
+                var marginRight = TwipsToPoints(tblpPr.Attribute(W.rightFromText));
+                var marginTop = TwipsToPoints(tblpPr.Attribute(W.topFromText));
+                var marginBottom = TwipsToPoints(tblpPr.Attribute(W.bottomFromText));
+
+                if (marginLeft != null)
+                {
+                    wrapperDivStyle ??= new Dictionary<string, string>();
+                    wrapperDivStyle["margin-left"] = marginLeft;
+                }
+                if (marginRight != null)
+                {
+                    wrapperDivStyle ??= new Dictionary<string, string>();
+                    wrapperDivStyle["margin-right"] = marginRight;
+                }
+                if (marginTop != null)
+                {
+                    wrapperDivStyle ??= new Dictionary<string, string>();
+                    wrapperDivStyle["margin-top"] = marginTop;
+                }
+                if (marginBottom != null)
+                {
+                    wrapperDivStyle ??= new Dictionary<string, string>();
+                    wrapperDivStyle["margin-bottom"] = marginBottom;
+                }
+            }
+
             var table = new XElement(
                 Xhtml.table,
                 // TODO: Revisit and make sure the omission is covered by appropriate CSS.
@@ -856,6 +918,10 @@ namespace Clippit.Word
                 jcToUse = new XAttribute("align", jc);
             }
             var tableDiv = new XElement(Xhtml.div, dir, jcToUse, table);
+            if (wrapperDivStyle is not null)
+            {
+                tableDiv.AddAnnotation(wrapperDivStyle);
+            }
             return tableDiv;
         }
 
@@ -1521,7 +1587,17 @@ namespace Clippit.Word
                 return null;
 
             var style = DefineRunStyle(run);
-            object content = run.Elements().Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, 0m));
+            var convertedChildren = run.Elements()
+                .Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, 0m))
+                .Where(x => x != null)
+                .ToList();
+
+            // If the run contains a single block-level <div> (e.g. a text box), return it directly
+            // without any wrapping — a <span><div>…</div></span> would be invalid HTML.
+            if (convertedChildren is [XElement singleDiv] && singleDiv.Name == Xhtml.div)
+                return singleDiv;
+
+            object content = convertedChildren;
 
             // Wrap content in h:sup or h:sub elements as necessary.
             if (rPr.Element(W.vertAlign) != null)
@@ -3176,6 +3252,77 @@ namespace Clippit.Word
 
             return txformed;
         }
+
+        #region Text Box Processing
+
+        private static XElement? ProcessTextBoxDrawing(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            XElement drawingElement
+        )
+        {
+            var containerElement = drawingElement
+                .Elements()
+                .FirstOrDefault(e => e.Name == WP.inline || e.Name == WP.anchor);
+            if (containerElement == null)
+                return null;
+
+            var txbx = containerElement
+                .Elements(A.graphic)
+                .Elements(A.graphicData)
+                .Elements(WPS.wsp)
+                .Elements(WPS.txbx)
+                .FirstOrDefault();
+            if (txbx == null)
+                return null;
+
+            var txbxContent = txbx.Element(W.txbxContent);
+            if (txbxContent == null)
+                return null;
+
+            var extentCx = (int?)containerElement.Elements(WP.extent).Attributes(NoNamespace.cx).FirstOrDefault();
+            var extentCy = (int?)containerElement.Elements(WP.extent).Attributes(NoNamespace.cy).FirstOrDefault();
+
+            var style = new Dictionary<string, string>();
+            style.AddIfMissing("display", "inline-block");
+            style.AddIfMissing("overflow", "hidden");
+            style.AddIfMissing("padding", "2pt");
+            if (extentCx != null)
+                style.AddIfMissing(
+                    "width",
+                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", (float)extentCx / ImageInfo.EmusPerInch)
+                );
+            if (extentCy != null)
+                style.AddIfMissing(
+                    "min-height",
+                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", (float)extentCy / ImageInfo.EmusPerInch)
+                );
+
+            // Only float anchored text boxes when the wrap mode implies surrounding text should flow
+            // around the shape. wp:wrapNone means no text wrap (overlap), and wp:wrapTopAndBottom
+            // pushes the shape to its own line — neither needs float.
+            if (containerElement.Name == WP.anchor)
+            {
+                var hasTextWrapping = containerElement
+                    .Elements()
+                    .Any(e => e.Name == WP.wrapSquare || e.Name == WP.wrapTight || e.Name == WP.wrapThrough);
+                if (hasTextWrapping)
+                    style.AddIfMissing("float", "left");
+            }
+
+            // Text boxes have independent layout — reset the outer paragraph margin so that list/indent
+            // offsets from the surrounding context do not incorrectly bleed into the text box interior.
+            var content = txbxContent
+                .Elements()
+                .Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, 0m))
+                .ToList();
+
+            var div = new XElement(Xhtml.div, content);
+            div.AddAnnotation(style);
+            return div;
+        }
+
+        #endregion
 
         #region Image Processing
 
