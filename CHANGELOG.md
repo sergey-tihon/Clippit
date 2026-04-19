@@ -1,5 +1,30 @@
 # Changelog
 
+## [3.4.0] - April 19, 2026
+
+- feat: add `Optional="true"` support to `<Table>` directive in DocumentAssembler (#150)
+- feat: add `FitWithin` image sizing mode to DocumentAssembler (#168)
+- feat: add `RelationshipValidator` to detect dangling `r:id` references in OpenXml parts (#160)
+- feat: extract shared `RomanNumeralUtil` with `ToUpperRoman`/`ToLowerRoman` helpers (#164)
+- feat(html): render floating tables (`w:tblpPr`) with CSS float in `WmlToHtmlConverter` (#180)
+- fix(word): correct Russian list item text for values ≥ 100 (#187)
+- fix(word): guard `cardinalText`/`ordinalText` against out-of-range `levelNumber` in multiple locales (#200, #201, #208)
+- fix(html): render DOCX text boxes as inline-block divs in `WmlToHtmlConverter` (#166)
+- perf(pptx): single-pass dispatch in `CopyRelatedPartsForContentParts` + lazy `SaveAndCleanup` (#175)
+- perf(pptx): avoid `OuterXml`→`Parse` roundtrip in `SlidePartData.GetShapeDescriptor` (#178)
+- perf: convert `Regex` instances to source-generated `[GeneratedRegex]` in several modules (#196)
+- perf(comparer): reduce heap allocations in `WmlComparerUtil` SHA-1 hashing (#199)
+- perf: modernize SHA1/SHA256 hashing — use `SHA1.HashData()`, `SHA256.HashData()`, `Convert.ToHexString()` (#184)
+- perf: eliminate per-character heap allocations in base64 chunking (FlatOpc / Base64) (#209)
+- refactor: remove custom relationship ID generator — delegate to OpenXML SDK APIs (#161)
+- refactor: simplify LINQ patterns across Excel, Word, and Html modules (#207)
+- docs: improve README with NuGet badges, project overview, quick-start, and docs link (#183)
+- docs: switch DocFX documentation site to modern Bootstrap-based theme (#211)
+- test(word): add unit tests for `ListItemTextGetter_Default`, fr_FR, sv_SE, zh_CN, tr_TR, ru_RU locales (#198, #206)
+- test(word): add MS004–MS009 for `MarkupSimplifier` settings coverage (#213)
+- test(excel): add `ParseFormula` and `XlsxTables` cell-address utility tests (#169, #185)
+- test(common): add `TextReplacer` unit tests (#167)
+
 ## [3.3.1] - March 24, 2026
 
 - fix: handle dangling r:id on p:oleObj/p:externalData — KeyNotFoundException in slide publishing (#156)
