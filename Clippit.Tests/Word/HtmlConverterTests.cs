@@ -291,6 +291,169 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         await Assert.That(styleProperties.Where(p => p.StartsWith("width:", StringComparison.Ordinal))).IsEmpty();
     }
 
+    // Regression test for https://github.com/sergey-tihon/Clippit/issues/65
+    // Floating tables (w:tblpPr) should produce a div with CSS float and margin-from-text properties.
+    [Test]
+    public async Task HC066_FloatingTableRenderedWithFloat()
+    {
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+
+            var settingsPart = mainPart.AddNewPart<DocumentSettingsPart>();
+            settingsPart.Settings = new Settings();
+
+            var stylesPart = mainPart.AddNewPart<StyleDefinitionsPart>();
+            stylesPart.Styles = new Styles();
+
+            mainPart.Document = new Document(
+                new Body(
+                    new Paragraph(new Run(new Text("Before table"))),
+                    new Table(
+                        new TableProperties(
+                            new TablePositionProperties
+                            {
+                                HorizontalAnchor = HorizontalAnchorValues.Margin,
+                                VerticalAnchor = VerticalAnchorValues.Margin,
+                                TablePositionXAlignment = HorizontalAlignmentValues.Left,
+                                LeftFromText = 144, // 144 twips = 7.2pt
+                                RightFromText = 288, // 288 twips = 14.4pt
+                            }
+                        ),
+                        new TableRow(new TableCell(new Paragraph(new Run(new Text("Cell content")))))
+                    ),
+                    new Paragraph(new Run(new Text("After table")))
+                )
+            );
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = false,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+
+        var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+        var htmlString = html.ToString(SaveOptions.DisableFormatting);
+
+        // Cell content and surrounding text must appear in output.
+        await Assert.That(htmlString).Contains("Cell content");
+        await Assert.That(htmlString).Contains("Before table");
+        await Assert.That(htmlString).Contains("After table");
+
+        // The div wrapping the table must carry float: left.
+        var tableDivs = html.Descendants(Xhtml.div).Where(d => d.Descendants(Xhtml.table).Any()).ToList();
+        await Assert.That(tableDivs).IsNotEmpty();
+        var floatDiv = tableDivs.FirstOrDefault(d => (d.Attribute("style")?.Value ?? string.Empty).Contains("float:"));
+        await Assert.That(floatDiv).IsNotNull();
+
+        var divStyle = floatDiv!.Attribute("style")?.Value ?? string.Empty;
+        await Assert.That(divStyle).Contains("float: left");
+        await Assert.That(divStyle).Contains("margin-left: 7.2pt");
+        await Assert.That(divStyle).Contains("margin-right: 14.4pt");
+    }
+
+    // Regression test for https://github.com/sergey-tihon/Clippit/issues/65
+    // tblpXSpec="right" must produce float: right.
+    [Test]
+    public async Task HC067_FloatingTableRightAlignedRendersFloatRight()
+    {
+        var html = ConvertFloatingTableToHtml(
+            xAlignment: HorizontalAlignmentValues.Right,
+            leftFromText: 200,
+            rightFromText: 100
+        );
+
+        var floatDiv = html.Descendants(Xhtml.div)
+            .Where(d => d.Descendants(Xhtml.table).Any())
+            .FirstOrDefault(d => (d.Attribute("style")?.Value ?? string.Empty).Contains("float:"));
+        await Assert.That(floatDiv).IsNotNull();
+
+        var divStyle = floatDiv!.Attribute("style")?.Value ?? string.Empty;
+        await Assert.That(divStyle).Contains("float: right");
+        await Assert.That(divStyle).Contains("margin-left: 10pt");
+        await Assert.That(divStyle).Contains("margin-right: 5pt");
+    }
+
+    // Regression test for https://github.com/sergey-tihon/Clippit/issues/65
+    // tblpXSpec="center" has no CSS float equivalent — float must be omitted, but the
+    // *FromText margins must still be honored so the table renders with appropriate spacing.
+    [Test]
+    public async Task HC068_FloatingTableCenterAlignedHasMarginsButNoFloat()
+    {
+        var html = ConvertFloatingTableToHtml(
+            xAlignment: HorizontalAlignmentValues.Center,
+            leftFromText: 144,
+            rightFromText: 288
+        );
+
+        var tableDiv = html.Descendants(Xhtml.div)
+            .Where(d => d.Descendants(Xhtml.table).Any())
+            .FirstOrDefault(d => (d.Attribute("style")?.Value ?? string.Empty).Contains("margin-left:"));
+        await Assert.That(tableDiv).IsNotNull();
+
+        var divStyle = tableDiv!.Attribute("style")?.Value ?? string.Empty;
+        // Margins are still emitted from leftFromText/rightFromText
+        await Assert.That(divStyle).Contains("margin-left: 7.2pt");
+        await Assert.That(divStyle).Contains("margin-right: 14.4pt");
+        // float must NOT be applied for center alignment
+        await Assert.That(divStyle.Contains("float")).IsFalse();
+    }
+
+    private static XElement ConvertFloatingTableToHtml(
+        HorizontalAlignmentValues xAlignment,
+        short leftFromText,
+        short rightFromText
+    )
+    {
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.AddNewPart<DocumentSettingsPart>().Settings = new Settings();
+            mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
+
+            mainPart.Document = new Document(
+                new Body(
+                    new Paragraph(new Run(new Text("Before table"))),
+                    new Table(
+                        new TableProperties(
+                            new TablePositionProperties
+                            {
+                                HorizontalAnchor = HorizontalAnchorValues.Margin,
+                                VerticalAnchor = VerticalAnchorValues.Margin,
+                                TablePositionXAlignment = xAlignment,
+                                LeftFromText = leftFromText,
+                                RightFromText = rightFromText,
+                            }
+                        ),
+                        new TableRow(new TableCell(new Paragraph(new Run(new Text("Cell content")))))
+                    ),
+                    new Paragraph(new Run(new Text("After table")))
+                )
+            );
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = false,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+        return WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+    }
+
     [Test]
     public async Task HC063_TextBoxRenderedAsInlineBlock()
     {

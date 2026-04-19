@@ -834,6 +834,61 @@ namespace Clippit.Word
             }
             var tableDirection = bidiVisual != null ? new XAttribute("dir", "rtl") : new XAttribute("dir", "ltr");
             style.AddIfMissing("margin-bottom", ".001pt");
+
+            // Handle floating table (w:tblpPr): apply CSS float/margin so surrounding text flows around the table.
+            var tblpPr = element.Elements(W.tblPr).Elements(W.tblpPr).FirstOrDefault();
+            Dictionary<string, string>? wrapperDivStyle = null;
+            if (tblpPr != null)
+            {
+                // Map w:tblpXSpec to a CSS float value. CSS float has no clean equivalent for "center",
+                // and absolute positioning (w:tblpX/w:tblpY) cannot be expressed with float at all —
+                // in those cases we intentionally omit float but still honor the *FromText margins so
+                // the table at least renders with appropriate spacing.
+                var xSpec = (string)tblpPr.Attribute(W.tblpXSpec);
+                var floatValue = xSpec switch
+                {
+                    "left" => "left",
+                    "right" => "right",
+                    _ => null,
+                };
+                if (floatValue != null)
+                {
+                    wrapperDivStyle ??= new Dictionary<string, string>();
+                    wrapperDivStyle["float"] = floatValue;
+                }
+
+                static string? TwipsToPoints(XAttribute attr) =>
+                    attr != null && decimal.TryParse((string)attr, out var v)
+                        ? string.Format(NumberFormatInfo.InvariantInfo, "{0:0.##}pt", v / 20m)
+                        : null;
+
+                var marginLeft = TwipsToPoints(tblpPr.Attribute(W.leftFromText));
+                var marginRight = TwipsToPoints(tblpPr.Attribute(W.rightFromText));
+                var marginTop = TwipsToPoints(tblpPr.Attribute(W.topFromText));
+                var marginBottom = TwipsToPoints(tblpPr.Attribute(W.bottomFromText));
+
+                if (marginLeft != null)
+                {
+                    wrapperDivStyle ??= new Dictionary<string, string>();
+                    wrapperDivStyle["margin-left"] = marginLeft;
+                }
+                if (marginRight != null)
+                {
+                    wrapperDivStyle ??= new Dictionary<string, string>();
+                    wrapperDivStyle["margin-right"] = marginRight;
+                }
+                if (marginTop != null)
+                {
+                    wrapperDivStyle ??= new Dictionary<string, string>();
+                    wrapperDivStyle["margin-top"] = marginTop;
+                }
+                if (marginBottom != null)
+                {
+                    wrapperDivStyle ??= new Dictionary<string, string>();
+                    wrapperDivStyle["margin-bottom"] = marginBottom;
+                }
+            }
+
             var table = new XElement(
                 Xhtml.table,
                 // TODO: Revisit and make sure the omission is covered by appropriate CSS.
@@ -863,6 +918,10 @@ namespace Clippit.Word
                 jcToUse = new XAttribute("align", jc);
             }
             var tableDiv = new XElement(Xhtml.div, dir, jcToUse, table);
+            if (wrapperDivStyle is not null)
+            {
+                tableDiv.AddAnnotation(wrapperDivStyle);
+            }
             return tableDiv;
         }
 
