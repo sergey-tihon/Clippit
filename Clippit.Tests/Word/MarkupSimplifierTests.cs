@@ -164,6 +164,11 @@ public class MarkupSimplifierTests
         await Assert.That(partDocument.Descendants(W.commentRangeStart)).IsEmpty();
         await Assert.That(partDocument.Descendants(W.commentRangeEnd)).IsEmpty();
         await Assert.That(partDocument.Descendants(W.commentReference)).IsEmpty();
+        await Assert
+            .That(
+                partDocument.Descendants(W.rStyle).Any(rStyle => (string?)rStyle.Attribute(W.val) == "CommentReference")
+            )
+            .IsFalse();
         // The text run content must be preserved.
         await Assert.That(string.Concat(partDocument.Descendants(W.t).Select(t => (string)t))).IsEqualTo("Hello");
     }
@@ -261,7 +266,7 @@ public class MarkupSimplifierTests
         var rsidAttributes = partDocument
             .Descendants()
             .SelectMany(e => e.Attributes())
-            .Where(a => a.Name == W.rsidR || a.Name == W.rsidDel || a.Name == W.rsidRPr || a.Name == W.rsidRDefault)
+            .Where(a => a.Name.Namespace == W.rsidR.Namespace && a.Name.LocalName.StartsWith("rsid"))
             .ToList();
         await Assert.That(rsidAttributes).IsEmpty();
         // Text content must be preserved.
