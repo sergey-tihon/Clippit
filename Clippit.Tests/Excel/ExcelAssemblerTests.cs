@@ -23,18 +23,7 @@ public class ExcelAssemblerTests : TestsBase
                     Rows = cells
                         .GroupBy(c => c.row)
                         .OrderBy(g => g.Key)
-                        .Select(g => new RowDfn
-                        {
-                            Cells = Enumerable
-                                .Range(1, g.Max(c => c.col))
-                                .Select(col => g.FirstOrDefault(c => c.col == col))
-                                .Select(cell =>
-                                    cell == default
-                                        ? new CellDfn { CellDataType = CellDataType.String }
-                                        : new CellDfn { CellDataType = CellDataType.String, Value = cell.value }
-                                )
-                                .ToArray(),
-                        })
+                        .Select(g => new RowDfn { Cells = CreateRowCells(g) })
                         .ToArray(),
                 },
             ],
@@ -42,6 +31,19 @@ public class ExcelAssemblerTests : TestsBase
         using var ms = new MemoryStream();
         workbook.WriteTo(ms);
         return ms.ToArray();
+    }
+
+    private static CellDfn[] CreateRowCells(IGrouping<int, (int row, int col, string value)> rowCells)
+    {
+        var valuesByColumn = rowCells.ToDictionary(c => c.col, c => c.value);
+        return Enumerable
+            .Range(1, valuesByColumn.Keys.Max())
+            .Select(col =>
+                valuesByColumn.TryGetValue(col, out var value)
+                    ? new CellDfn { CellDataType = CellDataType.String, Value = value }
+                    : new CellDfn { CellDataType = CellDataType.String }
+            )
+            .ToArray();
     }
 
     // WorksheetAccessor.GetCellValue doesn't handle t="str" (formula-string cells written by
