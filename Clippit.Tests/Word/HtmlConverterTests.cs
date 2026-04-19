@@ -350,6 +350,10 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         await Assert.That(spanStyle).Contains("width:");
         await Assert.That(spanStyle).Contains("min-height:");
         await Assert.That(spanStyle).Contains("float: left");
+
+        // Inner w:p elements must be converted to display:block <span>s, not <p>s.
+        // A <p> inside a <span> is invalid HTML and causes browsers to implicitly close the outer element.
+        await Assert.That(textBoxSpan.Descendants(Xhtml.p).ToList()).IsEmpty();
     }
 
     [Test]

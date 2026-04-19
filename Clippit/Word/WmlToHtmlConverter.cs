@@ -3260,14 +3260,52 @@ namespace Clippit.Word
 
             // Text boxes have independent layout — reset the outer paragraph margin so that list/indent
             // offsets from the surrounding context do not incorrectly bleed into the text box interior.
+            // Block-level elements (p, h1–h6) produced by paragraph conversion are re-tagged as
+            // display:block spans so the text box container can later be safely re-tagged as a <span>
+            // at the call site without producing invalid HTML like <span><p>…</p></span>.
             var content = txbxContent
                 .Elements()
                 .Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, 0m))
+                .Select(NormalizeBlockToInlineBlock)
                 .ToList();
 
             var div = new XElement(Xhtml.div, content);
             div.AddAnnotation(style);
             return div;
+        }
+
+        private static readonly HashSet<XName> s_blockLevelHtmlElements =
+        [
+            Xhtml.p,
+            Xhtml.xhtml + "h1",
+            Xhtml.xhtml + "h2",
+            Xhtml.xhtml + "h3",
+            Xhtml.xhtml + "h4",
+            Xhtml.xhtml + "h5",
+            Xhtml.xhtml + "h6",
+        ];
+
+        // Re-tags block-level XHTML elements produced inside a text box as display:block spans so
+        // they remain valid phrasing content when the text box container is emitted as a <span>.
+        // The style annotation and all other attributes/children are preserved intact.
+        private static object NormalizeBlockToInlineBlock(object node)
+        {
+            if (node is not XElement element || !s_blockLevelHtmlElements.Contains(element.Name))
+                return node;
+
+            var span = new XElement(Xhtml.span, element.Attributes(), element.Nodes());
+            var annotation = element.Annotation<Dictionary<string, string>>();
+            if (annotation != null)
+            {
+                annotation.AddIfMissing("display", "block");
+                span.AddAnnotation(annotation);
+            }
+            else
+            {
+                var blockStyle = new Dictionary<string, string> { ["display"] = "block" };
+                span.AddAnnotation(blockStyle);
+            }
+            return span;
         }
 
         #endregion
