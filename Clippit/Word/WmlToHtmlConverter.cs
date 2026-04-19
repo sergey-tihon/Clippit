@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics.CodeAnalysis;
@@ -502,9 +502,16 @@ namespace Clippit.Word
                 return ProcessTableCell(wordDoc, settings, element);
             }
 
-            // Transform images
+            // Transform images and text boxes.
             if (element.Name == W.drawing || element.Name == W.pict || element.Name == W._object)
             {
+                // Text boxes in w:drawing (wps:wsp/wps:txbx) must be handled before image processing.
+                if (element.Name == W.drawing)
+                {
+                    var textBoxResult = ProcessTextBoxDrawing(wordDoc, settings, element);
+                    if (textBoxResult != null)
+                        return textBoxResult;
+                }
                 return ProcessImage(wordDoc, element, settings.ImageHandler);
             }
 
@@ -1521,7 +1528,17 @@ namespace Clippit.Word
                 return null;
 
             var style = DefineRunStyle(run);
-            object content = run.Elements().Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, 0m));
+            var convertedChildren = run.Elements()
+                .Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, 0m))
+                .Where(x => x != null)
+                .ToList();
+
+            // If the run contains a single block-level <div> (e.g. a text box), return it directly
+            // without any wrapping — a <span><div>…</div></span> would be invalid HTML.
+            if (convertedChildren is [XElement singleDiv] && singleDiv.Name == Xhtml.div)
+                return singleDiv;
+
+            object content = convertedChildren;
 
             // Wrap content in h:sup or h:sub elements as necessary.
             if (rPr.Element(W.vertAlign) != null)
@@ -3176,6 +3193,77 @@ namespace Clippit.Word
 
             return txformed;
         }
+
+        #region Text Box Processing
+
+        private static XElement? ProcessTextBoxDrawing(
+            WordprocessingDocument wordDoc,
+            WmlToHtmlConverterSettings settings,
+            XElement drawingElement
+        )
+        {
+            var containerElement = drawingElement
+                .Elements()
+                .FirstOrDefault(e => e.Name == WP.inline || e.Name == WP.anchor);
+            if (containerElement == null)
+                return null;
+
+            var txbx = containerElement
+                .Elements(A.graphic)
+                .Elements(A.graphicData)
+                .Elements(WPS.wsp)
+                .Elements(WPS.txbx)
+                .FirstOrDefault();
+            if (txbx == null)
+                return null;
+
+            var txbxContent = txbx.Element(W.txbxContent);
+            if (txbxContent == null)
+                return null;
+
+            var extentCx = (int?)containerElement.Elements(WP.extent).Attributes(NoNamespace.cx).FirstOrDefault();
+            var extentCy = (int?)containerElement.Elements(WP.extent).Attributes(NoNamespace.cy).FirstOrDefault();
+
+            var style = new Dictionary<string, string>();
+            style.AddIfMissing("display", "inline-block");
+            style.AddIfMissing("overflow", "hidden");
+            style.AddIfMissing("padding", "2pt");
+            if (extentCx != null)
+                style.AddIfMissing(
+                    "width",
+                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", (float)extentCx / ImageInfo.EmusPerInch)
+                );
+            if (extentCy != null)
+                style.AddIfMissing(
+                    "min-height",
+                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", (float)extentCy / ImageInfo.EmusPerInch)
+                );
+
+            // Only float anchored text boxes when the wrap mode implies surrounding text should flow
+            // around the shape. wp:wrapNone means no text wrap (overlap), and wp:wrapTopAndBottom
+            // pushes the shape to its own line — neither needs float.
+            if (containerElement.Name == WP.anchor)
+            {
+                var hasTextWrapping = containerElement
+                    .Elements()
+                    .Any(e => e.Name == WP.wrapSquare || e.Name == WP.wrapTight || e.Name == WP.wrapThrough);
+                if (hasTextWrapping)
+                    style.AddIfMissing("float", "left");
+            }
+
+            // Text boxes have independent layout — reset the outer paragraph margin so that list/indent
+            // offsets from the surrounding context do not incorrectly bleed into the text box interior.
+            var content = txbxContent
+                .Elements()
+                .Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, 0m))
+                .ToList();
+
+            var div = new XElement(Xhtml.div, content);
+            div.AddAnnotation(style);
+            return div;
+        }
+
+        #endregion
 
         #region Image Processing
 
