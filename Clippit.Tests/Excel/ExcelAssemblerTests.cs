@@ -25,12 +25,14 @@ public class ExcelAssemblerTests : TestsBase
                         .OrderBy(g => g.Key)
                         .Select(g => new RowDfn
                         {
-                            Cells = g.OrderBy(c => c.col)
-                                .Select(c => new CellDfn
-                                {
-                                    CellDataType = CellDataType.String,
-                                    Value = c.value,
-                                })
+                            Cells = Enumerable
+                                .Range(1, g.Max(c => c.col))
+                                .Select(col => g.FirstOrDefault(c => c.col == col))
+                                .Select(cell =>
+                                    cell == default
+                                        ? new CellDfn { CellDataType = CellDataType.String }
+                                        : new CellDfn { CellDataType = CellDataType.String, Value = cell.value }
+                                )
                                 .ToArray(),
                         })
                         .ToArray(),
@@ -48,8 +50,7 @@ public class ExcelAssemblerTests : TestsBase
     {
         var wsXDoc = ws.GetXDocument();
         var cellRef = WorksheetAccessor.GetColumnId(column) + row;
-        var cell = wsXDoc.Descendants(S.c)
-            .FirstOrDefault(c => c.Attribute(NoNamespace.r)?.Value == cellRef);
+        var cell = wsXDoc.Descendants(S.c).FirstOrDefault(c => c.Attribute(NoNamespace.r)?.Value == cellRef);
         if (cell is null)
             return null;
         var t = cell.Attribute(NoNamespace.t)?.Value;
@@ -65,10 +66,7 @@ public class ExcelAssemblerTests : TestsBase
     [Test]
     public async Task EA001_ScalarPlaceholderReplacement()
     {
-        var templateBytes = CreateTemplate(
-            (1, 1, "{{Name}}"),
-            (2, 1, "{{Age}}")
-        );
+        var templateBytes = CreateTemplate((1, 1, "{{Name}}"), (2, 1, "{{Age}}"));
         var data = XElement.Parse("<Root><Name>Alice</Name><Age>30</Age></Root>");
 
         var resultBytes = ExcelAssembler.AssembleDocument(templateBytes, data);
@@ -140,10 +138,7 @@ public class ExcelAssemblerTests : TestsBase
     [Test]
     public async Task EA006_NonTemplateCellsAreUntouched()
     {
-        var templateBytes = CreateTemplate(
-            (1, 1, "Static Label"),
-            (1, 2, "{{Value}}")
-        );
+        var templateBytes = CreateTemplate((1, 1, "Static Label"), (1, 2, "{{Value}}"));
         var data = XElement.Parse("<Root><Value>42</Value></Root>");
 
         var resultBytes = ExcelAssembler.AssembleDocument(templateBytes, data);
@@ -183,5 +178,19 @@ public class ExcelAssemblerTests : TestsBase
         var ws = WorksheetAccessor.GetWorksheet(doc, "Sheet1");
 
         await Assert.That(GetCellStringValue(doc, ws, 1, 1)).IsEqualTo("123");
+    }
+
+    [Test]
+    public async Task EA009_NonContiguousColumnIndexIsPreserved()
+    {
+        var templateBytes = CreateTemplate((1, 3, "{{Name}}"));
+        var data = XElement.Parse("<Root><Name>Alice</Name></Root>");
+
+        var resultBytes = ExcelAssembler.AssembleDocument(templateBytes, data);
+
+        using var doc = SpreadsheetDocument.Open(new MemoryStream(resultBytes), false);
+        var ws = WorksheetAccessor.GetWorksheet(doc, "Sheet1");
+
+        await Assert.That(GetCellStringValue(doc, ws, 3, 1)).IsEqualTo("Alice");
     }
 }

@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -101,27 +102,28 @@ public static class ExcelAssembler
                             var result = data.XPathEvaluate(xpath);
                             return result switch
                             {
-                                IEnumerable<object> seq => ResolveNodeSet(seq),
+                                IEnumerable seq when result is not string => ResolveNodeSet(seq),
                                 null => string.Empty,
                                 _ => Convert.ToString(result, CultureInfo.InvariantCulture) ?? string.Empty,
                             };
                         }
-                        catch (XPathException)
+                        catch (Exception)
                         {
                             return $"[XPathError:{xpath}]";
                         }
                     }
                 );
 
-                // Rewrite the cell as an inline string, preserving the cell reference and style.
-                var newCell = new XElement(
-                    S.c,
-                    cell.Attribute(NoNamespace.r) is { } r ? new XAttribute(NoNamespace.r, r.Value) : null,
-                    cell.Attribute(NoNamespace.s) is { } s ? new XAttribute(NoNamespace.s, s.Value) : null,
-                    new XAttribute(NoNamespace.t, "inlineStr"),
-                    new XElement(S._is, new XElement(S.t, resolved))
-                );
-                cell.ReplaceWith(newCell);
+                // Rewrite cell value as an inline string, preserving non-value attributes/children.
+                cell.SetAttributeValue(NoNamespace.t, "inlineStr");
+                cell.Elements(S.v).Remove();
+                cell.Elements(S._is).Remove();
+
+                var inlineString = new XElement(S._is, new XElement(S.t, resolved));
+                if (cell.Element(S.extLst) is { } extLst)
+                    extLst.AddBeforeSelf(inlineString);
+                else
+                    cell.Add(inlineString);
                 modified = true;
             }
 
@@ -130,9 +132,9 @@ public static class ExcelAssembler
         }
     }
 
-    private static string ResolveNodeSet(IEnumerable<object> seq)
+    private static string ResolveNodeSet(IEnumerable seq)
     {
-        var first = seq.FirstOrDefault();
+        var first = seq.Cast<object?>().FirstOrDefault();
         return first switch
         {
             XElement xe => xe.Value,
@@ -148,8 +150,9 @@ public static class ExcelAssembler
         var t = cell.Attribute(NoNamespace.t)?.Value;
         return t switch
         {
-            "s" when int.TryParse(cell.Element(S.v)?.Value, out var idx)
-                => sharedStrings.TryGetValue(idx, out var s) ? s : null,
+            "s" when int.TryParse(cell.Element(S.v)?.Value, out var idx) => sharedStrings.TryGetValue(idx, out var s)
+                ? s
+                : null,
             "inlineStr" => cell.Element(S._is)?.Element(S.t)?.Value,
             // "str" is used by SpreadsheetWriter for formula-result string cells.
             "str" => cell.Element(S.v)?.Value,
