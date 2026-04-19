@@ -351,6 +351,9 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         await Assert.That(spanStyle).Contains("min-height:");
         await Assert.That(spanStyle).Contains("float: left");
 
+        // The text box <div> must not be wrapped in a <span> — ConvertRun must skip the wrapper.
+        await Assert.That(textBoxDiv.Parent?.Name).IsNotEqualTo(Xhtml.span);
+
         // Inner w:p elements are converted to <p> elements — valid inside a <div>.
         await Assert.That(textBoxDiv.Descendants(Xhtml.p).ToList()).IsNotEmpty();
     }

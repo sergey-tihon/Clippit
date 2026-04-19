@@ -1528,7 +1528,17 @@ namespace Clippit.Word
                 return null;
 
             var style = DefineRunStyle(run);
-            object content = run.Elements().Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, 0m));
+            var convertedChildren = run.Elements()
+                .Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, 0m))
+                .Where(x => x != null)
+                .ToList();
+
+            // If the run contains a single block-level <div> (e.g. a text box), return it directly
+            // without any wrapping — a <span><div>…</div></span> would be invalid HTML.
+            if (convertedChildren is [XElement singleDiv] && singleDiv.Name == Xhtml.div)
+                return singleDiv;
+
+            object content = convertedChildren;
 
             // Wrap content in h:sup or h:sub elements as necessary.
             if (rPr.Element(W.vertAlign) != null)
@@ -1551,11 +1561,6 @@ namespace Clippit.Word
 
             if (style.Any() || langAttribute != null || runStartMark != null)
             {
-                // If content is already a block-level <div> (e.g. a text box), skip the <span>
-                // wrapper — wrapping a <div> in a <span> produces invalid HTML.
-                if (content is XElement divContent && divContent.Name == Xhtml.div)
-                    return content;
-
                 style.AddIfMissing("margin", "0");
                 style.AddIfMissing("padding", "0");
                 var xe = new XElement(Xhtml.span, langAttribute, runStartMark, content, runEndMark);
