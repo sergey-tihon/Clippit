@@ -169,7 +169,7 @@ namespace Clippit.Excel
 
             // Generate a unique sheet ID number
             var sheetId = 1;
-            if (wb.Root.Element(S.sheets).Elements(S.sheet).Count() != 0)
+            if (wb.Root.Element(S.sheets).Elements(S.sheet).Any())
                 sheetId =
                     wb.Root.Element(S.sheets)
                         .Elements(S.sheet)
@@ -718,7 +718,7 @@ namespace Clippit.Excel
                 wb.Root.Add(new XElement(S.pivotCaches));
             else
             {
-                if (wb.Root.Element(S.pivotCaches).Elements(S.pivotCache).Count() != 0)
+                if (wb.Root.Element(S.pivotCaches).Elements(S.pivotCache).Any())
                     cacheId =
                         wb.Root.Element(S.pivotCaches)
                             .Elements(S.pivotCache)

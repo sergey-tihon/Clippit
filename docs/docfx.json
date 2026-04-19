@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
   "metadata": [
     {
       "src": [
@@ -55,19 +56,27 @@
     "dest": "_site",
     "globalMetadata": {
       "_appTitle": "Clippit",
+      "_appName": "Clippit",
       "_enableSearch": true,
       "_appLogoPath": "images/logo-site.png",
+      "_appFaviconPath": "images/logo-site.png",
       "_gitContribute": {
         "repo": "https://github.com/sergey-tihon/Clippit",
         "branch": "master"
-      }
+      },
+      "_appFooter": "Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.",
+      "_disableContribution": false,
+      "_disableNewTab": true
     },
     "globalMetadataFiles": [],
     "fileMetadataFiles": [],
     "template": [
-      "default"
+      "default",
+      "modern"
     ],
-    "postProcessors": [],
+    "postProcessors": [
+      "ExtractSearchIndex"
+    ],
     "markdownEngineName": "markdig",
     "noLangKeyword": false,
     "keepFileLink": false,

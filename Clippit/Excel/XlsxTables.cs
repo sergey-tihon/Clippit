@@ -87,7 +87,9 @@ namespace Clippit.Excel
         {
             get
             {
-                var tc = Parent.TableColumns().Where(x => x.Name.ToLower() == columnName.ToLower()).FirstOrDefault();
+                var tc = Parent
+                    .TableColumns()
+                    .FirstOrDefault(x => string.Equals(x.Name, columnName, StringComparison.OrdinalIgnoreCase));
                 if (tc == null)
                     throw new Exception("Invalid column name: " + columnName);
                 var refs = Parent.Ref.Split(':');
@@ -95,7 +97,7 @@ namespace Clippit.Excel
                 var columnAddress = XlsxTables.IndexToColumnAddress(
                     XlsxTables.ColumnAddressToIndex(startRefs[0]) + tc.ColumnIndex
                 );
-                var cell = Row.Cells().Where(c => c.ColumnAddress == columnAddress).FirstOrDefault();
+                var cell = Row.Cells().FirstOrDefault(c => c.ColumnAddress == columnAddress);
                 if (cell != null)
                 {
                     if (cell.Type == "s")

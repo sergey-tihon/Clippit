@@ -809,7 +809,7 @@ public class WmlComparerTests : TestsBase
 
         var revisionWml = new WmlDocument(docxWithRevisionsFi.FullName);
         var revisions = WmlComparer.GetRevisions(revisionWml, settings);
-        await Assert.That(revisions).HasCount(revisionCount);
+        await Assert.That(revisions).Count().IsEqualTo(revisionCount);
 
         var afterRejectingWml = RevisionProcessor.RejectRevisions(revisionWml);
 
@@ -1085,7 +1085,7 @@ public class WmlComparerTests : TestsBase
 
         var revisionWml = new WmlDocument(docxWithRevisionsFi.FullName);
         var revisions = WmlComparer.GetRevisions(revisionWml, settings);
-        await Assert.That(revisions).HasCount(revisionCount);
+        await Assert.That(revisions).Count().IsEqualTo(revisionCount);
     }
 
     private static async Task ValidateDocument(WmlDocument wmlToValidate)
