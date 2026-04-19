@@ -840,6 +840,10 @@ namespace Clippit.Word
             Dictionary<string, string>? wrapperDivStyle = null;
             if (tblpPr != null)
             {
+                // Map w:tblpXSpec to a CSS float value. CSS float has no clean equivalent for "center",
+                // and absolute positioning (w:tblpX/w:tblpY) cannot be expressed with float at all —
+                // in those cases we intentionally omit float but still honor the *FromText margins so
+                // the table at least renders with appropriate spacing.
                 var xSpec = (string)tblpPr.Attribute(W.tblpXSpec);
                 var floatValue = xSpec switch
                 {
@@ -853,7 +857,7 @@ namespace Clippit.Word
                     wrapperDivStyle["float"] = floatValue;
                 }
 
-                static string TwipsToPoints(XAttribute attr) =>
+                static string? TwipsToPoints(XAttribute attr) =>
                     attr != null && decimal.TryParse((string)attr, out var v)
                         ? string.Format(NumberFormatInfo.InvariantInfo, "{0:0.##}pt", v / 20m)
                         : null;
