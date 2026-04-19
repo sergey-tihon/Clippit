@@ -166,7 +166,9 @@ public class MarkupSimplifierTests
         await Assert.That(partDocument.Descendants(W.commentReference)).IsEmpty();
         await Assert
             .That(
-                partDocument.Descendants(W.rStyle).Any(rStyle => (string?)rStyle.Attribute(W.val) == "CommentReference")
+                partDocument
+                    .Descendants(W.rStyle)
+                    .Any(runStyle => (string?)runStyle.Attribute(W.val) == "CommentReference")
             )
             .IsFalse();
         // The text run content must be preserved.
