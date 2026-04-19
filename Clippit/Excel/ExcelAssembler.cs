@@ -102,13 +102,12 @@ public static class ExcelAssembler
                             var result = data.XPathEvaluate(xpath);
                             return result switch
                             {
-                                IEnumerable seq when seq is not string => ResolveNodeSet(seq),
+                                IEnumerable seq when result is not string => ResolveNodeSet(seq),
                                 null => string.Empty,
                                 _ => Convert.ToString(result, CultureInfo.InvariantCulture) ?? string.Empty,
                             };
                         }
-                        catch (Exception ex)
-                            when (ex is XPathException or ArgumentException or InvalidOperationException)
+                        catch (Exception)
                         {
                             return $"[XPathError:{xpath}]";
                         }
