@@ -36,6 +36,9 @@ public class ExcelAssemblerTests : TestsBase
     private static CellDfn[] CreateRowCells(IGrouping<int, (int row, int col, string value)> rowCells)
     {
         var valuesByColumn = rowCells.ToDictionary(c => c.col, c => c.value);
+        if (valuesByColumn.Count == 0)
+            return [];
+
         return Enumerable
             .Range(1, valuesByColumn.Keys.Max())
             .Select(col =>

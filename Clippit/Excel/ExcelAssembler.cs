@@ -107,7 +107,8 @@ public static class ExcelAssembler
                                 _ => Convert.ToString(result, CultureInfo.InvariantCulture) ?? string.Empty,
                             };
                         }
-                        catch (Exception)
+                        catch (Exception ex)
+                            when (ex is XPathException or ArgumentException or InvalidOperationException)
                         {
                             return $"[XPathError:{xpath}]";
                         }
