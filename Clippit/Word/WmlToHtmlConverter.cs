@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics.CodeAnalysis;
@@ -503,19 +503,31 @@ namespace Clippit.Word
             }
 
             // Transform images and text boxes.
-            // Known limitation: w:drawing can appear inside a w:r (run) within a w:p (paragraph).
-            // ProcessTextBoxDrawing returns a block-level <div>, which is technically invalid HTML
-            // when nested under <p>/<span>. Hoisting the div to a block-level sibling of the paragraph
-            // would be the proper structural fix but requires significant refactoring of the paragraph
-            // transform pipeline.
+            // w:drawing can appear inside a w:r (run) within a w:p (paragraph). ProcessTextBoxDrawing
+            // builds a <div> internally for layout, but returning a block-level element from here would
+            // produce invalid HTML (e.g. <span><div>…</div></span>) when ConvertRun later wraps the run
+            // in a <span>. To keep output structurally valid, the <div> is re-tagged as a <span> while
+            // preserving all attributes and content. Hoisting to a block-level sibling of the paragraph
+            // would be more faithful to Word layout but requires significant pipeline refactoring.
             if (element.Name == W.drawing || element.Name == W.pict || element.Name == W._object)
             {
-                // Text boxes in w:drawing (wps:wsp/wps:txbx) must be handled before image processing
+                // Text boxes in w:drawing (wps:wsp/wps:txbx) must be handled before image processing.
+                // Normalize the resulting <div> to <span> so it is safe at run/inline level.
                 if (element.Name == W.drawing)
                 {
                     var textBoxResult = ProcessTextBoxDrawing(wordDoc, settings, element);
                     if (textBoxResult != null)
-                        return textBoxResult;
+                    {
+                        // ProcessTextBoxDrawing builds a <div> for layout, but w:drawing commonly
+                        // appears inside a w:r so returning a block element here would produce
+                        // invalid HTML (e.g. <span><div>…</div></span>). Re-tag as <span> while
+                        // preserving attributes, content, and the style annotation.
+                        var span = new XElement(Xhtml.span, textBoxResult.Attributes(), textBoxResult.Nodes());
+                        var annotation = textBoxResult.Annotation<Dictionary<string, string>>();
+                        if (annotation != null)
+                            span.AddAnnotation(annotation);
+                        return span;
+                    }
                 }
                 return ProcessImage(wordDoc, element, settings.ImageHandler);
             }
@@ -3191,7 +3203,7 @@ namespace Clippit.Word
 
         #region Text Box Processing
 
-        private static XElement ProcessTextBoxDrawing(
+        private static XElement? ProcessTextBoxDrawing(
             WordprocessingDocument wordDoc,
             WmlToHtmlConverterSettings settings,
             XElement drawingElement
