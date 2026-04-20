@@ -1,6 +1,6 @@
 {
-    "lr": "2026-04-18",
-    "rid": "24605564128",
+    "lr": "2026-04-20",
+    "rid": "24668939407",
     "m_issue": 170,
     "m_month": "2026-04",
     "comments": {
@@ -17,12 +17,10 @@
     "prs": {
         "163": "RegisterCustomHandler",
         "165": "ExcelAssembler",
-        "166": "html textboxes",
-        "180": "html floating tables",
-        "212": "release-3.4.0: CHANGELOG + TUnit 1.35.2 (branch: clippy/release-3.4.0-20260417)",
-        "new_testing": "test: MarkupSimplifier MS004-MS009 (branch: clippy/test-markup-simplifier-20260418)"
+        "new_cache": "ci: NuGet cache (branch: clippy/eng-nuget-cache-20260420)",
+        "new_publish": "ci: NuGet publish workflow (branch: clippy/eng-publish-workflow-20260420)"
     },
-    "notes": "PRs 175,177,178,181,183,184,185,196,197,198,199,200,201,205,206,207,208,209,211 merged. PR 174 closed. Issue 179 closed. 2026-04-17 run: created release-3.4.0 PR. 2026-04-18 run (Task 6): merged master into PR branches 163, 165, 166, 180 (all 30-39 commits behind, no conflicts). (Task 9): added 6 new MarkupSimplifier tests MS004-MS009 (RemoveComments, RemoveBookmarks, RemoveProof, RemoveRsidInfo, ReplaceTabsWithSpaces, RemoveHyperlinks); new PR on branch clippy/test-markup-simplifier-20260418. All open issues have Clippy comments.",
+    "notes": "PRs 175,177,178,181,183,184,185,196,197,198,199,200,201,205,206,207,208,209,211,212,213,166,180 merged. PR 174 closed. Issue 179 closed. 2026-04-20 run (Task 4): added NuGet cache (cache:true) to CI main.yml. (Task 10): created NuGet publish workflow publish.yml triggered by v*.*.* tags. Both PRs pending. All open issues have Clippy comments.",
     "checked_off": {
         "196": "source-gen-regex",
         "tunit132": "TUnit-1.32.0"
