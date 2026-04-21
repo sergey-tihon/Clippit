@@ -1,6 +1,6 @@
 {
-    "lr": "2026-04-20",
-    "rid": "24668939407",
+    "lr": "2026-04-21",
+    "rid": "24724757069",
     "m_issue": 170,
     "m_month": "2026-04",
     "comments": {
@@ -17,10 +17,10 @@
     "prs": {
         "163": "RegisterCustomHandler",
         "165": "ExcelAssembler",
-        "new_cache": "ci: NuGet cache (branch: clippy/eng-nuget-cache-20260420)",
-        "new_publish": "ci: NuGet publish workflow (branch: clippy/eng-publish-workflow-20260420)"
+        "221": "Clippy workflow timeout fix (by Copilot SWE agent)",
+        "new_tunit": "chore: TUnit 1.37.0→1.37.10 (branch: clippy/eng-tunit-patch-20260421)"
     },
-    "notes": "PRs 175,177,178,181,183,184,185,196,197,198,199,200,201,205,206,207,208,209,211,212,213,166,180 merged. PR 174 closed. Issue 179 closed. 2026-04-20 run (Task 4): added NuGet cache (cache:true) to CI main.yml. (Task 10): created NuGet publish workflow publish.yml triggered by v*.*.* tags. Both PRs pending. All open issues have Clippy comments.",
+    "notes": "All open issues have Clippy comments. Issues #219/#220 are issue-based CI patches (workflow file protection blocks push). PR #221 by Copilot SWE agent (timeout fix) labelled with enhancement. 2026-04-21 run (Task1): labelled PR #221. (Task4 sub): created TUnit patch PR 1.37.0→1.37.10. All CI passing on PRs #163, #165.",
     "checked_off": {
         "196": "source-gen-regex",
         "tunit132": "TUnit-1.32.0"
