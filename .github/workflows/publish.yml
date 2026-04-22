@@ -18,12 +18,15 @@ jobs:
               uses: actions/setup-dotnet@v5
               with:
                   global-json-file: global.json
-                  cache: true
             - name: Build and Pack
-              run: dotnet fsi build.fsx -- -p build
+              run: ./build.sh
             - name: Publish to NuGet
               run: |
                   dotnet nuget push bin/*.nupkg \
+                    --api-key ${{ secrets.NUGET_API_KEY }} \
+                    --source https://api.nuget.org/v3/index.json \
+                    --skip-duplicate
+                  dotnet nuget push bin/*.snupkg \
                     --api-key ${{ secrets.NUGET_API_KEY }} \
                     --source https://api.nuget.org/v3/index.json \
                     --skip-duplicate
