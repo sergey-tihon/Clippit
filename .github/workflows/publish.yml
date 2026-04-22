@@ -23,8 +23,10 @@ jobs:
               shell: bash
             - name: Publish to NuGet
               run: |
-                  dotnet nuget push bin/*.{nupkg,snupkg} \
-                    --api-key ${{ secrets.NUGET_API_KEY }} \
-                    --source https://api.nuget.org/v3/index.json \
-                    --skip-duplicate
+                  for packagePattern in "bin/*.nupkg" "bin/*.snupkg"; do
+                      dotnet nuget push $packagePattern \
+                        --api-key ${{ secrets.NUGET_API_KEY }} \
+                        --source https://api.nuget.org/v3/index.json \
+                        --skip-duplicate
+                  done
               shell: bash
