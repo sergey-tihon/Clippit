@@ -461,8 +461,7 @@ namespace Clippit.Excel
             i = i - i1 * 676;
             var i2 = i / 26;
             var i3 = i % 26;
-            var s =
-                new string((char)('A' + i1), 1) + new string((char)('A' + i2), 1) + new string((char)('A' + i3), 1);
+            var s = new string((char)('A' + i1), 1) + new string((char)('A' + i2), 1) + new string((char)('A' + i3), 1);
             return s;
         }
 
