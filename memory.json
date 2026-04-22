@@ -1,6 +1,6 @@
 {
-    "lr": "2026-04-21",
-    "rid": "24724757069",
+    "lr": "2026-04-22",
+    "rid": "24780687838",
     "m_issue": 170,
     "m_month": "2026-04",
     "comments": {
@@ -17,10 +17,10 @@
     "prs": {
         "163": "RegisterCustomHandler",
         "165": "ExcelAssembler",
-        "221": "Clippy workflow timeout fix (by Copilot SWE agent)",
-        "new_tunit": "chore: TUnit 1.37.0→1.37.10 (branch: clippy/eng-tunit-patch-20260421)"
+        "226": "refactor: exception types (clippy/improve-exception-types-20260422)",
+        "227": "ci: NuGet publish workflow (by sergey-tihon)"
     },
-    "notes": "All open issues have Clippy comments. Issues #219/#220 are issue-based CI patches (workflow file protection blocks push). PR #221 by Copilot SWE agent (timeout fix) labelled with enhancement. 2026-04-21 run (Task1): labelled PR #221. (Task4 sub): created TUnit patch PR 1.37.0→1.37.10. All CI passing on PRs #163, #165.",
+    "notes": "All open issues have Clippy comments. 2026-04-22: maintainer closed PR #221 (timeout fix) and PR #225 (NuGet caching), applied clippy workflow fix via direct commit. Maintainer opened PR #227 (NuGet publish workflow). Clippy created PR #226 (exception types refactor). PR #222 (TUnit 1.37.10) merged on 2026-04-21.",
     "checked_off": {
         "196": "source-gen-regex",
         "tunit132": "TUnit-1.32.0"
