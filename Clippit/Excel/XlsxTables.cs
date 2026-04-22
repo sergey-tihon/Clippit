@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft. All rights reserved.
+﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Xml.Linq;
@@ -461,7 +461,10 @@ namespace Clippit.Excel
             idx = idx - idx1 * 676;
             var idx2 = idx / 26;
             var idx3 = idx % 26;
-            var result = new string((char)('A' + idx1), 1) + new string((char)('A' + idx2), 1) + new string((char)('A' + idx3), 1);
+            var result =
+                new string((char)('A' + idx1), 1)
+                + new string((char)('A' + idx2), 1)
+                + new string((char)('A' + idx3), 1);
             return result;
         }
 
