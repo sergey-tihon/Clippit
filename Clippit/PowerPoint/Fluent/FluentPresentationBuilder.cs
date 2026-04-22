@@ -12,7 +12,8 @@ internal sealed partial class FluentPresentationBuilder : IFluentPresentationBui
 
     internal FluentPresentationBuilder(PresentationDocument presentationDocument)
     {
-        _newDocument = presentationDocument ?? throw new NullReferenceException(nameof(presentationDocument));
+        ArgumentNullException.ThrowIfNull(presentationDocument);
+        _newDocument = presentationDocument;
 
         if (_newDocument.PresentationPart is null)
         {
