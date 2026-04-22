@@ -20,13 +20,11 @@ jobs:
                   global-json-file: global.json
             - name: Build and Pack
               run: ./build.sh
+              shell: bash
             - name: Publish to NuGet
               run: |
-                  dotnet nuget push bin/*.nupkg \
+                  dotnet nuget push bin/*.{nupkg,snupkg} \
                     --api-key ${{ secrets.NUGET_API_KEY }} \
                     --source https://api.nuget.org/v3/index.json \
                     --skip-duplicate
-                  dotnet nuget push bin/*.snupkg \
-                    --api-key ${{ secrets.NUGET_API_KEY }} \
-                    --source https://api.nuget.org/v3/index.json \
-                    --skip-duplicate
+              shell: bash
