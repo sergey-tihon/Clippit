@@ -22,11 +22,29 @@ namespace Clippit
             return d;
         }
 
+        /// <summary>
+        /// Replaces ASCII control characters (code points 0x00–0x1F) in <paramref name="p"/>
+        /// with the escape sequence <c>_HH_</c> (upper-case hex), leaving all other characters
+        /// unchanged. Returns the original string reference when no control characters are present.
+        /// </summary>
         public static string MakeValidXml(string p)
         {
-            return p.Any(c => c < 0x20)
-                ? p.Select(c => c < 0x20 ? $"_{(int)c:X}_" : c.ToString()).StringConcatenate()
-                : p;
+            StringBuilder? sb = null;
+            for (var i = 0; i < p.Length; i++)
+            {
+                var c = p[i];
+                if (c < 0x20)
+                {
+                    // Lazy-initialise: copy the clean prefix, then append the escape.
+                    sb ??= new StringBuilder(p.Length + 8).Append(p, 0, i);
+                    sb.Append('_').Append(((int)c).ToString("X")).Append('_');
+                }
+                else
+                {
+                    sb?.Append(c);
+                }
+            }
+            return sb?.ToString() ?? p;
         }
 
         public static void AddElementIfMissing(XDocument partXDoc, XElement existing, string newElement)
