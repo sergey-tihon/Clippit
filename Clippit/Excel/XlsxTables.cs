@@ -87,6 +87,8 @@ namespace Clippit.Excel
         {
             get
             {
+                System.ArgumentNullException.ThrowIfNull(columnName);
+
                 var tc = Parent
                     .TableColumns()
                     .FirstOrDefault(x => string.Equals(x.Name, columnName, StringComparison.OrdinalIgnoreCase));
@@ -438,6 +440,8 @@ namespace Clippit.Excel
 
         public static string IndexToColumnAddress(int index)
         {
+            if (index < 0 || index >= 18278)
+                throw new ArgumentOutOfRangeException(nameof(index), index, "Index must be between 0 and 18277.");
             if (index < 26)
             {
                 var c = (char)('A' + index);
@@ -452,18 +456,14 @@ namespace Clippit.Excel
                 var s = new string((char)('A' + i1), 1) + new string((char)('A' + i2), 1);
                 return s;
             }
-            if (index < 18278)
-            {
-                var i = index - 702;
-                var i1 = i / 676;
-                i = i - i1 * 676;
-                var i2 = i / 26;
-                var i3 = i % 26;
-                var s =
-                    new string((char)('A' + i1), 1) + new string((char)('A' + i2), 1) + new string((char)('A' + i3), 1);
-                return s;
-            }
-            throw new InvalidOperationException("Invalid column address");
+            var i = index - 702;
+            var i1 = i / 676;
+            i = i - i1 * 676;
+            var i2 = i / 26;
+            var i3 = i % 26;
+            var s =
+                new string((char)('A' + i1), 1) + new string((char)('A' + i2), 1) + new string((char)('A' + i3), 1);
+            return s;
         }
 
         public static int ColumnAddressToIndex(string columnAddress)
