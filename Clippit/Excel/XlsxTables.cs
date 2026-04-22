@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Xml.Linq;
@@ -456,13 +456,13 @@ namespace Clippit.Excel
                 var s = new string((char)('A' + i1), 1) + new string((char)('A' + i2), 1);
                 return s;
             }
-            var i = index - 702;
-            var i1 = i / 676;
-            i = i - i1 * 676;
-            var i2 = i / 26;
-            var i3 = i % 26;
-            var s = new string((char)('A' + i1), 1) + new string((char)('A' + i2), 1) + new string((char)('A' + i3), 1);
-            return s;
+            var idx = index - 702;
+            var idx1 = idx / 676;
+            idx = idx - idx1 * 676;
+            var idx2 = idx / 26;
+            var idx3 = idx % 26;
+            var result = new string((char)('A' + idx1), 1) + new string((char)('A' + idx2), 1) + new string((char)('A' + idx3), 1);
+            return result;
         }
 
         public static int ColumnAddressToIndex(string columnAddress)
