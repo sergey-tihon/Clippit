@@ -87,7 +87,7 @@ namespace Clippit.Excel
         {
             get
             {
-                System.ArgumentNullException.ThrowIfNull(columnName);
+                ArgumentNullException.ThrowIfNull(columnName);
 
                 var tc = Parent
                     .TableColumns()
