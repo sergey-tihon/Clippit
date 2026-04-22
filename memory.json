@@ -1,6 +1,6 @@
 {
     "lr": "2026-04-22",
-    "rid": "24780687838",
+    "rid": "24780543422",
     "m_issue": 170,
     "m_month": "2026-04",
     "comments": {
@@ -17,12 +17,15 @@
     "prs": {
         "163": "RegisterCustomHandler",
         "165": "ExcelAssembler",
-        "226": "refactor: exception types (clippy/improve-exception-types-20260422)",
-        "227": "ci: NuGet publish workflow (by sergey-tihon)"
+        "226": "refactor: replace generic Exception with specific exception types",
+        "227": "ci: add NuGet publish workflow triggered by version tags",
+        "perf_20260422": "perf: MakeValidXml single-pass lazy-StringBuilder + AddIfMissing TryAdd (branch: clippy/perf-make-valid-xml-20260422)",
+        "test_base64_20260422": "test: add 14 unit tests for Base64.ChunkBase64 and ConvertFromBase64 B64_001-B64_014 (branch: clippy/test-base64-chunk-20260422)"
     },
-    "notes": "All open issues have Clippy comments. 2026-04-22: maintainer closed PR #221 (timeout fix) and PR #225 (NuGet caching), applied clippy workflow fix via direct commit. Maintainer opened PR #227 (NuGet publish workflow). Clippy created PR #226 (exception types refactor). PR #222 (TUnit 1.37.10) merged on 2026-04-21.",
+    "notes": "All open issues have Clippy comments. Issues #219/#220 are issue-based CI patches (workflow file protection). PR #221 (timeout fix) and PR #225 (NuGet caching) were closed by maintainer. PR #222 (TUnit update) merged. PR #226 (refactor exceptions) and PR #227 (NuGet publish workflow) opened by earlier run today (24780687838). This run (24780543422): created perf PR (MakeValidXml+AddIfMissing) and test PR (Base64 unit tests). PRs pending patch application - no numbers yet. All CI passing on PRs #163, #165.",
     "checked_off": {
         "196": "source-gen-regex",
-        "tunit132": "TUnit-1.32.0"
+        "tunit132": "TUnit-1.32.0",
+        "222": "TUnit-1.37.10"
     }
 }
