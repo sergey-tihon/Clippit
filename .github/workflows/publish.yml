@@ -19,7 +19,7 @@ jobs:
               with:
                   global-json-file: global.json
             - name: Build and Pack
-              run: bash ./build.sh
+              run: dotnet fsi build.fsx -- -p build
             - name: Publish to NuGet
               run: |
                   dotnet nuget push bin/*.nupkg \
