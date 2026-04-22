@@ -24,8 +24,10 @@ namespace Clippit
 
         /// <summary>
         /// Replaces ASCII control characters (code points 0x00–0x1F) in <paramref name="p"/>
-        /// with the escape sequence <c>_HH_</c> (upper-case hex), leaving all other characters
-        /// unchanged. Returns the original string reference when no control characters are present.
+        /// with the escape sequence <c>_H_</c> or <c>_HH_</c> using upper-case hexadecimal
+        /// without zero-padding (for example, <c>0x0A</c> becomes <c>_A_</c>), leaving all other
+        /// characters unchanged. Returns the original string reference when no control characters
+        /// are present.
         /// </summary>
         public static string MakeValidXml(string p)
         {
