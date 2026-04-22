@@ -316,7 +316,7 @@ namespace Clippit.Word
         {
             var fontTablePart = doc.MainDocumentPart.FontTablePart;
             if (fontTablePart == null)
-                throw new Exception("Todo need to insert font table part");
+                throw new OpenXmlPowerToolsException("Font table part is missing and cannot be inserted automatically");
             var fontTableXDoc = fontTablePart.GetXDocument();
 
             AddElementIfMissing(

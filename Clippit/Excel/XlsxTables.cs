@@ -91,7 +91,7 @@ namespace Clippit.Excel
                     .TableColumns()
                     .FirstOrDefault(x => string.Equals(x.Name, columnName, StringComparison.OrdinalIgnoreCase));
                 if (tc == null)
-                    throw new Exception("Invalid column name: " + columnName);
+                    throw new ArgumentException($"Invalid column name: {columnName}", nameof(columnName));
                 var refs = Parent.Ref.Split(':');
                 var startRefs = XlsxTables.SplitAddress(refs[0]);
                 var columnAddress = XlsxTables.IndexToColumnAddress(
@@ -463,7 +463,7 @@ namespace Clippit.Excel
                     new string((char)('A' + i1), 1) + new string((char)('A' + i2), 1) + new string((char)('A' + i3), 1);
                 return s;
             }
-            throw new Exception("Invalid column address");
+            throw new InvalidOperationException("Invalid column address");
         }
 
         public static int ColumnAddressToIndex(string columnAddress)
