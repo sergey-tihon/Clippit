@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using System.Xml.Linq;
 using Clippit.PowerPoint;
 using Clippit.PowerPoint.Fluent;
@@ -7,6 +8,85 @@ namespace Clippit.Tests.PowerPoint;
 
 public partial class PresentationBuilderSlidePublishingTests
 {
+    /// <summary>
+    /// Regression test for https://github.com/sergey-tihon/Clippit/issues/233 —
+    /// AddSlidePart must not throw InvalidDataException when a slide contains an image part
+    /// whose ZIP entry has a corrupt local file header.
+    /// </summary>
+    [Test]
+    public async Task AddSlidePart_WithCorruptImageLocalFileHeader_DoesNotThrow()
+    {
+        var sourcePath = Path.Combine(SourceDirectory, "BRK3066.pptx");
+        var openSettings = new OpenSettings { AutoSave = false };
+
+        // Copy the source file into a writable memory stream, then corrupt an image entry's
+        // local file header to reproduce the InvalidDataException reported in issue #233.
+        using var srcMemory = new MemoryStream();
+        await using (var fs = File.OpenRead(sourcePath))
+            await fs.CopyToAsync(srcMemory);
+
+        var corrupted = CorruptFirstMediaLocalFileHeader(srcMemory.ToArray());
+        using var corruptedMemory = new MemoryStream(corrupted);
+
+        using var srcDoc = PresentationDocument.Open(corruptedMemory, false, openSettings);
+        ArgumentNullException.ThrowIfNull(srcDoc.PresentationPart);
+
+        var firstSlideId = PresentationBuilderTools.GetSlideIdsInOrder(srcDoc).First();
+        var srcSlidePart = (SlidePart)srcDoc.PresentationPart.GetPartById(firstSlideId);
+
+        // Should not throw InvalidDataException
+        using var destStream = new MemoryStream();
+        using (var destDoc = PresentationBuilder.NewDocument(destStream))
+        using (var builder = PresentationBuilder.Create(destDoc))
+        {
+            builder.AddSlidePart(srcSlidePart);
+        }
+
+        await Assert.That(destStream.Length).IsGreaterThan(0);
+    }
+
+    /// <summary>
+    /// Scans raw ZIP bytes for the first entry whose path starts with "ppt/media/"
+    /// and corrupts its local file header signature so that <see cref="ZipArchiveEntry.Open"/>
+    /// throws <see cref="InvalidDataException"/> when the entry is read.
+    /// </summary>
+    private static byte[] CorruptFirstMediaLocalFileHeader(byte[] zipBytes)
+    {
+        // ZIP local file header layout:
+        //   [0-3]  signature  0x04034B50
+        //   [26-27] file name length (little-endian uint16)
+        //   [28-29] extra field length (little-endian uint16)
+        //   [30+]   file name
+        const uint LocalFileHeaderSignature = 0x04034B50;
+
+        for (var i = 0; i <= zipBytes.Length - 30; i++)
+        {
+            var sig =
+                zipBytes[i]
+                | ((uint)zipBytes[i + 1] << 8)
+                | ((uint)zipBytes[i + 2] << 16)
+                | ((uint)zipBytes[i + 3] << 24);
+            if (sig != LocalFileHeaderSignature)
+                continue;
+
+            var nameLen = zipBytes[i + 26] | (zipBytes[i + 27] << 8);
+            if (i + 30 + nameLen > zipBytes.Length)
+                continue;
+
+            var name = System.Text.Encoding.UTF8.GetString(zipBytes, i + 30, nameLen);
+            if (!name.StartsWith("ppt/media/"))
+                continue;
+
+            // Corrupt bytes 2-3 of the signature so Open() throws InvalidDataException.
+            var result = (byte[])zipBytes.Clone();
+            result[i + 2] = 0xFF;
+            result[i + 3] = 0xFF;
+            return result;
+        }
+
+        throw new InvalidOperationException("No ppt/media/ entry found in the PPTX ZIP archive.");
+    }
+
     /// <summary>
     /// Regression test for https://github.com/sergey-tihon/Clippit/issues/155 —
     /// AddSlidePart must not throw KeyNotFoundException when a slide contains a p:oleObj

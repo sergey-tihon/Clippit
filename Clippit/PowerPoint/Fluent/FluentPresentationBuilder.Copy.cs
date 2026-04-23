@@ -828,8 +828,20 @@ internal sealed partial class FluentPresentationBuilder
                 var id = newContentPart.GetIdOfPart(newPart);
                 temp.AddContentPartRelTypeResourceIdTupple(newContentPart, newPart.RelationshipType, id);
 
-                using (var stream = oldPart.GetStream())
-                    newPart.FeedData(stream);
+                try
+                {
+                    using (var stream = oldPart.GetStream())
+                        newPart.FeedData(stream);
+                }
+                catch (InvalidDataException)
+                {
+                    // The image part's ZIP entry has a corrupt local file header.
+                    // Leave the empty part in place so the slide structure is preserved;
+                    // the image will be missing but the copy operation can continue.
+                    imageReference.SetAttributeValue(attributeName, id);
+                    return;
+                }
+
                 imageReference.SetAttributeValue(attributeName, id);
             }
             else
@@ -915,8 +927,16 @@ internal sealed partial class FluentPresentationBuilder
             var ct = oldPart.ContentType;
             var ext = Path.GetExtension(oldPart.Uri.OriginalString);
             var newPart = newContentPart.OpenXmlPackage.CreateMediaDataPart(ct, ext);
-            using (var stream = oldPart.GetStream())
-                newPart.FeedData(stream);
+            try
+            {
+                using (var stream = oldPart.GetStream())
+                    newPart.FeedData(stream);
+            }
+            catch (InvalidDataException)
+            {
+                // The media part's ZIP entry has a corrupt local file header.
+                // Leave the empty part in place; the media will be missing but the copy continues.
+            }
             string id = null;
             string relationshipType = null;
 
