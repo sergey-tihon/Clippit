@@ -674,9 +674,7 @@ internal sealed partial class FluentPresentationBuilder
                         )
                     )
                     {
-                        var cxpp = newPart.AddNewPart<CustomXmlPropertiesPart>(
-                            "application/vnd.openxmlformats-officedocument.customXmlProperties+xml"
-                        );
+                        var cxpp = newPart.AddNewPart<CustomXmlPropertiesPart>();
                         using var stream = itemProps.OpenXmlPart.GetStream();
                         cxpp.FeedData(stream);
                     }
