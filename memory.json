@@ -1,6 +1,6 @@
 {
-    "lr": "2026-04-22",
-    "rid": "24780543422",
+    "lr": "2026-04-23",
+    "rid": "24822778500",
     "m_issue": 170,
     "m_month": "2026-04",
     "comments": {
@@ -11,18 +11,20 @@
         "77": "2026-03-14",
         "54": "2026-04-03",
         "28": "2026-03-28",
-        "65": "2026-03-29"
+        "65": "2026-03-29",
+        "233": "2026-04-23"
     },
-    "cursor": "103",
+    "cursor": "233",
     "prs": {
         "163": "RegisterCustomHandler",
         "165": "ExcelAssembler",
         "226": "refactor: replace generic Exception with specific exception types",
         "227": "ci: add NuGet publish workflow triggered by version tags",
         "perf_20260422": "perf: MakeValidXml single-pass lazy-StringBuilder + AddIfMissing TryAdd (branch: clippy/perf-make-valid-xml-20260422)",
-        "test_base64_20260422": "test: add 14 unit tests for Base64.ChunkBase64 and ConvertFromBase64 B64_001-B64_014 (branch: clippy/test-base64-chunk-20260422)"
+        "test_base64_20260422": "test: add 14 unit tests for Base64.ChunkBase64 and ConvertFromBase64 B64_001-B64_014 (branch: clippy/test-base64-chunk-20260422)",
+        "fix_233": "fix: handle corrupt ZIP local file header in image/media parts (branch: clippy/fix-issue-233-corrupt-zip-image)"
     },
-    "notes": "All open issues have Clippy comments. Issues #219/#220 are issue-based CI patches (workflow file protection). PR #221 (timeout fix) and PR #225 (NuGet caching) were closed by maintainer. PR #222 (TUnit update) merged. PR #226 (refactor exceptions) and PR #227 (NuGet publish workflow) opened by earlier run today (24780687838). This run (24780543422): created perf PR (MakeValidXml+AddIfMissing) and test PR (Base64 unit tests). PRs pending patch application - no numbers yet. All CI passing on PRs #163, #165.",
+    "notes": "Command-mode run 24822778500: fixed issue #233 (InvalidDataException on corrupt ZIP local file header in image parts). ImageData/MediaData ctors now catch InvalidDataException with GUID fallback hash. CopyRelatedImage/CopyRelatedMedia wrap FeedData in try/catch. Regression test added. PR pending (branch: clippy/fix-issue-233-corrupt-zip-image). All 17 PresentationBuilder tests pass.",
     "checked_off": {
         "196": "source-gen-regex",
         "tunit132": "TUnit-1.32.0",
