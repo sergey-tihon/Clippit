@@ -99,6 +99,71 @@ public partial class PresentationBuilderSlidePublishingTests
         Console.WriteLine($"GC Total Memory: {GC.GetTotalMemory(false) / 1024 / 1024} MB");
     }
 
+    /// <summary>
+    /// Regression test for https://github.com/sergey-tihon/Clippit/issues/231 —
+    /// AddSlidePart must not throw ArgumentException ("An invalid XML ID string")
+    /// when a slide contains a p:custData element whose CustomXmlPart has a CustomXmlPropertiesPart.
+    /// </summary>
+    [Test]
+    public async Task AddSlidePart_WithCustDataHavingCustomXmlPropertiesPart_DoesNotThrow()
+    {
+        var sourcePath = Path.Combine(SourceDirectory, "BRK3066.pptx");
+        var openSettings = new OpenSettings { AutoSave = false };
+
+        // Copy the source file into a writable memory stream so we can inject the custom-data parts.
+        using var srcMemory = new MemoryStream();
+        await using (var fs = File.OpenRead(sourcePath))
+            await fs.CopyToAsync(srcMemory);
+        srcMemory.Position = 0;
+
+        using var srcDoc = PresentationDocument.Open(srcMemory, true, openSettings);
+        ArgumentNullException.ThrowIfNull(srcDoc.PresentationPart);
+
+        var firstSlideId = PresentationBuilderTools.GetSlideIdsInOrder(srcDoc).First();
+        var srcSlidePart = (SlidePart)srcDoc.PresentationPart.GetPartById(firstSlideId);
+
+        // Attach a CustomXmlPart (with a CustomXmlPropertiesPart child) to the slide and
+        // add a p:custData element referencing it.  This is the exact combination that used
+        // to throw "An invalid XML ID string" inside CopyRelatedPartsForContentParts because
+        // AddNewPart<CustomXmlPropertiesPart> was incorrectly called with a content-type
+        // string as the relationship-ID argument.
+        var customXmlPart = srcSlidePart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
+        customXmlPart.PutXDocument(new XDocument(new XElement("root", "test")));
+
+        var propsPart = customXmlPart.AddNewPart<CustomXmlPropertiesPart>();
+        propsPart.PutXDocument(
+            new XDocument(
+                new XElement(
+                    XName.Get("datastoreItem", "http://schemas.openxmlformats.org/officeDocument/2006/customXml"),
+                    new XAttribute(
+                        XName.Get("itemID", "http://schemas.openxmlformats.org/officeDocument/2006/customXml"),
+                        "{12345678-1234-1234-1234-123456789012}"
+                    )
+                )
+            )
+        );
+
+        // Inject the p:custData element into the slide XML.
+        XNamespace pns = "http://schemas.openxmlformats.org/presentationml/2006/main";
+        XNamespace rns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+        var custDataRelId = srcSlidePart.GetIdOfPart(customXmlPart);
+        var slideXDoc = srcSlidePart.GetXDocument();
+        slideXDoc.Root?.Add(
+            new XElement(pns + "custDataLst", new XElement(pns + "custData", new XAttribute(rns + "id", custDataRelId)))
+        );
+        srcSlidePart.PutXDocument(slideXDoc);
+
+        // Should not throw ArgumentException ("An invalid XML ID string")
+        using var destStream = new MemoryStream();
+        using (var destDoc = PresentationBuilder.NewDocument(destStream))
+        using (var builder = PresentationBuilder.Create(destDoc))
+        {
+            builder.AddSlidePart(srcSlidePart);
+        }
+
+        await Assert.That(destStream.Length).IsGreaterThan(0);
+    }
+
     [Test]
     [MethodDataSource(typeof(PublishingTestData), nameof(PublishingTestData.Files))]
     public async Task MergeAllPowerPointBack(string sourcePath, CancellationToken cancellationToken)
