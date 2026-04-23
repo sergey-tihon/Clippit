@@ -181,7 +181,7 @@ public class SmlDataRetrieverTests : TestsBase
         var smlDoc = new SmlDocument(filePath);
         var fromFile = SmlDataRetriever.RetrieveRange(filePath, "Sheet1", "A1:C2");
         var fromSml = SmlDataRetriever.RetrieveRange(smlDoc, "Sheet1", "A1:C2");
-        await Assert.That(fromSml.ToString()).IsEqualTo(fromFile.ToString());
+        await Assert.That(XNode.DeepEquals(fromSml, fromFile)).IsTrue();
     }
 
     // ── RetrieveTable ────────────────────────────────────────────────────────
@@ -249,6 +249,14 @@ public class SmlDataRetrieverTests : TestsBase
         {
             await Assert.That(cell.Element("Value")).IsNotNull();
         }
+        var sharedStringValues = cells
+            .Where(cell => (string?)cell.Attribute("Type") == "s")
+            .Select(cell => (string?)cell.Element("Value"))
+            .Where(value => !string.IsNullOrEmpty(value))
+            .Cast<string>()
+            .ToList();
+        await Assert.That(sharedStringValues).IsNotEmpty();
+        await Assert.That(sharedStringValues.Any(value => !int.TryParse(value, out _))).IsTrue();
     }
 
     [Test]
@@ -268,5 +276,35 @@ public class SmlDataRetrieverTests : TestsBase
         var result = SmlDataRetriever.RetrieveSheet(sDoc, "Sheet1");
         await Assert.That(result.Name.LocalName).IsEqualTo("Data");
         await Assert.That(result.Elements("Row").ToList()).HasCount().EqualTo(3);
+    }
+
+    [Test]
+    public async Task SDR026_SpreadsheetDocument_Overload_TableNames()
+    {
+        using var sDoc = SpreadsheetDocument.Open(Path("SH002-TwoTablesTwoSheets.xlsx"), false);
+        var names = SmlDataRetriever.TableNames(sDoc);
+        await Assert.That(names).HasCount().EqualTo(2);
+        await Assert.That(names).Contains("MyTable");
+        await Assert.That(names).Contains("MyTable2");
+    }
+
+    [Test]
+    public async Task SDR027_SpreadsheetDocument_Overload_RetrieveRange()
+    {
+        using var sDoc = SpreadsheetDocument.Open(Path("SH001-Table.xlsx"), false);
+        var result = SmlDataRetriever.RetrieveRange(sDoc, "Sheet1", "A1:C2");
+        var rows = result.Elements("Row").ToList();
+        await Assert.That(rows).HasCount().EqualTo(2);
+        await Assert.That(rows.All(row => row.Elements("Cell").Count() == 3)).IsTrue();
+    }
+
+    [Test]
+    public async Task SDR028_SpreadsheetDocument_Overload_RetrieveTable()
+    {
+        using var sDoc = SpreadsheetDocument.Open(Path("SH001-Table.xlsx"), false);
+        var result = SmlDataRetriever.RetrieveTable(sDoc, "MyTable");
+        await Assert.That(result.Name.LocalName).IsEqualTo("Table");
+        await Assert.That((string?)result.Attribute("TableName")).IsEqualTo("MyTable");
+        await Assert.That(result.Element("Data")?.Elements("Row").ToList()).HasCount().EqualTo(2);
     }
 }
