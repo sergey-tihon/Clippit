@@ -256,6 +256,7 @@ public class SmlDataRetrieverTests : TestsBase
             .Cast<string>()
             .ToList();
         await Assert.That(sharedStringValues).IsNotEmpty();
+        await Assert.That(sharedStringValues).Contains("Eric");
         await Assert.That(sharedStringValues.Any(value => !int.TryParse(value, out _))).IsTrue();
     }
 
