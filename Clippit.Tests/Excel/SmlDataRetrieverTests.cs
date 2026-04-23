@@ -263,48 +263,30 @@ public class SmlDataRetrieverTests : TestsBase
     public async Task SDR024_SpreadsheetDocument_Overload_SheetNames()
     {
         using var sDoc = SpreadsheetDocument.Open(Path("SH002-TwoTablesTwoSheets.xlsx"), false);
-        var names = SmlDataRetriever.SheetNames(sDoc);
-        await Assert.That(names).HasCount().EqualTo(2);
-        await Assert.That(names).Contains("Sheet1");
-        await Assert.That(names).Contains("Sheet2");
+        var sheetNames = SmlDataRetriever.SheetNames(sDoc);
+        await Assert.That(sheetNames).HasCount().EqualTo(2);
+        await Assert.That(sheetNames).Contains("Sheet1");
+        await Assert.That(sheetNames).Contains("Sheet2");
+        var tableNames = SmlDataRetriever.TableNames(sDoc);
+        await Assert.That(tableNames).HasCount().EqualTo(2);
+        await Assert.That(tableNames).Contains("MyTable");
+        await Assert.That(tableNames).Contains("MyTable2");
     }
 
     [Test]
     public async Task SDR025_SpreadsheetDocument_Overload_RetrieveSheet()
     {
         using var sDoc = SpreadsheetDocument.Open(Path("SH001-Table.xlsx"), false);
-        var result = SmlDataRetriever.RetrieveSheet(sDoc, "Sheet1");
-        await Assert.That(result.Name.LocalName).IsEqualTo("Data");
-        await Assert.That(result.Elements("Row").ToList()).HasCount().EqualTo(3);
-    }
-
-    [Test]
-    public async Task SDR026_SpreadsheetDocument_Overload_TableNames()
-    {
-        using var sDoc = SpreadsheetDocument.Open(Path("SH002-TwoTablesTwoSheets.xlsx"), false);
-        var names = SmlDataRetriever.TableNames(sDoc);
-        await Assert.That(names).HasCount().EqualTo(2);
-        await Assert.That(names).Contains("MyTable");
-        await Assert.That(names).Contains("MyTable2");
-    }
-
-    [Test]
-    public async Task SDR027_SpreadsheetDocument_Overload_RetrieveRange()
-    {
-        using var sDoc = SpreadsheetDocument.Open(Path("SH001-Table.xlsx"), false);
-        var result = SmlDataRetriever.RetrieveRange(sDoc, "Sheet1", "A1:C2");
-        var rows = result.Elements("Row").ToList();
+        var sheet = SmlDataRetriever.RetrieveSheet(sDoc, "Sheet1");
+        await Assert.That(sheet.Name.LocalName).IsEqualTo("Data");
+        await Assert.That(sheet.Elements("Row").ToList()).HasCount().EqualTo(3);
+        var range = SmlDataRetriever.RetrieveRange(sDoc, "Sheet1", "A1:C2");
+        var rows = range.Elements("Row").ToList();
         await Assert.That(rows).HasCount().EqualTo(2);
         await Assert.That(rows.All(row => row.Elements("Cell").Count() == 3)).IsTrue();
-    }
-
-    [Test]
-    public async Task SDR028_SpreadsheetDocument_Overload_RetrieveTable()
-    {
-        using var sDoc = SpreadsheetDocument.Open(Path("SH001-Table.xlsx"), false);
-        var result = SmlDataRetriever.RetrieveTable(sDoc, "MyTable");
-        await Assert.That(result.Name.LocalName).IsEqualTo("Table");
-        await Assert.That((string?)result.Attribute("TableName")).IsEqualTo("MyTable");
-        await Assert.That(result.Element("Data")?.Elements("Row").ToList()).HasCount().EqualTo(2);
+        var table = SmlDataRetriever.RetrieveTable(sDoc, "MyTable");
+        await Assert.That(table.Name.LocalName).IsEqualTo("Table");
+        await Assert.That((string?)table.Attribute("TableName")).IsEqualTo("MyTable");
+        await Assert.That(table.Element("Data")?.Elements("Row").ToList()).HasCount().EqualTo(2);
     }
 }
