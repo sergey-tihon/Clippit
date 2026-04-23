@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.4.1] - April 23, 2026
+
+- fix: resolve `ArgumentException` for slides with `custData`+`CustomXmlProperties` (#232)
+- refactor: replace generic `Exception` with specific exception types (#228)
+- perf: eliminate redundant allocations in `MakeValidXml` and `AddIfMissing` (#229)
+- ci: add NuGet publish workflow triggered by version tags (#227)
+- test: add unit tests for `Base64.ChunkBase64` and `ConvertFromBase64` (#230)
+- chore(deps): update TUnit 1.37.0 → 1.37.10 (#222)
+
 ## [3.4.0] - April 19, 2026
 
 - feat: add `Optional="true"` support to `<Table>` directive in DocumentAssembler (#150)
