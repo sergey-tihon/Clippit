@@ -1,6 +1,6 @@
 {
     "lr": "2026-04-23",
-    "rid": "24822778500",
+    "rid": "24837682344",
     "m_issue": 170,
     "m_month": "2026-04",
     "comments": {
@@ -18,13 +18,11 @@
     "prs": {
         "163": "RegisterCustomHandler",
         "165": "ExcelAssembler",
-        "226": "refactor: replace generic Exception with specific exception types",
-        "227": "ci: add NuGet publish workflow triggered by version tags",
-        "perf_20260422": "perf: MakeValidXml single-pass lazy-StringBuilder + AddIfMissing TryAdd (branch: clippy/perf-make-valid-xml-20260422)",
-        "test_base64_20260422": "test: add 14 unit tests for Base64.ChunkBase64 and ConvertFromBase64 B64_001-B64_014 (branch: clippy/test-base64-chunk-20260422)",
-        "fix_233": "fix: handle corrupt ZIP local file header in image/media parts (branch: clippy/fix-issue-233-corrupt-zip-image)"
+        "fix_233": "fix: handle corrupt ZIP local file header in image/media parts (branch: clippy/fix-issue-233-corrupt-zip-image)",
+        "eng_tunit_20260423": "chore(deps): update TUnit 1.37.10->1.37.36 (branch: clippy/eng-update-tunit-20260423)",
+        "test_sdr_20260423": "test(excel): add SmlDataRetriever unit tests SDR001-SDR025 (branch: clippy/test-sml-data-retriever-20260423)"
     },
-    "notes": "Command-mode run 24822778500: fixed issue #233 (InvalidDataException on corrupt ZIP local file header in image parts). ImageData/MediaData ctors now catch InvalidDataException with GUID fallback hash. CopyRelatedImage/CopyRelatedMedia wrap FeedData in try/catch. Regression test added. PR pending (branch: clippy/fix-issue-233-corrupt-zip-image). All 17 PresentationBuilder tests pass.",
+    "notes": "Run 24837682344 (2026-04-23): TUnit 1.37.10->1.37.36 PR created (branch clippy/eng-update-tunit-20260423). SmlDataRetriever 25 tests PR created (branch clippy/test-sml-data-retriever-20260423). Old entries perf_20260422 and test_base64_20260422 were branches that never reached remote (improvements already merged in #229). PR #226 was NuGet cache (closed), #227 NuGet publish (merged), #228 exception types (merged). PR #234 was corrupt ZIP fix - check if still open.",
     "checked_off": {
         "196": "source-gen-regex",
         "tunit132": "TUnit-1.32.0",
