@@ -1,3 +1,4 @@
+using Clippit;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Tests.PowerPoint;

@@ -1910,11 +1910,11 @@ listSeparator
 
     public static class UriFixer
     {
-        private static readonly Uri s_placeholderUri = new("https://invalid.uri.com");
+        private static readonly Uri s_placeholderUri = new("https://example.invalid");
 
         /// <summary>
         /// Replaces invalid external hyperlink URIs in the package with a placeholder URI
-        /// (<c>https://invalid.uri.com</c>) so that the package can be opened by the OpenXML SDK.
+        /// (<c>https://example.invalid</c>) so that the package can be opened by the OpenXML SDK.
         /// </summary>
         /// <param name="fs">A stream containing the OpenXML package (must be seekable and writable).</param>
         /// <param name="leaveOpen">
@@ -1922,8 +1922,11 @@ listSeparator
         /// <see langword="false"/> (the default) to dispose it together with the internal
         /// <see cref="ZipArchive"/>.
         /// </param>
-        public static void FixInvalidUri(Stream fs, bool leaveOpen = false) =>
+        public static void FixInvalidUri(Stream fs, bool leaveOpen = false)
+        {
+            ArgumentNullException.ThrowIfNull(fs);
             FixInvalidUri(fs, _ => s_placeholderUri, leaveOpen);
+        }
 
         /// <summary>
         /// Replaces invalid external hyperlink URIs in the package using a custom handler so that the
@@ -1941,6 +1944,8 @@ listSeparator
         /// </param>
         public static void FixInvalidUri(Stream fs, Func<string, Uri> invalidUriHandler, bool leaveOpen = false)
         {
+            ArgumentNullException.ThrowIfNull(fs);
+            ArgumentNullException.ThrowIfNull(invalidUriHandler);
             XNamespace relNs = "http://schemas.openxmlformats.org/package/2006/relationships";
             using var za = new ZipArchive(fs, ZipArchiveMode.Update, leaveOpen);
             foreach (var entry in za.Entries.ToList())

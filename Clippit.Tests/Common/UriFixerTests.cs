@@ -4,6 +4,7 @@
 using System.IO.Compression;
 using System.Xml;
 using System.Xml.Linq;
+using Clippit;
 
 namespace Clippit.Tests.Common;
 
@@ -73,7 +74,7 @@ public class UriFixerTests
 
         var xdoc = ReadRelsFromZip(ms);
         var target = xdoc.Descendants(RelNs + "Relationship").Single().Attribute("Target")?.Value;
-        await Assert.That(target).IsEqualTo("https://invalid.uri.com");
+        await Assert.That(target).IsEqualTo("https://example.invalid");
     }
 
     // ── UF003: custom handler receives the invalid URI and its result is used ─
@@ -168,7 +169,7 @@ public class UriFixerTests
         var xdoc = ReadRelsFromZip(ms);
         var targets = xdoc.Descendants(RelNs + "Relationship").Select(r => r.Attribute("Target")?.Value).ToList();
         await Assert.That(targets).HasCount(2);
-        await Assert.That(targets[0]).IsEqualTo("https://invalid.uri.com");
-        await Assert.That(targets[1]).IsEqualTo("https://invalid.uri.com");
+        await Assert.That(targets[0]).IsEqualTo("https://example.invalid");
+        await Assert.That(targets[1]).IsEqualTo("https://example.invalid");
     }
 }
