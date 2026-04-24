@@ -1910,41 +1910,66 @@ listSeparator
 
     public static class UriFixer
     {
-        public static void FixInvalidUri(Stream fs, Func<string, Uri> invalidUriHandler)
+        private static readonly Uri s_placeholderUri = new("https://invalid.uri.com");
+
+        /// <summary>
+        /// Replaces invalid external hyperlink URIs in the package with a placeholder URI
+        /// (<c>https://invalid.uri.com</c>) so that the package can be opened by the OpenXML SDK.
+        /// </summary>
+        /// <param name="fs">A stream containing the OpenXML package (must be seekable and writable).</param>
+        /// <param name="leaveOpen">
+        /// <see langword="true"/> to leave <paramref name="fs"/> open after the fix is applied;
+        /// <see langword="false"/> (the default) to dispose it together with the internal
+        /// <see cref="ZipArchive"/>.
+        /// </param>
+        public static void FixInvalidUri(Stream fs, bool leaveOpen = false) =>
+            FixInvalidUri(fs, _ => s_placeholderUri, leaveOpen);
+
+        /// <summary>
+        /// Replaces invalid external hyperlink URIs in the package using a custom handler so that the
+        /// package can be opened by the OpenXML SDK.
+        /// </summary>
+        /// <param name="fs">A stream containing the OpenXML package (must be seekable and writable).</param>
+        /// <param name="invalidUriHandler">
+        /// A delegate that receives the raw (invalid) URI string and returns a valid replacement
+        /// <see cref="Uri"/>.
+        /// </param>
+        /// <param name="leaveOpen">
+        /// <see langword="true"/> to leave <paramref name="fs"/> open after the fix is applied;
+        /// <see langword="false"/> (the default) to dispose it together with the internal
+        /// <see cref="ZipArchive"/>.
+        /// </param>
+        public static void FixInvalidUri(Stream fs, Func<string, Uri> invalidUriHandler, bool leaveOpen = false)
         {
             XNamespace relNs = "http://schemas.openxmlformats.org/package/2006/relationships";
-            using var za = new ZipArchive(fs, ZipArchiveMode.Update);
+            using var za = new ZipArchive(fs, ZipArchiveMode.Update, leaveOpen);
             foreach (var entry in za.Entries.ToList())
             {
                 if (!entry.Name.EndsWith(".rels"))
                     continue;
                 var replaceEntry = false;
-                XDocument entryXDoc = null;
+                XDocument? entryXDoc = null;
                 using (var entryStream = entry.Open())
                 {
                     try
                     {
                         entryXDoc = XDocument.Load(entryStream);
-                        if (entryXDoc.Root != null && entryXDoc.Root.Name.Namespace == relNs)
+                        if (entryXDoc.Root?.Name.Namespace == relNs)
                         {
                             var urisToCheck = entryXDoc
                                 .Descendants(relNs + "Relationship")
-                                .Where(r =>
-                                    r.Attribute("TargetMode") != null && (string)r.Attribute("TargetMode") == "External"
-                                );
+                                .Where(r => r.Attribute("TargetMode")?.Value == "External");
                             foreach (var rel in urisToCheck)
                             {
-                                var target = (string)rel.Attribute("Target");
-                                if (target != null)
+                                if (rel.Attribute("Target") is { } targetAttr)
                                 {
                                     try
                                     {
-                                        var uri = new Uri(target);
+                                        _ = new Uri(targetAttr.Value);
                                     }
                                     catch (UriFormatException)
                                     {
-                                        var newUri = invalidUriHandler(target);
-                                        rel.Attribute("Target").Value = newUri.ToString();
+                                        targetAttr.Value = invalidUriHandler(targetAttr.Value).OriginalString;
                                         replaceEntry = true;
                                     }
                                 }
@@ -1963,7 +1988,7 @@ listSeparator
                     var newEntry = za.CreateEntry(fullName);
                     using var writer = new StreamWriter(newEntry.Open());
                     using var xmlWriter = XmlWriter.Create(writer);
-                    entryXDoc.WriteTo(xmlWriter);
+                    entryXDoc!.WriteTo(xmlWriter);
                 }
             }
         }
