@@ -1,6 +1,6 @@
 {
-  "lr": "2026-04-24",
-  "rid": "24891738357",
+  "lr": "2026-04-25",
+  "rid": "24931831429",
   "m_issue": 170,
   "m_month": "2026-04",
   "comments": {
@@ -18,15 +18,15 @@
   "prs": {
     "163": "RegisterCustomHandler",
     "165": "ExcelAssembler",
-    "234": "fix: handle corrupt ZIP local file header in image/media parts (branch: clippy/fix-issue-233-corrupt-zip-image-5b26047fdcb973c4)",
-    "uri_fixer_20260424": "refactor: modernize UriFixer — convenience overload, leaveOpen param, eliminate test duplication (branch: clippy/improve-uri-fixer-20260424)"
+    "234": "fix: handle corrupt ZIP local file header in image/media parts (branch: clippy/fix-issue-233-corrupt-zip-image-5b26047fdcb973c4)"
   },
-  "notes": "Run 24891738357 (2026-04-24): Rebased PR #234 onto master. Created UriFixer refactor PR (branch clippy/improve-uri-fixer-20260424 — PR number pending). TUnit update merged as #235, SmlDataRetriever tests merged as #236. UriFixer latent bug fixed: original TargetMode comparison was 'External ' (trailing space) — now 'External'.",
+  "notes": "Run 24931831429 (2026-04-25): Rebased PR #234, #163, #165 onto master (includes UriFixer #237 and v3.4.1). PR #237 (UriFixer) was merged. All three open Clippy PRs are now current with master.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
     "222": "TUnit-1.37.10",
     "235": "TUnit-1.37.36",
-    "236": "SmlDataRetriever-tests"
+    "236": "SmlDataRetriever-tests",
+    "237": "UriFixer-refactor"
   }
 }
