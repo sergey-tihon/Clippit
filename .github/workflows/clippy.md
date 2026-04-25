@@ -177,7 +177,7 @@ steps:
           json.dump(result, f, indent=2)
       EOF
 
-source: githubnext/agentics/workflows/repo-assist.md@51c8f6ad4357d2ecc06e47120031b3d75e80227d
+source: githubnext/agentics/workflows/repo-assist.md@3de4e604a36b5190a1c7dc4719c7341500ba8a95
 ---
 
 # Clippy
