@@ -1888,8 +1888,18 @@ listSeparator
             ArgumentNullException.ThrowIfNull(part);
 
             ContentType = part.ContentType;
-            using var s = part.GetStream();
-            Hash = s.ComputeHash();
+            try
+            {
+                using var s = part.GetStream();
+                Hash = s.ComputeHash();
+            }
+            catch (InvalidDataException)
+            {
+                // The image part's ZIP entry has a corrupt local file header.
+                // Use a unique hash so the deduplication cache treats this entry
+                // as distinct rather than throwing, allowing the rest of the slide to be copied.
+                Hash = Guid.NewGuid().ToByteArray();
+            }
         }
     }
 
@@ -1903,8 +1913,18 @@ listSeparator
             ArgumentNullException.ThrowIfNull(part);
 
             ContentType = part.ContentType;
-            using var s = part.GetStream();
-            Hash = s.ComputeHash();
+            try
+            {
+                using var s = part.GetStream();
+                Hash = s.ComputeHash();
+            }
+            catch (InvalidDataException)
+            {
+                // The media part's ZIP entry has a corrupt local file header.
+                // Use a unique hash so the deduplication cache treats this entry
+                // as distinct rather than throwing, allowing the rest of the slide to be copied.
+                Hash = Guid.NewGuid().ToByteArray();
+            }
         }
     }
 
