@@ -49,7 +49,7 @@ public class ExcelAssemblerTests : TestsBase
             .ToArray();
     }
 
-    // WorksheetAccessor.GetCellValue doesn't handle t="str" (formula-string cells written by
+    // WorksheetAccessor.GetCellValue doesn't handle t="str" (formula result string cells written by
     // SpreadsheetWriter). This helper also covers that case.
     private static string? GetCellStringValue(SpreadsheetDocument doc, WorksheetPart ws, int column, int row)
     {

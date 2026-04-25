@@ -67,7 +67,7 @@ public static class ExcelAssembler
     public static byte[] AssembleDocument(byte[] templateBytes, XElement data)
     {
         using var ms = new MemoryStream();
-        ms.Write(templateBytes, 0, templateBytes.Length);
+        ms.Write(templateBytes);
         ms.Position = 0;
         using (var doc = SpreadsheetDocument.Open(ms, isEditable: true))
         {
@@ -155,7 +155,7 @@ public static class ExcelAssembler
                 ? s
                 : null,
             "inlineStr" => cell.Element(S._is)?.Element(S.t)?.Value,
-            // "str" is used by SpreadsheetWriter for formula-result string cells.
+            // "str" is used by SpreadsheetWriter for formula result string cells.
             "str" => cell.Element(S.v)?.Value,
             _ => null,
         };
