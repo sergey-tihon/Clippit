@@ -664,7 +664,10 @@ namespace Clippit
                     {
                         var thisUnid = (string)ae.Attribute(PtOpenXml.Unid);
                         if (thisUnid == null)
+                        {
                             thisUnid = Guid.NewGuid().ToString("N");
+                            ae.SetAttributeValue(PtOpenXml.Unid, thisUnid);
+                        }
                         return thisUnid;
                     });
                 var thisAncestorUnids = currentAncestorUnids.Concat(additionalAncestorUnids).ToArray();
@@ -740,7 +743,10 @@ namespace Clippit
                     {
                         var thisUnid = (string)ae.Attribute(PtOpenXml.Unid);
                         if (thisUnid == null)
+                        {
                             thisUnid = Guid.NewGuid().ToString("N");
+                            ae.SetAttributeValue(PtOpenXml.Unid, thisUnid);
+                        }
                         return thisUnid;
                     });
                 var thisAncestorUnids = currentAncestorUnids.Concat(additionalAncestorUnids).ToArray();
