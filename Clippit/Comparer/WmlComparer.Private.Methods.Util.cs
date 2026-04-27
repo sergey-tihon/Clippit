@@ -48,7 +48,7 @@ namespace Clippit
                         uriString =
                             uriSplit.SkipLast(1).Select(p => p + "/").StringConcatenate()
                             + "P"
-                            + Guid.NewGuid().ToString().Replace("-", "")
+                            + Guid.NewGuid().ToString("N")
                             + "."
                             + last[1];
                     }
@@ -57,7 +57,7 @@ namespace Clippit
                         uriString =
                             uriSplit.SkipLast(1).Select(p => p + "/").StringConcatenate()
                             + "P"
-                            + Guid.NewGuid().ToString().Replace("-", "");
+                            + Guid.NewGuid().ToString("N");
                     }
 
                     var uri = relatedPackagePart.Uri.IsAbsoluteUri
