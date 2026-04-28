@@ -12,19 +12,6 @@ namespace Clippit
         {
             XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 
-#if false
-            // This is the old code.  Both versions work - the caching version is significantly faster.
-            var relevantElements = root.Descendants()
-                .Where(e =>
-                {
-                    Stack<FieldElementTypeInfo> s = e.Annotation<Stack<FieldElementTypeInfo>>();
-                    if (s != null)
-                        return s.Any(z => z.Id == id &&
-                            z.FieldElementType == FieldElementTypeEnum.InstrText);
-                    return false;
-                })
-                .ToList();
-#else
             var cachedAnnotationInformation = root.Annotation<Dictionary<int, List<XElement>>>();
             if (cachedAnnotationInformation == null)
                 throw new OpenXmlPowerToolsException("Internal error");
@@ -33,7 +20,6 @@ namespace Clippit
             if (!cachedAnnotationInformation.ContainsKey(id))
                 return "";
             var relevantElements = cachedAnnotationInformation[id];
-#endif
 
             var groupedSubFields = relevantElements
                 .GroupAdjacent(e =>
