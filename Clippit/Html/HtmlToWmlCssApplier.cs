@@ -3757,8 +3757,8 @@ namespace Clippit.Html
                 }
                 if (value.Substring(0, 1) == "#")
                     return value.Substring(1);
-                if (ColorMap.ContainsKey(value))
-                    return ColorMap[value];
+                if (ColorMap.TryGetValue(value, out var mappedColor))
+                    return mappedColor;
                 return value;
             }
             return "000000";

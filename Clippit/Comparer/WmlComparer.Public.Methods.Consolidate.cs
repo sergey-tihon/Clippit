@@ -130,8 +130,7 @@ namespace Clippit
                                 throw new OpenXmlPowerToolsException("Internal error");
 
                             XElement elementToInsertAfter = null;
-                            if (consolidatedByUnid.ContainsKey(unid))
-                                elementToInsertAfter = consolidatedByUnid[unid];
+                            consolidatedByUnid.TryGetValue(unid, out elementToInsertAfter);
 
                             if (elementToInsertAfter != null)
                             {

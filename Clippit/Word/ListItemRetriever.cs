@@ -633,9 +633,7 @@ namespace Clippit.Word
                 listItemInfoCache = new Dictionary<string, ListItemInfo>();
                 numXDocRoot.AddAnnotation(listItemInfoCache);
             }
-            if (listItemInfoCache.ContainsKey(key))
-                return listItemInfoCache[key];
-            return null;
+            return listItemInfoCache.TryGetValue(key, out var cached) ? cached : null;
         }
 
         private static void AddListItemInfoIntoCache(
@@ -654,8 +652,7 @@ namespace Clippit.Word
                 listItemInfoCache = new Dictionary<string, ListItemInfo>();
                 numXDocRoot.AddAnnotation(listItemInfoCache);
             }
-            if (!listItemInfoCache.ContainsKey(key))
-                listItemInfoCache.Add(key, listItemInfo);
+            listItemInfoCache.TryAdd(key, listItemInfo);
         }
 
         public class LevelNumbers
@@ -1091,11 +1088,8 @@ namespace Clippit.Word
                         }
                         if (languageCultureName != null && settings != null)
                         {
-                            if (settings.ListItemTextImplementations.ContainsKey(languageCultureName))
-                            {
-                                var impl = settings.ListItemTextImplementations[languageCultureName];
+                            if (settings.ListItemTextImplementations.TryGetValue(languageCultureName, out var impl))
                                 levelText = impl(languageCultureName, levelNumber, numFmtForLevel);
-                            }
                         }
                         if (levelText == null)
                             levelText = ListItemTextGetter_Default.GetListItemText(
