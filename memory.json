@@ -1,6 +1,6 @@
 {
-  "lr": "2026-04-28",
-  "rid": "25055442164",
+  "lr": "2026-04-29",
+  "rid": "25111463797",
   "m_issue": 170,
   "m_month": "2026-04",
   "comments": {
@@ -19,9 +19,9 @@
     "163": "RegisterCustomHandler",
     "165": "ExcelAssembler",
     "234": "fix: handle corrupt ZIP local file header in image/media parts",
-    "245": "chore(deps): update TUnit 1.40.5 → 1.40.10 (branch: clippy/eng-tunit-1.40.10-20260428)"
+    "246": "refactor: replace ContainsKey+indexer double-lookups with TryGetValue (branch: clippy/improve-trygetvalue-doubleLookup-20260429)"
   },
-  "notes": "Run 25055442164 (2026-04-28): Task 4 - created TUnit 1.40.5→1.40.10 PR (#245, 1699 tests pass). Task 2 - no new human activity on any open issues. PRs 243+244 from 2026-04-27 were merged. All open issues (28,47,54,66,67,77,103,233) have Clippy comments.",
+  "notes": "Run 25111463797 (2026-04-29): Tasks 5+8 - created TryGetValue refactor PR (~246) for 5 files, 1699 tests pass. PR #245 was merged by maintainer. All open issues (28,47,54,66,67,77,103,233) have Clippy comments.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
@@ -31,6 +31,7 @@
     "237": "UriFixer-refactor",
     "242": "TUnit-1.39.0",
     "243": "TUnit-1.40.5",
-    "244": "guid-random-refactor"
+    "244": "guid-random-refactor",
+    "245": "TUnit-1.40.10"
   }
 }
