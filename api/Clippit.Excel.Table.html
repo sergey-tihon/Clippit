@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Table | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Table | Clippit ">
+      
+      
+      <link rel="icon" href="../images/logo-site.png">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Clippit_Excel_Table.md&amp;value=---%0Auid%3A%20Clippit.Excel.Table%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Clippit.Excel.Table">
+
+
+
+  <h1 id="Clippit_Excel_Table" data-uid="Clippit.Excel.Table" class="text-break">
+Class Table  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Clippit.html">Clippit</a>.<a class="xref" href="Clippit.Excel.html">Excel</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Clippit.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class Table</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">Table</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Clippit_Excel_Table__ctor_" data-uid="Clippit.Excel.Table.#ctor*"></a>
+
+  <h3 id="Clippit_Excel_Table__ctor_DocumentFormat_OpenXml_Packaging_WorksheetPart_" data-uid="Clippit.Excel.Table.#ctor(DocumentFormat.OpenXml.Packaging.WorksheetPart)">
+  Table(WorksheetPart)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Table(WorksheetPart parent)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>parent</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/documentformat.openxml.packaging.worksheetpart">WorksheetPart</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Clippit_Excel_Table_BottomRow_" data-uid="Clippit.Excel.Table.BottomRow*"></a>
+
+  <h3 id="Clippit_Excel_Table_BottomRow" data-uid="Clippit.Excel.Table.BottomRow">
+  BottomRow
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int BottomRow { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_Table_DisplayName_" data-uid="Clippit.Excel.Table.DisplayName*"></a>
+
+  <h3 id="Clippit_Excel_Table_DisplayName" data-uid="Clippit.Excel.Table.DisplayName">
+  DisplayName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string DisplayName { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_Table_HeaderRowCount_" data-uid="Clippit.Excel.Table.HeaderRowCount*"></a>
+
+  <h3 id="Clippit_Excel_Table_HeaderRowCount" data-uid="Clippit.Excel.Table.HeaderRowCount">
+  HeaderRowCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int? HeaderRowCount { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_Table_Id_" data-uid="Clippit.Excel.Table.Id*"></a>
+
+  <h3 id="Clippit_Excel_Table_Id" data-uid="Clippit.Excel.Table.Id">
+  Id
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Id { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_Table_LeftColumn_" data-uid="Clippit.Excel.Table.LeftColumn*"></a>
+
+  <h3 id="Clippit_Excel_Table_LeftColumn" data-uid="Clippit.Excel.Table.LeftColumn">
+  LeftColumn
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int LeftColumn { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_Table_Parent_" data-uid="Clippit.Excel.Table.Parent*"></a>
+
+  <h3 id="Clippit_Excel_Table_Parent" data-uid="Clippit.Excel.Table.Parent">
+  Parent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WorksheetPart Parent { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/documentformat.openxml.packaging.worksheetpart">WorksheetPart</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_Table_Ref_" data-uid="Clippit.Excel.Table.Ref*"></a>
+
+  <h3 id="Clippit_Excel_Table_Ref" data-uid="Clippit.Excel.Table.Ref">
+  Ref
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Ref { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_Table_RightColumn_" data-uid="Clippit.Excel.Table.RightColumn*"></a>
+
+  <h3 id="Clippit_Excel_Table_RightColumn" data-uid="Clippit.Excel.Table.RightColumn">
+  RightColumn
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int RightColumn { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_Table_TableDefinitionPart_" data-uid="Clippit.Excel.Table.TableDefinitionPart*"></a>
+
+  <h3 id="Clippit_Excel_Table_TableDefinitionPart" data-uid="Clippit.Excel.Table.TableDefinitionPart">
+  TableDefinitionPart
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TableDefinitionPart TableDefinitionPart { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/documentformat.openxml.packaging.tabledefinitionpart">TableDefinitionPart</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_Table_TableName_" data-uid="Clippit.Excel.Table.TableName*"></a>
+
+  <h3 id="Clippit_Excel_Table_TableName" data-uid="Clippit.Excel.Table.TableName">
+  TableName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string TableName { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_Table_TableStyleInfo_" data-uid="Clippit.Excel.Table.TableStyleInfo*"></a>
+
+  <h3 id="Clippit_Excel_Table_TableStyleInfo" data-uid="Clippit.Excel.Table.TableStyleInfo">
+  TableStyleInfo
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public XElement TableStyleInfo { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.xml.linq.xelement">XElement</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_Table_TableType_" data-uid="Clippit.Excel.Table.TableType*"></a>
+
+  <h3 id="Clippit_Excel_Table_TableType" data-uid="Clippit.Excel.Table.TableType">
+  TableType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string TableType { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_Table_TopRow_" data-uid="Clippit.Excel.Table.TopRow*"></a>
+
+  <h3 id="Clippit_Excel_Table_TopRow" data-uid="Clippit.Excel.Table.TopRow">
+  TopRow
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int TopRow { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_Table_TotalsRowCount_" data-uid="Clippit.Excel.Table.TotalsRowCount*"></a>
+
+  <h3 id="Clippit_Excel_Table_TotalsRowCount" data-uid="Clippit.Excel.Table.TotalsRowCount">
+  TotalsRowCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int? TotalsRowCount { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Clippit_Excel_Table_TableColumns_" data-uid="Clippit.Excel.Table.TableColumns*"></a>
+
+  <h3 id="Clippit_Excel_Table_TableColumns" data-uid="Clippit.Excel.Table.TableColumns">
+  TableColumns()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;TableColumn&gt; TableColumns()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Clippit.Excel.TableColumn.html">TableColumn</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_Table_TableRows_" data-uid="Clippit.Excel.Table.TableRows*"></a>
+
+  <h3 id="Clippit_Excel_Table_TableRows" data-uid="Clippit.Excel.Table.TableRows">
+  TableRows()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;TableRow&gt; TableRows()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Clippit.Excel.TableRow.html">TableRow</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/XlsxTables.cs/#L9" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

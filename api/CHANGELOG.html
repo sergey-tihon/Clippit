@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Changelog | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Changelog | Clippit ">
+      
+      
+      <link rel="icon" href="../images/logo-site.png">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/blob/master/docs/api/CHANGELOG.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="changelog">Changelog</h1>
+
+<h2 id="341---april-23-2026">[3.4.1] - April 23, 2026</h2>
+<ul>
+<li>fix: resolve <code>ArgumentException</code> for slides with <code>custData</code>+<code>CustomXmlProperties</code> (#232)</li>
+<li>refactor: replace generic <code>Exception</code> with specific exception types (#228)</li>
+<li>perf: eliminate redundant allocations in <code>MakeValidXml</code> and <code>AddIfMissing</code> (#229)</li>
+<li>ci: add NuGet publish workflow triggered by version tags (#227)</li>
+<li>test: add unit tests for <code>Base64.ChunkBase64</code> and <code>ConvertFromBase64</code> (#230)</li>
+<li>chore(deps): update TUnit 1.37.0 → 1.37.10 (#222)</li>
+</ul>
+<h2 id="340---april-19-2026">[3.4.0] - April 19, 2026</h2>
+<ul>
+<li>feat: add <code>Optional=&quot;true&quot;</code> support to <code>&lt;Table&gt;</code> directive in DocumentAssembler (#150)</li>
+<li>feat: add <code>FitWithin</code> image sizing mode to DocumentAssembler (#168)</li>
+<li>feat: add <code>RelationshipValidator</code> to detect dangling <code>r:id</code> references in OpenXml parts (#160)</li>
+<li>feat: extract shared <code>RomanNumeralUtil</code> with <code>ToUpperRoman</code>/<code>ToLowerRoman</code> helpers (#164)</li>
+<li>feat(html): render floating tables (<code>w:tblpPr</code>) with CSS float in <code>WmlToHtmlConverter</code> (#180)</li>
+<li>fix(word): correct Russian list item text for values ≥ 100 (#187)</li>
+<li>fix(word): guard <code>cardinalText</code>/<code>ordinalText</code> against out-of-range <code>levelNumber</code> in multiple locales (#200, #201, #208)</li>
+<li>fix(html): render DOCX text boxes as inline-block divs in <code>WmlToHtmlConverter</code> (#166)</li>
+<li>perf(pptx): single-pass dispatch in <code>CopyRelatedPartsForContentParts</code> + lazy <code>SaveAndCleanup</code> (#175)</li>
+<li>perf(pptx): avoid <code>OuterXml</code>→<code>Parse</code> roundtrip in <code>SlidePartData.GetShapeDescriptor</code> (#178)</li>
+<li>perf: convert <code>Regex</code> instances to source-generated <code>[GeneratedRegex]</code> in several modules (#196)</li>
+<li>perf(comparer): reduce heap allocations in <code>WmlComparerUtil</code> SHA-1 hashing (#199)</li>
+<li>perf: modernize SHA1/SHA256 hashing — use <code>SHA1.HashData()</code>, <code>SHA256.HashData()</code>, <code>Convert.ToHexString()</code> (#184)</li>
+<li>perf: eliminate per-character heap allocations in base64 chunking (FlatOpc / Base64) (#209)</li>
+<li>refactor: remove custom relationship ID generator — delegate to OpenXML SDK APIs (#161)</li>
+<li>refactor: simplify LINQ patterns across Excel, Word, and Html modules (#207)</li>
+<li>docs: improve README with NuGet badges, project overview, quick-start, and docs link (#183)</li>
+<li>docs: switch DocFX documentation site to modern Bootstrap-based theme (#211)</li>
+<li>test(word): add unit tests for <code>ListItemTextGetter_Default</code>, fr_FR, sv_SE, zh_CN, tr_TR, ru_RU locales (#198, #206)</li>
+<li>test(word): add MS004–MS009 for <code>MarkupSimplifier</code> settings coverage (#213)</li>
+<li>test(excel): add <code>ParseFormula</code> and <code>XlsxTables</code> cell-address utility tests (#169, #185)</li>
+<li>test(common): add <code>TextReplacer</code> unit tests (#167)</li>
+</ul>
+<h2 id="331---march-24-2026">[3.3.1] - March 24, 2026</h2>
+<ul>
+<li>fix: handle dangling r:id on p:oleObj/p:externalData — KeyNotFoundException in slide publishing (#156)</li>
+<li>fix: resolve Content directives in v:textpath/<code>@string</code> for VML watermarks (#141)</li>
+</ul>
+<h2 id="330---march-22-2026">[3.3.0] - March 22, 2026</h2>
+<ul>
+<li>fix: prevent malformed XLSX when worksheet has no data rows (#108)</li>
+<li>fix: use min-width for tab-preceding span to prevent text overflow (#110)</li>
+<li>fix: update docProps/app.xml metadata in PublishSlides output (#114)</li>
+<li>fix: update numFmts count attribute when adding custom number formats (#124)</li>
+<li>fix: custom numFmt IDs must start at 164 per ECMA-376 (#131)</li>
+<li>fix: TextReplacer.CloneWithAnnotation now returns the clone, not the original (#135)</li>
+<li>perf: <code>O(1)</code> dictionary lookup for media deduplication cache in FluentPresentationBuilder (#128)</li>
+<li>perf: cache next slide ID in FluentPresentationBuilder to avoid <code>O(n²)</code> scan (#140)</li>
+<li>perf: cache compiled Regex, use <code>Any()</code> over <code>Count() == 0</code>, use <code>Element()</code> over <code>Elements().First()</code> (#143)</li>
+<li>refactor: modernise assembler helper classes (#118)</li>
+<li>refactor: modernize DocumentAssembler.cs with collection expressions and catch cleanup (#138)</li>
+<li>hk: DocumentFormat.OpenXml 3.5.1, TUnit 1.20.0 (#146)</li>
+<li>hk: Modernize CI workflow and update dependencies (#121)</li>
+</ul>
+<h2 id="320---january-25-2026">[3.2.0] - January 25, 2026</h2>
+<ul>
+<li>hk: DocumentFormat.OpenXml 3.4.1</li>
+</ul>
+<h2 id="310---august-30-2025">[3.1.0] - August 30, 2025</h2>
+<ul>
+<li>Build with .NET 10.0 and provide .NET 8 &amp; 10 binaries (#106)</li>
+</ul>
+<h2 id="302---august-30-2025">[3.0.2] - August 30, 2025</h2>
+<ul>
+<li>Extends <code>DocumentAssembler</code> to also apply HTML formatting on content in table cells (#101)</li>
+</ul>
+<h2 id="301---july-30-2025">[3.0.1] - July 30, 2025</h2>
+<ul>
+<li>fix: incorrect insertion of sldLayoutIdLst element for SlideMaster (#100)</li>
+</ul>
+<h2 id="300---june-30-2025">[3.0.0] - June 30, 2025</h2>
+<ul>
+<li>Public exposure of <code>IFluentPresentationBuilder</code> ergonomic API for the code behind <code>PresentationBuilder</code></li>
+</ul>
+<h2 id="252---june-28-2025">[2.5.2] - June 28, 2025</h2>
+<ul>
+<li>fix: relationship of theme parts (#99)</li>
+</ul>
+<h2 id="251---march-30-2025">[2.5.1] - March 30, 2025</h2>
+<ul>
+<li>Issue 95 and other issues #96 by @MalcolmJohnston</li>
+<li>hk: DocumentFormat.OpenXml 3.3.0</li>
+</ul>
+<h2 id="250---february-7-2025">[2.5.0] - February 7, 2025</h2>
+<ul>
+<li>Insert Documents or Document Templates using Document Assembler #93 by @MalcolmJohnston</li>
+</ul>
+<h2 id="242---january-15-2025">[2.4.2] - January 15, 2025</h2>
+<ul>
+<li>fix: Font Sizing Font Styling and Font Coloring is not working #94</li>
+<li>hk: dependencies update</li>
+</ul>
+<h2 id="241---january-4-2025">[2.4.1] - January 4, 2025</h2>
+<ul>
+<li>fix: Bug fix/document assembler paragraph properties not copied from template #91</li>
+<li>fix: slide naming issues during publishing presentation with *.potx extension</li>
+<li>hk: Migration to xUnit.v3</li>
+</ul>
+<h2 id="240---december-8-2024">[2.4.0] - December 8, 2024</h2>
+<ul>
+<li>feat: Added support for HTML fragments in Document Assembler Content tag (#86)</li>
+</ul>
+<h2 id="230---november-23-2024">[2.3.0] - November 23, 2024</h2>
+<ul>
+<li>hk: build with .NET 9.0</li>
+<li>hk: DocumentFormat.OpenXml 3.2.0</li>
+<li>hk: Pack with <code>dotnet pack</code> instead of <code>paket</code></li>
+<li>feat: handle invalid xml characters (#89)</li>
+</ul>
+<h2 id="222---november-1-2024">[2.2.2] - November 1, 2024</h2>
+<ul>
+<li>feat: DocumentFormat.OpenXml 3.1.0 -&gt; 3.1.1</li>
+<li>docs: Fix document assembler images and other tidy up (#84)</li>
+<li>hk: Document Assembler - Small Code Reorganisation (#83)</li>
+</ul>
+<h2 id="221---october-8-2024">[2.2.1] - October 8, 2024</h2>
+<ul>
+<li>fix: optimized memory usage during slide publishing</li>
+</ul>
+<h2 id="220---september-8-2024">[2.2.0] - September 8, 2024</h2>
+<ul>
+<li>DocumentFormat.OpenXml 3.0.2 -&gt; 3.1.0</li>
+<li>DocumentFormat.OpenXml.Framework 3.0.2 -&gt; 3.1.0</li>
+<li>SixLabors.ImageSharp 3.1.4 -&gt; 3.1.5</li>
+<li>SixLabors.ImageSharp.Drawing 2.1.3 -&gt; 2.1.4</li>
+</ul>
+<h2 id="211---april-18-2024">[2.1.1] - April 18, 2024</h2>
+<ul>
+<li>fix: regression cased by migration to struct inside OpenXML v3 #75</li>
+<li>Dependencies updated</li>
+</ul>
+<h2 id="210---mar-18-2024">[2.1.0] - Mar 18, 2024</h2>
+<ul>
+<li>Migration to .NET 8.0</li>
+</ul>
+<h2 id="201---jan-16-2024">[2.0.1] - Jan 16, 2024</h2>
+<ul>
+<li>Fix regression cased by migration to struct inside OpenXML v3</li>
+<li>DocumentFormat.OpenXml 3.0 -&gt; 3.0.1</li>
+<li>SixLabors.Fonts 2.0 -&gt; 2.0.1</li>
+<li>SixLabors.ImageSharp 3.0.2 -&gt; 3.1.2</li>
+<li>SixLabors.ImageSharp.Drawing 2.0.1 -&gt; 2.1.0</li>
+</ul>
+<h2 id="200---nov-26-2023">[2.0.0] - Nov 26, 2023</h2>
+<ul>
+<li>Migration to .NET 6.0</li>
+<li>DocumentFormat.OpenXml 3.0.0-beta0003</li>
+<li><code>System.Drawing.Common</code> replaced by SixLabors.ImageSharp.Drawing`</li>
+<li>Removed <code>libgdiplus</code> dependency</li>
+<li>Drop old <code>WmlComparer</code></li>
+</ul>
+<h2 id="1135---mar-27-2023">[1.13.5] - Mar 27, 2023</h2>
+<ul>
+<li>perf: improved PublishSlides perf #61</li>
+</ul>
+<h2 id="1134---dec-6-2022">[1.13.4] - Dec 6, 2022</h2>
+<ul>
+<li>fix: issues with 7.0 packages</li>
+</ul>
+<h2 id="1133---dec-5-2022">[1.13.3] - Dec 5, 2022</h2>
+<ul>
+<li>fix: PublishSlides: missing ppt/metadata for google presentations #59</li>
+<li>Dependencies updated</li>
+</ul>
+<h2 id="1132---oct-4-2022">[1.13.2] - Oct 4, 2022</h2>
+<ul>
+<li>remove caracters to prevent &gt; at document assembler <a href="https://github.com/sergey-tihon/Clippit/pull/57">#57</a></li>
+<li>Handle W.lastRenderedPageBreak in UnicodeMapper <a href="https://github.com/sergey-tihon/Clippit/pull/58">#58</a></li>
+</ul>
+<h2 id="1131---sept-27-2022">[1.13.1] - Sept 27, 2022</h2>
+<ul>
+<li><code>long</code> overload for <code>Cell.Number</code></li>
+</ul>
+<h2 id="1130---sept-27-2022">[1.13.0] - Sept 27, 2022</h2>
+<ul>
+<li>DocumentFormat.OpenXml (2.18)</li>
+<li>Added Cell.Bool for Excel helpers</li>
+</ul>
+<h2 id="1122---jul-13-2022">[1.12.2] - Jul 13, 2022</h2>
+<ul>
+<li>fix: PtOpenXmlUtil: process corrupted OpenXmlPart items <a href="https://github.com/sergey-tihon/Clippit/pull/56">#56</a></li>
+</ul>
+<h2 id="1121---jul-11-2022">[1.12.1] - Jul 11, 2022</h2>
+<ul>
+<li>DocumentFormat.OpenXml (2.17.1)</li>
+</ul>
+<h2 id="1120---jun-2-2022">[1.12.0] - Jun 2, 2022</h2>
+<ul>
+<li>Static Cell builder class for simpler and safer Excel generation</li>
+<li>Auto new modified date for decks composed with PresentationBuilder</li>
+</ul>
+<h2 id="1110---may-29-2022">[1.11.0] - May 29, 2022</h2>
+<ul>
+<li>PublishSlides: reduced memory consumption <a href="https://github.com/sergey-tihon/Clippit/pull/53">#53</a></li>
+</ul>
+<h2 id="1102---mar-16-2022">[1.10.2] - Mar 16, 2022</h2>
+<ul>
+<li>DocumentFormat.OpenXml (2.16.0)</li>
+<li>Lock <code>System.Drawing.Common</code> version to <code>v5</code></li>
+</ul>
+<h2 id="1100---feb-19-2022">[1.10.0] - Feb 19, 2022</h2>
+<ul>
+<li>Added support of ExtendedChartPart (<a href="http://schemas.microsoft.com/office/drawing/2014/chartex">http://schemas.microsoft.com/office/drawing/2014/chartex</a>) in PresentationBuilder and DocumentBuilder.</li>
+</ul>
+<h2 id="192---feb-17-2022">[1.9.2] - Feb 17, 2022</h2>
+<ul>
+<li>Fix: Don't show hidden slides after PresentationBuilder.BuildPresentation</li>
+</ul>
+<h2 id="191---feb-9-2022">[1.9.1] - Feb 9, 2022</h2>
+<ul>
+<li>Fixed incorrect usage of Stream API</li>
+</ul>
+<h2 id="190---jan-28-2022">[1.9.0] - Jan 28, 2022</h2>
+<ul>
+<li>DocumentFormat.OpenXml (2.15.0)</li>
+</ul>
+<h2 id="182---dec-16-2021">[1.8.2] - Dec 16, 2021</h2>
+<ul>
+<li>Improved memory consumption for PresentationBuilder.PublishSlides <a href="https://github.com/sergey-tihon/Clippit/pull/44">#44 by @f1nzer</a></li>
+<li>Revert DocumentFormat.OpenXml back to 2.13.1 (because of <a href="https://github.com/OfficeDev/Open-XML-SDK/issues/1069">this issue</a>)</li>
+</ul>
+<h2 id="181---nov-5-2021">[1.8.1] - Nov 5, 2021</h2>
+<ul>
+<li>DocumentFormat.OpenXml (2.14.0)</li>
+</ul>
+<h2 id="180---oct-25-2021">[1.8.0] - Oct 25, 2021</h2>
+<ul>
+<li>DocumentAssembler: Support for multi-value XPath results <a href="https://github.com/sergey-tihon/Clippit/pull/39">#39</a></li>
+</ul>
+<h2 id="173---oct-7-2021">[1.7.3] - Oct 7, 2021</h2>
+<ul>
+<li>Fixed copy Chart Style Parts in FluentPresentationBuilder</li>
+</ul>
+<h2 id="172---aug-23-2021">[1.7.2] - Aug 23, 2021</h2>
+<ul>
+<li>DocumentFormat.OpenXml v2.13.1</li>
+</ul>
+<h2 id="171---aug-18-2021">[1.7.1] - Aug 18, 2021</h2>
+<ul>
+<li>Resolving bug with nested rowspans <a href="https://github.com/sergey-tihon/Clippit/pull/35">#35</a></li>
+</ul>
+<h2 id="170---aug-15-2021">[1.7.0] - Aug 15, 2021</h2>
+<ul>
+<li>DocumentAssembler: Support for images <a href="https://github.com/sergey-tihon/Clippit/pull/31">#31</a></li>
+</ul>
+<h2 id="161---jul-11-2021">[1.6.1] - Jul 11, 2021</h2>
+<ul>
+<li>New docs site generated by DocFx <a href="https://github.com/sergey-tihon/Clippit/pull/33">#33</a></li>
+<li>Tests suite cleanup, samples converted to tests <a href="https://github.com/sergey-tihon/Clippit/pull/32">#32</a></li>
+</ul>
+<h2 id="160---jul-3-2021">[1.6.0] - Jul 3, 2021</h2>
+<ul>
+<li>Add WorkbookDfn.WriteTo(Stream) method <a href="https://github.com/sergey-tihon/Clippit/pull/29">#29</a></li>
+<li>Fixed generation of multiple Excel tables</li>
+<li>Fixed formatting of cells with DateTime</li>
+</ul>
+<h2 id="150---jun-26-2021">[1.5.0] - Jun 26, 2021</h2>
+<ul>
+<li>Structural comparison for Theme, Master, Layout <a href="https://github.com/sergey-tihon/Clippit/pull/20">#20</a></li>
+<li>Auto-scaling for slides from presentations with different slide size</li>
+<li>DocumentFormat.OpenXml (2.13)</li>
+<li>System.Drawing.Common (5.0.2)</li>
+</ul>
+<h2 id="140---feb-10-2021">[1.4.0] - Feb 10, 2021</h2>
+<ul>
+<li>DocumentBuilder: Added ISource and TableCellSource - <a href="https://github.com/sergey-tihon/Clippit/pull/17">#17</a></li>
+<li>DocumentFormat.OpenXml (2.12.1)</li>
+<li>Added dependency on System.IO.Packaging</li>
+<li>Fixed DateTime/DateTimeOffset serialisation format to Excel</li>
+</ul>
+<h2 id="131---july-30-2020">[1.3.1] - July 30, 2020</h2>
+<ul>
+<li>PresentationBuilder: Fixed CopyExtendedPart</li>
+</ul>
+<h2 id="130---july-29-2020">[1.3.0] - July 29, 2020</h2>
+<ul>
+<li>DocumentFormat.OpenXml (2.11.3)</li>
+<li>PresentationBuilder: Bug Fixes <a href="https://github.com/sergey-tihon/Clippit/pull/16">#16</a></li>
+</ul>
+<h2 id="121---may-2-2020">[1.2.1] - May 2, 2020</h2>
+<ul>
+<li>HTML to WML: Allow font-size with unit rem <a href="https://github.com/sergey-tihon/Clippit/pull/13">#13</a></li>
+</ul>
+<h2 id="120---march-12-2020">[1.2.0] - March 12, 2020</h2>
+<ul>
+<li>DocumentFormat.OpenXml (2.10.1)</li>
+</ul>
+<h2 id="114---december-6-2019">[1.1.4] - December 6, 2019</h2>
+<ul>
+<li>Slide title extracted and saved to document title <a href="https://github.com/sergey-tihon/Clippit/pull/10">#10</a></li>
+<li>Ensured that Modified date is propagated</li>
+<li>Compiled and tested on .NET Core 3.1 <a href="https://github.com/sergey-tihon/Clippit/pull/9">#9</a></li>
+</ul>
+<h2 id="113---december-3-2019">[1.1.3] - December 3, 2019</h2>
+<ul>
+<li>Don't rename theme when we extract slides from auto-generated 1-layout master</li>
+</ul>
+<h2 id="112---december-2-2019">[1.1.2] - December 2, 2019</h2>
+<ul>
+<li>Bug fixes</li>
+</ul>
+<h2 id="111---december-1-2019">[1.1.1] - December 1, 2019</h2>
+<ul>
+<li>Extract and merge presentation without slides (only masters) <a href="https://github.com/sergey-tihon/Clippit/pull/5">#5</a></li>
+</ul>
+<h2 id="110---november-29-2019">[1.1.0] - November 29, 2019</h2>
+<ul>
+<li>Added Slide Publishing API <a href="https://github.com/sergey-tihon/Clippit/pull/2">#2</a></li>
+</ul>
+<h2 id="100---november-21-2019">[1.0.0] - November 21, 2019</h2>
+<ul>
+<li>Initial release: <a href="https://github.com/EricWhiteDev/Open-Xml-PowerTools/tree/6e56a5f5cf662f3bd3da87945a5d3ed2329964ff">latest version of OpenXmlPowerTools</a></li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/api/CHANGELOG.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

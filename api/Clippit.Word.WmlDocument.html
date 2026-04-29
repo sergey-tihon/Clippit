@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class WmlDocument | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class WmlDocument | Clippit ">
+      
+      
+      <link rel="icon" href="../images/logo-site.png">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Clippit_Word_WmlDocument.md&amp;value=---%0Auid%3A%20Clippit.Word.WmlDocument%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Clippit.Word.WmlDocument">
+
+
+
+  <h1 id="Clippit_Word_WmlDocument" data-uid="Clippit.Word.WmlDocument" class="text-break">
+Class WmlDocument  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/WmlToHtmlConverter.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Clippit.html">Clippit</a>.<a class="xref" href="Clippit.Word.html">Word</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Clippit.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class WmlDocument : OpenXmlPowerToolsDocument</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Clippit.OpenXmlPowerToolsDocument.html">OpenXmlPowerToolsDocument</a></div>
+      <div><span class="xref">WmlDocument</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Clippit.OpenXmlPowerToolsDocument.html#Clippit_OpenXmlPowerToolsDocument_FileName">OpenXmlPowerToolsDocument.FileName</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.OpenXmlPowerToolsDocument.html#Clippit_OpenXmlPowerToolsDocument_DocumentByteArray">OpenXmlPowerToolsDocument.DocumentByteArray</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.OpenXmlPowerToolsDocument.html#Clippit_OpenXmlPowerToolsDocument_FromFileName_System_String_">OpenXmlPowerToolsDocument.FromFileName(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.OpenXmlPowerToolsDocument.html#Clippit_OpenXmlPowerToolsDocument_FromDocument_Clippit_OpenXmlPowerToolsDocument_">OpenXmlPowerToolsDocument.FromDocument(OpenXmlPowerToolsDocument)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.OpenXmlPowerToolsDocument.html#Clippit_OpenXmlPowerToolsDocument_GetName">OpenXmlPowerToolsDocument.GetName()</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.OpenXmlPowerToolsDocument.html#Clippit_OpenXmlPowerToolsDocument_SaveAs_System_String_">OpenXmlPowerToolsDocument.SaveAs(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.OpenXmlPowerToolsDocument.html#Clippit_OpenXmlPowerToolsDocument_Save">OpenXmlPowerToolsDocument.Save()</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.OpenXmlPowerToolsDocument.html#Clippit_OpenXmlPowerToolsDocument_WriteByteArray_System_IO_Stream_">OpenXmlPowerToolsDocument.WriteByteArray(Stream)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.OpenXmlPowerToolsDocument.html#Clippit_OpenXmlPowerToolsDocument_GetDocumentType">OpenXmlPowerToolsDocument.GetDocumentType()</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.OpenXmlPowerToolsDocument.html#Clippit_OpenXmlPowerToolsDocument_SavePartAs_DocumentFormat_OpenXml_Packaging_OpenXmlPart_System_String_">OpenXmlPowerToolsDocument.SavePartAs(OpenXmlPart, string)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Clippit_Word_WmlDocument__ctor_" data-uid="Clippit.Word.WmlDocument.#ctor*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument__ctor_Clippit_OpenXmlPowerToolsDocument_" data-uid="Clippit.Word.WmlDocument.#ctor(Clippit.OpenXmlPowerToolsDocument)">
+  WmlDocument(OpenXmlPowerToolsDocument)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/WmlDocument.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WmlDocument(OpenXmlPowerToolsDocument original)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>original</code> <a class="xref" href="Clippit.OpenXmlPowerToolsDocument.html">OpenXmlPowerToolsDocument</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument__ctor_" data-uid="Clippit.Word.WmlDocument.#ctor*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument__ctor_Clippit_OpenXmlPowerToolsDocument_System_Boolean_" data-uid="Clippit.Word.WmlDocument.#ctor(Clippit.OpenXmlPowerToolsDocument,System.Boolean)">
+  WmlDocument(OpenXmlPowerToolsDocument, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/WmlDocument.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WmlDocument(OpenXmlPowerToolsDocument original, bool convertToTransitional)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>original</code> <a class="xref" href="Clippit.OpenXmlPowerToolsDocument.html">OpenXmlPowerToolsDocument</a></dt>
+    <dd></dd>
+    <dt><code>convertToTransitional</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument__ctor_" data-uid="Clippit.Word.WmlDocument.#ctor*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument__ctor_Clippit_Word_WmlDocument_System_Xml_Linq_XElement___" data-uid="Clippit.Word.WmlDocument.#ctor(Clippit.Word.WmlDocument,System.Xml.Linq.XElement[])">
+  WmlDocument(WmlDocument, params XElement[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/WmlDocument.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WmlDocument(WmlDocument other, params XElement[] replacementParts)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="Clippit.Word.WmlDocument.html">WmlDocument</a></dt>
+    <dd></dd>
+    <dt><code>replacementParts</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.xml.linq.xelement">XElement</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument__ctor_" data-uid="Clippit.Word.WmlDocument.#ctor*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument__ctor_System_String_" data-uid="Clippit.Word.WmlDocument.#ctor(System.String)">
+  WmlDocument(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/WmlDocument.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WmlDocument(string fileName)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fileName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument__ctor_" data-uid="Clippit.Word.WmlDocument.#ctor*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument__ctor_System_String_System_Boolean_" data-uid="Clippit.Word.WmlDocument.#ctor(System.String,System.Boolean)">
+  WmlDocument(string, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/WmlDocument.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WmlDocument(string fileName, bool convertToTransitional)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fileName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>convertToTransitional</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument__ctor_" data-uid="Clippit.Word.WmlDocument.#ctor*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument__ctor_System_String_System_Byte___" data-uid="Clippit.Word.WmlDocument.#ctor(System.String,System.Byte[])">
+  WmlDocument(string, byte[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/WmlDocument.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WmlDocument(string fileName, byte[] byteArray)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fileName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>byteArray</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument__ctor_" data-uid="Clippit.Word.WmlDocument.#ctor*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument__ctor_System_String_System_Byte___System_Boolean_" data-uid="Clippit.Word.WmlDocument.#ctor(System.String,System.Byte[],System.Boolean)">
+  WmlDocument(string, byte[], bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/WmlDocument.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WmlDocument(string fileName, byte[] byteArray, bool convertToTransitional)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fileName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>byteArray</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+    <dt><code>convertToTransitional</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument__ctor_" data-uid="Clippit.Word.WmlDocument.#ctor*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument__ctor_System_String_System_IO_MemoryStream_" data-uid="Clippit.Word.WmlDocument.#ctor(System.String,System.IO.MemoryStream)">
+  WmlDocument(string, MemoryStream)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/WmlDocument.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WmlDocument(string fileName, MemoryStream memStream)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fileName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>memStream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.memorystream">MemoryStream</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument__ctor_" data-uid="Clippit.Word.WmlDocument.#ctor*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument__ctor_System_String_System_IO_MemoryStream_System_Boolean_" data-uid="Clippit.Word.WmlDocument.#ctor(System.String,System.IO.MemoryStream,System.Boolean)">
+  WmlDocument(string, MemoryStream, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/WmlDocument.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WmlDocument(string fileName, MemoryStream memStream, bool convertToTransitional)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fileName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>memStream</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.memorystream">MemoryStream</a></dt>
+    <dd></dd>
+    <dt><code>convertToTransitional</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="Clippit_Word_WmlDocument_MainDocumentPart_" data-uid="Clippit.Word.WmlDocument.MainDocumentPart*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument_MainDocumentPart" data-uid="Clippit.Word.WmlDocument.MainDocumentPart">
+  MainDocumentPart
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/WmlDocument.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PtMainDocumentPart MainDocumentPart { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Clippit.Word.PtMainDocumentPart.html">PtMainDocumentPart</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Clippit_Word_WmlDocument_AcceptRevisions_" data-uid="Clippit.Word.WmlDocument.AcceptRevisions*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument_AcceptRevisions_Clippit_Word_WmlDocument_" data-uid="Clippit.Word.WmlDocument.AcceptRevisions(Clippit.Word.WmlDocument)">
+  AcceptRevisions(WmlDocument)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/RevisionProcessor.cs/#L2908"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WmlDocument AcceptRevisions(WmlDocument document)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>document</code> <a class="xref" href="Clippit.Word.WmlDocument.html">WmlDocument</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Clippit.Word.WmlDocument.html">WmlDocument</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument_AddToa_" data-uid="Clippit.Word.WmlDocument.AddToa*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument_AddToa_System_String_System_String_System_Nullable_System_Int32__" data-uid="Clippit.Word.WmlDocument.AddToa(System.String,System.String,System.Nullable{System.Int32})">
+  AddToa(string, string, int?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/ReferenceAdder.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WmlDocument AddToa(string xPath, string switches, int? rightTabPos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>xPath</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>switches</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>rightTabPos</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Clippit.Word.WmlDocument.html">WmlDocument</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument_AddToc_" data-uid="Clippit.Word.WmlDocument.AddToc*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument_AddToc_System_String_System_String_System_String_System_Nullable_System_Int32__" data-uid="Clippit.Word.WmlDocument.AddToc(System.String,System.String,System.String,System.Nullable{System.Int32})">
+  AddToc(string, string, string, int?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/ReferenceAdder.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WmlDocument AddToc(string xPath, string switches, string title, int? rightTabPos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>xPath</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>switches</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>title</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>rightTabPos</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Clippit.Word.WmlDocument.html">WmlDocument</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument_AddTof_" data-uid="Clippit.Word.WmlDocument.AddTof*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument_AddTof_System_String_System_String_System_Nullable_System_Int32__" data-uid="Clippit.Word.WmlDocument.AddTof(System.String,System.String,System.Nullable{System.Int32})">
+  AddTof(string, string, int?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/ReferenceAdder.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WmlDocument AddTof(string xPath, string switches, int? rightTabPos)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>xPath</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>switches</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>rightTabPos</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Clippit.Word.WmlDocument.html">WmlDocument</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument_ConvertToHtml_" data-uid="Clippit.Word.WmlDocument.ConvertToHtml*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument_ConvertToHtml_Clippit_Word_HtmlConverterSettings_" data-uid="Clippit.Word.WmlDocument.ConvertToHtml(Clippit.Word.HtmlConverterSettings)">
+  ConvertToHtml(HtmlConverterSettings)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/WmlToHtmlConverter.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[SuppressMessage(&quot;ReSharper&quot;, &quot;UnusedMember.Global&quot;)]
+public XElement ConvertToHtml(HtmlConverterSettings htmlConverterSettings)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>htmlConverterSettings</code> <a class="xref" href="Clippit.Word.HtmlConverterSettings.html">HtmlConverterSettings</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.xml.linq.xelement">XElement</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument_ConvertToHtml_" data-uid="Clippit.Word.WmlDocument.ConvertToHtml*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument_ConvertToHtml_Clippit_Word_WmlToHtmlConverterSettings_" data-uid="Clippit.Word.WmlDocument.ConvertToHtml(Clippit.Word.WmlToHtmlConverterSettings)">
+  ConvertToHtml(WmlToHtmlConverterSettings)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/WmlToHtmlConverter.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[SuppressMessage(&quot;ReSharper&quot;, &quot;UnusedMember.Global&quot;)]
+public XElement ConvertToHtml(WmlToHtmlConverterSettings htmlConverterSettings)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>htmlConverterSettings</code> <a class="xref" href="Clippit.Word.WmlToHtmlConverterSettings.html">WmlToHtmlConverterSettings</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.xml.linq.xelement">XElement</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument_HasTrackedRevisions_" data-uid="Clippit.Word.WmlDocument.HasTrackedRevisions*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument_HasTrackedRevisions_Clippit_Word_WmlDocument_" data-uid="Clippit.Word.WmlDocument.HasTrackedRevisions(Clippit.Word.WmlDocument)">
+  HasTrackedRevisions(WmlDocument)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/RevisionProcessor.cs/#L2913"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HasTrackedRevisions(WmlDocument document)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>document</code> <a class="xref" href="Clippit.Word.WmlDocument.html">WmlDocument</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument_SearchAndReplace_" data-uid="Clippit.Word.WmlDocument.SearchAndReplace*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument_SearchAndReplace_System_String_System_String_System_Boolean_" data-uid="Clippit.Word.WmlDocument.SearchAndReplace(System.String,System.String,System.Boolean)">
+  SearchAndReplace(string, string, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/WmlDocument.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WmlDocument SearchAndReplace(string search, string replace, bool matchCase)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>search</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>replace</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+    <dt><code>matchCase</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Clippit.Word.WmlDocument.html">WmlDocument</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument_SimplifyMarkup_" data-uid="Clippit.Word.WmlDocument.SimplifyMarkup*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument_SimplifyMarkup_Clippit_Word_SimplifyMarkupSettings_" data-uid="Clippit.Word.WmlDocument.SimplifyMarkup(Clippit.Word.SimplifyMarkupSettings)">
+  SimplifyMarkup(SimplifyMarkupSettings)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/MarkupSimplifier.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WmlDocument SimplifyMarkup(SimplifyMarkupSettings settings)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>settings</code> <a class="xref" href="Clippit.Word.SimplifyMarkupSettings.html">SimplifyMarkupSettings</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Clippit.Word.WmlDocument.html">WmlDocument</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Word_WmlDocument_SplitOnSections_" data-uid="Clippit.Word.WmlDocument.SplitOnSections*"></a>
+
+  <h3 id="Clippit_Word_WmlDocument_SplitOnSections" data-uid="Clippit.Word.WmlDocument.SplitOnSections">
+  SplitOnSections()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/DocumentBuilder.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;WmlDocument&gt; SplitOnSections()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Clippit.Word.WmlDocument.html">WmlDocument</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Word/WmlToHtmlConverter.cs/#L20" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

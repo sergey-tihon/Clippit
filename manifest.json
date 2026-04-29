@@ -1,0 +1,4894 @@
+{
+  "source_base_path": "/home/runner/work/Clippit/Clippit/docs",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Resource",
+      "output": {
+        "resource": {
+          "relative_path": "index.json"
+        }
+      }
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/CHANGELOG.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/CHANGELOG.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.A.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.A.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.A",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.A14.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.A14.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.A14",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.ACTIVEX.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.ACTIVEX.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.ACTIVEX",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.AddDocxTextHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.AddDocxTextHelper.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.AddDocxTextHelper",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.BIBLIO.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.BIBLIO.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.BIBLIO",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Base64.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Base64.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Base64",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.C.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.C.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.C",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.CDR.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.CDR.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.CDR",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.COM.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.COM.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.COM",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.CP.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.CP.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.CP",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.CUSTPRO.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.CUSTPRO.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.CUSTPRO",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.ColumnReferenceOutOfRange.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.ColumnReferenceOutOfRange.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.ColumnReferenceOutOfRange",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.ComparisonUnit.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.ComparisonUnit.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.ComparisonUnit",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.ComparisonUnitAtom.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.ComparisonUnitAtom.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.ComparisonUnitAtom",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Core.PowerToolsBlock.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Core.PowerToolsBlock.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Core.PowerToolsBlock",
+      "Summary": "<p sourcefile=\"api/Clippit.Core.PowerToolsBlock.yml\" sourcestartlinenumber=\"1\">Provides an elegant way of wrapping a set of invocations of the PowerTools in a using\nstatement that demarcates those invocations as one &quot;block&quot; before and after which the\nstrongly typed classes provided by the Open XML SDK can be used safely.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Core.PowerToolsBlockExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Core.PowerToolsBlockExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Core.PowerToolsBlockExtensions",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Core.RelationshipValidationError.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Core.RelationshipValidationError.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Core.RelationshipValidationError",
+      "Summary": "<p sourcefile=\"api/Clippit.Core.RelationshipValidationError.yml\" sourcestartlinenumber=\"1\">Describes a single relationship validation error found in an OpenXml package.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Core.RelationshipValidator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Core.RelationshipValidator.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Core.RelationshipValidator",
+      "Summary": "<p sourcefile=\"api/Clippit.Core.RelationshipValidator.yml\" sourcestartlinenumber=\"1\">Validates that every relationship ID referenced inside XML markup can be resolved\nto an actual relationship registered on that part.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Core.StronglyTypedBlock.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Core.StronglyTypedBlock.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Core.StronglyTypedBlock",
+      "Summary": "<p sourcefile=\"api/Clippit.Core.StronglyTypedBlock.yml\" sourcestartlinenumber=\"1\">Provides an elegant way of wrapping a set of invocations of the strongly typed\nclasses provided by the Open XML SDK) in a using statement that demarcates those\ninvokations as one &quot;block&quot; before and after which the PowerTools can be used safely.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Core.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Core.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Core",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.CorrelationStatus.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.CorrelationStatus.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.CorrelationStatus",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Cx.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Cx.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Cx",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.DC.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.DC.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.DC",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.DCTERMS.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.DCTERMS.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.DCTERMS",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.DGM.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.DGM.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.DGM",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.DGM14.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.DGM14.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.DGM14",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.DIGSIG.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.DIGSIG.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.DIGSIG",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.DS.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.DS.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.DS",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.DSP.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.DSP.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.DSP",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.DescendantsReverseDocumentOrderInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.DescendantsReverseDocumentOrderInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.DescendantsReverseDocumentOrderInfo",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.DescendantsTrimmedReverseDocumentOrderInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.DescendantsTrimmedReverseDocumentOrderInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.DescendantsTrimmedReverseDocumentOrderInfo",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.DocxMetrics.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.DocxMetrics.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.DocxMetrics",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.EP.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.EP.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.EP",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.Builder.Cell.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.Builder.Cell.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.Builder.Cell",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.Builder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.Builder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.Builder",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.Cell.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.Cell.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.Cell",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.CellDataType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.CellDataType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.CellDataType",
+      "Summary": "<p sourcefile=\"api/Clippit.Excel.CellDataType.yml\" sourcestartlinenumber=\"1\">Specifies the data type stored in a spreadsheet cell.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.CellDfn.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.CellDfn.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.CellDfn",
+      "Summary": "<p sourcefile=\"api/Clippit.Excel.CellDfn.yml\" sourcestartlinenumber=\"1\">Defines a single cell value along with optional formatting and data-type metadata.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.ECreatorPhase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.ECreatorPhase.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.ECreatorPhase",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.ESpecialNodes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.ESpecialNodes.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.ESpecialNodes",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.EncodingClass.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.EncodingClass.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.EncodingClass",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.FileLoader.FileEncoding.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.FileLoader.FileEncoding.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.FileLoader.FileEncoding",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.FileLoader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.FileLoader.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.FileLoader",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.HorizontalCellAlignment.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.HorizontalCellAlignment.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.HorizontalCellAlignment",
+      "Summary": "<p sourcefile=\"api/Clippit.Excel.HorizontalCellAlignment.yml\" sourcestartlinenumber=\"1\">Specifies the horizontal alignment of cell content within a spreadsheet cell.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.InvalidSheetNameException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.InvalidSheetNameException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.InvalidSheetNameException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.MemoryCell.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.MemoryCell.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.MemoryCell",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.MemoryRow.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.MemoryRow.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.MemoryRow",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.MemorySpreadsheet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.MemorySpreadsheet.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.MemorySpreadsheet",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.ParseFormula.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.ParseFormula.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.ParseFormula",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.PegBaseParser.Creator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.PegBaseParser.Creator.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.PegBaseParser.Creator",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.PegBaseParser.Matcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.PegBaseParser.Matcher.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.PegBaseParser.Matcher",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.PegBaseParser.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.PegBaseParser.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.PegBaseParser",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.PegBegEnd.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.PegBegEnd.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.PegBegEnd",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.PegByteParser.BytesetData.Range.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.PegByteParser.BytesetData.Range.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.PegByteParser.BytesetData.Range",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.PegByteParser.BytesetData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.PegByteParser.BytesetData.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.PegByteParser.BytesetData",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.PegByteParser.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.PegByteParser.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.PegByteParser",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.PegCharParser.OptimizedCharset.Range.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.PegCharParser.OptimizedCharset.Range.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.PegCharParser.OptimizedCharset.Range",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.PegCharParser.OptimizedCharset.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.PegCharParser.OptimizedCharset.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.PegCharParser.OptimizedCharset",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.PegCharParser.OptimizedLiterals.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.PegCharParser.OptimizedLiterals.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.PegCharParser.OptimizedLiterals",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.PegCharParser.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.PegCharParser.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.PegCharParser",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.PegError.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.PegError.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.PegError",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.PegException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.PegException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.PegException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.PegNode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.PegNode.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.PegNode",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.PrintNode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.PrintNode.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.PrintNode",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.Row.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.Row.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.Row",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.RowDfn.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.RowDfn.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.RowDfn",
+      "Summary": "<p sourcefile=\"api/Clippit.Excel.RowDfn.yml\" sourcestartlinenumber=\"1\">Defines a single row of cells in a worksheet.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.SmlCellFormatter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.SmlCellFormatter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.SmlCellFormatter",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.SmlDataRetriever.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.SmlDataRetriever.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.SmlDataRetriever",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.SmlDocument.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.SmlDocument.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.SmlDocument",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.SmlToHtmlConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.SmlToHtmlConverter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.SmlToHtmlConverter",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.SmlToHtmlConverterSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.SmlToHtmlConverterSettings.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.SmlToHtmlConverterSettings",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.SpreadsheetDocumentManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.SpreadsheetDocumentManager.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.SpreadsheetDocumentManager",
+      "Summary": "<p sourcefile=\"api/Clippit.Excel.SpreadsheetDocumentManager.yml\" sourcestartlinenumber=\"1\">Manages SpreadsheetDocument content</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.SpreadsheetWriter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.SpreadsheetWriter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.SpreadsheetWriter",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.SpreadsheetWriterInternalException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.SpreadsheetWriterInternalException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.SpreadsheetWriterInternalException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.Table.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.Table.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.Table",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.TableCell.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.TableCell.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.TableCell",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.TableColumn.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.TableColumn.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.TableColumn",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.TableRow.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.TableRow.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.TableRow",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.TreePrint.GetNodeName.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.TreePrint.GetNodeName.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.TreePrint.GetNodeName",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.TreePrint.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.TreePrint.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.TreePrint",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.UnicodeDetection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.UnicodeDetection.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.UnicodeDetection",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorkbookDfn.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorkbookDfn.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorkbookDfn",
+      "Summary": "<p sourcefile=\"api/Clippit.Excel.WorkbookDfn.yml\" sourcestartlinenumber=\"1\">Defines the structure of an Excel workbook, serving as the root definition for spreadsheet generation.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetAccessor.Border.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetAccessor.Border.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetAccessor.Border",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetAccessor.BorderLine.LineStyle.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetAccessor.BorderLine.LineStyle.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetAccessor.BorderLine.LineStyle",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetAccessor.BorderLine.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetAccessor.BorderLine.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetAccessor.BorderLine",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetAccessor.CellAlignment.Horizontal.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetAccessor.CellAlignment.Horizontal.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetAccessor.CellAlignment.Horizontal",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetAccessor.CellAlignment.Vertical.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetAccessor.CellAlignment.Vertical.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetAccessor.CellAlignment.Vertical",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetAccessor.CellAlignment.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetAccessor.CellAlignment.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetAccessor.CellAlignment",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetAccessor.ColorInfo.ColorType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetAccessor.ColorInfo.ColorType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetAccessor.ColorInfo.ColorType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetAccessor.ColorInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetAccessor.ColorInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetAccessor.ColorInfo",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetAccessor.Font.SchemeType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetAccessor.Font.SchemeType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetAccessor.Font.SchemeType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetAccessor.Font.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetAccessor.Font.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetAccessor.Font",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetAccessor.GradientFill.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetAccessor.GradientFill.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetAccessor.GradientFill",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetAccessor.GradientStop.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetAccessor.GradientStop.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetAccessor.GradientStop",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetAccessor.PatternFill.PatternType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetAccessor.PatternFill.PatternType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetAccessor.PatternFill.PatternType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetAccessor.PatternFill.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetAccessor.PatternFill.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetAccessor.PatternFill",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetAccessor.PivotAxis.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetAccessor.PivotAxis.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetAccessor.PivotAxis",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetAccessor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetAccessor.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetAccessor",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.WorksheetDfn.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.WorksheetDfn.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.WorksheetDfn",
+      "Summary": "<p sourcefile=\"api/Clippit.Excel.WorksheetDfn.yml\" sourcestartlinenumber=\"1\">Defines the structure and content of a single worksheet within a workbook.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.XlsxTables.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.XlsxTables.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel.XlsxTables",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Excel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Excel.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Excel",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.ExecutableRunner.RunResults.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.ExecutableRunner.RunResults.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.ExecutableRunner.RunResults",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.ExecutableRunner.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.ExecutableRunner.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.ExecutableRunner",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.FieldInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.FieldInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.FieldInfo",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.FieldParser.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.FieldParser.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.FieldParser",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.FieldRetriever.FieldElementTypeEnum.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.FieldRetriever.FieldElementTypeEnum.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.FieldRetriever.FieldElementTypeEnum",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.FieldRetriever.FieldElementTypeInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.FieldRetriever.FieldElementTypeInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.FieldRetriever.FieldElementTypeInfo",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.FieldRetriever.FieldElementTypeStack.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.FieldRetriever.FieldElementTypeStack.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.FieldRetriever.FieldElementTypeStack",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.FieldRetriever.FieldInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.FieldRetriever.FieldInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.FieldRetriever.FieldInfo",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.FieldRetriever.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.FieldRetriever.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.FieldRetriever",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.FileUtils.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.FileUtils.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.FileUtils",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.FlatOpc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.FlatOpc.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.FlatOpc",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.GetMetricsHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.GetMetricsHelper.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.GetMetricsHelper",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.GroupOfAdjacent-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.GroupOfAdjacent-2.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.GroupOfAdjacent<TSource, TKey>",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.H.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.H.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.H",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssAttribute.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssAttribute",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssAttributeOperator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssAttributeOperator.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssAttributeOperator",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssBuffer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssBuffer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssBuffer",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssCombinator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssCombinator.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssCombinator",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssDeclaration.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssDeclaration.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssDeclaration",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssDirective.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssDirective.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssDirective",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssDirectiveType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssDirectiveType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssDirectiveType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssDocument.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssDocument.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssDocument",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssExpression.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssExpression.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssExpression",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssFunction.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssFunction.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssFunction",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssMedium.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssMedium.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssMedium",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssParser.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssParser.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssParser",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssPropertyValue.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssPropertyValue.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssPropertyValue",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssRuleSet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssRuleSet.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssRuleSet",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssSelector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssSelector.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssSelector",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssSimpleSelector.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssSimpleSelector.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssSimpleSelector",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssTag.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssTag.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssTag",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssTagType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssTagType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssTagType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssTerm.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssTerm.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssTerm",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssTermType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssTermType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssTermType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssToken.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssToken.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssToken",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssUnit.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssUnit.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssUnit",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssUnitOutput.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssUnitOutput.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssUnitOutput",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.CssValueType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.CssValueType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.CssValueType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.ElementToStyleMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.ElementToStyleMap.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.ElementToStyleMap",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.Emu.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.Emu.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.Emu",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.Errors.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.Errors.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.Errors",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.FatalError.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.FatalError.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.FatalError",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.HtmlToWmlConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.HtmlToWmlConverter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.HtmlToWmlConverter",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.HtmlToWmlConverterCore.CharStyleAttributes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.HtmlToWmlConverterCore.CharStyleAttributes.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.HtmlToWmlConverterCore.CharStyleAttributes",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.HtmlToWmlConverterCore.FontType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.HtmlToWmlConverterCore.FontType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.HtmlToWmlConverterCore.FontType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.HtmlToWmlConverterCore.NumberedItemAnnotation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.HtmlToWmlConverterCore.NumberedItemAnnotation.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.HtmlToWmlConverterCore.NumberedItemAnnotation",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.HtmlToWmlConverterCore.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.HtmlToWmlConverterCore.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.HtmlToWmlConverterCore",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.HtmlToWmlConverterSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.HtmlToWmlConverterSettings.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.HtmlToWmlConverterSettings",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.ItfDeclarationContainer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.ItfDeclarationContainer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.ItfDeclarationContainer",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.ItfRuleSetContainer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.ItfRuleSetContainer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.ItfRuleSetContainer",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.ItfSelectorContainer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.ItfSelectorContainer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.ItfSelectorContainer",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.LocalExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.LocalExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.LocalExtensions",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.Parser.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.Parser.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.Parser",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.PictureId.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.PictureId.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.PictureId",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.Scanner.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.Scanner.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.Scanner",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.SizeEmu.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.SizeEmu.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.SizeEmu",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.TPoint.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.TPoint.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.TPoint",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.Twip.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.Twip.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.Twip",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.UTF8Buffer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.UTF8Buffer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html.UTF8Buffer",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Html.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Html.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Html",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.HtmlConverterHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.HtmlConverterHelper.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.HtmlConverterHelper",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.INK.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.INK.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.INK",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.ImageHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.ImageHelper.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.ImageHelper",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Internal.TextReplacer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Internal.TextReplacer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Internal.TextReplacer",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Internal.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Internal.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Internal",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.InvalidOpenXmlDocumentException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.InvalidOpenXmlDocumentException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.InvalidOpenXmlDocumentException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.LC.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.LC.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.LC",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.M.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.M.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.M",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.MC.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.MC.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.MC",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.MDSSI.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.MDSSI.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.MDSSI",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.MP.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.MP.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.MP",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.MV.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.MV.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.MV",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.MetricsGetter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.MetricsGetter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.MetricsGetter",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.MetricsGetterSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.MetricsGetterSettings.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.MetricsGetterSettings",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.MhtParser.MhtParserPart.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.MhtParser.MhtParserPart.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.MhtParser.MhtParserPart",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.MhtParser.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.MhtParser.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.MhtParser",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.NoNamespace.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.NoNamespace.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.NoNamespace",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Normalizer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Normalizer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Normalizer",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.O.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.O.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.O",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.OpenXmlMemoryStreamDocument.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.OpenXmlMemoryStreamDocument.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.OpenXmlMemoryStreamDocument",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.OpenXmlPowerToolsDocument.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.OpenXmlPowerToolsDocument.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.OpenXmlPowerToolsDocument",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.OpenXmlPowerToolsException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.OpenXmlPowerToolsException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.OpenXmlPowerToolsException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.OpenXmlRegex.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.OpenXmlRegex.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.OpenXmlRegex",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.P.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.P.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.P",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.P14.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.P14.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.P14",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.P15.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.P15.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.P15",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PAV.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PAV.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PAV",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Pic.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Pic.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Pic",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Plegacy.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Plegacy.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Plegacy",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PowerPoint.Fluent.PresentationBuilderException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PowerPoint.Fluent.PresentationBuilderException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PowerPoint.Fluent.PresentationBuilderException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PowerPoint.Fluent.PresentationBuilderInternalException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PowerPoint.Fluent.PresentationBuilderInternalException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PowerPoint.Fluent.PresentationBuilderInternalException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PowerPoint.Fluent.PresentationBuilderTools.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PowerPoint.Fluent.PresentationBuilderTools.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PowerPoint.Fluent.PresentationBuilderTools",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PowerPoint.Fluent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PowerPoint.Fluent.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PowerPoint.Fluent",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PowerPoint.IFluentPresentationBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PowerPoint.IFluentPresentationBuilder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PowerPoint.IFluentPresentationBuilder",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PowerPoint.PmlDocument.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PowerPoint.PmlDocument.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PowerPoint.PmlDocument",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PowerPoint.PresentationBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PowerPoint.PresentationBuilder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PowerPoint.PresentationBuilder",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PowerPoint.SlideSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PowerPoint.SlideSource.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PowerPoint.SlideSource",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PowerPoint.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PowerPoint.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PowerPoint",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PowerToolsDocumentException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PowerToolsDocumentException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PowerToolsDocumentException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PowerToolsInvalidDataException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PowerToolsInvalidDataException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PowerToolsInvalidDataException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PresentationMLUtil.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PresentationMLUtil.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PresentationMLUtil",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PtBucketTimer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PtBucketTimer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PtBucketTimer",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PtExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PtExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PtExtensions",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PtOpenXml.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PtOpenXml.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PtOpenXml",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PtOpenXmlExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PtOpenXmlExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PtOpenXmlExtensions",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.PtUtils.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.PtUtils.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.PtUtils",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.R.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.R.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.R",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.S.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.S.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.S",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.SL.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.SL.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.SL",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.SLE.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.SLE.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.SLE",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.SSNoNamespace.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.SSNoNamespace.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.SSNoNamespace",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.SVG.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.SVG.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.SVG",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.SiblingsReverseDocumentOrderInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.SiblingsReverseDocumentOrderInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.SiblingsReverseDocumentOrderInfo",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.SpreadsheetMLUtil.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.SpreadsheetMLUtil.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.SpreadsheetMLUtil",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.StreamHelpers.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.StreamHelpers.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.StreamHelpers",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.TestUtil.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.TestUtil.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.TestUtil",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.UnicodeMapper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.UnicodeMapper.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.UnicodeMapper",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.UriFixer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.UriFixer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.UriFixer",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Util.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Util.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Util",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.VML.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.VML.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.VML",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.VT.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.VT.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.VT",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.ValidationHelper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.ValidationHelper.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.ValidationHelper",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.W.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.W.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.W",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.W10.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.W10.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.W10",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.W14.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.W14.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.W14",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.W15.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.W15.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.W15",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.W16SE.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.W16SE.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.W16SE",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.W3DIGSIG.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.W3DIGSIG.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.W3DIGSIG",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WE.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WE.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WE",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WETP.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WETP.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WETP",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WNE.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WNE.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WNE",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WP.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WP.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WP",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WP14.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WP14.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WP14",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WPC.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WPC.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WPC",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WPG.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WPG.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WPG",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WPI.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WPI.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WPI",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WPS.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WPS.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WPS",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WmlComparer.WmlComparerRevision.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WmlComparer.WmlComparerRevision.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WmlComparer.WmlComparerRevision",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WmlComparer.WmlComparerRevisionType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WmlComparer.WmlComparerRevisionType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WmlComparer.WmlComparerRevisionType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WmlComparer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WmlComparer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WmlComparer",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WmlComparerConsolidateSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WmlComparerConsolidateSettings.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WmlComparerConsolidateSettings",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WmlComparerExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WmlComparerExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WmlComparerExtensions",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WmlComparerSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WmlComparerSettings.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WmlComparerSettings",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WmlRevisedDocumentInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WmlRevisedDocumentInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WmlRevisedDocumentInfo",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.Assembler.StringExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.Assembler.StringExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.Assembler.StringExtensions",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.Assembler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.Assembler.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.Assembler",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.BlockContentInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.BlockContentInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.BlockContentInfo",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.BlockLevelContentValidationRule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.BlockLevelContentValidationRule.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.BlockLevelContentValidationRule",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ChartData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ChartData.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ChartData",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ChartDataType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ChartDataType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ChartDataType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ChartUpdater.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ChartUpdater.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ChartUpdater",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ContentTypeRule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ContentTypeRule.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ContentTypeRule",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.DocumentAssembler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.DocumentAssembler.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.DocumentAssembler",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.DocumentBuilder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.DocumentBuilder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.DocumentBuilder",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.DocumentBuilderException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.DocumentBuilderException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.DocumentBuilderException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.DocumentBuilderInternalException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.DocumentBuilderInternalException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.DocumentBuilderInternalException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.DocumentBuilderSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.DocumentBuilderSettings.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.DocumentBuilderSettings",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.FormattingAssembler.CharStyleAttributes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.FormattingAssembler.CharStyleAttributes.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.FormattingAssembler.CharStyleAttributes",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.FormattingAssembler.FontType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.FormattingAssembler.FontType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.FormattingAssembler.FontType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.FormattingAssembler.UnsupportedLanguageException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.FormattingAssembler.UnsupportedLanguageException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.FormattingAssembler.UnsupportedLanguageException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.FormattingAssembler.UnsupportedNumberingFormatException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.FormattingAssembler.UnsupportedNumberingFormatException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.FormattingAssembler.UnsupportedNumberingFormatException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.FormattingAssembler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.FormattingAssembler.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.FormattingAssembler",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.FormattingAssemblerSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.FormattingAssemblerSettings.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.FormattingAssemblerSettings",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.GlobalValidationRule.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.GlobalValidationRule.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.GlobalValidationRule",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.HtmlConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.HtmlConverter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.HtmlConverter",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.HtmlConverterExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.HtmlConverterExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.HtmlConverterExtensions",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.HtmlConverterSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.HtmlConverterSettings.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.HtmlConverterSettings",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ISource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ISource.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ISource",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ImageInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ImageInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ImageInfo",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ListItemRetriever.LevelNumbers.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ListItemRetriever.LevelNumbers.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ListItemRetriever.LevelNumbers",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ListItemRetriever.ListItemInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ListItemRetriever.ListItemInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ListItemRetriever.ListItemInfo",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ListItemRetriever.ListItemSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ListItemRetriever.ListItemSource.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ListItemRetriever.ListItemSource",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ListItemRetriever.ListItemSourceSet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ListItemRetriever.ListItemSourceSet.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ListItemRetriever.ListItemSourceSet",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ListItemRetriever.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ListItemRetriever.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ListItemRetriever",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ListItemRetrieverSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ListItemRetrieverSettings.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ListItemRetrieverSettings",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ListItemTextGetter_fr_FR.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ListItemTextGetter_fr_FR.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ListItemTextGetter_fr_FR",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ListItemTextGetter_ru_RU.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ListItemTextGetter_ru_RU.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ListItemTextGetter_ru_RU",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ListItemTextGetter_sv_SE.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ListItemTextGetter_sv_SE.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ListItemTextGetter_sv_SE",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ListItemTextGetter_tr_TR.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ListItemTextGetter_tr_TR.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ListItemTextGetter_tr_TR",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ListItemTextGetter_zh_CN.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ListItemTextGetter_zh_CN.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ListItemTextGetter_zh_CN",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.MarkupSimplifier.InternalException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.MarkupSimplifier.InternalException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.MarkupSimplifier.InternalException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.MarkupSimplifier.InvalidSettingsException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.MarkupSimplifier.InvalidSettingsException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.MarkupSimplifier.InvalidSettingsException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.MarkupSimplifier.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.MarkupSimplifier.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.MarkupSimplifier",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.PtMainDocumentPart.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.PtMainDocumentPart.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.PtMainDocumentPart",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.PtWordprocessingCommentsPart.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.PtWordprocessingCommentsPart.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.PtWordprocessingCommentsPart",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ReferenceAdder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ReferenceAdder.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ReferenceAdder",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.RevisionAccepter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.RevisionAccepter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.RevisionAccepter",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.RevisionAccepterExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.RevisionAccepterExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.RevisionAccepterExtensions",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.RevisionProcessor.PT.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.RevisionProcessor.PT.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.RevisionProcessor.PT",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.RevisionProcessor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.RevisionProcessor.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.RevisionProcessor",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.SimplifyMarkupSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.SimplifyMarkupSettings.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.SimplifyMarkupSettings",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.Source.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.Source.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.Source",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.TableCellSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.TableCellSource.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.TableCellSource",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.TransformInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.TransformInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.TransformInfo",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ValidationErrorType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ValidationErrorType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ValidationErrorType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.ValidationRuleDocumentTypeInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.ValidationRuleDocumentTypeInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.ValidationRuleDocumentTypeInfo",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.WmlDocument.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.WmlDocument.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.WmlDocument",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.WmlToHtmlConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.WmlToHtmlConverter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.WmlToHtmlConverter",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.WmlToHtmlConverterSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.WmlToHtmlConverterSettings.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.WmlToHtmlConverterSettings",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.WmlToXml.ContentApplierException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.WmlToXml.ContentApplierException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.WmlToXml.ContentApplierException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.WmlToXml.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.WmlToXml.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.WmlToXml",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.WmlToXmlContentTypeMetrics.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.WmlToXmlContentTypeMetrics.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.WmlToXmlContentTypeMetrics",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.WmlToXmlProgressInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.WmlToXmlProgressInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.WmlToXmlProgressInfo",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.WmlToXmlSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.WmlToXmlSettings.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.WmlToXmlSettings",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.WmlToXmlUtil.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.WmlToXmlUtil.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.WmlToXmlUtil",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.WmlToXmlValidationError.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.WmlToXmlValidationError.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word.WmlToXmlValidationError",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Word.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Word.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Word",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WordprocessingMLUtil.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WordprocessingMLUtil.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WordprocessingMLUtil",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.WorksheetAlreadyExistsException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.WorksheetAlreadyExistsException.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.WorksheetAlreadyExistsException",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.X.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.X.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.X",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.XDR.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.XDR.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.XDR",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.XDR14.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.XDR14.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.XDR14",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.XEntity.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.XEntity.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.XEntity",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.XM.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.XM.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.XM",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.XSI.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.XSI.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.XSI",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Xhtml.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Xhtml.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Xhtml",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.XhtmlNoNamespace.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.XhtmlNoNamespace.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.XhtmlNoNamespace",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.XmlUtil.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.XmlUtil.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.XmlUtil",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.Xsi.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.Xsi.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit.Xsi",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Clippit.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Clippit.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "Clippit",
+      "Summary": null
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html"
+        },
+        ".json": {
+          "relative_path": "api/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/logo-site.png",
+      "output": {
+        "resource": {
+          "relative_path": "images/logo-site.png"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/logo.jpeg",
+      "output": {
+        "resource": {
+          "relative_path": "images/logo.jpeg"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/word/documentassembler/image1.jpg",
+      "output": {
+        "resource": {
+          "relative_path": "images/word/documentassembler/image1.jpg"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/word/documentassembler/image2.png",
+      "output": {
+        "resource": {
+          "relative_path": "images/word/documentassembler/image2.png"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/word/documentassembler/image3.png",
+      "output": {
+        "resource": {
+          "relative_path": "images/word/documentassembler/image3.png"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/word/documentassembler/inline-HTML-in-Word-example.png",
+      "output": {
+        "resource": {
+          "relative_path": "images/word/documentassembler/inline-HTML-in-Word-example.png"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html"
+        },
+        ".json": {
+          "relative_path": "toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/common/MetricsGetter.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/common/MetricsGetter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/common/OpenXmlRegex.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/common/OpenXmlRegex.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/common/RelationshipValidator.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/common/RelationshipValidator.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "tutorials/common/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/common/toc.html"
+        },
+        ".json": {
+          "relative_path": "tutorials/common/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/excel/SmlDataRetriever.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/excel/SmlDataRetriever.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/excel/SpreadsheetWriter.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/excel/SpreadsheetWriter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "tutorials/excel/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/excel/toc.html"
+        },
+        ".json": {
+          "relative_path": "tutorials/excel/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/index.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/powerpoint/BuildPresentation.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/powerpoint/BuildPresentation.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/powerpoint/BuildPresentation_FluentApi.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/powerpoint/BuildPresentation_FluentApi.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/powerpoint/BuildPresentation_PublishSlides.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/powerpoint/BuildPresentation_PublishSlides.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "tutorials/powerpoint/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/powerpoint/toc.html"
+        },
+        ".json": {
+          "relative_path": "tutorials/powerpoint/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "tutorials/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/toc.html"
+        },
+        ".json": {
+          "relative_path": "tutorials/toc.json"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/DocumentAssembler_DocumentTemplates.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/DocumentAssembler_DocumentTemplates.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/DocumentAssembler_FitWithin.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/DocumentAssembler_FitWithin.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/DocumentAssembler_ImagesSupport.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/DocumentAssembler_ImagesSupport.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/DocumentAssembler_InlineHtmlSupport.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/DocumentAssembler_InlineHtmlSupport.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/DocumentAssembler_OptionalTable.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/DocumentAssembler_OptionalTable.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/DocumentBuilder_CustomISource.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/DocumentBuilder_CustomISource.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/DocumentBuilder_TableCellSource.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/DocumentBuilder_TableCellSource.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/HtmlToWmlConverter.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/HtmlToWmlConverter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/MarkupSimplifier.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/MarkupSimplifier.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/RevisionProcessor.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/RevisionProcessor.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/WmlComparer.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/WmlComparer.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "tutorials/word/WmlToHtmlConverter.md",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/WmlToHtmlConverter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "tutorials/word/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "tutorials/word/toc.html"
+        },
+        ".json": {
+          "relative_path": "tutorials/word/toc.json"
+        }
+      },
+      "version": ""
+    }
+  ],
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

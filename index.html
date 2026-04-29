@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Clippit — Fresh PowerTools for OpenXml | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Clippit — Fresh PowerTools for OpenXml | Clippit ">
+      
+      
+      <link rel="icon" href="images/logo-site.png">
+      <link rel="stylesheet" href="public/docfx.min.css">
+      <link rel="stylesheet" href="public/main.css">
+      <meta name="docfx:navrel" content="toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/blob/master/docs/index.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="index.html">
+            <img id="logo" class="svg" src="images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="clippit--fresh-powertools-for-openxml">Clippit — Fresh PowerTools for OpenXml</h1>
+
+<p><img src="https://badgen.net/nuget/v/Clippit" alt="NuGet Version"> <img src="https://badgen.net/nuget/dt/Clippit" alt="NuGet Downloads"></p>
+<img style="float: right;" src="images/logo.jpeg">
+<p>Clippit is a .NET library for programmatically creating, modifying, and converting
+Word (DOCX), Excel (XLSX), and PowerPoint (PPTX) documents. Built on top of the
+<a href="https://github.com/OfficeDev/Open-XML-SDK">Open XML SDK</a>, it provides high-level
+APIs that handle the complexity of the Open XML format so you can focus on your content.</p>
+<h2 id="getting-started">Getting Started</h2>
+<p>Install from NuGet:</p>
+<pre><code class="lang-bash">dotnet add package Clippit
+</code></pre>
+<p>Split a PowerPoint presentation into individual slides:</p>
+<pre><code class="lang-csharp">using Clippit.PowerPoint;
+
+var presentation = new PmlDocument(&quot;conference-deck.pptx&quot;);
+var slides = PresentationBuilder.PublishSlides(presentation);
+
+foreach (var slide in slides)
+{
+    slide.SaveAs(Path.Combine(&quot;output&quot;, slide.FileName));
+}
+</code></pre>
+<h2 id="features">Features</h2>
+<p>Clippit covers a broad range of document processing scenarios across all three
+Office formats. Every feature listed below has a dedicated tutorial with API
+signatures and code samples.</p>
+<h3 id="word">Word</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="xref" href="tutorials/word/DocumentAssembler_DocumentTemplates.html">DocumentAssembler</a></td>
+<td>Populate DOCX templates with data from XML, including <a class="xref" href="tutorials/word/DocumentAssembler_ImagesSupport.html">images</a> and <a class="xref" href="tutorials/word/DocumentAssembler_InlineHtmlSupport.html">inline HTML</a></td>
+</tr>
+<tr>
+<td><a class="xref" href="tutorials/word/DocumentBuilder_CustomISource.html">DocumentBuilder</a></td>
+<td>Merge, split, and reorganize DOCX files with an <a class="xref" href="tutorials/word/DocumentBuilder_CustomISource.html">extensible ISource model</a> and <a class="xref" href="tutorials/word/DocumentBuilder_TableCellSource.html">TableCellSource</a></td>
+</tr>
+<tr>
+<td><a class="xref" href="tutorials/word/WmlComparer.html">WmlComparer</a></td>
+<td>Compare two DOCX files and produce a diff with revision tracking markup</td>
+</tr>
+<tr>
+<td><a class="xref" href="tutorials/word/WmlToHtmlConverter.html">WmlToHtmlConverter</a></td>
+<td>High-fidelity conversion from DOCX to HTML/CSS</td>
+</tr>
+<tr>
+<td><a class="xref" href="tutorials/word/HtmlToWmlConverter.html">HtmlToWmlConverter</a></td>
+<td>Convert HTML/CSS back into a properly structured DOCX</td>
+</tr>
+<tr>
+<td><a class="xref" href="tutorials/word/RevisionProcessor.html">RevisionProcessor</a></td>
+<td>Accept or reject tracked revisions programmatically</td>
+</tr>
+<tr>
+<td><a class="xref" href="tutorials/word/MarkupSimplifier.html">MarkupSimplifier</a></td>
+<td>Clean up and normalize DOCX markup for easier processing</td>
+</tr>
+</tbody>
+</table>
+<h3 id="excel">Excel</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="xref" href="tutorials/excel/SpreadsheetWriter.html">SpreadsheetWriter</a></td>
+<td>Generate multi-sheet XLSX files with formatted tables, streaming support for millions of rows, and a concise Cell Builder API</td>
+</tr>
+<tr>
+<td><a class="xref" href="tutorials/excel/SmlDataRetriever.html">SmlDataRetriever</a></td>
+<td>Extract data and formatting from existing spreadsheets as structured XML</td>
+</tr>
+</tbody>
+</table>
+<h3 id="powerpoint">PowerPoint</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="xref" href="tutorials/powerpoint/BuildPresentation.html">PresentationBuilder</a></td>
+<td>Merge and split PPTX files, with a <a class="xref" href="tutorials/powerpoint/BuildPresentation_FluentApi.html">Fluent API</a> for ergonomic slide composition and optimized <a class="xref" href="tutorials/powerpoint/BuildPresentation_PublishSlides.html">slide publishing</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="common">Common</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a class="xref" href="tutorials/common/OpenXmlRegex.html">OpenXmlRegex</a></td>
+<td>Search and replace content across DOCX/PPTX using regular expressions</td>
+</tr>
+<tr>
+<td><a class="xref" href="tutorials/common/MetricsGetter.html">MetricsGetter</a></td>
+<td>Retrieve document metrics — style hierarchy, languages, fonts, and more</td>
+</tr>
+</tbody>
+</table>
+<h2 id="compatibility">Compatibility</h2>
+<ul>
+<li><strong>Targets:</strong> <code>net8.0</code> and <code>net10.0</code></li>
+<li><strong>Dependency:</strong> <a href="https://www.nuget.org/packages/DocumentFormat.OpenXml">DocumentFormat.OpenXml</a> (Open XML SDK)</li>
+<li><strong>Platforms:</strong> Windows and Linux (continuously tested on both)</li>
+<li><strong>Side-by-side:</strong> Can coexist with the original Open-Xml-PowerTools assembly</li>
+</ul>
+<h2 id="heritage">Heritage</h2>
+<p>Clippit originated as a fork of <a href="https://github.com/EricWhiteDev/Open-Xml-PowerTools">Open-Xml-PowerTools</a>
+and has since evolved into an independently maintained library with new features,
+performance improvements, and modern .NET support. See the
+<a href="api/CHANGELOG.html">Changelog</a> for the full release history.</p>
+<h2 id="questions-and-contributing">Questions and Contributing</h2>
+<p>Have a question or idea? Start a <a href="https://github.com/sergey-tihon/Clippit/discussions">GitHub Discussion</a>.</p>
+<p>Found a bug or want to request a feature? Open an <a href="https://github.com/sergey-tihon/Clippit/issues">Issue</a>.</p>
+<pre><code>Copyright (c) Microsoft Corporation 2012-2017
+Portions Copyright (c) Eric White Inc 2018-2019
+Portions Copyright (c) Sergey Tihon 2019-2026
+Licensed under the MIT License.
+</code></pre>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/index.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

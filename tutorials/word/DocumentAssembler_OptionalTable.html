@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Optional Table Directive | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Optional Table Directive | Clippit ">
+      
+      
+      <link rel="icon" href="../../images/logo-site.png">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/blob/master/docs/tutorials/word/DocumentAssembler_OptionalTable.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Tutorial.Word.DocumentAssembler.OptionalTable">
+<h1 id="optional-table-directive">Optional Table Directive</h1>
+
+<p>Namespace: <code>Clippit.Word</code></p>
+<h2 id="introduction">Introduction</h2>
+<p>The <code>Table</code> directive in <code>DocumentAssembler</code> supports an <code>Optional</code> attribute that controls the behavior when the XPath <code>Select</code> expression returns no matching data.</p>
+<p>By default, when a <code>Table</code> directive's <code>Select</code> XPath returns no data, <code>DocumentAssembler</code> produces a template error:</p>
+<blockquote>
+<p>Table Select returned no data</p>
+</blockquote>
+<p>Adding <code>Optional=&quot;true&quot;</code> (or <code>Optional=&quot;1&quot;</code>) suppresses this error and silently removes the table from the output document instead.</p>
+<p>This brings <code>Table</code> into parity with <code>Repeat</code> and <code>Content</code>, which already support the <code>Optional</code> attribute.</p>
+<h2 id="usage">Usage</h2>
+<h3 id="metadata-style">Metadata Style</h3>
+<p>In a Word document template, use the <code>&lt;# ... #&gt;</code> metadata syntax:</p>
+<pre><code class="lang-xml">&lt;# &lt;Table Select=&quot;Orders&quot; Optional=&quot;true&quot; /&gt; #&gt;
+</code></pre>
+<p>The table following this directive will be removed from the output when <code>Orders</code> returns no matching XML elements.</p>
+<h3 id="content-control-style">Content Control Style</h3>
+<p>Alternatively, use a Word content control (structured document tag) with the <code>DocumentAssembler</code> directive:</p>
+<pre><code class="lang-xml">&lt;Table Select=&quot;Orders&quot; Optional=&quot;true&quot; /&gt;
+</code></pre>
+<p>Place this directive inside a content control that precedes the table in your document.</p>
+<h2 id="accepted-values">Accepted Values</h2>
+<p>The <code>Optional</code> attribute accepts any XSD <code>xs:boolean</code> value:</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>true</code></td>
+<td>Optional</td>
+</tr>
+<tr>
+<td><code>1</code></td>
+<td>Optional</td>
+</tr>
+<tr>
+<td><code>false</code></td>
+<td>Not optional (default)</td>
+</tr>
+<tr>
+<td><code>0</code></td>
+<td>Not optional (default)</td>
+</tr>
+</tbody>
+</table>
+<p>Omitting the attribute entirely is equivalent to <code>Optional=&quot;false&quot;</code>.</p>
+<h2 id="example">Example</h2>
+<h3 id="xml-data-no-orders">XML Data (no orders)</h3>
+<pre><code class="lang-xml">&lt;Data&gt;
+  &lt;Customer&gt;
+    &lt;Name&gt;Cheryl&lt;/Name&gt;
+  &lt;/Customer&gt;
+&lt;/Data&gt;
+</code></pre>
+<h3 id="template-with-optional-table">Template with Optional Table</h3>
+<pre><code class="lang-xml">&lt;# &lt;Table Select=&quot;Customer/Orders/Order&quot; Optional=&quot;true&quot; /&gt; #&gt;
+
+| Product | Quantity |
+| ------- | -------- |
+| ...     | ...      |
+</code></pre>
+<p><strong>Result:</strong> The table is silently removed from the output. No template error is produced.</p>
+<h3 id="template-without-optional">Template without Optional</h3>
+<pre><code class="lang-xml">&lt;# &lt;Table Select=&quot;Customer/Orders/Order&quot; /&gt; #&gt;
+</code></pre>
+<p><strong>Result:</strong> <code>DocumentAssembler</code> sets <code>returnedTemplateError = true</code> and inserts a <code>[Template error: Table Select returned no data]</code> placeholder in the output.</p>
+<h2 id="comparison-optional-vs-non-optional-behavior">Comparison: Optional vs. Non-Optional behavior</h2>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th><code>Optional</code> absent / <code>false</code></th>
+<th><code>Optional=&quot;true&quot;</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>XPath returns data</td>
+<td>Table is populated</td>
+<td>Table is populated</td>
+</tr>
+<tr>
+<td>XPath returns no data</td>
+<td>Template error produced</td>
+<td>Table is removed silently</td>
+</tr>
+</tbody>
+</table>
+<h2 id="further-reading">Further Reading</h2>
+<ul>
+<li><code>Repeat</code> directive also supports <code>Optional=&quot;true&quot;</code> — see the existing directive reference for <code>Repeat</code>.</li>
+<li>For template testing and examples, see <code>DocumentAssemblerTests.cs</code> in the test project, particularly the <code>DA_Table_Optional_*</code> test methods.</li>
+</ul>
+<p>Changes merged in: <a href="https://github.com/sergey-tihon/Clippit/pull/150">#150</a></p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/tutorials/word/DocumentAssembler_OptionalTable.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
