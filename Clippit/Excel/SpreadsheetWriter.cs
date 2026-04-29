@@ -797,8 +797,8 @@ namespace Clippit.Excel
             int? nfi = null;
             if (cell.FormatCode != null)
             {
-                if (CellDfn.StandardFormats.ContainsKey(cell.FormatCode))
-                    nfi = CellDfn.StandardFormats[cell.FormatCode];
+                if (CellDfn.StandardFormats.TryGetValue(cell.FormatCode, out var standardFormatId))
+                    nfi = standardFormatId;
                 if (nfi == numFmtId)
                     return true;
             }

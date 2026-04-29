@@ -118,8 +118,8 @@ namespace Clippit.Html
             var d = element.Annotation<Dictionary<string, CssExpression>>();
             if (d != null)
             {
-                if (d.ContainsKey(propertyName))
-                    return d[propertyName];
+                if (d.TryGetValue(propertyName, out var prop))
+                    return prop;
             }
             return null;
         }
@@ -563,12 +563,7 @@ namespace Clippit.Html
                         element
                             .Elements()
                             .Select(e => (XElement)TransformAndOrderElements(e))
-                            .OrderBy(e =>
-                            {
-                                if (Order_pPr.ContainsKey(e.Name))
-                                    return Order_pPr[e.Name];
-                                return 999;
-                            })
+                            .OrderBy(e => Order_pPr.TryGetValue(e.Name, out var o) ? o : 999)
                     );
 
                 if (element.Name == W.rPr)
@@ -578,12 +573,7 @@ namespace Clippit.Html
                         element
                             .Elements()
                             .Select(e => (XElement)TransformAndOrderElements(e))
-                            .OrderBy(e =>
-                            {
-                                if (Order_rPr.ContainsKey(e.Name))
-                                    return Order_rPr[e.Name];
-                                return 999;
-                            })
+                            .OrderBy(e => Order_rPr.TryGetValue(e.Name, out var o) ? o : 999)
                     );
 
                 if (element.Name == W.tblPr)
@@ -593,12 +583,7 @@ namespace Clippit.Html
                         element
                             .Elements()
                             .Select(e => (XElement)TransformAndOrderElements(e))
-                            .OrderBy(e =>
-                            {
-                                if (Order_tblPr.ContainsKey(e.Name))
-                                    return Order_tblPr[e.Name];
-                                return 999;
-                            })
+                            .OrderBy(e => Order_tblPr.TryGetValue(e.Name, out var o) ? o : 999)
                     );
 
                 if (element.Name == W.tcPr)
@@ -608,12 +593,7 @@ namespace Clippit.Html
                         element
                             .Elements()
                             .Select(e => (XElement)TransformAndOrderElements(e))
-                            .OrderBy(e =>
-                            {
-                                if (Order_tcPr.ContainsKey(e.Name))
-                                    return Order_tcPr[e.Name];
-                                return 999;
-                            })
+                            .OrderBy(e => Order_tcPr.TryGetValue(e.Name, out var o) ? o : 999)
                     );
 
                 if (element.Name == W.tcBorders)
@@ -623,12 +603,7 @@ namespace Clippit.Html
                         element
                             .Elements()
                             .Select(e => (XElement)TransformAndOrderElements(e))
-                            .OrderBy(e =>
-                            {
-                                if (Order_tcBorders.ContainsKey(e.Name))
-                                    return Order_tcBorders[e.Name];
-                                return 999;
-                            })
+                            .OrderBy(e => Order_tcBorders.TryGetValue(e.Name, out var o) ? o : 999)
                     );
 
                 if (element.Name == W.tblBorders)
@@ -638,12 +613,7 @@ namespace Clippit.Html
                         element
                             .Elements()
                             .Select(e => (XElement)TransformAndOrderElements(e))
-                            .OrderBy(e =>
-                            {
-                                if (Order_tblBorders.ContainsKey(e.Name))
-                                    return Order_tblBorders[e.Name];
-                                return 999;
-                            })
+                            .OrderBy(e => Order_tblBorders.TryGetValue(e.Name, out var o) ? o : 999)
                     );
 
                 if (element.Name == W.pBdr)
@@ -653,12 +623,7 @@ namespace Clippit.Html
                         element
                             .Elements()
                             .Select(e => (XElement)TransformAndOrderElements(e))
-                            .OrderBy(e =>
-                            {
-                                if (Order_pBdr.ContainsKey(e.Name))
-                                    return Order_pBdr[e.Name];
-                                return 999;
-                            })
+                            .OrderBy(e => Order_pBdr.TryGetValue(e.Name, out var o) ? o : 999)
                     );
 
                 if (element.Name == W.p)
@@ -1073,9 +1038,9 @@ namespace Clippit.Html
                     if (run != null)
                     {
                         var computedProperties = element.Annotation<Dictionary<string, CssExpression>>();
-                        if (computedProperties != null && computedProperties.ContainsKey("width"))
+                        if (computedProperties != null && computedProperties.TryGetValue("width", out var widthExpr))
                         {
-                            string width = computedProperties["width"];
+                            string width = widthExpr;
                             if (width != "auto")
                                 run.Add(new XAttribute(PtOpenXml.HtmlToWmlCssWidth, width));
                             var rFontsLocal = run.Element(W.rFonts);
@@ -3437,8 +3402,8 @@ namespace Clippit.Html
 
             if (styleProp != null)
             {
-                if (BorderStyleMap.ContainsKey(styleProp.ToString()))
-                    val = new XAttribute(W.val, BorderStyleMap[styleProp.ToString()]);
+                if (BorderStyleMap.TryGetValue(styleProp.ToString(), out var borderStyle))
+                    val = new XAttribute(W.val, borderStyle);
                 else
                     val = new XAttribute(W.val, "none");
             }
@@ -4319,9 +4284,7 @@ namespace Clippit.Html
                 return null;
             var fullFontFamily = fontFamily.Terms.Select(t => t + " ").StringConcatenate().Trim();
             var lcfont = fullFontFamily.ToLower();
-            if (InstalledFonts.ContainsKey(lcfont))
-                return InstalledFonts[lcfont];
-            return null;
+            return InstalledFonts.TryGetValue(lcfont, out var installedFont) ? installedFont : null;
         }
 
         private static XElement GetBackgroundProperty(XElement element)
@@ -4735,9 +4698,8 @@ namespace Clippit.Html
             foreach (var list in numberingElements)
             {
                 var nia = list.Annotation<HtmlToWmlConverterCore.NumberedItemAnnotation>();
-                if (!numToAbstractNum.ContainsKey(nia.numId))
+                if (numToAbstractNum.TryAdd(nia.numId, currentAbstractId))
                 {
-                    numToAbstractNum.Add(nia.numId, currentAbstractId);
                     if (list.Name == XhtmlNoNamespace.ul)
                     {
                         var bulletAbstract = XElement.Parse(string.Format(BulletAbstractXml, currentAbstractId++));
