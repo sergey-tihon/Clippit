@@ -838,8 +838,6 @@ internal sealed partial class FluentPresentationBuilder
                     // The image part's ZIP entry has a corrupt local file header.
                     // Leave the empty part in place so the slide structure is preserved;
                     // the image will be missing but the copy operation can continue.
-                    imageReference.SetAttributeValue(attributeName, id);
-                    return;
                 }
 
                 imageReference.SetAttributeValue(attributeName, id);
