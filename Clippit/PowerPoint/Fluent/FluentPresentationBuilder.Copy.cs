@@ -181,8 +181,7 @@ internal sealed partial class FluentPresentationBuilder
         )
         {
             var newPart = _newDocument.PresentationPart.AddNewPart<LegacyDiagramTextInfoPart>();
-            using var stream = legacyDocTextInfo.OpenXmlPart.GetStream();
-            newPart.FeedData(stream);
+            newPart.FeedDataFrom(legacyDocTextInfo.OpenXmlPart);
         }
 
         var listOfRootChildren = newPresentationRoot.Elements().ToList();
@@ -235,8 +234,7 @@ internal sealed partial class FluentPresentationBuilder
         };
 
         var newFontPart = _newDocument.PresentationPart.AddFontPart(fontPartType);
-        using (var stream = oldFontPart.GetStream())
-            newFontPart.FeedData(stream);
+        newFontPart.FeedDataFrom(oldFontPart);
         return new XElement(fontXName, new XAttribute(R.id, _newDocument.PresentationPart.GetIdOfPart(newFontPart)));
     }
 
@@ -665,8 +663,7 @@ internal sealed partial class FluentPresentationBuilder
                 if (oldPartIdPair9 != default)
                 {
                     var newPart = _newDocument.PresentationPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
-                    using (var stream = oldPartIdPair9.OpenXmlPart.GetStream())
-                        newPart.FeedData(stream);
+                    newPart.FeedDataFrom(oldPartIdPair9.OpenXmlPart);
                     foreach (
                         var itemProps in oldPartIdPair9.OpenXmlPart.Parts.Where(p =>
                             p.OpenXmlPart.ContentType
@@ -675,8 +672,7 @@ internal sealed partial class FluentPresentationBuilder
                     )
                     {
                         var cxpp = newPart.AddNewPart<CustomXmlPropertiesPart>();
-                        using var stream = itemProps.OpenXmlPart.GetStream();
-                        cxpp.FeedData(stream);
+                        cxpp.FeedDataFrom(itemProps.OpenXmlPart);
                     }
                     var newId = newContentPart.CreateRelationshipToPart(newPart);
                     element.Attribute(R.id).Value = newId;
@@ -828,17 +824,7 @@ internal sealed partial class FluentPresentationBuilder
                 var id = newContentPart.GetIdOfPart(newPart);
                 temp.AddContentPartRelTypeResourceIdTupple(newContentPart, newPart.RelationshipType, id);
 
-                try
-                {
-                    using (var stream = oldPart.GetStream())
-                        newPart.FeedData(stream);
-                }
-                catch (InvalidDataException)
-                {
-                    // The image part's ZIP entry has a corrupt local file header.
-                    // Leave the empty part in place so the slide structure is preserved;
-                    // the image will be missing but the copy operation can continue.
-                }
+                newPart.FeedDataFrom(oldPart);
 
                 imageReference.SetAttributeValue(attributeName, id);
             }
@@ -925,16 +911,7 @@ internal sealed partial class FluentPresentationBuilder
             var ct = oldPart.ContentType;
             var ext = Path.GetExtension(oldPart.Uri.OriginalString);
             var newPart = newContentPart.OpenXmlPackage.CreateMediaDataPart(ct, ext);
-            try
-            {
-                using (var stream = oldPart.GetStream())
-                    newPart.FeedData(stream);
-            }
-            catch (InvalidDataException)
-            {
-                // The media part's ZIP entry has a corrupt local file header.
-                // Leave the empty part in place; the media will be missing but the copy continues.
-            }
+            newPart.FeedDataFrom(oldPart);
             string id = null;
             string relationshipType = null;
 

@@ -38,6 +38,32 @@ namespace Clippit
 
     public static class PtOpenXmlExtensions
     {
+        public static void FeedDataFrom(this OpenXmlPart destination, OpenXmlPart source)
+        {
+            try
+            {
+                using var stream = source.GetStream();
+                destination.FeedData(stream);
+            }
+            catch (InvalidDataException)
+            {
+                // Corrupt ZIP local file header — leave empty part so structure is preserved.
+            }
+        }
+
+        public static void FeedDataFrom(this DataPart destination, DataPart source)
+        {
+            try
+            {
+                using var stream = source.GetStream();
+                destination.FeedData(stream);
+            }
+            catch (InvalidDataException)
+            {
+                // Corrupt ZIP local file header — leave empty part so structure is preserved.
+            }
+        }
+
         public static XDocument GetXDocument(this OpenXmlPart part)
         {
             if (part is null)
