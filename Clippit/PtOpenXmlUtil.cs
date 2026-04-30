@@ -1877,7 +1877,7 @@ listSeparator
             return ContentType == arg.ContentType && Hash.SequenceEqual(arg.Hash);
         }
 
-        private static byte[] ComputePartHash(Func<Stream> getStream, Uri uri)
+        protected static byte[] ComputePartHash(Func<Stream> getStream, Uri uri)
         {
             try
             {
