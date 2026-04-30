@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.4.2] - April 30, 2026
+
+- fix(pptx): make all part copies resilient to corrupt ZIP local file headers (#234)
+- refactor: replace ContainsKey+indexer double-lookups with TryGetValue (#246)
+- refactor(excel): remove dead code from SpreadsheetDocumentManager + add WorksheetAccessor unit tests (#247)
+- refactor: modernize UriFixer — convenience overload, leaveOpen param, eliminate test duplication (#237)
+- refactor: modernise random/guid usage, fix discarded Guid bug, and remove dead code (#244)
+- test(excel): add SmlDataRetriever unit tests (SDR001–SDR025) (#236)
+- chore(deps): update TUnit 1.37.10 → 1.40.10 (#235, #242, #243, #245)
+
 ## [3.4.1] - April 23, 2026
 
 - fix: resolve `ArgumentException` for slides with `custData`+`CustomXmlProperties` (#232)
