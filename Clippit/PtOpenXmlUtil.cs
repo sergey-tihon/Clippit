@@ -1908,7 +1908,7 @@ listSeparator
             return ContentType == arg.ContentType && Hash.SequenceEqual(arg.Hash);
         }
 
-        protected static byte[] ComputePartHash(Func<Stream> getStream, Uri uri, object part)
+        protected static byte[] ComputePartHash(Func<Stream> getStream, Uri uri)
         {
             try
             {
@@ -1917,12 +1917,10 @@ listSeparator
             }
             catch (InvalidDataException)
             {
-                // Combine the part's object identity with its URI so the fallback is:
-                //  - deterministic: same part instance → same hash within a run
-                //  - collision-free: different packages sharing the same part URI
-                //    (e.g. /ppt/media/image1.png) get distinct hashes
-                var key = $"{RuntimeHelpers.GetHashCode(part)}:{uri}";
-                return System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(key));
+                // Corrupt ZIP local file header.
+                // Fall back to a deterministic hash derived from the part URI so that repeated
+                // references to the same corrupt part map to the same deduplication cache key.
+                return System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(uri.ToString()));
             }
         }
     }
@@ -1937,7 +1935,7 @@ listSeparator
             ArgumentNullException.ThrowIfNull(part);
 
             ContentType = part.ContentType;
-            Hash = ComputePartHash(part.GetStream, part.Uri, part);
+            Hash = ComputePartHash(part.GetStream, part.Uri);
         }
     }
 
@@ -1951,7 +1949,7 @@ listSeparator
             ArgumentNullException.ThrowIfNull(part);
 
             ContentType = part.ContentType;
-            Hash = ComputePartHash(part.GetStream, part.Uri, part);
+            Hash = ComputePartHash(part.GetStream, part.Uri);
         }
     }
 
