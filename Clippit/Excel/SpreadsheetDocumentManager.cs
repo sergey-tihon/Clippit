@@ -16,7 +16,7 @@ namespace Clippit.Excel
         /// <param name="document">The SpreadsheetDocument to write to</param>
         /// <param name="headerList">Contents of first row (header)</param>
         /// <param name="valueTable">Contents of data</param>
-        /// <param name="initialRow">Row to start copying data from</param>
+        /// <param name="initialRow">Row where the header is written; data rows start on the following row</param>
         public static void Create(
             SpreadsheetDocument document,
             List<string> headerList,
