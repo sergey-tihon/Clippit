@@ -1876,6 +1876,19 @@ listSeparator
         {
             return ContentType == arg.ContentType && Hash.SequenceEqual(arg.Hash);
         }
+
+        private static byte[] ComputePartHash(Func<Stream> getStream, Uri uri)
+        {
+            try
+            {
+                using var s = getStream();
+                return s.ComputeHash();
+            }
+            catch (InvalidDataException)
+            {
+                return System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(uri.ToString()));
+            }
+        }
     }
 
     // This class is used to prevent duplication of images
@@ -1888,18 +1901,7 @@ listSeparator
             ArgumentNullException.ThrowIfNull(part);
 
             ContentType = part.ContentType;
-            try
-            {
-                using var s = part.GetStream();
-                Hash = s.ComputeHash();
-            }
-            catch (InvalidDataException)
-            {
-                // The image part's ZIP entry has a corrupt local file header.
-                // Fall back to a deterministic hash derived from the part URI so that repeated
-                // references to the same corrupt part map to the same deduplication cache key.
-                Hash = System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(part.Uri.ToString()));
-            }
+            Hash = ComputePartHash(part.GetStream, part.Uri);
         }
     }
 
@@ -1913,18 +1915,7 @@ listSeparator
             ArgumentNullException.ThrowIfNull(part);
 
             ContentType = part.ContentType;
-            try
-            {
-                using var s = part.GetStream();
-                Hash = s.ComputeHash();
-            }
-            catch (InvalidDataException)
-            {
-                // The media part's ZIP entry has a corrupt local file header.
-                // Fall back to a deterministic hash derived from the part URI so that repeated
-                // references to the same corrupt part map to the same deduplication cache key.
-                Hash = System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(part.Uri.ToString()));
-            }
+            Hash = ComputePartHash(part.GetStream, part.Uri);
         }
     }
 
