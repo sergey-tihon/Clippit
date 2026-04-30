@@ -25,7 +25,7 @@ public partial class PresentationBuilderSlidePublishingTests
         await using (var fs = File.OpenRead(sourcePath))
             await fs.CopyToAsync(srcMemory);
 
-        var corrupted = CorruptFirstMediaLocalFileHeader(srcMemory.ToArray());
+        var corrupted = CorruptPptMediaLocalFileHeader(srcMemory.ToArray());
         using var corruptedMemory = new MemoryStream(corrupted);
 
         using var srcDoc = PresentationDocument.Open(corruptedMemory, false, openSettings);
@@ -50,7 +50,7 @@ public partial class PresentationBuilderSlidePublishingTests
     /// and corrupts its local file header signature so that <see cref="ZipArchiveEntry.Open"/>
     /// throws <see cref="InvalidDataException"/> when the entry is read.
     /// </summary>
-    private static byte[] CorruptFirstMediaLocalFileHeader(byte[] zipBytes)
+    private static byte[] CorruptPptMediaLocalFileHeader(byte[] zipBytes)
     {
         // ZIP local file header layout:
         //   [0-3]  signature  0x04034B50
@@ -74,7 +74,7 @@ public partial class PresentationBuilderSlidePublishingTests
                 continue;
 
             var name = System.Text.Encoding.UTF8.GetString(zipBytes, i + 30, nameLen);
-            if (!name.StartsWith("ppt/media/"))
+            if (!name.StartsWith("ppt/media/", StringComparison.Ordinal))
                 continue;
 
             // Corrupt bytes 2-3 of the signature so Open() throws InvalidDataException.

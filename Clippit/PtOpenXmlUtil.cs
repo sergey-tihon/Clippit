@@ -1896,9 +1896,9 @@ listSeparator
             catch (InvalidDataException)
             {
                 // The image part's ZIP entry has a corrupt local file header.
-                // Use a unique hash so the deduplication cache treats this entry
-                // as distinct rather than throwing, allowing the rest of the slide to be copied.
-                Hash = Guid.NewGuid().ToByteArray();
+                // Fall back to a deterministic hash derived from the part URI so that repeated
+                // references to the same corrupt part map to the same deduplication cache key.
+                Hash = System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(part.Uri.ToString()));
             }
         }
     }
@@ -1921,9 +1921,9 @@ listSeparator
             catch (InvalidDataException)
             {
                 // The media part's ZIP entry has a corrupt local file header.
-                // Use a unique hash so the deduplication cache treats this entry
-                // as distinct rather than throwing, allowing the rest of the slide to be copied.
-                Hash = Guid.NewGuid().ToByteArray();
+                // Fall back to a deterministic hash derived from the part URI so that repeated
+                // references to the same corrupt part map to the same deduplication cache key.
+                Hash = System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(part.Uri.ToString()));
             }
         }
     }
