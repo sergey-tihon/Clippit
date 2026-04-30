@@ -3383,8 +3383,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     var id = newContentPart.GetIdOfPart(newPart);
                     temp.AddContentPartRelTypeResourceIdTupple(newContentPart, newPart.RelationshipType, id);
                     imageReference.SetAttributeValue(attributeName, id);
-                    using var stream = oldPart.GetStream();
-                    newPart.FeedData(stream);
+                    newPart.FeedDataFrom(oldPart);
                 }
                 else
                 {
