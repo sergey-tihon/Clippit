@@ -1,6 +1,6 @@
 {
-  "lr": "2026-04-29",
-  "rid": "25111463797",
+  "lr": "2026-04-30",
+  "rid": "25167856321",
   "m_issue": 170,
   "m_month": "2026-04",
   "comments": {
@@ -19,9 +19,9 @@
     "163": "RegisterCustomHandler",
     "165": "ExcelAssembler",
     "234": "fix: handle corrupt ZIP local file header in image/media parts",
-    "246": "refactor: replace ContainsKey+indexer double-lookups with TryGetValue (branch: clippy/improve-trygetvalue-doubleLookup-20260429)"
+    "247": "refactor: remove dead code from SpreadsheetDocumentManager + WorksheetAccessor unit tests (branch: clippy/improve-spreadsheet-doc-mgr-cleanup-20260430)"
   },
-  "notes": "Run 25111463797 (2026-04-29): Tasks 5+8 - created TryGetValue refactor PR (~246) for 5 files, 1699 tests pass. PR #245 was merged by maintainer. All open issues (28,47,54,66,67,77,103,233) have Clippy comments.",
+  "notes": "Run 25167856321 (2026-04-30): Tasks 5+9 - removed dead code from SpreadsheetDocumentManager (mutable static, commented-out chart method, 7 private methods), added WorksheetAccessorTests WA001-WA003 (28 tests). PR #246 (TryGetValue) was merged. All open issues have Clippy comments.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
@@ -32,6 +32,7 @@
     "242": "TUnit-1.39.0",
     "243": "TUnit-1.40.5",
     "244": "guid-random-refactor",
-    "245": "TUnit-1.40.10"
+    "245": "TUnit-1.40.10",
+    "246": "TryGetValue-refactor"
   }
 }
