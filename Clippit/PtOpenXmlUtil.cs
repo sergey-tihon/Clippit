@@ -3,6 +3,7 @@
 
 using System.IO.Compression;
 using System.IO.Packaging;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -47,7 +48,9 @@ namespace Clippit
             }
             catch (InvalidDataException)
             {
-                // Corrupt ZIP local file header — leave empty part so structure is preserved.
+                // Corrupt ZIP local file header — overwrite any partially written bytes with
+                // empty content so the destination part is left in a consistent empty state.
+                destination.FeedData(Stream.Null);
             }
         }
 
@@ -60,7 +63,9 @@ namespace Clippit
             }
             catch (InvalidDataException)
             {
-                // Corrupt ZIP local file header — leave empty part so structure is preserved.
+                // Corrupt ZIP local file header — overwrite any partially written bytes with
+                // empty content so the destination part is left in a consistent empty state.
+                destination.FeedData(Stream.Null);
             }
         }
 
@@ -1903,7 +1908,7 @@ listSeparator
             return ContentType == arg.ContentType && Hash.SequenceEqual(arg.Hash);
         }
 
-        protected static byte[] ComputePartHash(Func<Stream> getStream, Uri uri)
+        protected static byte[] ComputePartHash(Func<Stream> getStream, Uri uri, object part)
         {
             try
             {
@@ -1912,7 +1917,12 @@ listSeparator
             }
             catch (InvalidDataException)
             {
-                return System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(uri.ToString()));
+                // Combine the part's object identity with its URI so the fallback is:
+                //  - deterministic: same part instance → same hash within a run
+                //  - collision-free: different packages sharing the same part URI
+                //    (e.g. /ppt/media/image1.png) get distinct hashes
+                var key = $"{RuntimeHelpers.GetHashCode(part)}:{uri}";
+                return System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(key));
             }
         }
     }
@@ -1927,7 +1937,7 @@ listSeparator
             ArgumentNullException.ThrowIfNull(part);
 
             ContentType = part.ContentType;
-            Hash = ComputePartHash(part.GetStream, part.Uri);
+            Hash = ComputePartHash(part.GetStream, part.Uri, part);
         }
     }
 
@@ -1941,7 +1951,7 @@ listSeparator
             ArgumentNullException.ThrowIfNull(part);
 
             ContentType = part.ContentType;
-            Hash = ComputePartHash(part.GetStream, part.Uri);
+            Hash = ComputePartHash(part.GetStream, part.Uri, part);
         }
     }
 
