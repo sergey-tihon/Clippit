@@ -451,8 +451,7 @@ namespace Clippit.PowerPoint.Fluent
 
             var newPart = newContentPart.AddNewPart<CustomXmlPart>("application/inkml+xml");
 
-            using (var stream = oldPart.GetStream())
-                newPart.FeedData(stream);
+            newPart.FeedDataFrom(oldPart);
             contentPartReference.Attribute(attributeName).Set(newContentPart.GetIdOfPart(newPart));
         }
 
@@ -473,8 +472,7 @@ namespace Clippit.PowerPoint.Fluent
                 "application/vnd.ms-office.activeX+xml"
             );
 
-            using (var stream = oldPart.GetStream())
-                newPart.FeedData(stream);
+            newPart.FeedDataFrom(oldPart);
             activeXPartReference.Attribute(attributeName).Set(newContentPart.GetIdOfPart(newPart));
 
             if (newPart.ContentType == "application/vnd.ms-office.activeX+xml")
@@ -488,8 +486,7 @@ namespace Clippit.PowerPoint.Fluent
                         "application/vnd.ms-office.activeX"
                     );
 
-                    using (var stream = oldPersistencePart.GetStream())
-                        newPersistencePart.FeedData(stream);
+                    newPersistencePart.FeedDataFrom(oldPersistencePart);
                     attr.Set(newPart.GetIdOfPart(newPersistencePart));
                 }
             }
@@ -510,8 +507,7 @@ namespace Clippit.PowerPoint.Fluent
 
             var newPart = newContentPart.AddNewPart<LegacyDiagramTextPart>();
 
-            using (var stream = oldPart.GetStream())
-                newPart.FeedData(stream);
+            newPart.FeedDataFrom(oldPart);
             textDataReference.Attribute(attributeName).Set(newContentPart.GetIdOfPart(newPart));
         }
 
@@ -863,8 +859,7 @@ namespace Clippit.PowerPoint.Fluent
                 };
 
                 relId = newContentPart.GetIdOfPart(newPart);
-                using (var stream = oldPart.GetStream())
-                    newPart?.FeedData(stream);
+                newPart?.FeedDataFrom(oldPart);
                 extendedReference.Attribute(attributeName).Set(relId);
             }
             catch (ArgumentOutOfRangeException)
@@ -915,8 +910,7 @@ namespace Clippit.PowerPoint.Fluent
                 case AudioReferenceRelationship audioRef:
                 {
                     var newSound = newDocument.CreateMediaDataPart(audioRef.DataPart.ContentType);
-                    using (var stream = audioRef.DataPart.GetStream())
-                        newSound.FeedData(stream);
+                    newSound.FeedDataFrom(audioRef.DataPart);
 
                     var newRel = newContentPart switch
                     {
@@ -934,8 +928,7 @@ namespace Clippit.PowerPoint.Fluent
                 case MediaReferenceRelationship mediaRef:
                 {
                     var newSound = newDocument.CreateMediaDataPart(mediaRef.DataPart.ContentType);
-                    using (var stream = mediaRef.DataPart.GetStream())
-                        newSound.FeedData(stream);
+                    newSound.FeedDataFrom(mediaRef.DataPart);
 
                     var newRel = newContentPart switch
                     {

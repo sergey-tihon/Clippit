@@ -3,6 +3,7 @@
 
 using System.IO.Compression;
 using System.IO.Packaging;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -38,6 +39,36 @@ namespace Clippit
 
     public static class PtOpenXmlExtensions
     {
+        public static void FeedDataFrom(this OpenXmlPart destination, OpenXmlPart source)
+        {
+            try
+            {
+                using var stream = source.GetStream();
+                destination.FeedData(stream);
+            }
+            catch (InvalidDataException)
+            {
+                // Corrupt ZIP local file header — overwrite any partially written bytes with
+                // empty content so the destination part is left in a consistent empty state.
+                destination.FeedData(Stream.Null);
+            }
+        }
+
+        public static void FeedDataFrom(this DataPart destination, DataPart source)
+        {
+            try
+            {
+                using var stream = source.GetStream();
+                destination.FeedData(stream);
+            }
+            catch (InvalidDataException)
+            {
+                // Corrupt ZIP local file header — overwrite any partially written bytes with
+                // empty content so the destination part is left in a consistent empty state.
+                destination.FeedData(Stream.Null);
+            }
+        }
+
         public static XDocument GetXDocument(this OpenXmlPart part)
         {
             if (part is null)
@@ -1876,6 +1907,22 @@ listSeparator
         {
             return ContentType == arg.ContentType && Hash.SequenceEqual(arg.Hash);
         }
+
+        protected static byte[] ComputePartHash(Func<Stream> getStream, Uri uri)
+        {
+            try
+            {
+                using var s = getStream();
+                return s.ComputeHash();
+            }
+            catch (InvalidDataException)
+            {
+                // Corrupt ZIP local file header.
+                // Fall back to a deterministic hash derived from the part URI so that repeated
+                // references to the same corrupt part map to the same deduplication cache key.
+                return System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(uri.ToString()));
+            }
+        }
     }
 
     // This class is used to prevent duplication of images
@@ -1888,8 +1935,7 @@ listSeparator
             ArgumentNullException.ThrowIfNull(part);
 
             ContentType = part.ContentType;
-            using var s = part.GetStream();
-            Hash = s.ComputeHash();
+            Hash = ComputePartHash(part.GetStream, part.Uri);
         }
     }
 
@@ -1903,8 +1949,7 @@ listSeparator
             ArgumentNullException.ThrowIfNull(part);
 
             ContentType = part.ContentType;
-            using var s = part.GetStream();
-            Hash = s.ComputeHash();
+            Hash = ComputePartHash(part.GetStream, part.Uri);
         }
     }
 
