@@ -1,8 +1,8 @@
 {
-  "lr": "2026-04-30",
-  "rid": "25167856321",
-  "m_issue": 170,
-  "m_month": "2026-04",
+  "lr": "2026-05-01",
+  "rid": "25215812986",
+  "m_issue": null,
+  "m_month": "2026-05",
   "comments": {
     "66": "2026-03-26",
     "47": "2026-03-20",
@@ -17,11 +17,9 @@
   "cursor": "233",
   "prs": {
     "163": "RegisterCustomHandler",
-    "165": "ExcelAssembler",
-    "234": "fix: handle corrupt ZIP local file header in image/media parts",
-    "247": "refactor: remove dead code from SpreadsheetDocumentManager + WorksheetAccessor unit tests (branch: clippy/improve-spreadsheet-doc-mgr-cleanup-20260430)"
+    "165": "ExcelAssembler"
   },
-  "notes": "Run 25167856321 (2026-04-30): Tasks 5+9 - removed dead code from SpreadsheetDocumentManager (mutable static, commented-out chart method, 7 private methods), added WorksheetAccessorTests WA001-WA003 (28 tests). PR #246 (TryGetValue) was merged. All open issues have Clippy comments.",
+  "notes": "Run 25215812986 (2026-05-01): Tasks 5+2 - updated TUnit 1.40.10->1.41.0 and Microsoft.NET.Test.Sdk 18.4.0->18.5.1 (new PR on branch clippy/eng-tunit-1.41.0-20260501, 1728 tests pass). Closed April issue #170, created May issue. PRs #234 and #247 were merged by sergey-tihon on 2026-04-30. All open issues have Clippy comments, no new human activity since last run.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
@@ -33,6 +31,8 @@
     "243": "TUnit-1.40.5",
     "244": "guid-random-refactor",
     "245": "TUnit-1.40.10",
-    "246": "TryGetValue-refactor"
+    "246": "TryGetValue-refactor",
+    "247": "SpreadsheetDocMgr-cleanup-WorksheetAccessorTests",
+    "234": "corrupt-zip-fix"
   }
 }
