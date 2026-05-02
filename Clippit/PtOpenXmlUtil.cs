@@ -477,8 +477,7 @@ namespace Clippit
                     using var str = part.GetStream(FileMode.Create);
                     using var binaryWriter = new BinaryWriter(str);
                     var base64StringInChunks = (string)xmlPart.Element(pkg + "binaryData");
-                    var base64CharArray = base64StringInChunks.Where(c => c != '\r' && c != '\n').ToArray();
-                    var byteArray = Convert.FromBase64CharArray(base64CharArray, 0, base64CharArray.Length);
+                    var byteArray = Convert.FromBase64String(base64StringInChunks.ReplaceLineEndings(""));
                     binaryWriter.Write(byteArray);
                 }
             }
