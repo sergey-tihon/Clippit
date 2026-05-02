@@ -1,7 +1,7 @@
 {
-  "lr": "2026-05-01",
-  "rid": "25215812986",
-  "m_issue": null,
+  "lr": "2026-05-02",
+  "rid": "25252843999",
+  "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
     "66": "2026-03-26",
@@ -17,9 +17,11 @@
   "cursor": "233",
   "prs": {
     "163": "RegisterCustomHandler",
-    "165": "ExcelAssembler"
+    "165": "ExcelAssembler",
+    "perf-flatopc-base64": "FlatOpc ReplaceLineEndings perf fix",
+    "test-content-data-key": "ContentDataKey unit tests CDK001-CDK009"
   },
-  "notes": "Run 25215812986 (2026-05-01): Tasks 5+2 - updated TUnit 1.40.10->1.41.0 and Microsoft.NET.Test.Sdk 18.4.0->18.5.1 (new PR on branch clippy/eng-tunit-1.41.0-20260501, 1728 tests pass). Closed April issue #170, created May issue. PRs #234 and #247 were merged by sergey-tihon on 2026-04-30. All open issues have Clippy comments, no new human activity since last run.",
+  "notes": "Run 25252843999 (2026-05-02): Tasks 8+9. Task 8: replaced LINQ Where+ToArray in FlatOpc.ToPackage with ReplaceLineEndings+FromBase64String (branch clippy/perf-flatopc-base64-20260502). Task 9: added 9 unit tests for ContentDataKey struct (branch clippy/test-content-data-key-20260502). Both PRs created as drafts. PRs #163 and #165 still open. Monthly issue #249 updated.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
@@ -33,6 +35,7 @@
     "245": "TUnit-1.40.10",
     "246": "TryGetValue-refactor",
     "247": "SpreadsheetDocMgr-cleanup-WorksheetAccessorTests",
-    "234": "corrupt-zip-fix"
+    "234": "corrupt-zip-fix",
+    "248": "TUnit-1.41.0"
   }
 }
