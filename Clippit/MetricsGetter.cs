@@ -63,9 +63,14 @@ namespace Clippit
                     metrics.Add(new XElement(H.RevisionTracking, new XAttribute(H.Val, true)));
                 return metrics;
             }
-            catch (Exception ex) when (ex.GetType().Name == "OpenXmlPowerToolsException")
+            catch (OpenXmlPowerToolsException)
             {
-                return new XElement("Metrics", new XAttribute("Error", "Unknown error, metrics not determined"));
+                return new XElement(
+                    H.Metrics,
+                    new XAttribute(H.FileName, wmlDoc.FileName),
+                    new XAttribute(H.FileType, "DOCX"),
+                    new XAttribute(H.Error, "Unknown error, metrics not determined")
+                );
             }
         }
 
