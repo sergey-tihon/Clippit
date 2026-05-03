@@ -1,11 +1,11 @@
 {
-  "lr": "2026-05-02",
-  "rid": "25252843999",
+  "lr": "2026-05-03",
+  "rid": "25280289880",
   "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
     "66": "2026-03-26",
-    "47": "2026-03-20",
+    "47": "2026-05-03",
     "67": "2026-03-17",
     "103": "2026-03-15",
     "77": "2026-03-14",
@@ -14,14 +14,13 @@
     "65": "2026-03-29",
     "233": "2026-04-23"
   },
-  "cursor": "233",
+  "cursor": "103",
   "prs": {
     "163": "RegisterCustomHandler",
     "165": "ExcelAssembler",
-    "perf-flatopc-base64": "FlatOpc ReplaceLineEndings perf fix",
-    "test-content-data-key": "ContentDataKey unit tests CDK001-CDK009"
+    "urifixer-open-helpers": "UriFixer Open*Document helpers (Closes #47)"
   },
-  "notes": "Run 25252843999 (2026-05-02): Tasks 8+9. Task 8: replaced LINQ Where+ToArray in FlatOpc.ToPackage with ReplaceLineEndings+FromBase64String (branch clippy/perf-flatopc-base64-20260502). Task 9: added 9 unit tests for ContentDataKey struct (branch clippy/test-content-data-key-20260502). Both PRs created as drafts. PRs #163 and #165 still open. Monthly issue #249 updated.",
+  "notes": "Run 25280289880 (2026-05-03): Tasks 3+2. Task 3: added Open*Document helpers to UriFixer (OpenWordprocessingDocument, OpenPresentationDocument, OpenSpreadsheetDocument), simplified test helper OpenXmlExtensions.OpenPresentation. Created draft PR (branch clippy/fix-issue-47-urifixer-open-helpers-20260503), commented on #47. PRs #250, #251 from previous run were merged. PRs #163 and #165 still open.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
@@ -36,6 +35,8 @@
     "246": "TryGetValue-refactor",
     "247": "SpreadsheetDocMgr-cleanup-WorksheetAccessorTests",
     "234": "corrupt-zip-fix",
-    "248": "TUnit-1.41.0"
+    "248": "TUnit-1.41.0",
+    "250": "perf-flatopc-base64",
+    "251": "test-content-data-key"
   }
 }
