@@ -2041,6 +2041,90 @@ listSeparator
                 }
             }
         }
+
+        /// <summary>
+        /// Opens a <see cref="WordprocessingDocument"/> from <paramref name="stream"/>,
+        /// transparently fixing any invalid hyperlink URIs if the package cannot be opened
+        /// as-is by the OpenXML SDK.
+        /// </summary>
+        /// <param name="stream">A seekable stream containing the package. Must remain open for the lifetime of the returned document.</param>
+        /// <param name="isEditable"><see langword="true"/> to open for read/write; <see langword="false"/> for read-only.</param>
+        /// <param name="settings">Optional <see cref="OpenSettings"/>; <see langword="null"/> uses the SDK defaults.</param>
+        public static WordprocessingDocument OpenWordprocessingDocument(
+            Stream stream,
+            bool isEditable,
+            OpenSettings? settings = null
+        )
+        {
+            ArgumentNullException.ThrowIfNull(stream);
+            var openSettings = settings ?? new OpenSettings();
+            try
+            {
+                return WordprocessingDocument.Open(stream, isEditable, openSettings);
+            }
+            catch (OpenXmlPackageException e) when (e.Message.Contains("Invalid Hyperlink"))
+            {
+                FixInvalidUri(stream, leaveOpen: true);
+                stream.Position = 0;
+                return WordprocessingDocument.Open(stream, isEditable, openSettings);
+            }
+        }
+
+        /// <summary>
+        /// Opens a <see cref="PresentationDocument"/> from <paramref name="stream"/>,
+        /// transparently fixing any invalid hyperlink URIs if the package cannot be opened
+        /// as-is by the OpenXML SDK.
+        /// </summary>
+        /// <param name="stream">A seekable stream containing the package. Must remain open for the lifetime of the returned document.</param>
+        /// <param name="isEditable"><see langword="true"/> to open for read/write; <see langword="false"/> for read-only.</param>
+        /// <param name="settings">Optional <see cref="OpenSettings"/>; <see langword="null"/> uses the SDK defaults.</param>
+        public static PresentationDocument OpenPresentationDocument(
+            Stream stream,
+            bool isEditable,
+            OpenSettings? settings = null
+        )
+        {
+            ArgumentNullException.ThrowIfNull(stream);
+            var openSettings = settings ?? new OpenSettings();
+            try
+            {
+                return PresentationDocument.Open(stream, isEditable, openSettings);
+            }
+            catch (OpenXmlPackageException e) when (e.Message.Contains("Invalid Hyperlink"))
+            {
+                FixInvalidUri(stream, leaveOpen: true);
+                stream.Position = 0;
+                return PresentationDocument.Open(stream, isEditable, openSettings);
+            }
+        }
+
+        /// <summary>
+        /// Opens a <see cref="SpreadsheetDocument"/> from <paramref name="stream"/>,
+        /// transparently fixing any invalid hyperlink URIs if the package cannot be opened
+        /// as-is by the OpenXML SDK.
+        /// </summary>
+        /// <param name="stream">A seekable stream containing the package. Must remain open for the lifetime of the returned document.</param>
+        /// <param name="isEditable"><see langword="true"/> to open for read/write; <see langword="false"/> for read-only.</param>
+        /// <param name="settings">Optional <see cref="OpenSettings"/>; <see langword="null"/> uses the SDK defaults.</param>
+        public static SpreadsheetDocument OpenSpreadsheetDocument(
+            Stream stream,
+            bool isEditable,
+            OpenSettings? settings = null
+        )
+        {
+            ArgumentNullException.ThrowIfNull(stream);
+            var openSettings = settings ?? new OpenSettings();
+            try
+            {
+                return SpreadsheetDocument.Open(stream, isEditable, openSettings);
+            }
+            catch (OpenXmlPackageException e) when (e.Message.Contains("Invalid Hyperlink"))
+            {
+                FixInvalidUri(stream, leaveOpen: true);
+                stream.Position = 0;
+                return SpreadsheetDocument.Open(stream, isEditable, openSettings);
+            }
+        }
     }
 
     public static class ACTIVEX
