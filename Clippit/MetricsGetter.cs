@@ -58,44 +58,20 @@ namespace Clippit
                 var hasTrackedRevisions = RevisionAccepter.HasTrackedRevisions(document);
                 if (hasTrackedRevisions)
                     RevisionAccepter.AcceptRevisions(document);
-                var metrics1 = GetWmlMetrics(wmlDoc.FileName, false, document, settings);
+                var metrics = GetWmlMetrics(wmlDoc.FileName, document, settings);
                 if (hasTrackedRevisions)
-                    metrics1.Add(new XElement(H.RevisionTracking, new XAttribute(H.Val, true)));
-                return metrics1;
+                    metrics.Add(new XElement(H.RevisionTracking, new XAttribute(H.Val, true)));
+                return metrics;
             }
-            catch (OpenXmlPowerToolsException e)
+            catch (OpenXmlPowerToolsException)
             {
-                if (e.ToString().Contains("Invalid Hyperlink"))
-                {
-                    using (var ms = new MemoryStream())
-                    {
-                        ms.Write(wmlDoc.DocumentByteArray, 0, wmlDoc.DocumentByteArray.Length);
-                        UriFixer.FixInvalidUri(ms, FixUri);
-                        wmlDoc = new WmlDocument("dummy.docx", ms.ToArray());
-                    }
-                    using (var ms = new MemoryStream())
-                    {
-                        ms.Write(wmlDoc.DocumentByteArray, 0, wmlDoc.DocumentByteArray.Length);
-                        using (var document = WordprocessingDocument.Open(ms, true))
-                        {
-                            var hasTrackedRevisions = RevisionAccepter.HasTrackedRevisions(document);
-                            if (hasTrackedRevisions)
-                                RevisionAccepter.AcceptRevisions(document);
-                            var metrics2 = GetWmlMetrics(wmlDoc.FileName, true, document, settings);
-                            if (hasTrackedRevisions)
-                                metrics2.Add(new XElement(H.RevisionTracking, new XAttribute(H.Val, true)));
-                            return metrics2;
-                        }
-                    }
-                }
+                return new XElement(
+                    H.Metrics,
+                    new XAttribute(H.FileName, wmlDoc.FileName),
+                    new XAttribute(H.FileType, "WordprocessingML"),
+                    new XAttribute(H.Error, "Unknown error, metrics not determined")
+                );
             }
-            var metrics = new XElement(
-                H.Metrics,
-                new XAttribute(H.FileName, wmlDoc.FileName),
-                new XAttribute(H.FileType, "WordprocessingML"),
-                new XAttribute(H.Error, "Unknown error, metrics not determined")
-            );
-            return metrics;
         }
 
         private static int _getTextWidth(FontFamily ff, FontStyle fs, decimal sz, string text)
@@ -151,14 +127,8 @@ namespace Clippit
             }
         }
 
-        private static Uri FixUri(string brokenUri)
-        {
-            return new Uri("http://broken-link/");
-        }
-
         private static XElement GetWmlMetrics(
             string fileName,
-            bool invalidHyperlink,
             WordprocessingDocument wDoc,
             MetricsGetterSettings settings
         )
@@ -171,7 +141,7 @@ namespace Clippit
                 new XAttribute(H.FileName, fileName),
                 new XAttribute(H.FileType, "WordprocessingML"),
                 GetStyleHierarchy(wDoc),
-                GetMiscWmlMetrics(wDoc, invalidHyperlink),
+                GetMiscWmlMetrics(wDoc),
                 parts,
                 settings.RetrieveNamespaceList ? RetrieveNamespaceList(wDoc) : null,
                 settings.RetrieveContentTypeList ? RetrieveContentTypeList(wDoc) : null
@@ -239,18 +209,13 @@ namespace Clippit
             return xe;
         }
 
-        private static List<XElement> GetMiscWmlMetrics(WordprocessingDocument document, bool invalidHyperlink)
+        private static List<XElement> GetMiscWmlMetrics(WordprocessingDocument document)
         {
             var metrics = new List<XElement>();
             var notes = new List<string>();
             var elementCountDictionary = new Dictionary<XName, int>();
 
-            if (invalidHyperlink)
-                metrics.Add(new XElement(H.InvalidHyperlink, new XAttribute(H.Val, invalidHyperlink)));
-
-            var valid = ValidateWordprocessingDocument(document, metrics, notes, elementCountDictionary);
-            if (invalidHyperlink)
-                valid = false;
+            ValidateWordprocessingDocument(document, metrics, notes, elementCountDictionary);
 
             return metrics;
         }
