@@ -68,7 +68,7 @@ namespace Clippit
                 return new XElement(
                     H.Metrics,
                     new XAttribute(H.FileName, wmlDoc.FileName),
-                    new XAttribute(H.FileType, "DOCX"),
+                    new XAttribute(H.FileType, "WordprocessingML"),
                     new XAttribute(H.Error, "Unknown error, metrics not determined")
                 );
             }
