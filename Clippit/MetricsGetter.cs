@@ -65,8 +65,7 @@ namespace Clippit
             }
             catch (Exception ex) when (ex.GetType().Name == "OpenXmlPowerToolsException")
             {
-                return new XElement("Metrics",
-                    new XAttribute("Error", "Unknown error, metrics not determined"));
+                return new XElement("Metrics", new XAttribute("Error", "Unknown error, metrics not determined"));
             }
         }
 
