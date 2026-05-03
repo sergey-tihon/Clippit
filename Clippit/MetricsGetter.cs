@@ -50,16 +50,24 @@ namespace Clippit
 
         public static XElement GetDocxMetrics(WmlDocument wmlDoc, MetricsGetterSettings settings)
         {
-            using var ms = new MemoryStream();
-            ms.Write(wmlDoc.DocumentByteArray, 0, wmlDoc.DocumentByteArray.Length);
-            using var document = WordprocessingDocument.Open(ms, true);
-            var hasTrackedRevisions = RevisionAccepter.HasTrackedRevisions(document);
-            if (hasTrackedRevisions)
-                RevisionAccepter.AcceptRevisions(document);
-            var metrics = GetWmlMetrics(wmlDoc.FileName, document, settings);
-            if (hasTrackedRevisions)
-                metrics.Add(new XElement(H.RevisionTracking, new XAttribute(H.Val, true)));
-            return metrics;
+            try
+            {
+                using var ms = new MemoryStream();
+                ms.Write(wmlDoc.DocumentByteArray, 0, wmlDoc.DocumentByteArray.Length);
+                using var document = WordprocessingDocument.Open(ms, true);
+                var hasTrackedRevisions = RevisionAccepter.HasTrackedRevisions(document);
+                if (hasTrackedRevisions)
+                    RevisionAccepter.AcceptRevisions(document);
+                var metrics = GetWmlMetrics(wmlDoc.FileName, document, settings);
+                if (hasTrackedRevisions)
+                    metrics.Add(new XElement(H.RevisionTracking, new XAttribute(H.Val, true)));
+                return metrics;
+            }
+            catch (Exception ex) when (ex.GetType().Name == "OpenXmlPowerToolsException")
+            {
+                return new XElement("Metrics",
+                    new XAttribute("Error", "Unknown error, metrics not determined"));
+            }
         }
 
         private static int _getTextWidth(FontFamily ff, FontStyle fs, decimal sz, string text)
