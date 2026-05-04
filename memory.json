@@ -1,6 +1,6 @@
 {
-  "lr": "2026-05-03",
-  "rid": "25280289880",
+  "lr": "2026-05-04",
+  "rid": "25321519536",
   "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
@@ -16,11 +16,11 @@
   },
   "cursor": "103",
   "prs": {
-    "163": "RegisterCustomHandler",
-    "165": "ExcelAssembler",
-    "urifixer-open-helpers": "UriFixer Open*Document helpers (Closes #47)"
+    "163": "RegisterCustomHandler (Closes #66)",
+    "165": "ExcelAssembler (Closes #28)",
+    "tunit-1.43.11": "TUnit update 1.41.0->1.43.11 (branch: clippy/eng-tunit-1.43.11-20260504)"
   },
-  "notes": "Run 25280289880 (2026-05-03): Tasks 3+2. Task 3: added Open*Document helpers to UriFixer (OpenWordprocessingDocument, OpenPresentationDocument, OpenSpreadsheetDocument), simplified test helper OpenXmlExtensions.OpenPresentation. Created draft PR (branch clippy/fix-issue-47-urifixer-open-helpers-20260503), commented on #47. PRs #250, #251 from previous run were merged. PRs #163 and #165 still open.",
+  "notes": "Run 25321519536 (2026-05-04): Tasks 10+3. Task 10: updated TUnit 1.41.0->1.43.11, created draft PR (branch clippy/eng-tunit-1.43.11-20260504, 1739 tests pass). Task 3: no actionable bugs/help-wanted issues - all open help-wanted issues either have open Clippy PRs (#163,#165) or have Clippy comments already. PRs #252 and #253 both closed (253 merged into master). Issue #47 closed. PRs #163 and #165 still open, no CI failures, no merge conflicts with master.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
@@ -37,6 +37,8 @@
     "234": "corrupt-zip-fix",
     "248": "TUnit-1.41.0",
     "250": "perf-flatopc-base64",
-    "251": "test-content-data-key"
+    "251": "test-content-data-key",
+    "252": "urifixer-open-helpers-closed",
+    "253": "sdk-hyperlink-uri-fix-merged"
   }
 }
