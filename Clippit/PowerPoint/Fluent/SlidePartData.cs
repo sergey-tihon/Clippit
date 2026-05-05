@@ -116,10 +116,12 @@ internal class SlideLayoutData(SlideLayoutPart slideLayout, double scaleFactor)
 {
     protected override string GetShapeDescriptor(SlideLayoutPart slideLayout)
     {
-        var root = slideLayout.GetXDocument().Root!;
-        var cSld = root.Element(P.cSld)!;
-        var normalizedSpTree = NormalizeXml(cSld.Element(P.spTree)!);
-        var normalizedBg = cSld.Element(P.bg) is { } bg ? NormalizeXml(bg) : null;
+        var root = slideLayout.GetXDocument().Root;
+        if (root is null)
+            return string.Empty;
+        var cSld = root.Element(P.cSld);
+        var normalizedSpTree = cSld?.Element(P.spTree) is { } spTree ? NormalizeXml(spTree) : string.Empty;
+        var normalizedBg = cSld?.Element(P.bg) is { } bg ? NormalizeXml(bg) : null;
         return string.Concat(normalizedSpTree, normalizedBg);
     }
 }
@@ -128,23 +130,25 @@ internal class SlideLayoutData(SlideLayoutPart slideLayout, double scaleFactor)
 internal class ThemeData(ThemePart themePart, double scaleFactor) : SlidePartData<ThemePart>(themePart, scaleFactor)
 {
     protected override string GetShapeDescriptor(ThemePart themePart) =>
-        NormalizeXml(themePart.GetXDocument().Root!.Element(A.themeElements)!);
+        themePart?.GetXDocument()?.Root?.Element(A.themeElements) is { } elem ? NormalizeXml(elem) : string.Empty;
 }
 
 // This class is used to prevent duplication of masters and handle content modification
 internal class SlideMasterData(SlideMasterPart slideMaster, double scaleFactor)
     : SlidePartData<SlideMasterPart>(slideMaster, scaleFactor)
 {
-    public ThemeData ThemeData { get; } = new(slideMaster.ThemePart, scaleFactor);
+    public ThemeData? ThemeData { get; } = slideMaster.ThemePart is { } tp ? new ThemeData(tp, scaleFactor) : null;
     public Dictionary<SlideLayoutPart, SlideLayoutData> SlideLayouts { get; } = [];
 
     protected override string GetShapeDescriptor(SlideMasterPart slideMaster)
     {
-        var root = slideMaster.GetXDocument().Root!;
-        var cSld = root.Element(P.cSld)!;
-        var normalizedSpTree = NormalizeXml(cSld.Element(P.spTree)!);
-        var normalizedClrMap = NormalizeXml(root.Element(P.clrMap)!);
-        var normalizedBg = cSld.Element(P.bg) is { } bg ? NormalizeXml(bg) : null;
+        var root = slideMaster.GetXDocument().Root;
+        if (root is null)
+            return string.Empty;
+        var cSld = root.Element(P.cSld);
+        var normalizedSpTree = cSld?.Element(P.spTree) is { } spTree ? NormalizeXml(spTree) : string.Empty;
+        var normalizedClrMap = root.Element(P.clrMap) is { } clrMap ? NormalizeXml(clrMap) : string.Empty;
+        var normalizedBg = cSld?.Element(P.bg) is { } bg ? NormalizeXml(bg) : null;
         return string.Concat(normalizedSpTree, normalizedBg, normalizedClrMap);
     }
 
@@ -152,7 +156,13 @@ internal class SlideMasterData(SlideMasterPart slideMaster, double scaleFactor)
     {
         var res = base.CompareTo(other);
         if (res == 0 && other is SlideMasterData otherData)
-            res = ThemeData.CompareTo(otherData.ThemeData);
+            res = (ThemeData, otherData.ThemeData) switch
+            {
+                (null, null) => 0,
+                (null, _) => -1,
+                (_, null) => 1,
+                var (a, b) => a.CompareTo(b),
+            };
         return res;
     }
 }
