@@ -137,7 +137,7 @@ internal class ThemeData(ThemePart themePart, double scaleFactor) : SlidePartDat
 internal class SlideMasterData(SlideMasterPart slideMaster, double scaleFactor)
     : SlidePartData<SlideMasterPart>(slideMaster, scaleFactor)
 {
-    public ThemeData ThemeData { get; } = new(slideMaster.ThemePart, scaleFactor);
+    public ThemeData? ThemeData { get; } = slideMaster.ThemePart is { } tp ? new ThemeData(tp, scaleFactor) : null;
     public Dictionary<SlideLayoutPart, SlideLayoutData> SlideLayouts { get; } = [];
 
     protected override string GetShapeDescriptor(SlideMasterPart slideMaster)
@@ -156,7 +156,13 @@ internal class SlideMasterData(SlideMasterPart slideMaster, double scaleFactor)
     {
         var res = base.CompareTo(other);
         if (res == 0 && other is SlideMasterData otherData)
-            res = ThemeData.CompareTo(otherData.ThemeData);
+            res = (ThemeData, otherData.ThemeData) switch
+            {
+                (null, null) => 0,
+                (null, _) => -1,
+                (_, null) => 1,
+                var (a, b) => a.CompareTo(b),
+            };
         return res;
     }
 }
