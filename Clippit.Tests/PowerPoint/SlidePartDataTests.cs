@@ -1,5 +1,6 @@
 using System.Xml.Linq;
 using Clippit.PowerPoint.Fluent;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Tests.PowerPoint;
@@ -8,6 +9,9 @@ public class SlidePartDataTests : TestsBase
 {
     private static readonly string SourceDirectory = "../../../../TestFiles/PublishSlides/";
     private static readonly string TestPptxPath = Path.Combine(SourceDirectory, "BRK3066.pptx");
+
+    private static readonly XNamespace PresentationNs = "http://schemas.openxmlformats.org/presentationml/2006/main";
+    private static readonly XNamespace DrawingNs = "http://schemas.openxmlformats.org/drawingml/2006/main";
 
     [Test]
     public async Task SlideLayoutData_SamePartConstructedTwice_ComparesEqual()
@@ -58,15 +62,14 @@ public class SlidePartDataTests : TestsBase
 
         // Inject a noise attribute into the layout's spTree before building the descriptor.
         var xDoc = layoutPart.GetXDocument();
-        XNamespace pns = "http://schemas.openxmlformats.org/presentationml/2006/main";
-        var spTree = xDoc.Descendants(pns + "spTree").First();
+        var spTree = xDoc.Descendants(PresentationNs + "spTree").First();
         spTree.SetAttributeValue("dirty", "1");
 
         // Build SlideLayoutData — this triggers GetShapeDescriptor / NormalizeXml.
         _ = new SlideLayoutData(layoutPart, 1.0);
 
         // The original XDocument must still carry the injected attribute after normalization.
-        var afterAttr = xDoc.Descendants(pns + "spTree").First().Attribute("dirty");
+        var afterAttr = xDoc.Descendants(PresentationNs + "spTree").First().Attribute("dirty");
         await Assert.That(afterAttr).IsNotNull();
         await Assert.That(afterAttr!.Value).IsEqualTo("1");
     }
@@ -86,8 +89,7 @@ public class SlidePartDataTests : TestsBase
 
         // Inject a noise attribute and rebuild. NormalizeXml must strip it before comparing.
         var xDoc = layoutPart.GetXDocument();
-        XNamespace pns = "http://schemas.openxmlformats.org/presentationml/2006/main";
-        xDoc.Descendants(pns + "spTree").First().SetAttributeValue("smtClean", "0");
+        xDoc.Descendants(PresentationNs + "spTree").First().SetAttributeValue("smtClean", "0");
 
         var data2 = new SlideLayoutData(layoutPart, 1.0);
 
@@ -97,33 +99,125 @@ public class SlidePartDataTests : TestsBase
     [Test]
     public async Task ScaleShapes_ScalesNumericAttributes()
     {
-        XNamespace ans = "http://schemas.openxmlformats.org/drawingml/2006/main";
         var spTree = new XElement(
             "spTree",
-            new XElement(ans + "off", new XAttribute("x", "1000"), new XAttribute("y", "2000")),
-            new XElement(ans + "ext", new XAttribute("cx", "3000"), new XAttribute("cy", "4000"))
+            new XElement(DrawingNs + "off", new XAttribute("x", "1000"), new XAttribute("y", "2000")),
+            new XElement(DrawingNs + "ext", new XAttribute("cx", "3000"), new XAttribute("cy", "4000"))
         );
 
         SlidePartData<SlideLayoutPart>.ScaleShapes(spTree, 2.0);
 
-        await Assert.That(spTree.Descendants(ans + "off").First().Attribute("x")!.Value).IsEqualTo("2000");
-        await Assert.That(spTree.Descendants(ans + "off").First().Attribute("y")!.Value).IsEqualTo("4000");
-        await Assert.That(spTree.Descendants(ans + "ext").First().Attribute("cx")!.Value).IsEqualTo("6000");
-        await Assert.That(spTree.Descendants(ans + "ext").First().Attribute("cy")!.Value).IsEqualTo("8000");
+        await Assert.That(spTree.Descendants(DrawingNs + "off").First().Attribute("x")!.Value).IsEqualTo("2000");
+        await Assert.That(spTree.Descendants(DrawingNs + "off").First().Attribute("y")!.Value).IsEqualTo("4000");
+        await Assert.That(spTree.Descendants(DrawingNs + "ext").First().Attribute("cx")!.Value).IsEqualTo("6000");
+        await Assert.That(spTree.Descendants(DrawingNs + "ext").First().Attribute("cy")!.Value).IsEqualTo("8000");
     }
 
     [Test]
     public async Task ScaleShapes_ScaleFactorOne_LeavesAttributesUnchanged()
     {
-        XNamespace ans = "http://schemas.openxmlformats.org/drawingml/2006/main";
         var spTree = new XElement(
             "spTree",
-            new XElement(ans + "ext", new XAttribute("cx", "5000"), new XAttribute("cy", "6000"))
+            new XElement(DrawingNs + "ext", new XAttribute("cx", "5000"), new XAttribute("cy", "6000"))
         );
 
         SlidePartData<SlideLayoutPart>.ScaleShapes(spTree, 1.0);
 
-        await Assert.That(spTree.Descendants(ans + "ext").First().Attribute("cx")!.Value).IsEqualTo("5000");
-        await Assert.That(spTree.Descendants(ans + "ext").First().Attribute("cy")!.Value).IsEqualTo("6000");
+        await Assert.That(spTree.Descendants(DrawingNs + "ext").First().Attribute("cx")!.Value).IsEqualTo("5000");
+        await Assert.That(spTree.Descendants(DrawingNs + "ext").First().Attribute("cy")!.Value).IsEqualTo("6000");
+    }
+
+    /// <summary>
+    /// Missing p:spTree must produce an empty descriptor, not throw.
+    /// </summary>
+    [Test]
+    public async Task SlideLayoutData_WithMissingSpTree_DoesNotThrow()
+    {
+        using var doc = PresentationDocument.Open(TestPptxPath, false);
+        var layoutPart = doc.PresentationPart!.SlideMasterParts.First().SlideLayoutParts.First();
+
+        layoutPart.GetXDocument().Root!.Element(PresentationNs + "cSld")?.Element(PresentationNs + "spTree")?.Remove();
+
+        var data = new SlideLayoutData(layoutPart, 1.0);
+        await Assert.That(data.CompareTo(data)).IsEqualTo(0);
+    }
+
+    /// <summary>
+    /// Missing p:cSld must produce an empty descriptor, not throw.
+    /// </summary>
+    [Test]
+    public async Task SlideLayoutData_WithMissingCsld_DoesNotThrow()
+    {
+        using var doc = PresentationDocument.Open(TestPptxPath, false);
+        var layoutPart = doc.PresentationPart!.SlideMasterParts.First().SlideLayoutParts.First();
+
+        layoutPart.GetXDocument().Root!.Element(PresentationNs + "cSld")?.Remove();
+
+        var data = new SlideLayoutData(layoutPart, 1.0);
+        await Assert.That(data.CompareTo(data)).IsEqualTo(0);
+    }
+
+    /// <summary>
+    /// Missing p:spTree in a slide master must produce an empty descriptor, not throw.
+    /// </summary>
+    [Test]
+    public async Task SlideMasterData_WithMissingSpTree_DoesNotThrow()
+    {
+        using var doc = PresentationDocument.Open(TestPptxPath, false);
+        var masterPart = doc.PresentationPart!.SlideMasterParts.First();
+
+        masterPart.GetXDocument().Root!.Element(PresentationNs + "cSld")?.Element(PresentationNs + "spTree")?.Remove();
+
+        var data = new SlideMasterData(masterPart, 1.0);
+        await Assert.That(data.CompareTo(data)).IsEqualTo(0);
+    }
+
+    /// <summary>
+    /// Missing p:clrMap in a slide master must produce an empty descriptor, not throw.
+    /// </summary>
+    [Test]
+    public async Task SlideMasterData_WithMissingClrMap_DoesNotThrow()
+    {
+        using var doc = PresentationDocument.Open(TestPptxPath, false);
+        var masterPart = doc.PresentationPart!.SlideMasterParts.First();
+
+        masterPart.GetXDocument().Root!.Element(PresentationNs + "clrMap")?.Remove();
+
+        var data = new SlideMasterData(masterPart, 1.0);
+        await Assert.That(data.CompareTo(data)).IsEqualTo(0);
+    }
+
+    /// <summary>
+    /// Missing a:themeElements in a theme part must produce an empty descriptor, not throw.
+    /// </summary>
+    [Test]
+    public async Task ThemeData_WithMissingThemeElements_DoesNotThrow()
+    {
+        using var doc = PresentationDocument.Open(TestPptxPath, false);
+        var themePart = doc.PresentationPart!.SlideMasterParts.First().ThemePart!;
+
+        themePart.GetXDocument().Root!.Element(DrawingNs + "themeElements")?.Remove();
+
+        var data = new ThemeData(themePart, 1.0);
+        await Assert.That(data.CompareTo(data)).IsEqualTo(0);
+    }
+
+    /// <summary>
+    /// A slide master with no ThemePart must produce a null ThemeData, not throw.
+    /// </summary>
+    [Test]
+    public async Task SlideMasterData_WithNullThemePart_HasNullThemeData()
+    {
+        using var ms = new MemoryStream();
+        using var pptx = PresentationDocument.Create(ms, PresentationDocumentType.Presentation);
+        var presentationPart = pptx.AddPresentationPart();
+        var slideMasterPart = presentationPart.AddNewPart<SlideMasterPart>();
+
+        slideMasterPart.PutXDocument(new XDocument(new XElement(PresentationNs + "sldMaster")));
+
+        // ThemePart is null because no ThemePart relationship was added.
+        var data = new SlideMasterData(slideMasterPart, 1.0);
+        await Assert.That(data.ThemeData).IsNull();
+        await Assert.That(data.CompareTo(data)).IsEqualTo(0);
     }
 }
