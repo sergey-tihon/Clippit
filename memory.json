@@ -1,7 +1,7 @@
 {
-  "lr": "2026-05-04",
-  "rid": "25321519536",
-  "m_issue": 249,
+  "lr": "2026-05-05",
+  "rid": "25393155661",
+  "m_issue": 255,
   "m_month": "2026-05",
   "comments": {
     "66": "2026-03-26",
@@ -12,15 +12,17 @@
     "54": "2026-04-03",
     "28": "2026-03-28",
     "65": "2026-03-29",
-    "233": "2026-04-23"
+    "233": "2026-04-23",
+    "255": "2026-05-05"
   },
-  "cursor": "103",
+  "cursor": "255",
   "prs": {
     "163": "RegisterCustomHandler (Closes #66)",
     "165": "ExcelAssembler (Closes #28)",
-    "tunit-1.43.11": "TUnit update 1.41.0->1.43.11 (branch: clippy/eng-tunit-1.43.11-20260504)"
+    "tunit-1.43.11": "TUnit update 1.41.0->1.43.11 (branch: clippy/eng-tunit-1.43.11-20260504)",
+    "255-fix": "Fix ArgumentNullException in FluentPresentationBuilder (Closes #255, branch: clippy/fix-issue-255-null-theme-layout-parts)"
   },
-  "notes": "Run 25321519536 (2026-05-04): Tasks 10+3. Task 10: updated TUnit 1.41.0->1.43.11, created draft PR (branch clippy/eng-tunit-1.43.11-20260504, 1739 tests pass). Task 3: no actionable bugs/help-wanted issues - all open help-wanted issues either have open Clippy PRs (#163,#165) or have Clippy comments already. PRs #252 and #253 both closed (253 merged into master). Issue #47 closed. PRs #163 and #165 still open, no CI failures, no merge conflicts with master.",
+  "notes": "Run 25393155661 (2026-05-05): Command mode '/clippy prepare a fix' on issue #255. Root cause: null-forgiving ! operators on XML element lookups in GetShapeDescriptor methods pass null to NormalizeXml -> new XElement(null) throws ArgumentNullException(other). Fixed all three overrides in SlidePartData.cs to use null-conditional patterns. Build+tests pass. Created draft PR.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
