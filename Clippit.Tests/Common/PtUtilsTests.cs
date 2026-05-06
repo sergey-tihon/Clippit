@@ -249,7 +249,7 @@ public class PtExtensionsTests
     }
 
     [Test]
-    public async Task StrCat_SingleElement_NoSeparatorAppended()
+    public async Task StrCat_SingleElement_TrailingSeparatorAppended()
     {
         var result = new[] { "a" }.StrCat("/");
         await Assert.That(result).IsEqualTo("a/");
