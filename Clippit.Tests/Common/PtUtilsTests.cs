@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Xml.Linq;
 using Clippit.Word.Assembler;
 
 namespace Clippit.Tests.Common;
@@ -119,5 +120,145 @@ public class PtUtilsTests
     {
         var result = "a,b;c".SplitAndKeep(',', ';');
         await Assert.That(result).IsEquivalentTo(["a", ",", "b", ";", "c"]);
+    }
+}
+
+public class PtExtensionsTests
+{
+    // ── ToBoolean ───────────────────────────────────────────────────────────
+
+    [Test]
+    public async Task ToBoolean_Null_ReturnsNull()
+    {
+        XAttribute? a = null;
+        await Assert.That(a.ToBoolean()).IsNull();
+    }
+
+    [Test]
+    [Arguments("1", true)]
+    [Arguments("0", false)]
+    [Arguments("true", true)]
+    [Arguments("false", false)]
+    [Arguments("on", true)]
+    [Arguments("off", false)]
+    [Arguments("True", true)]
+    [Arguments("False", false)]
+    public async Task ToBoolean_KnownValues_ReturnsExpected(string value, bool expected)
+    {
+        var elem = new XElement("e", new XAttribute("a", value));
+        await Assert.That(elem.Attribute("a").ToBoolean()).IsEqualTo(expected);
+    }
+
+    // ── GetXPath ────────────────────────────────────────────────────────────
+
+    [Test]
+    public async Task GetXPath_Document_ReturnsDot()
+    {
+        var doc = new XDocument(new XElement("root"));
+        await Assert.That(doc.GetXPath()).IsEqualTo(".");
+    }
+
+    [Test]
+    public async Task GetXPath_RootElement_ReturnsSlashName()
+    {
+        var doc = new XDocument(new XElement("root"));
+        await Assert.That(doc.Root!.GetXPath()).IsEqualTo("/root");
+    }
+
+    [Test]
+    public async Task GetXPath_NestedElement_ReturnsFullPath()
+    {
+        var doc = new XDocument(new XElement("root", new XElement("child", new XElement("leaf"))));
+        var leaf = doc.Root!.Element("child")!.Element("leaf")!;
+        await Assert.That(leaf.GetXPath()).IsEqualTo("/root/child/leaf");
+    }
+
+    [Test]
+    public async Task GetXPath_SiblingElements_IncludePredicate()
+    {
+        var doc = new XDocument(
+            new XElement("root", new XElement("item", "a"), new XElement("item", "b"), new XElement("item", "c"))
+        );
+        var items = doc.Root!.Elements("item").ToList();
+        await Assert.That(items[0].GetXPath()).IsEqualTo("/root/item[1]");
+        await Assert.That(items[1].GetXPath()).IsEqualTo("/root/item[2]");
+        await Assert.That(items[2].GetXPath()).IsEqualTo("/root/item[3]");
+    }
+
+    [Test]
+    public async Task GetXPath_Attribute_ReturnsAtPath()
+    {
+        var doc = new XDocument(new XElement("root", new XAttribute("id", "42")));
+        var attr = doc.Root!.Attribute("id")!;
+        await Assert.That(attr.GetXPath()).IsEqualTo("/root/@id");
+    }
+
+    [Test]
+    public async Task GetXPath_TextNode_ReturnsTextPath()
+    {
+        var doc = new XDocument(new XElement("root", new XElement("child", "hello")));
+        var text = doc.Root!.Element("child")!.Nodes().OfType<XText>().First();
+        await Assert.That(text.GetXPath()).IsEqualTo("/root/child/text()");
+    }
+
+    // ── GroupAdjacent ───────────────────────────────────────────────────────
+
+    [Test]
+    public async Task GroupAdjacent_EmptySequence_ReturnsEmpty()
+    {
+        var result = Enumerable.Empty<int>().GroupAdjacent(x => x).ToList();
+        await Assert.That(result).IsEmpty();
+    }
+
+    [Test]
+    public async Task GroupAdjacent_AllSameKey_ReturnsOneGroup()
+    {
+        var result = new[] { 1, 1, 1 }.GroupAdjacent(x => x).ToList();
+        await Assert.That(result).HasCount(1);
+        await Assert.That(result[0].Key).IsEqualTo(1);
+        await Assert.That(result[0].ToList()).IsEquivalentTo([1, 1, 1]);
+    }
+
+    [Test]
+    public async Task GroupAdjacent_AllDifferentKeys_ReturnsOneGroupPerElement()
+    {
+        var result = new[] { 1, 2, 3 }.GroupAdjacent(x => x).ToList();
+        await Assert.That(result).HasCount(3);
+    }
+
+    [Test]
+    public async Task GroupAdjacent_AdjacentDuplicates_GroupedTogether()
+    {
+        var result = new[] { 1, 1, 2, 2, 1, 1 }.GroupAdjacent(x => x).ToList();
+        await Assert.That(result).HasCount(3);
+        await Assert.That(result[0].Key).IsEqualTo(1);
+        await Assert.That(result[1].Key).IsEqualTo(2);
+        await Assert.That(result[2].Key).IsEqualTo(1);
+        await Assert.That(result[0].Count()).IsEqualTo(2);
+        await Assert.That(result[1].Count()).IsEqualTo(2);
+        await Assert.That(result[2].Count()).IsEqualTo(2);
+    }
+
+    // ── StrCat ──────────────────────────────────────────────────────────────
+
+    [Test]
+    public async Task StrCat_EmptySequence_ReturnsEmpty()
+    {
+        var result = Enumerable.Empty<string>().StrCat("/");
+        await Assert.That(result).IsEmpty();
+    }
+
+    [Test]
+    public async Task StrCat_SingleElement_NoSeparatorAppended()
+    {
+        var result = new[] { "a" }.StrCat("/");
+        await Assert.That(result).IsEqualTo("a/");
+    }
+
+    [Test]
+    public async Task StrCat_MultipleElements_JoinedWithSeparator()
+    {
+        var result = new[] { "a", "b", "c" }.StrCat("/");
+        await Assert.That(result).IsEqualTo("a/b/c/");
     }
 }
