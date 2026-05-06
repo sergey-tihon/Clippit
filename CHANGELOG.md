@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.3] - May 6, 2026
+
+- fix(pptx): fix `ArgumentNullException` in `FluentPresentationBuilder` when slides have null data (#256)
+- fix(word): rely on SDK 3.x built-in handling for invalid hyperlink URIs — removes manual `UriFixer` patching (#253)
+- perf: replace LINQ char filter with `ReplaceLineEndings` in `FlatOpc.ToPackage` (#250)
+- chore(deps): update TUnit 1.41.0 → 1.43.11 (#254)
+
 ## [3.4.2] - April 30, 2026
 
 - fix(pptx): make all part copies resilient to corrupt ZIP local file headers (#234)
