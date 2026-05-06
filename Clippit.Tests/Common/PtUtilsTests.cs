@@ -261,4 +261,188 @@ public class PtExtensionsTests
         var result = new[] { "a", "b", "c" }.StrCat("/");
         await Assert.That(result).IsEqualTo("a/b/c/");
     }
+
+    // ── StringConcatenate ──────────────────────────────────────────────────
+
+    [Test]
+    public async Task StringConcatenate_StringOverload_JoinsAll()
+    {
+        var result = new[] { "foo", "bar", "baz" }.StringConcatenate();
+        await Assert.That(result).IsEqualTo("foobarbaz");
+    }
+
+    [Test]
+    public async Task StringConcatenate_Empty_ReturnsEmpty()
+    {
+        var result = Enumerable.Empty<string>().StringConcatenate();
+        await Assert.That(result).IsEmpty();
+    }
+
+    [Test]
+    public async Task StringConcatenate_WithProjection_AppliesProjection()
+    {
+        var result = new[] { 1, 2, 3 }.StringConcatenate(n => n.ToString());
+        await Assert.That(result).IsEqualTo("123");
+    }
+
+    // ── PtZip ─────────────────────────────────────────────────────────────
+
+    [Test]
+    public async Task PtZip_EqualLengthSequences_ZipsAll()
+    {
+        var result = new[] { 1, 2, 3 }.PtZip(new[] { "a", "b", "c" }, (n, s) => $"{n}{s}").ToList();
+        await Assert.That(result).IsEquivalentTo(["1a", "2b", "3c"]);
+    }
+
+    [Test]
+    public async Task PtZip_FirstShorter_StopsAtFirst()
+    {
+        var result = new[] { 1, 2 }.PtZip(new[] { "a", "b", "c" }, (n, s) => n + s).ToList();
+        await Assert.That(result).HasCount(2);
+    }
+
+    [Test]
+    public async Task PtZip_SecondShorter_StopsAtSecond()
+    {
+        var result = new[] { 1, 2, 3 }.PtZip(new[] { "a" }, (n, s) => n + s).ToList();
+        await Assert.That(result).HasCount(1);
+    }
+
+    // ── SkipLast ──────────────────────────────────────────────────────────
+
+    [Test]
+    public async Task SkipLast_SkipZero_ReturnsAll()
+    {
+        var result = new[] { 1, 2, 3 }.SkipLast(0).ToList();
+        await Assert.That(result).IsEquivalentTo([1, 2, 3]);
+    }
+
+    [Test]
+    public async Task SkipLast_SkipTwo_ReturnsFirstElement()
+    {
+        var result = new[] { 1, 2, 3 }.SkipLast(2).ToList();
+        await Assert.That(result).IsEquivalentTo([1]);
+    }
+
+    [Test]
+    public async Task SkipLast_SkipMoreThanLength_ReturnsEmpty()
+    {
+        var result = new[] { 1, 2 }.SkipLast(5).ToList();
+        await Assert.That(result).IsEmpty();
+    }
+
+    // ── SequenceAt ────────────────────────────────────────────────────────
+
+    [Test]
+    public async Task SequenceAt_FromStart_ReturnsAll()
+    {
+        var arr = new[] { 10, 20, 30 };
+        var result = arr.SequenceAt(0).ToList();
+        await Assert.That(result).IsEquivalentTo([10, 20, 30]);
+    }
+
+    [Test]
+    public async Task SequenceAt_FromMiddle_ReturnsTail()
+    {
+        var arr = new[] { 10, 20, 30 };
+        var result = arr.SequenceAt(1).ToList();
+        await Assert.That(result).IsEquivalentTo([20, 30]);
+    }
+
+    [Test]
+    public async Task SequenceAt_PastEnd_ReturnsEmpty()
+    {
+        var arr = new[] { 10, 20 };
+        var result = arr.SequenceAt(5).ToList();
+        await Assert.That(result).IsEmpty();
+    }
+
+    // ── Rollup ────────────────────────────────────────────────────────────
+
+    [Test]
+    public async Task Rollup_Empty_ReturnsEmpty()
+    {
+        var result = Enumerable.Empty<int>().Rollup(0, (x, acc) => acc + x).ToList();
+        await Assert.That(result).IsEmpty();
+    }
+
+    [Test]
+    public async Task Rollup_RunningSum_ProducesAccumulatedValues()
+    {
+        var result = new[] { 1, 2, 3, 4 }.Rollup(0, (x, acc) => acc + x).ToList();
+        await Assert.That(result).IsEquivalentTo([1, 3, 6, 10]);
+    }
+
+    [Test]
+    public async Task Rollup_WithIndex_IndexPassedCorrectly()
+    {
+        var result = new[] { "a", "b", "c" }.Rollup("", (x, acc, i) => $"{i}:{x}").ToList();
+        await Assert.That(result).IsEquivalentTo(["0:a", "1:b", "2:c"]);
+    }
+
+    // ── DescendantsTrimmed ─────────────────────────────────────────────────
+
+    [Test]
+    public async Task DescendantsTrimmed_ByName_StopsAtTrimElement()
+    {
+        var root = XElement.Parse("<root><a><b><c/></b></a><b><d/></b></root>");
+        XName trimName = "b";
+        var result = root.DescendantsTrimmed(trimName).Select(e => e.Name.LocalName).ToList();
+        // Expects: a, b (under a — trimmed, no c), b (child of root — trimmed, no d)
+        await Assert.That(result).IsEquivalentTo(["a", "b", "b"]);
+    }
+
+    [Test]
+    public async Task DescendantsTrimmed_ByPredicate_StopsWhenPredicateTrue()
+    {
+        var root = XElement.Parse("<root><keep><stop><deep/></stop></keep></root>");
+        var result = root.DescendantsTrimmed(e => e.Name.LocalName == "stop").Select(e => e.Name.LocalName).ToList();
+        await Assert.That(result).IsEquivalentTo(["keep", "stop"]);
+    }
+
+    // ── SiblingsBeforeSelfReverseDocumentOrder ─────────────────────────────
+
+    [Test]
+    public async Task SiblingsBeforeSelfReverseDocumentOrder_ReturnsOlderSiblingsInReverse()
+    {
+        var root = XElement.Parse("<root><a/><b/><c/><d/></root>");
+        var d = root.Element("d");
+        var result = d!.SiblingsBeforeSelfReverseDocumentOrder().Select(e => e.Name.LocalName).ToList();
+        await Assert.That(result).IsEquivalentTo(["c", "b", "a"]);
+    }
+
+    [Test]
+    public async Task SiblingsBeforeSelfReverseDocumentOrder_FirstSibling_ReturnsEmpty()
+    {
+        var root = XElement.Parse("<root><a/><b/></root>");
+        var a = root.Element("a");
+        var result = a!.SiblingsBeforeSelfReverseDocumentOrder().ToList();
+        await Assert.That(result).IsEmpty();
+    }
+
+    // ── DescendantsBeforeSelfReverseDocumentOrder ──────────────────────────
+
+    [Test]
+    public async Task DescendantsBeforeSelfReverseDocumentOrder_ReturnsDescendantsInReverse()
+    {
+        var root = XElement.Parse("<root><a><b/></a><c/></root>");
+        var c = root.Element("c");
+        var result = c!.DescendantsBeforeSelfReverseDocumentOrder().Select(e => e.Name.LocalName).ToList();
+        // In document order: root, a, b, c — so before c in reverse: b, a
+        await Assert.That(result).IsEquivalentTo(["b", "a"]);
+    }
+
+    // ── ToStringNewLineOnAttributes ────────────────────────────────────────
+
+    [Test]
+    public async Task ToStringNewLineOnAttributes_ElementWithAttributes_EachAttributeOnOwnLine()
+    {
+        var el = new XElement("item", new XAttribute("id", "1"), new XAttribute("name", "foo"));
+        var result = el.ToStringNewLineOnAttributes();
+        await Assert.That(result).Contains("id=\"1\"");
+        await Assert.That(result).Contains("name=\"foo\"");
+        // Each attribute should be on its own line
+        var lines = result.Split('\n').Select(l => l.Trim()).Where(l => l.Length > 0).ToArray();
+        await Assert.That(lines.Length).IsGreaterThan(1);
+    }
 }
