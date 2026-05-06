@@ -1,6 +1,6 @@
 {
   "lr": "2026-05-06",
-  "rid": "25447086604",
+  "rid": "25457160576",
   "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
@@ -19,10 +19,9 @@
   "prs": {
     "163": "RegisterCustomHandler (Closes #66)",
     "165": "ExcelAssembler (Closes #28)",
-    "259": "test: additional PtExtensions tests (StringConcatenate, PtZip, SkipLast, SequenceAt, Rollup, DescendantsTrimmed)",
-    "260": "ci: add NuGet package caching"
+    "release-3.4.3": "chore: prepare release v3.4.3 (branch: clippy/release-3.4.3-20260506)"
   },
-  "notes": "Run 25447086604 (2026-05-06): Task 9: created PR #259 with additional PtExtensions unit tests (StringConcatenate, PtZip, SkipLast, SequenceAt, Rollup, DescendantsTrimmed, SiblingsBeforeSelf, DescendantsBeforeSelf, ToStringNewLineOnAttributes). Task 4: no outdated deps, created PR #260 adding NuGet caching to CI workflow. PR #258 (PtExtensions tests from last run) was merged by maintainer.",
+  "notes": "Run 25457160576 (2026-05-06): Task 10: created release PR for v3.4.3 (CHANGELOG updated with fixes #256, #253, perf #250, TUnit update #254). Task 6: PRs #163 and #165 CI passing, no fixes needed. PR #259 merged by maintainer. PR #260 (NuGet caching) was closed without merge.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
@@ -44,6 +43,7 @@
     "253": "sdk-hyperlink-uri-fix-merged",
     "254": "TUnit-1.43.11-merged",
     "256": "fix-issue-255-merged",
-    "258": "ptextensions-tests-merged"
+    "258": "ptextensions-tests-merged",
+    "259": "ptextensions-additional-tests-merged"
   }
 }
