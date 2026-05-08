@@ -3,7 +3,6 @@
 
 using System.Xml.Linq;
 using Clippit.Word;
-using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 
@@ -18,7 +17,9 @@ public class ReferenceAdderTests : TestsBase
     private static WmlDocument CreateMinimalDocumentWithHeadings()
     {
         using var stream = new MemoryStream();
-        using (var wDoc = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
+        using (
+            var wDoc = WordprocessingDocument.Create(stream, DocumentFormat.OpenXml.WordprocessingDocumentType.Document)
+        )
         {
             var mainPart = wDoc.AddMainDocumentPart();
             mainPart.Document = new Document(
@@ -180,6 +181,18 @@ public class ReferenceAdderTests : TestsBase
         var instrTexts = mainXDoc.Descendants(W.instrText).Select(t => ((string)t).Trim()).ToList();
         await Assert.That(instrTexts).IsNotEmpty();
         await Assert.That(instrTexts[0]).Contains("Figure");
+
+        var bodyChildren = mainXDoc.Root!.Element(W.body)!.Elements().ToList();
+        var fieldParagraphIndex = bodyChildren.FindIndex(e =>
+            e.Name == W.p && e.Descendants(W.instrText).Any(t => ((string)t).Contains("Figure"))
+        );
+        var targetParagraphIndex = bodyChildren.FindIndex(e =>
+            e.Name == W.p && e.Descendants(W.t).Any(t => (string)t == "Chapter 1")
+        );
+
+        await Assert.That(fieldParagraphIndex).IsGreaterThanOrEqualTo(0);
+        await Assert.That(targetParagraphIndex).IsGreaterThanOrEqualTo(0);
+        await Assert.That(fieldParagraphIndex).IsLessThan(targetParagraphIndex);
     }
 
     [Test]
@@ -208,6 +221,18 @@ public class ReferenceAdderTests : TestsBase
         var instrTexts = mainXDoc.Descendants(W.instrText).Select(t => ((string)t).Trim()).ToList();
         await Assert.That(instrTexts).IsNotEmpty();
         await Assert.That(instrTexts[0]).Contains("TOA");
+
+        var bodyChildren = mainXDoc.Root!.Element(W.body)!.Elements().ToList();
+        var fieldParagraphIndex = bodyChildren.FindIndex(e =>
+            e.Name == W.p && e.Descendants(W.instrText).Any(t => ((string)t).Contains("TOA"))
+        );
+        var targetParagraphIndex = bodyChildren.FindIndex(e =>
+            e.Name == W.p && e.Descendants(W.t).Any(t => (string)t == "Chapter 1")
+        );
+
+        await Assert.That(fieldParagraphIndex).IsGreaterThanOrEqualTo(0);
+        await Assert.That(targetParagraphIndex).IsGreaterThanOrEqualTo(0);
+        await Assert.That(fieldParagraphIndex).IsLessThan(targetParagraphIndex);
     }
 
     // -----------------------------------------------------------------------
@@ -221,7 +246,7 @@ public class ReferenceAdderTests : TestsBase
         var result = doc.AddToc("/w:document/w:body/w:p[1]", @"TOC \o '1-3' \h \z \u", "Contents", null);
 
         using var wDoc = WordprocessingDocument.Open(new MemoryStream(result.DocumentByteArray), false);
-        await Validate(wDoc, ["The element has unexpected child element"]);
+        await Validate(wDoc, []);
     }
 
     [Test]
@@ -231,7 +256,7 @@ public class ReferenceAdderTests : TestsBase
         var result = doc.AddTof("/w:document/w:body/w:p[1]", @"TOC \h \z \c ""Figure""", null);
 
         using var wDoc = WordprocessingDocument.Open(new MemoryStream(result.DocumentByteArray), false);
-        await Validate(wDoc, ["The element has unexpected child element"]);
+        await Validate(wDoc, []);
     }
 
     // -----------------------------------------------------------------------
@@ -252,7 +277,12 @@ public class ReferenceAdderTests : TestsBase
         var result = ReferenceAdder.AddToc(srcDoc, xPath, switches, null, null);
 
         using var wDoc = WordprocessingDocument.Open(new MemoryStream(result.DocumentByteArray), false);
-        await Validate(wDoc, ["The element has unexpected child element"]);
+        await Validate(
+            wDoc,
+            [
+                "The element has unexpected child element 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:updateFields'.",
+            ]
+        );
 
         var mainXDoc = wDoc.MainDocumentPart!.GetXDocument();
         var sdt = mainXDoc.Descendants(W.sdt).FirstOrDefault();
