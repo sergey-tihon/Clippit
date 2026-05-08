@@ -181,7 +181,7 @@ namespace Clippit.Word
     </w:rPr>
   </w:pPr>
   <w:r>
-    <w:fldChar w:fldCharType='begin' dirty='true'/>
+    <w:fldChar w:fldCharType='begin' w:dirty='true'/>
   </w:r>
   <w:r>
     <w:instrText xml:space='preserve'> {1} </w:instrText>
