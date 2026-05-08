@@ -5,6 +5,7 @@ using System.Xml.Linq;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using WordprocessingDocumentType = DocumentFormat.OpenXml.WordprocessingDocumentType;
 
 namespace Clippit.Tests.Word;
 
@@ -17,9 +18,7 @@ public class ReferenceAdderTests : TestsBase
     private static WmlDocument CreateMinimalDocumentWithHeadings()
     {
         using var stream = new MemoryStream();
-        using (
-            var wDoc = WordprocessingDocument.Create(stream, DocumentFormat.OpenXml.WordprocessingDocumentType.Document)
-        )
+        using (var wDoc = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
         {
             var mainPart = wDoc.AddMainDocumentPart();
             mainPart.Document = new Document(
@@ -279,9 +278,7 @@ public class ReferenceAdderTests : TestsBase
         using var wDoc = WordprocessingDocument.Open(new MemoryStream(result.DocumentByteArray), false);
         await Validate(
             wDoc,
-            [
-                "The element has unexpected child element 'http://schemas.openxmlformats.org/wordprocessingml/2006/main:updateFields'.",
-            ]
+            [$"The element has unexpected child element '{W.updateFields.NamespaceName}:{W.updateFields.LocalName}'."]
         );
 
         var mainXDoc = wDoc.MainDocumentPart!.GetXDocument();
