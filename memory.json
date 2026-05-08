@@ -1,6 +1,6 @@
 {
-  "lr": "2026-05-07",
-  "rid": "25508153689",
+  "lr": "2026-05-08",
+  "rid": "25565828790",
   "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
@@ -18,9 +18,10 @@
   "cursor": "103",
   "prs": {
     "163": "RegisterCustomHandler (Closes #66)",
-    "165": "ExcelAssembler (Closes #28)"
+    "165": "ExcelAssembler (Closes #28)",
+    "263": "test: add ReferenceAdder unit tests (RA100-RA140) and fix AddTof w:dirty namespace bug"
   },
-  "notes": "Run 25508153689 (2026-05-07): Task 2 all issues commented, no new activity. Task 3 no fixable bugs. Release v3.4.3 PR #262 was merged by maintainer. PRs #163 and #165 still open awaiting review.",
+  "notes": "Run 25565828790 (2026-05-08): Task 2 all issues have recent comments, no new human activity. Task 10 added ReferenceAdder unit tests PR #263 and fixed AddTof w:dirty namespace bug. PRs #163 and #165 still open awaiting review.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
