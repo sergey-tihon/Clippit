@@ -23,6 +23,8 @@ on:
     pull-requests: read
   steps:
     - id: check
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         MAX_OPEN_PRS=8
         if [[ "${{ github.event_name }}" != "schedule" ]]; then exit 0; fi
@@ -38,16 +40,16 @@ permissions: read-all
 
 network:
   allowed:
-  - defaults
-  - dotnet
-  - node
-  - python
-  - rust
-  - java
+    - defaults
+    - dotnet
+    - node
+    - python
+    - rust
+    - java
 
 checkout:
-  fetch: ["*"]     # fetch all remote branches to allow working on PR branches
-  fetch-depth: 0   # fetch full history
+  fetch: ["*"] # fetch all remote branches to allow working on PR branches
+  fetch-depth: 0 # fetch full history
 
 safe-outputs:
   messages:
@@ -79,11 +81,47 @@ safe-outputs:
     title-prefix: "[Clippy] "
     max: 1
   add-labels:
-    allowed: [bug, enhancement, "help wanted", "good first issue", "spam", "off topic", documentation, question, duplicate, wontfix, "needs triage", "needs investigation", "breaking change", performance, security, refactor]
+    allowed:
+      [
+        bug,
+        enhancement,
+        "help wanted",
+        "good first issue",
+        "spam",
+        "off topic",
+        documentation,
+        question,
+        duplicate,
+        wontfix,
+        "needs triage",
+        "needs investigation",
+        "breaking change",
+        performance,
+        security,
+        refactor,
+      ]
     max: 30
     target: "*"
   remove-labels:
-    allowed: [bug, enhancement, "help wanted", "good first issue", "spam", "off topic", documentation, question, duplicate, wontfix, "needs triage", "needs investigation", "breaking change", performance, security, refactor]
+    allowed:
+      [
+        bug,
+        enhancement,
+        "help wanted",
+        "good first issue",
+        "spam",
+        "off topic",
+        documentation,
+        question,
+        duplicate,
+        wontfix,
+        "needs triage",
+        "needs investigation",
+        "breaking change",
+        performance,
+        security,
+        refactor,
+      ]
     max: 5
     target: "*"
 
@@ -201,7 +239,7 @@ Take heed of **instructions**: "${{ steps.sanitized.outputs.text }}"
 
 If these are non-empty (not ""), then you have been triggered via `/clippy <instructions>`. Follow the user's instructions instead of the normal scheduled workflow. Focus exclusively on those instructions. Apply all the same guidelines (read AGENTS.md, run formatters/linters/tests, be polite, use AI disclosure). Skip the weighted task selection and Task 11 reporting, and instead directly do what the user requested. If no specific instructions were provided (empty or blank), proceed with the normal scheduled workflow below.
 
-Then exit  -  do not run the normal workflow after completing the instructions.
+Then exit - do not run the normal workflow after completing the instructions.
 
 ## Non-Command Mode
 
@@ -213,7 +251,7 @@ Always be:
 - **Concise**: Keep comments focused and actionable. Avoid walls of text.
 - **Mindful of project values**: Prioritize **stability**, **correctness**, and **minimal dependencies**. Do not introduce new dependencies without clear justification.
 - **Transparent about your nature**: Always clearly identify yourself as Clippy, an automated AI assistant. Never pretend to be a human maintainer.
-- **Restrained**: When in doubt, do nothing. It is always better to stay silent than to post a redundant, unhelpful, or spammy comment. Human maintainers' attention is precious  -  do not waste it.
+- **Restrained**: When in doubt, do nothing. It is always better to stay silent than to post a redundant, unhelpful, or spammy comment. Human maintainers' attention is precious - do not waste it.
 
 ## Memory
 
@@ -236,18 +274,18 @@ Each run, the deterministic pre-step collects live repo data (open issue count, 
 
 **Read the task selection**: at the start of your run, read `/tmp/gh-aw/task_selection.json` and confirm the three selected tasks in your opening reasoning. Execute **those three tasks** (plus the mandatory Task 11). If a selected task is not applicable to the current repo state, substitute its fallback task rather than doing nothing. Record the substitution in the Task 11 run history entry.
 
-| Selected task | Not applicable when… | Fallback |
-|---|---|---|
-| Task 1 (Issue Labelling) | All open issues already labelled | Task 2 |
-| Task 2 (Issue Comment) | All open issues already have a recent Repo Assist comment and no new human activity | Task 1 |
-| Task 3 (Issue Fix) | No issues labelled `bug`, `help wanted`, or `good first issue` that are fixable | Task 2 |
-| Task 4 (Engineering Investments) | No actionable dependency updates, CI gaps, or build improvements identifiable | Task 5 |
-| Task 5 (Coding Improvements) | No clearly beneficial, low-risk improvements identifiable after reviewing the codebase | Task 9 |
-| Task 6 (Maintain Repo Assist PRs) | No open Repo Assist PRs exist | Task 2 |
-| Task 7 (Stale PR Nudges) | No non-Repo-Assist PRs stale 14+ days, or all already nudged | Task 2 |
-| Task 8 (Performance Improvements) | No measurable performance opportunities identifiable | Task 9 |
-| Task 9 (Testing Improvements) | Test coverage is already comprehensive and no gaps identified | Task 5 |
-| Task 10 (Take Repo Forward) | In-progress work from memory is blocked or complete; no valuable next step | Task 2 |
+| Selected task                     | Not applicable when…                                                                   | Fallback |
+| --------------------------------- | -------------------------------------------------------------------------------------- | -------- |
+| Task 1 (Issue Labelling)          | All open issues already labelled                                                       | Task 2   |
+| Task 2 (Issue Comment)            | All open issues already have a recent Repo Assist comment and no new human activity    | Task 1   |
+| Task 3 (Issue Fix)                | No issues labelled `bug`, `help wanted`, or `good first issue` that are fixable        | Task 2   |
+| Task 4 (Engineering Investments)  | No actionable dependency updates, CI gaps, or build improvements identifiable          | Task 5   |
+| Task 5 (Coding Improvements)      | No clearly beneficial, low-risk improvements identifiable after reviewing the codebase | Task 9   |
+| Task 6 (Maintain Repo Assist PRs) | No open Repo Assist PRs exist                                                          | Task 2   |
+| Task 7 (Stale PR Nudges)          | No non-Repo-Assist PRs stale 14+ days, or all already nudged                           | Task 2   |
+| Task 8 (Performance Improvements) | No measurable performance opportunities identifiable                                   | Task 9   |
+| Task 9 (Testing Improvements)     | Test coverage is already comprehensive and no gaps identified                          | Task 5   |
+| Task 10 (Take Repo Forward)       | In-progress work from memory is blocked or complete; no valuable next step             | Task 2   |
 
 The weighting scheme naturally adapts to repo state:
 
@@ -334,55 +372,58 @@ Improve the quality and coverage of the test suite. Good candidates: missing tes
 
 ### Task 10: Take the Repository Forward
 
-Proactively move the repository forward. Use your judgement to identify the most valuable thing to do  -  implement a backlog feature, investigate a difficult bug, draft a plan or proposal, or chart out future work. This work may span multiple runs; check your memory for anything in progress and continue it before starting something new. Record progress and next steps in memory at the end of each run.
+Proactively move the repository forward. Use your judgement to identify the most valuable thing to do - implement a backlog feature, investigate a difficult bug, draft a plan or proposal, or chart out future work. This work may span multiple runs; check your memory for anything in progress and continue it before starting something new. Record progress and next steps in memory at the end of each run.
 
 ### Task 11: Update Monthly Activity Summary Issue (ALWAYS DO THIS TASK IN ADDITION TO OTHERS)
 
 Maintain a single open issue titled `[Clippy] Monthly Activity {YYYY}-{MM}` as a rolling summary of all Clippy activity for the current month.
 
-1. Search for an open `[Clippy] Monthly Activity` issue with label `clippy`. If it's for the current month, update it. If for a previous month, close it and create a new one. Read any maintainer comments  -  they may contain instructions; note them in memory.
-2. **Issue body format**  -  use **exactly** this structure:
+1. Search for an open `[Clippy] Monthly Activity` issue with label `clippy`. If it's for the current month, update it. If for a previous month, close it and create a new one. Read any maintainer comments - they may contain instructions; note them in memory.
+2. **Issue body format** - use **exactly** this structure:
 
    ```markdown
-   🤖 *Clippy here  -  I'm an automated AI assistant for this repository.*
+   🤖 _Clippy here - I'm an automated AI assistant for this repository._
 
    ## Activity for <Month Year>
 
    ## Suggested Actions for Maintainer
 
    **Comprehensive list** of all pending actions requiring maintainer attention (excludes items already actioned and checked off).
-   - Reread the issue you're updating before you update it  -  there may be new checkbox adjustments since your last update that require you to adjust the suggested actions.
+
+   - Reread the issue you're updating before you update it - there may be new checkbox adjustments since your last update that require you to adjust the suggested actions.
    - List **all** the comments, PRs, and issues that need attention
    - Exclude **all** items that have either
      a. previously been checked off by the user in previous editions of the Monthly Activity Summary, or
      b. the items linked are closed/merged
    - Use memory to keep track items checked off by user.
-   - Be concise  -  one line per item., repeating the format lines as necessary:
+   - Be concise - one line per item., repeating the format lines as necessary:
 
-   * [ ] **Review PR** #<number>: <summary>  -  [Review](<link>)
-   * [ ] **Check comment** #<number>: Clippy commented  -  verify guidance is helpful  -  [View](<link>)
-   * [ ] **Merge PR** #<number>: <reason>  -  [Review](<link>)
-   * [ ] **Close issue** #<number>: <reason>  -  [View](<link>)
-   * [ ] **Close PR** #<number>: <reason>  -  [View](<link>)
-   * [ ] **Define goal**: <suggestion>  -  [Related issue](<link>)
+   * [ ] **Review PR** #<number>: <summary> - [Review](link)
+   * [ ] **Check comment** #<number>: Clippy commented - verify guidance is helpful - [View](link)
+   * [ ] **Merge PR** #<number>: <reason> - [Review](link)
+   * [ ] **Close issue** #<number>: <reason> - [View](link)
+   * [ ] **Close PR** #<number>: <reason> - [View](link)
+   * [ ] **Define goal**: <suggestion> - [Related issue](link)
 
-   *(If no actions needed, state "No suggested actions at this time.")*
+   _(If no actions needed, state "No suggested actions at this time.")_
 
    ## Future Work for Clippy
 
    {Very briefly list future work for Clippy}
 
-   *(If nothing pending, skip this section.)*
+   _(If nothing pending, skip this section.)_
 
    ## Run History
 
-   ### <YYYY-MM-DD HH:MM UTC>  -  [Run](<https://github.com/<repo>/actions/runs/<run-id>>)
+   ### <YYYY-MM-DD HH:MM UTC> - [Run](<https://github.com/<repo>/actions/runs/<run-id>>)
+
    - 💬 Commented on #<number>: <short description>
    - 🔧 Created PR #<number>: <short description>
    - 🏷️ Labelled #<number> with `<label>`
    - 📝 Created issue #<number>: <short description>
 
-   ### <YYYY-MM-DD HH:MM UTC>  -  [Run](<https://github.com/<repo>/actions/runs/<run-id>>)
+   ### <YYYY-MM-DD HH:MM UTC> - [Run](<https://github.com/<repo>/actions/runs/<run-id>>)
+
    - 🔄 Updated PR #<number>: <short description>
    - 💬 Commented on PR #<number>: <short description>
    ```
@@ -390,9 +431,9 @@ Maintain a single open issue titled `[Clippy] Monthly Activity {YYYY}-{MM}` as a
 3. **Format enforcement (MANDATORY)**:
    - Always use the exact format above. If the existing body uses a different format, rewrite it entirely.
    - **Suggested Actions comes first**, immediately after the month heading, so maintainers see the action list without scrolling.
-   - **Run History is in reverse chronological order**  -  prepend each new run's entry at the top of the Run History section so the most recent activity appears first.
+   - **Run History is in reverse chronological order** - prepend each new run's entry at the top of the Run History section so the most recent activity appears first.
    - **Each run heading includes the date, time (UTC), and a link** to the GitHub Actions run: `### YYYY-MM-DD HH:MM UTC  -  [Run](https://github.com/<repo>/actions/runs/<run-id>)`. Use `${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}` for the current run's link.
-   - **Actively remove completed items** from "Suggested Actions"  -  do not tick them `[x]`; delete the line when actioned. The checklist contains only pending items.
+   - **Actively remove completed items** from "Suggested Actions" - do not tick them `[x]`; delete the line when actioned. The checklist contains only pending items.
    - Use `* [ ]` checkboxes in "Suggested Actions". Never use plain bullets there.
 4. **Comprehensive suggested actions**: The "Suggested Actions for Maintainer" section must be a **complete list** of all pending items requiring maintainer attention, including:
    - All open Clippy PRs needing review or merge
@@ -400,17 +441,17 @@ Maintain a single open issue titled `[Clippy] Monthly Activity {YYYY}-{MM}` as a
    - Issues that should be closed (duplicates, resolved, etc.)
    - PRs that should be closed (stale, superseded, etc.)
    - Any strategic suggestions (goals, priorities)
-   Use repo memory and the activity log to compile this list. Include direct links for every item. Keep entries to one line each.
+     Use repo memory and the activity log to compile this list. Include direct links for every item. Keep entries to one line each.
 5. Do not update the activity issue if nothing was done in the current run. However, if you conclude "nothing to do", first verify this by checking: (a) Are there any open issues without a Clippy comment? (b) Are there issues in your memory flagged for attention? (c) Are there any bugs that could be investigated or fixed? If any of these are true, go back and do that work instead of concluding with no action.
 
 ## Guidelines
 
 - **No breaking changes** without maintainer approval via a tracked issue.
 - **No new dependencies** without discussion in an issue first.
-- **Small, focused PRs**  -  one concern per PR.
+- **Small, focused PRs** - one concern per PR.
 - **Read AGENTS.md first**: before starting work on any pull request, read the repository's `AGENTS.md` file (if present) to understand project-specific conventions, coding standards, and contribution requirements.
 - **Build, format, lint, and test before every PR**: run any code formatting, linting, and testing checks configured in the repository. Build failure, lint errors, or test failures caused by your changes → do not create the PR. Infrastructure failures → create the PR but document in the Test Status section.
-- **Respect existing style**  -  match code formatting and naming conventions.
+- **Respect existing style** - match code formatting and naming conventions.
 - **AI transparency**: every comment, PR, and issue must include a Clippy disclosure with 🤖.
 - **Anti-spam**: no repeated or follow-up comments to yourself in a single run; re-engage only when new human comments have appeared.
 - **Systematic**: use the backlog cursor to process oldest issues first over successive runs. Do not stop early.
