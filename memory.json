@@ -1,6 +1,6 @@
 {
-  "lr": "2026-05-08",
-  "rid": "25565828790",
+  "lr": "2026-05-10",
+  "rid": "25639346790",
   "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
@@ -19,9 +19,10 @@
   "prs": {
     "163": "RegisterCustomHandler (Closes #66)",
     "165": "ExcelAssembler (Closes #28)",
-    "263": "test: add ReferenceAdder unit tests (RA100-RA140) and fix AddTof w:dirty namespace bug"
+    "tunit-1.43.41": "chore(deps): update TUnit 1.43.11 → 1.43.41 (branch: clippy/eng-tunit-1.43.41-20260510)",
+    "throwifnull": "refactor: modernize null checks to ArgumentNullException.ThrowIfNull (branch: clippy/improve-argull-throwifnull-20260510)"
   },
-  "notes": "Run 25565828790 (2026-05-08): Task 2 all issues have recent comments, no new human activity. Task 10 added ReferenceAdder unit tests PR #263 and fixed AddTof w:dirty namespace bug. PRs #163 and #165 still open awaiting review.",
+  "notes": "Run 25639346790 (2026-05-10): Task 4 TUnit 1.43.11→1.43.41 PR submitted. Task 5 ArgumentNullException.ThrowIfNull refactor PR submitted (5 files: OpenXmlRegex, UnicodeMapper, PtOpenXmlUtil, SpreadsheetWriter, XlsxTables). Task 2 no new human activity. PR #263 merged by maintainer.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
@@ -45,6 +46,7 @@
     "256": "fix-issue-255-merged",
     "258": "ptextensions-tests-merged",
     "259": "ptextensions-additional-tests-merged",
-    "262": "release-v3.4.3-merged"
+    "262": "release-v3.4.3-merged",
+    "263": "reference-adder-tests-and-dirty-fix-merged"
   }
 }
