@@ -139,10 +139,8 @@ namespace Clippit
             bool coalesceContent
         )
         {
-            if (content == null)
-                throw new ArgumentNullException(nameof(content));
-            if (regex == null)
-                throw new ArgumentNullException(nameof(regex));
+            ArgumentNullException.ThrowIfNull(content);
+            ArgumentNullException.ThrowIfNull(regex);
 
             IEnumerable<XElement> contentList = content as IList<XElement> ?? content.ToList();
 

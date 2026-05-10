@@ -160,8 +160,7 @@ namespace Clippit.Excel
 
         public static explicit operator bool(TableCell cell)
         {
-            if (cell == null)
-                throw new ArgumentNullException("TableCell");
+            ArgumentNullException.ThrowIfNull(cell);
             return cell.Value == "1";
         }
 
@@ -174,8 +173,7 @@ namespace Clippit.Excel
 
         public static explicit operator int(TableCell cell)
         {
-            if (cell == null)
-                throw new ArgumentNullException("TableCell");
+            ArgumentNullException.ThrowIfNull(cell);
             return int.Parse(cell.Value);
         }
 
@@ -188,8 +186,7 @@ namespace Clippit.Excel
 
         public static explicit operator uint(TableCell cell)
         {
-            if (cell == null)
-                throw new ArgumentNullException("TableCell");
+            ArgumentNullException.ThrowIfNull(cell);
             return uint.Parse(cell.Value);
         }
 
@@ -202,8 +199,7 @@ namespace Clippit.Excel
 
         public static explicit operator long(TableCell cell)
         {
-            if (cell == null)
-                throw new ArgumentNullException("TableCell");
+            ArgumentNullException.ThrowIfNull(cell);
             return long.Parse(cell.Value);
         }
 
@@ -216,8 +212,7 @@ namespace Clippit.Excel
 
         public static explicit operator ulong(TableCell cell)
         {
-            if (cell == null)
-                throw new ArgumentNullException("TableCell");
+            ArgumentNullException.ThrowIfNull(cell);
             return ulong.Parse(cell.Value);
         }
 
@@ -230,8 +225,7 @@ namespace Clippit.Excel
 
         public static explicit operator float(TableCell cell)
         {
-            if (cell == null)
-                throw new ArgumentNullException("TableCell");
+            ArgumentNullException.ThrowIfNull(cell);
             return float.Parse(cell.Value);
         }
 
@@ -244,8 +238,7 @@ namespace Clippit.Excel
 
         public static explicit operator double(TableCell cell)
         {
-            if (cell == null)
-                throw new ArgumentNullException("TableCell");
+            ArgumentNullException.ThrowIfNull(cell);
             return double.Parse(cell.Value);
         }
 
@@ -258,8 +251,7 @@ namespace Clippit.Excel
 
         public static explicit operator decimal(TableCell cell)
         {
-            if (cell == null)
-                throw new ArgumentNullException("TableCell");
+            ArgumentNullException.ThrowIfNull(cell);
             return decimal.Parse(cell.Value);
         }
 
@@ -272,8 +264,7 @@ namespace Clippit.Excel
 
         public static implicit operator DateTime(TableCell cell)
         {
-            if (cell == null)
-                throw new ArgumentNullException("TableCell");
+            ArgumentNullException.ThrowIfNull(cell);
             return new DateTime(1900, 1, 1).AddDays(int.Parse(cell.Value) - 2);
         }
 

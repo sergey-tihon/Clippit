@@ -71,8 +71,7 @@ namespace Clippit
 
         public static XDocument GetXDocument(this OpenXmlPart part)
         {
-            if (part is null)
-                throw new ArgumentNullException(nameof(part));
+            ArgumentNullException.ThrowIfNull(part);
 
             var partXDocument = part.Annotation<XDocument>();
             if (partXDocument is not null)
@@ -98,8 +97,7 @@ namespace Clippit
 
         public static XDocument GetXDocument(this OpenXmlPart part, out XmlNamespaceManager namespaceManager)
         {
-            if (part is null)
-                throw new ArgumentNullException(nameof(part));
+            ArgumentNullException.ThrowIfNull(part);
 
             namespaceManager = part.Annotation<XmlNamespaceManager>();
             var partXDocument = part.Annotation<XDocument>();
