@@ -205,8 +205,7 @@ namespace Clippit
         /// <returns>A single-character Unicode string representing the w:sym element.</returns>
         public static char SymToChar(XElement sym)
         {
-            if (sym == null)
-                throw new ArgumentNullException(nameof(sym));
+            ArgumentNullException.ThrowIfNull(sym);
             if (sym.Name != W.sym)
                 throw new ArgumentException($"Not a w:sym: {sym.Name}", nameof(sym));
 

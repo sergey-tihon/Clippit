@@ -191,10 +191,8 @@ namespace Clippit.Excel
         {
             try
             {
-                if (fileName is null)
-                    throw new ArgumentNullException(nameof(fileName));
-                if (workbook is null)
-                    throw new ArgumentNullException(nameof(workbook));
+                ArgumentNullException.ThrowIfNull(fileName);
+                ArgumentNullException.ThrowIfNull(workbook);
 
                 var fi = new FileInfo(fileName);
                 if (fi.Exists)
@@ -216,10 +214,8 @@ namespace Clippit.Excel
 
         public static void WriteTo(this WorkbookDfn workbook, Stream stream)
         {
-            if (stream is null)
-                throw new ArgumentNullException(nameof(stream));
-            if (workbook is null)
-                throw new ArgumentNullException(nameof(workbook));
+            ArgumentNullException.ThrowIfNull(stream);
+            ArgumentNullException.ThrowIfNull(workbook);
 
             // create the blank workbook
             foreach (var b in CreateBlankWorkbook())
