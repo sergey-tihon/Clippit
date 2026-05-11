@@ -1,6 +1,6 @@
 {
-  "lr": "2026-05-10",
-  "rid": "25639346790",
+  "lr": "2026-05-11",
+  "rid": "25683044589",
   "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
@@ -18,11 +18,9 @@
   "cursor": "103",
   "prs": {
     "163": "RegisterCustomHandler (Closes #66)",
-    "165": "ExcelAssembler (Closes #28)",
-    "tunit-1.43.41": "chore(deps): update TUnit 1.43.11 → 1.43.41 (branch: clippy/eng-tunit-1.43.41-20260510)",
-    "throwifnull": "refactor: modernize null checks to ArgumentNullException.ThrowIfNull (branch: clippy/improve-argull-throwifnull-20260510)"
+    "165": "ExcelAssembler (Closes #28)"
   },
-  "notes": "Run 25639346790 (2026-05-10): Task 4 TUnit 1.43.11→1.43.41 PR submitted. Task 5 ArgumentNullException.ThrowIfNull refactor PR submitted (5 files: OpenXmlRegex, UnicodeMapper, PtOpenXmlUtil, SpreadsheetWriter, XlsxTables). Task 2 no new human activity. PR #263 merged by maintainer.",
+  "notes": "Run 25683044589 (2026-05-11): Task 9 created PR for OpenXmlPowerToolsDocument/OpenXmlMemoryStreamDocument tests (OXD001-OXD040, 27 tests). PRs #264 (TUnit) and #265 (ThrowIfNull) merged by maintainer. Task 3/2 fallback: no new human activity on open issues.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
@@ -47,6 +45,8 @@
     "258": "ptextensions-tests-merged",
     "259": "ptextensions-additional-tests-merged",
     "262": "release-v3.4.3-merged",
-    "263": "reference-adder-tests-and-dirty-fix-merged"
+    "263": "reference-adder-tests-and-dirty-fix-merged",
+    "264": "tunit-1.43.41-merged",
+    "265": "throwifnull-refactor-merged"
   }
 }
