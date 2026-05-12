@@ -443,33 +443,10 @@ namespace Clippit
             }
         }
 
-        public static List<string> GetFilesRecursive(DirectoryInfo dir, string searchPattern)
-        {
-            var fileList = new List<string>();
-            GetFilesRecursiveInternal(dir, searchPattern, fileList);
-            return fileList;
-        }
+        public static List<string> GetFilesRecursive(DirectoryInfo dir, string searchPattern) =>
+            dir.GetFiles(searchPattern, SearchOption.AllDirectories).Select(f => f.FullName).ToList();
 
-        private static void GetFilesRecursiveInternal(DirectoryInfo dir, string searchPattern, List<string> fileList)
-        {
-            fileList.AddRange(dir.GetFiles(searchPattern).Select(file => file.FullName));
-            foreach (var subdir in dir.GetDirectories())
-                GetFilesRecursiveInternal(subdir, searchPattern, fileList);
-        }
-
-        public static List<string> GetFilesRecursive(DirectoryInfo dir)
-        {
-            var fileList = new List<string>();
-            GetFilesRecursiveInternal(dir, fileList);
-            return fileList;
-        }
-
-        private static void GetFilesRecursiveInternal(DirectoryInfo dir, List<string> fileList)
-        {
-            fileList.AddRange(dir.GetFiles().Select(file => file.FullName));
-            foreach (var subdir in dir.GetDirectories())
-                GetFilesRecursiveInternal(subdir, fileList);
-        }
+        public static List<string> GetFilesRecursive(DirectoryInfo dir) => GetFilesRecursive(dir, "*");
     }
 
     public static class PtExtensions
