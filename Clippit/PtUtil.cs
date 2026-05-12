@@ -446,8 +446,7 @@ namespace Clippit
         public static List<string> GetFilesRecursive(DirectoryInfo dir, string searchPattern) =>
             dir.GetFiles(searchPattern, SearchOption.AllDirectories).Select(f => f.FullName).ToList();
 
-        public static List<string> GetFilesRecursive(DirectoryInfo dir) =>
-            dir.GetFiles("*", SearchOption.AllDirectories).Select(f => f.FullName).ToList();
+        public static List<string> GetFilesRecursive(DirectoryInfo dir) => GetFilesRecursive(dir, "*");
     }
 
     public static class PtExtensions
