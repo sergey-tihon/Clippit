@@ -3553,9 +3553,7 @@ namespace Clippit.Html
                 .Where(e => e.Name == XhtmlNoNamespace.tr)
                 .ToList();
             var numberColumns = rowList
-                .Select(r =>
-                    r.Elements().Where(e => e.Name == XhtmlNoNamespace.td || e.Name == XhtmlNoNamespace.th).Count()
-                )
+                .Select(r => r.Elements().Count(e => e.Name == XhtmlNoNamespace.td || e.Name == XhtmlNoNamespace.th))
                 .Max();
             var tableArray = new XElement[rowList.Count][];
             var rowNumber = 0;

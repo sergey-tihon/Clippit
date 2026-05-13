@@ -780,7 +780,7 @@ namespace Clippit
 
         private static string NameWithPredicate(XElement el)
         {
-            if (el.Parent != null && el.Parent.Elements(el.Name).Count() != 1)
+            if (el.Parent != null && el.Parent.Elements(el.Name).Skip(1).Any())
                 return GetQName(el) + "[" + (el.ElementsBeforeSelf(el.Name).Count() + 1) + "]";
             else
                 return GetQName(el);
@@ -823,13 +823,13 @@ namespace Clippit
                     //
                     XComment com when com.Document != null => "/"
                         + (
-                            com.Document.Nodes().OfType<XComment>().Count() != 1
+                            com.Document.Nodes().OfType<XComment>().Skip(1).Any()
                                 ? "comment()[" + (com.NodesBeforeSelf().OfType<XComment>().Count() + 1) + "]"
                                 : "comment()"
                         ),
                     XProcessingInstruction pi => "/"
                         + (
-                            pi.Document != null && pi.Document.Nodes().OfType<XProcessingInstruction>().Count() != 1
+                            pi.Document != null && pi.Document.Nodes().OfType<XProcessingInstruction>().Skip(1).Any()
                                 ? "processing-instruction()["
                                     + (pi.NodesBeforeSelf().OfType<XProcessingInstruction>().Count() + 1)
                                     + "]"
@@ -852,28 +852,28 @@ namespace Clippit
                     XComment com when com.Parent != null => "/"
                         + com.Parent.AncestorsAndSelf().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/")
                         + (
-                            com.Parent.Nodes().OfType<XComment>().Count() != 1
+                            com.Parent.Nodes().OfType<XComment>().Skip(1).Any()
                                 ? "comment()[" + (com.NodesBeforeSelf().OfType<XComment>().Count() + 1) + "]"
                                 : "comment()"
                         ),
                     XCData cd when cd.Parent != null => "/"
                         + cd.Parent.AncestorsAndSelf().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/")
                         + (
-                            cd.Parent.Nodes().OfType<XText>().Count() != 1
+                            cd.Parent.Nodes().OfType<XText>().Skip(1).Any()
                                 ? "text()[" + (cd.NodesBeforeSelf().OfType<XText>().Count() + 1) + "]"
                                 : "text()"
                         ),
                     XText tx when tx.Parent != null => "/"
                         + tx.Parent.AncestorsAndSelf().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/")
                         + (
-                            tx.Parent.Nodes().OfType<XText>().Count() != 1
+                            tx.Parent.Nodes().OfType<XText>().Skip(1).Any()
                                 ? "text()[" + (tx.NodesBeforeSelf().OfType<XText>().Count() + 1) + "]"
                                 : "text()"
                         ),
                     XProcessingInstruction pi when pi.Parent != null => "/"
                         + pi.Parent.AncestorsAndSelf().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/")
                         + (
-                            pi.Parent.Nodes().OfType<XProcessingInstruction>().Count() != 1
+                            pi.Parent.Nodes().OfType<XProcessingInstruction>().Skip(1).Any()
                                 ? "processing-instruction()["
                                     + (pi.NodesBeforeSelf().OfType<XProcessingInstruction>().Count() + 1)
                                     + "]"

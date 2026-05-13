@@ -187,7 +187,7 @@ namespace Clippit
                 var revTrackingWithDuplicateIds = root.DescendantsAndSelf()
                     .Where(d => RevTrackMarkupWithId.Contains(d.Name))
                     .GroupBy(d => (int)d.Attribute(W.id))
-                    .Where(g => g.Count() > 1)
+                    .Where(g => g.Skip(1).Any())
                     .ToList();
                 foreach (var group in revTrackingWithDuplicateIds)
                 foreach (var gc in group.Skip(1))

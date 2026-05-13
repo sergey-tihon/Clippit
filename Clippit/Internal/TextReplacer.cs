@@ -131,7 +131,7 @@ namespace Clippit.Internal
                             {
                                 if (ce.Name != W.r)
                                     return "DontConsolidate";
-                                if (ce.Elements().Where(e => e.Name != W.rPr).Count() != 1 || ce.Element(W.t) == null)
+                                if (ce.Elements().Count(e => e.Name != W.rPr) != 1 || ce.Element(W.t) == null)
                                     return "DontConsolidate";
                                 if (ce.Element(W.rPr) == null)
                                     return "";
@@ -356,7 +356,7 @@ namespace Clippit.Internal
                             {
                                 if (ce.Name != A.r)
                                     return "DontConsolidate";
-                                if (ce.Elements().Where(e => e.Name != A.rPr).Count() != 1 || ce.Element(A.t) == null)
+                                if (ce.Elements().Count(e => e.Name != A.rPr) != 1 || ce.Element(A.t) == null)
                                     return "DontConsolidate";
                                 if (ce.Element(A.rPr) == null)
                                     return "";
