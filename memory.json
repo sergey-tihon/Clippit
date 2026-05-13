@@ -1,6 +1,6 @@
 {
-  "lr": "2026-05-12",
-  "rid": "25747738659",
+  "lr": "2026-05-13",
+  "rid": "25812180719",
   "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
@@ -20,7 +20,7 @@
     "163": "RegisterCustomHandler (Closes #66)",
     "165": "ExcelAssembler (Closes #28)"
   },
-  "notes": "Run 25747738659 (2026-05-12): Task 4: TUnit 1.43.41->1.44.0 PR created. Task 5: refactor FileUtils.GetFilesRecursive PR created. Task 3: no fixable issues without existing PRs (fallback Task 2: no new human activity).",
+  "notes": "Run 25812180719 (2026-05-13): Task 8: LINQ perf PR created (clippy/perf-linq-count-20260513). Task 5: WmlComparer refactor PR created (clippy/improve-linq-materialize-20260513). Task 2: all issues have Clippy comments, no new human activity.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
@@ -47,6 +47,8 @@
     "262": "release-v3.4.3-merged",
     "263": "reference-adder-tests-and-dirty-fix-merged",
     "264": "tunit-1.43.41-merged",
-    "265": "throwifnull-refactor-merged"
+    "265": "throwifnull-refactor-merged",
+    "267": "tunit-1.44.0-merged",
+    "268": "fileutils-simplify-merged"
   }
 }
