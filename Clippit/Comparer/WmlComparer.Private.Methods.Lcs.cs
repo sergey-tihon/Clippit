@@ -353,8 +353,7 @@ namespace Clippit
                         else if (
                             leftGrouped[iLeft].Key == "Word"
                             && leftGrouped[iLeft]
-                                .Select(lg => lg.DescendantContentAtoms())
-                                .SelectMany(m => m)
+                                .SelectMany(lg => lg.DescendantContentAtoms())
                                 .Last()
                                 .ContentElement.Name != W.pPr
                             && rightGrouped[iRight].Key == "Row"
@@ -372,8 +371,7 @@ namespace Clippit
                         else if (
                             rightGrouped[iRight].Key == "Word"
                             && rightGrouped[iRight]
-                                .Select(lg => lg.DescendantContentAtoms())
-                                .SelectMany(m => m)
+                                .SelectMany(lg => lg.DescendantContentAtoms())
                                 .Last()
                                 .ContentElement.Name != W.pPr
                             && leftGrouped[iLeft].Key == "Row"
@@ -583,9 +581,9 @@ namespace Clippit
                 if (leftOnlyParasTablesTextboxes && rightOnlyParasTablesTextboxes)
                 {
                     // flatten paras and tables, and iterate
-                    var left = unknown.ComparisonUnitArray1.Select(cu => cu.Contents).SelectMany(m => m).ToArray();
+                    var left = unknown.ComparisonUnitArray1.SelectMany(cu => cu.Contents).ToArray();
 
-                    var right = unknown.ComparisonUnitArray2.Select(cu => cu.Contents).SelectMany(m => m).ToArray();
+                    var right = unknown.ComparisonUnitArray2.SelectMany(cu => cu.Contents).ToArray();
 
                     var unknownCorrelatedSequence = new CorrelatedSequence
                     {
