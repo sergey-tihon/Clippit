@@ -273,7 +273,7 @@ namespace Clippit
                     // that contains the revisions, then simply replace the paragraph with the one with the revisions.
                     // RC004 documents contain the test data to exercise this.
 
-                    var lciCount = lci.Where(ci => ci.InsertBefore == false).Count();
+                    var lciCount = lci.Count(ci => ci.InsertBefore == false);
 
                     if (lciCount > 1 && lciCount == revisedDocumentInfoListCount)
                     {
