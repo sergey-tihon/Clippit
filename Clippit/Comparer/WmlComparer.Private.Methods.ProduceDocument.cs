@@ -431,13 +431,9 @@ namespace Clippit
 
                     if (cs.CorrelationStatus == CorrelationStatus.Equal)
                     {
-                        var contentAtomsBefore = cs
-                            .ComparisonUnitArray1.Select(ca => ca.DescendantContentAtoms())
-                            .SelectMany(m => m);
+                        var contentAtomsBefore = cs.ComparisonUnitArray1.SelectMany(ca => ca.DescendantContentAtoms());
 
-                        var contentAtomsAfter = cs
-                            .ComparisonUnitArray2.Select(ca => ca.DescendantContentAtoms())
-                            .SelectMany(m => m);
+                        var contentAtomsAfter = cs.ComparisonUnitArray2.SelectMany(ca => ca.DescendantContentAtoms());
 
                         var comparisonUnitAtomList = contentAtomsBefore
                             .Zip(
@@ -463,8 +459,7 @@ namespace Clippit
                     if (cs.CorrelationStatus == CorrelationStatus.Deleted)
                     {
                         var comparisonUnitAtomList = cs
-                            .ComparisonUnitArray1.Select(ca => ca.DescendantContentAtoms())
-                            .SelectMany(m => m)
+                            .ComparisonUnitArray1.SelectMany(ca => ca.DescendantContentAtoms())
                             .Select(ca => new ComparisonUnitAtom(
                                 ca.ContentElement,
                                 ca.AncestorElements,
@@ -481,8 +476,7 @@ namespace Clippit
                     if (cs.CorrelationStatus == CorrelationStatus.Inserted)
                     {
                         var comparisonUnitAtomList = cs
-                            .ComparisonUnitArray2.Select(ca => ca.DescendantContentAtoms())
-                            .SelectMany(m => m)
+                            .ComparisonUnitArray2.SelectMany(ca => ca.DescendantContentAtoms())
                             .Select(ca => new ComparisonUnitAtom(
                                 ca.ContentElement,
                                 ca.AncestorElements,
