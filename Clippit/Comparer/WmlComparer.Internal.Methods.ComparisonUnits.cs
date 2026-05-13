@@ -391,7 +391,7 @@ namespace Clippit
                 {
                     if (gc.Key == "")
                     {
-                        return (IEnumerable<ComparisonUnit>)gc.Select(whgk => whgk.ComparisonUnitWord).ToList();
+                        return gc.Select(whgk => (ComparisonUnit)whgk.ComparisonUnitWord);
                     }
 
                     var spl = gc.Key.Split(':');
