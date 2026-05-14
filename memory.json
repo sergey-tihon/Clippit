@@ -1,6 +1,6 @@
 {
-  "lr": "2026-05-13",
-  "rid": "25812180719",
+  "lr": "2026-05-14",
+  "rid": "25871534776",
   "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
@@ -18,9 +18,10 @@
   "cursor": "103",
   "prs": {
     "163": "RegisterCustomHandler (Closes #66)",
-    "165": "ExcelAssembler (Closes #28)"
+    "165": "ExcelAssembler (Closes #28)",
+    "272": "FieldRetriever modernize (refactor)"
   },
-  "notes": "Run 25812180719 (2026-05-13): Task 8: LINQ perf PR created (clippy/perf-linq-count-20260513). Task 5: WmlComparer refactor PR created (clippy/improve-linq-materialize-20260513). Task 2: all issues have Clippy comments, no new human activity.",
+  "notes": "Run 25871534776 (2026-05-14): Task 4→5: PR #272 created modernizing FieldRetriever.cs (file-scoped ns, W.* constants, is null, TryGetValue, slicing, collection exprs). All tasks 4/3/1 fell back to Task 2/5 — no engineering updates available, no fixable issues, all issues labelled.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
@@ -49,6 +50,8 @@
     "264": "tunit-1.43.41-merged",
     "265": "throwifnull-refactor-merged",
     "267": "tunit-1.44.0-merged",
-    "268": "fileutils-simplify-merged"
+    "268": "fileutils-simplify-merged",
+    "270": "perf-linq-count-merged",
+    "271": "wmlcomparer-selectmany-merged"
   }
 }
