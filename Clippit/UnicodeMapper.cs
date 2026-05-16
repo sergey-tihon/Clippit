@@ -227,8 +227,8 @@ namespace Clippit
                 new XAttribute(XNamespace.Xmlns + "w", W.w)
             );
             var standardizedSymString = standardizedSym.ToString(SaveOptions.None);
-            if (SymStringToUnicodeCharDictionary.ContainsKey(standardizedSymString))
-                return SymStringToUnicodeCharDictionary[standardizedSymString];
+            if (SymStringToUnicodeCharDictionary.TryGetValue(standardizedSymString, out var existingChar))
+                return existingChar;
 
             // Determine Unicode value to be used to represent the current w:sym element.
             // Use the actual Unicode value if it has not yet been used with another font.
@@ -332,8 +332,8 @@ namespace Clippit
                 return new XElement(W.softHyphen);
 
             // Translate symbol characters into their corresponding w:sym elements.
-            if (UnicodeCharToSymDictionary.ContainsKey(character))
-                return UnicodeCharToSymDictionary[character];
+            if (UnicodeCharToSymDictionary.TryGetValue(character, out var symElement))
+                return symElement;
 
             // Turn "normal" characters into text elements.
             return new XElement(W.t, XmlUtil.GetXmlSpaceAttribute(character), character);

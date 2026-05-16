@@ -232,7 +232,7 @@ namespace Clippit
             {
                 if (d.Attribute(PtOpenXml.Unid) == null)
                 {
-                    var unid = Guid.NewGuid().ToString().Replace("-", "");
+                    var unid = Guid.NewGuid().ToString("N");
                     var newAtt = new XAttribute(PtOpenXml.Unid, unid);
                     d.Add(newAtt);
                 }
