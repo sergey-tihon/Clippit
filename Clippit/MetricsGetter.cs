@@ -464,10 +464,7 @@ public class MetricsGetter
 
     private static void IncrementMetric(Dictionary<XName, int> metricCountDictionary, XName xName)
     {
-        if (metricCountDictionary.ContainsKey(xName))
-            metricCountDictionary[xName] = metricCountDictionary[xName] + 1;
-        else
-            metricCountDictionary.Add(xName, 1);
+        metricCountDictionary[xName] = metricCountDictionary.GetValueOrDefault(xName) + 1;
     }
 
     private static void ValidateImageExists(OpenXmlPart part, string relId, Dictionary<XName, int> metrics)
