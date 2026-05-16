@@ -277,14 +277,14 @@ namespace Clippit.Word
                     string classNameToUse;
                     var firstOne = grp.First();
                     var styles = firstOne.Styles;
-                    if (styles.ContainsKey("PtStyleName"))
+                    if (styles.TryGetValue("PtStyleName", out var ptStyleName))
                     {
-                        classNameToUse = htmlConverterSettings.CssClassPrefix + styles["PtStyleName"];
+                        classNameToUse = htmlConverterSettings.CssClassPrefix + ptStyleName;
                         if (usedCssClassNames.Contains(classNameToUse))
                         {
                             classNameToUse =
                                 htmlConverterSettings.CssClassPrefix
-                                + styles["PtStyleName"]
+                                + ptStyleName
                                 + "-"
                                 + classCounter.ToString().Substring(1);
                             classCounter++;
@@ -1742,9 +1742,9 @@ namespace Clippit.Word
 
             // Can't add directional marks if the font-family is symbol - they are visible, and display as a ?
             var addDirectionalMarks = true;
-            if (style.ContainsKey("font-family"))
+            if (style.TryGetValue("font-family", out var fontFamily))
             {
-                if (style["font-family"].ToLower() == "symbol")
+                if (fontFamily.ToLower() == "symbol")
                     addDirectionalMarks = false;
             }
             if (!addDirectionalMarks)
@@ -1963,13 +1963,13 @@ namespace Clippit.Word
 
             var border1Val = (string)border1.Attribute(W.val);
             var border1Weight = 1;
-            if (BorderNumber.ContainsKey(border1Val))
-                border1Weight = BorderNumber[border1Val];
+            if (BorderNumber.TryGetValue(border1Val, out var border1WeightValue))
+                border1Weight = border1WeightValue;
 
             var border2Val = (string)border2.Attribute(W.val);
             var border2Weight = 1;
-            if (BorderNumber.ContainsKey(border2Val))
-                border2Weight = BorderNumber[border2Val];
+            if (BorderNumber.TryGetValue(border2Val, out var border2WeightValue))
+                border2Weight = border2WeightValue;
 
             if (border1Weight != border2Weight)
             {
@@ -1993,10 +1993,11 @@ namespace Clippit.Word
 
             var border1Type = (string)border1.Attribute(W.val);
             var border2Type = (string)border2.Attribute(W.val);
-            if (BorderTypePriority.ContainsKey(border1Type) && BorderTypePriority.ContainsKey(border2Type))
+            if (
+                BorderTypePriority.TryGetValue(border1Type, out var border1Pri)
+                && BorderTypePriority.TryGetValue(border2Type, out var border2Pri)
+            )
             {
-                var border1Pri = BorderTypePriority[border1Type];
-                var border2Pri = BorderTypePriority[border2Type];
                 if (border1Pri < border2Pri)
                 {
                     BorderOverride(border2, border1);
@@ -2948,9 +2949,8 @@ namespace Clippit.Word
                 var borderWidthInPoints = Math.Max(1m, Math.Min(96m, Math.Max(2m, sz)) / 8m);
 
                 var borderStyle = "solid";
-                if (BorderStyleMap.ContainsKey(type))
+                if (BorderStyleMap.TryGetValue(type, out var borderInfo))
                 {
-                    var borderInfo = BorderStyleMap[type];
                     borderStyle = borderInfo.CssName;
                     if (type == "double")
                     {
@@ -3049,8 +3049,8 @@ namespace Clippit.Word
             if (fill == "auto")
                 fill = "ffffff";
             var key = color + fill + pct.ToString(CultureInfo.InvariantCulture);
-            if (ShadeCache.ContainsKey(key))
-                return ShadeCache[key];
+            if (ShadeCache.TryGetValue(key, out var cached))
+                return cached;
             var fillRed = Convert.ToInt32(fill.Substring(0, 2), 16);
             var fillGreen = Convert.ToInt32(fill.Substring(2, 2), 16);
             var fillBlue = Convert.ToInt32(fill.Substring(4, 2), 16);
@@ -3072,9 +3072,9 @@ namespace Clippit.Word
             var shadeType = (string)shd.Attribute(W.val);
             var color = (string)shd.Attribute(W.color);
             var fill = (string)shd.Attribute(W.fill);
-            if (ShadeMapper.ContainsKey(shadeType))
+            if (ShadeMapper.TryGetValue(shadeType, out var shadeFn))
             {
-                color = ShadeMapper[shadeType](color, fill);
+                color = shadeFn(color, fill);
             }
             if (color != null)
             {
@@ -3114,12 +3114,11 @@ namespace Clippit.Word
             if (color == "auto")
                 color = propertyName == "color" ? "black" : "white";
 
-            if (NamedColors.ContainsKey(color))
+            if (NamedColors.TryGetValue(color, out var namedColor1))
             {
-                var lc = NamedColors[color];
-                if (lc == "")
+                if (namedColor1 == "")
                     return;
-                style.AddIfMissing(propertyName, lc);
+                style.AddIfMissing(propertyName, namedColor1);
                 return;
             }
             style.AddIfMissing(propertyName, "#" + color);
@@ -3133,12 +3132,11 @@ namespace Clippit.Word
             if (color == "auto")
                 color = "white";
 
-            if (NamedColors.ContainsKey(color))
+            if (NamedColors.TryGetValue(color, out var namedColor2))
             {
-                var lc = NamedColors[color];
-                if (lc == "")
+                if (namedColor2 == "")
                     return "black";
-                return lc;
+                return namedColor2;
             }
             return "#" + color;
         }
@@ -3180,9 +3178,9 @@ namespace Clippit.Word
 
         private static void CreateFontCssProperty(string font, Dictionary<string, string> style)
         {
-            if (FontFallback.ContainsKey(font))
+            if (FontFallback.TryGetValue(font, out var fallbackFormat))
             {
-                style.AddIfMissing("font-family", string.Format(FontFallback[font], font));
+                style.AddIfMissing("font-family", string.Format(fallbackFormat, font));
                 return;
             }
             style.AddIfMissing("font-family", font);

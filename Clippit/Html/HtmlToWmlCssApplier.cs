@@ -2323,7 +2323,7 @@ namespace Clippit.Html
         {
             var classesString = (string)element.Attribute("class");
             if (classesString == null)
-                return new string[0];
+                return [];
             return classesString.Split(' ');
         }
 
