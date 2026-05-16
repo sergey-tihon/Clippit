@@ -1,6 +1,6 @@
 {
-  "lr": "2026-05-15",
-  "rid": "25928512992",
+  "lr": "2026-05-16",
+  "rid": "25966334317",
   "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
@@ -19,10 +19,10 @@
   "prs": {
     "163": "RegisterCustomHandler (Closes #66)",
     "165": "ExcelAssembler (Closes #28)",
-    "272": "FieldRetriever modernize (refactor) - merged",
-    "273": "MetricsGetter modernize (refactor)"
+    "273": "MetricsGetter modernize (refactor)",
+    "274": "perf: TryGetValue double-lookup refactor (WmlToHtmlConverter, UnicodeMapper, MetricsGetter, PreProcessMarkup, HtmlToWmlCssApplier)"
   },
-  "notes": "Run 25928512992 (2026-05-15): Task 10: PR #273 created modernizing MetricsGetter.cs (file-scoped ns, is null/is not null, pattern matching). Task 2: all issues have recent Clippy comments, no new human activity. Task 3: no fixable issues without existing PRs.",
+  "notes": "Run 25966334317 (2026-05-16): Task 8: Created PR #274 (approx) replacing ContainsKey+indexer with TryGetValue in WmlToHtmlConverter (11 sites), UnicodeMapper (2), MetricsGetter (1), WmlComparer PreProcessMarkup (Guid.ToString N), HtmlToWmlCssApplier (empty array). 1829 tests pass. Task 3/2: all issues have recent Clippy comments, no new human activity.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
