@@ -1,28 +1,27 @@
 ﻿using System.Xml.Linq;
 
-namespace Clippit.Word.Assembler
-{
-    internal static class PA
-    {
-        public static XName Image = "Image";
-        public static XName Content = "Content";
-        public static XName DocumentTemplate = "DocumentTemplate";
-        public static XName Document = "Document";
-        public static XName Table = "Table";
-        public static XName Repeat = "Repeat";
-        public static XName EndRepeat = "EndRepeat";
-        public static XName Conditional = "Conditional";
-        public static XName EndConditional = "EndConditional";
+namespace Clippit.Word.Assembler;
 
-        public static XName Select = "Select";
-        public static XName Optional = "Optional";
-        public static XName Match = "Match";
-        public static XName NotMatch = "NotMatch";
-        public static XName Depth = "Depth";
-        public static XName Align = "Align";
-        public static XName Path = "Path";
-        public static XName Data = "Data";
-        public static XName PageBreakAfter = "PageBreakAfter";
-        public static XName FitWithin = "FitWithin";
-    }
+internal static class PA
+{
+    public static readonly XName Image = "Image";
+    public static readonly XName Content = "Content";
+    public static readonly XName DocumentTemplate = "DocumentTemplate";
+    public static readonly XName Document = "Document";
+    public static readonly XName Table = "Table";
+    public static readonly XName Repeat = "Repeat";
+    public static readonly XName EndRepeat = "EndRepeat";
+    public static readonly XName Conditional = "Conditional";
+    public static readonly XName EndConditional = "EndConditional";
+
+    public static readonly XName Select = "Select";
+    public static readonly XName Optional = "Optional";
+    public static readonly XName Match = "Match";
+    public static readonly XName NotMatch = "NotMatch";
+    public static readonly XName Depth = "Depth";
+    public static readonly XName Align = "Align";
+    public static readonly XName Path = "Path";
+    public static readonly XName Data = "Data";
+    public static readonly XName PageBreakAfter = "PageBreakAfter";
+    public static readonly XName FitWithin = "FitWithin";
 }

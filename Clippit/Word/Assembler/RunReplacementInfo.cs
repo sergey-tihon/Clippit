@@ -1,11 +1,10 @@
-﻿using System.Xml.Linq;
+using System.Xml.Linq;
 
-namespace Clippit.Word.Assembler
+namespace Clippit.Word.Assembler;
+
+internal class RunReplacementInfo
 {
-    internal class RunReplacementInfo
-    {
-        public XElement Xml { get; set; }
-        public string XmlExceptionMessage { get; set; }
-        public string SchemaValidationMessage { get; set; }
-    }
+    public XElement? Xml { get; set; }
+    public string? XmlExceptionMessage { get; set; }
+    public string? SchemaValidationMessage { get; set; }
 }

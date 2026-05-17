@@ -2,85 +2,75 @@
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Drawing;
 
-namespace Clippit.Word.Assembler
+namespace Clippit.Word.Assembler;
+
+internal static class XElementExtensions
 {
-    internal static class XElementExtensions
+    internal static bool IsPlainText(this XElement element)
     {
-        internal static bool IsPlainText(this XElement element)
-        {
-            return element.Value == element.GetInnerXml();
-        }
+        return element.Value == element.GetInnerXml();
+    }
 
-        internal static void MergeRunProperties(
-            this XElement element,
-            XElement paraRunProperties,
-            XElement runRunProperties
-        )
+    internal static void MergeRunProperties(
+        this XElement element,
+        XElement? paraRunProperties,
+        XElement? runRunProperties
+    )
+    {
+        // merge run properties of paragraph properties
+        if (element.Name == W.p && paraRunProperties is not null)
         {
-            // merge run properties of paragraph properties
-            if (element.Name == W.p && paraRunProperties != null)
+            var paraProps = element.Elements(W.pPr).FirstOrDefault();
+            if (paraProps is not null)
             {
-                XElement paraProps = element.Elements(W.pPr).FirstOrDefault();
-                if (paraProps != null)
+                var paraRunProps = paraProps.Elements(W.rPr).FirstOrDefault();
+                if (paraRunProps is null)
                 {
-                    XElement paraRunProps = paraProps.Elements(W.rPr).FirstOrDefault();
-                    if (paraRunProps == null)
-                    {
-                        paraProps.Add(paraRunProperties);
-                    }
-                    else
-                    {
-                        paraRunProps.MergeOriginalRunProperties(paraRunProperties);
-                    }
+                    paraProps.Add(paraRunProperties);
                 }
-            }
-
-            // merge run properties of runs
-            if (runRunProperties != null)
-            {
-                foreach (var run in element.DescendantsAndSelf(W.r))
+                else
                 {
-                    XElement runProps = run.Elements(W.rPr).FirstOrDefault();
-                    if (runProps == null)
-                    {
-                        run.AddFirst(runRunProperties);
-                    }
-                    else
-                    {
-                        runProps.MergeOriginalRunProperties(runRunProperties);
-                    }
+                    paraRunProps.MergeOriginalRunProperties(paraRunProperties);
                 }
             }
         }
 
-        private static void MergeOriginalRunProperties(this XElement runProps, XElement originalRunProps)
+        // merge run properties of runs
+        if (runRunProperties is not null)
         {
-            foreach (var prop in originalRunProps.Elements())
+            foreach (var run in element.DescendantsAndSelf(W.r))
             {
-                if (runProps.Element(prop.Name) == null)
+                var runProps = run.Elements(W.rPr).FirstOrDefault();
+                if (runProps is null)
                 {
-                    if (prop.Name == W.rStyle)
-                    {
-                        runProps.AddFirst(prop);
-                    }
-                    else
-                    {
-                        runProps.Add(prop);
-                    }
+                    run.AddFirst(runRunProperties);
+                }
+                else
+                {
+                    runProps.MergeOriginalRunProperties(runRunProperties);
                 }
             }
         }
+    }
 
-        private static string GetInnerXml(this XElement element)
+    private static void MergeOriginalRunProperties(this XElement runProps, XElement originalRunProps)
+    {
+        foreach (var prop in originalRunProps.Elements())
         {
-            string result = string.Empty;
-            using (var reader = element.CreateReader())
+            if (runProps.Element(prop.Name) is null)
             {
-                reader.MoveToContent();
-                result = reader.ReadInnerXml();
+                if (prop.Name == W.rStyle)
+                    runProps.AddFirst(prop);
+                else
+                    runProps.Add(prop);
             }
-
-            return System.Net.WebUtility.HtmlDecode(result);
         }
+    }
+
+    private static string GetInnerXml(this XElement element)
+    {
+        using var reader = element.CreateReader();
+        reader.MoveToContent();
+        return System.Net.WebUtility.HtmlDecode(reader.ReadInnerXml());
     }
 }

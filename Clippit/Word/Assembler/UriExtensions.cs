@@ -1,10 +1,9 @@
-﻿namespace Clippit.Word.Assembler
+namespace Clippit.Word.Assembler;
+
+internal static class UriExtensions
 {
-    internal static class UriExtensions
+    internal static Uri GetUri(this string s)
     {
-        internal static Uri GetUri(this string s)
-        {
-            return new UriBuilder(s).Uri;
-        }
+        return new UriBuilder(s).Uri;
     }
 }
