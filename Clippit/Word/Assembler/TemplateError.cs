@@ -1,7 +1,6 @@
-﻿namespace Clippit.Word.Assembler
+﻿namespace Clippit.Word.Assembler;
+
+internal class TemplateError
 {
-    internal class TemplateError
-    {
-        internal bool HasError { get; set; }
-    }
+    internal bool HasError { get; set; }
 }

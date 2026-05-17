@@ -1,28 +1,40 @@
-﻿using System.Xml.Linq;
+using System.Xml.Linq;
 
-namespace Clippit.Word.Assembler
+namespace Clippit.Word.Assembler;
+
+internal static class ErrorHandler
 {
-    internal static class ErrorHandler
+    internal static object CreateContextErrorMessage(
+        this XElement element,
+        string errorMessage,
+        TemplateError templateError
+    )
     {
-        internal static object CreateContextErrorMessage(
-            this XElement element,
-            string errorMessage,
-            TemplateError templateError
-        )
-        {
-            XElement para = element.Descendants(W.p).FirstOrDefault();
-            XElement run = element.Descendants(W.r).FirstOrDefault();
-            var errorRun = CreateRunErrorMessage(errorMessage, templateError);
-            if (para != null)
-                return new XElement(W.p, errorRun);
-            else
-                return errorRun;
-        }
+        var para = element.Descendants(W.p).FirstOrDefault();
+        var errorRun = CreateRunErrorMessage(errorMessage, templateError);
+        return para is not null ? new XElement(W.p, errorRun) : errorRun;
+    }
 
-        internal static XElement CreateRunErrorMessage(string errorMessage, TemplateError templateError)
-        {
-            templateError.HasError = true;
-            var errorRun = new XElement(
+    internal static XElement CreateRunErrorMessage(string errorMessage, TemplateError templateError)
+    {
+        templateError.HasError = true;
+        return new XElement(
+            W.r,
+            new XElement(
+                W.rPr,
+                new XElement(W.color, new XAttribute(W.val, "FF0000")),
+                new XElement(W.highlight, new XAttribute(W.val, "yellow"))
+            ),
+            new XElement(W.t, errorMessage)
+        );
+    }
+
+    internal static XElement CreateParaErrorMessage(string errorMessage, TemplateError templateError)
+    {
+        templateError.HasError = true;
+        return new XElement(
+            W.p,
+            new XElement(
                 W.r,
                 new XElement(
                     W.rPr,
@@ -30,26 +42,7 @@ namespace Clippit.Word.Assembler
                     new XElement(W.highlight, new XAttribute(W.val, "yellow"))
                 ),
                 new XElement(W.t, errorMessage)
-            );
-            return errorRun;
-        }
-
-        internal static XElement CreateParaErrorMessage(string errorMessage, TemplateError templateError)
-        {
-            templateError.HasError = true;
-            var errorPara = new XElement(
-                W.p,
-                new XElement(
-                    W.r,
-                    new XElement(
-                        W.rPr,
-                        new XElement(W.color, new XAttribute(W.val, "FF0000")),
-                        new XElement(W.highlight, new XAttribute(W.val, "yellow"))
-                    ),
-                    new XElement(W.t, errorMessage)
-                )
-            );
-            return errorPara;
-        }
+            )
+        );
     }
 }
