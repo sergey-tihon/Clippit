@@ -201,7 +201,7 @@ public class UnicodeMapper
     /// use a Unicode value in conjunction with different fonts.
     /// </summary>
     /// <param name="sym">The w:sym element to be stringified.</param>
-    /// <returns>A single-character Unicode string representing the w:sym element.</returns>
+    /// <returns>A Unicode character representing the w:sym element.</returns>
     public static char SymToChar(XElement sym)
     {
         ArgumentNullException.ThrowIfNull(sym);
@@ -266,7 +266,7 @@ public class UnicodeMapper
     /// </summary>
     /// <param name="textValue">The text value to transform.</param>
     /// <param name="runProperties">The run properties to apply.</param>
-    /// <returns>A list with a single run.</returns>
+    /// <returns>An enumerable containing a single run element.</returns>
     public static IEnumerable<XElement> StringToSingleRunList(string textValue, XElement runProperties)
     {
         var run = new XElement(
