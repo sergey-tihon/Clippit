@@ -301,4 +301,36 @@ public partial class PresentationBuilderSlidePublishingTests
         await using var resFile = File.Create(resultFile);
         await ms.CopyToAsync(resFile, cancellationToken).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Regression test for https://github.com/sergey-tihon/Clippit/issues/286 —
+    /// GetSlideTitle must return an empty string (not throw NullReferenceException)
+    /// when the slide element is missing a p:cSld or p:spTree child.
+    /// </summary>
+    [Test]
+    public async Task GetSlideTitle_MissingCsld_ReturnsEmptyString()
+    {
+        // Slide element with no p:cSld child at all
+        var slide = new XElement(P.sld);
+        var title = PresentationBuilderTools.GetSlideTitle(slide);
+        await Assert.That(title).IsEqualTo(string.Empty);
+    }
+
+    [Test]
+    public async Task GetSlideTitle_MissingSpTree_ReturnsEmptyString()
+    {
+        // p:cSld present but without p:spTree
+        var slide = new XElement(P.sld, new XElement(P.cSld));
+        var title = PresentationBuilderTools.GetSlideTitle(slide);
+        await Assert.That(title).IsEqualTo(string.Empty);
+    }
+
+    [Test]
+    public async Task GetSlideTitle_NoTitleShape_ReturnsEmptyString()
+    {
+        // p:cSld/p:spTree present but no shapes with title placeholder
+        var slide = new XElement(P.sld, new XElement(P.cSld, new XElement(P.spTree)));
+        var title = PresentationBuilderTools.GetSlideTitle(slide);
+        await Assert.That(title).IsEqualTo(string.Empty);
+    }
 }
