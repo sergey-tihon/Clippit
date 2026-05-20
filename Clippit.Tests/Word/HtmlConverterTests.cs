@@ -655,9 +655,9 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
     }
 
     [Test]
-    public async Task HC066_PageBreakRendersAsCssDivPageBreak()
+    public async Task HC069_PageBreakRendersAsCssPageBreakMarker()
     {
-        // Regression test: w:br with w:type="page" must emit a CSS page-break div,
+        // Regression test: w:br with w:type="page" must emit a CSS page-break marker,
         // not a plain <br> element.  Fixes issue #279.
         using var memoryStream = new MemoryStream();
         using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
@@ -673,10 +673,7 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
                 new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", "Before break"))),
                 new XElement(
                     w + "p",
-                    new XElement(
-                        w + "r",
-                        new XElement(w + "br", new XAttribute(w + "type", "page"))
-                    )
+                    new XElement(w + "r", new XElement(w + "br", new XAttribute(w + "type", "page")))
                 ),
                 new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", "After break")))
             );
@@ -697,15 +694,21 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
         var htmlString = html.ToString(SaveOptions.DisableFormatting);
 
-        // Must contain a page-break div
+        // Must contain a page-break marker
         await Assert.That(htmlString).Contains("page-break-before");
         await Assert.That(htmlString).Contains("always");
 
-        // Must NOT render a plain <br> for the page break
-        var pageBreakDivs = html.Descendants(Xhtml.div)
-            .Where(d => d.Attribute("style")?.Value?.Contains("page-break-before") == true)
+        var pageBreakMarkers = html.Descendants(Xhtml.span)
+            .Where(s =>
+                s.Attribute("style")?.Value?.Contains("page-break-before") == true
+                && s.Attribute("style")?.Value?.Contains("display: block") == true
+            )
             .ToList();
-        await Assert.That(pageBreakDivs).IsNotEmpty();
+        await Assert.That(pageBreakMarkers).HasCount(1);
+
+        // Must NOT render a plain <br> for the page break
+        var hasLineBreakElement = html.Descendants(Xhtml.br).Any();
+        await Assert.That(hasLineBreakElement).IsFalse();
     }
 
     private static XElement BuildTextBoxParagraph(
