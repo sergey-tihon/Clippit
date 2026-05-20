@@ -90,16 +90,15 @@ namespace Clippit
             var priamble = lines
                 .TakeWhile(l =>
                 {
-                    var s = l.ToUpper();
-                    return priambleKeyWords.Any(pk => s.StartsWith(pk));
+                    return priambleKeyWords.Any(pk => l.StartsWith(pk, StringComparison.OrdinalIgnoreCase));
                 })
                 .ToArray();
 
             foreach (var item in priamble)
             {
-                if (item.ToUpper().StartsWith("MIME-VERSION:"))
+                if (item.StartsWith("MIME-VERSION:", StringComparison.OrdinalIgnoreCase))
                     mimeVersion = item.Substring("MIME-VERSION:".Length).Trim();
-                else if (item.ToUpper().StartsWith("CONTENT-TYPE:"))
+                else if (item.StartsWith("CONTENT-TYPE:", StringComparison.OrdinalIgnoreCase))
                 {
                     var contentTypeLine = item.Substring("CONTENT-TYPE:".Length).Trim();
                     var spl = contentTypeLine.Split(';').Select(z => z.Trim()).ToArray();
@@ -144,8 +143,7 @@ namespace Clippit
 
                     var partPriamble = rp.TakeWhile(l =>
                         {
-                            var s = l.ToUpper();
-                            return partPriambleKeyWords.Any(pk => s.StartsWith(pk));
+                            return partPriambleKeyWords.Any(pk => l.StartsWith(pk, StringComparison.OrdinalIgnoreCase));
                         })
                         .ToArray();
 
@@ -157,11 +155,11 @@ namespace Clippit
 
                     foreach (var item in partPriamble)
                     {
-                        if (item.ToUpper().StartsWith("CONTENT-LOCATION:"))
+                        if (item.StartsWith("CONTENT-LOCATION:", StringComparison.OrdinalIgnoreCase))
                             contentLocation = item.Substring("CONTENT-LOCATION:".Length).Trim();
-                        else if (item.ToUpper().StartsWith("CONTENT-TRANSFER-ENCODING:"))
+                        else if (item.StartsWith("CONTENT-TRANSFER-ENCODING:", StringComparison.OrdinalIgnoreCase))
                             contentTransferEncoding = item.Substring("CONTENT-TRANSFER-ENCODING:".Length).Trim();
-                        else if (item.ToUpper().StartsWith("CONTENT-TYPE:"))
+                        else if (item.StartsWith("CONTENT-TYPE:", StringComparison.OrdinalIgnoreCase))
                             partContentType = item.Substring("CONTENT-TYPE:".Length).Trim();
                     }
 
@@ -195,7 +193,10 @@ namespace Clippit
                         partContentType = thisPartContentType;
                     }
 
-                    if (contentTransferEncoding != null && contentTransferEncoding.ToUpper() == "BASE64")
+                    if (
+                        contentTransferEncoding != null
+                        && contentTransferEncoding.Equals("BASE64", StringComparison.OrdinalIgnoreCase)
+                    )
                     {
                         partBinary = Convert.FromBase64String(partText);
                     }
