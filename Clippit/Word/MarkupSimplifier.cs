@@ -568,6 +568,8 @@ namespace Clippit.Word
                     || settings.RemoveWebHidden
                     || settings.RemoveGoBackBookmark
                     || settings.RemoveHyperlinks
+                    || settings.RemoveSoftHyphens
+                    || settings.RemoveLastRenderedPageBreak
                 )
                     newRoot = (XElement)SimplifyMarkupTransform(newRoot, settings, parameters);
 
