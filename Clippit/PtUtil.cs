@@ -193,7 +193,10 @@ namespace Clippit
                         partContentType = thisPartContentType;
                     }
 
-                    if (contentTransferEncoding != null && contentTransferEncoding.Equals("BASE64", StringComparison.OrdinalIgnoreCase))
+                    if (
+                        contentTransferEncoding != null
+                        && contentTransferEncoding.Equals("BASE64", StringComparison.OrdinalIgnoreCase)
+                    )
                     {
                         partBinary = Convert.FromBase64String(partText);
                     }
