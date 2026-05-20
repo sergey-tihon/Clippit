@@ -165,7 +165,9 @@ public class MetricsGetter
 
         var nonRelationshipParts = pkg.GetParts()
             .Where(p => p.ContentType != "application/vnd.openxmlformats-package.relationships+xml");
-        var xmlParts = nonRelationshipParts.Where(p => p.ContentType.ToLower().EndsWith("xml"));
+        var xmlParts = nonRelationshipParts.Where(p =>
+            p.ContentType.EndsWith("xml", StringComparison.OrdinalIgnoreCase)
+        );
 
         var uniqueNamespaces = new HashSet<string>();
         foreach (var xp in xmlParts)
