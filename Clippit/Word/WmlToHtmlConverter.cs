@@ -674,11 +674,11 @@ namespace Clippit.Word
             // Page and column breaks are rendered as a print-CSS page-break marker.
             if (breakType is "page" or "column")
             {
-                var pageBreakMarker = new XElement(Xhtml.span);
-                pageBreakMarker.AddAnnotation(
+                var pageBreakSpan = new XElement(Xhtml.span);
+                pageBreakSpan.AddAnnotation(
                     new Dictionary<string, string> { { "display", "block" }, { "page-break-before", "always" } }
                 );
-                return pageBreakMarker;
+                return pageBreakSpan;
             }
 
             XElement span = null;
