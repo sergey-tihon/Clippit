@@ -654,6 +654,63 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         await Assert.That(textBoxDiv!.Descendants(Xhtml.table).ToList()).IsNotEmpty();
     }
 
+    [Test]
+    public async Task HC069_PageBreakRendersAsCssPageBreakMarker()
+    {
+        // Regression test: w:br with w:type="page" must emit a CSS page-break marker,
+        // not a plain <br> element.  Fixes issue #279.
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
+            mainPart.AddNewPart<DocumentSettingsPart>().Settings = new Settings();
+
+            XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+
+            var body = new XElement(
+                w + "body",
+                new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", "Before break"))),
+                new XElement(
+                    w + "p",
+                    new XElement(w + "r", new XElement(w + "br", new XAttribute(w + "type", "page")))
+                ),
+                new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", "After break")))
+            );
+            mainPart.PutXDocument(new XDocument(new XElement(w + "document", body)));
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = false,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+
+        var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+        var htmlString = html.ToString(SaveOptions.DisableFormatting);
+
+        // Must contain a page-break marker
+        await Assert.That(htmlString).Contains("page-break-before");
+        await Assert.That(htmlString).Contains("always");
+
+        var pageBreakMarkers = html.Descendants(Xhtml.span)
+            .Where(s =>
+                s.Attribute("style")?.Value?.Contains("page-break-before") == true
+                && s.Attribute("style")?.Value?.Contains("display: block") == true
+            )
+            .ToList();
+        await Assert.That(pageBreakMarkers).HasCount(1);
+
+        // Must NOT render a plain <br> for the page break
+        var hasLineBreakElement = html.Descendants(Xhtml.br).Any();
+        await Assert.That(hasLineBreakElement).IsFalse();
+    }
+
     private static XElement BuildTextBoxParagraph(
         XNamespace w,
         XNamespace wp,
