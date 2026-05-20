@@ -15,10 +15,7 @@ namespace Clippit.PowerPoint.Fluent
         {
             ArgumentNullException.ThrowIfNull(slide);
 
-            var titleShapes = slide
-                .Element(P.cSld)
-                .Element(P.spTree)
-                .Descendants(P.sp)
+            var titleShapes = (slide.Element(P.cSld)?.Element(P.spTree)?.Descendants(P.sp) ?? [])
                 .Where(shape =>
                     shape.Element(P.nvSpPr)?.Element(P.nvPr)?.Element(P.ph)?.Attribute(NoNamespace.type)?.Value switch
                     {
@@ -33,7 +30,7 @@ namespace Clippit.PowerPoint.Fluent
             foreach (var shape in titleShapes)
             {
                 // Get the text in each paragraph in this shape.
-                foreach (var paragraph in shape.Element(P.txBody).Descendants(A.p))
+                foreach (var paragraph in shape.Element(P.txBody)?.Descendants(A.p) ?? [])
                 {
                     foreach (var text in paragraph.Descendants(A.t))
                     {
