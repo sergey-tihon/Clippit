@@ -1,6 +1,6 @@
 {
   "lr": "2026-05-20",
-  "rid": "26142972538",
+  "rid": "26165703304",
   "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
@@ -13,19 +13,18 @@
     "28": "2026-03-28",
     "65": "2026-03-29",
     "233": "2026-04-23",
-    "255": "2026-05-05"
+    "255": "2026-05-05",
+    "279": "2026-05-20",
+    "286": "2026-05-20"
   },
   "cursor": "103",
   "prs": {
     "163": "RegisterCustomHandler (Closes #66)",
     "165": "ExcelAssembler (Closes #28)",
-    "277": "chore(deps): update TUnit 1.45.0 → 1.45.8",
     "281": "fix: render Word page breaks as CSS page-break div (Closes #279)",
-    "282": "perf: replace ToUpper/ToLower+comparison with OrdinalIgnoreCase",
-    "fix-markupsimplifier": "fix: RemoveSoftHyphens/RemoveLastRenderedPageBreak silently ignored + tests MS010-MS015",
-    "refactor-getlistitemtext": "refactor: modernize GetListItemText locale files"
+    "287": "fix: NullReferenceException in GetSlideTitle (Closes #286)"
   },
-  "notes": "Run 26142972538 (2026-05-20): Task 9+bugfix: MarkupSimplifier bug (RemoveSoftHyphens/RemoveLastRenderedPageBreak not in transform guard) + tests MS010-MS015 PR created. Task 5: GetListItemText modernize PR created. Task 6: all Clippy PRs clean. Issue #279 labeled. Concurrent run created PR #281 (page break fix) and #282 (perf OrdinalIgnoreCase). PR #278 merged.",
+  "notes": "Run 26165703304 (2026-05-20): Task 5: Fixed GetSlideTitle NullReferenceException (PR #287, Closes #286), labeled #286 as bug, commented on #286. PRs #282,#283,#284 merged. Task 11: updated monthly issue.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
@@ -62,6 +61,9 @@
     "274": "trygetvalue-perf-merged",
     "275": "assembler-helpers-refactor-merged",
     "276": "tunit-1.45.0-merged",
-    "278": "unicodemapper-modernize-merged"
+    "278": "unicodemapper-modernize-merged",
+    "282": "ordinalignorecase-perf-merged",
+    "283": "getlistitemtext-refactor-merged",
+    "284": "markupsimplifier-bugfix-merged"
   }
 }
