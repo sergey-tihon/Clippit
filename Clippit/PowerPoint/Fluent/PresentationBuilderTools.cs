@@ -15,26 +15,16 @@ namespace Clippit.PowerPoint.Fluent
         {
             ArgumentNullException.ThrowIfNull(slide);
 
-            var titleShapes =
-                slide
-                    .Element(P.cSld)
-                    ?.Element(P.spTree)
-                    ?.Descendants(P.sp)
-                    .Where(shape =>
-                        shape
-                            .Element(P.nvSpPr)
-                            ?.Element(P.nvPr)
-                            ?.Element(P.ph)
-                            ?.Attribute(NoNamespace.type)
-                            ?.Value switch
-                        {
-                            "title" => true,
-                            "ctrTitle" => true,
-                            _ => false,
-                        }
-                    )
-                    .ToList()
-                ?? [];
+            var titleShapes = (slide.Element(P.cSld)?.Element(P.spTree)?.Descendants(P.sp) ?? [])
+                .Where(shape =>
+                    shape.Element(P.nvSpPr)?.Element(P.nvPr)?.Element(P.ph)?.Attribute(NoNamespace.type)?.Value switch
+                    {
+                        "title" => true,
+                        "ctrTitle" => true,
+                        _ => false,
+                    }
+                )
+                .ToList();
 
             var paragraphText = new StringBuilder();
             foreach (var shape in titleShapes)

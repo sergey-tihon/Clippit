@@ -333,4 +333,29 @@ public partial class PresentationBuilderSlidePublishingTests
         var title = PresentationBuilderTools.GetSlideTitle(slide);
         await Assert.That(title).IsEqualTo(string.Empty);
     }
+
+    [Test]
+    public async Task GetSlideTitle_TitleShapeWithoutTextBody_ReturnsEmptyString()
+    {
+        var slide = new XElement(
+            P.sld,
+            new XElement(
+                P.cSld,
+                new XElement(
+                    P.spTree,
+                    new XElement(
+                        P.sp,
+                        new XElement(
+                            P.nvSpPr,
+                            new XElement(P.nvPr, new XElement(P.ph, new XAttribute(NoNamespace.type, "title")))
+                        )
+                    )
+                )
+            )
+        );
+
+        var title = PresentationBuilderTools.GetSlideTitle(slide);
+
+        await Assert.That(title).IsEqualTo(string.Empty);
+    }
 }
