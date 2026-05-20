@@ -761,7 +761,19 @@ namespace Clippit.Word
             // The paragraph conversion might have created empty spans.
             // These can and should be removed because empty spans are
             // invalid in HTML5.
-            paragraph.Elements(Xhtml.span).Where(e => e.IsEmpty).Remove();
+            paragraph
+                .Elements(Xhtml.span)
+                .Where(e =>
+                {
+                    if (!e.IsEmpty)
+                    {
+                        return false;
+                    }
+
+                    var style = e.Annotation<Dictionary<string, string>>();
+                    return style is null || !style.ContainsKey("page-break-before");
+                })
+                .Remove();
 
             foreach (var span in paragraph.Elements(Xhtml.span).ToList())
             {
