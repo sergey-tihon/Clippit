@@ -340,4 +340,220 @@ public class MarkupSimplifierTests
         // But the text content must be preserved (run is promoted to parent paragraph).
         await Assert.That(string.Concat(partDocument.Descendants(W.t).Select(t => (string)t))).IsEqualTo("Click here");
     }
+
+    private const string SoftHyphenDocumentXmlString =
+        @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
+  <w:body>
+    <w:p>
+      <w:r>
+        <w:t xml:space=""preserve"">extra</w:t>
+        <w:softHyphen/>
+        <w:t>ordinary</w:t>
+      </w:r>
+    </w:p>
+  </w:body>
+</w:document>";
+
+    [Test]
+    public async Task MS010_RemoveSoftHyphens_RemovesSoftHyphenElements()
+    {
+        var partDocument = XDocument.Parse(SoftHyphenDocumentXmlString);
+        await Assert.That(partDocument.Descendants(W.softHyphen)).IsNotEmpty();
+
+        using var stream = new MemoryStream();
+        using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+        var part = wordDocument.AddMainDocumentPart();
+        part.PutXDocument(partDocument);
+        var settings = new SimplifyMarkupSettings { RemoveSoftHyphens = true };
+        MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
+        partDocument = part.GetXDocument();
+
+        await Assert.That(partDocument.Descendants(W.softHyphen)).IsEmpty();
+        // Text content must be preserved.
+        var text = string.Concat(partDocument.Descendants(W.t).Select(t => (string)t));
+        await Assert.That(text).IsEqualTo("extraordinary");
+    }
+
+    private const string LastRenderedPageBreakDocumentXmlString =
+        @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
+  <w:body>
+    <w:p>
+      <w:r>
+        <w:lastRenderedPageBreak/>
+        <w:t>Page content</w:t>
+      </w:r>
+    </w:p>
+  </w:body>
+</w:document>";
+
+    [Test]
+    public async Task MS011_RemoveLastRenderedPageBreak_RemovesElement()
+    {
+        var partDocument = XDocument.Parse(LastRenderedPageBreakDocumentXmlString);
+        await Assert.That(partDocument.Descendants(W.lastRenderedPageBreak)).IsNotEmpty();
+
+        using var stream = new MemoryStream();
+        using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+        var part = wordDocument.AddMainDocumentPart();
+        part.PutXDocument(partDocument);
+        var settings = new SimplifyMarkupSettings { RemoveLastRenderedPageBreak = true };
+        MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
+        partDocument = part.GetXDocument();
+
+        await Assert.That(partDocument.Descendants(W.lastRenderedPageBreak)).IsEmpty();
+        // Text content must be preserved.
+        await Assert
+            .That(string.Concat(partDocument.Descendants(W.t).Select(t => (string)t)))
+            .IsEqualTo("Page content");
+    }
+
+    private const string WebHiddenDocumentXmlString =
+        @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
+  <w:body>
+    <w:p>
+      <w:r>
+        <w:rPr>
+          <w:webHidden/>
+        </w:rPr>
+        <w:t>Hidden on web</w:t>
+      </w:r>
+    </w:p>
+  </w:body>
+</w:document>";
+
+    [Test]
+    public async Task MS012_RemoveWebHidden_RemovesWebHiddenElement()
+    {
+        var partDocument = XDocument.Parse(WebHiddenDocumentXmlString);
+        await Assert.That(partDocument.Descendants(W.webHidden)).IsNotEmpty();
+
+        using var stream = new MemoryStream();
+        using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+        var part = wordDocument.AddMainDocumentPart();
+        part.PutXDocument(partDocument);
+        var settings = new SimplifyMarkupSettings { RemoveWebHidden = true };
+        MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
+        partDocument = part.GetXDocument();
+
+        await Assert.That(partDocument.Descendants(W.webHidden)).IsEmpty();
+        // Text content must be preserved.
+        await Assert
+            .That(string.Concat(partDocument.Descendants(W.t).Select(t => (string)t)))
+            .IsEqualTo("Hidden on web");
+    }
+
+    private const string PermissionsDocumentXmlString =
+        @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
+  <w:body>
+    <w:p>
+      <w:permStart w:id=""1"" w:edGrp=""everyone""/>
+      <w:r><w:t>Protected text</w:t></w:r>
+      <w:permEnd w:id=""1""/>
+    </w:p>
+  </w:body>
+</w:document>";
+
+    [Test]
+    public async Task MS013_RemovePermissions_RemovesPermStartAndPermEnd()
+    {
+        var partDocument = XDocument.Parse(PermissionsDocumentXmlString);
+        await Assert.That(partDocument.Descendants(W.permStart)).IsNotEmpty();
+        await Assert.That(partDocument.Descendants(W.permEnd)).IsNotEmpty();
+
+        using var stream = new MemoryStream();
+        using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+        var part = wordDocument.AddMainDocumentPart();
+        part.PutXDocument(partDocument);
+        var settings = new SimplifyMarkupSettings { RemovePermissions = true };
+        MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
+        partDocument = part.GetXDocument();
+
+        await Assert.That(partDocument.Descendants(W.permStart)).IsEmpty();
+        await Assert.That(partDocument.Descendants(W.permEnd)).IsEmpty();
+        // Text content must be preserved.
+        await Assert
+            .That(string.Concat(partDocument.Descendants(W.t).Select(t => (string)t)))
+            .IsEqualTo("Protected text");
+    }
+
+    private const string FootnoteReferenceDocumentXmlString =
+        @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
+  <w:body>
+    <w:p>
+      <w:r><w:t xml:space=""preserve"">Some text</w:t></w:r>
+      <w:r>
+        <w:rPr><w:vertAlign w:val=""superscript""/></w:rPr>
+        <w:footnoteReference w:id=""1""/>
+      </w:r>
+      <w:r>
+        <w:endnoteReference w:id=""1""/>
+      </w:r>
+    </w:p>
+  </w:body>
+</w:document>";
+
+    [Test]
+    public async Task MS014_RemoveEndAndFootNotes_RemovesNoteReferenceElements()
+    {
+        var partDocument = XDocument.Parse(FootnoteReferenceDocumentXmlString);
+        await Assert.That(partDocument.Descendants(W.footnoteReference)).IsNotEmpty();
+        await Assert.That(partDocument.Descendants(W.endnoteReference)).IsNotEmpty();
+
+        using var stream = new MemoryStream();
+        using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+        var part = wordDocument.AddMainDocumentPart();
+        part.PutXDocument(partDocument);
+        var settings = new SimplifyMarkupSettings { RemoveEndAndFootNotes = true };
+        MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
+        partDocument = part.GetXDocument();
+
+        await Assert.That(partDocument.Descendants(W.footnoteReference)).IsEmpty();
+        await Assert.That(partDocument.Descendants(W.endnoteReference)).IsEmpty();
+        // Text content must be preserved.
+        await Assert.That(string.Concat(partDocument.Descendants(W.t).Select(t => (string)t))).IsEqualTo("Some text");
+    }
+
+    private const string FieldCodesDocumentXmlString =
+        @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
+  <w:body>
+    <w:p>
+      <w:fldSimple w:instr="" DATE "">
+        <w:r><w:t>5/20/2026</w:t></w:r>
+      </w:fldSimple>
+      <w:r>
+        <w:fldChar w:fldCharType=""begin""/>
+      </w:r>
+      <w:r>
+        <w:instrText xml:space=""preserve""> PAGE </w:instrText>
+      </w:r>
+      <w:r>
+        <w:fldChar w:fldCharType=""end""/>
+      </w:r>
+    </w:p>
+  </w:body>
+</w:document>";
+
+    [Test]
+    public async Task MS015_RemoveFieldCodes_RemovesFieldInstructionsAndUnwrapsFldSimple()
+    {
+        var partDocument = XDocument.Parse(FieldCodesDocumentXmlString);
+        await Assert.That(partDocument.Descendants(W.fldSimple)).IsNotEmpty();
+        await Assert.That(partDocument.Descendants(W.instrText)).IsNotEmpty();
+        await Assert.That(partDocument.Descendants(W.fldChar)).IsNotEmpty();
+
+        using var stream = new MemoryStream();
+        using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+        var part = wordDocument.AddMainDocumentPart();
+        part.PutXDocument(partDocument);
+        var settings = new SimplifyMarkupSettings { RemoveFieldCodes = true };
+        MarkupSimplifier.SimplifyMarkup(wordDocument, settings);
+        partDocument = part.GetXDocument();
+
+        // fldSimple is unwrapped (its children promoted), fldChar and instrText are removed.
+        await Assert.That(partDocument.Descendants(W.fldSimple)).IsEmpty();
+        await Assert.That(partDocument.Descendants(W.instrText)).IsEmpty();
+        await Assert.That(partDocument.Descendants(W.fldChar)).IsEmpty();
+        // The display text of the fldSimple field must be preserved.
+        await Assert.That(string.Concat(partDocument.Descendants(W.t).Select(t => (string)t))).IsEqualTo("5/20/2026");
+    }
 }
