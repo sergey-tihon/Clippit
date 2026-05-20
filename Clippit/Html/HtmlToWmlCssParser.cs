@@ -14,7 +14,6 @@ Resource Center and Documentation: http://openxmldeveloper.org/wiki/w/wiki/power
 
 ***************************************************************************/
 
-using System.Collections;
 using System.Drawing;
 using System.Globalization;
 using System.Text;
@@ -4298,7 +4297,7 @@ namespace Clippit.Html
         private int m_columnNumberOfCurrentCharacter;
         private int m_lineNumberOfCurrentCharacter;
         private int m_eolInComment;
-        private static readonly Hashtable s_start;
+        private static readonly Dictionary<int, int> s_start;
 
         private CssToken m_tokensAlreadyPeeked;
         private CssToken m_currentPeekToken;
@@ -4308,7 +4307,7 @@ namespace Clippit.Html
 
         static Scanner()
         {
-            s_start = new Hashtable(128);
+            s_start = new Dictionary<int, int>(128);
             for (var i = 65; i <= 84; ++i)
                 s_start[i] = 1;
             for (var i = 86; i <= 90; ++i)
@@ -4550,15 +4549,7 @@ namespace Clippit.Html
             m_currentToken.m_tokenColumn = m_columnNumberOfCurrentCharacter;
             m_currentToken.m_tokenLine = m_lineNumberOfCurrentCharacter;
             m_currentToken.m_tokenPositionInCharacters = m_unicodeCharacterPosition;
-            int state;
-            if (s_start.ContainsKey(m_currentInputCharacter))
-            {
-                state = (int)s_start[m_currentInputCharacter];
-            }
-            else
-            {
-                state = 0;
-            }
+            s_start.TryGetValue(m_currentInputCharacter, out var state);
             m_lengthOfCurrentToken = 0;
             AddCh();
 
