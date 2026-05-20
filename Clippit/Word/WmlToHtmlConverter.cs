@@ -669,6 +669,18 @@ namespace Clippit.Word
 
         private static object ProcessBreak(XElement element)
         {
+            var breakType = (string)element.Attribute(W.type);
+
+            // Page breaks and column breaks are rendered as a print-CSS page-break div.
+            if (breakType is "page" or "column")
+            {
+                var pageBreakDiv = new XElement(Xhtml.div);
+                pageBreakDiv.AddAnnotation(
+                    new Dictionary<string, string> { { "page-break-before", "always" } }
+                );
+                return pageBreakDiv;
+            }
+
             XElement span = null;
             var tabWidth = (decimal?)element.Attribute(PtOpenXml.TabWidth);
             if (tabWidth != null)
