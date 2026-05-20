@@ -1,5 +1,25 @@
 # Changelog
 
+## [3.4.4] - May 20, 2026
+
+- fix(pptx): prevent `NullReferenceException` in `GetSlideTitle` when `cSld`/`spTree` is missing (#287)
+- fix(html): render Word page breaks as CSS `page-break` div in HTML output (#281)
+- fix(word): `RemoveSoftHyphens` and `RemoveLastRenderedPageBreak` in `MarkupSimplifier` were silently ignored (#284)
+- perf: replace `ToUpper()`+`StartsWith()` with `OrdinalIgnoreCase` comparisons (#282)
+- perf: replace `.Where(pred).Count()` with `.Count(pred)` and `Count()!=1` with `Skip(1).Any()` (#270)
+- perf: replace `ContainsKey`+indexer double-lookups with `TryGetValue` (#274)
+- refactor: modernize `GetListItemText` locale files (#283)
+- refactor: modernize `UnicodeMapper.cs` (#278)
+- refactor: modernize Word/Assembler helper files (#275)
+- refactor: modernize `MetricsGetter.cs` — file-scoped namespace, `is null`/`is not null`, pattern matching (#273)
+- refactor: modernize `FieldRetriever.cs` — file-scoped namespace, `W.*` constants, `is null`, slices, `TryGetValue` (#272)
+- refactor: simplify `Select().SelectMany()` chains in `WmlComparer` to `SelectMany()` (#271)
+- refactor: simplify `FileUtils.GetFilesRecursive` using `SearchOption.AllDirectories` (#268)
+- refactor: modernize null checks to use `ArgumentNullException.ThrowIfNull` (#265)
+- test: add unit tests for `OpenXmlPowerToolsDocument` and `OpenXmlMemoryStreamDocument` (OXD001–OXD040) (#266)
+- test: add `ReferenceAdder` unit tests (RA100–RA140) and fix `AddTof` `w:dirty` namespace bug (#263)
+- chore(deps): update TUnit 1.43.11 → 1.45.8 (#264, #267, #276, #277)
+
 ## [3.4.3] - May 6, 2026
 
 - fix(pptx): fix `ArgumentNullException` in `FluentPresentationBuilder` when slides have null data (#256)
