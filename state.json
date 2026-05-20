@@ -1,6 +1,6 @@
 {
-  "lr": "2026-05-20",
-  "rid": "26142814204",
+  "lr": "2026-05-19",
+  "rid": "26111265926",
   "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
@@ -13,19 +13,16 @@
     "28": "2026-03-28",
     "65": "2026-03-29",
     "233": "2026-04-23",
-    "255": "2026-05-05",
-    "279": "2026-05-20"
+    "255": "2026-05-05"
   },
-  "cursor": "279",
+  "cursor": "103",
   "prs": {
     "163": "RegisterCustomHandler (Closes #66)",
     "165": "ExcelAssembler (Closes #28)",
-    "277": "chore(deps): update TUnit 1.45.0 → 1.45.8",
-    "278": "refactor: modernize UnicodeMapper.cs",
-    "281": "fix: page-break div in HTML output (Closes #279)",
-    "282": "perf: OrdinalIgnoreCase in PtUtil+MetricsGetter"
+    "277": "chore(deps): update TUnit 1.45.0 \u2192 1.45.8",
+    "278": "refactor: modernize UnicodeMapper.cs"
   },
-  "notes": "Run 26142814204 (2026-05-20): Task 3: Fixed page-break conversion bug in WmlToHtmlConverter (PR ~281, Closes #279). Task 8: OrdinalIgnoreCase perf fix in PtUtil.cs+MetricsGetter.cs (PR ~282). Task 2: Commented on #279. Labelled #279 bug. PR numbers 281/282 are estimates - confirm after workflow completes.",
+  "notes": "Run 26111265926 (2026-05-19): Task 4: TUnit 1.45.0\u21921.45.8 PR created. Task 10: UnicodeMapper modernize PR created. Task 3 fallback: no bug-labeled issues; help-wanted already have open PRs (#163, #165).",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
