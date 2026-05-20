@@ -669,6 +669,18 @@ namespace Clippit.Word
 
         private static object ProcessBreak(XElement element)
         {
+            var breakType = (string)element.Attribute(W.type);
+
+            // Page and column breaks are rendered as a print-CSS page-break marker.
+            if (breakType is "page" or "column")
+            {
+                var pageBreakSpan = new XElement(Xhtml.span);
+                pageBreakSpan.AddAnnotation(
+                    new Dictionary<string, string> { { "display", "block" }, { "page-break-before", "always" } }
+                );
+                return pageBreakSpan;
+            }
+
             XElement span = null;
             var tabWidth = (decimal?)element.Attribute(PtOpenXml.TabWidth);
             if (tabWidth != null)
@@ -749,7 +761,16 @@ namespace Clippit.Word
             // The paragraph conversion might have created empty spans.
             // These can and should be removed because empty spans are
             // invalid in HTML5.
-            paragraph.Elements(Xhtml.span).Where(e => e.IsEmpty).Remove();
+            paragraph
+                .Elements(Xhtml.span)
+                .Where(e =>
+                    e.IsEmpty
+                    && (
+                        e.Annotation<Dictionary<string, string>>() is not { } style
+                        || !style.ContainsKey("page-break-before")
+                    )
+                )
+                .Remove();
 
             foreach (var span in paragraph.Elements(Xhtml.span).ToList())
             {
