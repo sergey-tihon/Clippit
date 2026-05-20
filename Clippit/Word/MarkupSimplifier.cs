@@ -36,6 +36,22 @@ namespace Clippit.Word
         public bool RemoveSoftHyphens;
         public bool RemoveWebHidden;
         public bool ReplaceTabsWithSpaces;
+
+        // Returns true when at least one setting handled by SimplifyMarkupTransform is enabled,
+        // so the guard and the transform itself always consult the same list of flags.
+        public bool HasAnySimplifyTransformEnabled() =>
+            RemoveComments
+            || RemoveEndAndFootNotes
+            || ReplaceTabsWithSpaces
+            || RemoveFieldCodes
+            || RemovePermissions
+            || RemoveProof
+            || RemoveBookmarks
+            || RemoveWebHidden
+            || RemoveGoBackBookmark
+            || RemoveHyperlinks
+            || RemoveSoftHyphens
+            || RemoveLastRenderedPageBreak;
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -557,20 +573,7 @@ namespace Clippit.Word
             var prevNewRoot = new XDocument(newRoot);
             while (true)
             {
-                if (
-                    settings.RemoveComments
-                    || settings.RemoveEndAndFootNotes
-                    || settings.ReplaceTabsWithSpaces
-                    || settings.RemoveFieldCodes
-                    || settings.RemovePermissions
-                    || settings.RemoveProof
-                    || settings.RemoveBookmarks
-                    || settings.RemoveWebHidden
-                    || settings.RemoveGoBackBookmark
-                    || settings.RemoveHyperlinks
-                    || settings.RemoveSoftHyphens
-                    || settings.RemoveLastRenderedPageBreak
-                )
+                if (settings.HasAnySimplifyTransformEnabled())
                     newRoot = (XElement)SimplifyMarkupTransform(newRoot, settings, parameters);
 
                 // Remove runs and run properties that have become empty due to previous transforms.
