@@ -90,10 +90,10 @@ public class ListItemTextGetter_sv_SE
         var ones = int.Parse(sLevel.Substring(4, 1));
 
         //Validation
-        if (thousands > 19)
+        if (levelNumber > 19999)
             throw new ArgumentOutOfRangeException(
                 nameof(levelNumber),
-                "Convering a levelNumber to ordinal text that is greater then 19 999 is not supported"
+                "Converting a levelNumber to cardinal text that is greater than 19,999 is not supported"
             );
         if (levelNumber == 0)
             return "Noll";
@@ -248,8 +248,6 @@ public class ListItemTextGetter_sv_SE
     {
         var levelAsString = levelNumber.ToString();
 
-        if (levelAsString == null)
-            return "";
         if (levelAsString.Trim() == "")
             return "";
 

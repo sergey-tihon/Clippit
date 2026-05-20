@@ -7,13 +7,13 @@ public class ListItemTextGetter_zh_CN
 {
     public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
     {
-        var ccTDigitCharacters = new[] { "", "一", "二", "三", "四", "五", "六", "七", "八", "九" };
+        string[] ccTDigitCharacters = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
         var tenCharacter = "十";
         var hundredCharacter = "百";
         var thousandCharacter = "千";
         var andCharacter = "〇";
 
-        var ccDigitCharacters = new[] { "○", "一", "二", "三", "四", "五", "六", "七", "八", "九" };
+        string[] ccDigitCharacters = ["○", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
 
         var thousandsRemainder = levelNumber % 1000;
         var hundredsRemainder = levelNumber % 100;
@@ -99,7 +99,7 @@ public class ListItemTextGetter_zh_CN
         }
         if (numFmt == "ideographTraditional")
         {
-            var iDigitCharacters = new[] { " ", "甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸" };
+            string[] iDigitCharacters = [" ", "甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
             if (levelNumber >= 1 && levelNumber <= 10)
                 return iDigitCharacters[levelNumber];
             return levelNumber.ToString();

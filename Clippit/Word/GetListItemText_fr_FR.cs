@@ -99,6 +99,9 @@ public class ListItemTextGetter_fr_FR
     {
         if (numFmt == "cardinalText")
         {
+            if (levelNumber <= 0)
+                return levelNumber.ToString();
+
             var result = "";
 
             var sLevel = (levelNumber + 10000).ToString();
@@ -198,6 +201,9 @@ public class ListItemTextGetter_fr_FR
         if (numFmt == "ordinalText")
         {
             var result = "";
+
+            if (levelNumber <= 0)
+                return levelNumber.ToString();
 
             if (levelNumber == 1)
                 return "Premier";
