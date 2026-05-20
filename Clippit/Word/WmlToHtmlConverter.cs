@@ -764,15 +764,12 @@ namespace Clippit.Word
             paragraph
                 .Elements(Xhtml.span)
                 .Where(e =>
-                {
-                    if (!e.IsEmpty)
-                    {
-                        return false;
-                    }
-
-                    var style = e.Annotation<Dictionary<string, string>>();
-                    return style is null || !style.ContainsKey("page-break-before");
-                })
+                    e.IsEmpty
+                    && (
+                        e.Annotation<Dictionary<string, string>>() is not { } style
+                        || !style.ContainsKey("page-break-before")
+                    )
+                )
                 .Remove();
 
             foreach (var span in paragraph.Elements(Xhtml.span).ToList())
