@@ -765,8 +765,12 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         };
 
         var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
-        var styleValues = html.Descendants().Attributes("style").Select(a => a.Value).ToList();
-        var hasExpectedStyle = styleValues.Any(s => s.Contains(expectedCss));
+        var fontFamilyDeclarations = html.Descendants()
+            .Attributes("style")
+            .SelectMany(a => a.Value.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            .Where(d => d.StartsWith("font-family:", StringComparison.Ordinal))
+            .ToList();
+        var hasExpectedStyle = fontFamilyDeclarations.Any(d => d.Equals(expectedCss, StringComparison.Ordinal));
 
         await Assert.That(hasExpectedStyle).IsTrue();
     }
