@@ -716,10 +716,13 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
     [Arguments("Segoe UI Symbol", "font-family: 'Segoe UI Symbol'")]
     [Arguments("Symbol", "font-family: Symbol")]
     [Arguments("Arial", "font-family: 'Arial', 'sans-serif'")]
+    [Arguments("D'Angelo Serif", "font-family: \"D'Angelo Serif\"")]
+    [Arguments("Segoe\tUI", "font-family: 'Segoe\tUI'")]
     public async Task HC070_MultiWordFontFamilyIsQuotedInCss(string fontName, string expectedCss)
     {
         // CSS Fonts Level 3 §4.2: font family names containing whitespace must be quoted.
         // Single-word names and names in the FontFallback dictionary are handled separately.
+        // Quoted names with apostrophes must use a safe/valid CSS string representation.
         using var memoryStream = new MemoryStream();
         using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
         {
@@ -762,9 +765,10 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         };
 
         var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
-        var htmlString = html.ToString(SaveOptions.DisableFormatting);
+        var styleValues = html.Descendants().Attributes("style").Select(a => a.Value).ToList();
+        var hasExpectedStyle = styleValues.Any(s => s.Contains(expectedCss));
 
-        await Assert.That(htmlString).Contains(expectedCss);
+        await Assert.That(hasExpectedStyle).IsTrue();
     }
 
     private static XElement BuildTextBoxParagraph(
