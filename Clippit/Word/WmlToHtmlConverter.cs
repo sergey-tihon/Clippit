@@ -3204,7 +3204,9 @@ namespace Clippit.Word
                 style.AddIfMissing("font-family", string.Format(fallbackFormat, font));
                 return;
             }
-            style.AddIfMissing("font-family", font);
+            // CSS requires multi-word font family names to be quoted (CSS Fonts Level 3 §4.2).
+            var cssValue = font.Contains(' ') ? $"'{font}'" : font;
+            style.AddIfMissing("font-family", cssValue);
         }
 
         private static bool GetBoolProp(XElement runProps, XName xName)
