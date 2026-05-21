@@ -1,6 +1,6 @@
 {
-  "lr": "2026-05-20",
-  "rid": "26176298212",
+  "lr": "2026-05-21",
+  "rid": "26239177952",
   "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
@@ -15,18 +15,21 @@
     "233": "2026-04-23",
     "255": "2026-05-05",
     "279": "2026-05-20",
-    "286": "2026-05-20"
+    "286": "2026-05-20",
+    "290": "2026-05-21"
   },
-  "cursor": "103",
+  "cursor": "290",
   "prs": {
     "163": "RegisterCustomHandler (Closes #66)",
     "165": "ExcelAssembler (Closes #28)",
     "281": "fix: render Word page breaks as CSS page-break div (Closes #279)",
     "287": "fix: NullReferenceException in GetSlideTitle (Closes #286)",
-    "ci-cache": "ci: enable NuGet package caching in GitHub Actions",
-    "hashtable-dict": "refactor: replace Hashtable with Dictionary<int,int> in CSS scanner"
+    "ci-cache": "ci: enable NuGet package caching in GitHub Actions (PR #288)",
+    "hashtable-dict": "refactor: replace Hashtable with Dictionary<int,int> in CSS scanner (PR #289)",
+    "tunit-1.45.29": "chore(deps): update TUnit 1.45.8 -> 1.45.29",
+    "font-family-quoting": "fix(html): quote multi-word font family names in CSS output"
   },
-  "notes": "Run 26176298212 (2026-05-20): Task 5: Created PR replacing Hashtable with Dictionary<int,int> in HtmlToWmlCssParser.cs (branch clippy/improve-hashtable-to-dict-20260520). Task 4: Created PR adding NuGet cache to CI (branch clippy/eng-ci-cache-20260520). Task 2: all issues have recent comments, no new human activity. PR numbers for new PRs unknown (pending). Task 11: updated monthly issue.",
+  "notes": "Run 26239177952 (2026-05-21): Task 1: labelled #290 bug+needs investigation, commented. Task 4: TUnit 1.45.8->1.45.29 PR created. Task 10: font-family CSS quoting fix PR created (HC070 tests pass). NOTE: SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT attempt upgrade. PR #288=CI cache, PR #289=Hashtable->Dict.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
