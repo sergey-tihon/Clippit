@@ -3229,7 +3229,7 @@ namespace Clippit.Word
                         break;
                     case '\n' or '\r' or '\f':
                         sb.Append('\\');
-                        sb.Append(((int)c).ToString("X", CultureInfo.InvariantCulture));
+                        sb.Append(((int)c).ToString("x", CultureInfo.InvariantCulture));
                         sb.Append(' ');
                         break;
                     default:
