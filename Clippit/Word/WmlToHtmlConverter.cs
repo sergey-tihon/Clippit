@@ -3199,12 +3199,51 @@ namespace Clippit.Word
 
         private static void CreateFontCssProperty(string font, Dictionary<string, string> style)
         {
-            if (FontFallback.TryGetValue(font, out var fallbackFormat))
+            var normalizedFont = font.Trim();
+            if (FontFallback.TryGetValue(normalizedFont, out var fallbackFormat))
             {
-                style.AddIfMissing("font-family", string.Format(fallbackFormat, font));
+                style.AddIfMissing("font-family", string.Format(fallbackFormat, normalizedFont));
                 return;
             }
-            style.AddIfMissing("font-family", font);
+
+            // CSS requires names containing whitespace to be quoted (CSS Fonts Level 3 §4.2).
+            var cssValue = normalizedFont.Any(char.IsWhiteSpace) ? QuoteCssString(normalizedFont) : normalizedFont;
+            style.AddIfMissing("font-family", cssValue);
+        }
+
+        private static string QuoteCssString(string value)
+        {
+            var quote = value.Contains('\'') && !value.Contains('"') ? '"' : '\'';
+            return $"{quote}{EscapeCssString(value, quote)}{quote}";
+        }
+
+        private static string EscapeCssString(string value, char quote)
+        {
+            var sb = new StringBuilder(value.Length);
+            foreach (var c in value)
+            {
+                switch (c)
+                {
+                    case '\\':
+                        sb.Append(@"\\");
+                        break;
+                    case '\n' or '\r' or '\f':
+                        sb.Append('\\');
+                        sb.Append(((int)c).ToString("x", CultureInfo.InvariantCulture));
+                        sb.Append(' ');
+                        break;
+                    default:
+                        if (c == quote)
+                        {
+                            sb.Append('\\');
+                        }
+
+                        sb.Append(c);
+                        break;
+                }
+            }
+
+            return sb.ToString();
         }
 
         private static bool GetBoolProp(XElement runProps, XName xName)

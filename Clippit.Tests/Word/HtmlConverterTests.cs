@@ -711,6 +711,70 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         await Assert.That(hasLineBreakElement).IsFalse();
     }
 
+    [Test]
+    [Arguments("Franklin Gothic Medium", "font-family: 'Franklin Gothic Medium'")]
+    [Arguments("Segoe UI Symbol", "font-family: 'Segoe UI Symbol'")]
+    [Arguments("Symbol", "font-family: Symbol")]
+    [Arguments("Arial", "font-family: 'Arial', 'sans-serif'")]
+    [Arguments("D'Angelo Serif", "font-family: \"D'Angelo Serif\"")]
+    [Arguments("Segoe\tUI", "font-family: 'Segoe\tUI'")]
+    public async Task HC070_MultiWordFontFamilyIsQuotedInCss(string fontName, string expectedCss)
+    {
+        // CSS Fonts Level 3 §4.2: font family names containing whitespace must be quoted.
+        // Single-word names and names in the FontFallback dictionary are handled separately.
+        // Quoted names with apostrophes must use a safe/valid CSS string representation.
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
+            mainPart.AddNewPart<DocumentSettingsPart>().Settings = new Settings();
+
+            XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+
+            var body = new XElement(
+                w + "body",
+                new XElement(
+                    w + "p",
+                    new XElement(
+                        w + "r",
+                        new XElement(
+                            w + "rPr",
+                            new XElement(
+                                w + "rFonts",
+                                new XAttribute(w + "ascii", fontName),
+                                new XAttribute(w + "hAnsi", fontName)
+                            )
+                        ),
+                        new XElement(w + "t", "Hello")
+                    )
+                )
+            );
+            mainPart.PutXDocument(new XDocument(new XElement(w + "document", body)));
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = false,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+
+        var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+        var fontFamilyDeclarations = html.Descendants()
+            .Attributes("style")
+            .SelectMany(a => a.Value.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            .Where(d => d.StartsWith("font-family:", StringComparison.Ordinal))
+            .ToList();
+        var hasExpectedStyle = fontFamilyDeclarations.Any(d => d.Equals(expectedCss, StringComparison.Ordinal));
+
+        await Assert.That(hasExpectedStyle).IsTrue();
+    }
+
     private static XElement BuildTextBoxParagraph(
         XNamespace w,
         XNamespace wp,
