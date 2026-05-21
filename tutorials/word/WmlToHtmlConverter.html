@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Convert Word to HTML | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Convert Word to HTML | Clippit ">
+      
+      
+      <link rel="icon" href="../../images/logo-site.png">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/blob/master/docs/tutorials/word/WmlToHtmlConverter.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Tutorial.Word.WmlToHtmlConverter">
+<h1 id="convert-word-to-html">Convert Word to HTML</h1>
+
+<p>Namespace: <code>Clippit.Word</code></p>
+<p>Convert a Word document to an HTML <code>XElement</code>, with configurable CSS generation and image handling.</p>
+<pre><code class="lang-csharp">public static class WmlToHtmlConverter {
+    public static XElement ConvertToHtml(
+        WmlDocument doc, WmlToHtmlConverterSettings htmlConverterSettings)
+    {...}
+
+    public static XElement ConvertToHtml(
+        WordprocessingDocument wordDoc, WmlToHtmlConverterSettings htmlConverterSettings)
+    {...}
+}
+</code></pre>
+<p>The converter produces a complete HTML document as an <code>XElement</code> (XHTML). It generates CSS classes
+for paragraph and character styles, handles numbering/lists, and processes images through a
+configurable <code>ImageHandler</code> callback.</p>
+<p>An extension method is also available directly on <code>WmlDocument</code>:</p>
+<pre><code class="lang-csharp">WmlDocument doc = new WmlDocument(&quot;input.docx&quot;);
+XElement html = doc.ConvertToHtml(settings);
+</code></pre>
+<h3 id="wmltohtmlconvertersettings">WmlToHtmlConverterSettings</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PageTitle</code></td>
+<td><code>string</code></td>
+<td><code>&quot;&quot;</code></td>
+</tr>
+<tr>
+<td><code>CssClassPrefix</code></td>
+<td><code>string</code></td>
+<td><code>&quot;pt-&quot;</code></td>
+</tr>
+<tr>
+<td><code>FabricateCssClasses</code></td>
+<td><code>bool</code></td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>GeneralCss</code></td>
+<td><code>string</code></td>
+<td><code>&quot;span { white-space: pre-wrap; }&quot;</code></td>
+</tr>
+<tr>
+<td><code>AdditionalCss</code></td>
+<td><code>string</code></td>
+<td><code>&quot;&quot;</code></td>
+</tr>
+<tr>
+<td><code>RestrictToSupportedLanguages</code></td>
+<td><code>bool</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>RestrictToSupportedNumberingFormats</code></td>
+<td><code>bool</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>ImageHandler</code></td>
+<td><code>Func&lt;ImageInfo, XElement&gt;</code></td>
+<td><code>null</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="imageinfo">ImageInfo</h3>
+<p>The <code>ImageHandler</code> callback receives an <code>ImageInfo</code> object for each image in the document:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Image</code></td>
+<td><code>SixLabors.ImageSharp.Image</code></td>
+<td>The decoded image</td>
+</tr>
+<tr>
+<td><code>ImgStyleAttribute</code></td>
+<td><code>XAttribute</code></td>
+<td>The computed <code>style</code> attribute (width/height)</td>
+</tr>
+<tr>
+<td><code>ContentType</code></td>
+<td><code>string</code></td>
+<td>The image MIME type</td>
+</tr>
+<tr>
+<td><code>DrawingElement</code></td>
+<td><code>XElement</code></td>
+<td>The source OpenXml drawing element</td>
+</tr>
+<tr>
+<td><code>AltText</code></td>
+<td><code>string</code></td>
+<td>Alternative text for the image</td>
+</tr>
+</tbody>
+</table>
+<h3 id="wmltohtmlconverter-sample">WmlToHtmlConverter Sample</h3>
+<pre><code class="lang-csharp">var doc = new WmlDocument(&quot;input.docx&quot;);
+
+var settings = new WmlToHtmlConverterSettings
+{
+    PageTitle = &quot;My Document&quot;,
+    CssClassPrefix = &quot;doc-&quot;,
+    FabricateCssClasses = true,
+    AdditionalCss = &quot;body { font-family: Calibri, sans-serif; }&quot;,
+    ImageHandler = imageInfo =&gt;
+    {
+        // Convert images to inline base64 data URIs
+        using var stream = new MemoryStream();
+        imageInfo.Image.SaveAsPng(stream);
+        var base64 = Convert.ToBase64String(stream.ToArray());
+        var imgElement = new XElement(
+            Xhtml.img,
+            imageInfo.ImgStyleAttribute,
+            new XAttribute(&quot;src&quot;, $&quot;data:image/png;base64,{base64}&quot;),
+            new XAttribute(&quot;alt&quot;, imageInfo.AltText ?? &quot;&quot;)
+        );
+        return imgElement;
+    }
+};
+
+var html = WmlToHtmlConverter.ConvertToHtml(doc, settings);
+File.WriteAllText(&quot;output.html&quot;, html.ToString());
+</code></pre>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/tutorials/word/WmlToHtmlConverter.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
