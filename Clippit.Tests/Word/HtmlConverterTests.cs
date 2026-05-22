@@ -717,7 +717,7 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
     [Arguments("Symbol", "font-family: Symbol")]
     [Arguments("Arial", "font-family: 'Arial', 'sans-serif'")]
     [Arguments("D'Angelo Serif", "font-family: \"D'Angelo Serif\"")]
-    [Arguments("Segoe\tUI", "font-family: 'Segoe\tUI'")]
+    [Arguments("Segoe\tUI", "font-family: 'Segoe UI', 'sans-serif'")]
     public async Task HC070_MultiWordFontFamilyIsQuotedInCss(string fontName, string expectedCss)
     {
         // CSS Fonts Level 3 §4.2: font family names containing whitespace must be quoted.

@@ -3199,7 +3199,7 @@ namespace Clippit.Word
 
         private static void CreateFontCssProperty(string font, Dictionary<string, string> style)
         {
-            var normalizedFont = font.Trim();
+            var normalizedFont = NormalizeFontFamilyWhitespace(font);
             if (FontFallback.TryGetValue(normalizedFont, out var fallbackFormat))
             {
                 style.AddIfMissing("font-family", string.Format(fallbackFormat, normalizedFont));
@@ -3209,6 +3209,36 @@ namespace Clippit.Word
             // CSS requires names containing whitespace to be quoted (CSS Fonts Level 3 §4.2).
             var cssValue = normalizedFont.Any(char.IsWhiteSpace) ? QuoteCssString(normalizedFont) : normalizedFont;
             style.AddIfMissing("font-family", cssValue);
+        }
+
+        private static string NormalizeFontFamilyWhitespace(string font)
+        {
+            var trimmedFont = font.Trim();
+            if (trimmedFont.Length == 0)
+            {
+                return trimmedFont;
+            }
+
+            var sb = new StringBuilder(trimmedFont.Length);
+            var inWhitespace = false;
+            foreach (var c in trimmedFont)
+            {
+                if (char.IsWhiteSpace(c))
+                {
+                    if (!inWhitespace)
+                    {
+                        sb.Append(' ');
+                        inWhitespace = true;
+                    }
+                }
+                else
+                {
+                    sb.Append(c);
+                    inWhitespace = false;
+                }
+            }
+
+            return sb.ToString();
         }
 
         private static string QuoteCssString(string value)
