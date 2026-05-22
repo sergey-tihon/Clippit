@@ -712,18 +712,18 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
     }
 
     [Test]
-    [Arguments("Franklin Gothic Medium", "font-family: 'Franklin Gothic Medium', 'sans-serif'")]
+    [Arguments("Franklin Gothic Medium", "font-family: 'Franklin Gothic Medium', sans-serif")]
     [Arguments("Segoe UI Symbol", "font-family: 'Segoe UI Symbol'")]
     [Arguments("Symbol", "font-family: Symbol")]
-    [Arguments("Arial", "font-family: 'Arial', 'sans-serif'")]
-    [Arguments("Calibri", "font-family: 'Calibri', 'sans-serif'")]
-    [Arguments("Calibri Light", "font-family: 'Calibri Light', 'sans-serif'")]
-    [Arguments("Georgia", "font-family: 'Georgia', 'serif'")]
-    [Arguments("Courier New", "font-family: 'Courier New', 'monospace'")]
-    [Arguments("Consolas", "font-family: 'Consolas', 'monospace'")]
+    [Arguments("Arial", "font-family: 'Arial', sans-serif")]
+    [Arguments("Calibri", "font-family: 'Calibri', sans-serif")]
+    [Arguments("Calibri Light", "font-family: 'Calibri Light', sans-serif")]
+    [Arguments("Georgia", "font-family: 'Georgia', serif")]
+    [Arguments("Courier New", "font-family: 'Courier New', monospace")]
+    [Arguments("Consolas", "font-family: 'Consolas', monospace")]
     [Arguments("D'Angelo Serif", "font-family: \"D'Angelo Serif\"")]
     [Arguments("D'Angelo", "font-family: \"D'Angelo\"")]
-    [Arguments("Segoe\tUI", "font-family: 'Segoe UI', 'sans-serif'")]
+    [Arguments("Segoe\tUI", "font-family: 'Segoe UI', sans-serif")]
     public async Task HC070_FontFamilyIsQuotedInCssWhenRequired(string fontName, string expectedCss)
     {
         // CSS allows multi-word family names to be written either as a quoted string or as
