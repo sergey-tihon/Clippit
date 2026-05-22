@@ -717,12 +717,14 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
     [Arguments("Symbol", "font-family: Symbol")]
     [Arguments("Arial", "font-family: 'Arial', 'sans-serif'")]
     [Arguments("D'Angelo Serif", "font-family: \"D'Angelo Serif\"")]
+    [Arguments("D'Angelo", "font-family: \"D'Angelo\"")]
     [Arguments("Segoe\tUI", "font-family: 'Segoe UI', 'sans-serif'")]
-    public async Task HC070_MultiWordFontFamilyIsQuotedInCss(string fontName, string expectedCss)
+    public async Task HC070_FontFamilyIsQuotedInCssWhenRequired(string fontName, string expectedCss)
     {
         // CSS Fonts Level 3 §4.2: font family names containing whitespace must be quoted.
-        // Single-word names and names in the FontFallback dictionary are handled separately.
-        // Quoted names with apostrophes must use a safe/valid CSS string representation.
+        // Single-word names that are not valid CSS identifiers (for example containing apostrophes)
+        // must also use a safe/valid CSS string representation.
+        // Names in the FontFallback dictionary are handled separately.
         using var memoryStream = new MemoryStream();
         using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
         {
