@@ -249,8 +249,8 @@ namespace Clippit.Excel
             { "Palatino Linotype", @"'{0}', serif" },
             { "Times New Roman", @"'{0}', serif" },
             { "Wide Latin", @"'{0}', serif" },
-            { "Courier New", @"'{0}'" },
-            { "Lucida Console", @"'{0}'" },
+            { "Courier New", @"'{0}', monospace" },
+            { "Lucida Console", @"'{0}', monospace" },
         };
 
         private static void CreateFontCssProperty(string font, Dictionary<string, string> style)
