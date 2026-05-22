@@ -3199,12 +3199,119 @@ namespace Clippit.Word
 
         private static void CreateFontCssProperty(string font, Dictionary<string, string> style)
         {
-            if (FontFallback.TryGetValue(font, out var fallbackFormat))
+            var normalizedFont = NormalizeFontFamilyWhitespace(font);
+            if (FontFallback.TryGetValue(normalizedFont, out var fallbackFormat))
             {
-                style.AddIfMissing("font-family", string.Format(fallbackFormat, font));
+                style.AddIfMissing("font-family", string.Format(fallbackFormat, normalizedFont));
                 return;
             }
-            style.AddIfMissing("font-family", font);
+
+            // CSS font family names with whitespace can often be represented as a sequence of
+            // identifiers without quotes, but names that cannot be represented safely as
+            // identifiers (for example, those containing apostrophes) should be quoted. We
+            // quote such names here for consistency and safety.
+            var cssValue = NeedsCssQuoting(normalizedFont) ? QuoteCssString(normalizedFont) : normalizedFont;
+            style.AddIfMissing("font-family", cssValue);
+        }
+
+        private static string NormalizeFontFamilyWhitespace(string font)
+        {
+            var trimmedFont = font.Trim();
+            if (trimmedFont.Length == 0)
+            {
+                return trimmedFont;
+            }
+
+            var sb = new StringBuilder(trimmedFont.Length);
+            var inWhitespace = false;
+            foreach (var c in trimmedFont)
+            {
+                if (char.IsWhiteSpace(c))
+                {
+                    if (!inWhitespace)
+                    {
+                        sb.Append(' ');
+                        inWhitespace = true;
+                    }
+                }
+                else
+                {
+                    sb.Append(c);
+                    inWhitespace = false;
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        // Returns true when the font family name must be quoted in CSS.
+        // A name can be unquoted only when it is a valid CSS identifier:
+        // the first character must be a valid identifier start character and the
+        // remaining characters must be valid identifier continuation characters.
+        // ASCII punctuation such as apostrophes, and names that start with digits,
+        // must be written as quoted CSS strings.
+        private static bool IsValidCssIdentifierStart(char c) => c >= 0x80 || char.IsLetter(c) || c == '-' || c == '_';
+
+        private static bool IsValidCssIdentifierPart(char c) =>
+            c >= 0x80 || char.IsLetterOrDigit(c) || c == '-' || c == '_';
+
+        private static bool NeedsCssQuoting(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return true;
+            }
+
+            if (!IsValidCssIdentifierStart(value[0]))
+            {
+                return true;
+            }
+
+            for (var i = 1; i < value.Length; i++)
+            {
+                var c = value[i];
+                if (char.IsWhiteSpace(c) || !IsValidCssIdentifierPart(c))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static string QuoteCssString(string value)
+        {
+            var quote = value.Contains('\'') && !value.Contains('"') ? '"' : '\'';
+            return $"{quote}{EscapeCssString(value, quote)}{quote}";
+        }
+
+        private static string EscapeCssString(string value, char quote)
+        {
+            var sb = new StringBuilder(value.Length);
+            foreach (var c in value)
+            {
+                switch (c)
+                {
+                    case '\\':
+                        sb.Append(@"\\");
+                        break;
+                    case '\n' or '\r' or '\f':
+                        sb.Append('\\');
+                        sb.Append(((int)c).ToString("x", CultureInfo.InvariantCulture));
+                        sb.Append(' ');
+                        break;
+                    default:
+                        if (c == quote)
+                        {
+                            sb.Append('\\');
+                        }
+
+                        sb.Append(c);
+                        break;
+                }
+            }
+
+            return sb.ToString();
         }
 
         private static bool GetBoolProp(XElement runProps, XName xName)
