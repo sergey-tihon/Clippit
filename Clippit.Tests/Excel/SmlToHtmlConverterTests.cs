@@ -165,4 +165,23 @@ public class SmlToHtmlConverterTests : TestsBase
         var table = SmlDataRetriever.TableNames(sDoc);
         await Assert.That(table).Count().IsEqualTo(numberOfTables);
     }
+
+    [Test]
+    [Arguments("Arial", "'Arial', sans-serif")]
+    [Arguments("Times New Roman", "'Times New Roman', serif")]
+    [Arguments("Courier New", "'Courier New', monospace")]
+    [Arguments("Lucida Console", "'Lucida Console', monospace")]
+    public async Task SH006_FontFallbackUsesUnquotedGenericFamilies(string fontName, string expectedCss)
+    {
+        var field = typeof(SmlToHtmlConverter).GetField(
+            "FontFallback",
+            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static
+        );
+
+        await Assert.That(field).IsNotNull();
+
+        var fontFallback = (Dictionary<string, string>)field!.GetValue(null)!;
+        await Assert.That(fontFallback.TryGetValue(fontName, out var cssTemplate)).IsTrue();
+        await Assert.That(string.Format(cssTemplate!, fontName)).IsEqualTo(expectedCss);
+    }
 }
