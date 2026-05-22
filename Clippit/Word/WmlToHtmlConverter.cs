@@ -3206,8 +3206,9 @@ namespace Clippit.Word
                 return;
             }
 
-            // CSS requires names containing whitespace to be quoted (CSS Fonts Level 3 §4.2).
-            var cssValue = normalizedFont.Any(char.IsWhiteSpace) ? QuoteCssString(normalizedFont) : normalizedFont;
+            // CSS requires font family names that contain whitespace or non-identifier characters
+            // (e.g., apostrophes) to be quoted (CSS Fonts Level 3 §4.2).
+            var cssValue = NeedsCssQuoting(normalizedFont) ? QuoteCssString(normalizedFont) : normalizedFont;
             style.AddIfMissing("font-family", cssValue);
         }
 
@@ -3240,6 +3241,13 @@ namespace Clippit.Word
 
             return sb.ToString();
         }
+
+        // Returns true when the font family name must be quoted in CSS.
+        // A name can be unquoted only when every character is a valid CSS identifier character
+        // (letters, digits, hyphens, underscores, non-ASCII). ASCII punctuation such as
+        // apostrophes requires the name to be written as a quoted CSS string.
+        private static bool NeedsCssQuoting(string value) =>
+            value.Any(c => char.IsWhiteSpace(c) || (c < 0x80 && !char.IsLetterOrDigit(c) && c != '-' && c != '_'));
 
         private static string QuoteCssString(string value)
         {
