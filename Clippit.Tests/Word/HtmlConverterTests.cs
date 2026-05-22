@@ -721,9 +721,10 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
     [Arguments("Segoe\tUI", "font-family: 'Segoe UI', 'sans-serif'")]
     public async Task HC070_FontFamilyIsQuotedInCssWhenRequired(string fontName, string expectedCss)
     {
-        // CSS Fonts Level 3 §4.2: font family names containing whitespace must be quoted.
+        // CSS allows multi-word family names to be written either as a quoted string or as
+        // a sequence of identifiers; this converter quotes them here for safe/normalized output.
         // Single-word names that are not valid CSS identifiers (for example containing apostrophes)
-        // must also use a safe/valid CSS string representation.
+        // are also emitted using a safe/valid CSS string representation.
         // Names in the FontFallback dictionary are handled separately.
         using var memoryStream = new MemoryStream();
         using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))

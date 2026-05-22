@@ -3206,8 +3206,10 @@ namespace Clippit.Word
                 return;
             }
 
-            // CSS requires font family names that contain whitespace or non-identifier characters
-            // (e.g., apostrophes) to be quoted (CSS Fonts Level 3 §4.2).
+            // CSS font family names with whitespace can often be represented as a sequence of
+            // identifiers without quotes, but names that cannot be represented safely as
+            // identifiers (for example, those containing apostrophes) should be quoted. We
+            // quote such names here for consistency and safety.
             var cssValue = NeedsCssQuoting(normalizedFont) ? QuoteCssString(normalizedFont) : normalizedFont;
             style.AddIfMissing("font-family", cssValue);
         }
@@ -3243,11 +3245,40 @@ namespace Clippit.Word
         }
 
         // Returns true when the font family name must be quoted in CSS.
-        // A name can be unquoted only when every character is a valid CSS identifier character
-        // (letters, digits, hyphens, underscores, non-ASCII). ASCII punctuation such as
-        // apostrophes requires the name to be written as a quoted CSS string.
-        private static bool NeedsCssQuoting(string value) =>
-            value.Any(c => char.IsWhiteSpace(c) || (c < 0x80 && !char.IsLetterOrDigit(c) && c != '-' && c != '_'));
+        // A name can be unquoted only when it is a valid CSS identifier:
+        // the first character must be a valid identifier start character and the
+        // remaining characters must be valid identifier continuation characters.
+        // ASCII punctuation such as apostrophes, and names that start with digits,
+        // must be written as quoted CSS strings.
+        private static bool IsValidCssIdentifierStart(char c) =>
+            c >= 0x80 || char.IsLetter(c) || c == '-' || c == '_';
+
+        private static bool IsValidCssIdentifierPart(char c) =>
+            c >= 0x80 || char.IsLetterOrDigit(c) || c == '-' || c == '_';
+
+        private static bool NeedsCssQuoting(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return true;
+            }
+
+            if (!IsValidCssIdentifierStart(value[0]))
+            {
+                return true;
+            }
+
+            for (var i = 1; i < value.Length; i++)
+            {
+                var c = value[i];
+                if (char.IsWhiteSpace(c) || !IsValidCssIdentifierPart(c))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         private static string QuoteCssString(string value)
         {
