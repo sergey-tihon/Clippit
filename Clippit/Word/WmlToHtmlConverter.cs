@@ -3250,8 +3250,7 @@ namespace Clippit.Word
         // remaining characters must be valid identifier continuation characters.
         // ASCII punctuation such as apostrophes, and names that start with digits,
         // must be written as quoted CSS strings.
-        private static bool IsValidCssIdentifierStart(char c) =>
-            c >= 0x80 || char.IsLetter(c) || c == '-' || c == '_';
+        private static bool IsValidCssIdentifierStart(char c) => c >= 0x80 || char.IsLetter(c) || c == '-' || c == '_';
 
         private static bool IsValidCssIdentifierPart(char c) =>
             c >= 0x80 || char.IsLetterOrDigit(c) || c == '-' || c == '_';
