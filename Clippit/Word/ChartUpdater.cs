@@ -565,7 +565,7 @@ namespace Clippit.Word
                             return row;
                         }
                     );
-                    var allRows = new[] { firstRow }.Concat(otherRows);
+                    var allRows = otherRows.Prepend(firstRow);
                     var newSheetData = new XElement(S.sheetData, allRows);
                     sheetData.ReplaceWith(newSheetData);
                     sheetPart.PutXDocument();
