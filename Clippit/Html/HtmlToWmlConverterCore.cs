@@ -3822,7 +3822,7 @@ namespace Clippit.Html
                 var cellHeights = element
                     .Elements(XhtmlNoNamespace.td)
                     .Select(td => td.GetProp("height"))
-                    .Concat(new[] { heightProperty })
+                    .Append(heightProperty)
                     .Where(d => d != null)
                     .Select(e => (long)(Twip)e)
                     .ToList();
@@ -4364,12 +4364,7 @@ namespace Clippit.Html
             InitializeNumberingPart(wDoc);
             var numberingPart = wDoc.MainDocumentPart.NumberingDefinitionsPart;
             var numberingXDoc = numberingPart.GetXDocument();
-            nextNumId = numberingXDoc
-                .Root.Elements(W.num)
-                .Attributes(W.numId)
-                .Select(ni => (int)ni)
-                .Concat(new[] { 1 })
-                .Max();
+            nextNumId = numberingXDoc.Root.Elements(W.num).Attributes(W.numId).Select(ni => (int)ni).Append(1).Max();
         }
 
         // decimal, lowerLetter
@@ -4676,13 +4671,13 @@ namespace Clippit.Html
                 .Root.Elements(W.num)
                 .Attributes(W.numId)
                 .Select(ni => (int)ni)
-                .Concat(new[] { 1 })
+                .Append(1)
                 .Max();
             var nextAbstractId = numberingXDoc
                 .Root.Elements(W.abstractNum)
                 .Attributes(W.abstractNumId)
                 .Select(ani => (int)ani)
-                .Concat(new[] { 0 })
+                .Append(0)
                 .Max();
             var numberingElements = html.DescendantsAndSelf()
                 .Where(d => d.Name == XhtmlNoNamespace.ol || d.Name == XhtmlNoNamespace.ul)
