@@ -237,7 +237,7 @@ namespace Clippit
                             element
                                 .Attributes()
                                 .Where(a => a.Name.Namespace != PtOpenXml.pt)
-                                .Where(a => !AttributesToTrimWhenCloning.Contains(a.Name))
+                                .Where(a => !s_attributesToTrimWhenCloning.Contains(a.Name))
                                 .Select(a =>
                                 {
                                     if (!ComparisonUnitWord.RelationshipAttributeNames.Contains(a.Name))
@@ -371,7 +371,7 @@ namespace Clippit
                     element
                         .Attributes()
                         .Where(a => a.Name.Namespace != PtOpenXml.pt)
-                        .Where(a => !AttributesToTrimWhenCloning.Contains(a.Name)),
+                        .Where(a => !s_attributesToTrimWhenCloning.Contains(a.Name)),
                     element
                         .Nodes()
                         .Select(n =>

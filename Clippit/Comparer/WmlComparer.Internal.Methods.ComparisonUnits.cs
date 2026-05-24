@@ -36,7 +36,7 @@ namespace Clippit
 
         private static void VerifyNoInvalidContent(XElement contentParent)
         {
-            var invalidElement = contentParent.Descendants().FirstOrDefault(d => InvalidElements.Contains(d.Name));
+            var invalidElement = contentParent.Descendants().FirstOrDefault(d => s_invalidElements.Contains(d.Name));
             if (invalidElement == null)
                 return;
 
@@ -160,7 +160,7 @@ namespace Clippit
                 return;
             }
 
-            if (AllowableRunChildren.Contains(element.Name) || element.Name == W._object)
+            if (s_allowableRunChildren.Contains(element.Name) || element.Name == W._object)
             {
                 var sr3 = new ComparisonUnitAtom(
                     element,
@@ -176,14 +176,14 @@ namespace Clippit
                 return;
             }
 
-            var re = RecursionElements.FirstOrDefault(z => z.ElementName == element.Name);
+            var re = s_recursionElements.FirstOrDefault(z => z.ElementName == element.Name);
             if (re != null)
             {
                 AnnotateElementWithProps(part, element, comparisonUnitAtomList, re.ChildElementPropertyNames, settings);
                 return;
             }
 
-            if (ElementsToThrowAway.Contains(element.Name))
+            if (s_elementsToThrowAway.Contains(element.Name))
                 return;
 
             AnnotateElementWithProps(part, element, comparisonUnitAtomList, null, settings);
@@ -276,7 +276,7 @@ namespace Clippit
                                 key = nextIndex;
                             }
                         }
-                        else if (WordBreakElements.Contains(sr.ContentElement.Name))
+                        else if (s_wordBreakElements.Contains(sr.ContentElement.Name))
                         {
                             nextIndex++;
                             key = nextIndex;
@@ -333,7 +333,7 @@ namespace Clippit
                 {
                     var hierarchicalGroupingArray = g.First()
                         .ComparisonUnitAtomMember.AncestorElements.Where(a =>
-                            ComparisonGroupingElements.Contains(a.Name)
+                            s_comparisonGroupingElements.Contains(a.Name)
                         )
                         .Select(a => a.Name.LocalName + ":" + (string)a.Attribute(PtOpenXml.Unid))
                         .ToArray();
