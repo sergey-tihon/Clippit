@@ -1,6 +1,6 @@
 {
-  "lr": "2026-05-22",
-  "rid": "26299517651",
+  "lr": "2026-05-24",
+  "rid": "26365918212",
   "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
@@ -22,9 +22,9 @@
   "prs": {
     "163": "RegisterCustomHandler (Closes #66)",
     "165": "ExcelAssembler (Closes #28)",
-    "font-fallbacks": "feat(html): add CSS font-family fallbacks for common Office fonts (branch: clippy/improve-font-fallbacks-20260522)"
+    "wmlcomparer-hashset": "perf: replace per-call array properties with static readonly HashSet in WmlComparer (branch: clippy/improve-wmlcomparer-set-fields)"
   },
-  "notes": "Run 26299517651 (2026-05-22): Task 4->Task5: Created PR for font-family CSS fallbacks (Calibri, Georgia, Consolas, Century Gothic, Impact, Comic Sans added). Task 6: #163 and #165 are clean (no conflicts, CI passing). Task 2: no new human activity. PRs #281,#287,#288,#289,#291,#292 all merged. NOTE: SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT attempt upgrade.",
+  "notes": "Run 26365918212 (2026-05-24): Task 5: Created PR ~#295 for WmlComparer HashSet perf refactor (9 allocating properties -> static readonly fields, 7 -> HashSet<XName>). Task 2: no new human activity. Task 3: #290 still awaiting sample DOCX. PR #293 and #294 merged by maintainer. NOTE: SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT attempt upgrade.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
@@ -70,6 +70,7 @@
     "288": "hashtable-dict-merged",
     "289": "ci-cache-merged",
     "291": "tunit-1.45.29-merged",
-    "292": "font-family-quoting-merged"
+    "293": "font-fallbacks-merged",
+    "294": "concat-to-append-merged"
   }
 }
