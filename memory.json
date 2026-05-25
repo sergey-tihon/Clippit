@@ -1,6 +1,6 @@
 {
-  "lr": "2026-05-24",
-  "rid": "26365918212",
+  "lr": "2026-05-25",
+  "rid": "26410133769",
   "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
@@ -21,10 +21,9 @@
   "cursor": "290",
   "prs": {
     "163": "RegisterCustomHandler (Closes #66)",
-    "165": "ExcelAssembler (Closes #28)",
-    "wmlcomparer-hashset": "perf: replace per-call array properties with static readonly HashSet in WmlComparer (branch: clippy/improve-wmlcomparer-set-fields)"
+    "165": "ExcelAssembler (Closes #28)"
   },
-  "notes": "Run 26365918212 (2026-05-24): Task 5: Created PR ~#295 for WmlComparer HashSet perf refactor (9 allocating properties -> static readonly fields, 7 -> HashSet<XName>). Task 2: no new human activity. Task 3: #290 still awaiting sample DOCX. PR #293 and #294 merged by maintainer. NOTE: SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT attempt upgrade.",
+  "notes": "Run 26410133769 (2026-05-25): Task 9: Created PR #297 test(pptx): add Validate() assertions to PresentationBuilderTests PB001-PB005. Task 10: Created PR #298 chore: prepare 3.4.5 release CHANGELOG. Task 2: no new human activity. PR #296 (WmlComparer HashSet) merged by maintainer. NOTE: SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT attempt upgrade.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
@@ -71,6 +70,7 @@
     "289": "ci-cache-merged",
     "291": "tunit-1.45.29-merged",
     "293": "font-fallbacks-merged",
-    "294": "concat-to-append-merged"
+    "294": "concat-to-append-merged",
+    "296": "wmlcomparer-hashset-merged"
   }
 }
