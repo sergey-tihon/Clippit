@@ -91,7 +91,7 @@ namespace Clippit
                     rev.PartUri = wDoc.MainDocumentPart.Uri;
                     rev.PartContentType = wDoc.MainDocumentPart.ContentType;
 
-                    if (!RevElementsWithNoText.Contains(rev.ContentXElement.Name))
+                    if (!s_revElementsWithNoText.Contains(rev.ContentXElement.Name))
                     {
                         rev.Text = rg.Select(rgc =>
                                 rgc.ContentElement.Name == W.pPr ? NewLine : rgc.ContentElement.Value
@@ -199,7 +199,7 @@ namespace Clippit
                     rev.PartUri = footnotesEndnotesPart.Uri;
                     rev.PartContentType = footnotesEndnotesPart.ContentType;
 
-                    if (!RevElementsWithNoText.Contains(rev.ContentXElement.Name))
+                    if (!s_revElementsWithNoText.Contains(rev.ContentXElement.Name))
                     {
                         rev.Text = rg.Select(rgc =>
                                 rgc.ContentElement.Name == W.pPr ? NewLine : rgc.ContentElement.Value
