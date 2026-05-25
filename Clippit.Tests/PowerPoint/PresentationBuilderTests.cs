@@ -8,7 +8,7 @@ namespace Clippit.Tests.PowerPoint;
 public class PresentationBuilderTests : TestsBase
 {
     [Test]
-    public void PB001_Formatting()
+    public async Task PB001_Formatting()
     {
         var name1 = "PB001-Input1.pptx";
         var name2 = "PB001-Input2.pptx";
@@ -22,10 +22,12 @@ public class PresentationBuilderTests : TestsBase
         };
         var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB001-Formatting.pptx"));
         PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
+        using var pptx = PresentationDocument.Open(processedDestPptx.FullName, false);
+        await Validate(pptx);
     }
 
     [Test]
-    public void PB002_Formatting()
+    public async Task PB002_Formatting()
     {
         var name2 = "PB001-Input2.pptx";
         var sourceDir = new DirectoryInfo("../../../../TestFiles/");
@@ -33,10 +35,12 @@ public class PresentationBuilderTests : TestsBase
         var sources = new List<SlideSource> { new(new PmlDocument(source2Pptx.FullName), 0, true) };
         var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB002-Formatting.pptx"));
         PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
+        using var pptx = PresentationDocument.Open(processedDestPptx.FullName, false);
+        await Validate(pptx);
     }
 
     [Test]
-    public void PB003_Formatting()
+    public async Task PB003_Formatting()
     {
         var name1 = "PB001-Input1.pptx";
         var name2 = "PB001-Input3.pptx";
@@ -50,10 +54,12 @@ public class PresentationBuilderTests : TestsBase
         };
         var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB003-Formatting.pptx"));
         PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
+        using var pptx = PresentationDocument.Open(processedDestPptx.FullName, false);
+        await Validate(pptx);
     }
 
     [Test]
-    public void PB004_Formatting()
+    public async Task PB004_Formatting()
     {
         var name1 = "PB001-Input1.pptx";
         var name2 = "PB001-Input3.pptx";
@@ -67,10 +73,12 @@ public class PresentationBuilderTests : TestsBase
         };
         var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB004-Formatting.pptx"));
         PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
+        using var pptx = PresentationDocument.Open(processedDestPptx.FullName, false);
+        await Validate(pptx);
     }
 
     [Test]
-    public void PB005_Formatting()
+    public async Task PB005_Formatting()
     {
         var name1 = "PB001-Input1.pptx";
         var name2 = "PB001-Input3.pptx";
@@ -85,6 +93,8 @@ public class PresentationBuilderTests : TestsBase
         };
         var processedDestPptx = new FileInfo(Path.Combine(TempDir, "PB005-Formatting.pptx"));
         PresentationBuilder.BuildPresentation(sources).SaveAs(processedDestPptx.FullName);
+        using var pptx = PresentationDocument.Open(processedDestPptx.FullName, false);
+        await Validate(pptx);
     }
 
     [Test]
