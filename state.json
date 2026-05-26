@@ -1,6 +1,6 @@
 {
-  "lr": "2026-05-19",
-  "rid": "26111265926",
+  "lr": "2026-05-27",
+  "rid": "26471230093",
   "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
@@ -13,16 +13,17 @@
     "28": "2026-03-28",
     "65": "2026-03-29",
     "233": "2026-04-23",
-    "255": "2026-05-05"
+    "255": "2026-05-05",
+    "290": "2026-05-27"
   },
   "cursor": "103",
   "prs": {
     "163": "RegisterCustomHandler (Closes #66)",
     "165": "ExcelAssembler (Closes #28)",
-    "277": "chore(deps): update TUnit 1.45.0 \u2192 1.45.8",
-    "278": "refactor: modernize UnicodeMapper.cs"
+    "299": "perf: HashSet in MergeStyleElement + cache sdtPr",
+    "300": "fix: expand symbol font detection + OrdinalIgnoreCase in WmlToHtmlConverter"
   },
-  "notes": "Run 26111265926 (2026-05-19): Task 4: TUnit 1.45.0\u21921.45.8 PR created. Task 10: UnicodeMapper modernize PR created. Task 3 fallback: no bug-labeled issues; help-wanted already have open PRs (#163, #165).",
+  "notes": "Run 26471230093 (2026-05-27): Task 5/3: Created PR #300 expanding symbol font detection (Wingdings/Webdings/Symbol) in WmlToHtmlConverter directional marks + OrdinalIgnoreCase fixes. Task 2: Commented on #290 following up on user XML examples, asked for HTML snippet. SixLabors.ImageSharp.Drawing 3.0.0 requires paid license - stay on 2.1.7.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
@@ -58,6 +59,24 @@
     "273": "metricsgetter-modernize-merged",
     "274": "trygetvalue-perf-merged",
     "275": "assembler-helpers-refactor-merged",
-    "276": "tunit-1.45.0-merged"
+    "276": "tunit-1.45.0-merged",
+    "277": "tunit-1.45.8-merged",
+    "278": "unicodemapper-modernize-merged",
+    "279": "page-break-bug",
+    "281": "fix-page-break-merged",
+    "282": "perf-ordinalignorecase-merged",
+    "283": "getlistitemtext-locale-merged",
+    "284": "removesofthyphens-merged",
+    "286": "getslide-nullref-bug",
+    "287": "fix-getslide-nullref-merged",
+    "288": "nuget-cache-ci-merged",
+    "289": "css-scanner-hashtable-merged",
+    "291": "tunit-1.45.29-merged",
+    "292": "fix-multi-word-font-css-merged",
+    "293": "css-font-fallbacks-merged",
+    "294": "concat-append-merged",
+    "296": "wmlcomparer-hashset-merged",
+    "297": "pptx-validate-tests-merged",
+    "298": "release-3.4.5-merged"
   }
 }
