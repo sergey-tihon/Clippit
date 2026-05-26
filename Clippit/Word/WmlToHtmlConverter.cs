@@ -1254,7 +1254,9 @@ namespace Clippit.Word
                 .Elements(W.r)
                 .Elements(W.instrText)
                 .Select(e => e.Value)
-                .Any(value => value != null && value.TrimStart().ToUpper().StartsWith("HYPERLINK"));
+                .Any(value =>
+                    value != null && value.TrimStart().StartsWith("HYPERLINK", StringComparison.OrdinalIgnoreCase)
+                );
             if (hyperlinkPrecedesTab)
             {
                 var paraElement1 = new XElement(
@@ -1761,11 +1763,12 @@ namespace Clippit.Word
             if (run.Element(W.t) == null)
                 return;
 
-            // Can't add directional marks if the font-family is symbol - they are visible, and display as a ?
+            // Can't add directional marks if the font-family is a symbol/dingbat font —
+            // these fonts use non-standard encodings where directional mark code points render as '?'.
             var addDirectionalMarks = true;
             if (style.TryGetValue("font-family", out var fontFamily))
             {
-                if (fontFamily.ToLower() == "symbol")
+                if (s_symbolFonts.Contains(fontFamily))
                     addDirectionalMarks = false;
             }
             if (!addDirectionalMarks)
@@ -2991,7 +2994,7 @@ namespace Clippit.Word
                             _ => 11.25m,
                         };
                     }
-                    else if (type.ToLower().Contains("dash"))
+                    else if (type.Contains("dash", StringComparison.OrdinalIgnoreCase))
                     {
                         borderWidthInPoints = sz switch
                         {
@@ -3161,6 +3164,18 @@ namespace Clippit.Word
             }
             return "#" + color;
         }
+
+        // Symbol/dingbat fonts that use non-standard character encodings. Directional marks
+        // (LRM/RLM) must not be inserted into runs using these fonts as the marks render as
+        // visible glyphs rather than invisible control characters.
+        private static readonly HashSet<string> s_symbolFonts = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Symbol",
+            "Webdings",
+            "Wingdings",
+            "Wingdings 2",
+            "Wingdings 3",
+        };
 
         private static readonly Dictionary<string, string> FontFallback = new()
         {
@@ -3332,7 +3347,7 @@ namespace Clippit.Word
             var v = p.Attribute(W.val);
             if (v == null)
                 return true;
-            var s = v.Value.ToLower();
+            var s = v.Value;
             return s switch
             {
                 "0" or "false" => false,
