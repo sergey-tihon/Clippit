@@ -935,27 +935,29 @@ public class MetricsGetter
 
             if (element.Name == W.sdt)
             {
-                var tag = (string)element.Elements(W.sdtPr).Elements(W.tag).Attributes(W.val).FirstOrDefault();
+                var sdtPr = element.Element(W.sdtPr);
+
+                var tag = (string)sdtPr?.Elements(W.tag).Attributes(W.val).FirstOrDefault();
                 var tagAttr = tag is not null ? new XAttribute(H.Tag, tag) : null;
 
-                var alias = (string)element.Elements(W.sdtPr).Elements(W.alias).Attributes(W.val).FirstOrDefault();
+                var alias = (string)sdtPr?.Elements(W.alias).Attributes(W.val).FirstOrDefault();
                 var aliasAttr = alias is not null ? new XAttribute(H.Alias, alias) : null;
 
                 var xPathAttr = new XAttribute(H.XPath, element.GetXPath());
 
-                var isText = element.Elements(W.sdtPr).Elements(W.text).Any();
-                var isBibliography = element.Elements(W.sdtPr).Elements(W.bibliography).Any();
-                var isCitation = element.Elements(W.sdtPr).Elements(W.citation).Any();
-                var isComboBox = element.Elements(W.sdtPr).Elements(W.comboBox).Any();
-                var isDate = element.Elements(W.sdtPr).Elements(W.date).Any();
-                var isDocPartList = element.Elements(W.sdtPr).Elements(W.docPartList).Any();
-                var isDocPartObj = element.Elements(W.sdtPr).Elements(W.docPartObj).Any();
-                var isDropDownList = element.Elements(W.sdtPr).Elements(W.dropDownList).Any();
-                var isEquation = element.Elements(W.sdtPr).Elements(W.equation).Any();
-                var isGroup = element.Elements(W.sdtPr).Elements(W.group).Any();
-                var isPicture = element.Elements(W.sdtPr).Elements(W.picture).Any();
+                var isText = sdtPr?.Element(W.text) is not null;
+                var isBibliography = sdtPr?.Element(W.bibliography) is not null;
+                var isCitation = sdtPr?.Element(W.citation) is not null;
+                var isComboBox = sdtPr?.Element(W.comboBox) is not null;
+                var isDate = sdtPr?.Element(W.date) is not null;
+                var isDocPartList = sdtPr?.Element(W.docPartList) is not null;
+                var isDocPartObj = sdtPr?.Element(W.docPartObj) is not null;
+                var isDropDownList = sdtPr?.Element(W.dropDownList) is not null;
+                var isEquation = sdtPr?.Element(W.equation) is not null;
+                var isGroup = sdtPr?.Element(W.group) is not null;
+                var isPicture = sdtPr?.Element(W.picture) is not null;
                 var isRichText =
-                    element.Elements(W.sdtPr).Elements(W.richText).Any()
+                    sdtPr?.Element(W.richText) is not null
                     || (
                         !isText
                         && !isBibliography
