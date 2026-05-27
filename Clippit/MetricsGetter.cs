@@ -937,10 +937,10 @@ public class MetricsGetter
             {
                 var sdtPr = element.Element(W.sdtPr);
 
-                var tag = (string)sdtPr?.Elements(W.tag).Attributes(W.val).FirstOrDefault();
+                var tag = (string)sdtPr?.Element(W.tag)?.Attribute(W.val);
                 var tagAttr = tag is not null ? new XAttribute(H.Tag, tag) : null;
 
-                var alias = (string)sdtPr?.Elements(W.alias).Attributes(W.val).FirstOrDefault();
+                var alias = (string)sdtPr?.Element(W.alias)?.Attribute(W.val);
                 var aliasAttr = alias is not null ? new XAttribute(H.Alias, alias) : null;
 
                 var xPathAttr = new XAttribute(H.XPath, element.GetXPath());
