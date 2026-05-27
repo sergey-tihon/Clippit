@@ -1495,8 +1495,14 @@ listSeparator
         }
     }
 
-    public static class PresentationMLUtil
+    public static partial class PresentationMLUtil
     {
+        [GeneratedRegex(@"<!\[(?<test>.*)\]>", RegexOptions.Multiline)]
+        private static partial Regex VmlConditionalTagRegex();
+
+        [GeneratedRegex(@"o:relid=[""'](?<id1>.*)[""'] o:relid=[""'](?<id2>.*)[""']", RegexOptions.Multiline)]
+        private static partial Regex VmlDuplicateRelIdRegex();
+
         public static void FixUpPresentationDocument(PresentationDocument pDoc)
         {
             foreach (var part in pDoc.GetAllParts())
@@ -1531,35 +1537,28 @@ listSeparator
                         {
                             //string input = @"    <![if gte mso 9]><v:imagedata o:relid=""rId15""";
                             var input = sr.ReadToEnd();
-                            var pattern = @"<!\[(?<test>.*)\]>";
-                            //string replacement = "<![CDATA[${test}]]>";
-                            //fixedContent = Regex.Replace(input, pattern, replacement, RegexOptions.Multiline);
-                            fixedContent = Regex.Replace(
-                                input,
-                                pattern,
-                                m =>
-                                {
-                                    var g = m.Groups[1].Value;
-                                    if (g.StartsWith("CDATA["))
-                                        return "<![" + g + "]>";
-                                    else
-                                        return "<![CDATA[" + g + "]]>";
-                                },
-                                RegexOptions.Multiline
-                            );
+                            fixedContent = VmlConditionalTagRegex()
+                                .Replace(
+                                    input,
+                                    m =>
+                                    {
+                                        var g = m.Groups[1].Value;
+                                        if (g.StartsWith("CDATA["))
+                                            return "<![" + g + "]>";
+                                        else
+                                            return "<![CDATA[" + g + "]]>";
+                                    }
+                                );
 
-                            //var input = @"xxxxx o:relid=""rId1"" o:relid=""rId1"" xxxxx";
-                            pattern = @"o:relid=[""'](?<id1>.*)[""'] o:relid=[""'](?<id2>.*)[""']";
-                            fixedContent = Regex.Replace(
-                                fixedContent,
-                                pattern,
-                                m =>
-                                {
-                                    var g = m.Groups[1].Value;
-                                    return @"o:relid=""" + g + @"""";
-                                },
-                                RegexOptions.Multiline
-                            );
+                            fixedContent = VmlDuplicateRelIdRegex()
+                                .Replace(
+                                    fixedContent,
+                                    m =>
+                                    {
+                                        var g = m.Groups[1].Value;
+                                        return @"o:relid=""" + g + @"""";
+                                    }
+                                );
 
                             fixedContent = fixedContent.Replace("</xml>ml>", "</xml>");
 
