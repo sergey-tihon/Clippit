@@ -1500,8 +1500,8 @@ namespace Clippit.Word
             return rolledStyle;
         }
 
-        private static readonly XName[] SpecialCaseChildProperties =
-        {
+        private static readonly HashSet<XName> SpecialCaseChildProperties =
+        [
             W.tblPr,
             W.trPr,
             W.tcPr,
@@ -1517,7 +1517,7 @@ namespace Clippit.Word
             W.tblBorders,
             W.lang,
             W.numPr,
-        };
+        ];
 
         private static readonly XName[] MergeChildProperties =
         {
@@ -1609,9 +1609,10 @@ namespace Clippit.Word
                     ))
                     .ToArray();
             }
+            var hpeNames = new HashSet<XName>(hpe.Select(z => z.Name));
             var lpe = lowerPriorityElement
                 .Elements()
-                .Where(e => !SpecialCaseChildProperties.Contains(e.Name) && !hpe.Select(z => z.Name).Contains(e.Name))
+                .Where(e => !SpecialCaseChildProperties.Contains(e.Name) && !hpeNames.Contains(e.Name))
                 .ToArray();
             var ma = SpacingMerge(higherPriorityElement.Element(W.spacing), lowerPriorityElement.Element(W.spacing));
             var rFonts = FontMerge(higherPriorityElement.Element(W.rFonts), lowerPriorityElement.Element(W.rFonts));
