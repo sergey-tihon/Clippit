@@ -1768,7 +1768,19 @@ namespace Clippit.Word
             var addDirectionalMarks = true;
             if (style.TryGetValue("font-family", out var fontFamily))
             {
-                if (s_symbolFonts.Contains(fontFamily))
+                var unquotedFontFamily = fontFamily;
+                if (
+                    unquotedFontFamily.Length >= 2
+                    && (
+                        (unquotedFontFamily[0] == '\'' && unquotedFontFamily[^1] == '\'')
+                        || (unquotedFontFamily[0] == '"' && unquotedFontFamily[^1] == '"')
+                    )
+                )
+                {
+                    unquotedFontFamily = unquotedFontFamily[1..^1];
+                }
+
+                if (s_symbolFonts.Contains(unquotedFontFamily))
                     addDirectionalMarks = false;
             }
             if (!addDirectionalMarks)
