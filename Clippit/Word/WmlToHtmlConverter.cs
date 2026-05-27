@@ -3185,7 +3185,9 @@ namespace Clippit.Word
             "Symbol",
             "Webdings",
             "Wingdings",
+            "Wingdings2",
             "Wingdings 2",
+            "Wingdings3",
             "Wingdings 3",
         };
 
@@ -3359,7 +3361,7 @@ namespace Clippit.Word
             var v = p.Attribute(W.val);
             if (v == null)
                 return true;
-            var s = v.Value;
+            var s = v.Value.ToLowerInvariant();
             return s switch
             {
                 "0" or "false" => false,
