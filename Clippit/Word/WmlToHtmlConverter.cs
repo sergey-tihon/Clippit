@@ -3361,11 +3361,13 @@ namespace Clippit.Word
             var v = p.Attribute(W.val);
             if (v == null)
                 return true;
-            var s = v.Value.ToLowerInvariant();
+            var s = v.Value;
             return s switch
             {
-                "0" or "false" => false,
-                "1" or "true" => true,
+                "0" => false,
+                "1" => true,
+                _ when s.Equals("false", StringComparison.OrdinalIgnoreCase) => false,
+                _ when s.Equals("true", StringComparison.OrdinalIgnoreCase) => true,
                 _ => false,
             };
         }
