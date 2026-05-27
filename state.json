@@ -1,6 +1,6 @@
 {
   "lr": "2026-05-27",
-  "rid": "26471230093",
+  "rid": "26525352708",
   "m_issue": 249,
   "m_month": "2026-05",
   "comments": {
@@ -21,9 +21,11 @@
     "163": "RegisterCustomHandler (Closes #66)",
     "165": "ExcelAssembler (Closes #28)",
     "299": "perf: HashSet in MergeStyleElement + cache sdtPr",
-    "300": "fix: expand symbol font detection + OrdinalIgnoreCase in WmlToHtmlConverter"
+    "300": "fix: expand symbol font detection + OrdinalIgnoreCase in WmlToHtmlConverter",
+    "301-TBD": "chore(deps): update Microsoft.NET.Test.Sdk 18.5.1->18.6.0",
+    "302-TBD": "refactor: [GeneratedRegex] for VML fix-up in PresentationMLUtil"
   },
-  "notes": "Run 26471230093 (2026-05-27): Task 5/3: Created PR #300 expanding symbol font detection (Wingdings/Webdings/Symbol) in WmlToHtmlConverter directional marks + OrdinalIgnoreCase fixes. Task 2: Commented on #290 following up on user XML examples, asked for HTML snippet. SixLabors.ImageSharp.Drawing 3.0.0 requires paid license - stay on 2.1.7.",
+  "notes": "Run 26525352708 (2026-05-27): Task 4: Created PR for Microsoft.NET.Test.Sdk 18.5.1->18.6.0. Task 6: All 4 Clippy PRs have passing CI + clean merge state - no action. Task 10: Created PR for [GeneratedRegex] refactor in PresentationMLUtil; commented on #290 confirming non-Clippit bug, removed needs-investigation label. SixLabors.ImageSharp.Drawing 3.0.0 requires paid license - stay on 2.1.7.",
   "checked_off": {
     "196": "source-gen-regex",
     "tunit132": "TUnit-1.32.0",
