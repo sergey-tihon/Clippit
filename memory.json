@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-05-27",
-  "last_run_id": "26525352708",
+  "last_run": "2026-05-28",
+  "last_run_id": "26589287528",
   "backlog_cursor": {
     "issues": 290,
     "prs": 165
@@ -19,15 +19,15 @@
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "feat(excel): add ExcelAssembler for template-based xlsx document assembly"},
     {"number": 299, "branch": "clippy/perf-mergestyleelement-hashset-20260526", "title": "perf/refactor: HashSet in MergeStyleElement + cache sdtPr in MetricsGetter"},
     {"number": 300, "branch": "clippy/improve-symbol-fonts-directional-marks-20260526-b6dff4857fda2d40", "title": "fix: expand symbol font detection and use OrdinalIgnoreCase in WmlToHtmlConverter"},
-    {"number": null, "branch": "clippy/eng-update-test-sdk-20260527", "title": "chore(deps): update Microsoft.NET.Test.Sdk 18.5.1 -> 18.6.0", "note": "PR queued this run, number TBD"},
-    {"number": null, "branch": "clippy/refactor-presentationmlutil-generatedregex-20260527", "title": "refactor: use [GeneratedRegex] for VML fix-up patterns in PresentationMLUtil", "note": "PR queued this run, number TBD"}
+    {"number": null, "branch": "clippy/refactor-invariant-format-htmlconverter-20260528", "title": "refactor: replace string.Format(NumberFormatInfo.InvariantInfo) with FormattableString.Invariant in WmlToHtmlConverter"}
   ],
   "checked_off_by_maintainer": [],
   "notes": [
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "Issue #290 resolved - user confirmed WmlToHtmlConverter output is correct, duplication is downstream. Removed 'needs investigation' label.",
     "PR #300 still valid as code-quality improvement (symbol font HashSet + OrdinalIgnoreCase)",
-    "Monthly Activity issue is #249"
+    "Monthly Activity issue is #249",
+    "PR #302 (test sdk update) and PR #303 (GeneratedRegex) were merged on 2026-05-27"
   ],
   "improvements_submitted": [
     "PR#281: fix page breaks as CSS page-break div",
@@ -46,7 +46,8 @@
     "PR#298: release v3.4.5 CHANGELOG",
     "PR#299: perf HashSet in MergeStyleElement + cache sdtPr in MetricsGetter",
     "PR#300: fix symbol font detection + OrdinalIgnoreCase in WmlToHtmlConverter",
-    "PR(TBD): chore(deps): update Microsoft.NET.Test.Sdk 18.5.1->18.6.0",
-    "PR(TBD): refactor [GeneratedRegex] for VML fix-up in PresentationMLUtil"
+    "PR#302: chore(deps): update Microsoft.NET.Test.Sdk 18.5.1->18.6.0",
+    "PR#303: refactor [GeneratedRegex] for VML fix-up in PresentationMLUtil",
+    "PR(TBD): refactor FormattableString.Invariant in WmlToHtmlConverter (39 occurrences)"
   ]
 }
