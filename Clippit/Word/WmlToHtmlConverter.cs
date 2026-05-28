@@ -3564,7 +3564,7 @@ namespace Clippit.Word
                     ImgStyleAttribute = new XAttribute(
                         "style",
                         FormattableString.Invariant(
-                            $"width: {(float)extentCx / ImageInfo.EmusPerInch:0.00}in; height: {(float)extentCy / ImageInfo.EmusPerInch:0.00}in"
+                            $"width: {(float)extentCx / ImageInfo.EmusPerInch}in; height: {(float)extentCy / ImageInfo.EmusPerInch}in"
                         )
                     ),
                     ContentType = contentType,
