@@ -374,28 +374,25 @@ namespace Clippit.Word
 
         private static object RejectRevisionsForStylesTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
+            if (node is not XElement element)
+                return node;
+            if (element.Name == W.pPr && element.Element(W.pPrChange) != null)
             {
-                if (element.Name == W.pPr && element.Element(W.pPrChange) != null)
-                {
-                    var new_pPr = element.Element(W.pPrChange).Element(W.pPr);
-                    return RejectRevisionsForStylesTransform(new_pPr);
-                }
-
-                if (element.Name == W.rPr && element.Element(W.rPrChange) != null)
-                {
-                    var new_rPr = element.Element(W.rPrChange).Element(W.rPr);
-                    return RejectRevisionsForStylesTransform(new_rPr);
-                }
-
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(n => RejectRevisionsForStylesTransform(n))
-                );
+                var new_pPr = element.Element(W.pPrChange).Element(W.pPr);
+                return RejectRevisionsForStylesTransform(new_pPr);
             }
-            return node;
+
+            if (element.Name == W.rPr && element.Element(W.rPrChange) != null)
+            {
+                var new_rPr = element.Element(W.rPrChange).Element(W.rPr);
+                return RejectRevisionsForStylesTransform(new_rPr);
+            }
+
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => RejectRevisionsForStylesTransform(n))
+            );
         }
 
         private static void ReverseRevisions(WordprocessingDocument doc)
@@ -424,854 +421,839 @@ namespace Clippit.Word
 
         private static object RemoveRsidTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
-            {
-                if (element.Name == W.rsid)
-                    return null;
-                return new XElement(
-                    element.Name,
-                    element
-                        .Attributes()
-                        .Where(a =>
-                            a.Name != W.rsid
-                            && a.Name != W.rsidDel
-                            && a.Name != W.rsidP
-                            && a.Name != W.rsidR
-                            && a.Name != W.rsidRDefault
-                            && a.Name != W.rsidRPr
-                            && a.Name != W.rsidSect
-                            && a.Name != W.rsidTr
-                        ),
-                    element.Nodes().Select(n => RemoveRsidTransform(n))
-                );
-            }
-            return node;
+            if (node is not XElement element)
+                return node;
+            if (element.Name == W.rsid)
+                return null;
+            return new XElement(
+                element.Name,
+                element
+                    .Attributes()
+                    .Where(a =>
+                        a.Name != W.rsid
+                        && a.Name != W.rsidDel
+                        && a.Name != W.rsidP
+                        && a.Name != W.rsidR
+                        && a.Name != W.rsidRDefault
+                        && a.Name != W.rsidRPr
+                        && a.Name != W.rsidSect
+                        && a.Name != W.rsidTr
+                    ),
+                element.Nodes().Select(n => RemoveRsidTransform(n))
+            );
         }
 
         private static object MergeAdjacentTablesTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
+            if (node is not XElement element)
+                return node;
+            if (element.Element(W.tbl) != null)
             {
-                if (element.Element(W.tbl) != null)
-                {
-                    var grouped = element
-                        .Elements()
-                        .GroupAdjacent(e =>
-                        {
-                            if (e.Name != W.tbl)
-                                return "";
-                            var bidiVisual = e.Elements(W.tblPr).Elements(W.bidiVisual).FirstOrDefault();
-                            var bidiVisString = bidiVisual == null ? "" : "|bidiVisual";
-                            var key = "tbl" + bidiVisString;
-                            return key;
-                        });
-
-                    var newContent = grouped.Select(g =>
+                var grouped = element
+                    .Elements()
+                    .GroupAdjacent(e =>
                     {
-                        if (g.Key == "" || g.Count() == 1)
-                            return (object)g;
-                        var rolled = g.Select(tbl =>
-                            {
-                                var gridCols = tbl.Elements(W.tblGrid)
-                                    .Elements(W.gridCol)
-                                    .Attributes(W._w)
-                                    .Select(a => (int)a)
-                                    .Rollup(0, (s, i) => s + i);
-                                return gridCols;
-                            })
-                            .SelectMany(m => m)
-                            .Distinct()
-                            .OrderBy(w => w)
-                            .ToArray();
-                        var newTable = new XElement(
-                            W.tbl,
-                            g.First().Elements(W.tblPr),
-                            new XElement(
-                                W.tblGrid,
-                                rolled.Select(
-                                    (r, i) =>
-                                    {
-                                        int v;
-                                        if (i == 0)
-                                            v = r;
-                                        else
-                                            v = r - rolled[i - 1];
-                                        return new XElement(W.gridCol, new XAttribute(W._w, v));
-                                    }
-                                )
-                            ),
-                            g.Select(tbl =>
-                            {
-                                var fixedWidthsTbl = FixWidths(tbl);
-                                var newRows = fixedWidthsTbl
-                                    .Elements(W.tr)
-                                    .Select(tr =>
-                                    {
-                                        var newRow = new XElement(
-                                            W.tr,
-                                            tr.Attributes(),
-                                            tr.Elements().Where(e => e.Name != W.tc),
-                                            tr.Elements(W.tc)
-                                                .Select(tc =>
-                                                {
-                                                    var w = (int?)
-                                                        tc.Elements(W.tcPr)
-                                                            .Elements(W.tcW)
-                                                            .Attributes(W._w)
-                                                            .FirstOrDefault();
-                                                    if (w == null)
-                                                        return tc;
-                                                    var cellsToLeft = tc
-                                                        .Parent.Elements(W.tc)
-                                                        .TakeWhile(btc => btc != tc);
-                                                    var widthToLeft = 0;
-                                                    if (cellsToLeft.Any())
-                                                        widthToLeft = cellsToLeft
-                                                            .Elements(W.tcPr)
-                                                            .Elements(W.tcW)
-                                                            .Attributes(W._w)
-                                                            .Select(wi => (int)wi)
-                                                            .Sum();
-                                                    var rolledPairs = new[] { new { GridValue = 0, Index = 0 } }.Concat(
-                                                        rolled.Select((r, i) => new { GridValue = r, Index = i + 1 })
-                                                    );
-                                                    var start = rolledPairs.FirstOrDefault(t =>
-                                                        t.GridValue >= widthToLeft
-                                                    );
-                                                    if (start != null)
-                                                    {
-                                                        var gridsRequired = rolledPairs
-                                                            .Skip(start.Index)
-                                                            .TakeWhile(rp => rp.GridValue - start.GridValue < w)
-                                                            .Count();
-                                                        var tcPr = new XElement(
-                                                            W.tcPr,
-                                                            tc.Elements(W.tcPr)
-                                                                .Elements()
-                                                                .Where(e => e.Name != W.gridSpan),
-                                                            gridsRequired != 1
-                                                                ? new XElement(
-                                                                    W.gridSpan,
-                                                                    new XAttribute(W.val, gridsRequired)
-                                                                )
-                                                                : null
-                                                        );
-                                                        var orderedTcPr = new XElement(
-                                                            W.tcPr,
-                                                            tcPr.Elements()
-                                                                .OrderBy(e =>
-                                                                {
-                                                                    if (Order_tcPr.ContainsKey(e.Name))
-                                                                        return Order_tcPr[e.Name];
-                                                                    return 999;
-                                                                })
-                                                        );
-                                                        var newCell = new XElement(
-                                                            W.tc,
-                                                            orderedTcPr,
-                                                            tc.Elements().Where(e => e.Name != W.tcPr)
-                                                        );
-                                                        return newCell;
-                                                    }
-                                                    return tc;
-                                                })
-                                        );
-                                        return newRow;
-                                    });
-                                return newRows;
-                            })
-                        );
-                        return newTable;
+                        if (e.Name != W.tbl)
+                            return "";
+                        var bidiVisual = e.Elements(W.tblPr).Elements(W.bidiVisual).FirstOrDefault();
+                        var bidiVisString = bidiVisual == null ? "" : "|bidiVisual";
+                        var key = "tbl" + bidiVisString;
+                        return key;
                     });
-                    return new XElement(element.Name, element.Attributes(), newContent);
-                }
 
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(n => MergeAdjacentTablesTransform(n))
-                );
+                var newContent = grouped.Select(g =>
+                {
+                    if (g.Key == "" || g.Count() == 1)
+                        return (object)g;
+                    var rolled = g.Select(tbl =>
+                        {
+                            var gridCols = tbl.Elements(W.tblGrid)
+                                .Elements(W.gridCol)
+                                .Attributes(W._w)
+                                .Select(a => (int)a)
+                                .Rollup(0, (s, i) => s + i);
+                            return gridCols;
+                        })
+                        .SelectMany(m => m)
+                        .Distinct()
+                        .OrderBy(w => w)
+                        .ToArray();
+                    var newTable = new XElement(
+                        W.tbl,
+                        g.First().Elements(W.tblPr),
+                        new XElement(
+                            W.tblGrid,
+                            rolled.Select(
+                                (r, i) =>
+                                {
+                                    int v;
+                                    if (i == 0)
+                                        v = r;
+                                    else
+                                        v = r - rolled[i - 1];
+                                    return new XElement(W.gridCol, new XAttribute(W._w, v));
+                                }
+                            )
+                        ),
+                        g.Select(tbl =>
+                        {
+                            var fixedWidthsTbl = FixWidths(tbl);
+                            var newRows = fixedWidthsTbl
+                                .Elements(W.tr)
+                                .Select(tr =>
+                                {
+                                    var newRow = new XElement(
+                                        W.tr,
+                                        tr.Attributes(),
+                                        tr.Elements().Where(e => e.Name != W.tc),
+                                        tr.Elements(W.tc)
+                                            .Select(tc =>
+                                            {
+                                                var w = (int?)
+                                                    tc.Elements(W.tcPr)
+                                                        .Elements(W.tcW)
+                                                        .Attributes(W._w)
+                                                        .FirstOrDefault();
+                                                if (w == null)
+                                                    return tc;
+                                                var cellsToLeft = tc.Parent.Elements(W.tc).TakeWhile(btc => btc != tc);
+                                                var widthToLeft = 0;
+                                                if (cellsToLeft.Any())
+                                                    widthToLeft = cellsToLeft
+                                                        .Elements(W.tcPr)
+                                                        .Elements(W.tcW)
+                                                        .Attributes(W._w)
+                                                        .Select(wi => (int)wi)
+                                                        .Sum();
+                                                var rolledPairs = new[] { new { GridValue = 0, Index = 0 } }.Concat(
+                                                    rolled.Select((r, i) => new { GridValue = r, Index = i + 1 })
+                                                );
+                                                var start = rolledPairs.FirstOrDefault(t => t.GridValue >= widthToLeft);
+                                                if (start != null)
+                                                {
+                                                    var gridsRequired = rolledPairs
+                                                        .Skip(start.Index)
+                                                        .TakeWhile(rp => rp.GridValue - start.GridValue < w)
+                                                        .Count();
+                                                    var tcPr = new XElement(
+                                                        W.tcPr,
+                                                        tc.Elements(W.tcPr).Elements().Where(e => e.Name != W.gridSpan),
+                                                        gridsRequired != 1
+                                                            ? new XElement(
+                                                                W.gridSpan,
+                                                                new XAttribute(W.val, gridsRequired)
+                                                            )
+                                                            : null
+                                                    );
+                                                    var orderedTcPr = new XElement(
+                                                        W.tcPr,
+                                                        tcPr.Elements()
+                                                            .OrderBy(e =>
+                                                            {
+                                                                if (Order_tcPr.ContainsKey(e.Name))
+                                                                    return Order_tcPr[e.Name];
+                                                                return 999;
+                                                            })
+                                                    );
+                                                    var newCell = new XElement(
+                                                        W.tc,
+                                                        orderedTcPr,
+                                                        tc.Elements().Where(e => e.Name != W.tcPr)
+                                                    );
+                                                    return newCell;
+                                                }
+                                                return tc;
+                                            })
+                                    );
+                                    return newRow;
+                                });
+                            return newRows;
+                        })
+                    );
+                    return newTable;
+                });
+                return new XElement(element.Name, element.Attributes(), newContent);
             }
-            return node;
+
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => MergeAdjacentTablesTransform(n))
+            );
         }
 
         private static object ReverseRevisionsTransform(XNode node, ReverseRevisionsInfo rri)
         {
-            var element = node as XElement;
-            if (element != null)
+            if (node is not XElement element)
+                return node;
+            var parent = element
+                .Ancestors()
+                .Where(a => a.Name != W.sdtContent && a.Name != W.sdt && a.Name != W.smartTag)
+                .FirstOrDefault();
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            // Deleted run
+#if false
+<w:p>
+  <w:r>
+    <w:t xml:space="preserve">Video </w:t>
+  </w:r>
+  <w:del>
+    <w:r>
+      <w:delText xml:space="preserve">provides </w:delText>
+    </w:r>
+  </w:del>
+  <w:r>
+    <w:t>a powerful way to help you prove your point.</w:t>
+  </w:r>
+</w:p>
+#endif
+            if (element.Name == W.del && parent.Name == W.p)
             {
-                var parent = element
-                    .Ancestors()
-                    .Where(a => a.Name != W.sdtContent && a.Name != W.sdt && a.Name != W.smartTag)
-                    .FirstOrDefault();
+                return new XElement(W.ins, element.Nodes().Select(n => ReverseRevisionsTransform(n, rri)));
+            }
 
-                ////////////////////////////////////////////////////////////////////////////////////
-                // Deleted run
+            ////////////////////////////////////////////////////////////////////////////////////
+            // Deleted paragraph mark
 #if false
-    <w:p>
-      <w:r>
-        <w:t xml:space="preserve">Video </w:t>
-      </w:r>
-      <w:del>
+<w:p>
+  <w:pPr>
+    <w:rPr>
+      <w:del w:id="0" w:author="Eric White" w:date="2017-03-24T21:52:00Z"/>
+    </w:rPr>
+  </w:pPr>
+  <w:r>
+    <w:t>Video provides a powerful way to help you prove your point.</w:t>
+  </w:r>
+</w:p>
+<w:p>
+  <w:r>
+    <w:t>You can also type a keyword to search online for the video that best fits your document.</w:t>
+  </w:r>
+</w:p>
+#endif
+            if (element.Name == W.del && parent.Name == W.rPr && parent.Parent.Name == W.pPr)
+            {
+                return new XElement(W.ins);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            // Inserted paragraph mark
+#if false
+<w:p>
+  <w:pPr>
+    <w:rPr>
+      <w:ins w:id="0" w:author="Eric White" w:date="2017-03-24T21:58:00Z"/>
+    </w:rPr>
+  </w:pPr>
+  <w:r>
+    <w:t xml:space="preserve">Video provides a powerful way to help you prove your point. </w:t>
+  </w:r>
+</w:p>
+<w:p>
+  <w:r>
+    <w:rPr>
+      <w:lang w:val="en-US"/>
+    </w:rPr>
+    <w:t>When you click Online Video, you can paste in the embed code for the video you want to add.</w:t>
+  </w:r>
+</w:p>
+#endif
+            if (element.Name == W.ins && parent.Name == W.rPr && parent.Parent.Name == W.pPr)
+            {
+                return new XElement(W.del);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            // Inserted run
+#if false
+<w:p>
+  <w:r>
+    <w:t xml:space="preserve">Video </w:t>
+  </w:r>
+  <w:ins>
+    <w:r>
+      <w:t xml:space="preserve">provides </w:t>
+    </w:r>
+  </w:ins>
+  <w:r>
+    <w:t>a powerful way to help you prove your point.</w:t>
+  </w:r>
+</w:p>
+#endif
+            if (element.Name == W.ins && parent.Name == W.p)
+            {
+                var newRri = new ReverseRevisionsInfo() { InInsert = true };
+                return new XElement(W.del, element.Nodes().Select(n => ReverseRevisionsTransform(n, rri)));
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            // Deleted table row
+#if false
+<w:tbl>
+  <w:tr>
+    <w:tc>
+      <w:p>
         <w:r>
-          <w:delText xml:space="preserve">provides </w:delText>
+          <w:t>1</w:t>
         </w:r>
-      </w:del>
-      <w:r>
-        <w:t>a powerful way to help you prove your point.</w:t>
-      </w:r>
-    </w:p>
+      </w:p>
+    </w:tc>
+  </w:tr>
+  <w:tr>
+    <w:trPr>
+      <w:del w:id="0" w:author="Eric White" w:date="2017-03-24T22:15:00Z"/>
+    </w:trPr>
+    <w:tc>
+      <w:p>
+        <w:pPr>
+          <w:rPr>
+            <w:del w:id="1" w:author="Eric White" w:date="2017-03-24T22:15:00Z"/>
+          </w:rPr>
+        </w:pPr>
+        <w:del w:id="2" w:author="Eric White" w:date="2017-03-24T22:15:00Z">
+          <w:r>
+            <w:delText>4</w:delText>
+          </w:r>
+        </w:del>
+      </w:p>
+    </w:tc>
+  </w:tr>
+  <w:tr>
+    <w:tc>
+      <w:p>
+        <w:r>
+          <w:t>7</w:t>
+        </w:r>
+      </w:p>
+    </w:tc>
+  </w:tr>
+</w:tbl>
 #endif
-                if (element.Name == W.del && parent.Name == W.p)
-                {
-                    return new XElement(W.ins, element.Nodes().Select(n => ReverseRevisionsTransform(n, rri)));
-                }
+            if (element.Name == W.del && parent.Name == W.trPr)
+            {
+                return new XElement(W.ins);
+            }
 
-                ////////////////////////////////////////////////////////////////////////////////////
-                // Deleted paragraph mark
+            ////////////////////////////////////////////////////////////////////////////////////
+            // Inserted table row
 #if false
-    <w:p>
+<w:tbl>
+  <w:tr>
+    <w:tc>
+      <w:p>
+        <w:r>
+          <w:t>1</w:t>
+        </w:r>
+      </w:p>
+    </w:tc>
+  </w:tr>
+  <w:tr>
+    <w:trPr>
+      <w:ins w:id="0" w:author="Eric White" w:date="2017-03-24T22:16:00Z"/>
+    </w:trPr>
+    <w:tc>
+      <w:p>
+        <w:pPr>
+          <w:rPr>
+            <w:ins w:id="1" w:author="Eric White" w:date="2017-03-24T22:16:00Z"/>
+          </w:rPr>
+        </w:pPr>
+        <w:ins w:id="2" w:author="Eric White" w:date="2017-03-24T22:16:00Z">
+          <w:r>
+            <w:t>1a</w:t>
+          </w:r>
+        </w:ins>
+      </w:p>
+    </w:tc>
+  </w:tr>
+  <w:tr>
+    <w:tc>
+      <w:p>
+        <w:r>
+          <w:t>4</w:t>
+        </w:r>
+      </w:p>
+    </w:tc>
+  </w:tr>
+</w:tbl>
+#endif
+            if (element.Name == W.ins && parent.Name == W.trPr)
+            {
+                return new XElement(W.del);
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            // Deleted math control character
+#if false
+<w:p w:rsidR="007F4E48" w:rsidRDefault="00C9403B">
+  <m:oMathPara>
+    <m:oMath>
+      <m:r>
+        <w:rPr>
+          <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+        </w:rPr>
+        <m:t>A=</m:t>
+      </m:r>
+      <m:r>
+        <w:del w:id="0" w:author="Eric White" w:date="2017-03-24T22:53:00Z">
+          <w:rPr>
+            <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+          </w:rPr>
+          <m:t>2</m:t>
+        </w:del>
+      </m:r>
+      <m:r>
+        <w:rPr>
+          <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+        </w:rPr>
+        <m:t>π</m:t>
+      </m:r>
+#endif
+            if (element.Name == W.del && parent.Name == M.r)
+            {
+                return new XElement(W.ins, element.Nodes().Select(n => ReverseRevisionsTransform(n, rri)));
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            // Inserted math control character
+#if false
+<w:p w:rsidR="007F4E48" w:rsidRDefault="00C9403B">
+  <m:oMathPara>
+    <m:oMath>
+      <m:r>
+        <w:rPr>
+          <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+        </w:rPr>
+        <m:t>A=</m:t>
+      </m:r>
+      <m:r>
+        <w:ins w:id="0" w:author="Eric White" w:date="2017-03-24T22:54:00Z">
+          <w:rPr>
+            <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+          </w:rPr>
+          <m:t>2</m:t>
+        </w:ins>
+      </m:r>
+      <m:r>
+        <w:rPr>
+          <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
+        </w:rPr>
+        <m:t>π</m:t>
+      </m:r>
+#endif
+            if (element.Name == W.ins && parent.Name == M.r)
+            {
+                return new XElement(W.del, element.Nodes().Select(n => ReverseRevisionsTransform(n, rri)));
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            // moveFrom / moveTo
+#if false
+<w:p>
+  <w:r>
+    <w:t>Video provides a powerful way.</w:t>
+  </w:r>
+</w:p>
+<w:p>
+  <w:pPr>
+    <w:rPr>
+      <w:moveFrom w:id="0" w:author="Eric White" w:date="2017-03-24T23:18:00Z"/>
+    </w:rPr>
+  </w:pPr>
+  <w:moveFromRangeStart w:id="1" w:author="Eric White" w:date="2017-03-24T23:18:00Z" w:name="move478160808"/>
+  <w:moveFrom w:id="2" w:author="Eric White" w:date="2017-03-24T23:18:00Z">
+    <w:r>
+      <w:t>When you click Online Video.</w:t>
+    </w:r>
+  </w:moveFrom>
+</w:p>
+<w:moveFromRangeEnd w:id="1"/>
+<w:p>
+  <w:r>
+    <w:rPr>
+      <w:lang w:val="en-US"/>
+    </w:rPr>
+    <w:t>You can also type a keyword.</w:t>
+  </w:r>
+</w:p>
+<w:p>
+  <w:pPr>
+    <w:rPr>
+      <w:moveTo w:id="3" w:author="Eric White" w:date="2017-03-24T23:18:00Z"/>
+    </w:rPr>
+  </w:pPr>
+  <w:moveToRangeStart w:id="5" w:author="Eric White" w:date="2017-03-24T23:18:00Z" w:name="move478160808"/>
+  <w:moveTo w:id="6" w:author="Eric White" w:date="2017-03-24T23:18:00Z">
+    <w:r>
+      <w:t>When you click Online Video.</w:t>
+    </w:r>
+  </w:moveTo>
+</w:p>
+<w:moveToRangeEnd w:id="5"/>
+<w:p>
+  <w:r>
+    <w:t>Make your document look professionally produced.</w:t>
+  </w:r>
+</w:p>
+#endif
+            if (element.Name == W.moveFrom)
+            {
+                return new XElement(
+                    W.moveTo,
+                    element.Attributes(),
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+            if (element.Name == W.moveFromRangeStart)
+            {
+                return new XElement(
+                    W.moveToRangeStart,
+                    element.Attributes(),
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+            if (element.Name == W.moveFromRangeEnd)
+            {
+                return new XElement(
+                    W.moveToRangeEnd,
+                    element.Attributes(),
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+            if (element.Name == W.moveTo)
+            {
+                return new XElement(
+                    W.moveFrom,
+                    element.Attributes(),
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+            if (element.Name == W.moveToRangeStart)
+            {
+                return new XElement(
+                    W.moveFromRangeStart,
+                    element.Attributes(),
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+            if (element.Name == W.moveToRangeEnd)
+            {
+                return new XElement(
+                    W.moveFromRangeEnd,
+                    element.Attributes(),
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            // Deleted content control
+#if false
+<w:p>
+  <w:customXmlDelRangeStart w:id="1" w:author="Eric White" w:date="2017-03-25T22:10:00Z"/>
+  <w:sdt>
+    <w:sdtPr>
+      <w:rPr>
+        <w:lang w:val="en-US"/>
+      </w:rPr>
+      <w:id w:val="990292373"/>
+      <w:placeholder>
+        <w:docPart w:val="DefaultPlaceholder_-1854013440"/>
+      </w:placeholder>
+      <w:text/>
+    </w:sdtPr>
+    <w:sdtContent>
+      <w:customXmlDelRangeEnd w:id="1"/>
+      <w:r>
+        <w:t>Video</w:t>
+      </w:r>
+      <w:customXmlDelRangeStart w:id="2" w:author="Eric White" w:date="2017-03-25T22:10:00Z"/>
+    </w:sdtContent>
+  </w:sdt>
+  <w:customXmlDelRangeEnd w:id="2"/>
+  <w:r>
+    <w:t xml:space="preserve"> provides a powerful way to help you prove your point.</w:t>
+  </w:r>
+</w:p>
+#endif
+            if (element.Name == W.customXmlDelRangeStart)
+            {
+                return new XElement(
+                    W.customXmlInsRangeStart,
+                    element.Attributes(),
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+            if (element.Name == W.customXmlDelRangeEnd)
+            {
+                return new XElement(
+                    W.customXmlInsRangeEnd,
+                    element.Attributes(),
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            // Inserted content control
+#if false
+<w:p>
+  <w:customXmlInsRangeStart w:id="0" w:author="Eric White" w:date="2017-03-25T22:10:00Z"/>
+  <w:sdt>
+    <w:sdtPr>
+      <w:id w:val="-473839966"/>
+      <w:placeholder>
+        <w:docPart w:val="DefaultPlaceholder_-1854013440"/>
+      </w:placeholder>
+      <w:text/>
+    </w:sdtPr>
+    <w:sdtContent>
+      <w:customXmlInsRangeEnd w:id="0"/>
+      <w:r>
+        <w:t>Video</w:t>
+      </w:r>
+      <w:customXmlInsRangeStart w:id="1" w:author="Eric White" w:date="2017-03-25T22:10:00Z"/>
+    </w:sdtContent>
+  </w:sdt>
+  <w:customXmlInsRangeEnd w:id="1"/>
+  <w:r>
+    <w:rPr>
+      <w:lang w:val="en-US"/>
+    </w:rPr>
+    <w:t xml:space="preserve"> provides a powerful way to help you prove your point.</w:t>
+  </w:r>
+</w:p>
+#endif
+            if (element.Name == W.customXmlInsRangeStart)
+            {
+                return new XElement(
+                    W.customXmlDelRangeStart,
+                    element.Attributes(),
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+            if (element.Name == W.customXmlInsRangeEnd)
+            {
+                return new XElement(
+                    W.customXmlDelRangeEnd,
+                    element.Attributes(),
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            // Moved content control
+#if false
+<w:p>
+  <w:r>
+    <w:t>Video provides a powerful way.</w:t>
+  </w:r>
+</w:p>
+<w:customXmlMoveFromRangeStart w:id="0" w:author="Eric White" w:date="2017-03-25T22:21:00Z"/>
+<w:moveFromRangeStart w:id="1" w:author="Eric White" w:date="2017-03-25T22:21:00Z" w:name="move478243824" w:displacedByCustomXml="next"/>
+<w:sdt>
+  <w:sdtPr>
+    <w:id w:val="-2060007328"/>
+    <w:placeholder>
+      <w:docPart w:val="DefaultPlaceholder_-1854013440"/>
+    </w:placeholder>
+  </w:sdtPr>
+  <w:sdtContent>
+    <w:customXmlMoveFromRangeEnd w:id="0"/>
+    <w:p w:rsidR="00D306FD" w:rsidDel="001037E6" w:rsidRDefault="00D306FD">
       <w:pPr>
         <w:rPr>
-          <w:del w:id="0" w:author="Eric White" w:date="2017-03-24T21:52:00Z"/>
-        </w:rPr>
-      </w:pPr>
-      <w:r>
-        <w:t>Video provides a powerful way to help you prove your point.</w:t>
-      </w:r>
-    </w:p>
-    <w:p>
-      <w:r>
-        <w:t>You can also type a keyword to search online for the video that best fits your document.</w:t>
-      </w:r>
-    </w:p>
-#endif
-                if (element.Name == W.del && parent.Name == W.rPr && parent.Parent.Name == W.pPr)
-                {
-                    return new XElement(W.ins);
-                }
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                // Inserted paragraph mark
-#if false
-    <w:p>
-      <w:pPr>
-        <w:rPr>
-          <w:ins w:id="0" w:author="Eric White" w:date="2017-03-24T21:58:00Z"/>
-        </w:rPr>
-      </w:pPr>
-      <w:r>
-        <w:t xml:space="preserve">Video provides a powerful way to help you prove your point. </w:t>
-      </w:r>
-    </w:p>
-    <w:p>
-      <w:r>
-        <w:rPr>
+          <w:moveFrom w:id="2" w:author="Eric White" w:date="2017-03-25T22:21:00Z"/>
           <w:lang w:val="en-US"/>
         </w:rPr>
-        <w:t>When you click Online Video, you can paste in the embed code for the video you want to add.</w:t>
-      </w:r>
-    </w:p>
-#endif
-                if (element.Name == W.ins && parent.Name == W.rPr && parent.Parent.Name == W.pPr)
-                {
-                    return new XElement(W.del);
-                }
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                // Inserted run
-#if false
-    <w:p>
-      <w:r>
-        <w:t xml:space="preserve">Video </w:t>
-      </w:r>
-      <w:ins>
-        <w:r>
-          <w:t xml:space="preserve">provides </w:t>
-        </w:r>
-      </w:ins>
-      <w:r>
-        <w:t>a powerful way to help you prove your point.</w:t>
-      </w:r>
-    </w:p>
-#endif
-                if (element.Name == W.ins && parent.Name == W.p)
-                {
-                    var newRri = new ReverseRevisionsInfo() { InInsert = true };
-                    return new XElement(W.del, element.Nodes().Select(n => ReverseRevisionsTransform(n, rri)));
-                }
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                // Deleted table row
-#if false
-    <w:tbl>
-      <w:tr>
-        <w:tc>
-          <w:p>
-            <w:r>
-              <w:t>1</w:t>
-            </w:r>
-          </w:p>
-        </w:tc>
-      </w:tr>
-      <w:tr>
-        <w:trPr>
-          <w:del w:id="0" w:author="Eric White" w:date="2017-03-24T22:15:00Z"/>
-        </w:trPr>
-        <w:tc>
-          <w:p>
-            <w:pPr>
-              <w:rPr>
-                <w:del w:id="1" w:author="Eric White" w:date="2017-03-24T22:15:00Z"/>
-              </w:rPr>
-            </w:pPr>
-            <w:del w:id="2" w:author="Eric White" w:date="2017-03-24T22:15:00Z">
-              <w:r>
-                <w:delText>4</w:delText>
-              </w:r>
-            </w:del>
-          </w:p>
-        </w:tc>
-      </w:tr>
-      <w:tr>
-        <w:tc>
-          <w:p>
-            <w:r>
-              <w:t>7</w:t>
-            </w:r>
-          </w:p>
-        </w:tc>
-      </w:tr>
-    </w:tbl>
-#endif
-                if (element.Name == W.del && parent.Name == W.trPr)
-                {
-                    return new XElement(W.ins);
-                }
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                // Inserted table row
-#if false
-    <w:tbl>
-      <w:tr>
-        <w:tc>
-          <w:p>
-            <w:r>
-              <w:t>1</w:t>
-            </w:r>
-          </w:p>
-        </w:tc>
-      </w:tr>
-      <w:tr>
-        <w:trPr>
-          <w:ins w:id="0" w:author="Eric White" w:date="2017-03-24T22:16:00Z"/>
-        </w:trPr>
-        <w:tc>
-          <w:p>
-            <w:pPr>
-              <w:rPr>
-                <w:ins w:id="1" w:author="Eric White" w:date="2017-03-24T22:16:00Z"/>
-              </w:rPr>
-            </w:pPr>
-            <w:ins w:id="2" w:author="Eric White" w:date="2017-03-24T22:16:00Z">
-              <w:r>
-                <w:t>1a</w:t>
-              </w:r>
-            </w:ins>
-          </w:p>
-        </w:tc>
-      </w:tr>
-      <w:tr>
-        <w:tc>
-          <w:p>
-            <w:r>
-              <w:t>4</w:t>
-            </w:r>
-          </w:p>
-        </w:tc>
-      </w:tr>
-    </w:tbl>
-#endif
-                if (element.Name == W.ins && parent.Name == W.trPr)
-                {
-                    return new XElement(W.del);
-                }
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                // Deleted math control character
-#if false
-    <w:p w:rsidR="007F4E48" w:rsidRDefault="00C9403B">
-      <m:oMathPara>
-        <m:oMath>
-          <m:r>
-            <w:rPr>
-              <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
-            </w:rPr>
-            <m:t>A=</m:t>
-          </m:r>
-          <m:r>
-            <w:del w:id="0" w:author="Eric White" w:date="2017-03-24T22:53:00Z">
-              <w:rPr>
-                <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
-              </w:rPr>
-              <m:t>2</m:t>
-            </w:del>
-          </m:r>
-          <m:r>
-            <w:rPr>
-              <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
-            </w:rPr>
-            <m:t>π</m:t>
-          </m:r>
-#endif
-                if (element.Name == W.del && parent.Name == M.r)
-                {
-                    return new XElement(W.ins, element.Nodes().Select(n => ReverseRevisionsTransform(n, rri)));
-                }
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                // Inserted math control character
-#if false
-    <w:p w:rsidR="007F4E48" w:rsidRDefault="00C9403B">
-      <m:oMathPara>
-        <m:oMath>
-          <m:r>
-            <w:rPr>
-              <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
-            </w:rPr>
-            <m:t>A=</m:t>
-          </m:r>
-          <m:r>
-            <w:ins w:id="0" w:author="Eric White" w:date="2017-03-24T22:54:00Z">
-              <w:rPr>
-                <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
-              </w:rPr>
-              <m:t>2</m:t>
-            </w:ins>
-          </m:r>
-          <m:r>
-            <w:rPr>
-              <w:rFonts w:ascii="Cambria Math" w:hAnsi="Cambria Math"/>
-            </w:rPr>
-            <m:t>π</m:t>
-          </m:r>
-#endif
-                if (element.Name == W.ins && parent.Name == M.r)
-                {
-                    return new XElement(W.del, element.Nodes().Select(n => ReverseRevisionsTransform(n, rri)));
-                }
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                // moveFrom / moveTo
-#if false
-    <w:p>
-      <w:r>
-        <w:t>Video provides a powerful way.</w:t>
-      </w:r>
-    </w:p>
-    <w:p>
-      <w:pPr>
-        <w:rPr>
-          <w:moveFrom w:id="0" w:author="Eric White" w:date="2017-03-24T23:18:00Z"/>
-        </w:rPr>
       </w:pPr>
-      <w:moveFromRangeStart w:id="1" w:author="Eric White" w:date="2017-03-24T23:18:00Z" w:name="move478160808"/>
-      <w:moveFrom w:id="2" w:author="Eric White" w:date="2017-03-24T23:18:00Z">
-        <w:r>
+      <w:moveFrom w:id="3" w:author="Eric White" w:date="2017-03-25T22:21:00Z">
+        <w:r w:rsidDel="001037E6">
+          <w:rPr>
+            <w:lang w:val="en-US"/>
+          </w:rPr>
           <w:t>When you click Online Video.</w:t>
         </w:r>
       </w:moveFrom>
     </w:p>
-    <w:moveFromRangeEnd w:id="1"/>
-    <w:p>
-      <w:r>
-        <w:rPr>
-          <w:lang w:val="en-US"/>
-        </w:rPr>
-        <w:t>You can also type a keyword.</w:t>
-      </w:r>
-    </w:p>
+    <w:customXmlMoveFromRangeStart w:id="4" w:author="Eric White" w:date="2017-03-25T22:21:00Z"/>
+  </w:sdtContent>
+</w:sdt>
+<w:customXmlMoveFromRangeEnd w:id="4"/>
+<w:moveFromRangeEnd w:id="1"/>
+<w:p>
+  <w:r>
+    <w:rPr>
+      <w:lang w:val="en-US"/>
+    </w:rPr>
+    <w:t>You can also type a keyword.</w:t>
+  </w:r>
+</w:p>
+<w:p>
+  <w:r>
+    <w:rPr>
+      <w:lang w:val="en-US"/>
+    </w:rPr>
+    <w:t>To make your document look.</w:t>
+  </w:r>
+</w:p>
+<w:customXmlMoveToRangeStart w:id="5" w:author="Eric White" w:date="2017-03-25T22:21:00Z"/>
+<w:moveToRangeStart w:id="6" w:author="Eric White" w:date="2017-03-25T22:21:00Z" w:name="move478243824" w:displacedByCustomXml="next"/>
+<w:sdt>
+  <w:sdtPr>
+    <w:id w:val="-483622649"/>
+    <w:placeholder>
+      <w:docPart w:val="DC46F197491D4EC8B79DB4CE2D22E222"/>
+    </w:placeholder>
+  </w:sdtPr>
+  <w:sdtContent>
+    <w:customXmlMoveToRangeEnd w:id="5"/>
     <w:p>
       <w:pPr>
         <w:rPr>
-          <w:moveTo w:id="3" w:author="Eric White" w:date="2017-03-24T23:18:00Z"/>
+          <w:moveTo w:id="8" w:author="Eric White" w:date="2017-03-25T22:21:00Z"/>
         </w:rPr>
       </w:pPr>
-      <w:moveToRangeStart w:id="5" w:author="Eric White" w:date="2017-03-24T23:18:00Z" w:name="move478160808"/>
-      <w:moveTo w:id="6" w:author="Eric White" w:date="2017-03-24T23:18:00Z">
+      <w:moveTo w:id="9" w:author="Eric White" w:date="2017-03-25T22:21:00Z">
         <w:r>
           <w:t>When you click Online Video.</w:t>
         </w:r>
       </w:moveTo>
     </w:p>
-    <w:moveToRangeEnd w:id="5"/>
-    <w:p>
-      <w:r>
-        <w:t>Make your document look professionally produced.</w:t>
-      </w:r>
-    </w:p>
+    <w:customXmlMoveToRangeStart w:id="10" w:author="Eric White" w:date="2017-03-25T22:21:00Z"/>
+  </w:sdtContent>
+</w:sdt>
+<w:customXmlMoveToRangeEnd w:id="10"/>
+<w:moveToRangeEnd w:id="6"/>
+<w:p>
+  <w:ins w:id="11" w:author="Eric White" w:date="2017-03-25T22:21:00Z">
+    <w:r>
+      <w:t xml:space="preserve"> </w:t>
+    </w:r>
+  </w:ins>
+  <w:r>
+    <w:t>For example, you can add.</w:t>
+  </w:r>
+</w:p>
 #endif
-                if (element.Name == W.moveFrom)
-                {
-                    return new XElement(
-                        W.moveTo,
-                        element.Attributes(),
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-                if (element.Name == W.moveFromRangeStart)
-                {
-                    return new XElement(
-                        W.moveToRangeStart,
-                        element.Attributes(),
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-                if (element.Name == W.moveFromRangeEnd)
-                {
-                    return new XElement(
-                        W.moveToRangeEnd,
-                        element.Attributes(),
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-                if (element.Name == W.moveTo)
-                {
-                    return new XElement(
-                        W.moveFrom,
-                        element.Attributes(),
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-                if (element.Name == W.moveToRangeStart)
-                {
-                    return new XElement(
-                        W.moveFromRangeStart,
-                        element.Attributes(),
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-                if (element.Name == W.moveToRangeEnd)
-                {
-                    return new XElement(
-                        W.moveFromRangeEnd,
-                        element.Attributes(),
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                // Deleted content control
-#if false
-    <w:p>
-      <w:customXmlDelRangeStart w:id="1" w:author="Eric White" w:date="2017-03-25T22:10:00Z"/>
-      <w:sdt>
-        <w:sdtPr>
-          <w:rPr>
-            <w:lang w:val="en-US"/>
-          </w:rPr>
-          <w:id w:val="990292373"/>
-          <w:placeholder>
-            <w:docPart w:val="DefaultPlaceholder_-1854013440"/>
-          </w:placeholder>
-          <w:text/>
-        </w:sdtPr>
-        <w:sdtContent>
-          <w:customXmlDelRangeEnd w:id="1"/>
-          <w:r>
-            <w:t>Video</w:t>
-          </w:r>
-          <w:customXmlDelRangeStart w:id="2" w:author="Eric White" w:date="2017-03-25T22:10:00Z"/>
-        </w:sdtContent>
-      </w:sdt>
-      <w:customXmlDelRangeEnd w:id="2"/>
-      <w:r>
-        <w:t xml:space="preserve"> provides a powerful way to help you prove your point.</w:t>
-      </w:r>
-    </w:p>
-#endif
-                if (element.Name == W.customXmlDelRangeStart)
-                {
-                    return new XElement(
-                        W.customXmlInsRangeStart,
-                        element.Attributes(),
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-                if (element.Name == W.customXmlDelRangeEnd)
-                {
-                    return new XElement(
-                        W.customXmlInsRangeEnd,
-                        element.Attributes(),
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                // Inserted content control
-#if false
-    <w:p>
-      <w:customXmlInsRangeStart w:id="0" w:author="Eric White" w:date="2017-03-25T22:10:00Z"/>
-      <w:sdt>
-        <w:sdtPr>
-          <w:id w:val="-473839966"/>
-          <w:placeholder>
-            <w:docPart w:val="DefaultPlaceholder_-1854013440"/>
-          </w:placeholder>
-          <w:text/>
-        </w:sdtPr>
-        <w:sdtContent>
-          <w:customXmlInsRangeEnd w:id="0"/>
-          <w:r>
-            <w:t>Video</w:t>
-          </w:r>
-          <w:customXmlInsRangeStart w:id="1" w:author="Eric White" w:date="2017-03-25T22:10:00Z"/>
-        </w:sdtContent>
-      </w:sdt>
-      <w:customXmlInsRangeEnd w:id="1"/>
-      <w:r>
-        <w:rPr>
-          <w:lang w:val="en-US"/>
-        </w:rPr>
-        <w:t xml:space="preserve"> provides a powerful way to help you prove your point.</w:t>
-      </w:r>
-    </w:p>
-#endif
-                if (element.Name == W.customXmlInsRangeStart)
-                {
-                    return new XElement(
-                        W.customXmlDelRangeStart,
-                        element.Attributes(),
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-                if (element.Name == W.customXmlInsRangeEnd)
-                {
-                    return new XElement(
-                        W.customXmlDelRangeEnd,
-                        element.Attributes(),
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                // Moved content control
-#if false
-    <w:p>
-      <w:r>
-        <w:t>Video provides a powerful way.</w:t>
-      </w:r>
-    </w:p>
-    <w:customXmlMoveFromRangeStart w:id="0" w:author="Eric White" w:date="2017-03-25T22:21:00Z"/>
-    <w:moveFromRangeStart w:id="1" w:author="Eric White" w:date="2017-03-25T22:21:00Z" w:name="move478243824" w:displacedByCustomXml="next"/>
-    <w:sdt>
-      <w:sdtPr>
-        <w:id w:val="-2060007328"/>
-        <w:placeholder>
-          <w:docPart w:val="DefaultPlaceholder_-1854013440"/>
-        </w:placeholder>
-      </w:sdtPr>
-      <w:sdtContent>
-        <w:customXmlMoveFromRangeEnd w:id="0"/>
-        <w:p w:rsidR="00D306FD" w:rsidDel="001037E6" w:rsidRDefault="00D306FD">
-          <w:pPr>
-            <w:rPr>
-              <w:moveFrom w:id="2" w:author="Eric White" w:date="2017-03-25T22:21:00Z"/>
-              <w:lang w:val="en-US"/>
-            </w:rPr>
-          </w:pPr>
-          <w:moveFrom w:id="3" w:author="Eric White" w:date="2017-03-25T22:21:00Z">
-            <w:r w:rsidDel="001037E6">
-              <w:rPr>
-                <w:lang w:val="en-US"/>
-              </w:rPr>
-              <w:t>When you click Online Video.</w:t>
-            </w:r>
-          </w:moveFrom>
-        </w:p>
-        <w:customXmlMoveFromRangeStart w:id="4" w:author="Eric White" w:date="2017-03-25T22:21:00Z"/>
-      </w:sdtContent>
-    </w:sdt>
-    <w:customXmlMoveFromRangeEnd w:id="4"/>
-    <w:moveFromRangeEnd w:id="1"/>
-    <w:p>
-      <w:r>
-        <w:rPr>
-          <w:lang w:val="en-US"/>
-        </w:rPr>
-        <w:t>You can also type a keyword.</w:t>
-      </w:r>
-    </w:p>
-    <w:p>
-      <w:r>
-        <w:rPr>
-          <w:lang w:val="en-US"/>
-        </w:rPr>
-        <w:t>To make your document look.</w:t>
-      </w:r>
-    </w:p>
-    <w:customXmlMoveToRangeStart w:id="5" w:author="Eric White" w:date="2017-03-25T22:21:00Z"/>
-    <w:moveToRangeStart w:id="6" w:author="Eric White" w:date="2017-03-25T22:21:00Z" w:name="move478243824" w:displacedByCustomXml="next"/>
-    <w:sdt>
-      <w:sdtPr>
-        <w:id w:val="-483622649"/>
-        <w:placeholder>
-          <w:docPart w:val="DC46F197491D4EC8B79DB4CE2D22E222"/>
-        </w:placeholder>
-      </w:sdtPr>
-      <w:sdtContent>
-        <w:customXmlMoveToRangeEnd w:id="5"/>
-        <w:p>
-          <w:pPr>
-            <w:rPr>
-              <w:moveTo w:id="8" w:author="Eric White" w:date="2017-03-25T22:21:00Z"/>
-            </w:rPr>
-          </w:pPr>
-          <w:moveTo w:id="9" w:author="Eric White" w:date="2017-03-25T22:21:00Z">
-            <w:r>
-              <w:t>When you click Online Video.</w:t>
-            </w:r>
-          </w:moveTo>
-        </w:p>
-        <w:customXmlMoveToRangeStart w:id="10" w:author="Eric White" w:date="2017-03-25T22:21:00Z"/>
-      </w:sdtContent>
-    </w:sdt>
-    <w:customXmlMoveToRangeEnd w:id="10"/>
-    <w:moveToRangeEnd w:id="6"/>
-    <w:p>
-      <w:ins w:id="11" w:author="Eric White" w:date="2017-03-25T22:21:00Z">
-        <w:r>
-          <w:t xml:space="preserve"> </w:t>
-        </w:r>
-      </w:ins>
-      <w:r>
-        <w:t>For example, you can add.</w:t>
-      </w:r>
-    </w:p>
-#endif
-                if (element.Name == W.customXmlMoveFromRangeStart)
-                {
-                    return new XElement(
-                        W.customXmlMoveToRangeStart,
-                        element.Attributes(),
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-                if (element.Name == W.customXmlMoveFromRangeEnd)
-                {
-                    return new XElement(
-                        W.customXmlMoveToRangeEnd,
-                        element.Attributes(),
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-                if (element.Name == W.customXmlMoveToRangeStart)
-                {
-                    return new XElement(
-                        W.customXmlMoveFromRangeStart,
-                        element.Attributes(),
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-                if (element.Name == W.customXmlMoveToRangeEnd)
-                {
-                    return new XElement(
-                        W.customXmlMoveFromRangeEnd,
-                        element.Attributes(),
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                // Deleted field code
-#if false
-    <w:p>
-      <w:pPr>
-        <w:rPr>
-          <w:del w:id="0" w:author="Eric White" w:date="2017-03-25T22:43:00Z"/>
-        </w:rPr>
-      </w:pPr>
-      <w:del w:id="1" w:author="Eric White" w:date="2017-03-25T22:43:00Z">
-        <w:r>
-          <w:fldChar w:fldCharType="begin"/>
-        </w:r>
-        <w:r>
-          <w:delInstrText xml:space="preserve"> D</w:delInstrText>
-        </w:r>
-        <w:r>
-          <w:rPr>
-            <w:color w:val="FF0000"/>
-          </w:rPr>
-          <w:delInstrText>A</w:delInstrText>
-        </w:r>
-        <w:r>
-          <w:delInstrText xml:space="preserve">TE </w:delInstrText>
-        </w:r>
-        <w:r>
-          <w:fldChar w:fldCharType="separate"/>
-        </w:r>
-        <w:r>
-          <w:delText>25/03/2017</w:delText>
-        </w:r>
-        <w:r>
-          <w:fldChar w:fldCharType="end"/>
-        </w:r>
-      </w:del>
-    </w:p>
-#endif
-                if (element.Name == W.delInstrText)
-                {
-                    return new XElement(
-                        W.instrText,
-                        element.Attributes(), // pulls in xml:space attribute
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                // Change inserted instrText element to w:delInstrText
-                if (element.Name == W.instrText && rri.InInsert)
-                {
-                    return new XElement(
-                        W.delInstrText,
-                        element.Attributes(),
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                // Change inserted text element to w:delText
-                if (element.Name == W.t && rri.InInsert)
-                {
-                    return new XElement(
-                        W.delText,
-                        element.Attributes(),
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                // Change w:delText to w:t
-                if (element.Name == W.delText)
-                {
-                    return new XElement(
-                        W.t,
-                        element.Attributes(), // pulls in xml:space attribute
-                        element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
-                    );
-                }
-
-                ////////////////////////////////////////////////////////////////////////////////////
-                // Identity transform
+            if (element.Name == W.customXmlMoveFromRangeStart)
+            {
                 return new XElement(
-                    element.Name,
+                    W.customXmlMoveToRangeStart,
                     element.Attributes(),
                     element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
                 );
             }
-            return node;
+            if (element.Name == W.customXmlMoveFromRangeEnd)
+            {
+                return new XElement(
+                    W.customXmlMoveToRangeEnd,
+                    element.Attributes(),
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+            if (element.Name == W.customXmlMoveToRangeStart)
+            {
+                return new XElement(
+                    W.customXmlMoveFromRangeStart,
+                    element.Attributes(),
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+            if (element.Name == W.customXmlMoveToRangeEnd)
+            {
+                return new XElement(
+                    W.customXmlMoveFromRangeEnd,
+                    element.Attributes(),
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            // Deleted field code
+#if false
+<w:p>
+  <w:pPr>
+    <w:rPr>
+      <w:del w:id="0" w:author="Eric White" w:date="2017-03-25T22:43:00Z"/>
+    </w:rPr>
+  </w:pPr>
+  <w:del w:id="1" w:author="Eric White" w:date="2017-03-25T22:43:00Z">
+    <w:r>
+      <w:fldChar w:fldCharType="begin"/>
+    </w:r>
+    <w:r>
+      <w:delInstrText xml:space="preserve"> D</w:delInstrText>
+    </w:r>
+    <w:r>
+      <w:rPr>
+        <w:color w:val="FF0000"/>
+      </w:rPr>
+      <w:delInstrText>A</w:delInstrText>
+    </w:r>
+    <w:r>
+      <w:delInstrText xml:space="preserve">TE </w:delInstrText>
+    </w:r>
+    <w:r>
+      <w:fldChar w:fldCharType="separate"/>
+    </w:r>
+    <w:r>
+      <w:delText>25/03/2017</w:delText>
+    </w:r>
+    <w:r>
+      <w:fldChar w:fldCharType="end"/>
+    </w:r>
+  </w:del>
+</w:p>
+#endif
+            if (element.Name == W.delInstrText)
+            {
+                return new XElement(
+                    W.instrText,
+                    element.Attributes(), // pulls in xml:space attribute
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            // Change inserted instrText element to w:delInstrText
+            if (element.Name == W.instrText && rri.InInsert)
+            {
+                return new XElement(
+                    W.delInstrText,
+                    element.Attributes(),
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            // Change inserted text element to w:delText
+            if (element.Name == W.t && rri.InInsert)
+            {
+                return new XElement(
+                    W.delText,
+                    element.Attributes(),
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            // Change w:delText to w:t
+            if (element.Name == W.delText)
+            {
+                return new XElement(
+                    W.t,
+                    element.Attributes(), // pulls in xml:space attribute
+                    element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+                );
+            }
+
+            ////////////////////////////////////////////////////////////////////////////////////
+            // Identity transform
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => ReverseRevisionsTransform(n, rri))
+            );
         }
 
         public static WmlDocument AcceptRevisions(WmlDocument document)
@@ -1309,18 +1291,15 @@ namespace Clippit.Word
 
         private static object AcceptRevisionsForStylesTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
-            {
-                if (element.Name == W.pPrChange || element.Name == W.rPrChange)
-                    return null;
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(AcceptRevisionsForStylesTransform)
-                );
-            }
-            return node;
+            if (node is not XElement element)
+                return node;
+            if (element.Name == W.pPrChange || element.Name == W.rPrChange)
+                return null;
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(AcceptRevisionsForStylesTransform)
+            );
         }
 
         public static void AcceptRevisionsForPart(OpenXmlPart part)
@@ -1369,110 +1348,100 @@ namespace Clippit.Word
 
         private static object FixUpDeletedOrInsertedFieldCodesTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
+            if (node is not XElement element)
+                return node;
+            if (element.Name == W.p)
             {
-                if (element.Name == W.p)
-                {
-                    // 1 other
-                    // 2 w:del/w:r/w:fldChar
-                    // 3 w:ins/w:r/w:fldChar
-                    // 4 w:instrText
+                // 1 other
+                // 2 w:del/w:r/w:fldChar
+                // 3 w:ins/w:r/w:fldChar
+                // 4 w:instrText
 
-                    // formulate new paragraph, looking for 4 that has 2 (or 3) before and after.  Then put in a w:del (or w:ins), transforming w:instrText to w:delInstrText if w:del.
-                    // transform 1, 2, 3 as usual
+                // formulate new paragraph, looking for 4 that has 2 (or 3) before and after.  Then put in a w:del (or w:ins), transforming w:instrText to w:delInstrText if w:del.
+                // transform 1, 2, 3 as usual
 
-                    var groupedParaContentsKey = element
-                        .Elements()
-                        .Select(e =>
+                var groupedParaContentsKey = element
+                    .Elements()
+                    .Select(e =>
+                    {
+                        if (e.Name == W.del && e.Elements(W.r).Elements(W.fldChar).Any())
+                            return 2;
+                        if (e.Name == W.ins && e.Elements(W.r).Elements(W.fldChar).Any())
+                            return 3;
+                        if (e.Name == W.r && e.Element(W.instrText) != null)
+                            return 4;
+                        return 1;
+                    });
+
+                var zipped = element.Elements().Zip(groupedParaContentsKey, (e, k) => new { Ele = e, Key = k });
+
+                var grouped = zipped.GroupAdjacent(z => z.Key).ToArray();
+
+                var gLen = grouped.Length;
+
+                //if (gLen != 1)
+                //    Console.WriteLine();
+
+                var newParaContents = grouped.Select(
+                    (g, i) =>
+                    {
+                        return g.Key switch
                         {
-                            if (e.Name == W.del && e.Elements(W.r).Elements(W.fldChar).Any())
-                                return 2;
-                            if (e.Name == W.ins && e.Elements(W.r).Elements(W.fldChar).Any())
-                                return 3;
-                            if (e.Name == W.r && e.Element(W.instrText) != null)
-                                return 4;
-                            return 1;
-                        });
-
-                    var zipped = element.Elements().Zip(groupedParaContentsKey, (e, k) => new { Ele = e, Key = k });
-
-                    var grouped = zipped.GroupAdjacent(z => z.Key).ToArray();
-
-                    var gLen = grouped.Length;
-
-                    //if (gLen != 1)
-                    //    Console.WriteLine();
-
-                    var newParaContents = grouped.Select(
-                        (g, i) =>
-                        {
-                            return g.Key switch
-                            {
-                                1 or 2 or 3 => (object)
-                                    g.Select(gc => FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele)),
-                                4 when i == 0 || i == gLen - 1 => g.Select(gc =>
-                                    FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele)
-                                ),
-                                4 when grouped[i - 1].Key == 2 && grouped[i + 1].Key == 2 => new XElement(
-                                    W.del,
-                                    g.Select(gc => TransformInstrTextToDelInstrText(gc.Ele))
-                                ),
-                                4 when grouped[i - 1].Key == 3 && grouped[i + 1].Key == 3 => new XElement(
-                                    W.ins,
-                                    g.Select(gc => FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele))
-                                ),
-                                4 => g.Select(gc => FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele)),
-                                _ => throw new OpenXmlPowerToolsException("Internal error"),
-                            };
-                        }
-                    );
-
-                    var newParagraph = new XElement(W.p, element.Attributes(), newParaContents);
-                    return newParagraph;
-                }
-
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(n => FixUpDeletedOrInsertedFieldCodesTransform(n))
+                            1 or 2 or 3 => (object)g.Select(gc => FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele)),
+                            4 when i == 0 || i == gLen - 1 => g.Select(gc =>
+                                FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele)
+                            ),
+                            4 when grouped[i - 1].Key == 2 && grouped[i + 1].Key == 2 => new XElement(
+                                W.del,
+                                g.Select(gc => TransformInstrTextToDelInstrText(gc.Ele))
+                            ),
+                            4 when grouped[i - 1].Key == 3 && grouped[i + 1].Key == 3 => new XElement(
+                                W.ins,
+                                g.Select(gc => FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele))
+                            ),
+                            4 => g.Select(gc => FixUpDeletedOrInsertedFieldCodesTransform(gc.Ele)),
+                            _ => throw new OpenXmlPowerToolsException("Internal error"),
+                        };
+                    }
                 );
+
+                var newParagraph = new XElement(W.p, element.Attributes(), newParaContents);
+                return newParagraph;
             }
-            return node;
+
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => FixUpDeletedOrInsertedFieldCodesTransform(n))
+            );
         }
 
         private static object TransformInstrTextToDelInstrText(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
-            {
-                if (element.Name == W.instrText)
-                    return new XElement(W.delInstrText, element.Attributes(), element.Nodes());
+            if (node is not XElement element)
+                return node;
+            if (element.Name == W.instrText)
+                return new XElement(W.delInstrText, element.Attributes(), element.Nodes());
 
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(n => TransformInstrTextToDelInstrText(n))
-                );
-            }
-            return node;
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => TransformInstrTextToDelInstrText(n))
+            );
         }
 
         private static object AddEmptyParagraphToAnyEmptyCells(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
-            {
-                if (element.Name == W.tc && !element.Elements().Where(e => e.Name != W.tcPr).Any())
-                    return new XElement(W.tc, element.Attributes(), element.Elements(), new XElement(W.p));
+            if (node is not XElement element)
+                return node;
+            if (element.Name == W.tc && !element.Elements().Where(e => e.Name != W.tcPr).Any())
+                return new XElement(W.tc, element.Attributes(), element.Elements(), new XElement(W.p));
 
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(n => AddEmptyParagraphToAnyEmptyCells(n))
-                );
-            }
-            return node;
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => AddEmptyParagraphToAnyEmptyCells(n))
+            );
         }
 
         private static readonly Dictionary<XName, int> Order_tcPr = new()
@@ -1526,20 +1495,17 @@ namespace Clippit.Word
 
         private static object AcceptMoveFromMoveToTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
-            {
-                if (element.Name == W.moveTo)
-                    return element.Nodes().Select(n => AcceptMoveFromMoveToTransform(n));
-                if (element.Name == W.moveFrom)
-                    return null;
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(n => AcceptMoveFromMoveToTransform(n))
-                );
-            }
-            return node;
+            if (node is not XElement element)
+                return node;
+            if (element.Name == W.moveTo)
+                return element.Nodes().Select(n => AcceptMoveFromMoveToTransform(n));
+            if (element.Name == W.moveFrom)
+                return null;
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => AcceptMoveFromMoveToTransform(n))
+            );
         }
 
         private static XElement AcceptMoveFromRanges(XElement document)
@@ -1626,203 +1592,191 @@ namespace Clippit.Word
 
         private static object AcceptParagraphEndTagsInMoveFromTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
+            if (node is not XElement element)
+                return node;
+            if (W.BlockLevelContentContainers.Contains(element.Name))
             {
-                if (W.BlockLevelContentContainers.Contains(element.Name))
-                {
-                    var groupedBodyChildren = element
-                        .Elements()
-                        .GroupAdjacent(c =>
-                        {
-                            BlockContentInfo pi = c.GetParagraphInfo();
-                            if (pi.ThisBlockContentElement != null)
-                            {
-                                var paragraphMarkIsInMoveFromRange =
-                                    pi.ThisBlockContentElement.Elements(W.moveFromRangeStart).Any()
-                                    && !pi.ThisBlockContentElement.Elements(W.moveFromRangeEnd).Any();
-                                if (paragraphMarkIsInMoveFromRange)
-                                    return MoveFromCollectionType.ParagraphEndTagInMoveFromRange;
-                            }
-                            XElement previousContentElement = c.ContentElementsBeforeSelf()
-                                .Where(e => e.GetParagraphInfo().ThisBlockContentElement != null)
-                                .FirstOrDefault();
-                            if (previousContentElement != null)
-                            {
-                                BlockContentInfo pi2 = previousContentElement.GetParagraphInfo();
-                                if (
-                                    c.Name == W.p
-                                    && pi2.ThisBlockContentElement.Elements(W.moveFromRangeStart).Any()
-                                    && !pi2.ThisBlockContentElement.Elements(W.moveFromRangeEnd).Any()
-                                )
-                                    return MoveFromCollectionType.ParagraphEndTagInMoveFromRange;
-                            }
-                            return MoveFromCollectionType.Other;
-                        })
-                        .ToList();
-
-                    // If there is only one group, and it's key is MoveFromCollectionType.Other
-                    // then there is nothing to do.
-                    if (
-                        groupedBodyChildren.Count == 1
-                        && groupedBodyChildren.First().Key == MoveFromCollectionType.Other
-                    )
+                var groupedBodyChildren = element
+                    .Elements()
+                    .GroupAdjacent(c =>
                     {
-                        var newElement = new XElement(
-                            element.Name,
-                            element.Attributes(),
-                            groupedBodyChildren.Select(g =>
-                            {
-                                if (g.Key == MoveFromCollectionType.Other)
-                                    return g;
+                        BlockContentInfo pi = c.GetParagraphInfo();
+                        if (pi.ThisBlockContentElement != null)
+                        {
+                            var paragraphMarkIsInMoveFromRange =
+                                pi.ThisBlockContentElement.Elements(W.moveFromRangeStart).Any()
+                                && !pi.ThisBlockContentElement.Elements(W.moveFromRangeEnd).Any();
+                            if (paragraphMarkIsInMoveFromRange)
+                                return MoveFromCollectionType.ParagraphEndTagInMoveFromRange;
+                        }
+                        XElement previousContentElement = c.ContentElementsBeforeSelf()
+                            .Where(e => e.GetParagraphInfo().ThisBlockContentElement != null)
+                            .FirstOrDefault();
+                        if (previousContentElement != null)
+                        {
+                            BlockContentInfo pi2 = previousContentElement.GetParagraphInfo();
+                            if (
+                                c.Name == W.p
+                                && pi2.ThisBlockContentElement.Elements(W.moveFromRangeStart).Any()
+                                && !pi2.ThisBlockContentElement.Elements(W.moveFromRangeEnd).Any()
+                            )
+                                return MoveFromCollectionType.ParagraphEndTagInMoveFromRange;
+                        }
+                        return MoveFromCollectionType.Other;
+                    })
+                    .ToList();
 
-                                // This is a transform that produces the first element in the
-                                // collection, except that the paragraph in the descendents is
-                                // replaced with a new paragraph that contains all contents of the
-                                // existing paragraph, plus subsequent elements in the group
-                                // collection, where the paragraph in each of those groups is
-                                // collapsed.
-                                return CoalesqueParagraphEndTagsInMoveFromTransform(g.First(), g);
-                            })
-                        );
-                        return newElement;
-                    }
-                    else
-                        return new XElement(
-                            element.Name,
-                            element.Attributes(),
-                            element.Nodes().Select(n => AcceptParagraphEndTagsInMoveFromTransform(n))
-                        );
+                // If there is only one group, and it's key is MoveFromCollectionType.Other
+                // then there is nothing to do.
+                if (groupedBodyChildren.Count == 1 && groupedBodyChildren.First().Key == MoveFromCollectionType.Other)
+                {
+                    var newElement = new XElement(
+                        element.Name,
+                        element.Attributes(),
+                        groupedBodyChildren.Select(g =>
+                        {
+                            if (g.Key == MoveFromCollectionType.Other)
+                                return g;
+
+                            // This is a transform that produces the first element in the
+                            // collection, except that the paragraph in the descendents is
+                            // replaced with a new paragraph that contains all contents of the
+                            // existing paragraph, plus subsequent elements in the group
+                            // collection, where the paragraph in each of those groups is
+                            // collapsed.
+                            return CoalesqueParagraphEndTagsInMoveFromTransform(g.First(), g);
+                        })
+                    );
+                    return newElement;
                 }
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(n => AcceptParagraphEndTagsInMoveFromTransform(n))
-                );
+                else
+                    return new XElement(
+                        element.Name,
+                        element.Attributes(),
+                        element.Nodes().Select(n => AcceptParagraphEndTagsInMoveFromTransform(n))
+                    );
             }
-            return node;
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => AcceptParagraphEndTagsInMoveFromTransform(n))
+            );
         }
 
         private static object AcceptAllOtherRevisionsTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
-            {
-                /// Accept inserted text, inserted paragraph marks, etc.
-                /// Collapse all w:ins elements.
-                if (element.Name == W.ins)
-                    return element.Nodes().Select(n => AcceptAllOtherRevisionsTransform(n));
+            if (node is not XElement element)
+                return node;
+            /// Accept inserted text, inserted paragraph marks, etc.
+            /// Collapse all w:ins elements.
+            if (element.Name == W.ins)
+                return element.Nodes().Select(n => AcceptAllOtherRevisionsTransform(n));
 
-                /// Remove all of the following elements.  These elements are processed in:
-                ///   AcceptDeletedAndMovedFromContentControls
-                ///   AcceptMoveFromMoveToTransform
-                ///   AcceptDeletedAndMoveFromParagraphMarksTransform
-                ///   AcceptParagraphEndTagsInMoveFromTransform
-                ///   AcceptMoveFromRanges
-                if (
-                    element.Name == W.customXmlDelRangeStart
-                    || element.Name == W.customXmlDelRangeEnd
-                    || element.Name == W.customXmlInsRangeStart
-                    || element.Name == W.customXmlInsRangeEnd
-                    || element.Name == W.customXmlMoveFromRangeStart
-                    || element.Name == W.customXmlMoveFromRangeEnd
-                    || element.Name == W.customXmlMoveToRangeStart
-                    || element.Name == W.customXmlMoveToRangeEnd
-                    || element.Name == W.moveFromRangeStart
-                    || element.Name == W.moveFromRangeEnd
-                    || element.Name == W.moveToRangeStart
-                    || element.Name == W.moveToRangeEnd
-                )
-                    return null;
+            /// Remove all of the following elements.  These elements are processed in:
+            ///   AcceptDeletedAndMovedFromContentControls
+            ///   AcceptMoveFromMoveToTransform
+            ///   AcceptDeletedAndMoveFromParagraphMarksTransform
+            ///   AcceptParagraphEndTagsInMoveFromTransform
+            ///   AcceptMoveFromRanges
+            if (
+                element.Name == W.customXmlDelRangeStart
+                || element.Name == W.customXmlDelRangeEnd
+                || element.Name == W.customXmlInsRangeStart
+                || element.Name == W.customXmlInsRangeEnd
+                || element.Name == W.customXmlMoveFromRangeStart
+                || element.Name == W.customXmlMoveFromRangeEnd
+                || element.Name == W.customXmlMoveToRangeStart
+                || element.Name == W.customXmlMoveToRangeEnd
+                || element.Name == W.moveFromRangeStart
+                || element.Name == W.moveFromRangeEnd
+                || element.Name == W.moveToRangeStart
+                || element.Name == W.moveToRangeEnd
+            )
+                return null;
 
-                /// Accept revisions in formatting on paragraphs.
-                /// Accept revisions in formatting on runs.
-                /// Accept revisions for applied styles to a table.
-                /// Accept revisions for grid revisions to a table.
-                /// Accept revisions for column properties.
-                /// Accept revisions for row properties.
-                /// Accept revisions for table level property exceptions.
-                /// Accept revisions for section properties.
-                /// Accept numbering revision in fields.
-                /// Accept deleted field code text.
-                /// Accept deleted literal text.
-                /// Accept inserted cell.
-                if (
-                    element.Name == W.pPrChange
-                    || element.Name == W.rPrChange
-                    || element.Name == W.tblPrChange
-                    || element.Name == W.tblGridChange
-                    || element.Name == W.tcPrChange
-                    || element.Name == W.trPrChange
-                    || element.Name == W.tblPrExChange
-                    || element.Name == W.sectPrChange
-                    || element.Name == W.numberingChange
-                    || element.Name == W.delInstrText
-                    || element.Name == W.delText
-                    || element.Name == W.cellIns
-                )
-                    return null;
+            /// Accept revisions in formatting on paragraphs.
+            /// Accept revisions in formatting on runs.
+            /// Accept revisions for applied styles to a table.
+            /// Accept revisions for grid revisions to a table.
+            /// Accept revisions for column properties.
+            /// Accept revisions for row properties.
+            /// Accept revisions for table level property exceptions.
+            /// Accept revisions for section properties.
+            /// Accept numbering revision in fields.
+            /// Accept deleted field code text.
+            /// Accept deleted literal text.
+            /// Accept inserted cell.
+            if (
+                element.Name == W.pPrChange
+                || element.Name == W.rPrChange
+                || element.Name == W.tblPrChange
+                || element.Name == W.tblGridChange
+                || element.Name == W.tcPrChange
+                || element.Name == W.trPrChange
+                || element.Name == W.tblPrExChange
+                || element.Name == W.sectPrChange
+                || element.Name == W.numberingChange
+                || element.Name == W.delInstrText
+                || element.Name == W.delText
+                || element.Name == W.cellIns
+            )
+                return null;
 
-                // Accept revisions for deleted math control character.
-                // Match m:f/m:fPr/m:ctrlPr/w:del, remove m:f.
+            // Accept revisions for deleted math control character.
+            // Match m:f/m:fPr/m:ctrlPr/w:del, remove m:f.
 
-                if (element.Name == M.f && element.Elements(M.fPr).Elements(M.ctrlPr).Elements(W.del).Any())
-                    return null;
+            if (element.Name == M.f && element.Elements(M.fPr).Elements(M.ctrlPr).Elements(W.del).Any())
+                return null;
 
-                // Accept revisions for deleted rows in tables.
-                // Match w:tr/w:trPr/w:del, remove w:tr.
+            // Accept revisions for deleted rows in tables.
+            // Match w:tr/w:trPr/w:del, remove w:tr.
 
-                if (element.Name == W.tr && element.Elements(W.trPr).Elements(W.del).Any())
-                    return null;
+            if (element.Name == W.tr && element.Elements(W.trPr).Elements(W.del).Any())
+                return null;
 
-                // Accept deleted text in paragraphs.
+            // Accept deleted text in paragraphs.
 
-                if (element.Name == W.del)
-                    return null;
+            if (element.Name == W.del)
+                return null;
 
-                // Accept revisions for vertically merged cells.
-                //   cellMerge with a parent of tcPr, with attribute w:vMerge="rest" transformed
-                //     to <w:vMerge w:val="restart"/>
-                //   cellMerge with a parent of tcPr, with attribute w:vMerge="cont" transformed
-                //     to <w:vMerge w:val="continue"/>
+            // Accept revisions for vertically merged cells.
+            //   cellMerge with a parent of tcPr, with attribute w:vMerge="rest" transformed
+            //     to <w:vMerge w:val="restart"/>
+            //   cellMerge with a parent of tcPr, with attribute w:vMerge="cont" transformed
+            //     to <w:vMerge w:val="continue"/>
 
-                if (
-                    element.Name == W.cellMerge
-                    && element.Parent.Name == W.tcPr
-                    && (string)element.Attribute(W.vMerge) == "rest"
-                )
-                    return new XElement(W.vMerge, new XAttribute(W.val, "restart"));
-                if (
-                    element.Name == W.cellMerge
-                    && element.Parent.Name == W.tcPr
-                    && (string)element.Attribute(W.vMerge) == "cont"
-                )
-                    return new XElement(W.vMerge, new XAttribute(W.val, "continue"));
+            if (
+                element.Name == W.cellMerge
+                && element.Parent.Name == W.tcPr
+                && (string)element.Attribute(W.vMerge) == "rest"
+            )
+                return new XElement(W.vMerge, new XAttribute(W.val, "restart"));
+            if (
+                element.Name == W.cellMerge
+                && element.Parent.Name == W.tcPr
+                && (string)element.Attribute(W.vMerge) == "cont"
+            )
+                return new XElement(W.vMerge, new XAttribute(W.val, "continue"));
 
-                // Otherwise do identity clone.
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(n => AcceptAllOtherRevisionsTransform(n))
-                );
-            }
-            return node;
+            // Otherwise do identity clone.
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => AcceptAllOtherRevisionsTransform(n))
+            );
         }
 
         private static object CollapseParagraphTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
-            {
-                if (element.Name == W.p)
-                    return element.Elements().Where(e => e.Name != W.pPr);
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(n => CollapseParagraphTransform(n))
-                );
-            }
-            return node;
+            if (node is not XElement element)
+                return node;
+            if (element.Name == W.p)
+                return element.Elements().Where(e => e.Name != W.pPr);
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => CollapseParagraphTransform(n))
+            );
         }
 
         private enum DeletedParagraphCollectionType
@@ -2137,84 +2091,38 @@ namespace Clippit.Word
 
         private static object AcceptDeletedAndMoveFromParagraphMarksTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
+            if (node is not XElement element)
+                return node;
+            if (W.BlockLevelContentContainers.Contains(element.Name))
             {
-                if (W.BlockLevelContentContainers.Contains(element.Name))
+                XElement bodySectPr = null;
+                if (element.Name == W.body)
+                    bodySectPr = element.Element(W.sectPr);
+
+                var currentKey = 0;
+                var deletedParagraphGroupingInfo = new List<GroupingInfo>();
+
+                var state = 0; // 0 = in non deleted paragraphs
+                // 1 = in deleted paragraph
+                // 2 - paragraph following deleted paragraphs
+
+                foreach (var c in IterateBlockContentElements(element))
                 {
-                    XElement bodySectPr = null;
-                    if (element.Name == W.body)
-                        bodySectPr = element.Element(W.sectPr);
-
-                    var currentKey = 0;
-                    var deletedParagraphGroupingInfo = new List<GroupingInfo>();
-
-                    var state = 0; // 0 = in non deleted paragraphs
-                    // 1 = in deleted paragraph
-                    // 2 - paragraph following deleted paragraphs
-
-                    foreach (var c in IterateBlockContentElements(element))
+                    if (c.ThisBlockContentElement.Name == W.p)
                     {
-                        if (c.ThisBlockContentElement.Name == W.p)
+                        var paragraphMarkIsDeletedOrMovedFrom = c
+                            .ThisBlockContentElement.Elements(W.pPr)
+                            .Elements(W.rPr)
+                            .Elements()
+                            .Where(e => e.Name == W.del || e.Name == W.moveFrom)
+                            .Any();
+
+                        if (paragraphMarkIsDeletedOrMovedFrom)
                         {
-                            var paragraphMarkIsDeletedOrMovedFrom = c
-                                .ThisBlockContentElement.Elements(W.pPr)
-                                .Elements(W.rPr)
-                                .Elements()
-                                .Where(e => e.Name == W.del || e.Name == W.moveFrom)
-                                .Any();
-
-                            if (paragraphMarkIsDeletedOrMovedFrom)
-                            {
-                                if (state == 0)
-                                {
-                                    state = 1;
-                                    currentKey += 1;
-                                    deletedParagraphGroupingInfo.Add(
-                                        new GroupingInfo()
-                                        {
-                                            GroupingType = GroupingType.DeletedRange,
-                                            GroupingKey = currentKey,
-                                        }
-                                    );
-                                    continue;
-                                }
-                                else if (state == 1)
-                                {
-                                    deletedParagraphGroupingInfo.Add(
-                                        new GroupingInfo()
-                                        {
-                                            GroupingType = GroupingType.DeletedRange,
-                                            GroupingKey = currentKey,
-                                        }
-                                    );
-                                    continue;
-                                }
-                                else if (state == 2)
-                                {
-                                    state = 1;
-                                    currentKey += 1;
-                                    deletedParagraphGroupingInfo.Add(
-                                        new GroupingInfo()
-                                        {
-                                            GroupingType = GroupingType.DeletedRange,
-                                            GroupingKey = currentKey,
-                                        }
-                                    );
-                                    continue;
-                                }
-                            }
-
                             if (state == 0)
                             {
+                                state = 1;
                                 currentKey += 1;
-                                deletedParagraphGroupingInfo.Add(
-                                    new GroupingInfo() { GroupingType = GroupingType.Other, GroupingKey = currentKey }
-                                );
-                            }
-                            else if (state == 1)
-                            {
-                                state = 2;
                                 deletedParagraphGroupingInfo.Add(
                                     new GroupingInfo()
                                     {
@@ -2222,117 +2130,154 @@ namespace Clippit.Word
                                         GroupingKey = currentKey,
                                     }
                                 );
+                                continue;
+                            }
+                            else if (state == 1)
+                            {
+                                deletedParagraphGroupingInfo.Add(
+                                    new GroupingInfo()
+                                    {
+                                        GroupingType = GroupingType.DeletedRange,
+                                        GroupingKey = currentKey,
+                                    }
+                                );
+                                continue;
                             }
                             else if (state == 2)
                             {
-                                state = 0;
+                                state = 1;
                                 currentKey += 1;
                                 deletedParagraphGroupingInfo.Add(
-                                    new GroupingInfo() { GroupingType = GroupingType.Other, GroupingKey = currentKey }
+                                    new GroupingInfo()
+                                    {
+                                        GroupingType = GroupingType.DeletedRange,
+                                        GroupingKey = currentKey,
+                                    }
                                 );
+                                continue;
                             }
                         }
-                        else if (
-                            c.ThisBlockContentElement.Name == W.tbl
-                            || c.ThisBlockContentElement.Name.Namespace == M.m
-                        )
+
+                        if (state == 0)
                         {
                             currentKey += 1;
                             deletedParagraphGroupingInfo.Add(
                                 new GroupingInfo() { GroupingType = GroupingType.Other, GroupingKey = currentKey }
                             );
-                            state = 0;
                         }
-                        else
+                        else if (state == 1)
                         {
-                            // otherwise keep the same state, put in the same group, and continue
+                            state = 2;
+                            deletedParagraphGroupingInfo.Add(
+                                new GroupingInfo()
+                                {
+                                    GroupingType = GroupingType.DeletedRange,
+                                    GroupingKey = currentKey,
+                                }
+                            );
+                        }
+                        else if (state == 2)
+                        {
+                            state = 0;
+                            currentKey += 1;
                             deletedParagraphGroupingInfo.Add(
                                 new GroupingInfo() { GroupingType = GroupingType.Other, GroupingKey = currentKey }
                             );
                         }
                     }
-
-                    var zipped = IterateBlockContentElements(element)
-                        .Zip(
-                            deletedParagraphGroupingInfo,
-                            (blc, gi) => new { BlockLevelContent = blc, GroupingInfo = gi }
+                    else if (c.ThisBlockContentElement.Name == W.tbl || c.ThisBlockContentElement.Name.Namespace == M.m)
+                    {
+                        currentKey += 1;
+                        deletedParagraphGroupingInfo.Add(
+                            new GroupingInfo() { GroupingType = GroupingType.Other, GroupingKey = currentKey }
                         );
-
-                    var groupedParagraphs = zipped.GroupAdjacent(z => z.GroupingInfo.GroupingKey);
-
-                    // Create a new block level content container.
-                    var newBlockLevelContentContainer = new XElement(
-                        element.Name,
-                        element.Attributes(),
-                        element.Elements().Where(e => e.Name == W.tcPr),
-                        groupedParagraphs.Select(
-                            (g, i) =>
-                            {
-                                if (g.First().GroupingInfo.GroupingType == GroupingType.DeletedRange)
-                                {
-                                    var newParagraph = new XElement(
-                                        W.p,
-#if false
-                                    // previously, this was set to g.First()
-                                    // however, this caused test [InlineData("RP/RP052-Deleted-Para-Mark.docx")] to lose paragraph numbering for a paragraph that we did not want to loose it for.
-                                    // the question is - when coalescing multiple paragraphs due to deleted paragraph marks, should we be taking the paragraph properties from the first or the last
-                                    // in the sequence of coalesced paragraph.  It is possible that we should take Last when accepting revisions, but First when rejecting revisions.
-                                    g.First().BlockLevelContent.ThisBlockContentElement.Elements(W.pPr),
-#endif
-                                        g.Last().BlockLevelContent.ThisBlockContentElement.Elements(W.pPr),
-                                        g.Select(z =>
-                                            CollapseParagraphTransform(z.BlockLevelContent.ThisBlockContentElement)
-                                        )
-                                    );
-
-                                    // if this contains the last paragraph in the document, and if there is no content,
-                                    // and if the paragraph mark is deleted, then nuke the paragraph.
-                                    var allIsDeleted = AllParaContentIsDeleted(newParagraph);
-                                    if (
-                                        allIsDeleted
-                                        && g.Last()
-                                            .BlockLevelContent.ThisBlockContentElement.Elements(W.pPr)
-                                            .Elements(W.rPr)
-                                            .Elements(W.del)
-                                            .Any()
-                                        && (
-                                            g.Last().BlockLevelContent.NextBlockContentElement == null
-                                            || g.Last().BlockLevelContent.NextBlockContentElement.Name == W.tbl
-                                        )
-                                    )
-                                        return null;
-
-                                    return (object)newParagraph;
-                                }
-                                else
-                                {
-                                    return g.Select(z =>
-                                    {
-                                        var newEle = new XElement(
-                                            z.BlockLevelContent.ThisBlockContentElement.Name,
-                                            z.BlockLevelContent.ThisBlockContentElement.Attributes(),
-                                            z.BlockLevelContent.ThisBlockContentElement.Nodes()
-                                                .Select(n => AcceptDeletedAndMoveFromParagraphMarksTransform(n))
-                                        );
-                                        return newEle;
-                                    });
-                                }
-                            }
-                        ),
-                        bodySectPr
-                    );
-
-                    return newBlockLevelContentContainer;
+                        state = 0;
+                    }
+                    else
+                    {
+                        // otherwise keep the same state, put in the same group, and continue
+                        deletedParagraphGroupingInfo.Add(
+                            new GroupingInfo() { GroupingType = GroupingType.Other, GroupingKey = currentKey }
+                        );
+                    }
                 }
 
-                // Otherwise, identity clone.
-                return new XElement(
+                var zipped = IterateBlockContentElements(element)
+                    .Zip(deletedParagraphGroupingInfo, (blc, gi) => new { BlockLevelContent = blc, GroupingInfo = gi });
+
+                var groupedParagraphs = zipped.GroupAdjacent(z => z.GroupingInfo.GroupingKey);
+
+                // Create a new block level content container.
+                var newBlockLevelContentContainer = new XElement(
                     element.Name,
                     element.Attributes(),
-                    element.Nodes().Select(n => AcceptDeletedAndMoveFromParagraphMarksTransform(n))
+                    element.Elements().Where(e => e.Name == W.tcPr),
+                    groupedParagraphs.Select(
+                        (g, i) =>
+                        {
+                            if (g.First().GroupingInfo.GroupingType == GroupingType.DeletedRange)
+                            {
+                                var newParagraph = new XElement(
+                                    W.p,
+#if false
+                                // previously, this was set to g.First()
+                                // however, this caused test [InlineData("RP/RP052-Deleted-Para-Mark.docx")] to lose paragraph numbering for a paragraph that we did not want to loose it for.
+                                // the question is - when coalescing multiple paragraphs due to deleted paragraph marks, should we be taking the paragraph properties from the first or the last
+                                // in the sequence of coalesced paragraph.  It is possible that we should take Last when accepting revisions, but First when rejecting revisions.
+                                g.First().BlockLevelContent.ThisBlockContentElement.Elements(W.pPr),
+#endif
+                                    g.Last().BlockLevelContent.ThisBlockContentElement.Elements(W.pPr),
+                                    g.Select(z =>
+                                        CollapseParagraphTransform(z.BlockLevelContent.ThisBlockContentElement)
+                                    )
+                                );
+
+                                // if this contains the last paragraph in the document, and if there is no content,
+                                // and if the paragraph mark is deleted, then nuke the paragraph.
+                                var allIsDeleted = AllParaContentIsDeleted(newParagraph);
+                                if (
+                                    allIsDeleted
+                                    && g.Last()
+                                        .BlockLevelContent.ThisBlockContentElement.Elements(W.pPr)
+                                        .Elements(W.rPr)
+                                        .Elements(W.del)
+                                        .Any()
+                                    && (
+                                        g.Last().BlockLevelContent.NextBlockContentElement == null
+                                        || g.Last().BlockLevelContent.NextBlockContentElement.Name == W.tbl
+                                    )
+                                )
+                                    return null;
+
+                                return (object)newParagraph;
+                            }
+                            else
+                            {
+                                return g.Select(z =>
+                                {
+                                    var newEle = new XElement(
+                                        z.BlockLevelContent.ThisBlockContentElement.Name,
+                                        z.BlockLevelContent.ThisBlockContentElement.Attributes(),
+                                        z.BlockLevelContent.ThisBlockContentElement.Nodes()
+                                            .Select(n => AcceptDeletedAndMoveFromParagraphMarksTransform(n))
+                                    );
+                                    return newEle;
+                                });
+                            }
+                        }
+                    ),
+                    bodySectPr
                 );
+
+                return newBlockLevelContentContainer;
             }
-            return node;
+
+            // Otherwise, identity clone.
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => AcceptDeletedAndMoveFromParagraphMarksTransform(n))
+            );
         }
 
         // Determine if the paragraph contains any content that is not deleted.
@@ -2358,31 +2303,24 @@ namespace Clippit.Word
         // dir, bdo, sdt, ins, moveTo, smartTag
         private static object CollapseTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
-            {
-                if (
-                    element.Name == W.dir
-                    || element.Name == W.bdr
-                    || element.Name == W.ins
-                    || element.Name == W.moveTo
-                    || element.Name == W.smartTag
-                )
-                    return element.Elements();
+            if (node is not XElement element)
+                return node;
+            if (
+                element.Name == W.dir
+                || element.Name == W.bdr
+                || element.Name == W.ins
+                || element.Name == W.moveTo
+                || element.Name == W.smartTag
+            )
+                return element.Elements();
 
-                if (element.Name == W.sdt)
-                    return element.Elements(W.sdtContent).Elements();
+            if (element.Name == W.sdt)
+                return element.Elements(W.sdtContent).Elements();
 
-                if (element.Name == W.pPr)
-                    return null;
+            if (element.Name == W.pPr)
+                return null;
 
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(n => CollapseTransform(n))
-                );
-            }
-            return node;
+            return new XElement(element.Name, element.Attributes(), element.Nodes().Select(n => CollapseTransform(n)));
         }
 
         private static bool? IsRunContent(XName ceName)
@@ -2481,37 +2419,34 @@ namespace Clippit.Word
             XElement[] moveFromElementsToDelete
         )
         {
-            var element = node as XElement;
-            if (element != null)
-            {
-                if (element.Name == W.sdt && contentControlElementsToCollapse.Contains(element))
-                    return element
-                        .Element(W.sdtContent)
-                        .Nodes()
-                        .Select(n =>
-                            AcceptDeletedAndMovedFromContentControlsTransform(
-                                n,
-                                contentControlElementsToCollapse,
-                                moveFromElementsToDelete
-                            )
-                        );
-                if (moveFromElementsToDelete.Contains(element))
-                    return null;
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element
-                        .Nodes()
-                        .Select(n =>
-                            AcceptDeletedAndMovedFromContentControlsTransform(
-                                n,
-                                contentControlElementsToCollapse,
-                                moveFromElementsToDelete
-                            )
+            if (node is not XElement element)
+                return node;
+            if (element.Name == W.sdt && contentControlElementsToCollapse.Contains(element))
+                return element
+                    .Element(W.sdtContent)
+                    .Nodes()
+                    .Select(n =>
+                        AcceptDeletedAndMovedFromContentControlsTransform(
+                            n,
+                            contentControlElementsToCollapse,
+                            moveFromElementsToDelete
                         )
-                );
-            }
-            return node;
+                    );
+            if (moveFromElementsToDelete.Contains(element))
+                return null;
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element
+                    .Nodes()
+                    .Select(n =>
+                        AcceptDeletedAndMovedFromContentControlsTransform(
+                            n,
+                            contentControlElementsToCollapse,
+                            moveFromElementsToDelete
+                        )
+                    )
+            );
         }
 
         private static XElement AcceptDeletedAndMovedFromContentControls(XElement documentRootElement)
@@ -2659,18 +2594,15 @@ namespace Clippit.Word
 
         private static object AcceptMoveFromRangesTransform(XNode node, XElement[] elementsToDelete)
         {
-            var element = node as XElement;
-            if (element != null)
-            {
-                if (elementsToDelete.Contains(element))
-                    return null;
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(n => AcceptMoveFromRangesTransform(n, elementsToDelete))
-                );
-            }
-            return node;
+            if (node is not XElement element)
+                return node;
+            if (elementsToDelete.Contains(element))
+                return null;
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => AcceptMoveFromRangesTransform(n, elementsToDelete))
+            );
         }
 
         private static object CoalesqueParagraphEndTagsInMoveFromTransform(
@@ -2678,24 +2610,21 @@ namespace Clippit.Word
             IGrouping<MoveFromCollectionType, XElement> g
         )
         {
-            var element = node as XElement;
-            if (element != null)
-            {
-                if (element.Name == W.p)
-                    return new XElement(
-                        W.p,
-                        element.Attributes(),
-                        element.Elements(),
-                        g.Skip(1).Select(p => CollapseParagraphTransform(p))
-                    );
-                else
-                    return new XElement(
-                        element.Name,
-                        element.Attributes(),
-                        element.Nodes().Select(n => CoalesqueParagraphEndTagsInMoveFromTransform(n, g))
-                    );
-            }
-            return node;
+            if (node is not XElement element)
+                return node;
+            if (element.Name == W.p)
+                return new XElement(
+                    W.p,
+                    element.Attributes(),
+                    element.Elements(),
+                    g.Skip(1).Select(p => CollapseParagraphTransform(p))
+                );
+            else
+                return new XElement(
+                    element.Name,
+                    element.Attributes(),
+                    element.Nodes().Select(n => CoalesqueParagraphEndTagsInMoveFromTransform(n, g))
+                );
         }
 
         private enum DeletedCellCollectionType
@@ -2709,84 +2638,77 @@ namespace Clippit.Word
         // else.
         private static object AcceptDeletedCellsTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
+            if (node is not XElement element)
+                return node;
+            if (element.Name == W.tr)
             {
-                if (element.Name == W.tr)
-                {
-                    var groupedCells = element
-                        .Elements()
-                        .GroupAdjacent(e =>
+                var groupedCells = element
+                    .Elements()
+                    .GroupAdjacent(e =>
+                    {
+                        var cellAfter = e.ElementsAfterSelf(W.tc).FirstOrDefault();
+                        var cellAfterIsDeleted = cellAfter != null && cellAfter.Descendants(W.cellDel).Any();
+                        if (e.Name == W.tc && (cellAfterIsDeleted || e.Descendants(W.cellDel).Any()))
                         {
-                            var cellAfter = e.ElementsAfterSelf(W.tc).FirstOrDefault();
-                            var cellAfterIsDeleted = cellAfter != null && cellAfter.Descendants(W.cellDel).Any();
-                            if (e.Name == W.tc && (cellAfterIsDeleted || e.Descendants(W.cellDel).Any()))
+                            var a = new
                             {
-                                var a = new
-                                {
-                                    CollectionType = DeletedCellCollectionType.DeletedCell,
-                                    Disambiguator = new[] { e }
-                                        .Concat(e.SiblingsBeforeSelfReverseDocumentOrder())
-                                        .Where(z => z.Name == W.tc && !z.Descendants(W.cellDel).Any())
-                                        .FirstOrDefault(),
-                                };
-                                return a;
-                            }
-                            var a2 = new { CollectionType = DeletedCellCollectionType.Other, Disambiguator = e };
-                            return a2;
-                        });
-                    var tr = new XElement(
-                        W.tr,
-                        element.Attributes(),
-                        groupedCells.Select(g =>
-                        {
-                            if (
-                                g.Key.CollectionType == DeletedCellCollectionType.DeletedCell
-                                && g.First().Descendants(W.cellDel).Any()
-                            )
-                                return null;
-                            if (g.Key.CollectionType == DeletedCellCollectionType.Other)
-                                return g;
-                            var gridSpanElement = g.First().Elements(W.tcPr).Elements(W.gridSpan).FirstOrDefault();
-                            var gridSpan = gridSpanElement != null ? (int)gridSpanElement.Attribute(W.val) : 1;
-                            var newGridSpan = gridSpan + g.Count() - 1;
-                            var currentTcPr = g.First().Elements(W.tcPr).FirstOrDefault();
-                            var newTcPr = new XElement(
-                                W.tcPr,
-                                currentTcPr != null ? currentTcPr.Attributes() : null,
-                                new XElement(W.gridSpan, new XAttribute(W.val, newGridSpan)),
-                                currentTcPr.Elements().Where(e => e.Name != W.gridSpan)
-                            );
-                            var orderedTcPr = new XElement(
-                                W.tcPr,
-                                newTcPr
-                                    .Elements()
-                                    .OrderBy(e =>
-                                    {
-                                        if (Order_tcPr.ContainsKey(e.Name))
-                                            return Order_tcPr[e.Name];
-                                        return 999;
-                                    })
-                            );
-                            var newTc = new XElement(
-                                W.tc,
-                                orderedTcPr,
-                                g.First().Elements().Where(e => e.Name != W.tcPr)
-                            );
-                            return (object)newTc;
-                        })
-                    );
-                    return tr;
-                }
-
-                // Identity clone
-                return new XElement(
-                    element.Name,
+                                CollectionType = DeletedCellCollectionType.DeletedCell,
+                                Disambiguator = new[] { e }
+                                    .Concat(e.SiblingsBeforeSelfReverseDocumentOrder())
+                                    .Where(z => z.Name == W.tc && !z.Descendants(W.cellDel).Any())
+                                    .FirstOrDefault(),
+                            };
+                            return a;
+                        }
+                        var a2 = new { CollectionType = DeletedCellCollectionType.Other, Disambiguator = e };
+                        return a2;
+                    });
+                var tr = new XElement(
+                    W.tr,
                     element.Attributes(),
-                    element.Nodes().Select(n => AcceptDeletedCellsTransform(n))
+                    groupedCells.Select(g =>
+                    {
+                        if (
+                            g.Key.CollectionType == DeletedCellCollectionType.DeletedCell
+                            && g.First().Descendants(W.cellDel).Any()
+                        )
+                            return null;
+                        if (g.Key.CollectionType == DeletedCellCollectionType.Other)
+                            return g;
+                        var gridSpanElement = g.First().Elements(W.tcPr).Elements(W.gridSpan).FirstOrDefault();
+                        var gridSpan = gridSpanElement != null ? (int)gridSpanElement.Attribute(W.val) : 1;
+                        var newGridSpan = gridSpan + g.Count() - 1;
+                        var currentTcPr = g.First().Elements(W.tcPr).FirstOrDefault();
+                        var newTcPr = new XElement(
+                            W.tcPr,
+                            currentTcPr != null ? currentTcPr.Attributes() : null,
+                            new XElement(W.gridSpan, new XAttribute(W.val, newGridSpan)),
+                            currentTcPr.Elements().Where(e => e.Name != W.gridSpan)
+                        );
+                        var orderedTcPr = new XElement(
+                            W.tcPr,
+                            newTcPr
+                                .Elements()
+                                .OrderBy(e =>
+                                {
+                                    if (Order_tcPr.ContainsKey(e.Name))
+                                        return Order_tcPr[e.Name];
+                                    return 999;
+                                })
+                        );
+                        var newTc = new XElement(W.tc, orderedTcPr, g.First().Elements().Where(e => e.Name != W.tcPr));
+                        return (object)newTc;
+                    })
                 );
+                return tr;
             }
-            return node;
+
+            // Identity clone
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => AcceptDeletedCellsTransform(n))
+            );
         }
 
 #if false
@@ -2813,32 +2735,29 @@ namespace Clippit.Word
 
         private static object RemoveRowsLeftEmptyByMoveFrom(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
+            if (node is not XElement element)
+                return node;
+            if (element.Name == W.tr)
             {
-                if (element.Name == W.tr)
+                var nonEmptyCells = element
+                    .Elements(W.tc)
+                    .Any(tc => tc.Elements().Any(tcc => BlockLevelElements.Contains(tcc.Name)));
+                if (nonEmptyCells)
                 {
-                    var nonEmptyCells = element
-                        .Elements(W.tc)
-                        .Any(tc => tc.Elements().Any(tcc => BlockLevelElements.Contains(tcc.Name)));
-                    if (nonEmptyCells)
-                    {
-                        return new XElement(
-                            element.Name,
-                            element.Attributes(),
-                            element.Nodes().Select(n => RemoveRowsLeftEmptyByMoveFrom(n))
-                        );
-                    }
-                    return null;
+                    return new XElement(
+                        element.Name,
+                        element.Attributes(),
+                        element.Nodes().Select(n => RemoveRowsLeftEmptyByMoveFrom(n))
+                    );
                 }
-
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(n => RemoveRowsLeftEmptyByMoveFrom(n))
-                );
+                return null;
             }
-            return node;
+
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => RemoveRowsLeftEmptyByMoveFrom(n))
+            );
         }
 
         public static XName[] TrackedRevisionsElements = new[]
