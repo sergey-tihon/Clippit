@@ -683,8 +683,7 @@ namespace Clippit.Word
 #endif
             if (element.Name == W.ins && parent.Name == W.p)
             {
-                var newRri = new ReverseRevisionsInfo() { InInsert = true };
-                return new XElement(W.del, element.Nodes().Select(n => ReverseRevisionsTransform(n, newRri)));
+                return new XElement(W.del, element.Nodes().Select(n => ReverseRevisionsTransform(n, rri)));
             }
 
             ////////////////////////////////////////////////////////////////////////////////////
