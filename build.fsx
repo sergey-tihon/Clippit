@@ -54,6 +54,14 @@ let withCiMsBuildLogger (command: string) =
     else
         command
 
+let testCommand =
+    if isGitHubActions then
+        // Microsoft.Testing.Platform treats MSBuild logger options as unknown
+        // test-app options. Reuse the Release build stage instead of rebuilding.
+        "dotnet test --solution Clippit.slnx -c Release --no-build"
+    else
+        "dotnet test --solution Clippit.slnx"
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -214,7 +222,7 @@ pipeline "build" {
 
     stage "Build" { run (withCiMsBuildLogger "dotnet build Clippit.slnx -c Release") }
 
-    stage "RunTests" { run (withCiMsBuildLogger "dotnet test --solution Clippit.slnx") }
+    stage "RunTests" { run testCommand }
 
     stage "NuGet" {
         run (fun ctx ->

@@ -76,7 +76,9 @@ jobs:
                   global-json-file: global.json
             - name: Install Native AOT toolchain
               run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+            - name: Build Test Project
+              run: dotnet build Clippit.Tests/Clippit.Tests.csproj -c Release -clp:ErrorsOnly
             - name: Native AOT CLI Smoke Tests
-              run: dotnet test --project Clippit.Tests/Clippit.Tests.csproj --treenode-filter "/*/*/CliAotTests/**" -clp:ErrorsOnly
+              run: dotnet test --project Clippit.Tests/Clippit.Tests.csproj -c Release --no-build --treenode-filter "/*/*/CliAotTests/**"
               env:
                   CLIPPIT_TEST_AOT: "1"
