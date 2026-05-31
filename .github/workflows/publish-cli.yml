@@ -55,7 +55,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
 
       - name: Publish NativeAOT binary
-        run: dotnet publish Clippit.Cli/Clippit.Cli.csproj -c Release -r ${{ matrix.rid }} --self-contained -p:NativeAot=true -o bin/cli/${{ matrix.rid }}
+        run: dotnet publish Clippit.Cli/Clippit.Cli.csproj -c Release -r ${{ matrix.rid }} --self-contained -p:NativeAot=true -o bin/cli/${{ matrix.rid }} -clp:ErrorsOnly
 
       - name: Upload NativeAOT binary
         uses: actions/upload-artifact@v7

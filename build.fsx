@@ -41,6 +41,19 @@ let allCliRuntimesRequested =
     let supported = cliRuntimes |> List.map _.Rid |> Set.ofList
     requested = supported
 
+let isGitHubActions =
+    System.String.Equals(
+        System.Environment.GetEnvironmentVariable("GITHUB_ACTIONS"),
+        "true",
+        System.StringComparison.OrdinalIgnoreCase
+    )
+
+let withCiMsBuildLogger (command: string) =
+    if isGitHubActions then
+        $"{command} -clp:ErrorsOnly"
+    else
+        command
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -121,7 +134,8 @@ let publishCliBinaries () =
         runRequiredCommand
             __SOURCE_DIRECTORY__
             "dotnet"
-            $"publish Clippit.Cli/Clippit.Cli.csproj -c Release -r {runtime.Rid} --self-contained -p:NativeAot=true -o bin/cli/{runtime.Rid}"
+            (withCiMsBuildLogger
+                $"publish Clippit.Cli/Clippit.Cli.csproj -c Release -r {runtime.Rid} --self-contained -p:NativeAot=true -o bin/cli/{runtime.Rid}")
 
 let packNpmPackages () =
     if not allCliRuntimesRequested then
@@ -198,9 +212,9 @@ pipeline "build" {
             Shell.copyFile "docs/api/CHANGELOG.md" "CHANGELOG.md")
     }
 
-    stage "Build" { run "dotnet build Clippit.slnx -c Release" }
+    stage "Build" { run (withCiMsBuildLogger "dotnet build Clippit.slnx -c Release") }
 
-    stage "RunTests" { run "dotnet test --solution Clippit.slnx" }
+    stage "RunTests" { run (withCiMsBuildLogger "dotnet test --solution Clippit.slnx") }
 
     stage "NuGet" {
         run (fun ctx ->
@@ -217,7 +231,9 @@ pipeline "build" {
             )
 
             try
-                ctx.RunCommand $"dotnet pack Clippit/Clippit.csproj -o bin/ -p:PackageVersion={version.Version}"
+                ctx.RunCommand(
+                    withCiMsBuildLogger $"dotnet pack Clippit/Clippit.csproj -o bin/ -p:PackageVersion={version.Version}"
+                )
             finally
                 System.IO.File.Delete(targetsPath))
     }
@@ -225,7 +241,8 @@ pipeline "build" {
     stage "PackCliTool" {
         run (fun ctx ->
             ctx.RunCommand
-                $"dotnet pack Clippit.Cli/Clippit.Cli.csproj -o bin/ -p:PackageVersion={cliVersion.Version}")
+                (withCiMsBuildLogger
+                    $"dotnet pack Clippit.Cli/Clippit.Cli.csproj -o bin/ -p:PackageVersion={cliVersion.Version}"))
     }
 
     runIfOnlySpecified
