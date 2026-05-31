@@ -684,7 +684,7 @@ namespace Clippit.Word
             if (element.Name == W.ins && parent.Name == W.p)
             {
                 var newRri = new ReverseRevisionsInfo() { InInsert = true };
-                return new XElement(W.del, element.Nodes().Select(n => ReverseRevisionsTransform(n, rri)));
+                return new XElement(W.del, element.Nodes().Select(n => ReverseRevisionsTransform(n, newRri)));
             }
 
             ////////////////////////////////////////////////////////////////////////////////////
@@ -1630,24 +1630,11 @@ namespace Clippit.Word
                 // then there is nothing to do.
                 if (groupedBodyChildren.Count == 1 && groupedBodyChildren.First().Key == MoveFromCollectionType.Other)
                 {
-                    var newElement = new XElement(
+                    return new XElement(
                         element.Name,
                         element.Attributes(),
-                        groupedBodyChildren.Select(g =>
-                        {
-                            if (g.Key == MoveFromCollectionType.Other)
-                                return g;
-
-                            // This is a transform that produces the first element in the
-                            // collection, except that the paragraph in the descendents is
-                            // replaced with a new paragraph that contains all contents of the
-                            // existing paragraph, plus subsequent elements in the group
-                            // collection, where the paragraph in each of those groups is
-                            // collapsed.
-                            return CoalesqueParagraphEndTagsInMoveFromTransform(g.First(), g);
-                        })
+                        element.Nodes().Select(n => AcceptParagraphEndTagsInMoveFromTransform(n))
                     );
-                    return newElement;
                 }
                 else
                     return new XElement(
