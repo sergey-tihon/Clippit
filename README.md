@@ -5,12 +5,19 @@
 [![Build and Test](https://github.com/sergey-tihon/Clippit/actions/workflows/main.yml/badge.svg)](https://github.com/sergey-tihon/Clippit/actions/workflows/main.yml)
 [![License: MIT](https://badgen.net/badge/license/MIT/blue)](LICENSE)
 
+[![CLI NuGet Version](https://badgen.net/nuget/v/Clippit.Cli)](https://www.nuget.org/packages/Clippit.Cli)
+[![CLI npm Version](https://badgen.net/npm/v/clippit)](https://www.npmjs.com/package/clippit)
+[![CLI npm Downloads](https://badgen.net/npm/dt/clippit)](https://www.npmjs.com/package/clippit)
+
 Clippit is a .NET library for programmatically creating, modifying, and converting
 Word (DOCX), Excel (XLSX), and PowerPoint (PPTX) documents. Built on top of the
 [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), it provides high-level
 APIs that handle the complexity of the Open XML format so you can focus on your content.
+It also includes a scriptable CLI for PowerPoint split, build, and validation workflows.
 
 📖 **[Full documentation and tutorials →](https://sergey-tihon.github.io/Clippit/)**
+
+🛠️ **[CLI usage →](https://sergey-tihon.github.io/Clippit/cli.html)**
 
 ## Installation
 
@@ -32,12 +39,13 @@ foreach (var slide in slides)
 
 ## Features
 
-| Area        | Capabilities                                                                 |
-| ----------- | ---------------------------------------------------------------------------- |
-| **Word**    | Template assembler, merge/split docs, track-change diff, DOCX↔HTML, regex   |
-| **Excel**   | Generate XLSX with formatted tables, streaming writes, data extraction       |
-| **PowerPoint** | Merge/split PPTX, fluent slide builder, publish slides                   |
-| **Common**  | OpenXml regex search/replace, document metrics                               |
+| Area           | Capabilities                                                              |
+| -------------- | ------------------------------------------------------------------------- |
+| **Word**       | Template assembler, merge/split docs, track-change diff, DOCX↔HTML, regex |
+| **Excel**      | Generate XLSX with formatted tables, streaming writes, data extraction    |
+| **PowerPoint** | Merge/split PPTX, fluent slide builder, publish slides                    |
+| **CLI**        | Scriptable PPTX split/build/verify commands with text or JSON output      |
+| **Common**     | OpenXml regex search/replace, document metrics                            |
 
 See the [tutorials](https://sergey-tihon.github.io/Clippit/tutorials/) for API signatures and full code samples.
 
@@ -49,7 +57,7 @@ See the [tutorials](https://sergey-tihon.github.io/Clippit/tutorials/) for API s
 
 ## Contributing
 
-Questions and ideas → [GitHub Discussions](https://github.com/sergey-tihon/Clippit/discussions)  
+Questions and ideas → [GitHub Discussions](https://github.com/sergey-tihon/Clippit/discussions)
 Bugs and feature requests → [GitHub Issues](https://github.com/sergey-tihon/Clippit/issues)
 
 To build locally:

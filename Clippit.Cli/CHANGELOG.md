@@ -10,8 +10,7 @@ Initial CLI release for Clippit.
   - `pptx split --manifest`: generate a `pptx build run` compatible manifest alongside split slides, preserving source PPTX sections when present.
   - `pptx build init`: scaffold a deck manifest.
   - `pptx build run`: build a `.pptx` from a deck manifest, including per-entry slide-count reporting.
-  - `pptx verify`: validate PPTX package, OpenXml schema, and relationship correctness with structured diagnostics.
-  - `pptx verify --strict`: include warnings in diagnostics and treat them as validation failures.
+  - `pptx verify`: validate PPTX package, OpenXml schema, relationships, markup compatibility, and presentation sections with structured diagnostics.
 - Input/output features:
   - stdin support via `-` for `pptx split`, `pptx build run`, and `pptx verify`.
   - stdout support via `-` for `pptx build init` manifests and `pptx build run` binary PPTX output.
@@ -24,7 +23,7 @@ Initial CLI release for Clippit.
   - Parser/help errors use System.CommandLine usage output.
   - Structured `version` command and matching top-level `--version` output.
   - Published JSON schemas under `docs/schemas/` for deck manifests and CLI result payloads.
-  - Verify result JSON uses `diagnostics` for validation findings; diagnostic entries include `severity` and optional validator `code`.
+  - Verify result JSON uses `diagnostics` for validation findings; diagnostic entries include `kind` and optional validator `code`.
 - Distribution:
   - dotnet tool package: `Clippit.Cli`.
   - NativeAOT self-contained binaries for win-x64, osx-x64, osx-arm64, and linux-x64.
