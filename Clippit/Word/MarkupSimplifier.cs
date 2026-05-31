@@ -182,34 +182,30 @@ namespace Clippit.Word
             SimplifyMarkupSettings simplifyMarkupSettings
         )
         {
-            var element = node as XElement;
-            if (element != null)
-            {
-                if (simplifyMarkupSettings.RemoveSmartTags && element.Name == W.smartTag)
-                    return element
-                        .Elements()
-                        .Select(e => RemoveCustomXmlAndContentControlsTransform(e, simplifyMarkupSettings));
+            if (node is not XElement element)
+                return node;
 
-                if (simplifyMarkupSettings.RemoveContentControls && element.Name == W.sdt)
-                    return element
-                        .Elements(W.sdtContent)
-                        .Elements()
-                        .Select(e => RemoveCustomXmlAndContentControlsTransform(e, simplifyMarkupSettings));
+            if (simplifyMarkupSettings.RemoveSmartTags && element.Name == W.smartTag)
+                return element
+                    .Elements()
+                    .Select(e => RemoveCustomXmlAndContentControlsTransform(e, simplifyMarkupSettings));
 
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(n => RemoveCustomXmlAndContentControlsTransform(n, simplifyMarkupSettings))
-                );
-            }
+            if (simplifyMarkupSettings.RemoveContentControls && element.Name == W.sdt)
+                return element
+                    .Elements(W.sdtContent)
+                    .Elements()
+                    .Select(e => RemoveCustomXmlAndContentControlsTransform(e, simplifyMarkupSettings));
 
-            return node;
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => RemoveCustomXmlAndContentControlsTransform(n, simplifyMarkupSettings))
+            );
         }
 
         private static object RemoveRsidTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element == null)
+            if (node is not XElement element)
                 return node;
 
             if (element.Name == W.rsid)
@@ -235,8 +231,7 @@ namespace Clippit.Word
 
         private static object MergeAdjacentRunsTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element == null)
+            if (node is not XElement element)
                 return node;
 
             if (element.Name == W.p)
@@ -251,66 +246,60 @@ namespace Clippit.Word
 
         private static object RemoveEmptyRunsAndRunPropertiesTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
-            {
-                if (
-                    ((element.Name == W.r) || (element.Name == W.rPr) || (element.Name == W.pPr))
-                    && !element.Elements().Any()
-                )
-                    return null;
+            if (node is not XElement element)
+                return node;
 
-                return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(n => RemoveEmptyRunsAndRunPropertiesTransform(n))
-                );
-            }
+            if (
+                ((element.Name == W.r) || (element.Name == W.rPr) || (element.Name == W.pPr))
+                && !element.Elements().Any()
+            )
+                return null;
 
-            return node;
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => RemoveEmptyRunsAndRunPropertiesTransform(n))
+            );
         }
 
         private static object MergeAdjacentInstrText(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
+            if (node is not XElement element)
+                return node;
+
+            if ((element.Name == W.r) && element.Elements(W.instrText).Any())
             {
-                if ((element.Name == W.r) && element.Elements(W.instrText).Any())
-                {
-                    var grouped = element.Elements().GroupAdjacent(e => e.Name == W.instrText);
-                    return new XElement(
-                        W.r,
-                        grouped.Select(g =>
-                        {
-                            if (g.Key == false)
-                                return (object)g;
-
-                            // If .doc files are converted to .docx by the Binary to Open XML Translator,
-                            // the w:instrText elements might be empty, in which case newInstrText would
-                            // be an empty string.
-                            var newInstrText = g.Select(i => (string)i).StringConcatenate();
-                            if (string.IsNullOrEmpty(newInstrText))
-                                return new XElement(W.instrText);
-
-                            return new XElement(
-                                W.instrText,
-                                (newInstrText[0] == ' ') || (newInstrText[newInstrText.Length - 1] == ' ')
-                                    ? new XAttribute(XNamespace.Xml + "space", "preserve")
-                                    : null,
-                                newInstrText
-                            );
-                        })
-                    );
-                }
-
+                var grouped = element.Elements().GroupAdjacent(e => e.Name == W.instrText);
                 return new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Nodes().Select(n => MergeAdjacentInstrText(n))
+                    W.r,
+                    grouped.Select(g =>
+                    {
+                        if (g.Key == false)
+                            return (object)g;
+
+                        // If .doc files are converted to .docx by the Binary to Open XML Translator,
+                        // the w:instrText elements might be empty, in which case newInstrText would
+                        // be an empty string.
+                        var newInstrText = g.Select(i => (string)i).StringConcatenate();
+                        if (string.IsNullOrEmpty(newInstrText))
+                            return new XElement(W.instrText);
+
+                        return new XElement(
+                            W.instrText,
+                            (newInstrText[0] == ' ') || (newInstrText[newInstrText.Length - 1] == ' ')
+                                ? new XAttribute(XNamespace.Xml + "space", "preserve")
+                                : null,
+                            newInstrText
+                        );
+                    })
                 );
             }
 
-            return node;
+            return new XElement(
+                element.Name,
+                element.Attributes(),
+                element.Nodes().Select(n => MergeAdjacentInstrText(n))
+            );
         }
 
         // lastRenderedPageBreak, permEnd, permStart, proofErr, noProof
@@ -328,8 +317,7 @@ namespace Clippit.Word
             SimplifyMarkupParameters parameters
         )
         {
-            var element = node as XElement;
-            if (element == null)
+            if (node is not XElement element)
                 return node;
 
             if (settings.RemovePermissions && ((element.Name == W.permEnd) || (element.Name == W.permStart)))
@@ -431,8 +419,7 @@ namespace Clippit.Word
                         if (n is XComment or XProcessingInstruction or XText)
                             return null;
 
-                        var e = n as XElement;
-                        return e != null ? NormalizeElement(e, havePsvi) : n;
+                        return n is XElement e ? NormalizeElement(e, havePsvi) : n;
                     })
             );
         }
@@ -635,8 +622,7 @@ namespace Clippit.Word
 
         private static object SeparateRunChildrenIntoSeparateRuns(XNode node)
         {
-            var element = node as XElement;
-            if (element == null)
+            if (node is not XElement element)
                 return node;
 
             if (element.Name == W.r)
@@ -655,8 +641,7 @@ namespace Clippit.Word
 
         private static object SingleCharacterRunTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element == null)
+            if (node is not XElement element)
                 return node;
 
             if (element.Name == W.r)
