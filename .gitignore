@@ -24,6 +24,8 @@ Thumbs.db
 *FileListAbsolute.txt
 *Settings.settings
 [Bb]in/
+!npm/clippit/bin/
+!npm/clippit/bin/clippit.js
 [Oo]bj/
 TestResults/
 

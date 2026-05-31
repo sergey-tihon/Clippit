@@ -62,3 +62,21 @@ jobs:
                   github_token: ${{ secrets.GITHUB_TOKEN }}
                   publish_dir: docs/_site
                   force_orphan: true
+
+    cli-aot-smoke:
+        runs-on: ubuntu-latest
+        needs: build
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+            - name: Setup .NET SDK
+              uses: actions/setup-dotnet@v5
+              with:
+                  global-json-file: global.json
+            - name: Install Native AOT toolchain
+              run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+            - name: Native AOT CLI Smoke Tests
+              run: dotnet test --project Clippit.Tests/Clippit.Tests.csproj --treenode-filter "/*/*/CliAotTests/**"
+              env:
+                  CLIPPIT_TEST_AOT: "1"

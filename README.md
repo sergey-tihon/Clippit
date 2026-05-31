@@ -43,7 +43,7 @@ See the [tutorials](https://sergey-tihon.github.io/Clippit/tutorials/) for API s
 
 ## Compatibility
 
-- **Targets:** `net8.0` and `net10.0`
+- **Target:** `net10.0` only
 - **Platforms:** Windows and Linux (continuously tested)
 - **Dependency:** [DocumentFormat.OpenXml](https://www.nuget.org/packages/DocumentFormat.OpenXml) (Open XML SDK)
 

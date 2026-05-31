@@ -461,15 +461,8 @@ AAsACwDBAgAAbCwAAAAA";
     {
         public static bool IsValid(string fileName, string officeVersion)
         {
-            var fileFormatVersion = FileFormatVersions.Office2013;
-            try
-            {
-                fileFormatVersion = (FileFormatVersions)Enum.Parse(fileFormatVersion.GetType(), officeVersion);
-            }
-            catch (Exception)
-            {
+            if (!Enum.TryParse<FileFormatVersions>(officeVersion, out var fileFormatVersion))
                 fileFormatVersion = FileFormatVersions.Office2013;
-            }
 
             var fi = new FileInfo(fileName);
             if (Util.IsWordprocessingML(fi.Extension))
@@ -498,15 +491,8 @@ AAsACwDBAgAAbCwAAAAA";
 
         public static IEnumerable<ValidationErrorInfo> GetOpenXmlValidationErrors(string fileName, string officeVersion)
         {
-            var fileFormatVersion = FileFormatVersions.Office2013;
-            try
-            {
-                fileFormatVersion = (FileFormatVersions)Enum.Parse(fileFormatVersion.GetType(), officeVersion);
-            }
-            catch (Exception)
-            {
+            if (!Enum.TryParse<FileFormatVersions>(officeVersion, out var fileFormatVersion))
                 fileFormatVersion = FileFormatVersions.Office2013;
-            }
 
             var fi = new FileInfo(fileName);
             if (Util.IsWordprocessingML(fi.Extension))

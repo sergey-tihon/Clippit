@@ -21,7 +21,7 @@ public class RelationshipValidatorTests : TestsBase
     {
         using var doc = WordprocessingDocument.Open(Path.Combine(s_testFiles.FullName, "Blank-wml.docx"), false);
 
-        var errors = RelationshipValidator.Validate(doc).ToList();
+        var errors = RelationshipValidator.Validate(doc);
 
         await Assert.That(errors).IsEmpty();
         await Assert.That(RelationshipValidator.IsValid(doc)).IsTrue();
@@ -33,7 +33,7 @@ public class RelationshipValidatorTests : TestsBase
     {
         using var pres = PresentationDocument.Open(Path.Combine(s_testFiles.FullName, "PB001-Input1.pptx"), false);
 
-        var errors = RelationshipValidator.Validate(pres).ToList();
+        var errors = RelationshipValidator.Validate(pres);
 
         await Assert.That(errors).IsEmpty();
         await Assert.That(RelationshipValidator.IsValid(pres)).IsTrue();
@@ -120,7 +120,7 @@ public class RelationshipValidatorTests : TestsBase
     [Test]
     public async Task RV004_NullPackage_ThrowsArgumentNullException()
     {
-        await Assert.That(() => RelationshipValidator.Validate(null!).ToList()).Throws<ArgumentNullException>();
+        await Assert.That(() => RelationshipValidator.Validate(null!)).Throws<ArgumentNullException>();
     }
 
     // RV005: a PPTX with a dangling r:id in a slide is detected
@@ -139,7 +139,7 @@ public class RelationshipValidatorTests : TestsBase
 
         using var pres = PresentationDocument.Open(ms, false);
 
-        var errors = RelationshipValidator.Validate(pres).ToList();
+        var errors = RelationshipValidator.Validate(pres);
 
         // We expect at least one error for the injected dangling ID.
         await Assert.That(errors.Any(e => e.RelationshipId == "rId_dangling_test")).IsTrue();

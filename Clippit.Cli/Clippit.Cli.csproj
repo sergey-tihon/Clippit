@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <IsCliProject>true</IsCliProject>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+
+    <!-- dotnet tool packaging -->
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>clippit</ToolCommandName>
+    <PackageId>Clippit.Cli</PackageId>
+    <Description>CLI tool for Clippit — PowerTools for OpenXml (PowerPoint, Word, Excel)</Description>
+    <PackageTags>OpenXML;PowerTools;PowerPoint;Word;Excel;CLI;tool</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageProjectUrl>https://github.com/sergey-tihon/Clippit</PackageProjectUrl>
+    <PackageIcon>logo.jpeg</PackageIcon>
+
+    <!-- NativeAOT — only when explicitly requested (e.g. npm binary publish pipeline).
+         dotnet tool NuGet (dotnet pack / dotnet tool install) ships a managed DLL
+         so users do not need a native toolchain at install time.
+         Pass -p:NativeAot=true to opt in. -->
+    <PublishAot Condition="'$(NativeAot)' == 'true'">true</PublishAot>
+    <IlcOptimizationPreference Condition="'$(NativeAot)' == 'true'">Size</IlcOptimizationPreference>
+    <InvariantGlobalization Condition="'$(NativeAot)' == 'true'">true</InvariantGlobalization>
+    <StripSymbols Condition="'$(NativeAot)' == 'true'">true</StripSymbols>
+
+    <!-- Trimming -->
+    <TrimmerRootDescriptor>ILLink.Descriptors.xml</TrimmerRootDescriptor>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\docs\images\logo.jpeg" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="3.0.0-preview.4.26230.115" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Clippit\Clippit.csproj" />
+  </ItemGroup>
+
+  <Target Name="RenameNativeAotExecutable" AfterTargets="CopyNativeBinary" Condition="'$(PublishAot)' == 'true'">
+    <PropertyGroup>
+      <NativeAotExecutableName Condition="$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))"
+        >clippit.exe</NativeAotExecutableName
+      >
+      <NativeAotExecutableName Condition="!$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))"
+        >clippit</NativeAotExecutableName
+      >
+    </PropertyGroup>
+    <Copy
+      SourceFiles="$(PublishDir)$(AssemblyName)$(NativeExecutableExtension)"
+      DestinationFiles="$(PublishDir)$(NativeAotExecutableName)"
+      Condition="Exists('$(PublishDir)$(AssemblyName)$(NativeExecutableExtension)') and '$(AssemblyName)$(NativeExecutableExtension)' != '$(NativeAotExecutableName)'"
+    />
+    <Delete
+      Files="$(PublishDir)$(AssemblyName)$(NativeExecutableExtension)"
+      Condition="Exists('$(PublishDir)$(NativeAotExecutableName)') and '$(AssemblyName)$(NativeExecutableExtension)' != '$(NativeAotExecutableName)'"
+    />
+  </Target>
+</Project>
