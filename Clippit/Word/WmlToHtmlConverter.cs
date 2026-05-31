@@ -624,7 +624,7 @@ namespace Clippit.Word
                     );
                     style.Add("margin", "0 0 0 0");
                     style.Add("padding", "0 0 0 0");
-                    style.Add("width", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", tabWidth));
+                    style.Add("width", FormattableString.Invariant($"{tabWidth:0.00}in"));
                     style.Add("text-align", "center");
                     if (forceArial)
                         style.Add("font-family", "Arial");
@@ -634,7 +634,7 @@ namespace Clippit.Word
                     span = new XElement(Xhtml.span, new XAttribute(XNamespace.Xml + "space", "preserve"), " ");
                     style.Add("margin", "0 0 0 0");
                     style.Add("padding", "0 0 0 0");
-                    style.Add("width", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", tabWidth));
+                    style.Add("width", FormattableString.Invariant($"{tabWidth:0.00}in"));
                     style.Add("text-align", "center");
                     if (leader == "underscore")
                     {
@@ -660,7 +660,7 @@ namespace Clippit.Word
 #else
                 span = new XElement(Xhtml.span, new XEntity("#x00a0"));
 #endif
-                style.Add("margin", string.Format(NumberFormatInfo.InvariantInfo, "0 0 0 {0:0.00}in", tabWidth));
+                style.Add("margin", FormattableString.Invariant($"0 0 0 {tabWidth:0.00}in"));
                 style.Add("padding", "0 0 0 0");
             }
             span.AddAnnotation(style);
@@ -689,7 +689,7 @@ namespace Clippit.Word
                 span.AddAnnotation(
                     new Dictionary<string, string>
                     {
-                        { "margin", string.Format(NumberFormatInfo.InvariantInfo, "0 0 0 {0:0.00}in", tabWidth) },
+                        { "margin", FormattableString.Invariant($"0 0 0 {tabWidth:0.00}in") },
                         { "padding", "0 0 0 0" },
                     }
                 );
@@ -847,7 +847,7 @@ namespace Clippit.Word
                         {
                             style.AddIfMissing(
                                 "margin-left",
-                                width > 0m ? string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", width / 20m) : "0"
+                                width > 0m ? FormattableString.Invariant($"{width / 20m}pt") : "0"
                             );
                         }
                     }
@@ -880,7 +880,7 @@ namespace Clippit.Word
 
                 static string? TwipsToPoints(XAttribute attr) =>
                     attr != null && decimal.TryParse((string)attr, out var v)
-                        ? string.Format(NumberFormatInfo.InvariantInfo, "{0:0.##}pt", v / 20m)
+                        ? FormattableString.Invariant($"{v / 20m:0.##}pt")
                         : null;
 
                 var marginLeft = TwipsToPoints(tblpPr.Attribute(W.leftFromText));
@@ -1011,12 +1011,12 @@ namespace Clippit.Word
                 if ((string)tcPr.Elements(W.tcW).Attributes(W.type).FirstOrDefault() == "dxa")
                 {
                     decimal width = (int)tcPr.Elements(W.tcW).Attributes(W._w).FirstOrDefault();
-                    style.AddIfMissing("width", string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", width / 20m));
+                    style.AddIfMissing("width", FormattableString.Invariant($"{width / 20m}pt"));
                 }
                 if ((string)tcPr.Elements(W.tcW).Attributes(W.type).FirstOrDefault() == "pct")
                 {
                     decimal width = (int)tcPr.Elements(W.tcW).Attributes(W._w).FirstOrDefault();
-                    style.AddIfMissing("width", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}%", width / 50m));
+                    style.AddIfMissing("width", FormattableString.Invariant($"{width / 50m:0.0}%"));
                 }
 
                 var tcBorders = tcPr.Element(W.tcBorders);
@@ -1054,10 +1054,7 @@ namespace Clippit.Word
             var style = new Dictionary<string, string>();
             var trHeight = (int?)element.Elements(W.trPr).Elements(W.trHeight).Attributes(W.val).FirstOrDefault();
             if (trHeight != null)
-                style.AddIfMissing(
-                    "height",
-                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", (decimal)trHeight / 1440m)
-                );
+                style.AddIfMissing("height", FormattableString.Invariant($"{(decimal)trHeight / 1440m:0.00}in"));
             var htmlRow = new XElement(
                 Xhtml.tr,
                 element.Elements().Select(e => ConvertToHtmlTransform(wordDoc, settings, e, false, currentMarginLeft))
@@ -1254,7 +1251,9 @@ namespace Clippit.Word
                 .Elements(W.r)
                 .Elements(W.instrText)
                 .Select(e => e.Value)
-                .Any(value => value != null && value.TrimStart().ToUpper().StartsWith("HYPERLINK"));
+                .Any(value =>
+                    value != null && value.TrimStart().StartsWith("HYPERLINK", StringComparison.OrdinalIgnoreCase)
+                );
             if (hyperlinkPrecedesTab)
             {
                 var paraElement1 = new XElement(
@@ -1319,7 +1318,7 @@ namespace Clippit.Word
                     { "text-indent", "0" },
                     // Use min-width so the span expands when text exceeds the tab stop width,
                     // preventing text overflow and overlap with subsequent content.
-                    { "min-width", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}in", totalWidth) },
+                    { "min-width", FormattableString.Invariant($"{totalWidth:0.000}in") },
                 };
                 span.AddAnnotation(spanStyle);
 
@@ -1336,10 +1335,7 @@ namespace Clippit.Word
                     var spanStyle = element.Annotation<Dictionary<string, string>>();
                     spanStyle.AddIfMissing("display", "inline-block");
                     spanStyle.AddIfMissing("text-indent", "0");
-                    spanStyle.AddIfMissing(
-                        "min-width",
-                        string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}in", totalWidth)
-                    );
+                    spanStyle.AddIfMissing("min-width", FormattableString.Invariant($"{totalWidth:0.000}in"));
                 }
             }
             return txElementsPrecedingTab;
@@ -1414,7 +1410,7 @@ namespace Clippit.Word
                 var leftInInches = (decimal)left / 1440 - currentMarginLeft;
                 style.AddIfMissing(
                     isBidi ? "margin-right" : "margin-left",
-                    leftInInches > 0m ? string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", leftInInches) : "0"
+                    leftInInches > 0m ? FormattableString.Invariant($"{leftInInches:0.00}in") : "0"
                 );
             }
 
@@ -1424,9 +1420,7 @@ namespace Clippit.Word
                 var rightInInches = (decimal)right / 1440;
                 style.AddIfMissing(
                     isBidi ? "margin-left" : "margin-right",
-                    rightInInches > 0m
-                        ? string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", rightInInches)
-                        : "0"
+                    rightInInches > 0m ? FormattableString.Invariant($"{rightInInches:0.00}in") : "0"
                 );
             }
 
@@ -1434,20 +1428,14 @@ namespace Clippit.Word
             if (firstLine != null && elementName != Xhtml.span)
             {
                 var firstLineInInches = (decimal)firstLine / 1440m;
-                style.AddIfMissing(
-                    "text-indent",
-                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", firstLineInInches)
-                );
+                style.AddIfMissing("text-indent", FormattableString.Invariant($"{firstLineInInches:0.00}in"));
             }
 
             var hanging = (decimal?)ind.Attribute(W.hanging);
             if (hanging != null && elementName != Xhtml.span)
             {
                 var hangingInInches = (decimal)-hanging / 1440m;
-                style.AddIfMissing(
-                    "text-indent",
-                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", hangingInInches)
-                );
+                style.AddIfMissing("text-indent", FormattableString.Invariant($"{hangingInInches:0.00}in"));
             }
         }
 
@@ -1481,9 +1469,7 @@ namespace Clippit.Word
             if (spacingBefore != null && elementName != Xhtml.span)
                 style.AddIfMissing(
                     "margin-top",
-                    spacingBefore > 0m
-                        ? string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", spacingBefore / 20.0m)
-                        : "0"
+                    spacingBefore > 0m ? FormattableString.Invariant($"{spacingBefore / 20.0m}pt") : "0"
                 );
 
             var lineRule = (string)spacing.Attribute(W.lineRule);
@@ -1493,30 +1479,28 @@ namespace Clippit.Word
                 if (line != 240m)
                 {
                     var pct = (line / 240m) * 100m;
-                    style.Add("line-height", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}%", pct));
+                    style.Add("line-height", FormattableString.Invariant($"{pct:0.0}%"));
                 }
             }
             if (lineRule == "exact")
             {
                 var line = (decimal)spacing.Attribute(W.line);
                 var points = line / 20m;
-                style.Add("line-height", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}pt", points));
+                style.Add("line-height", FormattableString.Invariant($"{points:0.0}pt"));
             }
             if (lineRule == "atLeast")
             {
                 var line = (decimal)spacing.Attribute(W.line);
                 var points = line / 20m;
                 if (points >= 14m)
-                    style.Add("line-height", string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}pt", points));
+                    style.Add("line-height", FormattableString.Invariant($"{points:0.0}pt"));
             }
 
             var spacingAfter = suppressTrailingWhiteSpace ? 0m : (decimal?)spacing.Attribute(W.after);
             if (spacingAfter != null)
                 style.AddIfMissing(
                     "margin-bottom",
-                    spacingAfter > 0m
-                        ? string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", spacingAfter / 20.0m)
-                        : "0"
+                    spacingAfter > 0m ? FormattableString.Invariant($"{spacingAfter / 20.0m}pt") : "0"
                 );
         }
 
@@ -1547,7 +1531,7 @@ namespace Clippit.Word
                 .Select(WordprocessingMLUtil.GetFontSize)
                 .Max();
             if (sz != null)
-                style.AddIfMissing("font-size", string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", sz / 2.0m));
+                style.AddIfMissing("font-size", FormattableString.Invariant($"{sz / 2.0m}pt"));
         }
 
         private static void DefineLineHeight(Dictionary<string, string> style, XElement paragraph)
@@ -1697,7 +1681,7 @@ namespace Clippit.Word
             var languageType = (string)run.Attribute(PtOpenXml.LanguageType);
             var sz = WordprocessingMLUtil.GetFontSize(languageType, rPr);
             if (sz != null)
-                style.AddIfMissing("font-size", string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", sz / 2.0m));
+                style.AddIfMissing("font-size", FormattableString.Invariant($"{sz / 2.0m}pt"));
 
             // W.caps
             if (GetBoolProp(rPr, W.caps))
@@ -1712,9 +1696,7 @@ namespace Clippit.Word
             if (spacingInTwips != null)
                 style.AddIfMissing(
                     "letter-spacing",
-                    spacingInTwips > 0m
-                        ? string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", spacingInTwips / 20)
-                        : "0"
+                    spacingInTwips > 0m ? FormattableString.Invariant($"{spacingInTwips / 20}pt") : "0"
                 );
 
             // W.position
@@ -1722,7 +1704,7 @@ namespace Clippit.Word
             if (position != null)
             {
                 style.AddIfMissing("position", "relative");
-                style.AddIfMissing("top", string.Format(NumberFormatInfo.InvariantInfo, "{0}pt", -(position / 2)));
+                style.AddIfMissing("top", FormattableString.Invariant($"{-(position / 2)}pt"));
             }
 
             // W.vanish
@@ -1761,11 +1743,24 @@ namespace Clippit.Word
             if (run.Element(W.t) == null)
                 return;
 
-            // Can't add directional marks if the font-family is symbol - they are visible, and display as a ?
+            // Can't add directional marks if the font-family is a symbol/dingbat font —
+            // these fonts use non-standard encodings where directional mark code points render as '?'.
             var addDirectionalMarks = true;
             if (style.TryGetValue("font-family", out var fontFamily))
             {
-                if (fontFamily.ToLower() == "symbol")
+                var unquotedFontFamily = fontFamily;
+                if (
+                    unquotedFontFamily.Length >= 2
+                    && (
+                        (unquotedFontFamily[0] == '\'' && unquotedFontFamily[^1] == '\'')
+                        || (unquotedFontFamily[0] == '"' && unquotedFontFamily[^1] == '"')
+                    )
+                )
+                {
+                    unquotedFontFamily = unquotedFontFamily[1..^1];
+                }
+
+                if (s_symbolFonts.Contains(unquotedFontFamily))
                     addDirectionalMarks = false;
             }
             if (!addDirectionalMarks)
@@ -2192,10 +2187,7 @@ namespace Clippit.Word
                     twipCounter = leftInTwips;
 
                     currentElement.Add(
-                        new XAttribute(
-                            PtOpenXml.TabWidth,
-                            string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", firstInTwips / 1440m)
-                        )
+                        new XAttribute(PtOpenXml.TabWidth, FormattableString.Invariant($"{firstInTwips / 1440m:0.000}"))
                     );
 
                     currentElementIdx++;
@@ -2249,10 +2241,7 @@ namespace Clippit.Word
                         if (delta2 < 0)
                             delta2 = 0;
                         currentElement.Add(
-                            new XAttribute(
-                                PtOpenXml.TabWidth,
-                                string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta2 / 1440m)
-                            ),
+                            new XAttribute(PtOpenXml.TabWidth, FormattableString.Invariant($"{delta2 / 1440m:0.000}")),
                             GetLeader(tabAfterText)
                         );
                         twipCounter = Math.Max((int)tabAfterText.Attribute(W.pos), twipCounter + widthOfTextAfterTab);
@@ -2299,7 +2288,7 @@ namespace Clippit.Word
                             currentElement.Add(
                                 new XAttribute(
                                     PtOpenXml.TabWidth,
-                                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta2 / 1440m)
+                                    FormattableString.Invariant($"{delta2 / 1440m:0.000}")
                                 ),
                                 GetLeader(tabAfterText)
                             );
@@ -2344,7 +2333,7 @@ namespace Clippit.Word
                             currentElement.Add(
                                 new XAttribute(
                                     PtOpenXml.TabWidth,
-                                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta2 / 1440m)
+                                    FormattableString.Invariant($"{delta2 / 1440m:0.000}")
                                 ),
                                 GetLeader(tabAfterText)
                             );
@@ -2390,10 +2379,7 @@ namespace Clippit.Word
                         if (delta2 < 0)
                             delta2 = 0;
                         currentElement.Add(
-                            new XAttribute(
-                                PtOpenXml.TabWidth,
-                                string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta2 / 1440m)
-                            ),
+                            new XAttribute(PtOpenXml.TabWidth, FormattableString.Invariant($"{delta2 / 1440m:0.000}")),
                             GetLeader(tabAfterText)
                         );
                         twipCounter = Math.Max(
@@ -2415,10 +2401,7 @@ namespace Clippit.Word
                     {
                         var delta = (int)tabAfterText.Attribute(W.pos) - twipCounter;
                         currentElement.Add(
-                            new XAttribute(
-                                PtOpenXml.TabWidth,
-                                string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", delta / 1440m)
-                            ),
+                            new XAttribute(PtOpenXml.TabWidth, FormattableString.Invariant($"{delta / 1440m:0.000}")),
                             GetLeader(tabAfterText)
                         );
                         twipCounter = (int)tabAfterText.Attribute(W.pos);
@@ -2450,10 +2433,7 @@ namespace Clippit.Word
                     //var widthOfText = CalcWidthOfRunInTwips(dummyRun3);
                     const int widthOfText = 0;
                     currentElement.Add(
-                        new XAttribute(
-                            PtOpenXml.TabWidth,
-                            string.Format(NumberFormatInfo.InvariantInfo, "{0:0.000}", widthOfText / 1440m)
-                        )
+                        new XAttribute(PtOpenXml.TabWidth, FormattableString.Invariant($"{widthOfText / 1440m:0.000}"))
                     );
                     twipCounter += widthOfText;
 
@@ -2755,9 +2735,7 @@ namespace Clippit.Word
 
                         style.AddIfMissing(
                             "margin-left",
-                            currentMarginLeft > 0m
-                                ? string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", currentMarginLeft)
-                                : "0"
+                            currentMarginLeft > 0m ? FormattableString.Invariant($"{currentMarginLeft:0.00}in") : "0"
                         );
                     }
 
@@ -2952,10 +2930,7 @@ namespace Clippit.Word
                 if (borderType == BorderType.Cell && whichSide is "left" or "right")
                     if (space < 5.4m)
                         space = 5.4m;
-                style.Add(
-                    "padding-" + whichSide,
-                    space == 0 ? "0" : string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}pt", space)
-                );
+                style.Add("padding-" + whichSide, space == 0 ? "0" : FormattableString.Invariant($"{space:0.0}pt"));
             }
             else
             {
@@ -2991,7 +2966,7 @@ namespace Clippit.Word
                             _ => 11.25m,
                         };
                     }
-                    else if (type.ToLower().Contains("dash"))
+                    else if (type.Contains("dash", StringComparison.OrdinalIgnoreCase))
                     {
                         borderWidthInPoints = sz switch
                         {
@@ -3005,17 +2980,14 @@ namespace Clippit.Word
                 }
                 if (type is "outset" or "inset")
                     color = "";
-                var borderWidth = string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}pt", borderWidthInPoints);
+                var borderWidth = FormattableString.Invariant($"{borderWidthInPoints:0.0}pt");
 
                 style.Add("border-" + whichSide, borderStyle + " " + color + " " + borderWidth);
                 if (borderType == BorderType.Cell && whichSide is "left" or "right")
                     if (space < 5.4m)
                         space = 5.4m;
 
-                style.Add(
-                    "padding-" + whichSide,
-                    space == 0 ? "0" : string.Format(NumberFormatInfo.InvariantInfo, "{0:0.0}pt", space)
-                );
+                style.Add("padding-" + whichSide, space == 0 ? "0" : FormattableString.Invariant($"{space:0.0}pt"));
             }
         }
 
@@ -3161,6 +3133,20 @@ namespace Clippit.Word
             }
             return "#" + color;
         }
+
+        // Symbol/dingbat fonts that use non-standard character encodings. Directional marks
+        // (LRM/RLM) must not be inserted into runs using these fonts as the marks render as
+        // visible glyphs rather than invisible control characters.
+        private static readonly HashSet<string> s_symbolFonts = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "Symbol",
+            "Webdings",
+            "Wingdings",
+            "Wingdings2",
+            "Wingdings 2",
+            "Wingdings3",
+            "Wingdings 3",
+        };
 
         private static readonly Dictionary<string, string> FontFallback = new()
         {
@@ -3332,11 +3318,13 @@ namespace Clippit.Word
             var v = p.Attribute(W.val);
             if (v == null)
                 return true;
-            var s = v.Value.ToLower();
+            var s = v.Value;
             return s switch
             {
-                "0" or "false" => false,
-                "1" or "true" => true,
+                "0" => false,
+                "1" => true,
+                _ when s.Equals("false", StringComparison.OrdinalIgnoreCase) => false,
+                _ when s.Equals("true", StringComparison.OrdinalIgnoreCase) => true,
                 _ => false,
             };
         }
@@ -3426,12 +3414,12 @@ namespace Clippit.Word
             if (extentCx != null)
                 style.AddIfMissing(
                     "width",
-                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", (float)extentCx / ImageInfo.EmusPerInch)
+                    FormattableString.Invariant($"{(float)extentCx / ImageInfo.EmusPerInch:0.00}in")
                 );
             if (extentCy != null)
                 style.AddIfMissing(
                     "min-height",
-                    string.Format(NumberFormatInfo.InvariantInfo, "{0:0.00}in", (float)extentCy / ImageInfo.EmusPerInch)
+                    FormattableString.Invariant($"{(float)extentCy / ImageInfo.EmusPerInch:0.00}in")
                 );
 
             // Only float anchored text boxes when the wrap mode implies surrounding text should flow
@@ -3575,11 +3563,8 @@ namespace Clippit.Word
                     Image = image,
                     ImgStyleAttribute = new XAttribute(
                         "style",
-                        string.Format(
-                            NumberFormatInfo.InvariantInfo,
-                            "width: {0}in; height: {1}in",
-                            (float)extentCx / ImageInfo.EmusPerInch,
-                            (float)extentCy / ImageInfo.EmusPerInch
+                        FormattableString.Invariant(
+                            $"width: {(float)extentCx / ImageInfo.EmusPerInch}in; height: {(float)extentCy / ImageInfo.EmusPerInch}in"
                         )
                     ),
                     ContentType = contentType,
@@ -3664,12 +3649,7 @@ namespace Clippit.Word
                     {
                         imageInfo.ImgStyleAttribute = new XAttribute(
                             "style",
-                            string.Format(
-                                NumberFormatInfo.InvariantInfo,
-                                "width: {0}pt; height: {1}pt",
-                                widthInPoints,
-                                heightInPoints
-                            )
+                            FormattableString.Invariant($"width: {widthInPoints}pt; height: {heightInPoints}pt")
                         );
                     }
                     return imageHandler(imageInfo);

@@ -253,7 +253,7 @@ namespace Clippit
         {
             var blockLevelContentToAnnotate = contentParent
                 .Descendants()
-                .Where(d => ElementsToHaveSha1Hash.Contains(d.Name));
+                .Where(d => s_elementsToHaveSha1Hash.Contains(d.Name));
 
             foreach (var blockLevelContent in blockLevelContentToAnnotate)
             {
@@ -783,7 +783,7 @@ namespace Clippit
                 {
                     var statusList = element
                         .DescendantsTrimmed(W.txbxContent)
-                        .Where(d => d.Name == W.t || d.Name == W.delText || AllowableRunChildren.Contains(d.Name))
+                        .Where(d => d.Name == W.t || d.Name == W.delText || s_allowableRunChildren.Contains(d.Name))
                         .Attributes(PtOpenXml.Status)
                         .Select(a => (string)a)
                         .Distinct()
@@ -2880,7 +2880,7 @@ namespace Clippit
                         return newChildElements;
                     }
 
-                    if (AllowableRunChildren.Contains(ancestorBeingConstructed.Name))
+                    if (s_allowableRunChildren.Contains(ancestorBeingConstructed.Name))
                     {
                         var newChildElements = groupedChildren
                             .Select(gc =>
