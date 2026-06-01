@@ -1,7 +1,7 @@
 # Clippy Memory
 
 ## Last Run
-2026-05-31 16:00 UTC — Run 26717375823
+2026-06-01 17:30 UTC — Run 26770851830
 
 ## Comments Made
 - #54: CRC32 improvement idea — explained using reflection is fragile; suggested profiling first
@@ -10,19 +10,18 @@
 - #103: Explained DocumentAssembler uses content controls not bookmarks
 
 ## Open Clippy PRs
-- #307: refactor: modernize `as` + null-check in RevisionProcessor (19 methods)
-- #308: refactor: modernize `as` + null-check in MarkupSimplifier (8 methods + 1 lambda) — created this run
-- #165: feat(excel): ExcelAssembler — open since March 2026
-- #163: feat: RegisterCustomHandler extensibility API — open since March 2026
+- #163: feat: RegisterCustomHandler extensibility API — open since March 2026, CI passing (April), clean merge
+- #165: feat(excel): ExcelAssembler — open since March 2026, CI passing (April), clean merge
 
 ## Backlog Cursor
 All 6 non-activity open issues have Clippy comments. No new human activity as of this run.
 Issues: #28, #54, #66, #67, #77, #103
 
 ## Notes
-- #273 (MetricsGetter modernize) merged
-- #274 (TryGetValue perf) merged
-- #275 (Word/Assembler helper files refactor) merged
-- Monthly Activity issue: #249
-- PR #307 CI: all checks passing (build ubuntu, build windows, generate-docs ✅)
-- Next: Consider OpenXmlRegex.cs, WmlToXml.cs, WmlToHtmlConverter.cs for similar modernization
+- #307 (RevisionProcessor modernize) merged
+- #308 (MarkupSimplifier modernize) merged
+- #309 (feat: add Clippit CLI) merged — big new feature
+- #310 (fix: npm publishing) open by sergey-tihon — not a Clippy PR
+- Monthly Activity issue: new June issue created this run (old #249 closed)
+- SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade
+- Next: Consider release PR for 3.4.6; continue modernizing as+null patterns in OpenXmlRegex.cs, WmlToXml.cs, WmlToHtmlConverter.cs
