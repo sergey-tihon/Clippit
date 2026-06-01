@@ -54,13 +54,13 @@
       >
     </PropertyGroup>
     <Copy
-      SourceFiles="$(PublishDir)$(AssemblyName)$(NativeExecutableExtension)"
+      SourceFiles="$(PublishDir)$(AssemblyName)$(ExeSuffix)"
       DestinationFiles="$(PublishDir)$(NativeAotExecutableName)"
-      Condition="Exists('$(PublishDir)$(AssemblyName)$(NativeExecutableExtension)') and '$(AssemblyName)$(NativeExecutableExtension)' != '$(NativeAotExecutableName)'"
+      Condition="Exists('$(PublishDir)$(AssemblyName)$(ExeSuffix)') and '$(AssemblyName)$(ExeSuffix)' != '$(NativeAotExecutableName)'"
     />
     <Delete
-      Files="$(PublishDir)$(AssemblyName)$(NativeExecutableExtension)"
-      Condition="Exists('$(PublishDir)$(NativeAotExecutableName)') and '$(AssemblyName)$(NativeExecutableExtension)' != '$(NativeAotExecutableName)'"
+      Files="$(PublishDir)$(AssemblyName)$(ExeSuffix)"
+      Condition="Exists('$(PublishDir)$(NativeAotExecutableName)') and '$(AssemblyName)$(ExeSuffix)' != '$(NativeAotExecutableName)'"
     />
   </Target>
 </Project>
