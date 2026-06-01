@@ -8,20 +8,25 @@ open Fake.DotNet
 type CliRuntime =
     { Rid: string
       NpmPackage: string
+      NpmDirectory: string
       BinaryName: string }
 
 let cliRuntimes =
     [ { Rid = "win-x64"
         NpmPackage = "@sergey-tihon/clippit-bin-win32-x64"
+        NpmDirectory = "clippit-win32-x64"
         BinaryName = "clippit.exe" }
       { Rid = "osx-x64"
         NpmPackage = "@sergey-tihon/clippit-bin-darwin-x64"
+        NpmDirectory = "clippit-darwin-x64"
         BinaryName = "clippit" }
       { Rid = "osx-arm64"
         NpmPackage = "@sergey-tihon/clippit-bin-darwin-arm64"
+        NpmDirectory = "clippit-darwin-arm64"
         BinaryName = "clippit" }
       { Rid = "linux-x64"
         NpmPackage = "@sergey-tihon/clippit-bin-linux-x64"
+        NpmDirectory = "clippit-linux-x64"
         BinaryName = "clippit" } ]
 
 let requestedRids =
@@ -83,10 +88,10 @@ let testCommand =
 /// package directory, making the file executable on non-Windows platforms.
 let copyNativeBinary (runtime: CliRuntime) =
     let rid = runtime.Rid
-    let npmPkg = runtime.NpmPackage
+    let npmPkgDir = runtime.NpmDirectory
     let binName = runtime.BinaryName
     let src = System.IO.Path.Combine(__SOURCE_DIRECTORY__, "bin", "cli", rid, binName)
-    let destDir = System.IO.Path.Combine(__SOURCE_DIRECTORY__, "npm", npmPkg)
+    let destDir = System.IO.Path.Combine(__SOURCE_DIRECTORY__, "npm", npmPkgDir)
     let dest = System.IO.Path.Combine(destDir, binName)
 
     if not (System.IO.File.Exists(src)) then
@@ -121,7 +126,11 @@ let patchNpmVersion (pkgJsonPath: string) (v: string) =
     // fact that other string values in the file are not bare semver strings.
     // Pattern: "some-package-name": "digits..."
     let pass2 =
-        System.Text.RegularExpressions.Regex.Replace(pass1, "(\"clippit-[^\"]+\"\\s*:\\s*)\"[^\"]+\"", $"$1\"{v}\"")
+        System.Text.RegularExpressions.Regex.Replace(
+            pass1,
+            "(\"(?:@[^\"/]+/)?clippit(?:-bin)?-[^\"]+\"\\s*:\\s*)\"[^\"]+\"",
+            $"$1\"{v}\""
+        )
 
     System.IO.File.WriteAllText(pkgJsonPath, pass2)
 
@@ -169,12 +178,7 @@ let packNpmPackages () =
 
     let npmDir = System.IO.Path.Combine(__SOURCE_DIRECTORY__, "npm")
 
-    let allPackages =
-        [ "clippit"
-          "@sergey-tihon/clippit-bin-win32-x64"
-          "@sergey-tihon/clippit-bin-darwin-x64"
-          "@sergey-tihon/clippit-bin-darwin-arm64"
-          "@sergey-tihon/clippit-bin-linux-x64" ]
+    let allPackages = [ "clippit" ] @ (cliRuntimes |> List.map _.NpmDirectory)
 
     let packageJsonFiles =
         allPackages
@@ -193,14 +197,14 @@ let packNpmPackages () =
             // Pack platform packages, then the wrapper.
             Shell.mkdir (System.IO.Path.Combine(__SOURCE_DIRECTORY__, "bin", "npm"))
 
-            for pkg in (requestedRids |> List.map _.NpmPackage) @ [ "clippit" ] do
+            for pkg in (requestedRids |> List.map _.NpmDirectory) @ [ "clippit" ] do
                 let pkgDir = System.IO.Path.Combine(npmDir, pkg)
                 let outDir = System.IO.Path.Combine(__SOURCE_DIRECTORY__, "bin", "npm")
                 runRequiredCommand pkgDir "npm" $"pack --pack-destination {outDir}"
         finally
             for runtime in requestedRids do
                 let generated =
-                    System.IO.Path.Combine(npmDir, runtime.NpmPackage, runtime.BinaryName)
+                    System.IO.Path.Combine(npmDir, runtime.NpmDirectory, runtime.BinaryName)
 
                 if System.IO.File.Exists(generated) then
                     System.IO.File.Delete(generated))
