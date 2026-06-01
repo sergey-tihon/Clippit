@@ -7,25 +7,20 @@ open Fake.DotNet
 
 type CliRuntime =
     { Rid: string
-      NpmPackage: string
       NpmDirectory: string
       BinaryName: string }
 
 let cliRuntimes =
     [ { Rid = "win-x64"
-        NpmPackage = "@sergey-tihon/clippit-bin-win32-x64"
         NpmDirectory = "clippit-win32-x64"
         BinaryName = "clippit.exe" }
       { Rid = "osx-x64"
-        NpmPackage = "@sergey-tihon/clippit-bin-darwin-x64"
         NpmDirectory = "clippit-darwin-x64"
         BinaryName = "clippit" }
       { Rid = "osx-arm64"
-        NpmPackage = "@sergey-tihon/clippit-bin-darwin-arm64"
         NpmDirectory = "clippit-darwin-arm64"
         BinaryName = "clippit" }
       { Rid = "linux-x64"
-        NpmPackage = "@sergey-tihon/clippit-bin-linux-x64"
         NpmDirectory = "clippit-linux-x64"
         BinaryName = "clippit" } ]
 
@@ -107,7 +102,7 @@ let copyNativeBinary (runtime: CliRuntime) =
             )
         )
     then
-        let chmod = System.Diagnostics.Process.Start("chmod", $"+x {dest}")
+        let chmod = System.Diagnostics.Process.Start("chmod", $"+x \"{dest}\"")
         chmod.WaitForExit()
 
         if chmod.ExitCode <> 0 then
