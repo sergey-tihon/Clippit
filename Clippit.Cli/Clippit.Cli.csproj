@@ -26,7 +26,6 @@
     <IlcOptimizationPreference Condition="'$(NativeAot)' == 'true'">Size</IlcOptimizationPreference>
     <InvariantGlobalization Condition="'$(NativeAot)' == 'true'">true</InvariantGlobalization>
     <StripSymbols Condition="'$(NativeAot)' == 'true'">true</StripSymbols>
-
   </PropertyGroup>
 
   <ItemGroup>
@@ -49,10 +48,18 @@
 
   <Target Name="RenameNativeAotExecutable" AfterTargets="Publish" Condition="'$(PublishAot)' == 'true'">
     <PropertyGroup>
-      <NativeAotSourceName Condition="$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))">$(AssemblyName).exe</NativeAotSourceName>
-      <NativeAotSourceName Condition="!$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))">$(AssemblyName)</NativeAotSourceName>
-      <NativeAotExecutableName Condition="$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))">clippit.exe</NativeAotExecutableName>
-      <NativeAotExecutableName Condition="!$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))">clippit</NativeAotExecutableName>
+      <NativeAotSourceName Condition="$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))"
+        >$(AssemblyName).exe</NativeAotSourceName
+      >
+      <NativeAotSourceName Condition="!$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))"
+        >$(AssemblyName)</NativeAotSourceName
+      >
+      <NativeAotExecutableName Condition="$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))"
+        >clippit.exe</NativeAotExecutableName
+      >
+      <NativeAotExecutableName Condition="!$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))"
+        >clippit</NativeAotExecutableName
+      >
     </PropertyGroup>
     <Copy
       SourceFiles="$(PublishDir)$(NativeAotSourceName)"
@@ -64,5 +71,4 @@
       Condition="Exists('$(PublishDir)$(NativeAotExecutableName)') and '$(NativeAotSourceName)' != '$(NativeAotExecutableName)'"
     />
   </Target>
-
 </Project>

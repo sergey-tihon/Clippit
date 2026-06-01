@@ -10,6 +10,38 @@ clippit pptx build run slides/deck.manifest.json --output final.pptx
 clippit pptx verify final.pptx
 ```
 
+## Installation
+
+You can install Clippit CLI either as a .NET global tool (NuGet) or as a Node.js global package (npm).
+
+### Install from NuGet (`dotnet tool`)
+
+```bash
+dotnet tool install -g Clippit.Cli
+clippit --version
+```
+
+Update / uninstall:
+
+```bash
+dotnet tool update -g Clippit.Cli
+dotnet tool uninstall -g Clippit.Cli
+```
+
+### Install from npm
+
+```bash
+npm install -g clippit
+clippit --version
+```
+
+Update / uninstall:
+
+```bash
+npm install -g clippit@latest
+npm uninstall -g clippit
+```
+
 ## Output Behavior
 
 Every command supports `--format json|text` and `--quiet` unless it writes binary content to stdout. Text output is intended for humans; JSON output is compact and stable for automation.
