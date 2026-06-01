@@ -7,21 +7,34 @@ open Fake.DotNet
 
 type CliRuntime =
     { Rid: string
-      NpmPackage: string
+      NpmDirectory: string
       BinaryName: string }
 
 let cliRuntimes =
-    [ { Rid = "win-x64"; NpmPackage = "clippit-win32-x64"; BinaryName = "clippit.exe" }
-      { Rid = "osx-x64"; NpmPackage = "clippit-darwin-x64"; BinaryName = "clippit" }
-      { Rid = "osx-arm64"; NpmPackage = "clippit-darwin-arm64"; BinaryName = "clippit" }
-      { Rid = "linux-x64"; NpmPackage = "clippit-linux-x64"; BinaryName = "clippit" } ]
+    [ { Rid = "win-x64"
+        NpmDirectory = "clippit-win32-x64"
+        BinaryName = "clippit.exe" }
+      { Rid = "osx-x64"
+        NpmDirectory = "clippit-darwin-x64"
+        BinaryName = "clippit" }
+      { Rid = "osx-arm64"
+        NpmDirectory = "clippit-darwin-arm64"
+        BinaryName = "clippit" }
+      { Rid = "linux-x64"
+        NpmDirectory = "clippit-linux-x64"
+        BinaryName = "clippit" } ]
 
 let requestedRids =
     let value = System.Environment.GetEnvironmentVariable("CLIPPIT_PUBLISH_RIDS")
+
     if System.String.IsNullOrWhiteSpace(value) then
         cliRuntimes
     else
-        value.Split(',', System.StringSplitOptions.RemoveEmptyEntries ||| System.StringSplitOptions.TrimEntries)
+        value.Split(
+            ',',
+            System.StringSplitOptions.RemoveEmptyEntries
+            ||| System.StringSplitOptions.TrimEntries
+        )
         |> Array.map (fun rid ->
             cliRuntimes
             |> List.tryFind (fun r -> r.Rid = rid)
@@ -33,7 +46,7 @@ let version =
     |> Option.defaultWith (fun () -> failwith "Version is not found")
 
 let cliVersion =
-    Changelog.GetLastVersion (System.IO.Path.Combine(__SOURCE_DIRECTORY__, "Clippit.Cli"))
+    Changelog.GetLastVersion(System.IO.Path.Combine(__SOURCE_DIRECTORY__, "Clippit.Cli"))
     |> Option.defaultWith (fun () -> failwith "CLI version not found in Clippit.Cli/CHANGELOG.md")
 
 let allCliRuntimesRequested =
@@ -70,10 +83,10 @@ let testCommand =
 /// package directory, making the file executable on non-Windows platforms.
 let copyNativeBinary (runtime: CliRuntime) =
     let rid = runtime.Rid
-    let npmPkg = runtime.NpmPackage
+    let npmPkgDir = runtime.NpmDirectory
     let binName = runtime.BinaryName
     let src = System.IO.Path.Combine(__SOURCE_DIRECTORY__, "bin", "cli", rid, binName)
-    let destDir = System.IO.Path.Combine(__SOURCE_DIRECTORY__, "npm", npmPkg)
+    let destDir = System.IO.Path.Combine(__SOURCE_DIRECTORY__, "npm", npmPkgDir)
     let dest = System.IO.Path.Combine(destDir, binName)
 
     if not (System.IO.File.Exists(src)) then
@@ -81,9 +94,17 @@ let copyNativeBinary (runtime: CliRuntime) =
 
     Shell.copyFile dest src
     // Make executable on Unix
-    if binName <> "clippit.exe" && not (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)) then
-        let chmod = System.Diagnostics.Process.Start("chmod", $"+x {dest}")
+    if
+        binName <> "clippit.exe"
+        && not (
+            System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(
+                System.Runtime.InteropServices.OSPlatform.Windows
+            )
+        )
+    then
+        let chmod = System.Diagnostics.Process.Start("chmod", $"+x \"{dest}\"")
         chmod.WaitForExit()
+
         if chmod.ExitCode <> 0 then
             failwith $"chmod failed ({chmod.ExitCode}) for {dest}"
 
@@ -94,11 +115,7 @@ let patchNpmVersion (pkgJsonPath: string) (v: string) =
     let content = System.IO.File.ReadAllText(pkgJsonPath)
     // Pass 1 — top-level version field
     let pass1 =
-        System.Text.RegularExpressions.Regex.Replace(
-            content,
-            "\"version\":\\s*\"[^\"]+\"",
-            $"\"version\": \"{v}\""
-        )
+        System.Text.RegularExpressions.Regex.Replace(content, "\"version\":\\s*\"[^\"]+\"", $"\"version\": \"{v}\"")
     // Pass 2 — every "pkg-name": "x.y.z" pair anywhere in the file where the
     // value looks like a semver string. Scoped to optionalDependencies by the
     // fact that other string values in the file are not bare semver strings.
@@ -106,13 +123,16 @@ let patchNpmVersion (pkgJsonPath: string) (v: string) =
     let pass2 =
         System.Text.RegularExpressions.Regex.Replace(
             pass1,
-            "(\"clippit-[^\"]+\"\\s*:\\s*)\"[^\"]+\"",
+            "(\"(?:@[^\"/]+/)?clippit(?:-bin)?-[^\"]+\"\\s*:\\s*)\"[^\"]+\"",
             $"$1\"{v}\""
         )
+
     System.IO.File.WriteAllText(pkgJsonPath, pass2)
 
 let withOriginalFiles (paths: string list) (action: unit -> unit) =
-    let originals = paths |> List.map (fun path -> path, System.IO.File.ReadAllText(path))
+    let originals =
+        paths |> List.map (fun path -> path, System.IO.File.ReadAllText(path))
+
     try
         action ()
     finally
@@ -131,6 +151,7 @@ let runRequiredCommand (workingDir: string) (fileName: string) (arguments: strin
         )
 
     proc.WaitForExit()
+
     if proc.ExitCode <> 0 then
         failwith $"Command failed ({proc.ExitCode}): {fileName} {arguments}"
 
@@ -147,11 +168,16 @@ let publishCliBinaries () =
 
 let packNpmPackages () =
     if not allCliRuntimesRequested then
-        failwith "NPM wrapper package requires all CLI runtimes. Set CLIPPIT_PUBLISH_RIDS=win-x64,osx-x64,osx-arm64,linux-x64."
+        failwith
+            "NPM wrapper package requires all CLI runtimes. Set CLIPPIT_PUBLISH_RIDS=win-x64,osx-x64,osx-arm64,linux-x64."
 
     let npmDir = System.IO.Path.Combine(__SOURCE_DIRECTORY__, "npm")
-    let allPackages = [ "clippit"; "clippit-win32-x64"; "clippit-darwin-x64"; "clippit-darwin-arm64"; "clippit-linux-x64" ]
-    let packageJsonFiles = allPackages |> List.map (fun pkg -> System.IO.Path.Combine(npmDir, pkg, "package.json"))
+
+    let allPackages = [ "clippit" ] @ (cliRuntimes |> List.map _.NpmDirectory)
+
+    let packageJsonFiles =
+        allPackages
+        |> List.map (fun pkg -> System.IO.Path.Combine(npmDir, pkg, "package.json"))
 
     withOriginalFiles packageJsonFiles (fun () ->
         try
@@ -165,13 +191,16 @@ let packNpmPackages () =
 
             // Pack platform packages, then the wrapper.
             Shell.mkdir (System.IO.Path.Combine(__SOURCE_DIRECTORY__, "bin", "npm"))
-            for pkg in (requestedRids |> List.map _.NpmPackage) @ [ "clippit" ] do
+
+            for pkg in (requestedRids |> List.map _.NpmDirectory) @ [ "clippit" ] do
                 let pkgDir = System.IO.Path.Combine(npmDir, pkg)
                 let outDir = System.IO.Path.Combine(__SOURCE_DIRECTORY__, "bin", "npm")
                 runRequiredCommand pkgDir "npm" $"pack --pack-destination {outDir}"
         finally
             for runtime in requestedRids do
-                let generated = System.IO.Path.Combine(npmDir, runtime.NpmPackage, runtime.BinaryName)
+                let generated =
+                    System.IO.Path.Combine(npmDir, runtime.NpmDirectory, runtime.BinaryName)
+
                 if System.IO.File.Exists(generated) then
                     System.IO.File.Delete(generated))
 
@@ -240,7 +269,8 @@ pipeline "build" {
 
             try
                 ctx.RunCommand(
-                    withCiMsBuildLogger $"dotnet pack Clippit/Clippit.csproj -o bin/ -p:PackageVersion={version.Version}"
+                    withCiMsBuildLogger
+                        $"dotnet pack Clippit/Clippit.csproj -o bin/ -p:PackageVersion={version.Version}"
                 )
             finally
                 System.IO.File.Delete(targetsPath))
@@ -248,9 +278,10 @@ pipeline "build" {
 
     stage "PackCliTool" {
         run (fun ctx ->
-            ctx.RunCommand
-                (withCiMsBuildLogger
-                    $"dotnet pack Clippit.Cli/Clippit.Cli.csproj -o bin/ -p:PackageVersion={cliVersion.Version}"))
+            ctx.RunCommand(
+                withCiMsBuildLogger
+                    $"dotnet pack Clippit.Cli/Clippit.Cli.csproj -o bin/ -p:PackageVersion={cliVersion.Version}"
+            ))
     }
 
     runIfOnlySpecified
@@ -273,13 +304,9 @@ pipeline "publish" {
         if ctx.GetStageLevel() = 0 then
             printfn "::endgroup::")
 
-    stage "PublishCli" {
-        run (fun _ -> publishCliBinaries ())
-    }
+    stage "PublishCli" { run (fun _ -> publishCliBinaries ()) }
 
-    stage "PackNpm" {
-        run (fun _ -> packNpmPackages ())
-    }
+    stage "PackNpm" { run (fun _ -> packNpmPackages ()) }
 
     runIfOnlySpecified
 }
@@ -301,9 +328,7 @@ pipeline "pack-npm" {
         if ctx.GetStageLevel() = 0 then
             printfn "::endgroup::")
 
-    stage "PackNpm" {
-        run (fun _ -> packNpmPackages ())
-    }
+    stage "PackNpm" { run (fun _ -> packNpmPackages ()) }
 
     runIfOnlySpecified
 }

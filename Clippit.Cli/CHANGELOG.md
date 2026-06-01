@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.1.1] - 2026-06-01
+
+Patch release focused on NativeAOT packaging/runtime stability.
+
+- Fixed NativeAOT runtime failures in PowerPoint command paths (`pptx split`,
+  `pptx build`) caused by trim-sensitive type loading.
+- Fixed NativeAOT linker descriptor wiring and rooted required Fluent/
+  PowerPoint exception types for AOT publish.
+- Fixed NativeAOT executable naming in publish output (stable `clippit` /
+  `clippit.exe` output for npm packaging).
+- Fixed npm platform package naming and publish workflow for scoped packages:
+  `@sergey-tihon/clippit-bin-win32-x64`,
+  `@sergey-tihon/clippit-bin-darwin-x64`,
+  `@sergey-tihon/clippit-bin-darwin-arm64`,
+  `@sergey-tihon/clippit-bin-linux-x64`.
+- Fixed `pack-npm` path resolution for scoped package names by separating npm
+  package name from local package directory name.
+- Fixed npm publish workflow flags for first publish + provenance
+  (`--access public`).
+
 ## [0.1.0] - 2026-05-23
 
 Initial CLI release for Clippit.

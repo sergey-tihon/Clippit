@@ -1,5 +1,5 @@
 {
-  "name": "clippit-darwin-x64",
+  "name": "@sergey-tihon/clippit-bin-darwin-x64",
   "version": "0.0.0",
   "description": "macOS x64 (Intel) binary for the Clippit CLI",
   "repository": {
