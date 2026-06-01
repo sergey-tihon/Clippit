@@ -37,7 +37,7 @@ static bool IsTopLevelVersionRequest(string[] arguments)
     // Only intercept when the user really meant the root --version, i.e. no
     // subcommand precedes it and no help follows.
     return arguments.Length > 0
-        && arguments[0] is "--version" or "-v"
+        && arguments[0] is "--version"
         && !arguments.Any(argument => argument is "--help" or "-h" or "-?");
 }
 

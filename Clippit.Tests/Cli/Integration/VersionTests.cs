@@ -38,6 +38,15 @@ internal sealed class VersionTests : CliIntegrationTestBase
     }
 
     [Test]
+    public async Task CLI001aa_RootShortV_IsNotVersionAlias()
+    {
+        var result = await CliTestRunner.RunManagedAsync("-v").ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsNotEqualTo(0);
+        await Assert.That(result.StandardOutput).DoesNotContain("openXmlSdkVersion");
+    }
+
+    [Test]
     public async Task CLI001b_RootHelp_ShowsCommands()
     {
         var result = await CliTestRunner.RunManagedAsync("--help").ConfigureAwait(false);

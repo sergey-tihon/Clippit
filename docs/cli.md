@@ -53,6 +53,8 @@ cat deck.pptx | clippit pptx verify - --format json
 
 When `pptx build run --output -` writes a `.pptx` to stdout, the success summary is suppressed automatically so the binary stream is not corrupted.
 
+Binary stdout output is buffered in memory before it is written to stdout. Prefer file output for very large decks.
+
 ## `version`
 
 Prints the Clippit CLI version and the Open XML SDK version used by the tool.

@@ -52,12 +52,32 @@ internal sealed class OutputTarget
         throw CliException.OutputError($"{itemName} already exists: {_path}. Pass --force to overwrite.");
     }
 
-    public Stream OpenWrite()
+    public Stream OpenWrite(out string? tempPath)
     {
         if (_path is null)
+        {
+            tempPath = null;
             return new MemoryStream();
+        }
 
-        return new FileStream(_path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+        var directory = Path.GetDirectoryName(_path) ?? Directory.GetCurrentDirectory();
+        var fileName = Path.GetFileName(_path);
+        tempPath = Path.Combine(directory, $".{fileName}.{Guid.NewGuid():N}.tmp");
+        return new FileStream(tempPath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+    }
+
+    public void Commit(string? tempPath)
+    {
+        if (_path is null || tempPath is null)
+            return;
+
+        System.IO.File.Move(tempPath, _path, overwrite: true);
+    }
+
+    public static void DeleteTemp(string? tempPath)
+    {
+        if (tempPath is not null && System.IO.File.Exists(tempPath))
+            System.IO.File.Delete(tempPath);
     }
 
     public void Flush(Stream stream)

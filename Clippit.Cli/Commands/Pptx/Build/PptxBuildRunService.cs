@@ -68,10 +68,7 @@ internal static class PptxBuildRunService
                     "A file entry with 'keepSections' cannot follow manifest section entries. "
                         + "Move it before manifest sections or remove 'keepSections'."
                 );
-        }
 
-        foreach (var entry in manifest.Deck.Where(e => e.IsFile))
-        {
             var absPath = ResolvePath(manifestDir, entry.File!);
             if (!File.Exists(absPath))
                 throw CliException.FileNotFound($"Source file not found: {absPath}");
@@ -103,76 +100,85 @@ internal static class PptxBuildRunService
         var openSettings = new OpenSettings { AutoSave = false };
         var sectionManager = new PptxSectionManager();
 
-        var outputStream = target.OpenWrite();
-
-        using (outputStream)
+        string? tempPath = null;
+        try
         {
-            using (var destination = PresentationBuilder.NewDocument(outputStream))
+            using (var outputStream = target.OpenWrite(out tempPath))
             {
-                using (var builder = PresentationBuilder.Create(destination))
+                using (var destination = PresentationBuilder.NewDocument(outputStream))
                 {
-                    foreach (var entry in manifest.Deck)
+                    using (var builder = PresentationBuilder.Create(destination))
                     {
-                        if (entry.IsSection)
+                        foreach (var entry in manifest.Deck)
                         {
-                            sectionManager.AddNewSection(entry.Section);
-                            entryResults.Add(new BuildEntryResult { Section = entry.Section });
-                            continue;
-                        }
-
-                        var absPath = ResolvePath(manifestDir, entry.File!);
-                        using var srcFs = new FileStream(absPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                        using var srcDoc = PresentationDocument.Open(srcFs, false, openSettings);
-                        if (srcDoc.PresentationPart is null)
-                            throw CliException.InvalidFormat($"Source file is not a presentation: {absPath}");
-
-                        PptxSectionManager.SectionLoadSession? sectionSession = null;
-
-                        if (entry.ShouldCopyAllMasters)
-                        {
-                            foreach (var masterPart in srcDoc.PresentationPart.SlideMasterParts)
-                                builder.AddSlideMasterPart(masterPart);
-                        }
-
-                        if (entry.ShouldKeepSections)
-                            sectionSession = sectionManager.LoadFrom(srcDoc);
-
-                        var entrySlides = 0;
-                        if (entry.ShouldCopySlides)
-                        {
-                            var slideIds = PresentationBuilderTools.GetSlideIdsInOrder(srcDoc);
-                            foreach (var slideRelId in slideIds)
+                            if (entry.IsSection)
                             {
-                                var srcSlidePart = (SlidePart)srcDoc.PresentationPart.GetPartById(slideRelId);
-                                var dstSlidePart = builder.AddSlidePart(srcSlidePart);
-                                dstSlidePart.GetXDocument().Descendants().Attributes("smtClean").Remove();
-                                dstSlidePart.PutXDocument();
-                                dstSlidePart.RemoveAnnotations<XDocument>();
-                                var dstRelId = destination.PresentationPart!.GetIdOfPart(dstSlidePart);
-
-                                if (sectionSession is not null)
-                                    sectionSession.RemapRelId(slideRelId, dstRelId);
-                                else
-                                    sectionManager.AppendSlideToLastSection(dstRelId);
-
-                                srcSlidePart.RemoveAnnotations<XDocument>();
-                                srcSlidePart.UnloadRootElement();
-                                totalSlides++;
-                                entrySlides++;
+                                sectionManager.AddNewSection(entry.Section);
+                                entryResults.Add(new BuildEntryResult { Section = entry.Section });
+                                continue;
                             }
-                        }
 
-                        entryResults.Add(new BuildEntryResult { File = entry.File, Slides = entrySlides });
+                            var absPath = ResolvePath(manifestDir, entry.File!);
+                            using var srcFs = new FileStream(absPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                            using var srcDoc = PresentationDocument.Open(srcFs, false, openSettings);
+                            if (srcDoc.PresentationPart is null)
+                                throw CliException.InvalidFormat($"Source file is not a presentation: {absPath}");
+
+                            PptxSectionManager.SectionLoadSession? sectionSession = null;
+
+                            if (entry.ShouldCopyAllMasters)
+                            {
+                                foreach (var masterPart in srcDoc.PresentationPart.SlideMasterParts)
+                                    builder.AddSlideMasterPart(masterPart);
+                            }
+
+                            if (entry.ShouldKeepSections)
+                                sectionSession = sectionManager.LoadFrom(srcDoc);
+
+                            var entrySlides = 0;
+                            if (entry.ShouldCopySlides)
+                            {
+                                var slideIds = PresentationBuilderTools.GetSlideIdsInOrder(srcDoc);
+                                foreach (var slideRelId in slideIds)
+                                {
+                                    var srcSlidePart = (SlidePart)srcDoc.PresentationPart.GetPartById(slideRelId);
+                                    var dstSlidePart = builder.AddSlidePart(srcSlidePart);
+                                    dstSlidePart.GetXDocument().Descendants().Attributes("smtClean").Remove();
+                                    dstSlidePart.PutXDocument();
+                                    dstSlidePart.RemoveAnnotations<XDocument>();
+                                    var dstRelId = destination.PresentationPart!.GetIdOfPart(dstSlidePart);
+
+                                    if (sectionSession is not null)
+                                        sectionSession.RemapRelId(slideRelId, dstRelId);
+                                    else
+                                        sectionManager.AppendSlideToLastSection(dstRelId);
+
+                                    srcSlidePart.RemoveAnnotations<XDocument>();
+                                    srcSlidePart.UnloadRootElement();
+                                    totalSlides++;
+                                    entrySlides++;
+                                }
+                            }
+
+                            entryResults.Add(new BuildEntryResult { File = entry.File, Slides = entrySlides });
+                        }
                     }
+
+                    sectionManager.SaveSectionsTo(destination);
+                    destination.PackageProperties.Title = manifest.Title;
+                    destination.PackageProperties.Creator = "Clippit";
+                    destination.PackageProperties.Modified = DateTime.UtcNow;
                 }
 
-                sectionManager.SaveSectionsTo(destination);
-                destination.PackageProperties.Title = manifest.Title;
-                destination.PackageProperties.Creator = "Clippit";
-                destination.PackageProperties.Modified = DateTime.UtcNow;
+                target.Flush(outputStream);
             }
 
-            target.Flush(outputStream);
+            target.Commit(tempPath);
+            tempPath = null;
+        }
+        finally
+        {
+            OutputTarget.DeleteTemp(tempPath);
         }
 
         return (totalSlides, entryResults);

@@ -266,6 +266,40 @@ internal sealed class PptxBuildTests : CliIntegrationTestBase
     }
 
     [Test]
+    public async Task CLI030b_PptxBuildRun_FailedBuildKeepsExistingOutput()
+    {
+        var directory = CliTestRunner.CreateTempDirectory("build-output-atomic");
+        var outputName = "built.pptx";
+        var output = new FileInfo(Path.Combine(directory.FullName, outputName));
+        var invalidSource = new FileInfo(Path.Combine(directory.FullName, "invalid.pptx"));
+        var manifest = new FileInfo(Path.Combine(directory.FullName, "deck.json"));
+
+        await File.WriteAllTextAsync(output.FullName, "existing output").ConfigureAwait(false);
+        await File.WriteAllTextAsync(invalidSource.FullName, "not a presentation").ConfigureAwait(false);
+        var json = JsonSerializer.Serialize(
+            new
+            {
+                title = "Invalid",
+                output = outputName,
+                deck = new[] { invalidSource.FullName },
+            }
+        );
+        await File.WriteAllTextAsync(manifest.FullName, json).ConfigureAwait(false);
+
+        var result = await CliTestRunner
+            .RunManagedAsync("pptx", "build", "run", manifest.FullName, "--force", "--format", "json")
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(4);
+        await Assert
+            .That(await File.ReadAllTextAsync(output.FullName).ConfigureAwait(false))
+            .IsEqualTo("existing output");
+        await Assert.That(directory.EnumerateFiles("*.tmp")).IsEmpty();
+        using var error = result.ReadStderrJson();
+        await Assert.That(error.RootElement.GetProperty("code").GetString()).IsEqualTo("INVALID_FORMAT");
+    }
+
+    [Test]
     public async Task CLI031_PptxBuildRun_MultipleKeepSectionsSources_AppendsSectionsInOrder()
     {
         var directory = CliTestRunner.CreateTempDirectory("build-multiple-keepsections");

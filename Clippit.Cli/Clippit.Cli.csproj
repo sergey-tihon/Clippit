@@ -36,6 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- System.CommandLine 3.x is still preview; keep the exact version pinned and revisit when it reaches GA. -->
     <PackageReference Include="System.CommandLine" Version="3.0.0-preview.4.26230.115" />
   </ItemGroup>
 
