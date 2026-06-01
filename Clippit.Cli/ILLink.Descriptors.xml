@@ -1,4 +1,4 @@
-<LinkerDescriptor>
+<linker>
     <!--
     ILLink / NativeAOT root descriptors for Clippit.Cli.
 
@@ -17,4 +17,9 @@
         <type fullname="DocumentFormat.OpenXml.Packaging.SlideMasterPart" preserve="all" />
         <type fullname="DocumentFormat.OpenXml.Packaging.SlideLayoutPart" preserve="all" />
     </assembly>
-</LinkerDescriptor>
+    <assembly fullname="Clippit">
+        <type fullname="Clippit.PowerPoint.Fluent.PresentationBuilderTools" preserve="all" />
+        <type fullname="Clippit.PowerPoint.Fluent.PresentationBuilderException" preserve="all" />
+        <type fullname="Clippit.PowerToolsDocumentException" preserve="all" />
+    </assembly>
+</linker>
