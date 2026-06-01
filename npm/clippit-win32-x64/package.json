@@ -1,5 +1,5 @@
 {
-  "name": "clippit-win32-x64",
+  "name": "@sergey-tihon/clippit-bin-win32-x64",
   "version": "0.0.0",
   "description": "Windows x64 binary for the Clippit CLI",
   "repository": {

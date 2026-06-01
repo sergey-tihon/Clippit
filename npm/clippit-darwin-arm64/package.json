@@ -1,5 +1,5 @@
 {
-  "name": "clippit-darwin-arm64",
+  "name": "@sergey-tihon/clippit-bin-darwin-arm64",
   "version": "0.0.0",
   "description": "macOS ARM64 (Apple Silicon) binary for the Clippit CLI",
   "repository": {

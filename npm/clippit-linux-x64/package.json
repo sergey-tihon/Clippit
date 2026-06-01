@@ -1,5 +1,5 @@
 {
-  "name": "clippit-linux-x64",
+  "name": "@sergey-tihon/clippit-bin-linux-x64",
   "version": "0.0.0",
   "description": "Linux x64 binary for the Clippit CLI",
   "repository": {

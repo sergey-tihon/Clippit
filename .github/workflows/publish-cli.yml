@@ -126,10 +126,10 @@ jobs:
       - name: Publish platform npm packages
         if: github.event_name == 'push' || inputs.publish
         run: |
-          npm publish bin/npm/clippit-win32-x64-*.tgz --provenance --access public
-          npm publish bin/npm/clippit-darwin-x64-*.tgz --provenance --access public
-          npm publish bin/npm/clippit-darwin-arm64-*.tgz --provenance --access public
-          npm publish bin/npm/clippit-linux-x64-*.tgz --provenance --access public
+          npm publish bin/npm/clippit-bin-win32-x64-*.tgz --provenance --access public
+          npm publish bin/npm/clippit-bin-darwin-x64-*.tgz --provenance --access public
+          npm publish bin/npm/clippit-bin-darwin-arm64-*.tgz --provenance --access public
+          npm publish bin/npm/clippit-bin-linux-x64-*.tgz --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
