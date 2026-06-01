@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <OutputType>Exe</OutputType>
-    <AssemblyName>clippit</AssemblyName>
     <IsCliProject>true</IsCliProject>
     <VersionPrefix>0.1.0</VersionPrefix>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -28,9 +27,12 @@
     <InvariantGlobalization Condition="'$(NativeAot)' == 'true'">true</InvariantGlobalization>
     <StripSymbols Condition="'$(NativeAot)' == 'true'">true</StripSymbols>
 
-    <!-- Trimming -->
-    <TrimmerRootDescriptor>ILLink.Descriptors.xml</TrimmerRootDescriptor>
   </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Trimming -->
+    <TrimmerRootDescriptor Include="ILLink.Descriptors.xml" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\docs\images\logo.jpeg" Pack="true" PackagePath="\" />
@@ -44,5 +46,23 @@
   <ItemGroup>
     <ProjectReference Include="..\Clippit\Clippit.csproj" />
   </ItemGroup>
+
+  <Target Name="RenameNativeAotExecutable" AfterTargets="Publish" Condition="'$(PublishAot)' == 'true'">
+    <PropertyGroup>
+      <NativeAotSourceName Condition="$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))">$(AssemblyName).exe</NativeAotSourceName>
+      <NativeAotSourceName Condition="!$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))">$(AssemblyName)</NativeAotSourceName>
+      <NativeAotExecutableName Condition="$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))">clippit.exe</NativeAotExecutableName>
+      <NativeAotExecutableName Condition="!$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))">clippit</NativeAotExecutableName>
+    </PropertyGroup>
+    <Copy
+      SourceFiles="$(PublishDir)$(NativeAotSourceName)"
+      DestinationFiles="$(PublishDir)$(NativeAotExecutableName)"
+      Condition="Exists('$(PublishDir)$(NativeAotSourceName)') and '$(NativeAotSourceName)' != '$(NativeAotExecutableName)'"
+    />
+    <Delete
+      Files="$(PublishDir)$(NativeAotSourceName)"
+      Condition="Exists('$(PublishDir)$(NativeAotExecutableName)') and '$(NativeAotSourceName)' != '$(NativeAotExecutableName)'"
+    />
+  </Target>
 
 </Project>
