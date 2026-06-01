@@ -126,15 +126,15 @@ jobs:
       - name: Publish platform npm packages
         if: github.event_name == 'push' || inputs.publish
         run: |
-          npm publish bin/npm/clippit-win32-x64-*.tgz --provenance
-          npm publish bin/npm/clippit-darwin-x64-*.tgz --provenance
-          npm publish bin/npm/clippit-darwin-arm64-*.tgz --provenance
-          npm publish bin/npm/clippit-linux-x64-*.tgz --provenance
+          npm publish bin/npm/clippit-win32-x64-*.tgz --provenance --access public
+          npm publish bin/npm/clippit-darwin-x64-*.tgz --provenance --access public
+          npm publish bin/npm/clippit-darwin-arm64-*.tgz --provenance --access public
+          npm publish bin/npm/clippit-linux-x64-*.tgz --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish wrapper npm package
         if: github.event_name == 'push' || inputs.publish
-        run: npm publish bin/npm/clippit-[0-9]*.tgz --provenance
+        run: npm publish bin/npm/clippit-[0-9]*.tgz --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
