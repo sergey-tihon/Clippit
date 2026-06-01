@@ -1,0 +1,16 @@
+{
+  "name": "clippit-darwin-arm64",
+  "version": "0.0.0",
+  "description": "macOS ARM64 (Apple Silicon) binary for the Clippit CLI",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sergey-tihon/Clippit.git",
+    "directory": "npm/clippit-darwin-arm64"
+  },
+  "license": "MIT",
+  "os": ["darwin"],
+  "cpu": ["arm64"],
+  "files": [
+    "clippit"
+  ]
+}

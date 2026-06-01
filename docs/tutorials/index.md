@@ -8,7 +8,7 @@ Welcome to Clippit library usage guide. If you don't know what Clippit is - plea
 Please check navigation on the left ⬅ for more articles.
 
 ### Requirements
-Clippit targets `net8.0` and `net10.0`. It requires .NET 8.0 or later.
+Clippit targets `net10.0`. It requires .NET 10.0 or later.
 
 ## Questions?
 To ask questions or share ideas, feel free to start a new [GitHub Discussion](https://github.com/sergey-tihon/Clippit/discussions).

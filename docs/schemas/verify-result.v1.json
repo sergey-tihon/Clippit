@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sergey-tihon.github.io/Clippit/schemas/verify-result.v1.json",
+  "title": "Clippit pptx verify result",
+  "description": "Result payload of `clippit pptx verify` written to stdout in JSON mode. Invalid presentations are reported here with exit code 4 rather than as stderr command errors.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["input", "officeVersion", "valid", "diagnostics"],
+  "properties": {
+    "input": {
+      "type": "string",
+      "description": "Absolute path of the source .pptx file, or '<stdin>' when read from stdin."
+    },
+    "officeVersion": {
+      "type": "string",
+      "enum": ["Office2007", "Office2010", "Office2013", "Office2016", "Office2019", "Office2021", "Microsoft365"],
+      "description": "OpenXml schema version used for schema validation. Defaults to Microsoft365."
+    },
+    "valid": {
+      "type": "boolean",
+      "description": "True when package, OpenXml schema, and relationship validation found no errors."
+    },
+    "diagnostics": {
+      "type": "array",
+      "description": "Validation diagnostics returned by `pptx verify`.",
+      "items": { "$ref": "#/$defs/verifyDiagnostic" }
+    }
+  },
+  "$defs": {
+    "verifyDiagnostic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "description"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["package", "schema", "semantic", "markupCompatibility", "relationship", "presentation.section", "unknown"],
+          "description": "Unified diagnostic kind. SDK diagnostics use ValidationErrorType-derived values; Clippit diagnostics use custom values."
+        },
+        "code": {
+          "type": ["string", "null"],
+          "description": "Validator-specific diagnostic code, when available."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable validation message."
+        },
+        "part": {
+          "type": ["string", "null"],
+          "description": "OpenXml part URI related to the diagnostic, when available."
+        },
+        "path": {
+          "type": ["string", "null"],
+          "description": "OpenXml validator XPath, when available."
+        },
+        "element": {
+          "type": ["string", "null"],
+          "description": "Element name related to the diagnostic, when available. Schema diagnostics use full `{namespace}local` names."
+        },
+        "attribute": {
+          "type": ["string", "null"],
+          "description": "Attribute local name related to a relationship diagnostic, when available."
+        },
+        "relationshipId": {
+          "type": ["string", "null"],
+          "description": "Dangling relationship ID for relationship diagnostics."
+        }
+      }
+    }
+  }
+}

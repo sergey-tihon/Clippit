@@ -1,0 +1,140 @@
+name: Publish CLI npm Packages
+
+on:
+  push:
+    tags:
+      - "cli-v[0-9]+.[0-9]+.[0-9]+*"
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish packages to npm"
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build-native:
+    name: Build ${{ matrix.rid }}
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - rid: linux-x64
+            os: ubuntu-latest
+            binary: clippit
+          - rid: win-x64
+            os: windows-latest
+            binary: clippit.exe
+          - rid: osx-x64
+            os: macos-15-intel
+            binary: clippit
+          - rid: osx-arm64
+            os: macos-15
+            binary: clippit
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Install Linux NativeAOT toolchain
+        if: matrix.rid == 'linux-x64'
+        run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+
+      - name: Publish NativeAOT binary
+        run: dotnet publish Clippit.Cli/Clippit.Cli.csproj -c Release -r ${{ matrix.rid }} --self-contained -p:NativeAot=true -o bin/cli/${{ matrix.rid }} -clp:ErrorsOnly
+
+      - name: Upload NativeAOT binary
+        uses: actions/upload-artifact@v7
+        with:
+          name: clippit-${{ matrix.rid }}
+          path: bin/cli/${{ matrix.rid }}/${{ matrix.binary }}
+          if-no-files-found: error
+
+  publish-npm:
+    name: Pack and Publish npm Packages
+    runs-on: ubuntu-latest
+    needs: build-native
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Download linux-x64 binary
+        uses: actions/download-artifact@v7
+        with:
+          name: clippit-linux-x64
+          path: bin/cli/linux-x64
+
+      - name: Download win-x64 binary
+        uses: actions/download-artifact@v7
+        with:
+          name: clippit-win-x64
+          path: bin/cli/win-x64
+
+      - name: Download osx-x64 binary
+        uses: actions/download-artifact@v7
+        with:
+          name: clippit-osx-x64
+          path: bin/cli/osx-x64
+
+      - name: Download osx-arm64 binary
+        uses: actions/download-artifact@v7
+        with:
+          name: clippit-osx-arm64
+          path: bin/cli/osx-arm64
+
+      - name: Pack npm packages
+        run: dotnet fsi build.fsx -- -p pack-npm
+        env:
+          CLIPPIT_PUBLISH_RIDS: win-x64,osx-x64,osx-arm64,linux-x64
+
+      - name: Upload npm tarballs
+        uses: actions/upload-artifact@v7
+        with:
+          name: clippit-npm-packages
+          path: bin/npm/*.tgz
+          if-no-files-found: error
+
+      - name: Publish platform npm packages
+        if: github.event_name == 'push' || inputs.publish
+        run: |
+          npm publish bin/npm/clippit-win32-x64-*.tgz --provenance
+          npm publish bin/npm/clippit-darwin-x64-*.tgz --provenance
+          npm publish bin/npm/clippit-darwin-arm64-*.tgz --provenance
+          npm publish bin/npm/clippit-linux-x64-*.tgz --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish wrapper npm package
+        if: github.event_name == 'push' || inputs.publish
+        run: npm publish bin/npm/clippit-[0-9]*.tgz --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

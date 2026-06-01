@@ -1,5 +1,6 @@
 <Solution>
     <Project Path="Clippit/Clippit.csproj" />
+    <Project Path="Clippit.Cli/Clippit.Cli.csproj" />
     <Project Path="Clippit.Tests/Clippit.Tests.csproj" />
     <Folder Name="/Solution Items/">
         <File Path="README.md" />

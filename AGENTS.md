@@ -13,7 +13,7 @@ Clippit is a .NET library providing OpenXml PowerTools for Word, Excel, and Powe
 | Build only          | `dotnet build Clippit.slnx -c Release`                                         |
 | Restore tools       | `dotnet tool restore`                                                          |
 | Lint check          | `dotnet csharpier check .`                                                     |
-| Lint fix            | `dotnet csharpier .`                                                           |
+| Lint fix            | `dotnet csharpier format .`                                                    |
 | Test all            | `dotnet test --project Clippit.Tests/`                                         |
 | Single test         | `dotnet test --project Clippit.Tests/ --treenode-filter "/*/*/*/MethodName**"` |
 | Tests in class      | `dotnet test --project Clippit.Tests/ --treenode-filter "/*/*/ClassName/**"`   |
@@ -32,7 +32,7 @@ which runs these stages in order:
 6. `dotnet test --solution Clippit.slnx`
 7. `dotnet pack Clippit/Clippit.csproj -o bin/`
 
-Always run `dotnet csharpier .` before committing. A pre-commit hook (Husky.NET)
+Always run `dotnet csharpier format .` before committing. A pre-commit hook (Husky.NET)
 runs CSharpier on staged `.cs` files automatically.
 
 ### Test Runner
@@ -45,7 +45,7 @@ filter syntax — the pattern `/*/*/*/MethodName**` matches any test method star
 ## Project Structure
 
 ```
-Clippit/                    Main library (targets net8.0 + net10.0)
+Clippit/                    Main library (targets net10.0)
   Word/                     Word/DOCX: DocumentBuilder, DocumentAssembler, WmlComparer, HtmlConverter
     Assembler/              DocumentAssembler helpers (templates, extensions)
   PowerPoint/               PPTX: PresentationBuilder, Fluent API
@@ -55,10 +55,18 @@ Clippit/                    Main library (targets net8.0 + net10.0)
   Core/                     PowerToolsBlock, StronglyTypedBlock
   Internal/                 ColorParser, TextReplacer, Relationships
   Properties/               AssemblyInfo.cs (InternalsVisibleTo), AssemblyInfo.g.cs (generated)
+Clippit.Cli/                CLI tool (targets net10.0)
+  Commands/Pptx/Split/      `pptx split` command and result payload
+  Commands/Pptx/Build/      `pptx build init` / `pptx build run`, manifests, sections
+  Commands/Pptx/Verify/     `pptx verify` validation command and result payload
+  Commands/Version/         `version` command and root `--version` payload
+  Infrastructure/           Output format, structured errors, exit codes
 Clippit.Tests/              Test project (targets net10.0)
   Word/ PowerPoint/ Excel/ Html/ Common/    Mirror library structure
+  Cli/                                      CLI integration and AOT smoke tests
   */Samples/                                Sample/integration tests
 TestFiles/                  Test data (.docx, .pptx, .xlsx)
+docs/schemas/               JSON schemas for CLI manifests/results
 Directory.Build.props       Shared MSBuild props (nullable, implicit usings, lang version)
 .editorconfig               Code style rules
 ```
@@ -151,6 +159,8 @@ Prefer modern C# idioms wherever applicable:
 - All test classes inherit from `TestsBase` (provides `TempDir`, `Validate()`, helpers)
 - Test data lives in `TestFiles/` — reference via `new DirectoryInfo("../../../../TestFiles/")`
 - Test output goes to `temp/` directory (created lazily by `TestsBase.TempDir`)
+- CLI tests use `CliTestRunner.CreateTempDirectory()` under the OS temp directory instead of `TestsBase.TempDir`
+  because `TestsBase` may wipe repo `temp/` during parallel test runs.
 - Organize tests to mirror library structure (`Word/`, `PowerPoint/`, etc.)
 - Name tests with a prefix code and descriptive name: `DB001_DocumentBuilderKeepSections`
 
@@ -166,7 +176,17 @@ Prefer modern C# idioms wherever applicable:
 - **Partial classes**: `WmlComparer` is split across ~26 files by concern
   (e.g., `WmlComparer.Public.Methods.Compare.cs`, `WmlComparer.Private.Methods.Hashing.cs`)
 - **Extension methods**: `PtOpenXmlExtensions`, `PtExtensions` extend OpenXml SDK types
+- **CLI output discipline**: success payloads go to stdout (compact JSON when `--format json` or stdout is piped,
+  text otherwise); command errors always go to stderr as compact JSON with a symbolic `code`.
+- **CLI validation**: `pptx verify` combines `OpenXmlValidator` schema checks with `RelationshipValidator` dangling
+  relationship checks; invalid-but-readable decks return a result on stdout and exit code `4`.
 - **XNamespace constants**: `W`, `WP`, `M`, `MC`, etc. in `PtOpenXmlUtil.cs` define
   all XML namespace constants used throughout the library
+- **PPTX memory model**: large-deck workflows should open source presentations with
+  `OpenSettings { AutoSave = false }`, copy slides through `FluentPresentationBuilder`, then release per-slide XML
+  caches. For source slides call `RemoveAnnotations<XDocument>()` and `UnloadRootElement()` after copying. For
+  destination slides that were mutated directly, call `PutXDocument()` and `RemoveAnnotations<XDocument>()`. Dispose
+  in this order: fluent builder, presentation document, stream; save sections after builder disposal and before
+  disposing the destination document.
 - **Versioning**: version is derived from `CHANGELOG.md` by the build script
 - **No new dependencies** without clear justification — the project values minimal deps

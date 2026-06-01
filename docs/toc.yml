@@ -1,5 +1,7 @@
 - name: Home
   href: index.md
+- name: CLI
+  href: cli.md
 - name: Tutorials
   href: tutorials/
 - name: API Documentation
