@@ -1,6 +1,6 @@
 # Clippit — Fresh PowerTools for OpenXml
 
-![NuGet Version](https://badgen.net/nuget/v/Clippit) ![NuGet Downloads](https://badgen.net/nuget/dt/Clippit)
+![NuGet Version](https://badgen.net/nuget/v/Clippit) ![NuGet Downloads](https://badgen.net/nuget/dt/Clippit) ![CLI NuGet Version](https://badgen.net/nuget/v/Clippit.Cli) ![CLI npm Version](https://badgen.net/npm/v/clippit) ![CLI npm Downloads](https://badgen.net/npm/dt/clippit)
 
 <img style="float: right;" src="images/logo.jpeg">
 
@@ -8,6 +8,7 @@ Clippit is a .NET library for programmatically creating, modifying, and converti
 Word (DOCX), Excel (XLSX), and PowerPoint (PPTX) documents. Built on top of the
 [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), it provides high-level
 APIs that handle the complexity of the Open XML format so you can focus on your content.
+It also includes a [scriptable CLI](cli.md) for PowerPoint split, build, and validation workflows.
 
 ## Getting Started
 
@@ -62,6 +63,12 @@ signatures and code samples.
 | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [PresentationBuilder](xref:Tutorial.PowerPoint.PresentationBuilder) | Merge and split PPTX files, with a [Fluent API](xref:Tutorial.PowerPoint.BuildPresentation.FluentApi) for ergonomic slide composition and optimized [slide publishing](xref:Tutorial.PowerPoint.PresentationBuilder.PublishSlides) |
 
+### CLI
+
+| Feature | Description |
+| ------- | ----------- |
+| [Clippit CLI](cli.md) | Scriptable PPTX split/build/verify commands with human-readable text output, stable JSON output, stdin/stdout support, and JSON schemas for automation |
+
 ### Common
 
 | Feature                                             | Description                                                             |
@@ -71,7 +78,7 @@ signatures and code samples.
 
 ## Compatibility
 
-- **Targets:** `net8.0` and `net10.0`
+- **Target:** `net10.0`
 - **Dependency:** [DocumentFormat.OpenXml](https://www.nuget.org/packages/DocumentFormat.OpenXml) (Open XML SDK)
 - **Platforms:** Windows and Linux (continuously tested on both)
 - **Side-by-side:** Can coexist with the original Open-Xml-PowerTools assembly

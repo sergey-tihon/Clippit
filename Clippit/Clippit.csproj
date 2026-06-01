@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <PackageId>Clippit</PackageId>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -11,6 +11,11 @@
     <PackageTags>OpenXML;PowerTools;PowerPoint;Word;Excel;HTML</PackageTags>
     <Description>Fresh PowerTools for OpenXml</Description>
     <PackageProjectUrl>https://github.com/sergey-tihon/Clippit</PackageProjectUrl>
+    <!-- Opt into trimmer analysis during dotnet build so trim warnings surface early.
+         WmlToXml.ApplyContentTypes is intentionally annotated [RequiresDynamicCode] /
+         [RequiresUnreferencedCode] because it constructs Regex from user-supplied XML.
+         All other library code is trim-safe. -->
+    <IsTrimmable>true</IsTrimmable>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\docs\images\logo.jpeg" Pack="true" PackagePath="\" />

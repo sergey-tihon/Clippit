@@ -36,7 +36,7 @@ namespace Clippit.Tests
 
         protected async Task ValidateRelationships(OpenXmlPackage package)
         {
-            var errors = RelationshipValidator.Validate(package).ToList();
+            var errors = RelationshipValidator.Validate(package);
             foreach (var error in errors)
                 Console.WriteLine(error.Description);
             await Assert.That(errors).IsEmpty();

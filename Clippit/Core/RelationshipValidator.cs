@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Xml;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
@@ -14,12 +15,14 @@ namespace Clippit.Core;
 /// <param name="AttributeName">XML attribute name that holds the relationship ID.</param>
 /// <param name="RelationshipId">The relationship ID value that could not be resolved.</param>
 /// <param name="Description">Human-readable description of the problem.</param>
+/// <param name="Kind">Stable diagnostic kind used when converting this error to a validation diagnostic.</param>
 public sealed record RelationshipValidationError(
     Uri PartUri,
     XName ElementName,
     XName AttributeName,
     string RelationshipId,
-    string Description
+    string Description,
+    string Kind = OpenXmlValidationDiagnosticKinds.Relationship
 );
 
 /// <summary>
@@ -66,13 +69,13 @@ public static class RelationshipValidator
     /// </summary>
     /// <param name="package">The package to validate.</param>
     /// <returns>
-    /// A sequence of <see cref="RelationshipValidationError"/> items describing each
+    /// A list of <see cref="RelationshipValidationError"/> items describing each
     /// unresolvable relationship reference; empty when the package is clean.
     /// </returns>
     /// <example>
     /// <code>
     /// using var doc = PresentationDocument.Open("deck.pptx", false);
-    /// var errors = RelationshipValidator.Validate(doc).ToList();
+    /// var errors = RelationshipValidator.Validate(doc);
     /// foreach (var e in errors)
     ///     Console.WriteLine(e.Description);
     /// </code>
@@ -92,11 +95,21 @@ public static class RelationshipValidator
             XDocument xDoc;
             try
             {
-                xDoc = part.GetXDocument();
+                using var stream = part.GetStream(FileMode.Open, FileAccess.Read);
+                xDoc = XDocument.Load(stream);
             }
-            catch
+            catch (XmlException ex)
             {
-                // Skip parts we cannot parse.
+                errors.Add(
+                    new RelationshipValidationError(
+                        part.Uri,
+                        XName.Get("part"),
+                        XName.Get("xml"),
+                        string.Empty,
+                        $"Part '{part.Uri}' contains malformed XML: {ex.Message}",
+                        OpenXmlValidationDiagnosticKinds.Package
+                    )
+                );
                 continue;
             }
 

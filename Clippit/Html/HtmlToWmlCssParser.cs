@@ -36,7 +36,7 @@ namespace Clippit.Html
         public string CssOperatorString
         {
             get { return this.m_op?.ToString(); }
-            set { this.m_op = (CssAttributeOperator)Enum.Parse(typeof(CssAttributeOperator), value); }
+            set { this.m_op = Enum.Parse<CssAttributeOperator>(value); }
         }
 
         public string Value { get; set; }
@@ -730,7 +730,7 @@ namespace Clippit.Html
                     return null;
                 }
             }
-            set { this.m_combinator = (CssCombinator)Enum.Parse(typeof(CssCombinator), value); }
+            set { this.m_combinator = Enum.Parse<CssCombinator>(value); }
         }
 
         public string ElementName { get; set; }
@@ -933,7 +933,7 @@ namespace Clippit.Html
                     return null;
                 }
             }
-            set { this.m_unit = (CssUnit)Enum.Parse(typeof(CssUnit), value); }
+            set { this.m_unit = Enum.Parse<CssUnit>(value); }
         }
 
         public CssFunction Function { get; set; }
@@ -2784,7 +2784,7 @@ namespace Clippit.Html
                                 Identity(out ident);
                                 try
                                 {
-                                    trm.Unit = (CssUnit)Enum.Parse(typeof(CssUnit), ident, true);
+                                    trm.Unit = Enum.Parse<CssUnit>(ident, ignoreCase: true);
                                 }
                                 catch
                                 {

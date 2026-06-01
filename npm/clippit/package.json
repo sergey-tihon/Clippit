@@ -1,0 +1,31 @@
+{
+  "name": "clippit",
+  "version": "0.0.0",
+  "description": "CLI tool for Clippit — PowerTools for OpenXml (PowerPoint, Word, Excel)",
+  "keywords": ["openxml", "powertools", "powerpoint", "word", "excel", "cli", "pptx", "docx"],
+  "homepage": "https://github.com/sergey-tihon/Clippit",
+  "bugs": "https://github.com/sergey-tihon/Clippit/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sergey-tihon/Clippit.git",
+    "directory": "npm/clippit"
+  },
+  "license": "MIT",
+  "bin": {
+    "clippit": "bin/clippit.js"
+  },
+  "files": [
+    "bin/",
+    "index.js",
+    "index.d.ts"
+  ],
+  "optionalDependencies": {
+    "clippit-win32-x64": "0.0.0",
+    "clippit-darwin-x64": "0.0.0",
+    "clippit-darwin-arm64": "0.0.0",
+    "clippit-linux-x64": "0.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

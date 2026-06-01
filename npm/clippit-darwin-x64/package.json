@@ -1,0 +1,16 @@
+{
+  "name": "clippit-darwin-x64",
+  "version": "0.0.0",
+  "description": "macOS x64 (Intel) binary for the Clippit CLI",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sergey-tihon/Clippit.git",
+    "directory": "npm/clippit-darwin-x64"
+  },
+  "license": "MIT",
+  "os": ["darwin"],
+  "cpu": ["x64"],
+  "files": [
+    "clippit"
+  ]
+}

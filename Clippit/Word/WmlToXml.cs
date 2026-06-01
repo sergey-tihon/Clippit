@@ -9,6 +9,7 @@
 // Twitter: @EricWhiteDev
 // Email: eric@ericwhite.com
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -189,6 +190,11 @@ namespace Clippit.Word
         [GeneratedRegex("[A-F0-9.]+$")]
         private static partial Regex ListItemRegex();
 
+        [RequiresDynamicCode(
+            "WmlToXml applies user-supplied regex patterns from settings XML at runtime. "
+                + "These cannot be source-generated and require the regex interpreter."
+        )]
+        [RequiresUnreferencedCode("WmlToXml applies user-supplied regex patterns from settings XML at runtime.")]
         public static WmlDocument ApplyContentTypes(WmlDocument document, WmlToXmlSettings settings)
         {
             using var streamDoc = new OpenXmlMemoryStreamDocument(document);
@@ -200,6 +206,11 @@ namespace Clippit.Word
             return streamDoc.GetModifiedWmlDocument();
         }
 
+        [RequiresDynamicCode(
+            "WmlToXml applies user-supplied regex patterns from settings XML at runtime. "
+                + "These cannot be source-generated and require the regex interpreter."
+        )]
+        [RequiresUnreferencedCode("WmlToXml applies user-supplied regex patterns from settings XML at runtime.")]
         public static void ApplyContentTypes(WordprocessingDocument wDoc, WmlToXmlSettings settings)
         {
 #if false
