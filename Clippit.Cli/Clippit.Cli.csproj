@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <OutputType>Exe</OutputType>
+    <AssemblyName>clippit</AssemblyName>
     <IsCliProject>true</IsCliProject>
     <VersionPrefix>0.1.0</VersionPrefix>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -44,23 +45,4 @@
     <ProjectReference Include="..\Clippit\Clippit.csproj" />
   </ItemGroup>
 
-  <Target Name="RenameNativeAotExecutable" AfterTargets="CopyNativeBinary" Condition="'$(PublishAot)' == 'true'">
-    <PropertyGroup>
-      <NativeAotExecutableName Condition="$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))"
-        >clippit.exe</NativeAotExecutableName
-      >
-      <NativeAotExecutableName Condition="!$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))"
-        >clippit</NativeAotExecutableName
-      >
-    </PropertyGroup>
-    <Copy
-      SourceFiles="$(PublishDir)$(AssemblyName)$(ExeSuffix)"
-      DestinationFiles="$(PublishDir)$(NativeAotExecutableName)"
-      Condition="Exists('$(PublishDir)$(AssemblyName)$(ExeSuffix)') and '$(AssemblyName)$(ExeSuffix)' != '$(NativeAotExecutableName)'"
-    />
-    <Delete
-      Files="$(PublishDir)$(AssemblyName)$(ExeSuffix)"
-      Condition="Exists('$(PublishDir)$(NativeAotExecutableName)') and '$(AssemblyName)$(ExeSuffix)' != '$(NativeAotExecutableName)'"
-    />
-  </Target>
 </Project>
