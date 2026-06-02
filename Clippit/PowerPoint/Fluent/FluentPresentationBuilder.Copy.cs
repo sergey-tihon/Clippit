@@ -426,7 +426,7 @@ internal sealed partial class FluentPresentationBuilder
         //   - Duplicate-copy guards (HasRelationship / DataPartReferenceRelationships.Any)
         //     prevent double-processing if the same relId appears more than once in the tree.
         // Within each element type, document order is preserved just as in the original code.
-        foreach (var element in newContent.DescendantsAndSelf())
+        foreach (var element in newContent.DescendantsAndSelf().ToList())
         {
             var name = element.Name;
 
@@ -669,8 +669,30 @@ internal sealed partial class FluentPresentationBuilder
                 var oldPartIdPair9 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
                 if (oldPartIdPair9 != default)
                 {
+                    // Skip empty CustomXml parts: a zero-byte stream has no root element and
+                    // will make PowerPoint show a repair dialog when it opens the output file.
+                    // Such parts are occasionally produced by SharePoint/AI generators and carry
+                    // no meaningful content, so dropping them is safe.
+                    // Buffer into memory: lets us check length AND rewind regardless of
+                    // whether the underlying stream is seekable (DeflateStream from a
+                    // file-backed package is not seekable).
+                    using var srcStream = oldPartIdPair9.OpenXmlPart.GetStream();
+                    var buf = new MemoryStream();
+                    srcStream.CopyTo(buf);
+                    if (buf.Length == 0)
+                    {
+                        // Remove the referencing <p:custData> element and prune an empty
+                        // <p:custDataLst> parent so the slide XML doesn't keep a dangling relId.
+                        var parent = element.Parent;
+                        element.Remove();
+                        if (parent?.Name == P.custDataLst && !parent.HasElements)
+                            parent.Remove();
+                        continue;
+                    }
+
                     var newPart = _newDocument.PresentationPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
-                    newPart.FeedDataFrom(oldPartIdPair9.OpenXmlPart);
+                    buf.Position = 0;
+                    newPart.FeedData(buf);
                     foreach (
                         var itemProps in oldPartIdPair9.OpenXmlPart.Parts.Where(p =>
                             p.OpenXmlPart.ContentType
@@ -786,7 +808,11 @@ internal sealed partial class FluentPresentationBuilder
             var temp = GetOrAddImageCopy(oldPart);
             if (temp.ImagePart is null)
             {
-                var contentType = oldPart?.ContentType;
+                // Normalize non-standard SVG MIME type produced by some generators.
+                // "image/svg" is not a registered MIME type; the correct type is "image/svg+xml".
+                // When both appear in the same package PowerPoint detects the inconsistency
+                // and shows a repair dialog, so we normalise here at copy time.
+                var contentType = oldPart?.ContentType == "image/svg" ? "image/svg+xml" : oldPart?.ContentType;
                 var targetExtension = contentType switch
                 {
                     "image/bmp" => ".bmp",

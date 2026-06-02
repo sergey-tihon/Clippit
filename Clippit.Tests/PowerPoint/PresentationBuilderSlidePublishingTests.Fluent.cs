@@ -244,6 +244,86 @@ public partial class PresentationBuilderSlidePublishingTests
         await Assert.That(destStream.Length).IsGreaterThan(0);
     }
 
+    /// <summary>
+    /// Regression test: a slide whose p:custData element references an empty (zero-byte)
+    /// CustomXmlPart should be copied without error, and the empty part must not appear
+    /// in the output (it has no root element and causes a PowerPoint repair dialog).
+    /// </summary>
+    [Test]
+    public async Task AddSlidePart_WithEmptyCustDataPart_SkipsEmptyPartAndDoesNotThrow()
+    {
+        var sourcePath = Path.Combine(SourceDirectory, "BRK3066.pptx");
+        var openSettings = new OpenSettings { AutoSave = false };
+
+        using var srcMemory = new MemoryStream();
+        await using (var fs = File.OpenRead(sourcePath))
+            await fs.CopyToAsync(srcMemory);
+        srcMemory.Position = 0;
+
+        using var srcDoc = PresentationDocument.Open(srcMemory, true, openSettings);
+        ArgumentNullException.ThrowIfNull(srcDoc.PresentationPart);
+
+        var firstSlideId = PresentationBuilderTools.GetSlideIdsInOrder(srcDoc).First();
+        var srcSlidePart = (SlidePart)srcDoc.PresentationPart.GetPartById(firstSlideId);
+
+        // Attach an empty CustomXmlPart (zero bytes, no root element) to the slide.
+        var emptyXmlPart = srcSlidePart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
+        // deliberately leave the stream empty (no PutXDocument call)
+
+        var propsPart = emptyXmlPart.AddNewPart<CustomXmlPropertiesPart>();
+        propsPart.PutXDocument(
+            new XDocument(
+                new XElement(
+                    XName.Get("datastoreItem", "http://schemas.openxmlformats.org/officeDocument/2006/customXml"),
+                    new XAttribute(
+                        XName.Get("itemID", "http://schemas.openxmlformats.org/officeDocument/2006/customXml"),
+                        "{7D2CF446-7740-064C-89BA-4FB9111814D7}"
+                    )
+                )
+            )
+        );
+
+        XNamespace pns = "http://schemas.openxmlformats.org/presentationml/2006/main";
+        XNamespace rns = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+        var custDataRelId = srcSlidePart.GetIdOfPart(emptyXmlPart);
+        var slideXDoc = srcSlidePart.GetXDocument();
+        slideXDoc.Root?.Add(
+            new XElement(pns + "custDataLst", new XElement(pns + "custData", new XAttribute(rns + "id", custDataRelId)))
+        );
+        srcSlidePart.PutXDocument(slideXDoc);
+
+        using var destStream = new MemoryStream();
+        // Should not throw
+        using (var destDoc = PresentationBuilder.NewDocument(destStream))
+        using (var builder = PresentationBuilder.Create(destDoc))
+        {
+            builder.AddSlidePart(srcSlidePart);
+        }
+
+        await Assert.That(destStream.Length).IsGreaterThan(0);
+
+        // The empty customXml part must not appear in the output package.
+        destStream.Position = 0;
+        using var archive = new System.IO.Compression.ZipArchive(destStream, System.IO.Compression.ZipArchiveMode.Read);
+        var customXmlEntries = archive
+            .Entries.Where(e =>
+                e.FullName.StartsWith("customXml/item", StringComparison.Ordinal)
+                && e.FullName.EndsWith(".xml", StringComparison.Ordinal)
+                && !e.FullName.Contains("Props", StringComparison.Ordinal)
+            )
+            .ToList();
+        await Assert.That(customXmlEntries).IsEmpty();
+
+        // The <p:custDataLst> element must also be pruned from the slide XML
+        // so no dangling relationship reference remains.
+        destStream.Position = 0;
+        using var doc = PresentationDocument.Open(destStream, false);
+        var slidePart = doc.PresentationPart!.SlideParts.First();
+        XNamespace pns2 = "http://schemas.openxmlformats.org/presentationml/2006/main";
+        var custDataLst = slidePart.GetXDocument().Root?.Element(pns2 + "custDataLst");
+        await Assert.That(custDataLst).IsNull();
+    }
+
     [Test]
     [MethodDataSource(typeof(PublishingTestData), nameof(PublishingTestData.Files))]
     public async Task MergeAllPowerPointBack(string sourcePath, CancellationToken cancellationToken)
