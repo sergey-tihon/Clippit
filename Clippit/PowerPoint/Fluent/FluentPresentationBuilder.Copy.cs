@@ -459,6 +459,13 @@ internal sealed partial class FluentPresentationBuilder
                 if (isVmlPart)
                     PBT.CopyRelatedSound(_newDocument, oldContentPart, newContentPart, element, R.embed);
             }
+            else if (name == A1611.picAttrSrcUrl)
+            {
+                // <a1611:picAttrSrcUrl r:id="..."/> sits inside <a:blip><a:extLst> and carries
+                // an r:id pointing to the original online-image source URL relationship.
+                // It must be rewritten just like any other image relationship reference.
+                CopyRelatedImage(oldContentPart, newContentPart, element, R.id);
+            }
             else if (name == A14.imgLayer)
             {
                 PBT.CopyExtendedPart(oldContentPart, newContentPart, element, R.embed);
