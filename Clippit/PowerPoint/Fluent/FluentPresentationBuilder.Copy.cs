@@ -677,9 +677,19 @@ internal sealed partial class FluentPresentationBuilder
                     // Buffer into memory: lets us check length AND rewind regardless of
                     // whether the underlying stream is seekable (DeflateStream from a
                     // file-backed package is not seekable).
-                    using var srcStream = oldPartIdPair9.OpenXmlPart.GetStream();
                     using var buf = new MemoryStream();
-                    srcStream.CopyTo(buf);
+                    try
+                    {
+                        using var srcStream = oldPartIdPair9.OpenXmlPart.GetStream();
+                        srcStream.CopyTo(buf);
+                    }
+                    catch (InvalidDataException)
+                    {
+                        // Preserve FeedDataFrom's corrupt-ZIP behavior: treat unreadable
+                        // CustomXml content as empty and drop its dangling p:custData reference.
+                        buf.SetLength(0);
+                    }
+
                     if (buf.Length == 0)
                     {
                         // Remove the referencing <p:custData> element and prune an empty
