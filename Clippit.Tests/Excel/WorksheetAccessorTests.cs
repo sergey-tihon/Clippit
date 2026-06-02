@@ -115,16 +115,29 @@ public class WorksheetAccessorTests
     [Test]
     public async Task WA005_SetGetCellValue_Double_RoundTrip()
     {
-        using var ms = new MemoryStream();
-        using var doc = CreateBlankSpreadsheet(ms);
-        var sheet = WorksheetAccessor.AddWorksheet(doc, "Data");
+        var originalCulture = System.Globalization.CultureInfo.CurrentCulture;
+        var originalUiCulture = System.Globalization.CultureInfo.CurrentUICulture;
+        try
+        {
+            System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            System.Globalization.CultureInfo.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
 
-        WorksheetAccessor.SetCellValue(doc, sheet, row: 2, column: 3, value: 3.14);
-        sheet.PutXDocument();
+            using var ms = new MemoryStream();
+            using var doc = CreateBlankSpreadsheet(ms);
+            var sheet = WorksheetAccessor.AddWorksheet(doc, "Data");
 
-        var result = WorksheetAccessor.GetCellValue(doc, sheet, column: 3, row: 2);
+            WorksheetAccessor.SetCellValue(doc, sheet, row: 2, column: 3, value: 3.14);
+            sheet.PutXDocument();
 
-        await Assert.That(result).IsEqualTo(3.14);
+            var result = WorksheetAccessor.GetCellValue(doc, sheet, column: 3, row: 2);
+
+            await Assert.That(result).IsEqualTo(3.14);
+        }
+        finally
+        {
+            System.Globalization.CultureInfo.CurrentCulture = originalCulture;
+            System.Globalization.CultureInfo.CurrentUICulture = originalUiCulture;
+        }
     }
 
     [Test]
