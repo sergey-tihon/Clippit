@@ -304,7 +304,11 @@ public partial class PresentationBuilderSlidePublishingTests
 
         // The empty customXml part must not appear in the output package.
         destStream.Position = 0;
-        using var archive = new System.IO.Compression.ZipArchive(destStream, System.IO.Compression.ZipArchiveMode.Read);
+        using var archive = new System.IO.Compression.ZipArchive(
+            destStream,
+            System.IO.Compression.ZipArchiveMode.Read,
+            leaveOpen: true
+        );
         var customXmlEntries = archive
             .Entries.Where(e =>
                 e.FullName.StartsWith("customXml/item", StringComparison.Ordinal)

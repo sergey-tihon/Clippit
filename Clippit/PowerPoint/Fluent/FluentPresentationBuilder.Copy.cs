@@ -417,7 +417,8 @@ internal sealed partial class FluentPresentationBuilder
         // Single pass over the entire element tree dispatches all relationship-copying work.
         // The previous implementation traversed DescendantsAndSelf() up to 16 separate times
         // (once per element-type group). A single dispatch loop reduces tree visits from O(16N)
-        // to O(N) and eliminates intermediate List<XElement> allocations.
+        // to O(N). The traversal is materialized once so p:custData pruning can safely remove
+        // nodes while the relationship-copying loop continues.
         //
         // Ordering note: elements are now visited in document order rather than per-type-group
         // order. This is safe because every copy helper is independent and idempotent:
@@ -677,7 +678,7 @@ internal sealed partial class FluentPresentationBuilder
                     // whether the underlying stream is seekable (DeflateStream from a
                     // file-backed package is not seekable).
                     using var srcStream = oldPartIdPair9.OpenXmlPart.GetStream();
-                    var buf = new MemoryStream();
+                    using var buf = new MemoryStream();
                     srcStream.CopyTo(buf);
                     if (buf.Length == 0)
                     {
