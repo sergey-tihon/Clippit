@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.2] - 2026-06-02
+
+Patch release for the next CLI package publish.
+
 ## [0.1.1] - 2026-06-01
 
 Patch release focused on NativeAOT packaging/runtime stability.

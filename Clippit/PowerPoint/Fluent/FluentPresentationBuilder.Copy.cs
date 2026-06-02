@@ -417,7 +417,8 @@ internal sealed partial class FluentPresentationBuilder
         // Single pass over the entire element tree dispatches all relationship-copying work.
         // The previous implementation traversed DescendantsAndSelf() up to 16 separate times
         // (once per element-type group). A single dispatch loop reduces tree visits from O(16N)
-        // to O(N) and eliminates intermediate List<XElement> allocations.
+        // to O(N). The traversal is materialized once so p:custData pruning can safely remove
+        // nodes while the relationship-copying loop continues.
         //
         // Ordering note: elements are now visited in document order rather than per-type-group
         // order. This is safe because every copy helper is independent and idempotent:
@@ -426,7 +427,7 @@ internal sealed partial class FluentPresentationBuilder
         //   - Duplicate-copy guards (HasRelationship / DataPartReferenceRelationships.Any)
         //     prevent double-processing if the same relId appears more than once in the tree.
         // Within each element type, document order is preserved just as in the original code.
-        foreach (var element in newContent.DescendantsAndSelf())
+        foreach (var element in newContent.DescendantsAndSelf().ToList())
         {
             var name = element.Name;
 
@@ -458,6 +459,13 @@ internal sealed partial class FluentPresentationBuilder
                 PBT.CopyRelatedMediaExternalRelationship(oldContentPart, newContentPart, element, R.link);
                 if (isVmlPart)
                     PBT.CopyRelatedSound(_newDocument, oldContentPart, newContentPart, element, R.embed);
+            }
+            else if (name == A1611.picAttrSrcUrl)
+            {
+                // <a1611:picAttrSrcUrl r:id="..."/> sits inside <a:blip><a:extLst> and carries
+                // an r:id pointing to the original online-image source URL relationship.
+                // It must be rewritten just like any other image relationship reference.
+                CopyRelatedImage(oldContentPart, newContentPart, element, R.id);
             }
             else if (name == A14.imgLayer)
             {
@@ -662,8 +670,37 @@ internal sealed partial class FluentPresentationBuilder
                 var oldPartIdPair9 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
                 if (oldPartIdPair9 != default)
                 {
-                    var newPart = _newDocument.PresentationPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
-                    newPart.FeedDataFrom(oldPartIdPair9.OpenXmlPart);
+                    // Skip empty CustomXml parts: a zero-byte stream has no root element and
+                    // will make PowerPoint show a repair dialog when it opens the output file.
+                    // Such parts are occasionally produced by SharePoint/AI generators and carry
+                    // no meaningful content, so dropping them is safe.
+                    CustomXmlPart newPart = null;
+                    try
+                    {
+                        using var srcStream = oldPartIdPair9.OpenXmlPart.GetStream();
+                        var firstByte = srcStream.ReadByte();
+                        if (firstByte < 0)
+                        {
+                            PruneCustDataReference(element);
+                            continue;
+                        }
+
+                        newPart = _newDocument.PresentationPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
+                        using var dstStream = newPart.GetStream(FileMode.Create, FileAccess.Write);
+                        dstStream.WriteByte((byte)firstByte);
+                        srcStream.CopyTo(dstStream);
+                    }
+                    catch (InvalidDataException)
+                    {
+                        // Preserve FeedDataFrom's corrupt-ZIP behavior: treat unreadable
+                        // CustomXml content as empty and drop its dangling p:custData reference.
+                        if (newPart is not null)
+                            _newDocument.PresentationPart.DeletePart(newPart);
+
+                        PruneCustDataReference(element);
+                        continue;
+                    }
+
                     foreach (
                         var itemProps in oldPartIdPair9.OpenXmlPart.Parts.Where(p =>
                             p.OpenXmlPart.ContentType
@@ -686,6 +723,14 @@ internal sealed partial class FluentPresentationBuilder
             {
                 PBT.CopyRelatedSound(_newDocument, oldContentPart, newContentPart, element, R.embed);
             }
+        }
+
+        static void PruneCustDataReference(XElement element)
+        {
+            var parent = element.Parent;
+            element.Remove();
+            if (parent?.Name == P.custDataLst && !parent.HasElements)
+                parent.Remove();
         }
 
         // VML drawing parts use implicit relationships (not element-based) and are handled separately.
@@ -779,7 +824,11 @@ internal sealed partial class FluentPresentationBuilder
             var temp = GetOrAddImageCopy(oldPart);
             if (temp.ImagePart is null)
             {
-                var contentType = oldPart?.ContentType;
+                // Normalize non-standard SVG MIME type produced by some generators.
+                // "image/svg" is not a registered MIME type; the correct type is "image/svg+xml".
+                // When both appear in the same package PowerPoint detects the inconsistency
+                // and shows a repair dialog, so we normalise here at copy time.
+                var contentType = oldPart?.ContentType == "image/svg" ? "image/svg+xml" : oldPart?.ContentType;
                 var targetExtension = contentType switch
                 {
                     "image/bmp" => ".bmp",
