@@ -675,22 +675,20 @@ internal sealed partial class FluentPresentationBuilder
                     // Such parts are occasionally produced by SharePoint/AI generators and carry
                     // no meaningful content, so dropping them is safe.
                     CustomXmlPart newPart = null;
-                    var skipCustomXmlPart = false;
                     try
                     {
                         using var srcStream = oldPartIdPair9.OpenXmlPart.GetStream();
                         var firstByte = srcStream.ReadByte();
                         if (firstByte < 0)
                         {
-                            skipCustomXmlPart = true;
+                            PruneCustDataReference(element);
+                            continue;
                         }
-                        else
-                        {
-                            newPart = _newDocument.PresentationPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
-                            using var dstStream = newPart.GetStream(FileMode.Create, FileAccess.Write);
-                            dstStream.WriteByte((byte)firstByte);
-                            srcStream.CopyTo(dstStream);
-                        }
+
+                        newPart = _newDocument.PresentationPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
+                        using var dstStream = newPart.GetStream(FileMode.Create, FileAccess.Write);
+                        dstStream.WriteByte((byte)firstByte);
+                        srcStream.CopyTo(dstStream);
                     }
                     catch (InvalidDataException)
                     {
@@ -698,17 +696,8 @@ internal sealed partial class FluentPresentationBuilder
                         // CustomXml content as empty and drop its dangling p:custData reference.
                         if (newPart is not null)
                             _newDocument.PresentationPart.DeletePart(newPart);
-                        skipCustomXmlPart = true;
-                    }
 
-                    if (skipCustomXmlPart)
-                    {
-                        // Remove the referencing <p:custData> element and prune an empty
-                        // <p:custDataLst> parent so the slide XML doesn't keep a dangling relId.
-                        var parent = element.Parent;
-                        element.Remove();
-                        if (parent?.Name == P.custDataLst && !parent.HasElements)
-                            parent.Remove();
+                        PruneCustDataReference(element);
                         continue;
                     }
 
@@ -734,6 +723,14 @@ internal sealed partial class FluentPresentationBuilder
             {
                 PBT.CopyRelatedSound(_newDocument, oldContentPart, newContentPart, element, R.embed);
             }
+        }
+
+        static void PruneCustDataReference(XElement element)
+        {
+            var parent = element.Parent;
+            element.Remove();
+            if (parent?.Name == P.custDataLst && !parent.HasElements)
+                parent.Remove();
         }
 
         // VML drawing parts use implicit relationships (not element-based) and are handled separately.
