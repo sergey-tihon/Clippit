@@ -304,19 +304,23 @@ public partial class PresentationBuilderSlidePublishingTests
 
         // The empty customXml part must not appear in the output package.
         destStream.Position = 0;
-        using var archive = new System.IO.Compression.ZipArchive(
-            destStream,
-            System.IO.Compression.ZipArchiveMode.Read,
-            leaveOpen: true
-        );
-        var customXmlEntries = archive
-            .Entries.Where(e =>
-                e.FullName.StartsWith("customXml/item", StringComparison.Ordinal)
-                && e.FullName.EndsWith(".xml", StringComparison.Ordinal)
-                && !e.FullName.Contains("Props", StringComparison.Ordinal)
+        using (
+            var archive = new System.IO.Compression.ZipArchive(
+                destStream,
+                System.IO.Compression.ZipArchiveMode.Read,
+                leaveOpen: true
             )
-            .ToList();
-        await Assert.That(customXmlEntries).IsEmpty();
+        )
+        {
+            var customXmlEntries = archive
+                .Entries.Where(e =>
+                    e.FullName.StartsWith("customXml/item", StringComparison.Ordinal)
+                    && e.FullName.EndsWith(".xml", StringComparison.Ordinal)
+                    && !e.FullName.Contains("Props", StringComparison.Ordinal)
+                )
+                .ToList();
+            await Assert.That(customXmlEntries).IsEmpty();
+        }
 
         // The <p:custDataLst> element must also be pruned from the slide XML
         // so no dangling relationship reference remains.

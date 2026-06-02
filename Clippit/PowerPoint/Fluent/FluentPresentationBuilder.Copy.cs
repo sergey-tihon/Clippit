@@ -674,23 +674,34 @@ internal sealed partial class FluentPresentationBuilder
                     // will make PowerPoint show a repair dialog when it opens the output file.
                     // Such parts are occasionally produced by SharePoint/AI generators and carry
                     // no meaningful content, so dropping them is safe.
-                    // Buffer into memory: lets us check length AND rewind regardless of
-                    // whether the underlying stream is seekable (DeflateStream from a
-                    // file-backed package is not seekable).
-                    using var buf = new MemoryStream();
+                    CustomXmlPart newPart = null;
+                    var skipCustomXmlPart = false;
                     try
                     {
                         using var srcStream = oldPartIdPair9.OpenXmlPart.GetStream();
-                        srcStream.CopyTo(buf);
+                        var firstByte = srcStream.ReadByte();
+                        if (firstByte < 0)
+                        {
+                            skipCustomXmlPart = true;
+                        }
+                        else
+                        {
+                            newPart = _newDocument.PresentationPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
+                            using var dstStream = newPart.GetStream(FileMode.Create, FileAccess.Write);
+                            dstStream.WriteByte((byte)firstByte);
+                            srcStream.CopyTo(dstStream);
+                        }
                     }
                     catch (InvalidDataException)
                     {
                         // Preserve FeedDataFrom's corrupt-ZIP behavior: treat unreadable
                         // CustomXml content as empty and drop its dangling p:custData reference.
-                        buf.SetLength(0);
+                        if (newPart is not null)
+                            _newDocument.PresentationPart.DeletePart(newPart);
+                        skipCustomXmlPart = true;
                     }
 
-                    if (buf.Length == 0)
+                    if (skipCustomXmlPart)
                     {
                         // Remove the referencing <p:custData> element and prune an empty
                         // <p:custDataLst> parent so the slide XML doesn't keep a dangling relId.
@@ -701,9 +712,6 @@ internal sealed partial class FluentPresentationBuilder
                         continue;
                     }
 
-                    var newPart = _newDocument.PresentationPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
-                    buf.Position = 0;
-                    newPart.FeedData(buf);
                     foreach (
                         var itemProps in oldPartIdPair9.OpenXmlPart.Parts.Where(p =>
                             p.OpenXmlPart.ContentType
