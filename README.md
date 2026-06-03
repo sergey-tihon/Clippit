@@ -2,10 +2,6 @@
 
 [![NuGet Version](https://badgen.net/nuget/v/Clippit)](https://www.nuget.org/packages/Clippit)
 [![NuGet Downloads](https://badgen.net/nuget/dt/Clippit)](https://www.nuget.org/packages/Clippit)
-[![Build and Test](https://github.com/sergey-tihon/Clippit/actions/workflows/main.yml/badge.svg)](https://github.com/sergey-tihon/Clippit/actions/workflows/main.yml)
-[![License: MIT](https://badgen.net/badge/license/MIT/blue)](LICENSE)
-
-[![CLI NuGet Version](https://badgen.net/nuget/v/Clippit.Cli)](https://www.nuget.org/packages/Clippit.Cli)
 [![CLI npm Version](https://badgen.net/npm/v/clippit)](https://www.npmjs.com/package/clippit)
 [![CLI npm Downloads](https://badgen.net/npm/dt/clippit)](https://www.npmjs.com/package/clippit)
 
