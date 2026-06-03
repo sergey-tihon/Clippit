@@ -1,6 +1,6 @@
 # clippit
 
-**Clippit CLI** is a command-line tool for working with OpenXml files (PowerPoint, Word, Excel).  
+**Clippit CLI** is a command-line tool for working with OpenXml files (PowerPoint, Word, Excel).
 This npm package provides native binaries for all platforms — no .NET runtime required.
 
 ## Installation
@@ -27,39 +27,39 @@ clippit pptx split presentation.pptx --format json
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
-| `pptx split` | Split a `.pptx` into individual single-slide files. Supports slide range selection (`--slides`) and manifest generation (`--manifest`). |
-| `pptx build init` | Scaffold a deck manifest (JSON). |
-| `pptx build run` | Assemble a `.pptx` from a deck manifest. |
-| `pptx verify` | Validate a PPTX — schema, relationships, markup compatibility, and sections. |
-| `version` | Print version information. |
+| Command           | Description                                                                                                                             |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `pptx split`      | Split a `.pptx` into individual single-slide files. Supports slide range selection (`--slides`) and manifest generation (`--manifest`). |
+| `pptx build init` | Scaffold a deck manifest (JSON).                                                                                                        |
+| `pptx build run`  | Assemble a `.pptx` from a deck manifest.                                                                                                |
+| `pptx verify`     | Validate a PPTX — schema, relationships, markup compatibility, and sections.                                                            |
+| `version`         | Print version information.                                                                                                              |
 
 ### Common flags
 
-| Flag | Description |
-|------|-------------|
-| `--format json|text` | Structured JSON or human-readable output (default: `text`) |
-| `--quiet` / `-q` | Suppress success output; exit codes still reflect result |
-| `--force` | Overwrite existing output files |
-| `-` | Use stdin / stdout for piped workflows |
+| Flag                  | Description                                                |
+| --------------------- | ---------------------------------------------------------- |
+| `--format json\|text` | Structured JSON or human-readable output (default: `text`) |
+| `--quiet` / `-q`      | Suppress success output; exit codes still reflect result   |
+| `--force`             | Overwrite existing output files                            |
+| `-`                   | Use stdin / stdout for piped workflows                     |
 
 ## Machine-readable output
 
-Success payloads → **stdout** (compact JSON when `--format json` or stdout is piped).  
+Success payloads → **stdout** (compact JSON when `--format json` or stdout is piped).
 Command errors → **stderr** (compact JSON with a stable symbolic `code`).
 
-Published JSON schemas for manifests and result payloads are available at  
+Published JSON schemas for manifests and result payloads are available at
 [`docs/schemas/`](https://github.com/sergey-tihon/Clippit/tree/main/docs/schemas).
 
 ## Supported platforms
 
-| Platform | Package |
-|----------|---------|
-| Windows x64 | `@sergey-tihon/clippit-bin-win32-x64` |
-| macOS x64 | `@sergey-tihon/clippit-bin-darwin-x64` |
+| Platform    | Package                                  |
+| ----------- | ---------------------------------------- |
+| Windows x64 | `@sergey-tihon/clippit-bin-win32-x64`    |
+| macOS x64   | `@sergey-tihon/clippit-bin-darwin-x64`   |
 | macOS arm64 | `@sergey-tihon/clippit-bin-darwin-arm64` |
-| Linux x64 | `@sergey-tihon/clippit-bin-linux-x64` |
+| Linux x64   | `@sergey-tihon/clippit-bin-linux-x64`    |
 
 The correct binary package is installed automatically as an optional dependency.
 
