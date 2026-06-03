@@ -139,11 +139,10 @@ internal sealed class CliJsonContractTests : TestsBase
         var schema = s_schemaCache
             .GetOrAdd(
                 schemaFileName,
-                static fileName =>
-                    new Lazy<JsonSchema>(
-                        () => LoadSchema(fileName),
-                        LazyThreadSafetyMode.ExecutionAndPublication
-                    )
+                static fileName => new Lazy<JsonSchema>(
+                    () => LoadSchema(fileName),
+                    LazyThreadSafetyMode.ExecutionAndPublication
+                )
             )
             .Value;
         return schema.Evaluate(payload, new EvaluationOptions { OutputFormat = OutputFormat.Hierarchical });
