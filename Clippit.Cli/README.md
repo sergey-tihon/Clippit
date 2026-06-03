@@ -38,7 +38,7 @@ clippit pptx split presentation.pptx --format json
 
 | Flag | Description |
 |------|-------------|
-| `--format json\|text` | Structured JSON or human-readable output (default: `text`) |
+| `--format json|text` | Structured JSON or human-readable output (default: `text`) |
 | `--quiet` / `-q` | Suppress success output; exit codes still reflect result |
 | `--force` | Overwrite existing output files |
 | `-` | Use stdin / stdout for piped workflows |
