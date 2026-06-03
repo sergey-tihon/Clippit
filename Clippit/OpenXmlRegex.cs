@@ -230,8 +230,7 @@ namespace Clippit
             bool coalesceContent
         )
         {
-            var element = node as XElement;
-            if (element == null)
+            if (node is not XElement element)
                 return node;
 
             if (element.Name == W.p)
@@ -420,8 +419,7 @@ namespace Clippit
                         .Nodes()
                         .Select(n =>
                         {
-                            var e = n as XElement;
-                            if (e == null)
+                            if (n is not XElement e)
                                 return n;
 
                             if (e.Name == W.pPr)
@@ -516,8 +514,7 @@ namespace Clippit
 
         private static object TransformToDelText(XNode node)
         {
-            var element = node as XElement;
-            if (element == null)
+            if (node is not XElement element)
                 return node;
 
             if (element.Name == W.t)
@@ -534,8 +531,7 @@ namespace Clippit
             ReplaceInternalInfo counter
         )
         {
-            var element = node as XElement;
-            if (element == null)
+            if (node is not XElement element)
                 return node;
 
             if (element.Name == A.p)
