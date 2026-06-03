@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.4.5] - June 3, 2026
+
+- feat: add Clippit CLI — `pptx split`, `pptx build`, `pptx verify`, and `version` commands (#309)
+- fix(pptx): fix PowerPoint relationship copying edge cases — prevent missing parts after slide copy (#312)
+- fix(cli): set `AssemblyName=clippit` to avoid NativeAOT rename on Windows
+- fix(cli): use `$(ExeSuffix)` in `RenameNativeAotExecutable` MSBuild target
+- fix(cli): fix npm publishing workflow
+- refactor: modernize `as` + null-check to `is not` pattern matching in `RevisionProcessor` (#307)
+- refactor: modernize `as` + null-check to `is not` pattern matching in `MarkupSimplifier` (#308)
+- test(excel): expand `WorksheetAccessor` tests — `SetCellValue`/`GetCellValue` round-trips WA004–WA013 (#314)
+- chore(deps): update TUnit 1.47.0 → 1.48.6 (#313)
+- docs: add README for Clippit.Cli NuGet tool and npm clippit package (#320)
+- docs: restore classic Clippy hero image and redesign homepage with retro Clippy speech bubble
+
 ## [3.4.4] - May 20, 2026
 
 - fix(pptx): prevent `NullReferenceException` in `GetSlideTitle` when `cSld`/`spTree` is missing (#287)
