@@ -17,7 +17,8 @@
   "files": [
     "bin/",
     "index.js",
-    "index.d.ts"
+    "index.d.ts",
+    "README.md"
   ],
   "optionalDependencies": {
     "@sergey-tihon/clippit-bin-win32-x64": "0.0.0",

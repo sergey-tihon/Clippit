@@ -1,0 +1,60 @@
+# Clippit CLI — `dotnet tool`
+
+**Clippit CLI** is a command-line tool for working with OpenXml files (PowerPoint, Word, Excel), built on [Clippit](https://github.com/sergey-tihon/Clippit) — the .NET OpenXml PowerTools library.
+
+## Installation
+
+```bash
+dotnet tool install -g Clippit.Cli
+```
+
+## Quick Start
+
+```bash
+# Split a deck into individual slides
+clippit pptx split presentation.pptx --output ./slides/
+
+# Build a deck from a manifest
+clippit pptx build run manifest.json --output result.pptx
+
+# Validate a PPTX file
+clippit pptx verify presentation.pptx
+
+# Get JSON output for scripting
+clippit pptx split presentation.pptx --format json
+```
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `pptx split` | Split a `.pptx` into individual single-slide files. Supports slide range selection (`--slides`) and manifest generation (`--manifest`). |
+| `pptx build init` | Scaffold a deck manifest (JSON). |
+| `pptx build run` | Assemble a `.pptx` from a deck manifest. |
+| `pptx verify` | Validate a PPTX — schema, relationships, markup compatibility, and sections. |
+| `version` | Print version information. |
+
+### Common flags
+
+| Flag | Description |
+|------|-------------|
+| `--format json\|text` | Structured JSON or human-readable output (default: `text`) |
+| `--quiet` / `-q` | Suppress success output; exit codes still reflect result |
+| `--force` | Overwrite existing output files |
+| `-` | Use stdin / stdout for piped workflows |
+
+## Machine-readable output
+
+Success payloads → **stdout** (compact JSON when `--format json` or stdout is piped).  
+Command errors → **stderr** (compact JSON with a stable symbolic `code`).
+
+Published JSON schemas for manifests and result payloads are available at  
+[`docs/schemas/`](https://github.com/sergey-tihon/Clippit/tree/main/docs/schemas).
+
+## Full documentation
+
+➡️ **[https://sergey-tihon.github.io/Clippit/cli.html](https://sergey-tihon.github.io/Clippit/cli.html)**
+
+## License
+
+MIT © [Sergey Tihon](https://github.com/sergey-tihon)
