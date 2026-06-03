@@ -25,3 +25,6 @@ Issues: #28, #54, #66, #67, #77, #103
 - Monthly Activity issue: new June issue created this run (old #249 closed)
 - SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade
 - Next: Consider release PR for 3.4.6; continue modernizing as+null patterns in OpenXmlRegex.cs, WmlToXml.cs, WmlToHtmlConverter.cs
+
+## Open Clippy PRs (updated 2026-06-03)
+- #319 (or latest): feat: add README for Clippit.Cli NuGet and npm — open, implements #318
