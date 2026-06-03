@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.1.3] - 2026-06-03
+
+Add README and CLI usage documentation to npm and NuGet packages.
+
 ## [0.1.2] - 2026-06-02
 
 Patch release for the next CLI package publish.
