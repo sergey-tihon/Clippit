@@ -8,6 +8,7 @@
     --clippit-cyan: #76fff0;
     --clippit-mint: #62ff9d;
     --clippit-blue: #7b9cff;
+    --clippit-yellow: #f5e642;
     margin: -0.5rem 0 2.5rem;
   }
 
@@ -86,13 +87,6 @@
     line-height: 1.75;
   }
 
-  .clippit-badges {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.45rem;
-    margin: 1.4rem 0 0;
-  }
-
   .clippit-actions {
     display: flex;
     flex-wrap: wrap;
@@ -122,15 +116,89 @@
     box-shadow: 0 18px 38px rgba(98, 255, 157, 0.18);
   }
 
+  /* Clippy art panel — sky-blue retro card matching the classic Office assistant */
   .clippit-hero-art {
     display: grid;
     place-items: center;
+    position: relative;
   }
 
   .clippit-hero-art img {
-    width: min(100%, 560px);
-    border-radius: 32px;
-    filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.34));
+    width: min(100%, 520px);
+    border-radius: 28px;
+    box-shadow:
+      0 0 0 3px rgba(245, 230, 66, 0.25),
+      0 30px 70px rgba(0, 0, 0, 0.45);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
+    display: block;
+  }
+
+  .clippit-hero-art img:hover {
+    transform: rotate(-1.5deg) scale(1.03);
+    box-shadow:
+      0 0 0 3px rgba(245, 230, 66, 0.55),
+      0 40px 90px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Classic Clippy speech bubble — sits inside the image, top-right corner */
+  .clippit-speech {
+    position: absolute;
+    top: 7%;
+    right: 6%;
+    width: clamp(140px, 38%, 195px);
+    pointer-events: none;
+    z-index: 2;
+    filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.4));
+    animation: clippy-bounce 3.8s ease-in-out infinite;
+  }
+
+  @keyframes clippy-bounce {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-5px); }
+  }
+
+  .clippit-speech-bubble {
+    position: relative;
+    background: #feffc2;
+    border: 2.5px solid #c8920a;
+    border-radius: 12px;
+    padding: 0.65rem 0.8rem 0.6rem;
+  }
+
+  .clippit-speech-bubble p {
+    margin: 0;
+    color: #1a1200;
+    font-size: 0.78rem;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+    font-family: "Comic Sans MS", "Chalkboard SE", "Comic Neue", cursive;
+  }
+
+  /* Tail points down-left toward Clippy's head */
+  .clippit-speech-bubble::after {
+    content: "";
+    position: absolute;
+    bottom: -17px;
+    left: 18px;
+    width: 0;
+    height: 0;
+    border-left: 0px solid transparent;
+    border-right: 22px solid transparent;
+    border-top: 17px solid #c8920a;
+  }
+
+  .clippit-speech-bubble::before {
+    content: "";
+    position: absolute;
+    bottom: -13px;
+    left: 20px;
+    width: 0;
+    height: 0;
+    border-left: 0px solid transparent;
+    border-right: 19px solid transparent;
+    border-top: 14px solid #feffc2;
+    z-index: 1;
   }
 
   .clippit-install-grid {
@@ -178,13 +246,6 @@
     <div class="clippit-hero-copy">
       <div class="clippit-eyebrow">.NET 10 • Open XML • Scriptable CLI</div>
       <h1>Clippit <span>Fresh PowerTools for OpenXml</span></h1>
-      <div class="clippit-badges">
-        <img alt="NuGet Version" src="https://badgen.net/nuget/v/Clippit" />
-        <img alt="NuGet Downloads" src="https://badgen.net/nuget/dt/Clippit" />
-        <img alt="CLI NuGet Version" src="https://badgen.net/nuget/v/Clippit.Cli" />
-        <img alt="CLI npm Version" src="https://badgen.net/npm/v/clippit" />
-        <img alt="CLI npm Downloads" src="https://badgen.net/npm/dt/clippit" />
-      </div>
       <p>
         Create, transform, compare, split, and validate Office documents with a modern .NET library
         and a native CLI built for automation. Clippit wraps the Open XML SDK with high-level APIs
@@ -197,6 +258,11 @@
       </div>
     </div>
     <div class="clippit-hero-art">
+      <div class="clippit-speech" aria-hidden="true">
+        <div class="clippit-speech-bubble">
+          <p>It looks like you're building a document. Can I help?</p>
+        </div>
+      </div>
       <img src="images/hero.jpg" alt="Friendly Clippit agent reviewing Open XML documents" />
     </div>
   </section>
