@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-06-02",
-  "last_run_id": "26835549349",
+  "last_run": "2026-06-03",
+  "last_run_id": "26901108041",
   "backlog_cursor": {
     "issues": 311,
     "prs": 165
@@ -14,8 +14,9 @@
   "open_clippy_prs": [
     {"number": 163, "branch": "clippy/improve-custom-handler-66-20260326-f25d5328ab83f793", "title": "[Clippy] feat: add RegisterCustomHandler extensibility API to DocumentAssembler"},
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "[Clippy] feat(excel): add ExcelAssembler for template-based xlsx document assembly"},
-    {"number": null, "branch": "clippy/deps-tunit-1.48.6-20260602", "title": "[Clippy] chore(deps): update TUnit 1.47.0 → 1.48.6"},
-    {"number": null, "branch": "clippy/test-worksheetaccessor-20260602", "title": "[Clippy] test(excel): expand WorksheetAccessor tests WA004-WA013"}
+    {"number": null, "branch": "clippy/improve-openxmlregex-is-not-20260603", "title": "[Clippy] refactor: modernize as+null-check to is not pattern matching in OpenXmlRegex"},
+    {"number": null, "branch": "clippy/release-3.4.5-20260603", "title": "[Clippy] docs: add v3.4.5 changelog entry"},
+    {"number": null, "branch": "clippy/deps-jsonschema-net-9.2.1-20260603", "title": "[Clippy] chore(deps): update JsonSchema.Net 7.4.0 → 9.2.1"}
   ],
   "checked_off_by_maintainer": [],
   "m_issue": 311,
@@ -23,11 +24,11 @@
   "notes": [
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "Monthly Activity issue for June 2026 is #311",
-    "PR #312 open by sergey-tihon (feature/bug-pic-rel-id) - not Clippy PR",
-    "JsonSchema.Net 7.4.0 -> 9.2.1 is major update - investigate before bumping"
+    "JsonSchema.Net upgraded 7.4.0 -> 9.2.1 in PR (2026-06-03); fix: schema cache ConcurrentDictionary"
   ],
   "improvements_submitted": [
-    "PR(TBD): TUnit 1.47.0 -> 1.48.6 - 2026-06-02",
-    "PR(TBD): test WorksheetAccessor SetCellValue/GetCellValue WA004-WA013 - 2026-06-02"
+    "PR(TBD): refactor OpenXmlRegex as+null -> is not pattern matching - 2026-06-03",
+    "PR(TBD): docs v3.4.5 changelog - 2026-06-03",
+    "PR(TBD): chore(deps) JsonSchema.Net 7.4.0 -> 9.2.1 - 2026-06-03"
   ]
 }
