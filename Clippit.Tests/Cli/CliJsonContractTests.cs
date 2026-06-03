@@ -121,7 +121,7 @@ internal sealed class CliJsonContractTests : TestsBase
         await Assert.That(IsValid(missingSlides.RootElement, "build-result.v1.json")).IsFalse();
     }
 
-    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, JsonSchema> s_schemaCache =
+    private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, Lazy<JsonSchema>> s_schemaCache =
         new();
 
     private static void ValidateJsonAgainstSchema(JsonElement payload, string schemaFileName)
@@ -136,7 +136,16 @@ internal sealed class CliJsonContractTests : TestsBase
 
     private static EvaluationResults Evaluate(JsonElement payload, string schemaFileName)
     {
-        var schema = s_schemaCache.GetOrAdd(schemaFileName, LoadSchema);
+        var schema = s_schemaCache
+            .GetOrAdd(
+                schemaFileName,
+                static fileName =>
+                    new Lazy<JsonSchema>(
+                        () => LoadSchema(fileName),
+                        LazyThreadSafetyMode.ExecutionAndPublication
+                    )
+            )
+            .Value;
         return schema.Evaluate(payload, new EvaluationOptions { OutputFormat = OutputFormat.Hierarchical });
     }
 
