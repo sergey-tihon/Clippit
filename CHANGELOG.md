@@ -11,6 +11,8 @@
 - refactor: modernize `as` + null-check to `is not` pattern matching in `MarkupSimplifier` (#308)
 - test(excel): expand `WorksheetAccessor` tests — `SetCellValue`/`GetCellValue` round-trips WA004–WA013 (#314)
 - chore(deps): update TUnit 1.47.0 → 1.48.6 (#313)
+- docs: add README for Clippit.Cli NuGet tool and npm clippit package (#320)
+- docs: restore classic Clippy hero image and redesign homepage with retro Clippy speech bubble
 
 ## [3.4.4] - May 20, 2026
 
