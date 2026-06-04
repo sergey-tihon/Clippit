@@ -88,25 +88,25 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: Download linux-x64 binary
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: clippit-linux-x64
           path: bin/cli/linux-x64
 
       - name: Download win-x64 binary
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: clippit-win-x64
           path: bin/cli/win-x64
 
       - name: Download osx-x64 binary
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: clippit-osx-x64
           path: bin/cli/osx-x64
 
       - name: Download osx-arm64 binary
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: clippit-osx-arm64
           path: bin/cli/osx-arm64
