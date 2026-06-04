@@ -1198,7 +1198,6 @@ namespace Clippit.Word
          * - kinsoku
          * - mirrorIndents
          * - overflowPunct
-         * - pageBreakBefore
          * - snapToGrid
          * - suppressAutoHyphens
          * - suppressLineNumbers
@@ -1373,6 +1372,9 @@ namespace Clippit.Word
 
             CreateStyleFromJc(style, pPr.Element(W.jc), isBidi);
             CreateStyleFromShd(style, pPr.Element(W.shd));
+
+            if (GetBoolProp(pPr, W.pageBreakBefore))
+                style.AddIfMissing("page-break-before", "always");
 
             // Pt.FontName
             var font = (string)paragraph.Attributes(PtOpenXml.FontName).FirstOrDefault();

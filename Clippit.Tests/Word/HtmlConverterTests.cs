@@ -783,6 +783,52 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         await Assert.That(hasExpectedStyle).IsTrue();
     }
 
+    [Test]
+    public async Task HC071_PageBreakBeforePropertyRendersAsCssPageBreakBefore()
+    {
+        // Regression test: w:pageBreakBefore paragraph property must emit a CSS page-break-before: always
+        // on the paragraph element. Fixes issue #279.
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
+            mainPart.AddNewPart<DocumentSettingsPart>().Settings = new Settings();
+
+            XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+
+            var body = new XElement(
+                w + "body",
+                new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", "Before break"))),
+                new XElement(
+                    w + "p",
+                    new XElement(w + "pPr", new XElement(w + "pageBreakBefore")),
+                    new XElement(w + "r", new XElement(w + "t", "After break"))
+                )
+            );
+            mainPart.PutXDocument(new XDocument(new XElement(w + "document", body)));
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = false,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+
+        var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+
+        // The paragraph with pageBreakBefore must have page-break-before: always in its style
+        var paragraphsWithPageBreak = html.Descendants(Xhtml.p)
+            .Where(p => p.Attribute("style")?.Value?.Contains("page-break-before: always") == true)
+            .ToList();
+        await Assert.That(paragraphsWithPageBreak).HasCount(1);
+    }
+
     private static XElement BuildTextBoxParagraph(
         XNamespace w,
         XNamespace wp,
