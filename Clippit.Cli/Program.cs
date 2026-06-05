@@ -1,12 +1,16 @@
 using System.CommandLine;
 using System.Text.Json;
 using Clippit.Cli;
+using Clippit.Cli.Commands.Excel;
 using Clippit.Cli.Commands.Pptx;
 using Clippit.Cli.Commands.Version;
+using Clippit.Cli.Commands.Word;
 
 var rootCommand = new RootCommand("Clippit — PowerTools CLI for OpenXml (PowerPoint, Word, Excel)");
 
 rootCommand.Subcommands.Add(PptxCommand.Build());
+rootCommand.Subcommands.Add(WordCommand.Build());
+rootCommand.Subcommands.Add(ExcelCommand.Build());
 rootCommand.Subcommands.Add(VersionCommand.Build());
 
 args = NormalizeHelpArgs(args);

@@ -8,6 +8,8 @@ clippit version
 clippit pptx split deck.pptx --output slides --manifest
 clippit pptx build run slides/deck.manifest.json --output final.pptx
 clippit pptx verify final.pptx
+clippit word verify document.docx
+clippit excel verify spreadsheet.xlsx
 ```
 
 ## Installation
@@ -56,6 +58,8 @@ Agents and scripts should use `--format json` when they need machine-readable co
 | ------ | --------- | ------- |
 | stdout | Successful JSON command | Command-specific result JSON. |
 | stdout | `pptx verify` finds validation diagnostics | Verify result JSON with `valid: false`; process exits `4`. |
+| stdout | `word verify` finds validation diagnostics | Verify result JSON with `valid: false`; process exits `4`. |
+| stdout | `excel verify` finds validation diagnostics | Verify result JSON with `valid: false`; process exits `4`. |
 | stdout | `pptx build run --output -` | Binary `.pptx`; no success summary is written. |
 | stderr | Command execution error | Compact JSON error object: `{"error":"...","code":"..."}`. |
 | stderr/stdout | Parser, arity, and help output | System.CommandLine text output, not JSON. |
@@ -81,6 +85,8 @@ Commands that accept files use `-` for stdin where binary or JSON streaming is s
 cat deck.pptx | clippit pptx split - --output slides --format json
 cat deck.json | clippit pptx build run - --output - > final.pptx
 cat deck.pptx | clippit pptx verify - --format json
+cat document.docx | clippit word verify - --format json
+cat spreadsheet.xlsx | clippit excel verify - --format json
 ```
 
 When `pptx build run --output -` writes a `.pptx` to stdout, the success summary is suppressed automatically so the binary stream is not corrupted.
@@ -268,6 +274,68 @@ Invalid JSON example:
 {"input":"/work/deck.pptx","officeVersion":"Microsoft365","valid":false,"diagnostics":[{"kind":"relationship","code":null,"description":"Dangling relationship target.","part":"/ppt/slides/slide1.xml","path":null,"element":null,"attribute":"id","relationshipId":"rId9"}]}
 ```
 
+## `word verify`
+
+Validates that a `.docx` file is a readable and structurally correct Open XML document. The command checks package readability, Open XML schema errors, dangling relationships, and markup compatibility issues.
+
+Synopsis:
+
+```text
+clippit word verify <input.docx|-> [--office-version <version>] [--format json|text] [--quiet]
+```
+
+```bash
+clippit word verify document.docx
+clippit word verify document.docx --format json
+clippit word verify document.docx --office-version Office2021
+cat document.docx | clippit word verify - --format json
+```
+
+Options:
+
+| Option | Description |
+| ------ | ----------- |
+| `--office-version` | Open XML schema version to validate against. Defaults to `Microsoft365`. |
+
+Invalid-but-readable documents produce a validation result on stdout and exit with code `4`. JSON results include `diagnostics`; each diagnostic has a `kind`, message, and optional validator code/location fields. The payload shape matches `pptx verify` and is documented in [schemas/README.md](schemas/README.md).
+
+Valid JSON example:
+
+```json
+{"input":"/work/document.docx","officeVersion":"Microsoft365","valid":true,"diagnostics":[]}
+```
+
+## `excel verify`
+
+Validates that a `.xlsx` file is a readable and structurally correct Open XML spreadsheet. The command checks package readability, Open XML schema errors, dangling relationships, and markup compatibility issues.
+
+Synopsis:
+
+```text
+clippit excel verify <input.xlsx|-> [--office-version <version>] [--format json|text] [--quiet]
+```
+
+```bash
+clippit excel verify spreadsheet.xlsx
+clippit excel verify spreadsheet.xlsx --format json
+clippit excel verify spreadsheet.xlsx --office-version Office2021
+cat spreadsheet.xlsx | clippit excel verify - --format json
+```
+
+Options:
+
+| Option | Description |
+| ------ | ----------- |
+| `--office-version` | Open XML schema version to validate against. Defaults to `Microsoft365`. |
+
+Invalid-but-readable spreadsheets produce a validation result on stdout and exit with code `4`. JSON results include `diagnostics`; each diagnostic has a `kind`, message, and optional validator code/location fields. The payload shape matches `pptx verify` and is documented in [schemas/README.md](schemas/README.md).
+
+Valid JSON example:
+
+```json
+{"input":"/work/spreadsheet.xlsx","officeVersion":"Microsoft365","valid":true,"diagnostics":[]}
+```
+
 ## JSON Schemas
 
 Schemas for deck manifests and CLI result payloads are published in [docs/schemas](schemas/README.md). Result schemas are intended for documentation, integration tests, and downstream contract validation; result payloads do not embed schema URLs.
@@ -279,4 +347,4 @@ Canonical schema URLs:
 | Deck manifest | `https://sergey-tihon.github.io/Clippit/schemas/deck-manifest.v1.json` |
 | `pptx split` result | `https://sergey-tihon.github.io/Clippit/schemas/split-result.v1.json` |
 | `pptx build run` result | `https://sergey-tihon.github.io/Clippit/schemas/build-result.v1.json` |
-| `pptx verify` result | `https://sergey-tihon.github.io/Clippit/schemas/verify-result.v1.json` |
+| `pptx verify`, `word verify`, `excel verify` result | `https://sergey-tihon.github.io/Clippit/schemas/verify-result.v1.json` |
