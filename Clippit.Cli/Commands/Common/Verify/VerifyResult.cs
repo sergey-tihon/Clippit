@@ -1,7 +1,7 @@
-namespace Clippit.Cli.Commands.Pptx.Verify;
+namespace Clippit.Cli.Commands.Common.Verify;
 
 /// <summary>
-/// Result of the "pptx verify" command.
+/// Result of the "verify" command for Word, Excel, or PowerPoint documents.
 /// </summary>
 internal sealed record VerifyResult
 {
@@ -12,7 +12,7 @@ internal sealed record VerifyResult
 
     public static void WriteText(VerifyResult result, TextWriter writer)
     {
-        writer.WriteLine($"{(result.Valid ? "Valid" : "Invalid")} PPTX: {result.Input}");
+        writer.WriteLine($"{(result.Valid ? "Valid" : "Invalid")} document: {result.Input}");
         writer.WriteLine($"Office version: {result.OfficeVersion}");
 
         if (result.Valid)
