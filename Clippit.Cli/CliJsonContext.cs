@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Clippit.Cli.Commands.Common.Verify;
 using Clippit.Cli.Commands.Pptx.Build;
 using Clippit.Cli.Commands.Pptx.Split;
 using Clippit.Cli.Commands.Pptx.Verify;

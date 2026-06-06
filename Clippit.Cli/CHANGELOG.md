@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.0] - 2026-06-05
+
+- Added `word verify` command to validate `.docx` files.
+- Added `excel verify` command to validate `.xlsx` files.
+
 ## [0.1.3] - 2026-06-03
 
 Add README and CLI usage documentation to npm and NuGet packages.
