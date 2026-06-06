@@ -783,6 +783,107 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         await Assert.That(hasExpectedStyle).IsTrue();
     }
 
+    [Test]
+    public async Task HC071_PageBreakBeforePropertyRendersAsCssPageBreakBefore()
+    {
+        // Regression test: w:pageBreakBefore paragraph property must emit a CSS page-break-before: always
+        // on the paragraph that carries the property, and on no other paragraph. Fixes issue #279.
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
+            mainPart.AddNewPart<DocumentSettingsPart>().Settings = new Settings();
+
+            XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+
+            var body = new XElement(
+                w + "body",
+                new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", "Before break"))),
+                new XElement(
+                    w + "p",
+                    new XElement(w + "pPr", new XElement(w + "pageBreakBefore")),
+                    new XElement(w + "r", new XElement(w + "t", "After break"))
+                )
+            );
+            mainPart.PutXDocument(new XDocument(new XElement(w + "document", body)));
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = false,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+
+        var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+        var paragraphs = html.Descendants(Xhtml.p).ToList();
+
+        var afterBreak = paragraphs.SingleOrDefault(p => p.Value.Contains("After break"));
+        var beforeBreak = paragraphs.SingleOrDefault(p => p.Value.Contains("Before break"));
+
+        await Assert.That(afterBreak).IsNotNull();
+        await Assert.That(beforeBreak).IsNotNull();
+
+        var afterBreakHasCss = afterBreak!.Attribute("style")?.Value?.Contains("page-break-before: always") == true;
+        var beforeBreakHasCss = beforeBreak!.Attribute("style")?.Value?.Contains("page-break-before: always") == true;
+        await Assert.That(afterBreakHasCss).IsTrue();
+        await Assert.That(beforeBreakHasCss).IsFalse();
+    }
+
+    [Test]
+    public async Task HC072_PageBreakBeforeRespectsValAttributeOff()
+    {
+        // Regression test: w:pageBreakBefore with w:val="0" or w:val="false" must NOT emit
+        // page-break-before CSS. Locks down the GetBoolProp CT_OnOff semantics (only "0"/"false"
+        // are off; absent, "1", and "true" are on). Fixes issue #279.
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
+            mainPart.AddNewPart<DocumentSettingsPart>().Settings = new Settings();
+
+            XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+
+            var body = new XElement(
+                w + "body",
+                new XElement(
+                    w + "p",
+                    new XElement(w + "pPr", new XElement(w + "pageBreakBefore", new XAttribute(w + "val", "0"))),
+                    new XElement(w + "r", new XElement(w + "t", "Zero val"))
+                ),
+                new XElement(
+                    w + "p",
+                    new XElement(w + "pPr", new XElement(w + "pageBreakBefore", new XAttribute(w + "val", "false"))),
+                    new XElement(w + "r", new XElement(w + "t", "False val"))
+                )
+            );
+            mainPart.PutXDocument(new XDocument(new XElement(w + "document", body)));
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = false,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+
+        var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+        var paragraphsWithPageBreak = html.Descendants(Xhtml.p)
+            .Where(p => p.Attribute("style")?.Value?.Contains("page-break-before: always") == true)
+            .ToList();
+        await Assert.That(paragraphsWithPageBreak).IsEmpty();
+    }
+
     private static XElement BuildTextBoxParagraph(
         XNamespace w,
         XNamespace wp,
