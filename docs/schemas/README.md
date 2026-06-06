@@ -13,7 +13,7 @@ published for documentation, integration validation, and contract tests.
 | [`deck-manifest.v1.json`](./deck-manifest.v1.json)   | Input manifest consumed by `clippit pptx build run`        |
 | [`split-result.v1.json`](./split-result.v1.json)     | Stdout payload of `clippit pptx split` (JSON mode)         |
 | [`build-result.v1.json`](./build-result.v1.json)     | Stdout payload of `clippit pptx build run` (JSON mode)     |
-| [`verify-result.v1.json`](./verify-result.v1.json)   | Stdout payload of `clippit pptx verify` (JSON mode)        |
+| [`verify-result.v1.json`](./verify-result.v1.json)   | Stdout payload of `clippit pptx verify`, `clippit word verify`, `clippit excel verify` (JSON mode) |
 
 ## Output discipline
 
@@ -31,10 +31,11 @@ published for documentation, integration validation, and contract tests.
 
   Parser/help errors come from System.CommandLine and may include usage text.
 
-  `pptx verify` is intentionally different for validation failures: an invalid
-  but readable PPTX is a successful verification result with `valid: false` on
-  stdout and process exit code `4`. Operational failures (missing file, IO
-  errors, unexpected exceptions) still use the stderr error shape above.
+  `pptx verify`, `word verify`, and `excel verify` are intentionally different
+  for validation failures: an invalid but readable file is a successful
+  verification result with `valid: false` on stdout and process exit code `4`.
+  Operational failures (missing file, IO errors, unexpected exceptions) still
+  use the stderr error shape above.
 
 ## Exit codes
 
@@ -49,9 +50,9 @@ published for documentation, integration validation, and contract tests.
 
 ## Diagnostics
 
-`pptx verify` diagnostics use a unified `kind` field. SDK diagnostics map from
-OpenXml SDK `ValidationErrorType` values; Clippit-specific diagnostics use
-custom kind values.
+`pptx verify`, `word verify`, and `excel verify` diagnostics use a unified
+`kind` field. SDK diagnostics map from OpenXml SDK `ValidationErrorType`
+values; Clippit-specific diagnostics use custom kind values.
 
 Current diagnostic kinds:
 

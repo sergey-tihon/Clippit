@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://sergey-tihon.github.io/Clippit/schemas/verify-result.v1.json",
-  "title": "Clippit pptx verify result",
-  "description": "Result payload of `clippit pptx verify` written to stdout in JSON mode. Invalid presentations are reported here with exit code 4 rather than as stderr command errors.",
+  "title": "Clippit verify result",
+  "description": "Result payload of `clippit word verify`, `clippit excel verify`, or `clippit pptx verify` written to stdout in JSON mode. Invalid documents are reported here with exit code 4 rather than as stderr command errors.",
   "type": "object",
   "additionalProperties": false,
   "required": ["input", "officeVersion", "valid", "diagnostics"],

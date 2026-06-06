@@ -20,6 +20,12 @@ clippit pptx build run manifest.json --output result.pptx
 # Validate a PPTX file
 clippit pptx verify presentation.pptx
 
+# Validate a DOCX file
+clippit word verify document.docx
+
+# Validate an XLSX file
+clippit excel verify spreadsheet.xlsx
+
 # Get JSON output for scripting
 clippit pptx split presentation.pptx --format json
 ```
@@ -32,6 +38,8 @@ clippit pptx split presentation.pptx --format json
 | `pptx build init` | Scaffold a deck manifest (JSON). |
 | `pptx build run` | Assemble a `.pptx` from a deck manifest. |
 | `pptx verify` | Validate a PPTX — schema, relationships, markup compatibility, and sections. |
+| `word verify` | Validate a DOCX — schema and relationships. |
+| `excel verify` | Validate an XLSX — schema and relationships. |
 | `version` | Print version information. |
 
 ### Common flags

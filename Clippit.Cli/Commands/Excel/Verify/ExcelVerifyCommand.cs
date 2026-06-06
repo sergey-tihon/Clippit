@@ -3,9 +3,9 @@ using Clippit.Cli.Commands.Common.Verify;
 using Clippit.Cli.Infrastructure;
 using DocumentFormat.OpenXml;
 
-namespace Clippit.Cli.Commands.Pptx.Verify;
+namespace Clippit.Cli.Commands.Excel.Verify;
 
-internal static class PptxVerifyCommand
+internal static class ExcelVerifyCommand
 {
     private const FileFormatVersions DefaultOfficeVersion = FileFormatVersions.Microsoft365;
     private static readonly string s_allowedOfficeVersions = string.Join(
@@ -17,7 +17,7 @@ internal static class PptxVerifyCommand
     {
         var inputArg = InputSource.BuildArgument(
             "input",
-            "Path to the .pptx file to verify. Use '-' to read from stdin."
+            "Path to the .xlsx file to verify. Use '-' to read from stdin."
         );
 
         var officeVersionOption = new Option<string>("--office-version")
@@ -39,12 +39,12 @@ internal static class PptxVerifyCommand
 
         var cmd = new Command(
             "verify",
-            "Validate that a .pptx file is a correct OpenXml presentation."
+            "Validate that a .xlsx file is a correct OpenXml spreadsheet."
                 + "\n\nExamples:"
-                + "\n  clippit pptx verify deck.pptx"
-                + "\n  clippit pptx verify deck.pptx --format json"
-                + "\n  clippit pptx verify deck.pptx --office-version Office2021"
-                + "\n  cat deck.pptx | clippit pptx verify - --format json"
+                + "\n  clippit excel verify spreadsheet.xlsx"
+                + "\n  clippit excel verify spreadsheet.xlsx --format json"
+                + "\n  clippit excel verify spreadsheet.xlsx --office-version Office2021"
+                + "\n  cat spreadsheet.xlsx | clippit excel verify - --format json"
         );
         cmd.Arguments.Add(inputArg);
         cmd.Options.Add(officeVersionOption);
@@ -67,8 +67,8 @@ internal static class PptxVerifyCommand
     private static int Run(string inputPath, FileFormatVersions officeVersion, OutputFormat format, bool quiet)
     {
         var writer = new OutputWriter(format, quiet);
-        var input = InputSource.From(inputPath, "stdin.pptx");
-        var result = PptxVerifyService.Execute(input, officeVersion);
+        var input = InputSource.From(inputPath, "stdin.xlsx");
+        var result = ExcelVerifyService.Execute(input, officeVersion);
         writer.WriteResult(result, CliJsonContext.Default.VerifyResult, VerifyResult.WriteText);
         return result.Valid ? ExitCodes.Success : ExitCodes.InvalidFormat;
     }
