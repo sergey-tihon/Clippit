@@ -13,6 +13,7 @@ public static partial class PresentationBuilder
     {
         ArgumentNullException.ThrowIfNull(src);
 
+        src = EnsureTransitional(src);
         using var streamSrcDoc = new OpenXmlMemoryStreamDocument(src);
         using var srcDoc = streamSrcDoc.GetPresentationDocument(new OpenSettings { AutoSave = false });
         return PublishSlides(srcDoc, src.FileName).ToList();
@@ -21,6 +22,7 @@ public static partial class PresentationBuilder
     public static IEnumerable<PmlDocument> PublishSlides(PresentationDocument srcDoc, string fileName)
     {
         ArgumentNullException.ThrowIfNull(srcDoc);
+        ThrowIfStrict(srcDoc);
 
         fileName ??= string.Empty;
 
@@ -77,6 +79,43 @@ public static partial class PresentationBuilder
 
     [GeneratedRegex(".pptx", RegexOptions.IgnoreCase, "en-US")]
     private static partial Regex SlideNameRegex();
+
+    // The builder reads slides through transitional (schemas.openxmlformats.org) qualified names,
+    // so an ISO/IEC 29500 Strict source (purl.oclc.org namespaces) would otherwise yield no slides.
+    // Convert it up front, reusing the SDK's strict-to-transitional mapping via PmlDocument.
+    private static PmlDocument EnsureTransitional(PmlDocument source)
+    {
+        if (!IsStrict(source.DocumentByteArray))
+        {
+            return source;
+        }
+
+        return new PmlDocument(source.FileName, source.DocumentByteArray, convertToTransitional: true)
+        {
+            FileName = source.FileName,
+        };
+    }
+
+    private static void ThrowIfStrict(PresentationDocument srcDoc)
+    {
+        if (srcDoc.StrictRelationshipFound)
+        {
+            throw new PresentationBuilderException(
+                "Source presentation is saved in strict mode (ISO/IEC 29500 Strict), which is not "
+                    + "supported. Convert it to transitional first, e.g. "
+                    + "new PmlDocument(path, convertToTransitional: true)."
+            );
+        }
+    }
+
+    private static bool IsStrict(byte[] documentByteArray)
+    {
+        using var stream = new MemoryStream();
+        stream.Write(documentByteArray, 0, documentByteArray.Length);
+        stream.Position = 0;
+        using var document = PresentationDocument.Open(stream, false);
+        return document.StrictRelationshipFound;
+    }
 
     /// <summary>
     /// Updates docProps/app.xml so that a single-slide output document reflects accurate metadata:
