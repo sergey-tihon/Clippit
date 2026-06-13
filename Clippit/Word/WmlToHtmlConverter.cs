@@ -358,8 +358,7 @@ namespace Clippit.Word
             decimal currentMarginLeft
         )
         {
-            var element = node as XElement;
-            if (element == null)
+            if (node is not XElement element)
                 return null;
 
             // Transform the w:document element to the XHTML h:html element.
@@ -2094,8 +2093,7 @@ namespace Clippit.Word
         [SuppressMessage("ReSharper", "FunctionComplexityOverflow")]
         private static object CalculateSpanWidthTransform(XNode node, int defaultTabStop)
         {
-            var element = node as XElement;
-            if (element == null)
+            if (node is not XElement element)
                 return node;
 
             // if it is not a paragraph or if there are no tabs in the paragraph,
@@ -2531,8 +2529,7 @@ namespace Clippit.Word
         // benefit of leading to a more faithful representation of the Word document in HTML.
         private static object InsertAppropriateNonbreakingSpacesTransform(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
+            if (node is XElement element)
             {
                 // child content of run to look for
                 // W.br
@@ -3366,12 +3363,8 @@ namespace Clippit.Word
                         parsed.Arguments.Length > 0
                             ? new XElement(Xhtml.a, new XAttribute("href", parsed.Arguments[0]), content)
                             : new XElement(Xhtml.a, content);
-                    var a2 = a as XElement;
-                    if (!a2.Nodes().Any())
-                    {
-                        a2.Add(new XText(""));
-                        return a2;
-                    }
+                    if (!a.Nodes().Any())
+                        a.Add(new XText(""));
                     return a;
                 })
                 .ToList();
