@@ -1,22 +1,22 @@
 {
-  "last_run": "2026-06-03",
-  "last_run_id": "26901108041",
+  "last_run": "2026-06-13",
+  "last_run_id": "27463338531",
   "backlog_cursor": {
     "issues": 311,
-    "prs": 165
+    "prs": 333
   },
   "comments_made": {
     "54": "2026-05-01",
     "67": "2026-05-01",
     "77": "2026-05-01",
-    "103": "2026-05-01"
+    "103": "2026-05-01",
+    "333": "2026-06-13"
   },
   "open_clippy_prs": [
     {"number": 163, "branch": "clippy/improve-custom-handler-66-20260326-f25d5328ab83f793", "title": "[Clippy] feat: add RegisterCustomHandler extensibility API to DocumentAssembler"},
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "[Clippy] feat(excel): add ExcelAssembler for template-based xlsx document assembly"},
-    {"number": null, "branch": "clippy/improve-openxmlregex-is-not-20260603", "title": "[Clippy] refactor: modernize as+null-check to is not pattern matching in OpenXmlRegex"},
-    {"number": null, "branch": "clippy/release-3.4.5-20260603", "title": "[Clippy] docs: add v3.4.5 changelog entry"},
-    {"number": null, "branch": "clippy/deps-jsonschema-net-9.2.1-20260603", "title": "[Clippy] chore(deps): update JsonSchema.Net 7.4.0 → 9.2.1"}
+    {"number": null, "branch": "clippy/improve-wmltohtmlconverter-wmltoxmlcs-is-not-20260613", "title": "[Clippy] refactor: modernize as+null-check to is not pattern matching in WmlToHtmlConverter and WmlToXml"},
+    {"number": null, "branch": "clippy/deps-tunit-1.54.0-20260613", "title": "[Clippy] chore(deps): update TUnit 1.49.0 → 1.54.0"}
   ],
   "checked_off_by_maintainer": [],
   "m_issue": 311,
@@ -24,11 +24,12 @@
   "notes": [
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "Monthly Activity issue for June 2026 is #311",
-    "JsonSchema.Net upgraded 7.4.0 -> 9.2.1 in PR (2026-06-03); fix: schema cache ConcurrentDictionary"
+    "v3.4.6 released 2026-06-10 (feat: word/excel CLI verify, fix: pageBreakBefore CSS, refactor: OpenXmlRegex is-not, deps: TUnit 1.49.0, JsonSchema.Net 9.2.1)",
+    "PR #333 by NikiforovAll: fix(PowerPoint) Strict OOXML - all CI passing, Clippy reviewed 2026-06-13",
+    "System.CommandLine is intentionally pinned at 3.0.0-preview.4 (still pre-release)"
   ],
   "improvements_submitted": [
-    "PR(TBD): refactor OpenXmlRegex as+null -> is not pattern matching - 2026-06-03",
-    "PR(TBD): docs v3.4.5 changelog - 2026-06-03",
-    "PR(TBD): chore(deps) JsonSchema.Net 7.4.0 -> 9.2.1 - 2026-06-03"
+    "PR(TBD): refactor WmlToHtmlConverter/WmlToXml as+null -> is not pattern matching - 2026-06-13",
+    "PR(TBD): chore(deps) TUnit 1.49.0 -> 1.54.0 - 2026-06-13"
   ]
 }
