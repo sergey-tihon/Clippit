@@ -114,7 +114,7 @@ internal static class WordFromHtmlCommand
     )
     {
         var input = InputSource.From(inputPath, "stdin.html");
-        var defaultOutput = Path.ChangeExtension(input.DisplayName, ".docx");
+        var defaultOutput = Path.ChangeExtension(input.IsStdin ? input.LogicalName : input.DisplayName, ".docx");
         var output = OutputTarget.FromOption(outputPath, () => defaultOutput);
         var writer = new OutputWriter(format, quiet || output.IsStdout);
 

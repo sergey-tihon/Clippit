@@ -38,8 +38,10 @@ published for documentation, integration validation, and contract tests.
   Operational failures (missing file, IO errors, unexpected exceptions) still
   use the stderr error shape above.
 
-  `word to-html` and `word from-html` emit their conversion result on stdout and
-  write the actual converted content to the output file (or stdout via `-`).
+  `word to-html` and `word from-html` emit their conversion result on stdout when
+  converted content is written to a file. When `--output -` is used, stdout is
+  reserved for the converted HTML/DOCX stream and the success payload is
+  suppressed.
 
 ## Exit codes
 

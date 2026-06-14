@@ -44,7 +44,7 @@ internal static class WordToHtmlService
         // Build converter settings
         var settings = new WmlToHtmlConverterSettings
         {
-            PageTitle = pageTitle ?? input.DisplayName,
+            PageTitle = pageTitle ?? input.LogicalName,
             AdditionalCss = additionalCss ?? string.Empty,
             CssClassPrefix = cssPrefix,
             FabricateCssClasses = fabricateCss,
@@ -57,6 +57,13 @@ internal static class WordToHtmlService
                 if (inlineImages)
                 {
                     return CreateInlineImage(imageInfo);
+                }
+
+                if (output.IsStdout)
+                {
+                    throw CliException.InvalidArguments(
+                        "--inline-images is required when writing HTML to stdout for documents with images."
+                    );
                 }
 
                 // Write image to external files directory

@@ -646,7 +646,18 @@ internal sealed class WordHtmlConvertTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI076_FromHtml_NestedOutputDirectory_Created()
+    public async Task CLI076_ToHtml_StdoutOutput_WithImages_RequiresInlineImages()
+    {
+        var result = await CliTestRunner
+            .RunManagedAsync("word", "to-html", DocxWithImage.FullName, "--output", "-", "--format", "json")
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(2);
+        await Assert.That(result.StandardError).Contains("--inline-images is required");
+    }
+
+    [Test]
+    public async Task CLI077_FromHtml_NestedOutputDirectory_Created()
     {
         var output = new FileInfo(Path.Combine(TempDir, "nested", "from-html", "output.docx"));
         var result = await CliTestRunner

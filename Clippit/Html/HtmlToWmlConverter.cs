@@ -341,7 +341,7 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
         /// standard browser defaults. Used as the <c>defaultCss</c> parameter for
         /// <see cref="ConvertHtmlToWml"/> when no custom default CSS is provided.
         /// </summary>
-        public static string DefaultCss { get; set; } =
+        public static string DefaultCss =>
             @"
 html, address,
 blockquote,

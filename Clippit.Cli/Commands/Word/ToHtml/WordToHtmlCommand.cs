@@ -95,7 +95,7 @@ internal static class WordToHtmlCommand
     )
     {
         var input = InputSource.From(inputPath, "stdin.docx");
-        var defaultOutput = Path.ChangeExtension(input.DisplayName, ".html");
+        var defaultOutput = Path.ChangeExtension(input.IsStdin ? input.LogicalName : input.DisplayName, ".html");
         var output = OutputTarget.FromOption(outputPath, () => defaultOutput);
         var writer = new OutputWriter(format, quiet || output.IsStdout);
 
