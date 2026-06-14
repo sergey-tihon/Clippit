@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sergey-tihon.github.io/Clippit/schemas/convert-result.v1.json",
+  "title": "Clippit word convert result",
+  "description": "Result payload of `clippit word to-html` or `clippit word from-html` written to stdout in JSON mode.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["input", "output", "outputSize"],
+  "properties": {
+    "input": {
+      "type": "string",
+      "description": "Absolute path of the source file (.docx for to-html, .html for from-html), or '<stdin>' when read from stdin."
+    },
+    "output": {
+      "type": "string",
+      "description": "Absolute path of the generated file (.html for to-html, .docx for from-html), or '<stdout>' when written to stdout."
+    },
+    "outputSize": {
+      "type": "integer",
+      "description": "Size of the generated output file in bytes."
+    }
+  }
+}

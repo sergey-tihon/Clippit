@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.3.0] - 2026-06-14
+
+- Added `word to-html` command to convert `.docx` files to HTML/CSS with
+  support for embedded or external images, custom CSS injection, page title
+  control, and CSS class prefix/fabrication options.
+- Added `word from-html` command to convert HTML/CSS documents to `.docx`
+  files with CSS extraction from `<style>` elements or external files, font
+  configuration, and image base URI resolution.
+- Both new commands support stdin/stdout pipelines (`-`), stable JSON
+  output (`--format json`), and quiet mode (`--quiet`).
+
 ## [0.2.0] - 2026-06-05
 
 - Added `word verify` command to validate `.docx` files.

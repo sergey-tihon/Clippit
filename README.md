@@ -9,7 +9,7 @@ Clippit is a .NET library for programmatically creating, modifying, and converti
 Word (DOCX), Excel (XLSX), and PowerPoint (PPTX) documents. Built on top of the
 [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), it provides high-level
 APIs that handle the complexity of the Open XML format so you can focus on your content.
-It also includes a scriptable CLI for PowerPoint split, build, and validation workflows.
+It also includes a scriptable CLI for PowerPoint split, build, and validation workflows, plus DOCX↔HTML conversion.
 
 📖 **[Full documentation and tutorials →](https://sergey-tihon.github.io/Clippit/)**
 
@@ -40,7 +40,7 @@ foreach (var slide in slides)
 | **Word**       | Template assembler, merge/split docs, track-change diff, DOCX↔HTML, regex |
 | **Excel**      | Generate XLSX with formatted tables, streaming writes, data extraction    |
 | **PowerPoint** | Merge/split PPTX, fluent slide builder, publish slides                    |
-| **CLI**        | Scriptable PPTX split/build/verify commands with text or JSON output      |
+| **CLI**        | Scriptable PPTX split/build/verify, DOCX validation, and DOCX↔HTML conversion with text or JSON output |
 | **Common**     | OpenXml regex search/replace, document metrics                            |
 
 See the [tutorials](https://sergey-tihon.github.io/Clippit/tutorials/) for API signatures and full code samples.

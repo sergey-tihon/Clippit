@@ -40,6 +40,8 @@ clippit pptx split presentation.pptx --format json
 | `pptx build run`  | Assemble a `.pptx` from a deck manifest.                                                                                                |
 | `pptx verify`     | Validate a PPTX — schema, relationships, markup compatibility, and sections.                                                            |
 | `word verify`     | Validate a DOCX — schema and relationships.                                                                                             |
+| `word to-html`    | Convert a DOCX to HTML/CSS.                                                                                                             |
+| `word from-html`  | Convert HTML/CSS to a DOCX.                                                                                                             |
 | `excel verify`    | Validate an XLSX — schema and relationships.                                                                                            |
 | `version`         | Print version information.                                                                                                              |
 

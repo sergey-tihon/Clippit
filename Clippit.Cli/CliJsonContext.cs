@@ -4,6 +4,7 @@ using Clippit.Cli.Commands.Pptx.Build;
 using Clippit.Cli.Commands.Pptx.Split;
 using Clippit.Cli.Commands.Pptx.Verify;
 using Clippit.Cli.Commands.Version;
+using Clippit.Cli.Commands.Word;
 using Clippit.Cli.Infrastructure;
 
 namespace Clippit.Cli;
@@ -26,6 +27,7 @@ namespace Clippit.Cli;
 [JsonSerializable(typeof(VerifyResult))]
 [JsonSerializable(typeof(VerifyDiagnostic))]
 [JsonSerializable(typeof(VersionResult))]
+[JsonSerializable(typeof(WordConvertResult))]
 [JsonSerializable(typeof(ErrorResult))]
 [JsonSourceGenerationOptions(
     WriteIndented = false,
