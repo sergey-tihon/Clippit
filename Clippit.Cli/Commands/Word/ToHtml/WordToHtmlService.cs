@@ -99,11 +99,7 @@ internal static class WordToHtmlService
             outputStream.Write(htmlBytes, 0, htmlBytes.Length);
             outputStream.Flush();
 
-            if (!output.IsStdout)
-            {
-                output.Commit(tempPath);
-            }
-            else
+            if (output.IsStdout)
             {
                 output.Flush(outputStream);
             }
@@ -111,6 +107,17 @@ internal static class WordToHtmlService
         finally
         {
             outputStream.Dispose();
+        }
+
+        try
+        {
+            if (!output.IsStdout)
+            {
+                output.Commit(tempPath);
+            }
+        }
+        finally
+        {
             OutputTarget.DeleteTemp(tempPath);
         }
 

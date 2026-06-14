@@ -126,11 +126,7 @@ internal static class WordFromHtmlService
             outputStream.Write(docxBytes, 0, docxBytes.Length);
             outputStream.Flush();
 
-            if (!output.IsStdout)
-            {
-                output.Commit(tempPath);
-            }
-            else
+            if (output.IsStdout)
             {
                 output.Flush(outputStream);
             }
@@ -138,6 +134,17 @@ internal static class WordFromHtmlService
         finally
         {
             outputStream.Dispose();
+        }
+
+        try
+        {
+            if (!output.IsStdout)
+            {
+                output.Commit(tempPath);
+            }
+        }
+        finally
+        {
             OutputTarget.DeleteTemp(tempPath);
         }
 
