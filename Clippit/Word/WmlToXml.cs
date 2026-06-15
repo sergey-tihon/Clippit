@@ -897,8 +897,7 @@ namespace Clippit.Word
 #endif
         private static object AnnotateRunsThatUseFldSimple(XNode node)
         {
-            var element = node as XElement;
-            if (element != null)
+            if (node is XElement element)
             {
                 if (
                     element.Name == W.p
@@ -1530,12 +1529,8 @@ namespace Clippit.Word
             }
 
             part.PutXDocument();
-            var mainPart = part as MainDocumentPart;
-            if (mainPart != null)
-            {
-                if (mainPart.WordprocessingCommentsPart != null)
-                    mainPart.WordprocessingCommentsPart.PutXDocument();
-            }
+            if (part is MainDocumentPart mainPart && mainPart.WordprocessingCommentsPart != null)
+                mainPart.WordprocessingCommentsPart.PutXDocument();
         }
 
         private static XElement RemoveContentAfterBR(XElement clonedBlc)

@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.4.6] - June 10, 2026
+
+- feat(cli): add `word verify` and `excel verify` commands (#329)
+- fix(html): convert `w:pageBreakBefore` paragraph property to CSS `page-break-before` (#325)
+- refactor: modernize `as` + null-check to `is not` pattern matching in `OpenXmlRegex` (#315)
+- chore(deps): update TUnit 1.48.6 → 1.49.0 (#327)
+- chore(deps): update JsonSchema.Net 7.4.0 → 9.2.1 (#317)
+
 ## [3.4.5] - June 3, 2026
 
 - feat: add Clippit CLI — `pptx split`, `pptx build`, `pptx verify`, and `version` commands (#309)
