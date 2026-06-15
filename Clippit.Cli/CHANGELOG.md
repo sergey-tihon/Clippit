@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.0] - 2026-06-15
+
+- Added `excel to-html` command to convert Excel spreadsheet sheets, ranges,
+  or named tables to HTML/CSS.
+  - `--sheet` selects a worksheet by name (defaults to the first sheet).
+  - `--range` restricts conversion to a cell range (e.g. `A1:D10`); requires `--sheet`.
+  - `--table` converts a named Excel table and emits a `<caption>` with the table name;
+    cannot be combined with `--sheet` or `--range`.
+  - `--page-title`, `--additional-css`, `--css-prefix`, and `--no-fabricate-css` mirror
+    the options available on `word to-html`.
+  - Supports stdin/stdout pipelines (`-`), `--format json`, and `--quiet`.
+  - Cell formatting (font, fill, border, alignment) is translated to CSS.
+
 ## [0.3.0] - 2026-06-14
 
 - Added `word to-html` command to convert `.docx` files to HTML/CSS with
