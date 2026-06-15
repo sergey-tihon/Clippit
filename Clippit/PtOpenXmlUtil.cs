@@ -5891,7 +5891,10 @@ listSeparator
         public static readonly XName sub = xhtml + "sub";
         public static readonly XName sup = xhtml + "sup";
         public static readonly XName table = xhtml + "table";
+        public static readonly XName tbody = xhtml + "tbody";
         public static readonly XName td = xhtml + "td";
+        public static readonly XName th = xhtml + "th";
+        public static readonly XName thead = xhtml + "thead";
         public static readonly XName title = xhtml + "title";
         public static readonly XName tr = xhtml + "tr";
         public static readonly XName u = xhtml + "u";
