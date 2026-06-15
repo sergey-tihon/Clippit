@@ -47,6 +47,7 @@ clippit pptx split presentation.pptx --format json
 | `word verify` | Validate a DOCX — schema and relationships. |
 | `word to-html` | Convert a DOCX to HTML/CSS. |
 | `word from-html` | Convert HTML/CSS to a DOCX. |
+| `excel to-html` | Convert an XLSX sheet, range, or table to HTML/CSS. |
 | `excel verify` | Validate an XLSX — schema and relationships. |
 | `version` | Print version information. |
 

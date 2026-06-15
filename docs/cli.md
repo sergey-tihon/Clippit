@@ -11,6 +11,7 @@ clippit pptx verify final.pptx
 clippit word verify document.docx
 clippit word to-html document.docx
 clippit word from-html article.html --css styles.css
+clippit excel to-html spreadsheet.xlsx
 clippit excel verify spreadsheet.xlsx
 ```
 
@@ -63,8 +64,10 @@ Agents and scripts should use `--format json` when they need machine-readable co
 | stdout | `word verify` finds validation diagnostics | Verify result JSON with `valid: false`; process exits `4`. |
 | stdout | `excel verify` finds validation diagnostics | Verify result JSON with `valid: false`; process exits `4`. |
 | stdout | `word to-html` / `word from-html` | Result JSON (e.g. `{"input":...,"output":...,"outputSize":...}`); converted content written to `--output` path. |
+| stdout | `excel to-html` | Result JSON (e.g. `{"input":...,"output":...,"outputSize":...}`); converted HTML written to `--output` path. |
 | stdout | `pptx build run --output -` | Binary `.pptx`; no success summary is written. |
 | stdout | `word to-html --output -` / `word from-html --output -` | Binary/HTML content streamed to stdout; no success summary is written. |
+| stdout | `excel to-html --output -` | HTML content streamed to stdout; no success summary is written. |
 | stderr | Command execution error | Compact JSON error object: `{"error":"...","code":"..."}`. |
 | stderr/stdout | Parser, arity, and help output | System.CommandLine text output, not JSON. |
 

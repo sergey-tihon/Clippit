@@ -1,6 +1,5 @@
 using System.Text;
 using System.Xml.Linq;
-using Clippit.Cli.Commands.Word;
 using Clippit.Cli.Infrastructure;
 using Clippit.Excel;
 using DocumentFormat.OpenXml.Packaging;
@@ -9,7 +8,7 @@ namespace Clippit.Cli.Commands.Excel.ToHtml;
 
 internal static class ExcelToHtmlService
 {
-    public static WordConvertResult Execute(
+    public static ConvertResult Execute(
         InputSource input,
         OutputTarget output,
         string? sheetName,
@@ -114,7 +113,7 @@ internal static class ExcelToHtmlService
                 FabricateCssClasses = fabricateCss,
             };
 
-            // Convert using our public ConvertToHtmlInternal
+            // Convert using SmlToHtmlConverter.ConvertToHtml
             var htmlElement = SmlToHtmlConverter.ConvertToHtml(sDoc, settings, rangeXml);
 
             // Produce HTML document with <!DOCTYPE html>
@@ -164,7 +163,7 @@ internal static class ExcelToHtmlService
                 OutputTarget.DeleteTemp(tempPath);
             }
 
-            return new WordConvertResult
+            return new ConvertResult
             {
                 Input = input.DisplayName,
                 Output = output.DisplayPath,

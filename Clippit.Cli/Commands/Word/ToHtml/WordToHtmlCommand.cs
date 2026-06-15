@@ -108,7 +108,7 @@ internal static class WordToHtmlCommand
             fabricateCss,
             inlineImages
         );
-        writer.WriteResult(result, CliJsonContext.Default.WordConvertResult, WordConvertResult.WriteText);
+        writer.WriteResult(result, CliJsonContext.Default.ConvertResult, ConvertResult.WriteText);
         return ExitCodes.Success;
     }
 }

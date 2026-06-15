@@ -1,5 +1,4 @@
 using System.CommandLine;
-using Clippit.Cli.Commands.Word;
 using Clippit.Cli.Infrastructure;
 
 namespace Clippit.Cli.Commands.Excel.ToHtml;
@@ -48,6 +47,7 @@ internal static class ExcelToHtmlCommand
         var cssPrefixOption = new Option<string>("--css-prefix")
         {
             Description = "Prefix for auto-generated CSS class names (default: pt-).",
+            DefaultValueFactory = _ => "pt-",
         };
 
         var noFabricateCssOption = new Option<bool>("--no-fabricate-css")
@@ -85,7 +85,7 @@ internal static class ExcelToHtmlCommand
                     parseResult.GetValue(tableOption),
                     parseResult.GetValue(pageTitleOption),
                     parseResult.GetValue(additionalCssOption),
-                    parseResult.GetValue(cssPrefixOption) ?? "pt-",
+                    parseResult.GetValue(cssPrefixOption)!,
                     !parseResult.GetValue(noFabricateCssOption),
                     parseResult.GetValue(formatOption),
                     parseResult.GetValue(quietOption)
@@ -126,7 +126,7 @@ internal static class ExcelToHtmlCommand
             cssPrefix,
             fabricateCss
         );
-        writer.WriteResult(result, CliJsonContext.Default.WordConvertResult, WordConvertResult.WriteText);
+        writer.WriteResult(result, CliJsonContext.Default.ConvertResult, ConvertResult.WriteText);
         return ExitCodes.Success;
     }
 }

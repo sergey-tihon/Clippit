@@ -14,7 +14,7 @@ published for documentation, integration validation, and contract tests.
 | [`split-result.v1.json`](./split-result.v1.json)       | Stdout payload of `clippit pptx split` (JSON mode)           |
 | [`build-result.v1.json`](./build-result.v1.json)       | Stdout payload of `clippit pptx build run` (JSON mode)       |
 | [`verify-result.v1.json`](./verify-result.v1.json)     | Stdout payload of `clippit pptx verify`, `clippit word verify`, `clippit excel verify` (JSON mode) |
-| [`convert-result.v1.json`](./convert-result.v1.json)   | Stdout payload of `clippit word to-html` or `clippit word from-html` (JSON mode) |
+| [`convert-result.v1.json`](./convert-result.v1.json)   | Stdout payload of `clippit word to-html`, `clippit word from-html`, or `clippit excel to-html` (JSON mode) |
 
 ## Output discipline
 
@@ -38,7 +38,7 @@ published for documentation, integration validation, and contract tests.
   Operational failures (missing file, IO errors, unexpected exceptions) still
   use the stderr error shape above.
 
-  `word to-html` and `word from-html` emit their conversion result on stdout when
+  `word to-html`, `word from-html`, and `excel to-html` emit their conversion result on stdout when
   converted content is written to a file. When `--output -` is used, stdout is
   reserved for the converted HTML/DOCX stream and the success payload is
   suppressed.

@@ -7,7 +7,7 @@ namespace Clippit.Cli.Commands.Word.ToHtml;
 
 internal static class WordToHtmlService
 {
-    public static WordConvertResult Execute(
+    public static ConvertResult Execute(
         InputSource input,
         OutputTarget output,
         string? pageTitle,
@@ -121,7 +121,7 @@ internal static class WordToHtmlService
             OutputTarget.DeleteTemp(tempPath);
         }
 
-        return new WordConvertResult
+        return new ConvertResult
         {
             Input = input.DisplayName,
             Output = output.DisplayPath,

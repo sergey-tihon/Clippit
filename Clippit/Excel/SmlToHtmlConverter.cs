@@ -198,7 +198,7 @@ namespace Clippit.Excel
             };
 
             if (tableName != null)
-                tableContent.Add(new XElement(XhtmlNoNamespace.caption, new XText(tableName)));
+                tableContent.Add(new XElement(Xhtml.caption, new XText(tableName)));
 
             tableContent.Add(new XElement(Xhtml.tbody, rows));
 
@@ -235,7 +235,12 @@ namespace Clippit.Excel
                     )
                 )
                 {
-                    tr.AddAnnotation(new Dictionary<string, string> { ["height"] = $"{ht:N2}pt" });
+                    tr.AddAnnotation(
+                        new Dictionary<string, string>
+                        {
+                            ["height"] = ht.ToString("F2", CultureInfo.InvariantCulture) + "pt",
+                        }
+                    );
                 }
             }
 
@@ -261,7 +266,7 @@ namespace Clippit.Excel
                 ApplyCellStyles(cellProps, styles);
 
             if (columnWidths != null && columnIndex < columnWidths.Count && columnWidths[columnIndex] > 0)
-                styles["width"] = $"{columnWidths[columnIndex]:N2}pt";
+                styles["width"] = columnWidths[columnIndex].ToString("F2", CultureInfo.InvariantCulture) + "pt";
 
             if (styles.Count > 0)
                 td.AddAnnotation(styles);
@@ -346,7 +351,7 @@ namespace Clippit.Excel
                         out var fontSize
                     )
                 )
-                    styles["font-size"] = $"{fontSize:N1}pt";
+                    styles["font-size"] = fontSize.ToString("F1", CultureInfo.InvariantCulture) + "pt";
 
                 var color = font.Element("color");
                 if (color != null)
@@ -423,7 +428,15 @@ namespace Clippit.Excel
 
                 var textRotation = (string)alignment.Attribute("textRotation");
                 if (textRotation != null && int.TryParse(textRotation, out var rotation))
-                    styles["writing-mode"] = rotation >= 90 ? "vertical-rl" : "vertical-lr";
+                {
+                    // Only map the two Excel vertical-text cases to CSS writing-mode.
+                    // rotation == 90: text rotated 90° counter-clockwise (vertical column)
+                    // rotation == 255: stacked vertical text
+                    // All other rotation values (e.g. 45°) are not representable in CSS
+                    // table cells and are left unstyled to avoid unexpected layout.
+                    if (rotation == 90 || rotation == 255)
+                        styles["writing-mode"] = "vertical-rl";
+                }
 
                 var indent = (string)alignment.Attribute("indent");
                 if (indent != null && int.TryParse(indent, out var indentLevel))

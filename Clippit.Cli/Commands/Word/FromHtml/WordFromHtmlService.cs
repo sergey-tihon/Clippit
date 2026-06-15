@@ -7,7 +7,7 @@ namespace Clippit.Cli.Commands.Word.FromHtml;
 
 internal static class WordFromHtmlService
 {
-    public static WordConvertResult Execute(
+    public static ConvertResult Execute(
         InputSource input,
         OutputTarget output,
         string? cssFilePath,
@@ -148,7 +148,7 @@ internal static class WordFromHtmlService
             OutputTarget.DeleteTemp(tempPath);
         }
 
-        return new WordConvertResult
+        return new ConvertResult
         {
             Input = input.DisplayName,
             Output = output.DisplayPath,
