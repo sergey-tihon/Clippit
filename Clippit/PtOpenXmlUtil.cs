@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using Clippit.Internal;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using SixLabors.Fonts;
@@ -87,7 +88,8 @@ namespace Clippit
                 else
                 {
                     using var partXmlReader = XmlReader.Create(partStream);
-                    partXDocument = XDocument.Load(partXmlReader);
+                    using var translatingReader = new StrictTranslatingXmlReader(partXmlReader);
+                    partXDocument = XDocument.Load(translatingReader);
                 }
             }
 
@@ -125,8 +127,9 @@ namespace Clippit
             else
             {
                 using var partXmlReader = XmlReader.Create(partStream);
-                partXDocument = XDocument.Load(partXmlReader);
-                namespaceManager = new XmlNamespaceManager(partXmlReader.NameTable);
+                using var translatingReader = new StrictTranslatingXmlReader(partXmlReader);
+                partXDocument = XDocument.Load(translatingReader);
+                namespaceManager = new XmlNamespaceManager(translatingReader.NameTable);
 
                 part.AddAnnotation(partXDocument);
                 part.AddAnnotation(namespaceManager);
