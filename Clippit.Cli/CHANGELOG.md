@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.3.0] - 2026-06-15
+
+- Added `word to-html` command to convert `.docx` files to HTML/CSS with
+  support for embedded or external images, custom CSS injection, page title
+  control, and CSS class prefix/fabrication options.
+- Added `word from-html` command to convert HTML/CSS documents to `.docx`
+  files with CSS extraction from `<style>` elements or external files, font
+  configuration, and image base URI resolution.
+- Both new commands support stdin/stdout pipelines (`-`), stable JSON
+  output (`--format json`), and quiet mode (`--quiet`).
+- Added `excel to-html` command to convert Excel spreadsheet sheets, ranges,
+  or named tables to HTML/CSS.
+  - `--sheet` selects a worksheet by name (defaults to the first sheet).
+  - `--range` restricts conversion to a cell range (e.g. `A1:D10`); requires `--sheet`.
+  - `--table` converts a named Excel table and emits a `<caption>` with the table name;
+    cannot be combined with `--sheet` or `--range`.
+  - `--page-title`, `--additional-css`, `--css-prefix`, and `--no-fabricate-css` mirror
+    the options available on `word to-html`.
+  - Supports stdin/stdout pipelines (`-`), `--format json`, and `--quiet`.
+  - Cell formatting (font, fill, border, alignment) is translated to CSS.
+
 ## [0.2.0] - 2026-06-05
 
 - Added `word verify` command to validate `.docx` files.

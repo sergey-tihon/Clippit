@@ -97,6 +97,72 @@ internal sealed class CliJsonContractTests : TestsBase
     }
 
     [Test]
+    public async Task CLI105_ToHtml_JsonResult_MatchesSchema()
+    {
+        var input = CliTestRunner.TestFile("Blank-wml.docx");
+        var output = new FileInfo(Path.Combine(TempDir, "schema-test.html"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync("word", "to-html", input.FullName, "--output", output.FullName, "--format", "json")
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        using var payload = result.ReadStdoutJson();
+        ValidateJsonAgainstSchema(payload.RootElement, "convert-result.v1.json");
+    }
+
+    [Test]
+    public async Task CLI106_FromHtml_JsonResult_MatchesSchema()
+    {
+        var input = CliTestRunner.TestFile("T0870.html");
+        var output = new FileInfo(Path.Combine(TempDir, "schema-test.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync("word", "from-html", input.FullName, "--output", output.FullName, "--format", "json")
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        using var payload = result.ReadStdoutJson();
+        ValidateJsonAgainstSchema(payload.RootElement, "convert-result.v1.json");
+    }
+
+    [Test]
+    public async Task CLI107_ConvertResult_Schema_RejectsInvalidPayloads()
+    {
+        using var missingInput = JsonDocument.Parse(
+            """
+            {"output":"/tmp/out.html","outputSize":100}
+            """
+        );
+        await Assert.That(IsValid(missingInput.RootElement, "convert-result.v1.json")).IsFalse();
+
+        using var missingOutput = JsonDocument.Parse(
+            """
+            {"input":"/tmp/in.docx","outputSize":100}
+            """
+        );
+        await Assert.That(IsValid(missingOutput.RootElement, "convert-result.v1.json")).IsFalse();
+
+        using var missingOutputSize = JsonDocument.Parse(
+            """
+            {"input":"/tmp/in.docx","output":"/tmp/out.html"}
+            """
+        );
+        await Assert.That(IsValid(missingOutputSize.RootElement, "convert-result.v1.json")).IsFalse();
+
+        using var wrongType = JsonDocument.Parse(
+            """
+            {"input":"/tmp/in.docx","output":"/tmp/out.html","outputSize":"not-a-number"}
+            """
+        );
+        await Assert.That(IsValid(wrongType.RootElement, "convert-result.v1.json")).IsFalse();
+    }
+
+    [Test]
     public async Task CLI104_JsonSchema_RejectsInvalidPayloads()
     {
         using var negativeCount = JsonDocument.Parse(

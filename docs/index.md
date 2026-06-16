@@ -338,7 +338,7 @@ signatures and code samples.
 
 | Feature | Description |
 | ------- | ----------- |
-| [Clippit CLI](cli.md) | Scriptable PPTX split/build/verify commands with human-readable text output, stable JSON output, stdin/stdout support, and JSON schemas for automation |
+| [Clippit CLI](cli.md) | Scriptable PPTX split/build/verify, DOCX validation, and DOCX↔HTML conversion with human-readable text output, stable JSON output, stdin/stdout support, and JSON schemas for automation |
 
 ### Common
 

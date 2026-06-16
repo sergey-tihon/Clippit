@@ -1,6 +1,6 @@
 # Clippit CLI — `dotnet tool`
 
-**Clippit CLI** is a command-line tool for working with OpenXml files (PowerPoint, Word, Excel), built on [Clippit](https://github.com/sergey-tihon/Clippit) — the .NET OpenXml PowerTools library.
+**Clippit CLI** is a command-line tool for working with OpenXml files (PowerPoint, Word, Excel), built on [Clippit](https://github.com/sergey-tihon/Clippit) — the .NET OpenXml PowerTools library. It supports PPTX split/build/verify workflows and DOCX↔HTML conversion.
 
 ## Installation
 
@@ -23,6 +23,12 @@ clippit pptx verify presentation.pptx
 # Validate a DOCX file
 clippit word verify document.docx
 
+# Convert DOCX to HTML
+clippit word to-html document.docx
+
+# Convert HTML to DOCX
+clippit word from-html article.html --css styles.css
+
 # Validate an XLSX file
 clippit excel verify spreadsheet.xlsx
 
@@ -39,6 +45,9 @@ clippit pptx split presentation.pptx --format json
 | `pptx build run` | Assemble a `.pptx` from a deck manifest. |
 | `pptx verify` | Validate a PPTX — schema, relationships, markup compatibility, and sections. |
 | `word verify` | Validate a DOCX — schema and relationships. |
+| `word to-html` | Convert a DOCX to HTML/CSS. |
+| `word from-html` | Convert HTML/CSS to a DOCX. |
+| `excel to-html` | Convert an XLSX sheet, range, or table to HTML/CSS. |
 | `excel verify` | Validate an XLSX — schema and relationships. |
 | `version` | Print version information. |
 

@@ -1,6 +1,6 @@
 # Clippit CLI
 
-Clippit CLI exposes PowerPoint workflows from the Clippit library as scriptable commands. It is designed for build pipelines, local deck automation, and tools that need stable JSON output.
+Clippit CLI exposes PowerPoint, Word, and Excel workflows from the Clippit library as scriptable commands. It is designed for build pipelines, local deck automation, DOCX↔HTML conversion, and tools that need stable JSON output.
 
 ```bash
 clippit --help
@@ -9,6 +9,9 @@ clippit pptx split deck.pptx --output slides --manifest
 clippit pptx build run slides/deck.manifest.json --output final.pptx
 clippit pptx verify final.pptx
 clippit word verify document.docx
+clippit word to-html document.docx
+clippit word from-html article.html --css styles.css
+clippit excel to-html spreadsheet.xlsx
 clippit excel verify spreadsheet.xlsx
 ```
 
@@ -60,7 +63,11 @@ Agents and scripts should use `--format json` when they need machine-readable co
 | stdout | `pptx verify` finds validation diagnostics | Verify result JSON with `valid: false`; process exits `4`. |
 | stdout | `word verify` finds validation diagnostics | Verify result JSON with `valid: false`; process exits `4`. |
 | stdout | `excel verify` finds validation diagnostics | Verify result JSON with `valid: false`; process exits `4`. |
+| stdout | `word to-html` / `word from-html` | Result JSON (e.g. `{"input":...,"output":...,"outputSize":...}`); converted content written to `--output` path. |
+| stdout | `excel to-html` | Result JSON (e.g. `{"input":...,"output":...,"outputSize":...}`); converted HTML written to `--output` path. |
 | stdout | `pptx build run --output -` | Binary `.pptx`; no success summary is written. |
+| stdout | `word to-html --output -` / `word from-html --output -` | Binary/HTML content streamed to stdout; no success summary is written. |
+| stdout | `excel to-html --output -` | HTML content streamed to stdout; no success summary is written. |
 | stderr | Command execution error | Compact JSON error object: `{"error":"...","code":"..."}`. |
 | stderr/stdout | Parser, arity, and help output | System.CommandLine text output, not JSON. |
 
@@ -86,10 +93,14 @@ cat deck.pptx | clippit pptx split - --output slides --format json
 cat deck.json | clippit pptx build run - --output - > final.pptx
 cat deck.pptx | clippit pptx verify - --format json
 cat document.docx | clippit word verify - --format json
+cat document.docx | clippit word to-html - --inline-images --output -
+cat article.html | clippit word from-html - --minor-font "Georgia" --output -
 cat spreadsheet.xlsx | clippit excel verify - --format json
 ```
 
 When `pptx build run --output -` writes a `.pptx` to stdout, the success summary is suppressed automatically so the binary stream is not corrupted.
+
+When `word to-html --output -` or `word from-html --output -` writes content to stdout, the success summary is also suppressed so the output stream is not corrupted.
 
 Binary stdout output is buffered in memory before it is written to stdout. Prefer file output for very large decks.
 
@@ -336,6 +347,81 @@ Valid JSON example:
 {"input":"/work/spreadsheet.xlsx","officeVersion":"Microsoft365","valid":true,"diagnostics":[]}
 ```
 
+## `word to-html`
+
+Converts a `.docx` file to HTML/CSS with high-fidelity layout preservation.
+Images can be embedded as base64 data URIs (`--inline-images`) or referenced as
+separate files. The command wraps `WmlToHtmlConverter` from the Clippit library.
+
+Synopsis:
+
+```text
+clippit word to-html <input.docx|-> [--output <file.html|->] [--page-title <text>] [--additional-css <css>] [--css-prefix <prefix>] [--inline-images] [--no-fabricate-css] [--format json|text] [--quiet]
+```
+
+```bash
+clippit word to-html report.docx
+clippit word to-html report.docx --page-title "Q3 Report" --additional-css "body { max-width: 800px; }"
+clippit word to-html report.docx --inline-images --output - > report.html
+cat document.docx | clippit word to-html - --inline-images --format json
+```
+
+Options:
+
+| Option | Description |
+| ------ | ----------- |
+| `--output`, `-o` | Output path for the generated `.html` file. Defaults to `<input>.html`. Use `-` to write HTML content to stdout. |
+| `--page-title` | HTML page `<title>`. Defaults to the source file name. |
+| `--additional-css` | Extra CSS rules injected into the generated `<style>` block. |
+| `--css-prefix` | Prefix for auto-generated CSS class names (default: `pt-`). |
+| `--inline-images` | Embed images as base64 data URIs instead of linking to external files. |
+| `--no-fabricate-css` | Skip CSS class generation and use inline `style` attributes instead. |
+
+JSON example:
+
+```json
+{"input":"/work/report.docx","output":"/work/report.html","outputSize":28473}
+```
+
+## `word from-html`
+
+Converts an HTML document to a `.docx` file, restoring styles, images, and layout
+as Open XML markup. CSS in the HTML `<style>` element is extracted automatically;
+external CSS can also be passed with `--css`. The command wraps
+`HtmlToWmlConverter` from the Clippit library.
+
+Synopsis:
+
+```text
+clippit word from-html <input.html|-> [--output <file.docx|->] [--css <file>] [--default-css <file>] [--user-css <css>] [--base-uri <uri>] [--major-font <name>] [--minor-font <name>] [--font-size <pt>] [--format json|text] [--quiet]
+```
+
+```bash
+clippit word from-html article.html
+clippit word from-html article.html -c styles.css -o article.docx
+clippit word from-html article.html --minor-font "Georgia" --font-size 11
+cat article.html | clippit word from-html - --base-uri https://example.com/images/ --format json
+```
+
+Options:
+
+| Option | Description |
+| ------ | ----------- |
+| `--output`, `-o` | Output path for the generated `.docx` file. Defaults to `<input>.docx`. Use `-` to write binary content to stdout. |
+| `--css`, `-c` | Path to an external author CSS file. When omitted, CSS is extracted from the HTML `<style>` element. |
+| `--default-css` | Path to a default CSS file to override the built-in default CSS. |
+| `--user-css` | Additional CSS rules to apply as user overrides. |
+| `--base-uri` | Base URI for resolving relative image `src` references. Defaults to the source HTML file's parent directory. |
+| `--major-font` | Theme major (heading) font name (default: `Calibri Light`). |
+| `--minor-font` | Theme minor (body) font name (default: `Times New Roman`). |
+| `--font-size` | Default font size in points (default: `12`). |
+
+JSON example:
+
+```json
+{"input":"/work/article.html","output":"/work/article.docx","outputSize":45021}
+```
+
 ## JSON Schemas
 
 Schemas for deck manifests and CLI result payloads are published in [docs/schemas](schemas/README.md). Result schemas are intended for documentation, integration tests, and downstream contract validation; result payloads do not embed schema URLs.
@@ -348,3 +434,4 @@ Canonical schema URLs:
 | `pptx split` result | `https://sergey-tihon.github.io/Clippit/schemas/split-result.v1.json` |
 | `pptx build run` result | `https://sergey-tihon.github.io/Clippit/schemas/build-result.v1.json` |
 | `pptx verify`, `word verify`, `excel verify` result | `https://sergey-tihon.github.io/Clippit/schemas/verify-result.v1.json` |
+| `word to-html`, `word from-html` result | `https://sergey-tihon.github.io/Clippit/schemas/convert-result.v1.json` |
