@@ -20,8 +20,11 @@ internal static class PresentationSectionValidator
         OpenXmlValidationDiagnostic? parseDiagnostic = null;
         try
         {
-            using var stream = presentationPart.GetStream(FileMode.Open, FileAccess.Read);
-            presentationXDoc = XDocument.Load(stream);
+            // GetXDocument() applies StrictTranslatingXmlReader so Strict namespace URIs
+            // (purl.oclc.org) are mapped to Transitional before the XDocument is built.
+            // Without this, P.sldIdLst lookups return nothing and every section slide
+            // reference would be a false-positive validation error.
+            presentationXDoc = presentationPart.GetXDocument();
         }
         catch (XmlException ex)
         {
