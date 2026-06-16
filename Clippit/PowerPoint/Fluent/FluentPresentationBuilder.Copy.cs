@@ -156,7 +156,7 @@ internal sealed partial class FluentPresentationBuilder
         )
         {
             var newPart = _newDocument.PresentationPart.AddNewPart<PresentationPropertiesPart>();
-            var xd1 = presentationPropertiesPart.GetXDocument();
+            var xd1 = new XDocument(presentationPropertiesPart.GetXDocument());
             xd1.Descendants(P.custShow).Remove();
             newPart.PutXDocument(xd1);
         }
@@ -168,7 +168,7 @@ internal sealed partial class FluentPresentationBuilder
         )
         {
             var newPart = _newDocument.PresentationPart.AddNewPart<ViewPropertiesPart>();
-            var xd = viewPropertiesPart.GetXDocument();
+            var xd = new XDocument(viewPropertiesPart.GetXDocument());
             xd.Descendants(P.outlineViewPr).Elements(P.sldLst).Remove();
             newPart.PutXDocument(xd);
         }
