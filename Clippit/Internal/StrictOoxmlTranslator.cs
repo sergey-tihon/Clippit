@@ -21,24 +21,18 @@ internal static class StrictOoxmlTranslator
     // Source: dotnet/Open-XML-SDK OpenXmlNamespaceResolver._strictTransitionalNamespaces
     private static readonly Dictionary<string, string> s_namespaces = new(StringComparer.Ordinal)
     {
-        ["http://purl.oclc.org/ooxml/descriptions/base"] =
-            "http://descriptions.openxmlformats.org/description/base",
-        ["http://purl.oclc.org/ooxml/descriptions/full"] =
-            "http://descriptions.openxmlformats.org/description/full",
-        ["http://purl.oclc.org/ooxml/drawingml/chart"] =
-            "http://schemas.openxmlformats.org/drawingml/2006/chart",
+        ["http://purl.oclc.org/ooxml/descriptions/base"] = "http://descriptions.openxmlformats.org/description/base",
+        ["http://purl.oclc.org/ooxml/descriptions/full"] = "http://descriptions.openxmlformats.org/description/full",
+        ["http://purl.oclc.org/ooxml/drawingml/chart"] = "http://schemas.openxmlformats.org/drawingml/2006/chart",
         ["http://purl.oclc.org/ooxml/drawingml/chartDrawing"] =
             "http://schemas.openxmlformats.org/drawingml/2006/chartDrawing",
         ["http://purl.oclc.org/ooxml/drawingml/compatibility"] =
             "http://schemas.openxmlformats.org/drawingml/2006/compatibility",
-        ["http://purl.oclc.org/ooxml/drawingml/diagram"] =
-            "http://schemas.openxmlformats.org/drawingml/2006/diagram",
+        ["http://purl.oclc.org/ooxml/drawingml/diagram"] = "http://schemas.openxmlformats.org/drawingml/2006/diagram",
         ["http://purl.oclc.org/ooxml/drawingml/lockedCanvas"] =
             "http://schemas.openxmlformats.org/drawingml/2006/lockedCanvas",
-        ["http://purl.oclc.org/ooxml/drawingml/main"] =
-            "http://schemas.openxmlformats.org/drawingml/2006/main",
-        ["http://purl.oclc.org/ooxml/drawingml/picture"] =
-            "http://schemas.openxmlformats.org/drawingml/2006/picture",
+        ["http://purl.oclc.org/ooxml/drawingml/main"] = "http://schemas.openxmlformats.org/drawingml/2006/main",
+        ["http://purl.oclc.org/ooxml/drawingml/picture"] = "http://schemas.openxmlformats.org/drawingml/2006/picture",
         ["http://purl.oclc.org/ooxml/drawingml/spreadsheetDrawing"] =
             "http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
         ["http://purl.oclc.org/ooxml/drawingml/wordprocessingDrawing"] =
@@ -65,10 +59,8 @@ internal static class StrictOoxmlTranslator
             "http://schemas.openxmlformats.org/officeDocument/2006/sharedTypes",
         ["http://purl.oclc.org/ooxml/presentationml/main"] =
             "http://schemas.openxmlformats.org/presentationml/2006/main",
-        ["http://purl.oclc.org/ooxml/schemaLibrary/main"] =
-            "http://schemas.openxmlformats.org/schemaLibrary/2006/main",
-        ["http://purl.oclc.org/ooxml/spreadsheetml/main"] =
-            "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+        ["http://purl.oclc.org/ooxml/schemaLibrary/main"] = "http://schemas.openxmlformats.org/schemaLibrary/2006/main",
+        ["http://purl.oclc.org/ooxml/spreadsheetml/main"] = "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
         ["http://purl.oclc.org/ooxml/wordprocessingml/main"] =
             "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
         // Workaround for a bug in the ISO spec (assembla.com/code/IS29500/subversion/changesets/160)

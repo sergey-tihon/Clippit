@@ -53,20 +53,29 @@ internal sealed class StrictTranslatingXmlReader(XmlReader inner) : XmlReader
     public override ReadState ReadState => inner.ReadState;
 
     public override string? GetAttribute(int i) => inner.GetAttribute(i);
+
     public override string? GetAttribute(string name) => inner.GetAttribute(name);
+
     public override string? GetAttribute(string localName, string? namespaceURI) =>
         inner.GetAttribute(localName, namespaceURI);
 
     public override void MoveToAttribute(int i) => inner.MoveToAttribute(i);
+
     public override bool MoveToAttribute(string name) => inner.MoveToAttribute(name);
+
     public override bool MoveToAttribute(string localName, string? namespaceURI) =>
         inner.MoveToAttribute(localName, namespaceURI);
 
     public override bool MoveToElement() => inner.MoveToElement();
+
     public override bool MoveToFirstAttribute() => inner.MoveToFirstAttribute();
+
     public override bool MoveToNextAttribute() => inner.MoveToNextAttribute();
+
     public override bool Read() => inner.Read();
+
     public override bool ReadAttributeValue() => inner.ReadAttributeValue();
+
     public override void ResolveEntity() => inner.ResolveEntity();
 
     // ── Overridden members — translate Strict → Transitional ────────────────
