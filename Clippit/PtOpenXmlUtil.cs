@@ -127,8 +127,9 @@ namespace Clippit
             else
             {
                 using var partXmlReader = XmlReader.Create(partStream);
-                partXDocument = XDocument.Load(partXmlReader);
-                namespaceManager = new XmlNamespaceManager(partXmlReader.NameTable);
+                using var translatingReader = new StrictTranslatingXmlReader(partXmlReader);
+                partXDocument = XDocument.Load(translatingReader);
+                namespaceManager = new XmlNamespaceManager(translatingReader.NameTable);
 
                 part.AddAnnotation(partXDocument);
                 part.AddAnnotation(namespaceManager);
