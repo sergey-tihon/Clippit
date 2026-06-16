@@ -19,13 +19,17 @@ namespace Clippit.Internal;
 /// namespace URIs — no post-processing or whole-file byte-array conversion is required.
 /// </para>
 /// <para>
-/// Two members are overridden:
+/// Three translations are applied:
 /// <list type="bullet">
 ///   <item><see cref="NamespaceURI"/> — returns the translated URI for every element and
 ///   attribute node.</item>
-///   <item><see cref="Value"/> — translates the value of <c>xmlns:*</c> declaration
-///   attributes so that the namespace declarations stored in the XDocument remain
+///   <item><see cref="Value"/> for <c>xmlns:*</c> attributes — translates namespace
+///   declaration values so that the namespace declarations stored in the XDocument remain
 ///   consistent with the element namespace URIs when the document is serialised back.</item>
+///   <item><see cref="Value"/> for <c>uri=</c> attributes — translates the content-type
+///   URI string on <c>&lt;a:graphicData uri="…"/&gt;</c> elements (e.g.
+///   <c>drawingml/chart</c>) which uses the Strict purl.oclc.org form in source
+///   documents even though it is not an XML namespace declaration.</item>
 /// </list>
 /// <see cref="LookupNamespace"/> is also overridden so that any caller resolving a prefix
 /// to a URI receives the Transitional form.
@@ -81,9 +85,14 @@ internal sealed class StrictTranslatingXmlReader(XmlReader inner) : XmlReader
 
     // Also translate the value of xmlns:* declaration attributes so the namespace
     // declarations written by LINQ to XML on serialization match the element URIs.
+    // Also translate the uri= attribute on <a:graphicData> (e.g. drawingml/chart) which
+    // carries a content-type URI string rather than an XML namespace, but still uses the
+    // purl.oclc.org Strict form in source documents.
     public override string Value =>
-        inner.NodeType == XmlNodeType.Attribute && inner.NamespaceURI == XmlnsNamespace
-            ? StrictOoxmlTranslator.TranslateNamespace(inner.Value)
+        inner.NodeType == XmlNodeType.Attribute
+            ? inner.NamespaceURI == XmlnsNamespace || inner.LocalName == "uri"
+                ? StrictOoxmlTranslator.TranslateNamespace(inner.Value)
+                : inner.Value
             : inner.Value;
 
     public override string? LookupNamespace(string prefix)
