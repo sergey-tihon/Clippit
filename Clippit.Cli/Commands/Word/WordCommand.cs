@@ -1,4 +1,6 @@
 using System.CommandLine;
+using Clippit.Cli.Commands.Word.FromHtml;
+using Clippit.Cli.Commands.Word.ToHtml;
 using Clippit.Cli.Commands.Word.Verify;
 
 namespace Clippit.Cli.Commands.Word;
@@ -12,6 +14,8 @@ internal static class WordCommand
     {
         var cmd = new Command("word", "Work with Word (.docx) files");
         cmd.Subcommands.Add(WordVerifyCommand.Build());
+        cmd.Subcommands.Add(WordToHtmlCommand.Build());
+        cmd.Subcommands.Add(WordFromHtmlCommand.Build());
         return cmd;
     }
 }

@@ -26,6 +26,7 @@ namespace Clippit.Cli;
 [JsonSerializable(typeof(VerifyResult))]
 [JsonSerializable(typeof(VerifyDiagnostic))]
 [JsonSerializable(typeof(VersionResult))]
+[JsonSerializable(typeof(ConvertResult))]
 [JsonSerializable(typeof(ErrorResult))]
 [JsonSourceGenerationOptions(
     WriteIndented = false,
