@@ -87,7 +87,8 @@ namespace Clippit
                 else
                 {
                     using var partXmlReader = XmlReader.Create(partStream);
-                    partXDocument = XDocument.Load(partXmlReader);
+                    using var translatingReader = new Clippit.Internal.StrictTranslatingXmlReader(partXmlReader);
+                    partXDocument = XDocument.Load(translatingReader);
                 }
             }
 

@@ -151,6 +151,9 @@ internal sealed partial class FluentPresentationBuilder : IFluentPresentationBui
 
         var slideDocument = newSlide.GetXDocument();
         SlideLayoutData.ScaleShapes(slideDocument, scaleFactor);
+        // Write the (now Transitional-namespace) XDocument back so strict source bytes
+        // don't survive into the output package.
+        newSlide.PutXDocument();
 
         PBT.AddRelationships(slidePart, newSlide, [newSlide.GetXDocument().Root]);
         CopyRelatedPartsForContentParts(slidePart, newSlide, [newSlide.GetXDocument().Root]);

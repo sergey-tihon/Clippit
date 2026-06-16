@@ -28,7 +28,7 @@ public static partial class PresentationBuilder
         var openSettings = new OpenSettings { AutoSave = false };
         foreach (var source in sources)
         {
-            using var streamDoc = new OpenXmlMemoryStreamDocument(EnsureTransitional(source.PmlDocument));
+            using var streamDoc = new OpenXmlMemoryStreamDocument(source.PmlDocument);
             using var doc = streamDoc.GetPresentationDocument(openSettings);
             try
             {

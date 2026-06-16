@@ -59,17 +59,6 @@ public class StrictFormatTests : Clippit.Tests.TestsBase
         }
     }
 
-    [Test]
-    public void PublishSlides_with_already_open_strict_document_throws()
-    {
-        using var ms = new MemoryStream(File.ReadAllBytes(StrictSource.FullName));
-        using var doc = PresentationDocument.Open(ms, false);
-
-        Assert.Throws<PresentationBuilderException>(() =>
-            PresentationBuilder.PublishSlides(doc, StrictSource.FullName).ToList()
-        );
-    }
-
     private static List<string> GetXmlPartsContaining(byte[] pptx, string marker)
     {
         using var ms = new MemoryStream(pptx);
