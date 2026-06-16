@@ -5879,6 +5879,7 @@ listSeparator
         public static readonly XName b = xhtml + "b";
         public static readonly XName body = xhtml + "body";
         public static readonly XName br = xhtml + "br";
+        public static readonly XName caption = xhtml + "caption";
         public static readonly XName div = xhtml + "div";
         public static readonly XName h1 = xhtml + "h1";
         public static readonly XName h2 = xhtml + "h2";
@@ -5894,7 +5895,10 @@ listSeparator
         public static readonly XName sub = xhtml + "sub";
         public static readonly XName sup = xhtml + "sup";
         public static readonly XName table = xhtml + "table";
+        public static readonly XName tbody = xhtml + "tbody";
         public static readonly XName td = xhtml + "td";
+        public static readonly XName th = xhtml + "th";
+        public static readonly XName thead = xhtml + "thead";
         public static readonly XName title = xhtml + "title";
         public static readonly XName tr = xhtml + "tr";
         public static readonly XName u = xhtml + "u";
