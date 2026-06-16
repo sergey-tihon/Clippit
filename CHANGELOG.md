@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.4.7] - June 16, 2026
+
+- feat(cli): add `word to-html`, `word from-html`, and `excel to-html` commands (#338)
+- fix(powerpoint): support ISO/IEC 29500 Strict OOXML presentations — translate Strict namespace URIs lazily via `XmlReader` wrapper in `GetXDocument()` (#339)
+- fix(powerpoint): translate `<a:graphicData uri=…>` content-type URIs and fix source `XDocument` mutation in `CopyPresentationParts` (#340)
+- refactor: modernize `as` + null-check to `is not` pattern matching in `WmlToHtmlConverter` and `WmlToXml` (#336)
+- chore(deps): update TUnit 1.49.0 → 1.54.0 (#337)
+
 ## [3.4.6] - June 10, 2026
 
 - feat(cli): add `word verify` and `excel verify` commands (#329)
