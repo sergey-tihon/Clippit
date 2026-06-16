@@ -66,7 +66,9 @@ internal static class StrictOoxmlTranslator
         // Workaround for a bug in the ISO spec (assembla.com/code/IS29500/subversion/changesets/160)
         ["http://purl.oclc.org/ooxml/officeDocument/relationships/customXml"] =
             "http://schemas.openxmlformats.org/officeDocument/2006/customXml",
-        // These are identity mappings present in the SDK table — included for completeness
+        // The following are identity mappings present in the SDK table.
+        // They are not purl.oclc.org URIs and will never be looked up by TranslateNamespace,
+        // but are retained here to keep the table in sync with the SDK source.
         ["http://purl.org/dc/dcmitype/"] = "http://purl.org/dc/dcmitype/",
         ["http://purl.org/dc/elements/1.1/"] = "http://purl.org/dc/elements/1.1/",
         ["http://purl.org/dc/terms/"] = "http://purl.org/dc/terms/",
@@ -254,10 +256,4 @@ internal static class StrictOoxmlTranslator
     /// </summary>
     public static string TranslateRelationshipType(string relationshipType) =>
         s_relTypes.TryGetValue(relationshipType, out var transitional) ? transitional : relationshipType;
-
-    /// <summary>
-    /// Returns <see langword="true"/> if <paramref name="namespaceUri"/> is a known
-    /// Strict namespace URI that would be translated by <see cref="TranslateNamespace"/>.
-    /// </summary>
-    public static bool IsStrictNamespace(string namespaceUri) => s_namespaces.ContainsKey(namespaceUri);
 }

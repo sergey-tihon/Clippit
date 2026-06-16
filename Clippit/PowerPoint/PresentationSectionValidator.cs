@@ -16,14 +16,14 @@ internal static class PresentationSectionValidator
         if (presentationPart is null)
             yield break;
 
-        // GetXDocument() applies StrictTranslatingXmlReader so that Strict namespace URIs
-        // (purl.oclc.org) are transparently mapped to Transitional ones before the XDocument
-        // is built.  Without this, P.sldIdLst lookups return nothing on Strict files and
-        // every section slide reference would appear as a false-positive validation error.
         XDocument? presentationXDoc = null;
         OpenXmlValidationDiagnostic? parseDiagnostic = null;
         try
         {
+            // GetXDocument() applies StrictTranslatingXmlReader so Strict namespace URIs
+            // (purl.oclc.org) are mapped to Transitional before the XDocument is built.
+            // Without this, P.sldIdLst lookups return nothing and every section slide
+            // reference would be a false-positive validation error.
             presentationXDoc = presentationPart.GetXDocument();
         }
         catch (XmlException ex)

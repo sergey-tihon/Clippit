@@ -39,8 +39,6 @@ internal sealed class StrictTranslatingXmlReader(XmlReader inner) : XmlReader
 {
     private const string XmlnsNamespace = "http://www.w3.org/2000/xmlns/";
 
-    // ── Abstract members — delegated to inner ────────────────────────────────
-
     public override int AttributeCount => inner.AttributeCount;
     public override string BaseURI => inner.BaseURI;
     public override int Depth => inner.Depth;
@@ -78,34 +76,21 @@ internal sealed class StrictTranslatingXmlReader(XmlReader inner) : XmlReader
 
     public override void ResolveEntity() => inner.ResolveEntity();
 
-    // ── Overridden members — translate Strict → Transitional ────────────────
-
-    /// <summary>
-    /// Returns the Transitional namespace URI for the current element or attribute node.
-    /// </summary>
+    // Translate Strict namespace URIs to Transitional on the way out.
     public override string NamespaceURI => StrictOoxmlTranslator.TranslateNamespace(inner.NamespaceURI);
 
-    /// <summary>
-    /// Returns the node value, translating the URI for <c>xmlns:*</c> declaration attributes
-    /// so that the namespace declarations in the loaded XDocument match the translated element
-    /// namespace URIs and remain consistent on serialization.
-    /// </summary>
+    // Also translate the value of xmlns:* declaration attributes so the namespace
+    // declarations written by LINQ to XML on serialization match the element URIs.
     public override string Value =>
         inner.NodeType == XmlNodeType.Attribute && inner.NamespaceURI == XmlnsNamespace
             ? StrictOoxmlTranslator.TranslateNamespace(inner.Value)
             : inner.Value;
 
-    /// <summary>
-    /// Resolves a namespace prefix to its URI, returning the Transitional form when the
-    /// prefix is bound to a Strict namespace URI.
-    /// </summary>
     public override string? LookupNamespace(string prefix)
     {
         var uri = inner.LookupNamespace(prefix);
         return uri is null ? null : StrictOoxmlTranslator.TranslateNamespace(uri);
     }
-
-    // ── Disposal ─────────────────────────────────────────────────────────────
 
     protected override void Dispose(bool disposing)
     {
