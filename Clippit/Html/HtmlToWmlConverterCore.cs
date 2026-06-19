@@ -100,8 +100,7 @@ using System.Xml.Linq;
 using Clippit.Internal;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
-using SixLabors.ImageSharp.Formats.Bmp;
-using Image = SixLabors.ImageSharp.Image;
+using SkiaSharp;
 
 namespace Clippit.Html
 {
@@ -2293,7 +2292,7 @@ namespace Clippit.Html
         {
             var srcAttribute = (string)element.Attribute(XhtmlNoNamespace.src);
             byte[] ba = null;
-            Image bmp = null;
+            SKBitmap bmp = null;
 
             if (srcAttribute.StartsWith("data:"))
             {
@@ -2302,13 +2301,13 @@ namespace Clippit.Html
                 var base64 = srcAttribute.Substring(commaIndex + 1);
                 ba = Convert.FromBase64String(base64);
                 using var ms = new MemoryStream(ba);
-                bmp = Image.Load(ms);
+                bmp = SKBitmap.Decode(ms);
             }
             else
             {
                 try
                 {
-                    bmp = Image.Load(settings.BaseUriForImages + "/" + srcAttribute);
+                    bmp = SKBitmap.Decode(settings.BaseUriForImages + "/" + srcAttribute);
                 }
                 catch (DirectoryNotFoundException)
                 {
@@ -2322,10 +2321,21 @@ namespace Clippit.Html
                 {
                     return null;
                 }
+                if (bmp == null)
+                    return null;
                 using var ms = new MemoryStream();
-                bmp.Save(ms, new BmpEncoder());
+                var image2 = SKImage.FromBitmap(bmp);
+                if (image2 == null)
+                    return null;
+                using var data2 = image2.Encode(SKEncodedImageFormat.Bmp, quality: 80);
+                if (data2 == null)
+                    return null;
+                data2.SaveTo(ms);
                 ba = ms.ToArray();
             }
+
+            if (bmp == null)
+                return null;
 
             var mdp = wDoc.MainDocumentPart;
             var ipt = ImagePartType.Png;
@@ -2377,7 +2387,7 @@ namespace Clippit.Html
             XElement element,
             HtmlToWmlConverterSettings settings,
             WordprocessingDocument wDoc,
-            Image bmp,
+            SKBitmap bmp,
             string rId,
             int pictureId,
             string pictureDescription
@@ -2403,7 +2413,7 @@ namespace Clippit.Html
             XElement element,
             HtmlToWmlConverterSettings settings,
             WordprocessingDocument wDoc,
-            Image bmp,
+            SKBitmap bmp,
             string rId,
             string floatValue,
             int pictureId,
@@ -2600,13 +2610,11 @@ namespace Clippit.Html
             return new XElement(W.rPr, new XElement(W.noProof));
         }
 
-        private static SizeEmu GetImageSizeInEmus(XElement img, Image bmp)
+        private static SizeEmu GetImageSizeInEmus(XElement img, SKBitmap bmp)
         {
-            var hres = bmp.Metadata.HorizontalResolution;
-            var vres = bmp.Metadata.VerticalResolution;
-            var s = bmp.Size;
-            Emu cx = (long)(s.Width / hres * Emu.s_EmusPerInch);
-            Emu cy = (long)(s.Height / vres * Emu.s_EmusPerInch);
+            // SkiaSharp does not preserve DPI from encoded images, so default to 96.
+            Emu cx = (long)(bmp.Width / 96.0 * Emu.s_EmusPerInch);
+            Emu cy = (long)(bmp.Height / 96.0 * Emu.s_EmusPerInch);
 
             var width = img.GetProp("width");
             var height = img.GetProp("height");
@@ -2633,7 +2641,7 @@ namespace Clippit.Html
             return new SizeEmu(cx, cy);
         }
 
-        private static XElement GetImageExtent(XElement img, Image bmp)
+        private static XElement GetImageExtent(XElement img, SKBitmap bmp)
         {
             var szEmu = GetImageSizeInEmus(img, bmp);
             return new XElement(
@@ -2679,7 +2687,7 @@ namespace Clippit.Html
         private static XElement GetGraphicForImage(
             XElement element,
             string rId,
-            Image bmp,
+            SKBitmap bmp,
             int pictureId,
             string pictureDescription
         )

@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Text;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using Image = SixLabors.ImageSharp.Image;
+using SkiaSharp;
 
 // 200e lrm - LTR
 // 200f rlm - RTL
@@ -106,7 +106,7 @@ namespace Clippit.Word
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class ImageInfo
     {
-        public Image Image;
+        public SKBitmap Image;
         public XAttribute ImgStyleAttribute;
         public string ContentType;
         public XElement DrawingElement;
@@ -3550,7 +3550,12 @@ namespace Clippit.Word
                 return null;
 
             using var partStream = imagePart.GetStream();
-            using var image = Image.Load(partStream);
+            using var memStream = new MemoryStream();
+            partStream.CopyTo(memStream);
+            var imageBytes = memStream.ToArray();
+            var image = SKBitmap.Decode(imageBytes);
+            if (image == null)
+                return null;
             if (extentCx != null && extentCy != null)
             {
                 var imageInfo = new ImageInfo()
@@ -3625,7 +3630,7 @@ namespace Clippit.Word
                 using var partStream = imagePart.GetStream();
                 try
                 {
-                    using var bitmap = Image.Load(partStream);
+                    var bitmap = SKBitmap.Decode(partStream);
                     var imageInfo = new ImageInfo
                     {
                         Image = bitmap,

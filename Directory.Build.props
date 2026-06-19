@@ -18,7 +18,7 @@
        Adding them directly would cause duplicate/conflicting resolution. -->
   <ItemGroup Condition="'$(IsCliProject)' != 'true'">
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.5.1" />
-    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
+    <PackageReference Include="SkiaSharp" Version="3.119.4" />
     <PackageReference Include="IDisposableAnalyzers" Version="4.0.8" PrivateAssets="all" />
   </ItemGroup>
 </Project>

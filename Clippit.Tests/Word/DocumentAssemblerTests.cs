@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
+using SkiaSharp;
 
 namespace Clippit.Tests.Word;
 
@@ -952,19 +953,12 @@ public class DocumentAssemblerTests : TestsBase
     /// <summary>Creates a minimal solid-color PNG of the given dimensions.</summary>
     private static byte[] BuildTestPng(int width, int height)
     {
-        using var newImage = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(width, height);
-        newImage.ProcessPixelRows(accessor =>
-        {
-            for (var y = 0; y < accessor.Height; y++)
-            {
-                var row = accessor.GetRowSpan(y);
-                for (var x = 0; x < row.Length; x++)
-                    row[x] = new SixLabors.ImageSharp.PixelFormats.Rgba32(100, 149, 237, 255); // cornflower blue
-            }
-        });
-        using var outMs = new MemoryStream();
-        newImage.Save(outMs, new SixLabors.ImageSharp.Formats.Png.PngEncoder());
-        return outMs.ToArray();
+        using var bitmap = new SKBitmap(width, height);
+        using var canvas = new SKCanvas(bitmap);
+        canvas.Clear(new SKColor(100, 149, 237, 255)); // cornflower blue
+        using var image = SKImage.FromBitmap(bitmap);
+        using var data = image.Encode(SKEncodedImageFormat.Png, quality: 80);
+        return data.ToArray();
     }
 
     /// <summary>

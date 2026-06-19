@@ -12,11 +12,7 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using DocumentFormat.OpenXml.Wordprocessing;
-using SixLabors.ImageSharp.Formats;
-using SixLabors.ImageSharp.Formats.Bmp;
-using SixLabors.ImageSharp.Formats.Gif;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.Formats.Png;
+using SkiaSharp;
 
 namespace Clippit
 {
@@ -343,27 +339,25 @@ AAsACwDBAgAAbCwAAAAA";
 
     public static class ImageHelper
     {
-        public static IImageEncoder GetEncoder(string extension, out string newExtension)
+        public static SKEncodedImageFormat? GetEncoder(string extension, out string newExtension)
         {
             newExtension = extension;
             switch (extension)
             {
                 case "png":
-                    return new PngEncoder();
+                    return SKEncodedImageFormat.Png;
                 case "gif":
-                    return new GifEncoder();
+                    return SKEncodedImageFormat.Gif;
                 case "bmp":
-                    return new BmpEncoder();
+                    return SKEncodedImageFormat.Bmp;
                 case "jpeg":
-                    return new JpegEncoder();
+                    return SKEncodedImageFormat.Jpeg;
                 case "tiff":
                     // Convert tiff to gif.
                     newExtension = "gif";
-                    return new GifEncoder();
+                    return SKEncodedImageFormat.Gif;
                 case "x-wmf":
                     // TODO: What to do with Wmf?
-                    //newExtension = "wmf";
-                    //imageEncoder = ImageFormat.Wmf;
                     break;
             }
 
@@ -385,10 +379,18 @@ AAsACwDBAgAAbCwAAAAA";
                 return null;
 
             var imageFileName = imageDirectoryName + "/image" + imageCounter + "." + extension;
+            if (imageInfo.Image == null)
+                return null;
             try
             {
                 using var fs = File.Open(imageFileName, FileMode.OpenOrCreate, FileAccess.Write);
-                imageInfo.Image.Save(fs, imageEncoder);
+                using var image = SKImage.FromBitmap(imageInfo.Image);
+                if (image == null)
+                    return null;
+                using var data = image.Encode(imageEncoder.Value, quality: 80);
+                if (data == null)
+                    return null;
+                data.SaveTo(fs);
             }
             catch (System.Runtime.InteropServices.ExternalException)
             {
