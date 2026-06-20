@@ -3550,7 +3550,7 @@ namespace Clippit.Word
                 return null;
 
             using var partStream = imagePart.GetStream();
-            var image = SKBitmap.Decode(partStream);
+            using var image = SKBitmap.Decode(partStream);
             if (image == null)
                 return null;
             if (extentCx != null && extentCy != null)
@@ -3627,7 +3627,7 @@ namespace Clippit.Word
                 using var partStream = imagePart.GetStream();
                 try
                 {
-                    var bitmap = SKBitmap.Decode(partStream);
+                    using var bitmap = SKBitmap.Decode(partStream);
                     var imageInfo = new ImageInfo
                     {
                         Image = bitmap,
