@@ -11,7 +11,7 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Experimental;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
-using SixLabors.Fonts;
+using SkiaSharp;
 
 namespace Clippit;
 
@@ -74,56 +74,73 @@ public class MetricsGetter
         }
     }
 
-    private static int _getTextWidth(FontFamily ff, FontStyle fs, decimal sz, string text)
+    private static int _getTextWidth(SKTypeface typeface, decimal sz, string text)
     {
-        try
-        {
-            var f = ff.CreateFont((float)sz / 2f, fs);
-            var box = TextMeasurer.MeasureBounds(text, new TextOptions(f));
-            return (int)box.Width;
-            // var proposedSize = new Size(int.MaxValue, int.MaxValue);
-            // var sf = Graphics.Value.MeasureString(text, f, proposedSize);
-            // return (int) sf.Width;
-        }
-        catch
-        {
-            return 0;
-        }
+        var fontSize = (float)sz / 2f;
+        using var font = new SKFont(typeface, fontSize, 1, 0);
+        using var paint = new SKPaint(font) { SubpixelText = true, IsAntialias = true };
+        var width = paint.MeasureText(text);
+        return (int)width;
     }
 
-    public static int GetTextWidth(FontFamily ff, FontStyle fs, decimal sz, string text)
+    public static int GetTextWidth(SKTypeface typeface, decimal sz, string text)
     {
         try
         {
-            return _getTextWidth(ff, fs, sz, text);
-        }
-        catch (ArgumentException)
-        {
-            try
-            {
-                return _getTextWidth(ff, FontStyle.Regular, sz, text);
-            }
-            catch (ArgumentException)
-            {
-                try
-                {
-                    return _getTextWidth(ff, FontStyle.Bold, sz, text);
-                }
-                catch (ArgumentException)
-                {
-                    // if both regular and bold fail, then get metrics for Times New Roman
-                    // use the original FontStyle (in fs)
-
-                    //var ff2 = new FontFamily("Times New Roman");
-                    SystemFonts.Collection.TryGet("Times New Roman", out var ff2); // TODO: test this
-                    return _getTextWidth(ff2, fs, sz, text);
-                }
-            }
+            return _getTextWidthWithFallback(typeface, sz, text);
         }
         catch (OverflowException)
         {
             // This happened on Azure but interestingly enough not while testing locally.
             return 0;
+        }
+    }
+
+    private static int _getTextWidthWithFallback(SKTypeface typeface, decimal sz, string text)
+    {
+        try
+        {
+            return _getTextWidth(typeface, sz, text);
+        }
+        catch (ArgumentException)
+        {
+            try
+            {
+                // Some fonts don't support the requested style (e.g. no italic variant).
+                // Create a fallback typeface with normal weight and upright slant.
+                using var normal = SKTypeface.FromFamilyName(
+                    typeface.FamilyName,
+                    SKFontStyleWeight.Normal,
+                    SKFontStyleWidth.Normal,
+                    SKFontStyleSlant.Upright
+                );
+                if (normal == null)
+                    return 0;
+                return _getTextWidth(normal, sz, text);
+            }
+            catch (ArgumentException)
+            {
+                try
+                {
+                    using var bold = SKTypeface.FromFamilyName(
+                        typeface.FamilyName,
+                        SKFontStyleWeight.Bold,
+                        SKFontStyleWidth.Normal,
+                        SKFontStyleSlant.Upright
+                    );
+                    if (bold == null)
+                        return 0;
+                    return _getTextWidth(bold, sz, text);
+                }
+                catch (ArgumentException)
+                {
+                    // if both regular and bold fail, then get metrics for Times New Roman
+                    using var fallback = SKTypeface.FromFamilyName("Times New Roman");
+                    if (fallback == null)
+                        return 0;
+                    return _getTextWidth(fallback, sz, text);
+                }
+            }
         }
     }
 

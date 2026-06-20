@@ -100,8 +100,7 @@ using System.Xml.Linq;
 using Clippit.Internal;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
-using SixLabors.ImageSharp.Formats.Bmp;
-using Image = SixLabors.ImageSharp.Image;
+using SkiaSharp;
 
 namespace Clippit.Html
 {
@@ -2285,30 +2284,24 @@ namespace Clippit.Html
             }
         }
 
-        private static XElement TransformImageToWml(
-            XElement element,
-            HtmlToWmlConverterSettings settings,
-            WordprocessingDocument wDoc
-        )
+        private static SKBitmap? LoadImageForTransform(string srcAttribute, HtmlToWmlConverterSettings settings)
         {
-            var srcAttribute = (string)element.Attribute(XhtmlNoNamespace.src);
-            byte[] ba = null;
-            Image bmp = null;
-
+            if (string.IsNullOrEmpty(srcAttribute))
+                return null;
             if (srcAttribute.StartsWith("data:"))
             {
                 var semiIndex = srcAttribute.IndexOf(';');
                 var commaIndex = srcAttribute.IndexOf(',', semiIndex);
                 var base64 = srcAttribute.Substring(commaIndex + 1);
-                ba = Convert.FromBase64String(base64);
-                using var ms = new MemoryStream(ba);
-                bmp = Image.Load(ms);
+                var rawBytes = Convert.FromBase64String(base64);
+                using var ms = new MemoryStream(rawBytes);
+                return SKBitmap.Decode(ms);
             }
             else
             {
                 try
                 {
-                    bmp = Image.Load(settings.BaseUriForImages + "/" + srcAttribute);
+                    return SKBitmap.Decode(settings.BaseUriForImages + "/" + srcAttribute);
                 }
                 catch (DirectoryNotFoundException)
                 {
@@ -2322,17 +2315,40 @@ namespace Clippit.Html
                 {
                     return null;
                 }
-                using var ms = new MemoryStream();
-                bmp.Save(ms, new BmpEncoder());
-                ba = ms.ToArray();
+            }
+        }
+
+        private static XElement TransformImageToWml(
+            XElement element,
+            HtmlToWmlConverterSettings settings,
+            WordprocessingDocument wDoc
+        )
+        {
+            var srcAttribute = (string)element.Attribute(XhtmlNoNamespace.src);
+            using var bmp = LoadImageForTransform(srcAttribute, settings);
+
+            if (bmp == null)
+                return null;
+
+            // Encode first; only add the image part to the package if encoding succeeds.
+            // This avoids leaving a dangling empty relationship on encode failure.
+            SKData encodedData;
+            using (var image = SKImage.FromBitmap(bmp))
+            {
+                if (image == null)
+                    return null;
+                var data = image.Encode(SKEncodedImageFormat.Png, quality: 80);
+                if (data == null)
+                    return null;
+                encodedData = data;
             }
 
             var mdp = wDoc.MainDocumentPart;
-            var ipt = ImagePartType.Png;
-            var newPart = mdp.AddImagePart(ipt);
+            var newPart = mdp.AddImagePart(ImagePartType.Png);
             var rId = mdp.GetIdOfPart(newPart);
-            using (var s = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
-                s.Write(ba, 0, ba.GetUpperBound(0) + 1);
+            using (encodedData)
+            using (var partStream = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
+                encodedData.SaveTo(partStream);
 
             var pid = wDoc.Annotation<PictureId>();
             if (pid == null)
@@ -2377,7 +2393,7 @@ namespace Clippit.Html
             XElement element,
             HtmlToWmlConverterSettings settings,
             WordprocessingDocument wDoc,
-            Image bmp,
+            SKBitmap bmp,
             string rId,
             int pictureId,
             string pictureDescription
@@ -2403,7 +2419,7 @@ namespace Clippit.Html
             XElement element,
             HtmlToWmlConverterSettings settings,
             WordprocessingDocument wDoc,
-            Image bmp,
+            SKBitmap bmp,
             string rId,
             string floatValue,
             int pictureId,
@@ -2600,13 +2616,11 @@ namespace Clippit.Html
             return new XElement(W.rPr, new XElement(W.noProof));
         }
 
-        private static SizeEmu GetImageSizeInEmus(XElement img, Image bmp)
+        private static SizeEmu GetImageSizeInEmus(XElement img, SKBitmap bmp)
         {
-            var hres = bmp.Metadata.HorizontalResolution;
-            var vres = bmp.Metadata.VerticalResolution;
-            var s = bmp.Size;
-            Emu cx = (long)(s.Width / hres * Emu.s_EmusPerInch);
-            Emu cy = (long)(s.Height / vres * Emu.s_EmusPerInch);
+            // SkiaSharp does not preserve DPI from encoded images, so default to 96.
+            Emu cx = (long)(bmp.Width / 96.0 * Emu.s_EmusPerInch);
+            Emu cy = (long)(bmp.Height / 96.0 * Emu.s_EmusPerInch);
 
             var width = img.GetProp("width");
             var height = img.GetProp("height");
@@ -2633,7 +2647,7 @@ namespace Clippit.Html
             return new SizeEmu(cx, cy);
         }
 
-        private static XElement GetImageExtent(XElement img, Image bmp)
+        private static XElement GetImageExtent(XElement img, SKBitmap bmp)
         {
             var szEmu = GetImageSizeInEmus(img, bmp);
             return new XElement(
@@ -2679,7 +2693,7 @@ namespace Clippit.Html
         private static XElement GetGraphicForImage(
             XElement element,
             string rId,
-            Image bmp,
+            SKBitmap bmp,
             int pictureId,
             string pictureDescription
         )

@@ -2,6 +2,7 @@ using System.Text;
 using System.Xml.Linq;
 using Clippit.Cli.Infrastructure;
 using Clippit.Word;
+using SkiaSharp;
 
 namespace Clippit.Cli.Commands.Word.ToHtml;
 
@@ -141,13 +142,18 @@ internal static class WordToHtmlService
         try
         {
             using var ms = new MemoryStream();
-            imageInfo.Image.Save(ms, imageEncoder);
-            var ba = ms.ToArray();
-            base64 = Convert.ToBase64String(ba);
+            using var image = SKImage.FromBitmap(imageInfo.Image);
+            if (image == null)
+                return null;
+            using var data = image.Encode(imageEncoder.Value, quality: 80);
+            if (data == null)
+                return null;
+            data.SaveTo(ms);
+            base64 = Convert.ToBase64String(ms.ToArray());
         }
         catch (System.Runtime.InteropServices.ExternalException)
         {
-            return null!;
+            return null;
         }
 
         var mimeType = "image/" + extension;

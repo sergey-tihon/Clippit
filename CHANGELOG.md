@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.5.0] - June 20, 2026
+
+- feat: replace SixLabors.ImageSharp with SkiaSharp for all image processing (#341)
+- feat: add Linux native SkiaSharp asset support (`SkiaSharp.NativeAssets.Linux.NoDependencies`) (#341)
+- fix(html): guard null `srcAttribute` in `LoadImageForTransform` to prevent `NullReferenceException` (#341)
+- fix(html): encode image before adding `ImagePart` to prevent dangling empty relationship on encode failure (#341)
+- fix(docs): update `WmlToHtmlConverter` tutorial from ImageSharp to SkiaSharp API (#341)
+- fix(docs): add `using SkiaSharp;` note in tutorial code sample (#341)
+- refactor: replace `Image.Load`/`Image.Save` with `SKBitmap.Decode`/`SKImage.Encode` across all converters and helpers (#341)
+- refactor: replace `SixLabors.Fonts` text measurement with `SKTypeface`/`SKPaint.MeasureText` in `MetricsGetter` and `PtOpenXmlUtil` (#341)
+- refactor: use safe fallback chain for `GetTextWidth` — `ArgumentException` catch now works correctly after removing blanket catch in `_getTextWidth` (#341)
+- fix(cli): use `FileMode.Create` instead of `FileMode.OpenOrCreate` in `DefaultImageHandler` to avoid corrupted image on re-encode (#341)
+- fix(cli): return `null` instead of `null!` in `CreateInlineImage` failure paths (#341)
+- fix(test): add explicit null-check with `InvalidOperationException` in `BuildTestPng` SkiaSharp encode (#341)
+- perf: wrap `SKTypeface`/`SKFont`/`SKImage` with `using` to prevent native handle leaks (#341)
+- chore(deps): remove `SixLabors.ImageSharp.Drawing` dependency (#341)
+- chore(deps): add `SkiaSharp 3.119.4` (#341)
+
 ## [3.4.7] - June 16, 2026
 
 - feat(cli): add `word to-html`, `word from-html`, and `excel to-html` commands (#338)

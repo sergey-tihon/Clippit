@@ -2,6 +2,7 @@
 using System.Xml.Linq;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
+using SkiaSharp;
 
 namespace Clippit.Tests.Word.Samples
 {
@@ -137,10 +138,18 @@ namespace Clippit.Tests.Word.Samples
                     if (imageEncoder is null)
                         return null;
                     string base64 = null;
+                    if (imageInfo.Image == null)
+                        return null;
                     try
                     {
                         using var ms = new MemoryStream();
-                        imageInfo.Image.Save(ms, imageEncoder);
+                        using var image = SKImage.FromBitmap(imageInfo.Image);
+                        if (image == null)
+                            return null;
+                        using var data = image.Encode(imageEncoder.Value, quality: 80);
+                        if (data == null)
+                            return null;
+                        data.SaveTo(ms);
                         var ba = ms.ToArray();
                         base64 = System.Convert.ToBase64String(ba);
                     }

@@ -5,7 +5,6 @@ using System.Xml.Linq;
 using Clippit.Html;
 using Clippit.Internal;
 using DocumentFormat.OpenXml.Packaging;
-using SixLabors.ImageSharp;
 using NextExpected = Clippit.Html.HtmlToWmlConverterCore.NextExpected;
 
 namespace Clippit.Word.Assembler
