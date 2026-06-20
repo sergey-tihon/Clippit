@@ -11,7 +11,7 @@ using System.Xml.Linq;
 using Clippit.Internal;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
-using SixLabors.Fonts;
+using SkiaSharp;
 
 // ReSharper disable InconsistentNaming
 
@@ -607,9 +607,7 @@ namespace Clippit
         {
             if (KnownFamilies == null)
             {
-                KnownFamilies = new HashSet<string>();
-                foreach (var fam in SystemFonts.Families)
-                    KnownFamilies.Add(fam.Name);
+                KnownFamilies = new HashSet<string>(SKFontManager.Default.FontFamilies);
             }
 
             var tabLength = r.DescendantsTrimmed(W.txbxContent)
@@ -634,22 +632,22 @@ namespace Clippit
             if (!KnownFamilies.Contains(fontName))
                 return (0, tabLength);
 
+            var weight = SKFontStyleWeight.Normal;
+            var slant = SKFontStyleSlant.Upright;
+            var bold = GetBoolProp(rPr, W.b) || GetBoolProp(rPr, W.bCs);
+            var italic = GetBoolProp(rPr, W.i) || GetBoolProp(rPr, W.iCs);
+            if (bold)
+                weight = SKFontStyleWeight.Bold;
+            if (italic)
+                slant = SKFontStyleSlant.Italic;
+
             // in theory, all unknown fonts are found by the above test, but if not...
-            if (!SystemFonts.Collection.TryGet(fontName, out var ff))
+            using var typeface = SKTypeface.FromFamilyName(fontName, weight, SKFontStyleWidth.Normal, slant);
+            if (typeface == null)
             {
                 UnknownFonts.Add(fontName);
                 return (0, tabLength);
             }
-
-            var fs = FontStyle.Regular;
-            var bold = GetBoolProp(rPr, W.b) || GetBoolProp(rPr, W.bCs);
-            var italic = GetBoolProp(rPr, W.i) || GetBoolProp(rPr, W.iCs);
-            if (bold && !italic)
-                fs = FontStyle.Bold;
-            if (italic && !bold)
-                fs = FontStyle.Italic;
-            if (bold && italic)
-                fs = FontStyle.Bold | FontStyle.Italic;
 
             // Appended blank as a quick fix to accommodate &nbsp; that will get
             // appended to some layout-critical runs such as list item numbers.
@@ -680,7 +678,7 @@ namespace Clippit
                 runText = sb.ToString();
             }
 
-            var width = (double)MetricsGetter.GetTextWidth(ff, fs, sz, runText) / (double)multiplier;
+            var width = (double)MetricsGetter.GetTextWidth(typeface, sz, runText) / (double)multiplier;
             return (width, tabLength);
         }
 

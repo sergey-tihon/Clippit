@@ -49,7 +49,7 @@ The `ImageHandler` callback receives an `ImageInfo` object for each image in the
 
 | Field | Type | Description |
 |---|---|---|
-| `Image` | `SixLabors.ImageSharp.Image` | The decoded image |
+| `Image` | `SkiaSharp.SKBitmap` | The decoded image |
 | `ImgStyleAttribute` | `XAttribute` | The computed `style` attribute (width/height) |
 | `ContentType` | `string` | The image MIME type |
 | `DrawingElement` | `XElement` | The source OpenXml drawing element |
@@ -70,7 +70,11 @@ var settings = new WmlToHtmlConverterSettings
     {
         // Convert images to inline base64 data URIs
         using var stream = new MemoryStream();
-        imageInfo.Image.SaveAsPng(stream);
+        using var image = SKImage.FromBitmap(imageInfo.Image);
+        if (image == null) return null;
+        using var data = image.Encode(SKEncodedImageFormat.Png, quality: 80);
+        if (data == null) return null;
+        data.SaveTo(stream);
         var base64 = Convert.ToBase64String(stream.ToArray());
         var imgElement = new XElement(
             Xhtml.img,
@@ -80,6 +84,11 @@ var settings = new WmlToHtmlConverterSettings
         );
         return imgElement;
     }
+    ```
+    > [!NOTE]
+    > The `ImageHandler` callback uses SkiaSharp types (`SKImage`, `SKEncodedImageFormat`).
+    > Add `using SkiaSharp;` at the top of your file to use them.
+
 };
 
 var html = WmlToHtmlConverter.ConvertToHtml(doc, settings);

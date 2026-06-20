@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.4.0] - 2026-06-20
+
+- refactor: replace SixLabors.ImageSharp with SkiaSharp for image processing in
+  `word to-html` inline image encoding and CLI image handler (#341)
+- fix(cli): use `FileMode.Create` instead of `FileMode.OpenOrCreate` in
+  `DefaultImageHandler` to avoid corrupted images on re-encode (#341)
+- fix(cli): return `null` instead of `null!` in `CreateInlineImage` failure
+  paths when SkiaSharp encode fails (#341)
+- chore(deps): remove `SixLabors.ImageSharp.Drawing`, add `SkiaSharp 3.119.4` (#341)
+
 ## [0.3.0] - 2026-06-15
 
 - Added `word to-html` command to convert `.docx` files to HTML/CSS with

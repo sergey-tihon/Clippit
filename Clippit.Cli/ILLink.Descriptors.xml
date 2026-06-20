@@ -3,8 +3,8 @@
     ILLink / NativeAOT root descriptors for Clippit.Cli.
 
     All DocumentFormat.OpenXml types (3.5.1, net10.0, IsTrimmable=true) and
-    SixLabors.ImageSharp word/HTML paths are handled by static analysis —
-    no manual roots needed for those.
+    SkiaSharp word/HTML paths are handled by static analysis — no manual roots
+    needed for those.
 
     SlideMasterPart and SlideLayoutPart are kept because OpenXml's internal
     part-loading mechanism may resolve these types via a type-keyed dictionary
