@@ -958,6 +958,8 @@ public class DocumentAssemblerTests : TestsBase
         canvas.Clear(new SKColor(100, 149, 237, 255)); // cornflower blue
         using var image = SKImage.FromBitmap(bitmap);
         using var data = image.Encode(SKEncodedImageFormat.Png, quality: 80);
+        if (data is null)
+            throw new InvalidOperationException("SkiaSharp failed to encode test PNG.");
         return data.ToArray();
     }
 

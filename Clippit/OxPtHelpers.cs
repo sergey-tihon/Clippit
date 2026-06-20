@@ -384,7 +384,7 @@ AAsACwDBAgAAbCwAAAAA";
                 return null;
             try
             {
-                using var fs = File.Open(imageFileName, FileMode.OpenOrCreate, FileAccess.Write);
+                using var fs = File.Open(imageFileName, FileMode.Create, FileAccess.Write);
                 using var image = SKImage.FromBitmap(imageInfo.Image);
                 if (image == null)
                     return null;

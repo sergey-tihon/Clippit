@@ -2328,19 +2328,25 @@ namespace Clippit.Html
             if (bmp == null)
                 return null;
 
-            var mdp = wDoc.MainDocumentPart;
-            var newPart = mdp.AddImagePart(ImagePartType.Png);
-            var rId = mdp.GetIdOfPart(newPart);
-            using (var partStream = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
+            // Encode first; only add the image part to the package if encoding succeeds.
+            // This avoids leaving a dangling empty relationship on encode failure.
+            SKData encodedData;
             using (var image = SKImage.FromBitmap(bmp))
             {
                 if (image == null)
                     return null;
-                using var data = image.Encode(SKEncodedImageFormat.Png, quality: 80);
+                var data = image.Encode(SKEncodedImageFormat.Png, quality: 80);
                 if (data == null)
                     return null;
-                data.SaveTo(partStream);
+                encodedData = data;
             }
+
+            var mdp = wDoc.MainDocumentPart;
+            var newPart = mdp.AddImagePart(ImagePartType.Png);
+            var rId = mdp.GetIdOfPart(newPart);
+            using (encodedData)
+            using (var partStream = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
+                encodedData.SaveTo(partStream);
 
             var pid = wDoc.Annotation<PictureId>();
             if (pid == null)

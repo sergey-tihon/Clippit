@@ -144,16 +144,16 @@ internal static class WordToHtmlService
             using var ms = new MemoryStream();
             using var image = SKImage.FromBitmap(imageInfo.Image);
             if (image == null)
-                return null!;
+                return null;
             using var data = image.Encode(imageEncoder.Value, quality: 80);
             if (data == null)
-                return null!;
+                return null;
             data.SaveTo(ms);
             base64 = Convert.ToBase64String(ms.ToArray());
         }
         catch (System.Runtime.InteropServices.ExternalException)
         {
-            return null!;
+            return null;
         }
 
         var mimeType = "image/" + extension;
