@@ -3628,6 +3628,9 @@ namespace Clippit.Word
                 try
                 {
                     using var bitmap = SKBitmap.Decode(partStream);
+                    if (bitmap == null)
+                        return null;
+
                     var imageInfo = new ImageInfo
                     {
                         Image = bitmap,

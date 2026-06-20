@@ -632,27 +632,22 @@ namespace Clippit
             if (!KnownFamilies.Contains(fontName))
                 return (0, tabLength);
 
-            // in theory, all unknown fonts are found by the above test, but if not...
-            using var typeface = SKTypeface.FromFamilyName(
-                fontName,
-                SKFontStyleWeight.Normal,
-                SKFontStyleWidth.Normal,
-                SKFontStyleSlant.Upright
-            );
-            if (typeface == null)
-            {
-                UnknownFonts.Add(fontName);
-                return (0, tabLength);
-            }
-
-            SKFontStyleWeight weight = SKFontStyleWeight.Normal;
-            SKFontStyleSlant slant = SKFontStyleSlant.Upright;
+            var weight = SKFontStyleWeight.Normal;
+            var slant = SKFontStyleSlant.Upright;
             var bold = GetBoolProp(rPr, W.b) || GetBoolProp(rPr, W.bCs);
             var italic = GetBoolProp(rPr, W.i) || GetBoolProp(rPr, W.iCs);
             if (bold)
                 weight = SKFontStyleWeight.Bold;
             if (italic)
                 slant = SKFontStyleSlant.Italic;
+
+            // in theory, all unknown fonts are found by the above test, but if not...
+            using var typeface = SKTypeface.FromFamilyName(fontName, weight, SKFontStyleWidth.Normal, slant);
+            if (typeface == null)
+            {
+                UnknownFonts.Add(fontName);
+                return (0, tabLength);
+            }
 
             // Appended blank as a quick fix to accommodate &nbsp; that will get
             // appended to some layout-critical runs such as list item numbers.

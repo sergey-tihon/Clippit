@@ -347,15 +347,16 @@ AAsACwDBAgAAbCwAAAAA";
                 case "png":
                     return SKEncodedImageFormat.Png;
                 case "gif":
-                    return SKEncodedImageFormat.Gif;
                 case "bmp":
-                    return SKEncodedImageFormat.Bmp;
+                    // SKImage.Encode does not support GIF or BMP. Preserve the image by converting to PNG.
+                    newExtension = "png";
+                    return SKEncodedImageFormat.Png;
                 case "jpeg":
                     return SKEncodedImageFormat.Jpeg;
                 case "tiff":
-                    // Convert tiff to gif.
-                    newExtension = "gif";
-                    return SKEncodedImageFormat.Gif;
+                    // Convert TIFF to PNG because SkiaSharp cannot encode GIF in this API.
+                    newExtension = "png";
+                    return SKEncodedImageFormat.Png;
                 case "x-wmf":
                     // TODO: What to do with Wmf?
                     break;
