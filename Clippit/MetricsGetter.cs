@@ -74,13 +74,7 @@ public class MetricsGetter
         }
     }
 
-    private static int _getTextWidth(
-        SKTypeface typeface,
-        SKFontStyleWeight weight,
-        SKFontStyleSlant slant,
-        decimal sz,
-        string text
-    )
+    private static int _getTextWidth(SKTypeface typeface, decimal sz, string text)
     {
         try
         {
@@ -96,38 +90,49 @@ public class MetricsGetter
         }
     }
 
-    public static int GetTextWidth(
-        SKTypeface typeface,
-        SKFontStyleWeight weight,
-        SKFontStyleSlant slant,
-        decimal sz,
-        string text
-    )
+    public static int GetTextWidth(SKTypeface typeface, decimal sz, string text)
     {
         try
         {
-            return _getTextWidth(typeface, weight, slant, sz, text);
+            return _getTextWidth(typeface, sz, text);
         }
         catch (ArgumentException)
         {
             try
             {
-                return _getTextWidth(typeface, SKFontStyleWeight.Normal, SKFontStyleSlant.Upright, sz, text);
+                // Some fonts don't support the requested style (e.g. no italic variant).
+                // Create a fallback typeface with normal weight and upright slant.
+                using var normal = SKTypeface.FromFamilyName(
+                    typeface.FamilyName,
+                    SKFontStyleWeight.Normal,
+                    SKFontStyleWidth.Normal,
+                    SKFontStyleSlant.Upright
+                );
+                if (normal == null)
+                    return 0;
+                return _getTextWidth(normal, sz, text);
             }
             catch (ArgumentException)
             {
                 try
                 {
-                    return _getTextWidth(typeface, SKFontStyleWeight.Bold, SKFontStyleSlant.Upright, sz, text);
+                    using var bold = SKTypeface.FromFamilyName(
+                        typeface.FamilyName,
+                        SKFontStyleWeight.Bold,
+                        SKFontStyleWidth.Normal,
+                        SKFontStyleSlant.Upright
+                    );
+                    if (bold == null)
+                        return 0;
+                    return _getTextWidth(bold, sz, text);
                 }
                 catch (ArgumentException)
                 {
                     // if both regular and bold fail, then get metrics for Times New Roman
-                    // use the original FontStyle (in fs)
-                    var fallback = SKTypeface.FromFamilyName("Times New Roman");
+                    using var fallback = SKTypeface.FromFamilyName("Times New Roman");
                     if (fallback == null)
                         return 0;
-                    return _getTextWidth(fallback, weight, slant, sz, text);
+                    return _getTextWidth(fallback, sz, text);
                 }
             }
         }

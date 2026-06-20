@@ -633,7 +633,12 @@ namespace Clippit
                 return (0, tabLength);
 
             // in theory, all unknown fonts are found by the above test, but if not...
-            var typeface = SKTypeface.FromFamilyName(fontName);
+            using var typeface = SKTypeface.FromFamilyName(
+                fontName,
+                SKFontStyleWeight.Normal,
+                SKFontStyleWidth.Normal,
+                SKFontStyleSlant.Upright
+            );
             if (typeface == null)
             {
                 UnknownFonts.Add(fontName);
@@ -678,7 +683,7 @@ namespace Clippit
                 runText = sb.ToString();
             }
 
-            var width = (double)MetricsGetter.GetTextWidth(typeface, weight, slant, sz, runText) / (double)multiplier;
+            var width = (double)MetricsGetter.GetTextWidth(typeface, sz, runText) / (double)multiplier;
             return (width, tabLength);
         }
 

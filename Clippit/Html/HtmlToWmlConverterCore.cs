@@ -2284,30 +2284,22 @@ namespace Clippit.Html
             }
         }
 
-        private static XElement TransformImageToWml(
-            XElement element,
-            HtmlToWmlConverterSettings settings,
-            WordprocessingDocument wDoc
-        )
+        private static SKBitmap? LoadImageForTransform(string srcAttribute, HtmlToWmlConverterSettings settings)
         {
-            var srcAttribute = (string)element.Attribute(XhtmlNoNamespace.src);
-            byte[] ba = null;
-            SKBitmap bmp = null;
-
             if (srcAttribute.StartsWith("data:"))
             {
                 var semiIndex = srcAttribute.IndexOf(';');
                 var commaIndex = srcAttribute.IndexOf(',', semiIndex);
                 var base64 = srcAttribute.Substring(commaIndex + 1);
-                ba = Convert.FromBase64String(base64);
-                using var ms = new MemoryStream(ba);
-                bmp = SKBitmap.Decode(ms);
+                var rawBytes = Convert.FromBase64String(base64);
+                using var ms = new MemoryStream(rawBytes);
+                return SKBitmap.Decode(ms);
             }
             else
             {
                 try
                 {
-                    bmp = SKBitmap.Decode(settings.BaseUriForImages + "/" + srcAttribute);
+                    return SKBitmap.Decode(settings.BaseUriForImages + "/" + srcAttribute);
                 }
                 catch (DirectoryNotFoundException)
                 {
@@ -2321,28 +2313,34 @@ namespace Clippit.Html
                 {
                     return null;
                 }
-                if (bmp == null)
-                    return null;
-                using var ms = new MemoryStream();
-                var image2 = SKImage.FromBitmap(bmp);
-                if (image2 == null)
-                    return null;
-                using var data2 = image2.Encode(SKEncodedImageFormat.Bmp, quality: 80);
-                if (data2 == null)
-                    return null;
-                data2.SaveTo(ms);
-                ba = ms.ToArray();
             }
+        }
+
+        private static XElement TransformImageToWml(
+            XElement element,
+            HtmlToWmlConverterSettings settings,
+            WordprocessingDocument wDoc
+        )
+        {
+            var srcAttribute = (string)element.Attribute(XhtmlNoNamespace.src);
+            using var bmp = LoadImageForTransform(srcAttribute, settings);
 
             if (bmp == null)
                 return null;
 
             var mdp = wDoc.MainDocumentPart;
-            var ipt = ImagePartType.Png;
-            var newPart = mdp.AddImagePart(ipt);
+            var newPart = mdp.AddImagePart(ImagePartType.Png);
             var rId = mdp.GetIdOfPart(newPart);
-            using (var s = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
-                s.Write(ba, 0, ba.GetUpperBound(0) + 1);
+            using (var partStream = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
+            using (var image = SKImage.FromBitmap(bmp))
+            {
+                if (image == null)
+                    return null;
+                using var data = image.Encode(SKEncodedImageFormat.Png, quality: 80);
+                if (data == null)
+                    return null;
+                data.SaveTo(partStream);
+            }
 
             var pid = wDoc.Annotation<PictureId>();
             if (pid == null)

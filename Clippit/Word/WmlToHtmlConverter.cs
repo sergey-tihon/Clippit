@@ -3550,10 +3550,7 @@ namespace Clippit.Word
                 return null;
 
             using var partStream = imagePart.GetStream();
-            using var memStream = new MemoryStream();
-            partStream.CopyTo(memStream);
-            var imageBytes = memStream.ToArray();
-            var image = SKBitmap.Decode(imageBytes);
+            var image = SKBitmap.Decode(partStream);
             if (image == null)
                 return null;
             if (extentCx != null && extentCy != null)
