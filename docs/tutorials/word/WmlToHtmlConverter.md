@@ -84,6 +84,11 @@ var settings = new WmlToHtmlConverterSettings
         );
         return imgElement;
     }
+    ```
+    > [!NOTE]
+    > The `ImageHandler` callback uses SkiaSharp types (`SKImage`, `SKEncodedImageFormat`).
+    > Add `using SkiaSharp;` at the top of your file to use them.
+
 };
 
 var html = WmlToHtmlConverter.ConvertToHtml(doc, settings);

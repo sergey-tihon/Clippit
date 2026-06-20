@@ -2286,6 +2286,8 @@ namespace Clippit.Html
 
         private static SKBitmap? LoadImageForTransform(string srcAttribute, HtmlToWmlConverterSettings settings)
         {
+            if (string.IsNullOrEmpty(srcAttribute))
+                return null;
             if (srcAttribute.StartsWith("data:"))
             {
                 var semiIndex = srcAttribute.IndexOf(';');

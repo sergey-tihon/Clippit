@@ -76,21 +76,27 @@ public class MetricsGetter
 
     private static int _getTextWidth(SKTypeface typeface, decimal sz, string text)
     {
+        var fontSize = (float)sz / 2f;
+        using var font = new SKFont(typeface, fontSize, 1, 0);
+        using var paint = new SKPaint(font) { SubpixelText = true, IsAntialias = true };
+        var width = paint.MeasureText(text);
+        return (int)width;
+    }
+
+    public static int GetTextWidth(SKTypeface typeface, decimal sz, string text)
+    {
         try
         {
-            var fontSize = (float)sz / 2f;
-            using var font = new SKFont(typeface, fontSize, 1, 0);
-            using var paint = new SKPaint(font) { SubpixelText = true, IsAntialias = true };
-            var width = paint.MeasureText(text);
-            return (int)width;
+            return _getTextWidthWithFallback(typeface, sz, text);
         }
-        catch
+        catch (OverflowException)
         {
+            // This happened on Azure but interestingly enough not while testing locally.
             return 0;
         }
     }
 
-    public static int GetTextWidth(SKTypeface typeface, decimal sz, string text)
+    private static int _getTextWidthWithFallback(SKTypeface typeface, decimal sz, string text)
     {
         try
         {
@@ -135,11 +141,6 @@ public class MetricsGetter
                     return _getTextWidth(fallback, sz, text);
                 }
             }
-        }
-        catch (OverflowException)
-        {
-            // This happened on Azure but interestingly enough not while testing locally.
-            return 0;
         }
     }
 
