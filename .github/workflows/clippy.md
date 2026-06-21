@@ -14,7 +14,7 @@ description: |
   Always polite, constructive, and mindful of the project's goals.
 
 on:
-  schedule: weekly
+  schedule: every 2d
   workflow_dispatch:
     inputs:
       command:
@@ -234,7 +234,7 @@ steps:
           json.dump(result, f, indent=2)
       EOF
 
-source: githubnext/agentics/workflows/repo-assist.md@e15e57b40918dbca11b350c55d02ab61934afa75
+source: githubnext/agentics/workflows/repo-assist.md@d63b34de41bc0dc052096e094c732cf28eafc659
 ---
 
 # Clippy
