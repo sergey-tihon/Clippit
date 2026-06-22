@@ -7,7 +7,7 @@ namespace Clippit.Tests.Cli.Integration.Excel;
 internal sealed class ExcelToHtmlTests : CliIntegrationTestBase
 {
     [Test]
-    public async Task CLI061_ExcelToHtml_ConvertTable_ProducesValidHtmlAndJsonResult()
+    public async Task CLI083_ExcelToHtml_ConvertTable_ProducesValidHtmlAndJsonResult()
     {
         var input = CliTestRunner.TestFile("SH001-Table.xlsx");
         var tempDir = CliTestRunner.CreateTempDirectory("excel-to-html-table");
@@ -42,7 +42,7 @@ internal sealed class ExcelToHtmlTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI062_ExcelToHtml_ConvertWholeSheet_ProducesValidHtml()
+    public async Task CLI084_ExcelToHtml_ConvertWholeSheet_ProducesValidHtml()
     {
         var input = CliTestRunner.TestFile("SH101-SimpleFormats.xlsx");
         var tempDir = CliTestRunner.CreateTempDirectory("excel-to-html-sheet");
@@ -71,7 +71,7 @@ internal sealed class ExcelToHtmlTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI063_ExcelToHtml_ConvertRange_ProducesValidHtml()
+    public async Task CLI085_ExcelToHtml_ConvertRange_ProducesValidHtml()
     {
         var input = CliTestRunner.TestFile("SH101-SimpleFormats.xlsx");
         var tempDir = CliTestRunner.CreateTempDirectory("excel-to-html-range");
@@ -102,7 +102,7 @@ internal sealed class ExcelToHtmlTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI064_ExcelToHtml_InvalidTableCombination_ReturnsError()
+    public async Task CLI086_ExcelToHtml_InvalidTableCombination_ReturnsError()
     {
         var input = CliTestRunner.TestFile("SH001-Table.xlsx");
 
@@ -129,7 +129,7 @@ internal sealed class ExcelToHtmlTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI065_ExcelToHtml_RangeWithoutSheet_ReturnsError()
+    public async Task CLI087_ExcelToHtml_RangeWithoutSheet_ReturnsError()
     {
         var input = CliTestRunner.TestFile("SH101-SimpleFormats.xlsx");
 
@@ -146,7 +146,7 @@ internal sealed class ExcelToHtmlTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI066_ExcelToHtml_TableNotFound_ReturnsError()
+    public async Task CLI088_ExcelToHtml_TableNotFound_ReturnsError()
     {
         var input = CliTestRunner.TestFile("SH001-Table.xlsx");
 
