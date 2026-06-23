@@ -138,7 +138,7 @@ namespace Clippit.Excel
                 new XAttribute("border", "1"),
                 new XAttribute("cellpadding", "2"),
                 new XAttribute("cellspacing", "0"),
-                thead != null ? new XElement(Xhtml.thead, thead) : null,
+                thead is not null ? new XElement(Xhtml.thead, thead) : null,
                 new XElement(Xhtml.tbody, rows)
             );
 
@@ -184,7 +184,7 @@ namespace Clippit.Excel
                 rows.Add(new XElement(Xhtml.tr, headerCells));
             }
 
-            if (dataElement != null)
+            if (dataElement is not null)
             {
                 foreach (var row in dataElement.Elements("Row"))
                     rows.Add(BuildTableRow(row, columnWidths));
@@ -197,7 +197,7 @@ namespace Clippit.Excel
                 new XAttribute("cellspacing", "0"),
             };
 
-            if (tableName != null)
+            if (tableName is not null)
                 tableContent.Add(new XElement(Xhtml.caption, new XText(tableName)));
 
             tableContent.Add(new XElement(Xhtml.tbody, rows));
@@ -224,7 +224,7 @@ namespace Clippit.Excel
             var tr = new XElement(Xhtml.tr, cells);
 
             var rowProps = rowElement.Element("RowProps");
-            if (rowProps?.Attribute("ht") != null)
+            if (rowProps?.Attribute("ht") is not null)
             {
                 if (
                     double.TryParse(
@@ -262,10 +262,10 @@ namespace Clippit.Excel
             var td = new XElement(Xhtml.td, new XText(displayValue));
 
             var styles = new Dictionary<string, string>();
-            if (cellProps != null)
+            if (cellProps is not null)
                 ApplyCellStyles(cellProps, styles);
 
-            if (columnWidths != null && columnIndex < columnWidths.Count && columnWidths[columnIndex] > 0)
+            if (columnWidths is not null && columnIndex < columnWidths.Count && columnWidths[columnIndex] > 0)
                 styles["width"] = columnWidths[columnIndex].ToString("F2", CultureInfo.InvariantCulture) + "pt";
 
             if (styles.Count > 0)
@@ -281,7 +281,7 @@ namespace Clippit.Excel
         /// </summary>
         private static XElement? BuildTableHeader(IReadOnlyList<double>? columnWidths)
         {
-            if (columnWidths == null || columnWidths.Count == 0)
+            if (columnWidths is null || columnWidths.Count == 0)
                 return null;
 
             var headerCells = columnWidths.Select(
@@ -303,7 +303,7 @@ namespace Clippit.Excel
         private static List<double>? ExtractColumnWidths(XElement? dataProps)
         {
             var cols = dataProps?.Element("cols");
-            if (cols == null)
+            if (cols is null)
                 return null;
 
             var widths = new List<double>();
@@ -311,7 +311,7 @@ namespace Clippit.Excel
             {
                 var widthAttr = col.Attribute("width");
                 widths.Add(
-                    widthAttr != null
+                    widthAttr is not null
                     && double.TryParse((string)widthAttr, NumberStyles.Any, CultureInfo.InvariantCulture, out var w)
                         ? w * 7.5 // character widths → approximate points
                         : 0
@@ -327,23 +327,23 @@ namespace Clippit.Excel
         private static void ApplyCellStyles(XElement cellProps, Dictionary<string, string> styles)
         {
             var font = cellProps.Element("font");
-            if (font != null)
+            if (font is not null)
             {
-                if (font.Element("b") != null)
+                if (font.Element("b") is not null)
                     styles["font-weight"] = "bold";
 
-                if (font.Element("i") != null)
+                if (font.Element("i") is not null)
                     styles["font-style"] = "italic";
 
-                if (font.Element("u") != null)
+                if (font.Element("u") is not null)
                     styles["text-decoration"] = "underline";
 
-                if (font.Element("strike") != null)
+                if (font.Element("strike") is not null)
                     styles["text-decoration"] = "line-through";
 
                 var sz = font.Element("sz");
                 if (
-                    sz?.Attribute("val") != null
+                    sz?.Attribute("val") is not null
                     && double.TryParse(
                         (string)sz.Attribute("val"),
                         NumberStyles.Any,
@@ -354,19 +354,19 @@ namespace Clippit.Excel
                     styles["font-size"] = fontSize.ToString("F1", CultureInfo.InvariantCulture) + "pt";
 
                 var color = font.Element("color");
-                if (color != null)
+                if (color is not null)
                 {
                     var fontColor = ParseColor(color);
-                    if (fontColor != null)
+                    if (fontColor is not null)
                         styles["color"] = fontColor;
                 }
 
                 var name = font.Element("name");
-                if (name?.Attribute("val") != null)
+                if (name?.Attribute("val") is not null)
                     CreateFontCssProperty((string)name.Attribute("val"), styles);
 
                 var family = font.Element("family");
-                if (family?.Attribute("val") != null)
+                if (family?.Attribute("val") is not null)
                 {
                     var genericFamily = ((string)family.Attribute("val")).ToLowerInvariant() switch
                     {
@@ -377,32 +377,32 @@ namespace Clippit.Excel
                         "decorative" => "fantasy",
                         _ => null,
                     };
-                    if (genericFamily != null && !styles.ContainsKey("font-family"))
+                    if (genericFamily is not null && !styles.ContainsKey("font-family"))
                         styles["font-family"] = genericFamily;
                 }
             }
 
             var fill = cellProps.Element("fill");
-            if (fill != null)
+            if (fill is not null)
             {
                 var fgColor = fill.Element("patternFill")?.Element("fgColor");
-                if (fgColor != null)
+                if (fgColor is not null)
                 {
                     var fillColor = ParseColor(fgColor);
-                    if (fillColor != null)
+                    if (fillColor is not null)
                         styles["background-color"] = fillColor;
                 }
             }
 
             var border = cellProps.Element("border");
-            if (border != null)
+            if (border is not null)
                 ApplyBorderStyles(border, styles);
 
             var alignment = cellProps.Element("alignment");
-            if (alignment != null)
+            if (alignment is not null)
             {
                 var horizontal = (string)alignment.Attribute("horizontal");
-                if (horizontal != null)
+                if (horizontal is not null)
                     styles["text-align"] = horizontal switch
                     {
                         "center" => "center",
@@ -413,7 +413,7 @@ namespace Clippit.Excel
                     };
 
                 var vertical = (string)alignment.Attribute("vertical");
-                if (vertical != null)
+                if (vertical is not null)
                     styles["vertical-align"] = vertical switch
                     {
                         "top" => "top",
@@ -427,7 +427,7 @@ namespace Clippit.Excel
                     styles["white-space"] = "normal";
 
                 var textRotation = (string)alignment.Attribute("textRotation");
-                if (textRotation != null && int.TryParse(textRotation, out var rotation))
+                if (textRotation is not null && int.TryParse(textRotation, out var rotation))
                 {
                     // Only map the two Excel vertical-text cases to CSS writing-mode.
                     // rotation == 90: text rotated 90° counter-clockwise (vertical column)
@@ -439,7 +439,7 @@ namespace Clippit.Excel
                 }
 
                 var indent = (string)alignment.Attribute("indent");
-                if (indent != null && int.TryParse(indent, out var indentLevel))
+                if (indent is not null && int.TryParse(indent, out var indentLevel))
                     styles["padding-left"] = $"{indentLevel * 7}pt";
             }
         }
@@ -458,11 +458,11 @@ namespace Clippit.Excel
             XElement? borderElement
         )
         {
-            if (borderElement == null)
+            if (borderElement is null)
                 return;
 
             var styleAttr = (string)borderElement.Attribute("style");
-            if (styleAttr == null || styleAttr == "none")
+            if (styleAttr is null || styleAttr == "none")
                 return;
 
             var cssBorderStyle = styleAttr switch
@@ -484,7 +484,7 @@ namespace Clippit.Excel
             };
 
             var color = borderElement.Element("color");
-            var cssColor = color != null ? ParseColor(color) ?? "#000000" : "#000000";
+            var cssColor = color is not null ? ParseColor(color) ?? "#000000" : "#000000";
 
             styles[cssProperty] = $"{cssBorderWidth} {cssBorderStyle} {cssColor}";
         }
@@ -497,7 +497,7 @@ namespace Clippit.Excel
         {
             // Direct ARGB value (e.g. "FF9C0006" — leading two hex digits are alpha, ignored)
             var rgb = (string)colorElement.Attribute("rgb");
-            if (rgb != null)
+            if (rgb is not null)
             {
                 return rgb.Length >= 8 ? "#" + rgb[2..] : "#" + rgb;
             }
@@ -509,7 +509,7 @@ namespace Clippit.Excel
             // Indexed colour palette
             var indexed = (string)colorElement.Attribute("indexed");
             if (
-                indexed != null
+                indexed is not null
                 && int.TryParse(indexed, out var idx)
                 && idx >= 0
                 && idx < SmlDataRetriever.IndexedColors.Length
@@ -524,15 +524,15 @@ namespace Clippit.Excel
             // TODO: read the actual theme XML from sDoc.WorkbookPart.ThemePart for custom-themed workbooks;
             //       for now the default Office theme palette is used as an approximation.
             var theme = (string)colorElement.Attribute("theme");
-            if (theme != null)
+            if (theme is not null)
             {
                 double tintValue = 0;
                 var tintAttr = (string)colorElement.Attribute("tint");
-                if (tintAttr != null)
+                if (tintAttr is not null)
                     double.TryParse(tintAttr, NumberStyles.Any, CultureInfo.InvariantCulture, out tintValue);
 
                 var baseColor = GetThemeColor(int.TryParse(theme, out var ti) ? ti : 0);
-                if (baseColor == null)
+                if (baseColor is null)
                     return "#000000";
 
                 return Math.Abs(tintValue) > 0.001 ? ApplyTint(baseColor, tintValue) : baseColor;
@@ -606,7 +606,7 @@ namespace Clippit.Excel
                 var elementsThatNeedClasses = xhtml
                     .DescendantsAndSelf()
                     .Select(d => new { Element = d, Styles = d.Annotation<Dictionary<string, string>>() })
-                    .Where(z => z.Styles != null);
+                    .Where(z => z.Styles is not null);
                 var augmented = elementsThatNeedClasses
                     .Select(p => new
                     {
@@ -667,7 +667,7 @@ namespace Clippit.Excel
                 foreach (var d in xhtml.DescendantsAndSelf())
                 {
                     var style = d.Annotation<Dictionary<string, string>>();
-                    if (style == null)
+                    if (style is null)
                         continue;
                     var styleValue = style
                         .Where(p => p.Key != "PtStyleName")
@@ -675,7 +675,7 @@ namespace Clippit.Excel
                         .Select(e => $"{e.Key}: {e.Value};")
                         .StringConcatenate();
                     var st = new XAttribute("style", styleValue);
-                    if (d.Attribute("style") != null)
+                    if (d.Attribute("style") is not null)
                         d.Attribute("style").Value += styleValue;
                     else
                         d.Add(st);
@@ -686,7 +686,7 @@ namespace Clippit.Excel
         private static void SetStyleElementValue(XElement xhtml, string styleValue)
         {
             var styleElement = xhtml.Descendants(Xhtml.style).FirstOrDefault();
-            if (styleElement != null)
+            if (styleElement is not null)
                 styleElement.Value = styleValue;
             else
             {
