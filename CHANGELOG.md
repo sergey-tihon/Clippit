@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.5.1] - June 23, 2026
+
+- chore(deps): update SkiaSharp 3.119.4 → 4.148.0 with migration fix (#346)
+- chore(deps): update Microsoft.NET.Test.Sdk 18.6.0 → 18.7.0 (#346)
+- chore(deps): update dotnet-outdated-tool 4.7.1 → 4.8.1 (#346)
+- chore(deps): update csharpier 1.2.6 → 1.3.0 (#346)
+- chore(deps): update System.CommandLine 3.0.0-preview.4 → preview.5 (#346)
+- fix: replace deprecated `SKPaint.MeasureText` with `SKFont.MeasureText` for SkiaSharp 4.x compatibility (#346)
+
 ## [3.5.0] - June 20, 2026
 
 - feat: replace SixLabors.ImageSharp with SkiaSharp for all image processing (#341)
