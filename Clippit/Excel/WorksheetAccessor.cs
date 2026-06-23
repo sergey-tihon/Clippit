@@ -32,7 +32,7 @@ namespace Clippit.Excel
             if (!rowList.ContainsKey(row))
                 return null;
             var cell = rowList[row].GetCell(column);
-            if (cell == null)
+            if (cell is null)
                 return null;
             return cell.GetValue();
         }
@@ -118,7 +118,7 @@ namespace Clippit.Excel
                 ),
                 _ => null,
             };
-            if (newCell == null)
+            if (newCell is null)
                 throw new ArgumentException("Invalid cell type.");
             if (style != 0)
                 newCell.Add(new XAttribute(NoNamespace.s, style));
@@ -176,7 +176,7 @@ namespace Clippit.Excel
                         .Max(n => Convert.ToInt32(n.Attribute(NoNamespace.sheetId).Value)) + 1;
 
             // If name is null, generate a name based on the sheet ID
-            if (worksheetName == null)
+            if (worksheetName is null)
                 worksheetName = "Sheet" + sheetId;
 
             // Create the new sheet element in the workbook
@@ -224,9 +224,9 @@ namespace Clippit.Excel
             var worksheetXDocument = worksheet.GetXDocument();
             var cellValue = GetCell(worksheetXDocument, column, row);
 
-            if (cellValue != null)
+            if (cellValue is not null)
             {
-                if (cellValue.Attribute(NoNamespace.t) == null)
+                if (cellValue.Attribute(NoNamespace.t) is null)
                 {
                     var value = cellValue.Element(S.v).Value;
                     if (value.Contains("."))
@@ -262,7 +262,7 @@ namespace Clippit.Excel
                 .Elements(S.row)
                 .Where(r => r.Attribute(NoNamespace.r).Value.Equals(row.ToString()))
                 .FirstOrDefault<XElement>();
-            if (rowElement == null)
+            if (rowElement is null)
                 return null;
             return rowElement
                 .Elements(S.c)
@@ -304,7 +304,7 @@ namespace Clippit.Excel
                 ),
                 _ => null,
             };
-            if (newCell == null)
+            if (newCell is null)
                 throw new ArgumentException("Invalid cell type.");
 
             SetCell(worksheetXDocument, newCell);
@@ -323,7 +323,7 @@ namespace Clippit.Excel
                 .Where(t => t.Attribute(NoNamespace.r).Value == row.ToString())
                 .FirstOrDefault();
 
-            if (rowElement == null)
+            if (rowElement is null)
             {
                 //row element does not exist
                 //create a new one
@@ -335,7 +335,7 @@ namespace Clippit.Excel
                     //find the row with the inmediate higher index for the row containing the cell to set the value to
                     var rowAfterElement = FindRowAfter(worksheetXDocument, row);
                     //if there is a row with an inmediate higher index already defined at sheetData
-                    if (rowAfterElement != null)
+                    if (rowAfterElement is not null)
                     {
                         //add the new row before the row with an inmediate higher index
                         rowAfterElement.AddBeforeSelf(rowElement);
@@ -363,11 +363,11 @@ namespace Clippit.Excel
                     .Where(t => t.Attribute(NoNamespace.r).Value == cellReference)
                     .FirstOrDefault();
 
-                if (currentCell == null)
+                if (currentCell is null)
                 { //cell element does not exist at row indicated as parameter
                     //find the inmediate right column for the cell to set the value to
                     var columnAfterXElement = FindColumAfter(worksheetXDocument, row, column);
-                    if (columnAfterXElement != null)
+                    if (columnAfterXElement is not null)
                     {
                         //Insert the new cell before the inmediate right column
                         columnAfterXElement.AddBeforeSelf(newCell);
@@ -447,14 +447,14 @@ namespace Clippit.Excel
         )
         {
             var book = doc.WorkbookPart.GetXDocument();
-            if (book.Root.Element(S.definedNames) == null)
+            if (book.Root.Element(S.definedNames) is null)
                 throw new ArgumentException("Range name not found: " + rangeName);
             var element = book
                 .Root.Element(S.definedNames)
                 .Elements(S.definedName)
                 .Where(t => t.Attribute(NoNamespace.name).Value == rangeName)
                 .FirstOrDefault();
-            if (element == null)
+            if (element is null)
                 throw new ArgumentException("Range name not found: " + rangeName);
             var sheetName = element.Value.Substring(0, element.Value.IndexOf('!'));
             var range = element.Value.Substring(element.Value.IndexOf('!') + 1).Replace("$", "");
@@ -476,14 +476,14 @@ namespace Clippit.Excel
         )
         {
             var book = doc.WorkbookPart.GetXDocument();
-            if (book.Root.Element(S.definedNames) == null)
+            if (book.Root.Element(S.definedNames) is null)
                 book.Root.Add(new XElement(S.definedNames));
             var element = book
                 .Root.Element(S.definedNames)
                 .Elements(S.definedName)
                 .Where(t => t.Attribute(NoNamespace.name).Value == rangeName)
                 .FirstOrDefault();
-            if (element == null)
+            if (element is null)
             {
                 element = new XElement(S.definedName, new XAttribute(NoNamespace.name, rangeName));
                 book.Root.Element(S.definedNames).Add(element);
@@ -502,7 +502,7 @@ namespace Clippit.Excel
                 .Elements(S.definedName)
                 .Where(t => t.Attribute(NoNamespace.name).Value == rangeName)
                 .FirstOrDefault();
-            if (element != null)
+            if (element is not null)
             {
                 var original = element.Value;
                 element.SetValue(original.Substring(0, original.Length - 1) + lastRow);
@@ -520,7 +520,7 @@ namespace Clippit.Excel
         {
             var book = document.WorkbookPart.GetXDocument();
             var element = book.Root.Element(S.calcPr);
-            if (element == null)
+            if (element is null)
             {
                 book.Root.Add(new XElement(S.calcPr));
             }
@@ -571,12 +571,12 @@ namespace Clippit.Excel
             for (var column = startColumn; column <= endColumn; column++)
             {
                 var oldCell = GetCell(worksheetXDocument, column, row);
-                if (oldCell != null)
+                if (oldCell is not null)
                 {
                     var newCell = new XElement(oldCell);
                     newCell.SetAttributeValue(NoNamespace.r, GetColumnId(column + columnOffset) + (row + rowOffset));
                     var formula = newCell.Element(S.f);
-                    if (formula != null)
+                    if (formula is not null)
                     {
                         var parser = new ParseFormula(formula.Value);
                         formula.SetValue(parser.ReplaceRelativeCell(rowOffset, columnOffset));
@@ -714,7 +714,7 @@ namespace Clippit.Excel
             // Create the pivotCache entry in the workbook part
             var cacheId = 1;
             var wb = document.WorkbookPart.GetXDocument();
-            if (wb.Root.Element(S.pivotCaches) == null)
+            if (wb.Root.Element(S.pivotCaches) is null)
                 wb.Root.Add(new XElement(S.pivotCaches));
             else
             {
@@ -827,11 +827,11 @@ namespace Clippit.Excel
                     // Add to colFields
                     {
                         var fields = pivotTable.Element(S.pivotTableDefinition).Element(S.colFields);
-                        if (fields == null)
+                        if (fields is null)
                         {
                             fields = new XElement(S.colFields, new XAttribute(NoNamespace.count, 0));
                             var rowFields = pivotTable.Element(S.pivotTableDefinition).Element(S.rowFields);
-                            if (rowFields == null)
+                            if (rowFields is null)
                                 pivotTable.Element(S.pivotTableDefinition).Element(S.pivotFields).AddAfterSelf(fields);
                             else
                                 rowFields.AddAfterSelf(fields);
@@ -846,7 +846,7 @@ namespace Clippit.Excel
                     // Add to rowFields
                     {
                         var fields = pivotTable.Element(S.pivotTableDefinition).Element(S.rowFields);
-                        if (fields == null)
+                        if (fields is null)
                         {
                             fields = new XElement(S.rowFields, new XAttribute(NoNamespace.count, 0));
                             pivotTable.Element(S.pivotTableDefinition).Element(S.pivotFields).AddAfterSelf(fields);
@@ -861,13 +861,13 @@ namespace Clippit.Excel
                     // Add to pageFields
                     {
                         var fields = pivotTable.Element(S.pivotTableDefinition).Element(S.pageFields);
-                        if (fields == null)
+                        if (fields is null)
                         {
                             fields = new XElement(S.pageFields, new XAttribute(NoNamespace.count, 0));
                             var prev = pivotTable.Element(S.pivotTableDefinition).Element(S.colFields);
-                            if (prev == null)
+                            if (prev is null)
                                 prev = pivotTable.Element(S.pivotTableDefinition).Element(S.rowFields);
-                            if (prev == null)
+                            if (prev is null)
                                 pivotTable.Element(S.pivotTableDefinition).Element(S.pivotFields).AddAfterSelf(fields);
                             else
                                 prev.AddAfterSelf(fields);
@@ -891,11 +891,11 @@ namespace Clippit.Excel
                     // Add to colFields
                     {
                         var fields = pivotTable.Element(S.pivotTableDefinition).Element(S.colFields);
-                        if (fields == null)
+                        if (fields is null)
                         {
                             fields = new XElement(S.colFields, new XAttribute(NoNamespace.count, 0));
                             var rowFields = pivotTable.Element(S.pivotTableDefinition).Element(S.rowFields);
-                            if (rowFields == null)
+                            if (rowFields is null)
                                 pivotTable.Element(S.pivotTableDefinition).Element(S.pivotFields).AddAfterSelf(fields);
                             else
                                 rowFields.AddAfterSelf(fields);
@@ -908,7 +908,7 @@ namespace Clippit.Excel
                     // Add to rowFields
                     {
                         var fields = pivotTable.Element(S.pivotTableDefinition).Element(S.rowFields);
-                        if (fields == null)
+                        if (fields is null)
                         {
                             fields = new XElement(S.rowFields, new XAttribute(NoNamespace.count, 0));
                             pivotTable.Element(S.pivotTableDefinition).Element(S.pivotFields).AddAfterSelf(fields);
@@ -921,13 +921,13 @@ namespace Clippit.Excel
                     // Add to pageFields
                     {
                         var fields = pivotTable.Element(S.pivotTableDefinition).Element(S.pageFields);
-                        if (fields == null)
+                        if (fields is null)
                         {
                             fields = new XElement(S.pageFields, new XAttribute(NoNamespace.count, 0));
                             var prev = pivotTable.Element(S.pivotTableDefinition).Element(S.colFields);
-                            if (prev == null)
+                            if (prev is null)
                                 prev = pivotTable.Element(S.pivotTableDefinition).Element(S.rowFields);
-                            if (prev == null)
+                            if (prev is null)
                                 pivotTable.Element(S.pivotTableDefinition).Element(S.pivotFields).AddAfterSelf(fields);
                             else
                                 prev.AddAfterSelf(fields);
@@ -955,15 +955,15 @@ namespace Clippit.Excel
             var pivotField = pivotTable.Descendants(S.pivotField).Skip(index).First();
             pivotField.Add(new XAttribute(NoNamespace.dataField, "1"));
             var fields = pivotTable.Element(S.pivotTableDefinition).Element(S.dataFields);
-            if (fields == null)
+            if (fields is null)
             {
                 fields = new XElement(S.dataFields, new XAttribute(NoNamespace.count, 0));
                 var prev = pivotTable.Element(S.pivotTableDefinition).Element(S.pageFields);
-                if (prev == null)
+                if (prev is null)
                     prev = pivotTable.Element(S.pivotTableDefinition).Element(S.colFields);
-                if (prev == null)
+                if (prev is null)
                     prev = pivotTable.Element(S.pivotTableDefinition).Element(S.rowFields);
-                if (prev == null)
+                if (prev is null)
                     prev = pivotTable.Element(S.pivotTableDefinition).Element(S.pivotFields);
                 prev.AddAfterSelf(fields);
             }
@@ -990,7 +990,7 @@ namespace Clippit.Excel
         {
             var doc = cacheDef.GetXDocument();
             var def = doc.Element(S.pivotCacheDefinition);
-            if (def.Attribute(NoNamespace.refreshOnLoad) == null)
+            if (def.Attribute(NoNamespace.refreshOnLoad) is null)
                 def.Add(new XAttribute(NoNamespace.refreshOnLoad, 1));
             else
                 def.Attribute(NoNamespace.refreshOnLoad).Value = "1";
@@ -1006,7 +1006,7 @@ namespace Clippit.Excel
             );
             var styles = document.WorkbookPart.WorkbookStylesPart.GetXDocument();
             var numFmts = styles.Root.Element(S.numFmts);
-            if (numFmts == null)
+            if (numFmts is null)
             {
                 styles
                     .Root.Element(S.fonts)
@@ -1065,7 +1065,7 @@ namespace Clippit.Excel
                 var color = new XElement(colorName);
                 if (Auto)
                     color.Add(new XAttribute(NoNamespace.auto, "1"));
-                else if (RGB != null)
+                else if (RGB is not null)
                     color.Add(new XAttribute(NoNamespace.rgb, RGB));
                 else if (Indexed != 0)
                     color.Add(new XAttribute(NoNamespace.indexed, Indexed));
@@ -1121,9 +1121,9 @@ namespace Clippit.Excel
                     font.Add(new XElement(S.shadow));
                 if (Size != 0)
                     font.Add(new XElement(S.sz, new XAttribute(NoNamespace.val, Size.ToString())));
-                if (Color != null)
+                if (Color is not null)
                     font.Add(Color.GetXElement(S.color));
-                if (Name != null)
+                if (Name is not null)
                     font.Add(new XElement(S.name, new XAttribute(NoNamespace.val, Name)));
                 if (Family != 0)
                     font.Add(new XElement(S.family, new XAttribute(NoNamespace.val, Family.ToString())));
@@ -1242,9 +1242,9 @@ namespace Clippit.Excel
                         result.Add(new XAttribute(NoNamespace.patternType, "solid"));
                         break;
                 }
-                if (fgColor != null)
+                if (fgColor is not null)
                     result.Add(fgColor.GetXElement(S.fgColor));
-                if (bgColor != null)
+                if (bgColor is not null)
                     result.Add(bgColor.GetXElement(S.bgColor));
                 return new XElement(S.fill, result);
             }
@@ -1428,29 +1428,29 @@ namespace Clippit.Excel
                     border.Add(new XAttribute(NoNamespace.diagonalUp, "1"));
                 if (Outline)
                     border.Add(new XAttribute(NoNamespace.outline, "1"));
-                if (Left == null)
+                if (Left is null)
                     border.Add(new XElement(S.left));
                 else
                     border.Add(Left.GetXElement(S.left));
-                if (Right == null)
+                if (Right is null)
                     border.Add(new XElement(S.right));
                 else
                     border.Add(Right.GetXElement(S.right));
-                if (Top == null)
+                if (Top is null)
                     border.Add(new XElement(S.top));
                 else
                     border.Add(Top.GetXElement(S.top));
-                if (Bottom == null)
+                if (Bottom is null)
                     border.Add(new XElement(S.bottom));
                 else
                     border.Add(Bottom.GetXElement(S.bottom));
-                if (Diagonal == null)
+                if (Diagonal is null)
                     border.Add(new XElement(S.diagonal));
                 else
                     border.Add(Diagonal.GetXElement(S.diagonal));
-                if (Horizontal != null)
+                if (Horizontal is not null)
                     border.Add(Horizontal.GetXElement(S.horizontal));
-                if (Vertical != null)
+                if (Vertical is not null)
                     border.Add(Vertical.GetXElement(S.vertical));
                 return border;
             }
@@ -1488,7 +1488,7 @@ namespace Clippit.Excel
             if (index != -1)
                 return index;
             var cellStyleXf = styles.Root.Element(S.cellStyleXfs).Elements(S.xf).ToArray()[Convert.ToInt32(xfId)];
-            if (cellStyleXf != null)
+            if (cellStyleXf is not null)
             { // Create new xf element under cellXfs
                 cellXfs.Add(
                     new XElement(
@@ -1621,7 +1621,7 @@ namespace Clippit.Excel
                 new XAttribute(NoNamespace.applyFill, (fill == 0) ? 0 : 1),
                 new XAttribute(NoNamespace.applyBorder, (border == 0) ? 0 : 1)
             );
-            if (alignment != null)
+            if (alignment is not null)
             {
                 xf.Add(new XAttribute(NoNamespace.applyAlignment, "1"));
                 xf.Add(alignment.GetXElement());
@@ -2277,7 +2277,7 @@ namespace Clippit.Excel
                 .Where(t => t.Attribute(rowName).Value == row.ToString())
                 .FirstOrDefault();
 
-            if (rowElement == null)
+            if (rowElement is null)
             {
                 //row element does not exist
                 //create a new one
@@ -2289,7 +2289,7 @@ namespace Clippit.Excel
                     //find the row with the inmediate higher index for the row containing the cell to set the value to
                     var rowAfterElement = FindRowAfter(worksheet, row);
                     //if there is a row with an inmediate higher index already defined at sheetData
-                    if (rowAfterElement != null)
+                    if (rowAfterElement is not null)
                     {
                         //add the new row before the row with an inmediate higher index
                         rowAfterElement.AddBeforeSelf(rowElement);
@@ -2321,11 +2321,11 @@ namespace Clippit.Excel
                     .Where(t => t.Attribute("r").Value == cellReference)
                     .FirstOrDefault();
 
-                if (currentCellXElement == null)
+                if (currentCellXElement is null)
                 { //cell element does not exist at row indicated as parameter
                     //find the inmediate right column for the cell to set the value to
                     var columnAfterXElement = FindColumAfter(worksheet, row, column);
-                    if (columnAfterXElement != null)
+                    if (columnAfterXElement is not null)
                     {
                         //Insert the new cell before the inmediate right column
                         columnAfterXElement.AddBeforeSelf(newCellXElement);
