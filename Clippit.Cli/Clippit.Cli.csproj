@@ -43,7 +43,7 @@
 
   <ItemGroup>
     <!-- System.CommandLine 3.x is still preview; keep the exact version pinned and revisit when it reaches GA. -->
-    <PackageReference Include="System.CommandLine" Version="3.0.0-preview.4.26230.115" />
+    <PackageReference Include="System.CommandLine" Version="3.0.0-preview.5.26302.115" />
   </ItemGroup>
 
   <ItemGroup>
@@ -53,17 +53,13 @@
   <Target Name="RenameNativeAotExecutable" AfterTargets="Publish" Condition="'$(PublishAot)' == 'true'">
     <PropertyGroup>
       <NativeAotSourceName Condition="$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))"
-        >$(AssemblyName).exe</NativeAotSourceName
-      >
+        >$(AssemblyName).exe</NativeAotSourceName>
       <NativeAotSourceName Condition="!$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))"
-        >$(AssemblyName)</NativeAotSourceName
-      >
+        >$(AssemblyName)</NativeAotSourceName>
       <NativeAotExecutableName Condition="$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))"
-        >clippit.exe</NativeAotExecutableName
-      >
+        >clippit.exe</NativeAotExecutableName>
       <NativeAotExecutableName Condition="!$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))"
-        >clippit</NativeAotExecutableName
-      >
+        >clippit</NativeAotExecutableName>
     </PropertyGroup>
     <Copy
       SourceFiles="$(PublishDir)$(NativeAotSourceName)"
