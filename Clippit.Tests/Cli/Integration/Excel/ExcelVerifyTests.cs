@@ -8,7 +8,7 @@ namespace Clippit.Tests.Cli.Integration.Excel;
 internal sealed class ExcelVerifyTests : CliIntegrationTestBase
 {
     [Test]
-    public async Task CLI051_ExcelVerify_ValidSpreadsheet_ReturnsValidJson()
+    public async Task CLI078_ExcelVerify_ValidSpreadsheet_ReturnsValidJson()
     {
         var input = CliTestRunner.TestFile("SH001-Table.xlsx");
 
@@ -27,7 +27,7 @@ internal sealed class ExcelVerifyTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI052_ExcelVerify_NonXlsx_ReturnsInvalidResultOnStdout()
+    public async Task CLI079_ExcelVerify_NonXlsx_ReturnsInvalidResultOnStdout()
     {
         var directory = CliTestRunner.CreateTempDirectory("verify-invalid-package");
         var input = new FileInfo(Path.Combine(directory.FullName, "not-a-spreadsheet.xlsx"));
@@ -49,7 +49,7 @@ internal sealed class ExcelVerifyTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI053_ExcelVerify_DanglingRelationship_ReturnsRelationshipDiagnostic()
+    public async Task CLI080_ExcelVerify_DanglingRelationship_ReturnsRelationshipDiagnostic()
     {
         var directory = CliTestRunner.CreateTempDirectory("verify-dangling-rel");
         var input = new FileInfo(Path.Combine(directory.FullName, "dangling.xlsx"));
@@ -83,7 +83,7 @@ internal sealed class ExcelVerifyTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI054_ExcelVerify_ReadsFromStdin()
+    public async Task CLI081_ExcelVerify_ReadsFromStdin()
     {
         var input = CliTestRunner.TestFile("SH001-Table.xlsx");
         var bytes = await File.ReadAllBytesAsync(input.FullName).ConfigureAwait(false);
@@ -103,7 +103,7 @@ internal sealed class ExcelVerifyTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI054a_ExcelVerify_OfficeVersionOverride_IsReported()
+    public async Task CLI081a_ExcelVerify_OfficeVersionOverride_IsReported()
     {
         var input = CliTestRunner.TestFile("SH001-Table.xlsx");
 
@@ -120,7 +120,7 @@ internal sealed class ExcelVerifyTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI054b_ExcelVerify_InvalidOfficeVersion_ReturnsParserError()
+    public async Task CLI081b_ExcelVerify_InvalidOfficeVersion_ReturnsParserError()
     {
         var input = CliTestRunner.TestFile("SH001-Table.xlsx");
 
@@ -134,7 +134,7 @@ internal sealed class ExcelVerifyTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI054c_ExcelVerify_StrictOption_IsUnknownOption()
+    public async Task CLI081c_ExcelVerify_StrictOption_IsUnknownOption()
     {
         var input = CliTestRunner.TestFile("SH001-Table.xlsx");
 
@@ -148,7 +148,7 @@ internal sealed class ExcelVerifyTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI055_ExcelVerify_QuietSuppressesStdoutButPreservesExitCode()
+    public async Task CLI082_ExcelVerify_QuietSuppressesStdoutButPreservesExitCode()
     {
         var input = CliTestRunner.TestFile("SH001-Table.xlsx");
 
