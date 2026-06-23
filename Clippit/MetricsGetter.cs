@@ -78,8 +78,9 @@ public class MetricsGetter
     {
         var fontSize = (float)sz / 2f;
         using var font = new SKFont(typeface, fontSize, 1, 0);
-        using var paint = new SKPaint(font) { SubpixelText = true, IsAntialias = true };
-        var width = paint.MeasureText(text);
+        font.Subpixel = true;
+        font.Hinting = SKFontHinting.Full;
+        var width = font.MeasureText(text);
         return (int)width;
     }
 

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.1] - 2026-06-23
+
+- chore(deps): update SkiaSharp 3.119.4 → 4.148.0 with migration fix (#346)
+- chore(deps): update System.CommandLine 3.0.0-preview.4 → preview.5 (#346)
+- chore(deps): update dotnet-outdated-tool 4.7.1 → 4.8.1 (#346)
+- chore(deps): update csharpier 1.2.6 → 1.3.0 (#346)
+- chore(deps): update Microsoft.NET.Test.Sdk 18.6.0 → 18.7.0 (#346)
+
 ## [0.4.0] - 2026-06-20
 
 - refactor: replace SixLabors.ImageSharp with SkiaSharp for image processing in
