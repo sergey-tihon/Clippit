@@ -29,7 +29,7 @@ namespace Clippit.Excel
                 .Root.Elements(S.sheets)
                 .Elements(S.sheet)
                 .FirstOrDefault(s => (string)s.Attribute("name") == sheetName);
-            if (sheet == null)
+            if (sheet is null)
                 throw new ArgumentException("Invalid sheet name passed to RetrieveSheet", nameof(sheetName));
             var range = "A1:XFD1048576";
             XlsxTables.ParseRange(range, out var leftColumn, out var topRow, out var rightColumn, out var bottomRow);
@@ -98,17 +98,17 @@ namespace Clippit.Excel
                 .Root.Elements(S.sheets)
                 .Elements(S.sheet)
                 .FirstOrDefault(s => (string)s.Attribute("name") == sheetName);
-            if (sheet == null)
+            if (sheet is null)
                 throw new ArgumentException("Invalid sheet name passed to RetrieveRange", nameof(sheetName));
             var rId = (string)sheet.Attribute(R.id);
-            if (rId == null)
+            if (rId is null)
                 throw new FileFormatException("Invalid spreadsheet");
             var sheetPart = sDoc.WorkbookPart.GetPartById(rId);
-            if (sheetPart == null)
+            if (sheetPart is null)
                 throw new FileFormatException("Invalid spreadsheet");
             var shXDoc = sheetPart.GetXDocument();
 
-            if (sDoc.WorkbookPart.WorkbookStylesPart == null)
+            if (sDoc.WorkbookPart.WorkbookStylesPart is null)
                 throw new FileFormatException("Invalid spreadsheet.  No WorkbookStylesPart.");
             var styleXDoc = sDoc.WorkbookPart.WorkbookStylesPart.GetXDocument();
 
@@ -127,7 +127,7 @@ namespace Clippit.Excel
                 {
                     // filter
                     var ra = (string)row.Attribute("r");
-                    if (ra == null)
+                    if (ra is null)
                         return null;
                     if (!int.TryParse(ra, out var rowNbr))
                         return null;
@@ -140,7 +140,7 @@ namespace Clippit.Excel
                         .Select(cell =>
                         {
                             var cellAddress = (string)cell.Attribute("r");
-                            if (cellAddress == null)
+                            if (cellAddress is null)
                                 throw new FileFormatException("Invalid spreadsheet - cell does not have r attribute.");
                             var splitCellAddress = XlsxTables.SplitAddress(cellAddress);
                             var columnAddress = splitCellAddress[0];
@@ -155,15 +155,15 @@ namespace Clippit.Excel
                             if (cellType == "s")
                             {
                                 var sharedStringBeforeParsing = (string)cell.Element(S.v);
-                                if (sharedStringBeforeParsing == null)
+                                if (sharedStringBeforeParsing is null)
                                     sharedStringBeforeParsing = (string)
                                         cell.Elements(S._is).Elements(S.t).FirstOrDefault();
-                                if (sharedStringBeforeParsing == null)
+                                if (sharedStringBeforeParsing is null)
                                     throw new FileFormatException("Invalid document");
                                 if (!int.TryParse(sharedStringBeforeParsing, out var sharedStringIndex))
                                     throw new FileFormatException("Invalid document");
                                 XElement sharedStringElement = null;
-                                if (sharedStringTable == null)
+                                if (sharedStringTable is null)
                                     throw new FileFormatException(
                                         "Invalid spreadsheet.  Shared string, but no Shared String Part."
                                     );
@@ -172,20 +172,20 @@ namespace Clippit.Excel
                                     .Root.Elements(S.si)
                                     .Skip(sharedStringIndex)
                                     .FirstOrDefault();
-                                if (sharedStringElement == null)
+                                if (sharedStringElement is null)
                                     throw new FileFormatException(
                                         "Invalid spreadsheet.  Shared string reference not valid."
                                     );
                                 sharedString = sharedStringElement.Descendants(S.t).StringConcatenate(e => (string)e);
                             }
 
-                            if (sharedString != null)
+                            if (sharedString is not null)
                             {
                                 var cellProps = GetCellProps_NotInTable(sDoc, styleXDoc, cell);
                                 var value = sharedString;
                                 string displayValue;
                                 string color = null;
-                                if (cellProps != null)
+                                if (cellProps is not null)
                                     displayValue = SmlCellFormatter.FormatCell(
                                         (string)cellProps.Attribute("formatCode"),
                                         value,
@@ -198,19 +198,19 @@ namespace Clippit.Excel
                                     new XAttribute("Ref", (string)cell.Attribute("r")),
                                     new XAttribute("ColumnId", columnAddress),
                                     new XAttribute("ColumnNumber", columnIndex),
-                                    cell.Attribute("f") != null
+                                    cell.Attribute("f") is not null
                                         ? new XAttribute("Formula", (string)cell.Attribute("f"))
                                         : null,
-                                    cell.Attribute("s") != null
+                                    cell.Attribute("s") is not null
                                         ? new XAttribute("Style", (string)cell.Attribute("s"))
                                         : null,
-                                    cell.Attribute("t") != null
+                                    cell.Attribute("t") is not null
                                         ? new XAttribute("Type", (string)cell.Attribute("t"))
                                         : null,
                                     cellProps,
                                     new XElement("Value", value),
                                     new XElement("DisplayValue", displayValue),
-                                    color != null ? new XElement("DisplayColor", color) : null
+                                    color is not null ? new XElement("DisplayColor", color) : null
                                 );
                                 return newCell1;
                             }
@@ -218,18 +218,18 @@ namespace Clippit.Excel
                             {
                                 var type = (string)cell.Attribute("t");
                                 var value = new XElement("Value", cell.Value);
-                                if (type != null && type == "inlineStr")
+                                if (type is not null && type == "inlineStr")
                                 {
                                     type = "s";
                                 }
                                 XAttribute typeAttr = null;
-                                if (type != null)
+                                if (type is not null)
                                     typeAttr = new XAttribute("Type", type);
 
                                 var cellProps = GetCellProps_NotInTable(sDoc, styleXDoc, cell);
                                 string displayValue;
                                 string color = null;
-                                if (cellProps != null)
+                                if (cellProps is not null)
                                     displayValue = SmlCellFormatter.FormatCell(
                                         (string)cellProps.Attribute("formatCode"),
                                         cell.Value,
@@ -247,23 +247,23 @@ namespace Clippit.Excel
                                     new XAttribute("ColumnId", columnAddress),
                                     new XAttribute("ColumnNumber", columnIndex),
                                     typeAttr,
-                                    cell.Attribute("f") != null
+                                    cell.Attribute("f") is not null
                                         ? new XAttribute("Formula", (string)cell.Attribute("f"))
                                         : null,
-                                    cell.Attribute("s") != null
+                                    cell.Attribute("s") is not null
                                         ? new XAttribute("Style", (string)cell.Attribute("s"))
                                         : null,
                                     cellProps,
                                     value,
                                     new XElement("DisplayValue", displayValue),
-                                    color != null ? new XElement("DisplayColor", color) : null
+                                    color is not null ? new XElement("DisplayColor", color) : null
                                 );
                                 return newCell2;
                             }
                         });
                     var dataRow = new XElement(
                         "Row",
-                        row.Attribute("r") != null ? new XAttribute("RowNumber", (int)row.Attribute("r")) : null,
+                        row.Attribute("r") is not null ? new XAttribute("RowNumber", (int)row.Attribute("r")) : null,
                         cells
                     );
                     return dataRow;
@@ -281,7 +281,7 @@ namespace Clippit.Excel
             // if there are any rows that have all cells with no r attribute, then fix them up
             var invalidRows = shXDoc
                 .Descendants(S.row)
-                .Where(r => !r.Elements(S.c).Any(c => c.Attribute("r") != null))
+                .Where(r => !r.Elements(S.c).Any(c => c.Attribute("r") is not null))
                 .ToList();
 
             foreach (var row in invalidRows)
@@ -298,16 +298,16 @@ namespace Clippit.Excel
             // repeat iteratively until no further fixes can be made
             while (true)
             {
-                var invalidCells = shXDoc.Descendants(S.c).Where(c => c.Attribute("r") == null).ToList();
+                var invalidCells = shXDoc.Descendants(S.c).Where(c => c.Attribute("r") is null).ToList();
 
                 var didFixup = false;
                 foreach (var cell in invalidCells)
                 {
                     var followingCell = cell.ElementsAfterSelf(S.c).FirstOrDefault();
-                    if (followingCell != null)
+                    if (followingCell is not null)
                     {
                         var followingR = (string)followingCell.Attribute("r");
-                        if (followingR != null)
+                        if (followingR is not null)
                         {
                             var spl = XlsxTables.SplitAddress(followingR);
                             var colIdxFollowing = XlsxTables.ColumnAddressToIndex(spl[0]);
@@ -333,10 +333,10 @@ namespace Clippit.Excel
         private static bool FixUpBasedOnPrecedingCell(bool didFixup, XElement cell)
         {
             var precedingCell = GetPrevousElement(cell);
-            if (precedingCell != null)
+            if (precedingCell is not null)
             {
                 var precedingR = (string)precedingCell.Attribute("r");
-                if (precedingR != null)
+                if (precedingR is not null)
                 {
                     var spl = XlsxTables.SplitAddress(precedingR);
                     var colIdxFollowing = XlsxTables.ColumnAddressToIndex(spl[0]);
@@ -354,10 +354,10 @@ namespace Clippit.Excel
             XNode currentNode = element;
             while (true)
             {
-                if (currentNode.PreviousNode == null)
+                if (currentNode.PreviousNode is null)
                     return null;
                 previousElement = currentNode.PreviousNode as XElement;
-                if (previousElement != null)
+                if (previousElement is not null)
                     return previousElement;
                 currentNode = currentNode.PreviousNode;
             }
@@ -380,7 +380,7 @@ namespace Clippit.Excel
         public static XElement RetrieveTable(SpreadsheetDocument sDoc, string tableName)
         {
             var table = sDoc.Table(tableName);
-            if (table == null)
+            if (table is null)
                 throw new ArgumentException("Table not found", nameof(tableName));
 
             var styleXDoc = sDoc.WorkbookPart.WorkbookStylesPart.GetXDocument();
@@ -399,12 +399,12 @@ namespace Clippit.Excel
                     {
                         var colXElement = new XElement(
                             "Column",
-                            tc.Name != null ? new XAttribute("Name", tc.Name) : null,
-                            tc.UniqueName != null ? new XAttribute("UniqueName", tc.UniqueName) : null,
+                            tc.Name is not null ? new XAttribute("Name", tc.Name) : null,
+                            tc.UniqueName is not null ? new XAttribute("UniqueName", tc.UniqueName) : null,
                             new XAttribute("ColumnIndex", tc.ColumnIndex),
                             new XAttribute("Id", tc.Id),
-                            tc.DataDxfId != null ? new XAttribute("DataDxfId", tc.DataDxfId) : null,
-                            tc.QueryTableFieldId != null
+                            tc.DataDxfId is not null ? new XAttribute("DataDxfId", tc.DataDxfId) : null,
+                            tc.QueryTableFieldId is not null
                                 ? new XAttribute("QueryTableFieldId", tc.QueryTableFieldId)
                                 : null
                         );
@@ -437,11 +437,11 @@ namespace Clippit.Excel
                                     return null;
 
                                 var cellProps = GetCellProps_InTable(sDoc, styleXDoc, table, tc);
-                                if (tc.SharedString != null)
+                                if (tc.SharedString is not null)
                                 {
                                     string displayValue;
                                     string color = null;
-                                    if (cellProps != null)
+                                    if (cellProps is not null)
                                         displayValue = SmlCellFormatter.FormatCell(
                                             (string)cellProps.Attribute("formatCode"),
                                             tc.SharedString,
@@ -451,25 +451,27 @@ namespace Clippit.Excel
                                         displayValue = tc.SharedString;
                                     var newCell1 = new XElement(
                                         "Cell",
-                                        tc.CellElement != null
+                                        tc.CellElement is not null
                                             ? new XAttribute("Ref", (string)tc.CellElement.Attribute("r"))
                                             : null,
-                                        tc.ColumnAddress != null ? new XAttribute("ColumnId", tc.ColumnAddress) : null,
+                                        tc.ColumnAddress is not null
+                                            ? new XAttribute("ColumnId", tc.ColumnAddress)
+                                            : null,
                                         new XAttribute("ColumnNumber", tc.ColumnIndex),
-                                        tc.Type != null ? new XAttribute("Type", "s") : null,
-                                        tc.Formula != null ? new XAttribute("Formula", tc.Formula) : null,
-                                        tc.Style != null ? new XAttribute("Style", tc.Style) : null,
+                                        tc.Type is not null ? new XAttribute("Type", "s") : null,
+                                        tc.Formula is not null ? new XAttribute("Formula", tc.Formula) : null,
+                                        tc.Style is not null ? new XAttribute("Style", tc.Style) : null,
                                         cellProps,
                                         new XElement("Value", tc.SharedString),
                                         new XElement("DisplayValue", displayValue),
-                                        color != null ? new XElement("DisplayColor", color) : null
+                                        color is not null ? new XElement("DisplayColor", color) : null
                                     );
                                     return newCell1;
                                 }
                                 else
                                 {
                                     XAttribute type = null;
-                                    if (tc.Type != null)
+                                    if (tc.Type is not null)
                                     {
                                         if (tc.Type == "inlineStr")
                                             type = new XAttribute("Type", "s");
@@ -478,7 +480,7 @@ namespace Clippit.Excel
                                     }
                                     string displayValue;
                                     string color = null;
-                                    if (cellProps != null)
+                                    if (cellProps is not null)
                                         displayValue = SmlCellFormatter.FormatCell(
                                             (string)cellProps.Attribute("formatCode"),
                                             tc.Value,
@@ -488,18 +490,20 @@ namespace Clippit.Excel
                                         displayValue = SmlCellFormatter.FormatCell("General", tc.Value, out color);
                                     var newCell = new XElement(
                                         "Cell",
-                                        tc.CellElement != null
+                                        tc.CellElement is not null
                                             ? new XAttribute("Ref", (string)tc.CellElement.Attribute("r"))
                                             : null,
-                                        tc.ColumnAddress != null ? new XAttribute("ColumnId", tc.ColumnAddress) : null,
+                                        tc.ColumnAddress is not null
+                                            ? new XAttribute("ColumnId", tc.ColumnAddress)
+                                            : null,
                                         new XAttribute("ColumnNumber", tc.ColumnIndex),
                                         type,
-                                        tc.Formula != null ? new XAttribute("Formula", tc.Formula) : null,
-                                        tc.Style != null ? new XAttribute("Style", tc.Style) : null,
+                                        tc.Formula is not null ? new XAttribute("Formula", tc.Formula) : null,
+                                        tc.Style is not null ? new XAttribute("Style", tc.Style) : null,
                                         cellProps,
                                         new XElement("Value", tc.Value),
                                         new XElement("DisplayValue", displayValue),
-                                        color != null ? new XElement("DisplayColor", color) : null
+                                        color is not null ? new XElement("DisplayColor", color) : null
                                     );
                                     return newCell;
                                 }
@@ -514,11 +518,11 @@ namespace Clippit.Excel
             var tableXml = new XElement(
                 "Table",
                 tableProps,
-                table.TableName != null ? new XAttribute("TableName", table.TableName) : null,
-                table.DisplayName != null ? new XAttribute("DisplayName", table.DisplayName) : null,
-                table.Ref != null ? new XAttribute("Ref", table.Ref) : null,
-                table.HeaderRowCount != null ? new XAttribute("HeaderRowCount", table.HeaderRowCount) : null,
-                table.TotalsRowCount != null ? new XAttribute("TotalsRowCount", table.TotalsRowCount) : null,
+                table.TableName is not null ? new XAttribute("TableName", table.TableName) : null,
+                table.DisplayName is not null ? new XAttribute("DisplayName", table.DisplayName) : null,
+                table.Ref is not null ? new XAttribute("Ref", table.Ref) : null,
+                table.HeaderRowCount is not null ? new XAttribute("HeaderRowCount", table.HeaderRowCount) : null,
+                table.TotalsRowCount is not null ? new XAttribute("TotalsRowCount", table.TotalsRowCount) : null,
                 columns,
                 data
             );
@@ -576,7 +580,7 @@ namespace Clippit.Excel
                     var sheetPart = sDoc.WorkbookPart.GetPartById(rId);
                     var sheetXDoc = sheetPart.GetXDocument();
                     var tableParts = sheetXDoc.Root.Element(S.tableParts);
-                    if (tableParts == null)
+                    if (tableParts is null)
                         return new List<string>();
                     var tableNames2 = tableParts
                         .Elements(S.tablePart)
@@ -600,7 +604,7 @@ namespace Clippit.Excel
         {
             var tableProps = new XElement("TableProps");
             var tableStyleInfo = table.TableStyleInfo;
-            if (tableStyleInfo != null)
+            if (tableStyleInfo is not null)
             {
                 var newTableStyleInfo = TransformRemoveNamespace(tableStyleInfo);
                 tableProps.Add(newTableStyleInfo);
@@ -614,9 +618,9 @@ namespace Clippit.Excel
         private static XElement GetDataProps(XDocument shXDoc)
         {
             var sheetFormatPr = shXDoc.Root.Element(S.sheetFormatPr);
-            if (sheetFormatPr != null && sheetFormatPr.Attribute("defaultColWidth") == null)
+            if (sheetFormatPr is not null && sheetFormatPr.Attribute("defaultColWidth") is null)
                 sheetFormatPr.Add(new XAttribute("defaultColWidth", "9.25"));
-            if (sheetFormatPr != null && sheetFormatPr.Attribute("defaultRowHeight") == null)
+            if (sheetFormatPr is not null && sheetFormatPr.Attribute("defaultRowHeight") is null)
                 sheetFormatPr.Add(new XAttribute("defaultRowHeight", "14.25"));
 
             var mergeCells = TransformRemoveNamespace(shXDoc.Root.Element(S.mergeCells));
@@ -637,10 +641,10 @@ namespace Clippit.Excel
         {
             var rowProps = new XElement("RowProps");
             var ht = rowElement.Attribute("ht");
-            if (ht != null)
+            if (ht is not null)
                 rowProps.Add(ht);
             var dyDescent = rowElement.Attribute(x14ac + "dyDescent");
-            if (dyDescent != null)
+            if (dyDescent is not null)
                 rowProps.Add(new XAttribute("dyDescent", (string)dyDescent));
 
             if (!rowProps.HasAttributes && !rowProps.HasElements)
@@ -652,24 +656,24 @@ namespace Clippit.Excel
         {
             var cellProps = new XElement("CellProps");
             var style = (int?)cell.Attribute("s");
-            if (style == null)
+            if (style is null)
                 return cellProps;
 
             var xf = styleXDoc.Root.Elements(S.cellXfs).Elements(S.xf).Skip((int)style).FirstOrDefault();
 
             var numFmtId = (int?)xf.Attribute("numFmtId");
-            if (numFmtId != null)
+            if (numFmtId is not null)
                 AddNumFmtIdAndFormatCode(styleXDoc, cellProps, numFmtId);
 
             var masterXfId = (int?)xf.Attribute("xfId");
-            if (masterXfId != null)
+            if (masterXfId is not null)
             {
                 var masterXf = styleXDoc
                     .Root.Elements(S.cellStyleXfs)
                     .Elements(S.xf)
                     .Skip((int)masterXfId)
                     .FirstOrDefault();
-                if (masterXf != null)
+                if (masterXf is not null)
                     AddFormattingToCellProps(styleXDoc, cellProps, masterXf);
             }
 
@@ -689,53 +693,53 @@ namespace Clippit.Excel
         )
         {
             var style = tc.Style;
-            if (style == null)
+            if (style is null)
                 return null;
 
             var colIdStr = tc.ColumnAddress;
             var colNbr = XlsxTables.ColumnAddressToIndex(colIdStr);
             var column = table.TableColumns().FirstOrDefault(z => z.ColumnNumber == colNbr);
-            if (column == null)
+            if (column is null)
                 throw new FileFormatException("Invalid spreadsheet");
 
             var cellProps = new XElement("CellProps");
             var d = column.DataDxfId;
-            if (d != null)
+            if (d is not null)
             {
                 var dataDxf = styleXDoc.Root.Elements(S.dxfs).Elements(S.dxf).Skip((int)d).FirstOrDefault();
-                if (dataDxf == null)
+                if (dataDxf is null)
                     throw new FileFormatException("Invalid spreadsheet");
 
                 var numFmt = dataDxf.Element(S.numFmt);
-                if (numFmt != null)
+                if (numFmt is not null)
                 {
                     var numFmtId = (int?)numFmt.Attribute("numFmtId");
-                    if (numFmtId != null)
+                    if (numFmtId is not null)
                         cellProps.Add(new XAttribute("numFmtId", numFmtId));
                     var formatCode = (string)numFmt.Attribute("formatCode");
-                    if (formatCode != null)
+                    if (formatCode is not null)
                         cellProps.Add(new XAttribute("formatCode", formatCode));
                 }
             }
 
             var xf = styleXDoc.Root.Elements(S.cellXfs).Elements(S.xf).Skip((int)style).FirstOrDefault();
-            if (xf == null)
+            if (xf is null)
                 throw new FileFormatException("Invalid spreadsheet");
 
             // if xf has different numFmtId, then replace the ones from the table definition
             var numFmtId2 = (int?)xf.Attribute("numFmtId");
-            if (numFmtId2 != null)
+            if (numFmtId2 is not null)
                 AddNumFmtIdAndFormatCode(styleXDoc, cellProps, numFmtId2);
 
             var masterXfId = (int?)xf.Attribute("xfId");
-            if (masterXfId != null)
+            if (masterXfId is not null)
             {
                 var masterXf = styleXDoc
                     .Root.Elements(S.cellStyleXfs)
                     .Elements(S.xf)
                     .Skip((int)masterXfId)
                     .FirstOrDefault();
-                if (masterXf != null)
+                if (masterXf is not null)
                     AddFormattingToCellProps(styleXDoc, cellProps, masterXf);
             }
 
@@ -750,7 +754,7 @@ namespace Clippit.Excel
         private static void AddNumFmtIdAndFormatCode(XDocument styleXDoc, XElement props, int? numFmtId)
         {
             var existingNumFmtId = props.Attribute("numFmtId");
-            if (existingNumFmtId != null)
+            if (existingNumFmtId is not null)
                 existingNumFmtId.Value = numFmtId.ToString();
             else
                 props.Add(new XAttribute("numFmtId", numFmtId));
@@ -760,13 +764,13 @@ namespace Clippit.Excel
                 .Elements(S.numFmt)
                 .FirstOrDefault(z => (int)z.Attribute("numFmtId") == numFmtId);
 
-            if (numFmt == null)
+            if (numFmt is null)
             {
                 var formatCode = GetFormatCodeFromFmtId((int)numFmtId);
-                if (formatCode != null)
+                if (formatCode is not null)
                 {
                     var existingFormatCode = props.Attribute("formatCode");
-                    if (existingFormatCode != null)
+                    if (existingFormatCode is not null)
                         existingFormatCode.Value = formatCode;
                     else
                         props.Add(new XAttribute("formatCode", formatCode));
@@ -775,10 +779,10 @@ namespace Clippit.Excel
             else
             {
                 var formatCode = (string)numFmt.Attribute("formatCode");
-                if (formatCode != null)
+                if (formatCode is not null)
                 {
                     var existingFormatCode = props.Attribute("formatCode");
-                    if (existingFormatCode != null)
+                    if (existingFormatCode is not null)
                         existingFormatCode.Value = formatCode;
                     else
                         props.Add(new XAttribute("formatCode", formatCode));
@@ -798,41 +802,41 @@ namespace Clippit.Excel
             var fillId = (int?)xf.Attribute("fillId");
             var fontId = (int?)xf.Attribute("fontId");
 
-            if (fontId != null)
+            if (fontId is not null)
             {
                 var fontElement = styleXDoc.Root.Elements(S.fonts).Elements(S.font).Skip((int)fontId).FirstOrDefault();
-                if (fontElement != null)
+                if (fontElement is not null)
                 {
                     var newFontElement = (XElement)TransformRemoveNamespace(fontElement);
                     AddOrReplaceElement(props, newFontElement);
                 }
             }
 
-            if (fillId != null)
+            if (fillId is not null)
             {
                 var fillElement = styleXDoc.Root.Elements(S.fills).Elements(S.fill).Skip((int)fillId).FirstOrDefault();
-                if (fillElement != null)
+                if (fillElement is not null)
                 {
                     var newFillElement = (XElement)TransformRemoveNamespace(fillElement);
                     AddOrReplaceElement(props, newFillElement);
                 }
             }
 
-            if (borderId != null)
+            if (borderId is not null)
             {
                 var borderElement = styleXDoc
                     .Root.Elements(S.borders)
                     .Elements(S.border)
                     .Skip((int)borderId)
                     .FirstOrDefault();
-                if (borderElement != null)
+                if (borderElement is not null)
                 {
                     var newborderElement = (XElement)TransformRemoveNamespace(borderElement);
                     AddOrReplaceElement(props, newborderElement);
                 }
             }
 
-            if (xf.Element(S.alignment) != null)
+            if (xf.Element(S.alignment) is not null)
             {
                 var newAlignmentElement = (XElement)TransformRemoveNamespace(xf.Element(S.alignment));
                 AddOrReplaceElement(props, newAlignmentElement);
@@ -844,7 +848,7 @@ namespace Clippit.Excel
             var attrValue = ConvertAttributeToBool(xf.Attribute(attributeName));
             if (attrValue)
             {
-                if (props.Attribute(attributeName) == null)
+                if (props.Attribute(attributeName) is null)
                     props.Add(new XAttribute(attributeName, attrValue ? "1" : "0"));
                 else
                     props.Attribute(attributeName).Value = attrValue ? "1" : "0";
@@ -933,7 +937,7 @@ namespace Clippit.Excel
 
         private static void AugmentAndCleanUpProps(XElement props)
         {
-            foreach (var color in props.Descendants("color").Where(c => c.Attribute("indexed") != null).ToList())
+            foreach (var color in props.Descendants("color").Where(c => c.Attribute("indexed") is not null).ToList())
             {
                 var idx = (int)color.Attribute("indexed");
                 if (idx < IndexedColors.Length)
@@ -945,7 +949,7 @@ namespace Clippit.Excel
             foreach (var family in props.Descendants("family").ToList())
             {
                 var fam = (int?)family.Attribute("val");
-                if (fam != null)
+                if (fam is not null)
                 {
                     if (fam < FontFamilyList.Length)
                     {
@@ -972,9 +976,9 @@ namespace Clippit.Excel
             }
         }
 
-        private static void RemoveIfEmpty(XElement xElement)
+        private static void RemoveIfEmpty(XElement? xElement)
         {
-            if (xElement == null)
+            if (xElement is null)
                 return;
             if (!xElement.HasAttributes && !xElement.HasElements)
                 xElement.Remove();
@@ -1036,7 +1040,7 @@ namespace Clippit.Excel
         private static void AddOrReplaceElement(XElement props, XName childElementName, int value)
         {
             var existingElement = props.Element(childElementName);
-            if (existingElement != null)
+            if (existingElement is not null)
                 existingElement.ReplaceWith(new XElement(childElementName, new XAttribute("Val", value)));
             else
                 props.Add(new XElement(childElementName, new XAttribute("Val", value)));
@@ -1045,7 +1049,7 @@ namespace Clippit.Excel
         private static void AddOrReplaceElement(XElement props, XName childElementName, string value)
         {
             var existingElement = props.Element(childElementName);
-            if (existingElement != null)
+            if (existingElement is not null)
                 existingElement.ReplaceWith(new XElement(childElementName, new XAttribute("Val", value)));
             else
                 props.Add(new XElement(childElementName, new XAttribute("Val", value)));
@@ -1054,7 +1058,7 @@ namespace Clippit.Excel
         private static void AddOrReplaceElement(XElement props, XElement element)
         {
             var existingElement = props.Element(element.Name);
-            if (existingElement != null)
+            if (existingElement is not null)
                 existingElement.ReplaceWith(element);
             else
                 props.Add(element);
@@ -1064,7 +1068,7 @@ namespace Clippit.Excel
         {
             var applyNumberFormatStr = (string)xAttribute;
             var returnValue = false;
-            if (applyNumberFormatStr != null)
+            if (applyNumberFormatStr is not null)
             {
                 if (applyNumberFormatStr == "1")
                     returnValue = true;
