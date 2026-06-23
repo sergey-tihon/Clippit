@@ -1488,24 +1488,20 @@ namespace Clippit.Excel
             if (index != -1)
                 return index;
             var cellStyleXf = styles.Root.Element(S.cellStyleXfs).Elements(S.xf).ToArray()[Convert.ToInt32(xfId)];
-            if (cellStyleXf is not null)
-            { // Create new xf element under cellXfs
-                cellXfs.Add(
-                    new XElement(
-                        S.xf,
-                        new XAttribute(NoNamespace.numFmtId, cellStyleXf.Attribute(NoNamespace.numFmtId).Value),
-                        new XAttribute(NoNamespace.fontId, cellStyleXf.Attribute(NoNamespace.fontId).Value),
-                        new XAttribute(NoNamespace.fillId, cellStyleXf.Attribute(NoNamespace.fillId).Value),
-                        new XAttribute(NoNamespace.borderId, cellStyleXf.Attribute(NoNamespace.borderId).Value),
-                        new XAttribute(NoNamespace.xfId, xfId)
-                    )
-                );
-                cellXfs.Attribute(NoNamespace.count).Value = cellXfs.Elements(S.xf).Count().ToString();
-                document.WorkbookPart.WorkbookStylesPart.PutXDocument();
-                return cellXfs.Elements(S.xf).Count() - 1;
-            }
-
-            return 0;
+            // Create new xf element under cellXfs
+            cellXfs.Add(
+                new XElement(
+                    S.xf,
+                    new XAttribute(NoNamespace.numFmtId, cellStyleXf.Attribute(NoNamespace.numFmtId).Value),
+                    new XAttribute(NoNamespace.fontId, cellStyleXf.Attribute(NoNamespace.fontId).Value),
+                    new XAttribute(NoNamespace.fillId, cellStyleXf.Attribute(NoNamespace.fillId).Value),
+                    new XAttribute(NoNamespace.borderId, cellStyleXf.Attribute(NoNamespace.borderId).Value),
+                    new XAttribute(NoNamespace.xfId, xfId)
+                )
+            );
+            cellXfs.Attribute(NoNamespace.count).Value = cellXfs.Elements(S.xf).Count().ToString();
+            document.WorkbookPart.WorkbookStylesPart.PutXDocument();
+            return cellXfs.Elements(S.xf).Count() - 1;
         }
 
         public class CellAlignment

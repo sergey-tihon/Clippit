@@ -976,7 +976,7 @@ namespace Clippit.Excel
             }
         }
 
-        private static void RemoveIfEmpty(XElement xElement)
+        private static void RemoveIfEmpty(XElement? xElement)
         {
             if (xElement is null)
                 return;
