@@ -1,37 +1,36 @@
 {
-  "last_run": "2026-06-23",
-  "last_run_id": "27994786796",
+  "last_run": "2026-06-24",
+  "last_run_id": "28113570461",
   "backlog_cursor": {
     "issues": 311,
     "prs": 165
   },
   "comments_made": {
-    "54": "2026-05-01",
+    "54": "2026-03-12",
     "67": "2026-05-01",
     "77": "2026-05-01",
-    "103": "2026-05-01"
+    "103": "2026-05-01",
+    "28": "2026-03-28"
   },
   "open_clippy_prs": [
     {"number": 163, "branch": "clippy/improve-custom-handler-66-20260326-f25d5328ab83f793", "title": "[Clippy] feat: add RegisterCustomHandler extensibility API to DocumentAssembler"},
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "[Clippy] feat(excel): add ExcelAssembler for template-based xlsx document assembly"},
-    {"number": 342, "branch": "clippy/fix-duplicate-cli-test-codes-20260622-97627a55845a068f", "title": "[Clippy] test(cli): fix duplicate test codes in ExcelVerifyTests and ExcelToHtmlTests"},
-    {"number": 343, "branch": "clippy/deps-tunit-1.56.25-jsonschema-9.2.2-20260622-d92f7135bcf4a03e", "title": "[Clippy] chore(deps): update TUnit 1.54.0 → 1.56.25 and JsonSchema.Net 9.2.1 → 9.2.2"},
-    {"number": null, "branch": "clippy/refactor-null-patterns-formattingassembler-20260623", "title": "[Clippy] refactor: modernize == null / != null in FormattingAssembler.cs"},
-    {"number": null, "branch": "clippy/refactor-null-patterns-excel-20260623", "title": "[Clippy] refactor: modernize == null / != null in Excel converters"}
+    {"number": null, "branch": "clippy/refactor-null-patterns-documentbuilder-20260624", "title": "[Clippy] refactor: modernize == null / != null → is null / is not null in DocumentBuilder.cs"}
   ],
   "checked_off_by_maintainer": [],
   "m_issue": 311,
   "m_month": "2026-06",
   "notes": [
-    "v3.5.0 released 2026-06-20: SkiaSharp replaces SixLabors.ImageSharp.Drawing",
+    "v3.5.1 released 2026-06-23: SkiaSharp 4.x, System.CommandLine preview.5, MS.NET.Test.Sdk 18.7.0",
     "Monthly Activity issue for June 2026 is #311",
-    "System.CommandLine intentionally pinned at 3.0.0-preview.4 (pre-release)",
-    "Null modernization remaining: DocumentBuilder.cs(189), ListItemRetriever.cs(95), HtmlToWmlConverterCore.cs(163), WmlComparer.Private.ProduceDocument.cs(89)"
+    "System.CommandLine now at preview.5 (updated by maintainer in PR #346)",
+    "Null modernization remaining: ListItemRetriever.cs(95), HtmlToWmlConverterCore.cs(163), WmlComparer.Private.ProduceDocument.cs(89)"
   ],
   "improvements_submitted": [
-    "PR#342: test(cli) fix duplicate CLI test codes ExcelVerify/ExcelToHtml - 2026-06-22",
-    "PR#343: chore(deps) TUnit 1.54.0->1.56.25 + JsonSchema.Net 9.2.1->9.2.2 - 2026-06-22",
-    "PR(TBD#1): refactor FormattingAssembler.cs == null / != null -> is null / is not null (252) - 2026-06-23",
-    "PR(TBD#2): refactor Excel converters == null / != null -> is null / is not null (227) - 2026-06-23"
+    "PR#342: test(cli) fix duplicate CLI test codes - merged 2026-06-23",
+    "PR#343: chore(deps) TUnit 1.54.0->1.56.25 + JsonSchema.Net 9.2.1->9.2.2 - merged 2026-06-23",
+    "PR#344: refactor Excel converters == null / != null -> is null / is not null - merged 2026-06-23",
+    "PR#345: refactor FormattingAssembler.cs == null / != null -> is null / is not null - merged 2026-06-23",
+    "PR(TBD/#aw_db_null): refactor DocumentBuilder.cs == null / != null -> is null / is not null (189) - 2026-06-24"
   ]
 }
