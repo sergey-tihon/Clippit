@@ -371,7 +371,7 @@ namespace Clippit.Word
                         var elementBefore = b
                             .BlockLevelContent.SiblingsBeforeSelfReverseDocumentOrder()
                             .FirstOrDefault();
-                        if (elementBefore != null && elementBefore.Descendants(W.sectPr).Any())
+                        if (elementBefore is not null && elementBefore.Descendants(W.sectPr).Any())
                             return new Atbid
                             {
                                 BlockLevelContent = b.BlockLevelContent,
@@ -406,7 +406,7 @@ namespace Clippit.Word
             {
                 var mainXDoc = document.MainDocumentPart.GetXDocument();
                 var lastElement = mainXDoc.Root.Element(W.body).Elements().LastOrDefault();
-                if (lastElement != null)
+                if (lastElement is not null)
                 {
                     if (lastElement.Name != W.sectPr && lastElement.Descendants(W.sectPr).Any())
                     {
@@ -429,7 +429,7 @@ namespace Clippit.Word
         {
             var wmlGlossaryDocument = CoalesceGlossaryDocumentParts(sources, settings);
 
-            if (RelationshipMarkup == null)
+            if (RelationshipMarkup is null)
                 InitRelationshipMarkup();
 
             // This list is used to eliminate duplicate images
@@ -454,7 +454,7 @@ namespace Clippit.Word
                 var sourceNum2 = 0;
                 foreach (var source in sources)
                 {
-                    if (source.InsertId != null)
+                    if (source.InsertId is not null)
                     {
                         while (true)
                         {
@@ -545,10 +545,10 @@ namespace Clippit.Word
                     using var doc = streamDoc.GetWordprocessingDocument();
                     var body = doc.MainDocumentPart.GetXDocument().Root.Element(W.body);
 
-                    if (body != null && body.Elements().Any())
+                    if (body is not null && body.Elements().Any())
                     {
                         var sectPr = body.Elements().LastOrDefault();
-                        if (sectPr != null && sectPr.Name == W.sectPr)
+                        if (sectPr is not null && sectPr.Name == W.sectPr)
                         {
                             AddSectionAndDependencies(doc, output, sectPr, images);
                             body.Add(sectPr);
@@ -583,7 +583,7 @@ namespace Clippit.Word
                             {
                                 var referenceElement = sect.Elements(hf.Ref)
                                     .FirstOrDefault(z => (string)z.Attribute(W.type) == hf.Type);
-                                if (referenceElement != null)
+                                if (referenceElement is not null)
                                     hf.CachedPartRid = (string)referenceElement.Attribute(R.id);
                             }
                             firstSection = false;
@@ -603,7 +603,7 @@ namespace Clippit.Word
                 var sourceNum = 0;
                 foreach (var source in sources)
                 {
-                    if (source.InsertId != null)
+                    if (source.InsertId is not null)
                     {
                         while (true)
                         {
@@ -694,7 +694,7 @@ namespace Clippit.Word
                     using var doc = streamDoc.GetWordprocessingDocument();
                     var body = doc.MainDocumentPart.GetXDocument().Root.Element(W.body);
                     var sectPr = body.Elements().LastOrDefault();
-                    if (sectPr != null && sectPr.Name == W.sectPr)
+                    if (sectPr is not null && sectPr.Name == W.sectPr)
                     {
                         AddSectionAndDependencies(doc, output, sectPr, images);
                         body.Add(sectPr);
@@ -703,11 +703,11 @@ namespace Clippit.Word
                 AdjustDocPrIds(output);
             }
 
-            if (wmlGlossaryDocument != null)
+            if (wmlGlossaryDocument is not null)
                 WriteGlossaryDocumentPart(wmlGlossaryDocument, output, images);
 
             foreach (var part in output.GetAllParts())
-                if (part.Annotation<XDocument>() != null)
+                if (part.Annotation<XDocument>() is not null)
                     part.PutXDocument();
         }
 
@@ -862,7 +862,7 @@ application/vnd.ms-word.styles.textEffects+xml                                  
         {
             // update styles part
             UpdateStyleIdsForStylePart(wDoc.MainDocumentPart.StyleDefinitionsPart, correctionList);
-            if (wDoc.MainDocumentPart.StylesWithEffectsPart != null)
+            if (wDoc.MainDocumentPart.StylesWithEffectsPart is not null)
                 UpdateStyleIdsForStylePart(wDoc.MainDocumentPart.StylesWithEffectsPart, correctionList);
 
             // update content parts
@@ -871,13 +871,13 @@ application/vnd.ms-word.styles.textEffects+xml                                  
                 UpdateStyleIdsForContentPart(part, correctionList);
             foreach (var part in wDoc.MainDocumentPart.FooterParts)
                 UpdateStyleIdsForContentPart(part, correctionList);
-            if (wDoc.MainDocumentPart.FootnotesPart != null)
+            if (wDoc.MainDocumentPart.FootnotesPart is not null)
                 UpdateStyleIdsForContentPart(wDoc.MainDocumentPart.FootnotesPart, correctionList);
-            if (wDoc.MainDocumentPart.EndnotesPart != null)
+            if (wDoc.MainDocumentPart.EndnotesPart is not null)
                 UpdateStyleIdsForContentPart(wDoc.MainDocumentPart.EndnotesPart, correctionList);
-            if (wDoc.MainDocumentPart.WordprocessingCommentsPart != null)
+            if (wDoc.MainDocumentPart.WordprocessingCommentsPart is not null)
                 UpdateStyleIdsForContentPart(wDoc.MainDocumentPart.WordprocessingCommentsPart, correctionList);
-            if (wDoc.MainDocumentPart.WordprocessingCommentsExPart != null)
+            if (wDoc.MainDocumentPart.WordprocessingCommentsExPart is not null)
                 UpdateStyleIdsForContentPart(wDoc.MainDocumentPart.WordprocessingCommentsExPart, correctionList);
 
             // update numbering part
@@ -1097,7 +1097,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         {
             var allGlossaryDocuments = sources
                 .Select(s => ExtractGlossaryDocument(s.WmlDocument))
-                .Where(s => s != null)
+                .Where(s => s is not null)
                 .Select(s => new Source(s) as ISource)
                 .ToList();
 
@@ -1178,7 +1178,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             DocumentBuilderSettings settings
         )
         {
-            if (settings.CustomXmlGuidList == null || !settings.CustomXmlGuidList.Any())
+            if (settings.CustomXmlGuidList is null || !settings.CustomXmlGuidList.Any())
                 return;
 
             foreach (var customXmlPart in sourceDocument.MainDocumentPart.CustomXmlParts)
@@ -1189,7 +1189,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                         p.ContentType == "application/vnd.openxmlformats-officedocument.customXmlProperties+xml"
                     )
                     .FirstOrDefault();
-                if (propertyPart != null)
+                if (propertyPart is not null)
                 {
                     var propertyPartDoc = propertyPart.GetXDocument();
 #if false
@@ -1201,7 +1201,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 </ds:datastoreItem>
 #endif
                     var itemID = (string)propertyPartDoc.Root.Attribute(DS.itemID);
-                    if (itemID != null)
+                    if (itemID is not null)
                     {
                         itemID = itemID.Trim('{', '}');
                         if (settings.CustomXmlGuidList.Contains(itemID))
@@ -1264,9 +1264,9 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     var footerDefault = FindReference(sect, W.footerReference, "default");
                     var footerEven = FindReference(sect, W.footerReference, "even");
 
-                    if (headerEven == null)
+                    if (headerEven is null)
                     {
-                        if (headerDefault != null)
+                        if (headerDefault is not null)
                             AddReferenceToExistingHeaderOrFooter(
                                 doc.MainDocumentPart,
                                 sect,
@@ -1278,9 +1278,9 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                             InitEmptyHeaderOrFooter(doc.MainDocumentPart, sect, W.headerReference, "even");
                     }
 
-                    if (headerFirst == null)
+                    if (headerFirst is null)
                     {
-                        if (headerDefault != null)
+                        if (headerDefault is not null)
                             AddReferenceToExistingHeaderOrFooter(
                                 doc.MainDocumentPart,
                                 sect,
@@ -1292,9 +1292,9 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                             InitEmptyHeaderOrFooter(doc.MainDocumentPart, sect, W.headerReference, "first");
                     }
 
-                    if (footerEven == null)
+                    if (footerEven is null)
                     {
-                        if (footerDefault != null)
+                        if (footerDefault is not null)
                             AddReferenceToExistingHeaderOrFooter(
                                 doc.MainDocumentPart,
                                 sect,
@@ -1306,9 +1306,9 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                             InitEmptyHeaderOrFooter(doc.MainDocumentPart, sect, W.footerReference, "even");
                     }
 
-                    if (footerFirst == null)
+                    if (footerFirst is null)
                     {
-                        if (footerDefault != null)
+                        if (footerDefault is not null)
                             AddReferenceToExistingHeaderOrFooter(
                                 doc.MainDocumentPart,
                                 sect,
@@ -1322,11 +1322,11 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 
                     foreach (var hf in cachedHeaderFooter)
                     {
-                        if (sect.Elements(hf.Ref).FirstOrDefault(z => (string)z.Attribute(W.type) == hf.Type) == null)
+                        if (sect.Elements(hf.Ref).FirstOrDefault(z => (string)z.Attribute(W.type) == hf.Type) is null)
                             InitEmptyHeaderOrFooter(doc.MainDocumentPart, sect, hf.Ref, hf.Type);
                         var reference = sect.Elements(hf.Ref)
                             .FirstOrDefault(z => (string)z.Attribute(W.type) == hf.Type);
-                        if (reference == null)
+                        if (reference is null)
                             throw new OpenXmlPowerToolsException("Internal error");
                         hf.CachedPartRid = (string)reference.Attribute(R.id);
                     }
@@ -1353,7 +1353,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         )
         {
             var referenceElement = FindReference(sect, referenceXName, type);
-            if (referenceElement == null)
+            if (referenceElement is null)
             {
                 var cachedPartRid = cachedHeaderFooter
                     .FirstOrDefault(z => z.Ref == referenceXName && z.Type == type)
@@ -1509,7 +1509,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     var b2 = b || d.Attributes().Any(a => obsoleteNamespaces.Contains(a.Name.Namespace));
                     return b2;
                 });
-            if (invalidElement != null)
+            if (invalidElement is not null)
             {
                 if (invalidElement.Name == W.subDoc)
                     throw new DocumentBuilderException(
@@ -1547,7 +1547,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         //- documents with frame sets and frames
         private static void TestForUnsupportedDocument(WordprocessingDocument doc, int sourceNumber)
         {
-            if (doc.MainDocumentPart.GetXDocument().Root == null)
+            if (doc.MainDocumentPart.GetXDocument().Root is null)
                 throw new DocumentBuilderException(
                     $"Source {sourceNumber} is an invalid document - MainDocumentPart contains no content."
                 );
@@ -1579,13 +1579,13 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 TestPartForUnsupportedContent(hdr, sourceNumber);
             foreach (var ftr in doc.MainDocumentPart.FooterParts)
                 TestPartForUnsupportedContent(ftr, sourceNumber);
-            if (doc.MainDocumentPart.FootnotesPart != null)
+            if (doc.MainDocumentPart.FootnotesPart is not null)
                 TestPartForUnsupportedContent(doc.MainDocumentPart.FootnotesPart, sourceNumber);
-            if (doc.MainDocumentPart.EndnotesPart != null)
+            if (doc.MainDocumentPart.EndnotesPart is not null)
                 TestPartForUnsupportedContent(doc.MainDocumentPart.EndnotesPart, sourceNumber);
 
             if (
-                doc.MainDocumentPart.DocumentSettingsPart != null
+                doc.MainDocumentPart.DocumentSettingsPart is not null
                 && doc.MainDocumentPart.DocumentSettingsPart.GetXDocument()
                     .Descendants()
                     .Any(d => d.Name == W.src || d.Name == W.recipientData || d.Name == W.mailMerge)
@@ -1594,7 +1594,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     $"Source {sourceNumber} is unsupported document - contains Mail Merge content"
                 );
             if (
-                doc.MainDocumentPart.WebSettingsPart != null
+                doc.MainDocumentPart.WebSettingsPart is not null
                 && doc.MainDocumentPart.WebSettingsPart.GetXDocument().Descendants().Any(d => d.Name == W.frameset)
             )
                 throw new DocumentBuilderException(
@@ -1612,7 +1612,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     return true;
                 })
                 .ToList();
-            if (numberingElements.Any() && doc.MainDocumentPart.NumberingDefinitionsPart == null)
+            if (numberingElements.Any() && doc.MainDocumentPart.NumberingDefinitionsPart is null)
                 throw new DocumentBuilderException(
                     $"Source {sourceNumber} is invalid document - contains numbering markup but no numbering part"
                 );
@@ -1631,7 +1631,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             foreach (var s in sectionPropertiesToMove)
             {
                 var p = s.SiblingsBeforeSelfReverseDocumentOrder().First();
-                if (p.Element(W.pPr) == null)
+                if (p.Element(W.pPr) is null)
                     p.AddFirst(new XElement(W.pPr));
                 p.Element(W.pPr).Add(s);
             }
@@ -1661,7 +1661,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     throw new OpenXmlPowerToolsException(message);
                 }
                 var oldHeaderXDoc = oldHeaderPart.GetXDocument();
-                if (oldHeaderXDoc != null && oldHeaderXDoc.Root != null)
+                if (oldHeaderXDoc is not null && oldHeaderXDoc.Root is not null)
                     CopyNumbering(sourceDocument, newDocument, new[] { oldHeaderXDoc.Root }, images);
                 var newHeaderPart = newDocument.MainDocumentPart.AddNewPart<HeaderPart>();
                 var newHeaderXDoc = newHeaderPart.GetXDocument();
@@ -1683,7 +1683,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 
                 var oldFooterPart = (FooterPart)oldFooterPart2;
                 var oldFooterXDoc = oldFooterPart.GetXDocument();
-                if (oldFooterXDoc != null && oldFooterXDoc.Root != null)
+                if (oldFooterXDoc is not null && oldFooterXDoc.Root is not null)
                     CopyNumbering(sourceDocument, newDocument, new[] { oldFooterXDoc.Root }, images);
                 var newFooterPart = newDocument.MainDocumentPart.AddNewPart<FooterPart>();
                 var newFooterXDoc = newFooterPart.GetXDocument();
@@ -1707,7 +1707,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 #if MergeStylesWithSameNames
             var newIds = new Dictionary<string, string>();
 #endif
-            if (fromStyles.Root == null)
+            if (fromStyles.Root is null)
                 return;
 
             foreach (var style in fromStyles.Root.Elements(W.style))
@@ -1719,16 +1719,19 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     .Root.Elements(W.style)
                     .FirstOrDefault(st => (string)st.Elements(W.name).Attributes(W.val).FirstOrDefault() == fromName);
 
-                if (toStyle == null)
+                if (toStyle is null)
                 {
 #if MergeStylesWithSameNames
                     var linkElement = style.Element(W.link);
-                    if (linkElement != null && newIds.TryGetValue(linkElement.Attribute(W.val).Value, out var linkedId))
+                    if (
+                        linkElement is not null
+                        && newIds.TryGetValue(linkElement.Attribute(W.val).Value, out var linkedId)
+                    )
                     {
                         var linkedStyle = toStyles
                             .Root.Elements(W.style)
                             .First(o => o.Attribute(W.styleId).Value == linkedId);
-                        if (linkedStyle.Element(W.link) != null)
+                        if (linkedStyle.Element(W.link) is not null)
                             newIds.Add(fromId, linkedStyle.Element(W.link).Attribute(W.val).Value);
                         continue;
                     }
@@ -1737,9 +1740,9 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     //var namedStyle = toStyles
                     //    .Root
                     //    .Elements(W.style)
-                    //    .Where(st => st.Element(W.name) != null)
+                    //    .Where(st => st.Element(W.name) is not null)
                     //    .FirstOrDefault(o => (string)o.Element(W.name).Attribute(W.val) == name);
-                    //if (namedStyle != null)
+                    //if (namedStyle is not null)
                     //{
                     //    if (! newIds.ContainsKey(fromId))
                     //        newIds.Add(fromId, namedStyle.Attribute(W.styleId).Value);
@@ -1754,11 +1757,11 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     foreach (var numReference in style.Descendants(W.numPr))
                     {
                         var idElement = numReference.Descendants(W.numId).FirstOrDefault();
-                        if (idElement != null)
+                        if (idElement is not null)
                         {
-                            if (oldNumbering == null)
+                            if (oldNumbering is null)
                             {
-                                if (sourceDocument.MainDocumentPart.NumberingDefinitionsPart != null)
+                                if (sourceDocument.MainDocumentPart.NumberingDefinitionsPart is not null)
                                     oldNumbering =
                                         sourceDocument.MainDocumentPart.NumberingDefinitionsPart.GetXDocument();
                                 else
@@ -1768,9 +1771,9 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                                     oldNumbering.Add(new XElement(W.numbering, NamespaceAttributes));
                                 }
                             }
-                            if (newNumbering == null)
+                            if (newNumbering is null)
                             {
-                                if (newDocument.MainDocumentPart.NumberingDefinitionsPart != null)
+                                if (newDocument.MainDocumentPart.NumberingDefinitionsPart is not null)
                                 {
                                     newNumbering = newDocument.MainDocumentPart.NumberingDefinitionsPart.GetXDocument();
                                     newNumbering.Declaration.Standalone = Yes;
@@ -1806,7 +1809,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 
                                 // Copy abstract numbering element, if necessary (use matching NSID)
                                 var abstractNumId = string.Empty;
-                                if (element != null)
+                                if (element is not null)
                                 {
                                     abstractNumId = element.Elements(W.abstractNumId).First().Attribute(W.val).Value;
 
@@ -1816,26 +1819,26 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                                         .Where(p => ((string)p.Attribute(W.abstractNumId)) == abstractNumId)
                                         .FirstOrDefault();
                                     var abstractNSID = string.Empty;
-                                    if (abstractElement != null)
+                                    if (abstractElement is not null)
                                     {
                                         var nsidElement = abstractElement.Element(W.nsid);
                                         abstractNSID = null;
-                                        if (nsidElement != null)
+                                        if (nsidElement is not null)
                                             abstractNSID = (string)nsidElement.Attribute(W.val);
 
                                         var newAbstractElement = newNumbering
                                             .Descendants()
                                             .Elements(W.abstractNum)
-                                            .Where(e => e.Annotation<FromPreviousSourceSemaphore>() == null)
+                                            .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
                                             .Where(p =>
                                             {
                                                 var thisNsidElement = p.Element(W.nsid);
-                                                if (thisNsidElement == null)
+                                                if (thisNsidElement is null)
                                                     return false;
                                                 return (string)thisNsidElement.Attribute(W.val) == abstractNSID;
                                             })
                                             .FirstOrDefault();
-                                        if (newAbstractElement == null)
+                                        if (newAbstractElement is null)
                                         {
                                             newAbstractElement = new XElement(abstractElement);
                                             newAbstractElement.Attribute(W.abstractNumId).Value =
@@ -1887,7 +1890,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                                                         == newAbstractId
                                                 )
                                                 .FirstOrDefault();
-                                        if (newElement == null)
+                                        if (newElement is null)
                                         {
                                             newElement = new XElement(element);
                                             newElement.Elements(W.abstractNumId).First().Attribute(W.val).Value =
@@ -1938,14 +1941,14 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     ConvertToNewId(item, newIds);
                 }
 
-                if (newDocument.MainDocumentPart.NumberingDefinitionsPart != null)
+                if (newDocument.MainDocumentPart.NumberingDefinitionsPart is not null)
                 {
                     var newNumbering = newDocument.MainDocumentPart.NumberingDefinitionsPart.GetXDocument();
                     ConvertNumberingPartToNewIds(newNumbering, newIds);
                 }
 
                 // Convert source document, since numberings will be copied over after styles.
-                if (sourceDocument.MainDocumentPart.NumberingDefinitionsPart != null)
+                if (sourceDocument.MainDocumentPart.NumberingDefinitionsPart is not null)
                 {
                     var sourceNumbering = sourceDocument.MainDocumentPart.NumberingDefinitionsPart.GetXDocument();
                     ConvertNumberingPartToNewIds(sourceNumbering, newIds);
@@ -1957,18 +1960,18 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         private static void MergeLatentStyles(XDocument fromStyles, XDocument toStyles)
         {
             var fromLatentStyles = fromStyles.Descendants(W.latentStyles).FirstOrDefault();
-            if (fromLatentStyles == null)
+            if (fromLatentStyles is null)
                 return;
 
             var toLatentStyles = toStyles.Descendants(W.latentStyles).FirstOrDefault();
-            if (toLatentStyles == null)
+            if (toLatentStyles is null)
             {
                 var newLatentStylesElement = new XElement(W.latentStyles, fromLatentStyles.Attributes());
                 var globalDefaults = toStyles.Descendants(W.docDefaults).FirstOrDefault();
-                if (globalDefaults == null)
+                if (globalDefaults is null)
                 {
                     var firstStyle = toStyles.Root.Elements(W.style).FirstOrDefault();
-                    if (firstStyle == null)
+                    if (firstStyle is null)
                         toStyles.Root.Add(newLatentStylesElement);
                     else
                         firstStyle.AddBeforeSelf(newLatentStylesElement);
@@ -1977,7 +1980,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     globalDefaults.AddAfterSelf(newLatentStylesElement);
             }
             toLatentStyles = toStyles.Descendants(W.latentStyles).FirstOrDefault();
-            if (toLatentStyles == null)
+            if (toLatentStyles is null)
                 throw new OpenXmlPowerToolsException("Internal error");
 
             var toStylesHash = new HashSet<string>();
@@ -2010,7 +2013,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 #if MergeStylesWithSameNames
         private static void ConvertToNewId(XElement element, Dictionary<string, string> newIds)
         {
-            if (element == null)
+            if (element is null)
                 return;
 
             var valueAttribute = element.Attribute(W.val);
@@ -2056,10 +2059,10 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         )
         {
             // Copy all styles to the new document
-            if (sourceDocument.MainDocumentPart.StyleDefinitionsPart != null)
+            if (sourceDocument.MainDocumentPart.StyleDefinitionsPart is not null)
             {
                 var oldStyles = sourceDocument.MainDocumentPart.StyleDefinitionsPart.GetXDocument();
-                if (newDocument.MainDocumentPart.StyleDefinitionsPart == null)
+                if (newDocument.MainDocumentPart.StyleDefinitionsPart is null)
                 {
                     newDocument.MainDocumentPart.AddNewPart<StyleDefinitionsPart>();
                     var newStyles = newDocument.MainDocumentPart.StyleDefinitionsPart.GetXDocument();
@@ -2076,10 +2079,10 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             }
 
             // Copy all styles with effects to the new document
-            if (sourceDocument.MainDocumentPart.StylesWithEffectsPart != null)
+            if (sourceDocument.MainDocumentPart.StylesWithEffectsPart is not null)
             {
                 var oldStyles = sourceDocument.MainDocumentPart.StylesWithEffectsPart.GetXDocument();
-                if (newDocument.MainDocumentPart.StylesWithEffectsPart == null)
+                if (newDocument.MainDocumentPart.StylesWithEffectsPart is null)
                 {
                     newDocument.MainDocumentPart.AddNewPart<StylesWithEffectsPart>();
                     var newStyles = newDocument.MainDocumentPart.StylesWithEffectsPart.GetXDocument();
@@ -2096,10 +2099,10 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             }
 
             // Copy fontTable to the new document
-            if (sourceDocument.MainDocumentPart.FontTablePart != null)
+            if (sourceDocument.MainDocumentPart.FontTablePart is not null)
             {
                 var oldFontTable = sourceDocument.MainDocumentPart.FontTablePart.GetXDocument();
-                if (newDocument.MainDocumentPart.FontTablePart == null)
+                if (newDocument.MainDocumentPart.FontTablePart is null)
                 {
                     newDocument.MainDocumentPart.AddNewPart<FontTablePart>();
                     var newFontTable = newDocument.MainDocumentPart.FontTablePart.GetXDocument();
@@ -2128,11 +2131,11 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             XDocument newComments = null;
             foreach (var comment in newContent.DescendantsAndSelf(W.commentReference))
             {
-                if (oldComments == null)
+                if (oldComments is null)
                     oldComments = sourceDocument.MainDocumentPart.WordprocessingCommentsPart.GetXDocument();
-                if (newComments == null)
+                if (newComments is null)
                 {
-                    if (newDocument.MainDocumentPart.WordprocessingCommentsPart != null)
+                    if (newDocument.MainDocumentPart.WordprocessingCommentsPart is not null)
                     {
                         newComments = newDocument.MainDocumentPart.WordprocessingCommentsPart.GetXDocument();
                         newComments.Declaration.Standalone = Yes;
@@ -2163,7 +2166,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                         return thisId == id;
                     })
                     .FirstOrDefault();
-                if (element == null)
+                if (element is null)
                     throw new DocumentBuilderException(
                         "Invalid document - comment reference without associated comment in comments part"
                     );
@@ -2187,8 +2190,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     item.SetAttributeValue(W.id, commentIdMap[(int)item.Attribute(W.id)].ToString());
             }
             if (
-                sourceDocument.MainDocumentPart.WordprocessingCommentsPart != null
-                && newDocument.MainDocumentPart.WordprocessingCommentsPart != null
+                sourceDocument.MainDocumentPart.WordprocessingCommentsPart is not null
+                && newDocument.MainDocumentPart.WordprocessingCommentsPart is not null
             )
             {
                 AddRelationships(
@@ -2260,10 +2263,10 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             foreach (var footer in newDocument.MainDocumentPart.FooterParts)
             foreach (var item in footer.GetXDocument().Descendants(WP.docPr))
                 item.SetAttributeValue(NoNamespace.id, (++docPrId).ToString());
-            if (newDocument.MainDocumentPart.FootnotesPart != null)
+            if (newDocument.MainDocumentPart.FootnotesPart is not null)
                 foreach (var item in newDocument.MainDocumentPart.FootnotesPart.GetXDocument().Descendants(WP.docPr))
                     item.SetAttributeValue(NoNamespace.id, (++docPrId).ToString());
-            if (newDocument.MainDocumentPart.EndnotesPart != null)
+            if (newDocument.MainDocumentPart.EndnotesPart is not null)
                 foreach (var item in newDocument.MainDocumentPart.EndnotesPart.GetXDocument().Descendants(WP.docPr))
                     item.SetAttributeValue(NoNamespace.id, (++docPrId).ToString());
         }
@@ -2280,7 +2283,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             if (!(node is XElement element))
                 return node;
 
-            if (element.Annotation<ReplaceSemaphore>() != null)
+            if (element.Annotation<ReplaceSemaphore>() is not null)
                 return newContent;
             return new XElement(
                 element.Name,
@@ -2339,7 +2342,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             RemoveGfxdata(newContent);
             CopyCustomXmlPartsForDataBoundContentControls(sourceDocument, newDocument, newContent);
             CopyWebExtensions(sourceDocument, newDocument);
-            if (insertId != null)
+            if (insertId is not null)
             {
                 var insertElementToReplace = newMainXDoc
                     .Descendants(PtOpenXml.Insert)
@@ -2384,7 +2387,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 
         private static void CopyWebExtensions(WordprocessingDocument sourceDocument, WordprocessingDocument newDocument)
         {
-            if (sourceDocument.WebExTaskpanesPart == null || newDocument.WebExTaskpanesPart != null)
+            if (sourceDocument.WebExTaskpanesPart is null || newDocument.WebExTaskpanesPart is not null)
                 return;
 
             newDocument.AddWebExTaskpanesPart();
@@ -2442,7 +2445,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             AdjustUniqueIds(sourceDocument, newDocument, newContent);
             RemoveGfxdata(newContent);
 
-            if (insertId == null)
+            if (insertId is null)
                 throw new OpenXmlPowerToolsException("Internal error");
 
             var insertElementToReplace = partXDoc
@@ -2479,7 +2482,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 var mdp = outWDoc.AddMainDocumentPart();
                 var mdpXd = mdp.GetXDocument();
                 var root = new XElement(W.document);
-                if (mdpXd.Root == null)
+                if (mdpXd.Root is null)
                     mdpXd.Add(root);
                 else
                     mdpXd.Root.ReplaceWith(root);
@@ -2501,11 +2504,11 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         )
         {
             // Copy all styles to the new document
-            if (sourceDocument.MainDocumentPart.GlossaryDocumentPart.StyleDefinitionsPart != null)
+            if (sourceDocument.MainDocumentPart.GlossaryDocumentPart.StyleDefinitionsPart is not null)
             {
                 var oldStyles =
                     sourceDocument.MainDocumentPart.GlossaryDocumentPart.StyleDefinitionsPart.GetXDocument();
-                if (newDocument.MainDocumentPart.StyleDefinitionsPart == null)
+                if (newDocument.MainDocumentPart.StyleDefinitionsPart is null)
                 {
                     newDocument.MainDocumentPart.AddNewPart<StyleDefinitionsPart>();
                     var newStyles = newDocument.MainDocumentPart.StyleDefinitionsPart.GetXDocument();
@@ -2523,10 +2526,10 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             }
 
             // Copy fontTable to the new document
-            if (sourceDocument.MainDocumentPart.GlossaryDocumentPart.FontTablePart != null)
+            if (sourceDocument.MainDocumentPart.GlossaryDocumentPart.FontTablePart is not null)
             {
                 var oldFontTable = sourceDocument.MainDocumentPart.GlossaryDocumentPart.FontTablePart.GetXDocument();
-                if (newDocument.MainDocumentPart.FontTablePart == null)
+                if (newDocument.MainDocumentPart.FontTablePart is null)
                 {
                     newDocument.MainDocumentPart.AddNewPart<FontTablePart>();
                     var newFontTable = newDocument.MainDocumentPart.FontTablePart.GetXDocument();
@@ -2544,7 +2547,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             }
 
             var oldSettingsPart = sourceDocument.MainDocumentPart.GlossaryDocumentPart.DocumentSettingsPart;
-            if (oldSettingsPart != null)
+            if (oldSettingsPart is not null)
             {
                 var newSettingsPart = newDocument.MainDocumentPart.AddNewPart<DocumentSettingsPart>();
                 var settingsXDoc = oldSettingsPart.GetXDocument();
@@ -2560,7 +2563,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             }
 
             var oldWebSettingsPart = sourceDocument.MainDocumentPart.GlossaryDocumentPart.WebSettingsPart;
-            if (oldWebSettingsPart != null)
+            if (oldWebSettingsPart is not null)
             {
                 var newWebSettingsPart = newDocument.MainDocumentPart.AddNewPart<WebSettingsPart>();
                 var settingsXDoc = oldWebSettingsPart.GetXDocument();
@@ -2576,7 +2579,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 .MainDocumentPart
                 .GlossaryDocumentPart
                 .NumberingDefinitionsPart;
-            if (oldNumberingDefinitionsPart != null)
+            if (oldNumberingDefinitionsPart is not null)
             {
                 CopyNumberingForGlossaryDocumentPartFromGD(
                     oldNumberingDefinitionsPart,
@@ -2595,7 +2598,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         )
         {
             // Copy all styles to the new document
-            if (sourceDocument.MainDocumentPart.StyleDefinitionsPart != null)
+            if (sourceDocument.MainDocumentPart.StyleDefinitionsPart is not null)
             {
                 var oldStyles = sourceDocument.MainDocumentPart.StyleDefinitionsPart.GetXDocument();
                 newDocument.MainDocumentPart.GlossaryDocumentPart.AddNewPart<StyleDefinitionsPart>();
@@ -2607,7 +2610,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             }
 
             // Copy fontTable to the new document
-            if (sourceDocument.MainDocumentPart.FontTablePart != null)
+            if (sourceDocument.MainDocumentPart.FontTablePart is not null)
             {
                 var oldFontTable = sourceDocument.MainDocumentPart.FontTablePart.GetXDocument();
                 newDocument.MainDocumentPart.GlossaryDocumentPart.AddNewPart<FontTablePart>();
@@ -2619,7 +2622,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             }
 
             var oldSettingsPart = sourceDocument.MainDocumentPart.DocumentSettingsPart;
-            if (oldSettingsPart != null)
+            if (oldSettingsPart is not null)
             {
                 var newSettingsPart =
                     newDocument.MainDocumentPart.GlossaryDocumentPart.AddNewPart<DocumentSettingsPart>();
@@ -2636,7 +2639,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             }
 
             var oldWebSettingsPart = sourceDocument.MainDocumentPart.WebSettingsPart;
-            if (oldWebSettingsPart != null)
+            if (oldWebSettingsPart is not null)
             {
                 var newWebSettingsPart =
                     newDocument.MainDocumentPart.GlossaryDocumentPart.AddNewPart<WebSettingsPart>();
@@ -2650,7 +2653,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             }
 
             var oldNumberingDefinitionsPart = sourceDocument.MainDocumentPart.NumberingDefinitionsPart;
-            if (oldNumberingDefinitionsPart != null)
+            if (oldNumberingDefinitionsPart is not null)
             {
                 CopyNumberingForGlossaryDocumentPartToGD(oldNumberingDefinitionsPart, newDocument, newContent, images);
             }
@@ -2722,7 +2725,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                         p.ContentType == "application/vnd.openxmlformats-officedocument.customXmlProperties+xml"
                     )
                     .FirstOrDefault();
-                if (propertyPart != null)
+                if (propertyPart is not null)
                 {
                     var propertyPartDoc = propertyPart.GetXDocument();
                     if (itemList.Contains(propertyPartDoc.Root.Attribute(DS.itemID).Value))
@@ -2774,7 +2777,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     if (string.IsNullOrEmpty(relId))
                         continue;
                     var oldHyperlink = oldPart.HyperlinkRelationships.FirstOrDefault(h => h.Id == relId);
-                    if (oldHyperlink == null)
+                    if (oldHyperlink is null)
                         continue;
                     //throw new DocumentBuilderInternalException("Internal Error 0002");
                     var newRel = newPart.AddHyperlinkRelationship(oldHyperlink.Uri, oldHyperlink.IsExternal);
@@ -2786,7 +2789,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     if (string.IsNullOrEmpty(relId))
                         continue;
                     var oldRel = oldPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
-                    if (oldRel == null)
+                    if (oldRel is null)
                         throw new DocumentBuilderInternalException(
                             "Source {0} is invalid document - hyperlink contains invalid references"
                         );
@@ -2799,7 +2802,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     if (string.IsNullOrEmpty(relId))
                         continue;
                     var oldHyperlink = oldPart.HyperlinkRelationships.FirstOrDefault(h => h.Id == relId);
-                    if (oldHyperlink == null)
+                    if (oldHyperlink is null)
                         continue;
                     var newRel = newPart.AddHyperlinkRelationship(oldHyperlink.Uri, oldHyperlink.IsExternal);
                     UpdateContent(newContent, e.Name, relId, newRel.Id);
@@ -2810,7 +2813,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     if (string.IsNullOrEmpty(relId))
                         continue;
                     var oldRel = oldPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
-                    if (oldRel == null)
+                    if (oldRel is null)
                         throw new DocumentBuilderInternalException("Internal Error 0006");
                     var newRel = newPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri);
                     UpdateContent(newContent, e.Name, relId, newRel.Id);
@@ -2819,12 +2822,12 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 {
                     // <a:blip r:embed="rId6" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" />
                     var relId = (string)e.Attribute(R.link);
-                    //if (relId == null)
+                    //if (relId is null)
                     //    relId = (string)e.Attribute(R.embed);
                     if (string.IsNullOrEmpty(relId))
                         continue;
                     var oldRel = oldPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
-                    if (oldRel == null)
+                    if (oldRel is null)
                         continue;
                     var newRel = newPart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri);
                     UpdateContent(newContent, e.Name, relId, newRel.Id);
@@ -2850,12 +2853,12 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             foreach (var numReference in newContent.DescendantsAndSelf(W.numPr))
             {
                 var idElement = numReference.Descendants(W.numId).FirstOrDefault();
-                if (idElement != null)
+                if (idElement is not null)
                 {
                     oldNumbering ??= sourceDocument.MainDocumentPart.NumberingDefinitionsPart.GetXDocument();
-                    if (newNumbering == null)
+                    if (newNumbering is null)
                     {
-                        if (newDocument.MainDocumentPart.NumberingDefinitionsPart != null)
+                        if (newDocument.MainDocumentPart.NumberingDefinitionsPart is not null)
                         {
                             newNumbering = newDocument.MainDocumentPart.NumberingDefinitionsPart.GetXDocument();
                             var numIds = newNumbering.Root.Elements(W.num).Select(f => (int)f.Attribute(W.numId));
@@ -2883,7 +2886,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                             .Descendants(W.num)
                             .Where(p => ((int)p.Attribute(W.numId)) == numId)
                             .FirstOrDefault();
-                        if (element == null)
+                        if (element is null)
                             continue;
 
                         // Copy abstract numbering element, if necessary (use matching NSID)
@@ -2898,21 +2901,21 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                             .First();
                         var nsidElement = abstractElement.Element(W.nsid);
                         string abstractNSID = null;
-                        if (nsidElement != null)
+                        if (nsidElement is not null)
                             abstractNSID = (string)nsidElement.Attribute(W.val);
                         var newAbstractElement = newNumbering
                             .Descendants()
                             .Elements(W.abstractNum)
-                            .Where(e => e.Annotation<FromPreviousSourceSemaphore>() == null)
+                            .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
                             .Where(p =>
                             {
                                 var thisNsidElement = p.Element(W.nsid);
-                                if (thisNsidElement == null)
+                                if (thisNsidElement is null)
                                     return false;
                                 return (string)thisNsidElement.Attribute(W.val) == abstractNSID;
                             })
                             .FirstOrDefault();
-                        if (newAbstractElement == null)
+                        if (newAbstractElement is null)
                         {
                             newAbstractElement = new XElement(abstractElement);
                             newAbstractElement.Attribute(W.abstractNumId).Value = abstractNumber.ToString();
@@ -2952,7 +2955,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                             newElement = newNumbering
                                 .Descendants()
                                 .Elements(W.num)
-                                .Where(e => e.Annotation<FromPreviousSourceSemaphore>() == null)
+                                .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
                                 .Where(p => ((int)p.Attribute(W.numId)) == numIdMap[numId])
                                 .First();
                         }
@@ -2969,7 +2972,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     }
                 }
             }
-            if (newNumbering != null)
+            if (newNumbering is not null)
             {
                 foreach (var abstractNum in newNumbering.Descendants(W.abstractNum))
                     abstractNum.AddAnnotation(new FromPreviousSourceSemaphore());
@@ -2978,8 +2981,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             }
 
             if (
-                newDocument.MainDocumentPart.NumberingDefinitionsPart != null
-                && sourceDocument.MainDocumentPart.NumberingDefinitionsPart != null
+                newDocument.MainDocumentPart.NumberingDefinitionsPart is not null
+                && sourceDocument.MainDocumentPart.NumberingDefinitionsPart is not null
             )
             {
                 AddRelationships(
@@ -3013,12 +3016,12 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             foreach (var numReference in newContent.DescendantsAndSelf(W.numPr))
             {
                 var idElement = numReference.Descendants(W.numId).FirstOrDefault();
-                if (idElement != null)
+                if (idElement is not null)
                 {
                     oldNumbering ??= sourceNumberingPart.GetXDocument();
-                    if (newNumbering == null)
+                    if (newNumbering is null)
                     {
-                        if (newDocument.MainDocumentPart.NumberingDefinitionsPart != null)
+                        if (newDocument.MainDocumentPart.NumberingDefinitionsPart is not null)
                         {
                             newNumbering = newDocument.MainDocumentPart.NumberingDefinitionsPart.GetXDocument();
                             var numIds = newNumbering.Root.Elements(W.num).Select(f => (int)f.Attribute(W.numId));
@@ -3046,7 +3049,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                             .Descendants(W.num)
                             .Where(p => ((int)p.Attribute(W.numId)) == numId)
                             .FirstOrDefault();
-                        if (element == null)
+                        if (element is null)
                             continue;
 
                         // Copy abstract numbering element, if necessary (use matching NSID)
@@ -3060,21 +3063,21 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                             .First();
                         var nsidElement = abstractElement.Element(W.nsid);
                         string abstractNSID = null;
-                        if (nsidElement != null)
+                        if (nsidElement is not null)
                             abstractNSID = (string)nsidElement.Attribute(W.val);
                         var newAbstractElement = newNumbering
                             .Descendants()
                             .Elements(W.abstractNum)
-                            .Where(e => e.Annotation<FromPreviousSourceSemaphore>() == null)
+                            .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
                             .Where(p =>
                             {
                                 var thisNsidElement = p.Element(W.nsid);
-                                if (thisNsidElement == null)
+                                if (thisNsidElement is null)
                                     return false;
                                 return (string)thisNsidElement.Attribute(W.val) == abstractNSID;
                             })
                             .FirstOrDefault();
-                        if (newAbstractElement == null)
+                        if (newAbstractElement is null)
                         {
                             newAbstractElement = new XElement(abstractElement);
                             newAbstractElement.SetAttributeValue(W.abstractNumId, abstractNumber.ToString());
@@ -3114,7 +3117,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                             newElement = newNumbering
                                 .Descendants()
                                 .Elements(W.num)
-                                .Where(e => e.Annotation<FromPreviousSourceSemaphore>() == null)
+                                .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
                                 .Where(p => ((int)p.Attribute(W.numId)) == numIdMap[numId])
                                 .First();
                         }
@@ -3131,7 +3134,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     }
                 }
             }
-            if (newNumbering != null)
+            if (newNumbering is not null)
             {
                 foreach (var abstractNum in newNumbering.Descendants(W.abstractNum))
                     abstractNum.AddAnnotation(new FromPreviousSourceSemaphore());
@@ -3139,7 +3142,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     num.AddAnnotation(new FromPreviousSourceSemaphore());
             }
 
-            if (newDocument.MainDocumentPart.NumberingDefinitionsPart != null && sourceNumberingPart != null)
+            if (newDocument.MainDocumentPart.NumberingDefinitionsPart is not null && sourceNumberingPart is not null)
             {
                 AddRelationships(
                     sourceNumberingPart,
@@ -3173,12 +3176,12 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             foreach (var numReference in newContent.DescendantsAndSelf(W.numPr))
             {
                 var idElement = numReference.Descendants(W.numId).FirstOrDefault();
-                if (idElement != null)
+                if (idElement is not null)
                 {
                     oldNumbering ??= sourceNumberingPart.GetXDocument();
-                    if (newNumbering == null)
+                    if (newNumbering is null)
                     {
-                        if (newDocument.MainDocumentPart.GlossaryDocumentPart.NumberingDefinitionsPart != null)
+                        if (newDocument.MainDocumentPart.GlossaryDocumentPart.NumberingDefinitionsPart is not null)
                         {
                             newNumbering =
                                 newDocument.MainDocumentPart.GlossaryDocumentPart.NumberingDefinitionsPart.GetXDocument();
@@ -3208,7 +3211,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                             .Descendants(W.num)
                             .Where(p => ((int)p.Attribute(W.numId)) == numId)
                             .FirstOrDefault();
-                        if (element == null)
+                        if (element is null)
                             continue;
 
                         // Copy abstract numbering element, if necessary (use matching NSID)
@@ -3222,21 +3225,21 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                             .First();
                         var nsidElement = abstractElement.Element(W.nsid);
                         string abstractNSID = null;
-                        if (nsidElement != null)
+                        if (nsidElement is not null)
                             abstractNSID = (string)nsidElement.Attribute(W.val);
                         var newAbstractElement = newNumbering
                             .Descendants()
                             .Elements(W.abstractNum)
-                            .Where(e => e.Annotation<FromPreviousSourceSemaphore>() == null)
+                            .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
                             .Where(p =>
                             {
                                 var thisNsidElement = p.Element(W.nsid);
-                                if (thisNsidElement == null)
+                                if (thisNsidElement is null)
                                     return false;
                                 return (string)thisNsidElement.Attribute(W.val) == abstractNSID;
                             })
                             .FirstOrDefault();
-                        if (newAbstractElement == null)
+                        if (newAbstractElement is null)
                         {
                             newAbstractElement = new XElement(abstractElement);
                             newAbstractElement.SetAttributeValue(W.abstractNumId, abstractNumber.ToString());
@@ -3276,7 +3279,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                             newElement = newNumbering
                                 .Descendants()
                                 .Elements(W.num)
-                                .Where(e => e.Annotation<FromPreviousSourceSemaphore>() == null)
+                                .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
                                 .Where(p => ((int)p.Attribute(W.numId)) == numIdMap[numId])
                                 .First();
                         }
@@ -3293,7 +3296,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     }
                 }
             }
-            if (newNumbering != null)
+            if (newNumbering is not null)
             {
                 foreach (var abstractNum in newNumbering.Descendants(W.abstractNum))
                     abstractNum.AddAnnotation(new FromPreviousSourceSemaphore());
@@ -3302,8 +3305,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             }
 
             if (
-                newDocument.MainDocumentPart.GlossaryDocumentPart.NumberingDefinitionsPart != null
-                && sourceNumberingPart != null
+                newDocument.MainDocumentPart.GlossaryDocumentPart.NumberingDefinitionsPart is not null
+                && sourceNumberingPart is not null
             )
             {
                 AddRelationships(
@@ -3324,7 +3327,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     images
                 );
             }
-            if (newDocument.MainDocumentPart.GlossaryDocumentPart.NumberingDefinitionsPart != null)
+            if (newDocument.MainDocumentPart.GlossaryDocumentPart.NumberingDefinitionsPart is not null)
                 newDocument.MainDocumentPart.GlossaryDocumentPart.NumberingDefinitionsPart.PutXDocument();
         }
 
@@ -3349,7 +3352,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 return;
 
             var tempEr5 = newContentPart.ExternalRelationships.FirstOrDefault(er => er.Id == relId);
-            if (tempEr5 != null)
+            if (tempEr5 is not null)
                 return;
 
             var ipp2 = oldContentPart.Parts.FirstOrDefault(ipp => ipp.RelationshipId == relId);
@@ -3361,7 +3364,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 
                 var oldPart = (ImagePart)ipp2.OpenXmlPart;
                 var temp = ManageImageCopy(oldPart, newContentPart, images);
-                if (temp.ImagePart == null)
+                if (temp.ImagePart is null)
                 {
                     var newPart = newContentPart switch
                     {
@@ -3394,7 +3397,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                             var found = cpr.ContentPart == newContentPart;
                             return found;
                         });
-                        return rel != null;
+                        return rel is not null;
                     });
                     if (refRel != default)
                     {
@@ -3423,7 +3426,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             else
             {
                 var er = oldContentPart.ExternalRelationships.FirstOrDefault(er1 => er1.Id == relId);
-                if (er != null)
+                if (er is not null)
                 {
                     var newEr = newContentPart.AddExternalRelationship(er.RelationshipType, er.Uri);
                     imageReference.SetAttributeValue(attributeName, newEr.Id);
@@ -3469,7 +3472,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 }
 
                 var tempEr = newContentPart.ExternalRelationships.FirstOrDefault(er2 => er2.Id == relId);
-                if (tempEr != null)
+                if (tempEr is not null)
                     continue;
 
                 var oldPart = oldContentPart.GetPartById(relId);
@@ -3489,7 +3492,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 }
 
                 var tempEr4 = newContentPart.ExternalRelationships.FirstOrDefault(er3 => er3.Id == relId);
-                if (tempEr4 != null)
+                if (tempEr4 is not null)
                     continue;
 
                 oldPart = oldContentPart.GetPartById(relId);
@@ -3509,7 +3512,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 }
 
                 var tempEr5 = newContentPart.ExternalRelationships.FirstOrDefault(z => z.Id == relId);
-                if (tempEr5 != null)
+                if (tempEr5 is not null)
                     continue;
 
                 oldPart = oldContentPart.GetPartById(relId);
@@ -3529,7 +3532,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 }
 
                 var tempEr6 = newContentPart.ExternalRelationships.FirstOrDefault(z => z.Id == relId);
-                if (tempEr6 != null)
+                if (tempEr6 is not null)
                     continue;
 
                 oldPart = oldContentPart.GetPartById(relId);
@@ -3598,7 +3601,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 }
                 else
                 {
-                    if (relId != null)
+                    if (relId is not null)
                     {
                         var er = oldContentPart.GetExternalRelationship(relId);
                         var newEr = newContentPart.AddExternalRelationship(er.RelationshipType, er.Uri);
@@ -3620,7 +3623,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 }
 
                 var tempEr2 = newContentPart.ExternalRelationships.FirstOrDefault(z => z.Id == relId);
-                if (tempEr2 != null)
+                if (tempEr2 is not null)
                     continue;
 
                 var ipp3 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
@@ -3649,7 +3652,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 }
 
                 var tempEr2 = newContentPart.ExternalRelationships.FirstOrDefault(z => z.Id == relId);
-                if (tempEr2 != null)
+                if (tempEr2 is not null)
                     continue;
 
                 var ipp3 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
@@ -3679,7 +3682,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 }
 
                 var tempEr4 = newContentPart.ExternalRelationships.FirstOrDefault(z => z.Id == relId);
-                if (tempEr4 != null)
+                if (tempEr4 is not null)
                     continue;
 
                 var ipp5 = oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId);
@@ -3723,11 +3726,11 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 }
 
                 var tempEr1 = newFontTablePart.ExternalRelationships.FirstOrDefault(z => z.Id == relId);
-                if (tempEr1 != null)
+                if (tempEr1 is not null)
                     continue;
 
                 var oldPart2 = oldFontTablePart.GetPartById(relId);
-                if (oldPart2 == null || (!(oldPart2 is FontPart)))
+                if (oldPart2 is null || (!(oldPart2 is FontPart)))
                     throw new DocumentBuilderException(
                         "Invalid document - FontTablePart contains invalid relationship"
                     );
@@ -3792,7 +3795,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     var g = Guid.NewGuid();
                     var newRid = $"R{g:N}";
                     var oldRel = oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
-                    if (oldRel == null)
+                    if (oldRel is null)
                         throw new DocumentBuilderInternalException("Internal Error 0007");
                     newChart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     dataReference.SetAttributeValue(R.id, newRid);
@@ -3848,7 +3851,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     var g = Guid.NewGuid();
                     var newRid = $"R{g:N}";
                     var oldRel = oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId);
-                    if (oldRel == null)
+                    if (oldRel is null)
                         throw new DocumentBuilderInternalException("Internal Error 0007");
                     newChart.AddExternalRelationship(oldRel.RelationshipType, oldRel.Uri, newRid);
                     dataReference.SetAttributeValue(R.id, newRid);
@@ -3864,7 +3867,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         {
             // A Core File Properties part does not have implicit or explicit relationships to other parts.
             var corePart = sourceDocument.CoreFilePropertiesPart;
-            if (corePart?.GetXDocument().Root != null)
+            if (corePart?.GetXDocument().Root is not null)
             {
                 newDocument.AddCoreFilePropertiesPart();
                 var newXDoc = newDocument.CoreFilePropertiesPart.GetXDocument();
@@ -3876,7 +3879,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 
             // An application attributes part does not have implicit or explicit relationships to other parts.
             var extPart = sourceDocument.ExtendedFilePropertiesPart;
-            if (extPart != null)
+            if (extPart is not null)
             {
                 OpenXmlPart newPart = newDocument.AddExtendedFilePropertiesPart();
                 var newXDoc = newDocument.ExtendedFilePropertiesPart.GetXDocument();
@@ -3887,7 +3890,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 
             // An custom file properties part does not have implicit or explicit relationships to other parts.
             var customPart = sourceDocument.CustomFilePropertiesPart;
-            if (customPart != null)
+            if (customPart is not null)
             {
                 newDocument.AddCustomFilePropertiesPart();
                 var newXDoc = newDocument.CustomFilePropertiesPart.GetXDocument();
@@ -3902,7 +3905,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             }
 
             var oldSettingsPart = sourceDocument.MainDocumentPart.DocumentSettingsPart;
-            if (oldSettingsPart != null)
+            if (oldSettingsPart is not null)
             {
                 var newSettingsPart = newDocument.MainDocumentPart.AddNewPart<DocumentSettingsPart>();
                 var settingsXDoc = oldSettingsPart.GetXDocument();
@@ -3917,7 +3920,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             }
 
             var oldWebSettingsPart = sourceDocument.MainDocumentPart.WebSettingsPart;
-            if (oldWebSettingsPart != null)
+            if (oldWebSettingsPart is not null)
             {
                 var newWebSettingsPart = newDocument.MainDocumentPart.AddNewPart<WebSettingsPart>();
                 var settingsXDoc = oldWebSettingsPart.GetXDocument();
@@ -3929,7 +3932,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             }
 
             var themePart = sourceDocument.MainDocumentPart.ThemePart;
-            if (themePart != null)
+            if (themePart is not null)
             {
                 var newThemePart = newDocument.MainDocumentPart.AddNewPart<ThemePart>();
                 var newXDoc = newDocument.MainDocumentPart.ThemePart.GetXDocument();
@@ -3951,7 +3954,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 
             // A Style Definitions part shall not have implicit or explicit relationships to any other part.
             var stylesPart = sourceDocument.MainDocumentPart.StyleDefinitionsPart;
-            if (stylesPart != null)
+            if (stylesPart is not null)
             {
                 newDocument.MainDocumentPart.AddNewPart<StyleDefinitionsPart>();
                 var newXDoc = newDocument.MainDocumentPart.StyleDefinitionsPart.GetXDocument();
@@ -3982,7 +3985,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 
             // A Font Table part shall not have any implicit or explicit relationships to any other part.
             var fontTablePart = sourceDocument.MainDocumentPart.FontTablePart;
-            if (fontTablePart != null)
+            if (fontTablePart is not null)
             {
                 newDocument.MainDocumentPart.AddNewPart<FontTablePart>();
                 var newXDoc = newDocument.MainDocumentPart.FontTablePart.GetXDocument();
@@ -4007,16 +4010,16 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             XDocument oldFootnotes = null;
             XDocument newFootnotes = null;
             var footnotePr = settingsXDoc.Root.Element(W.footnotePr);
-            if (footnotePr == null)
+            if (footnotePr is null)
                 return;
-            if (sourceDocument.MainDocumentPart.FootnotesPart == null)
+            if (sourceDocument.MainDocumentPart.FootnotesPart is null)
                 return;
             foreach (var footnote in footnotePr.Elements(W.footnote))
             {
                 oldFootnotes ??= sourceDocument.MainDocumentPart.FootnotesPart.GetXDocument();
-                if (newFootnotes == null)
+                if (newFootnotes is null)
                 {
-                    if (newDocument.MainDocumentPart.FootnotesPart != null)
+                    if (newDocument.MainDocumentPart.FootnotesPart is not null)
                     {
                         newFootnotes = newDocument.MainDocumentPart.FootnotesPart.GetXDocument();
                         newFootnotes.Declaration.Standalone = Yes;
@@ -4040,7 +4043,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     .Elements(W.footnote)
                     .Where(p => ((string)p.Attribute(W.id)) == id)
                     .FirstOrDefault();
-                if (element != null)
+                if (element is not null)
                 {
                     var newElement = new XElement(element);
                     // the following adds the footnote into the new settings part
@@ -4063,16 +4066,16 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             XDocument oldEndnotes = null;
             XDocument newEndnotes = null;
             var endnotePr = settingsXDoc.Root.Element(W.endnotePr);
-            if (endnotePr == null)
+            if (endnotePr is null)
                 return;
-            if (sourceDocument.MainDocumentPart.EndnotesPart == null)
+            if (sourceDocument.MainDocumentPart.EndnotesPart is null)
                 return;
             foreach (var endnote in endnotePr.Elements(W.endnote))
             {
                 oldEndnotes ??= sourceDocument.MainDocumentPart.EndnotesPart.GetXDocument();
-                if (newEndnotes == null)
+                if (newEndnotes is null)
                 {
-                    if (newDocument.MainDocumentPart.EndnotesPart != null)
+                    if (newDocument.MainDocumentPart.EndnotesPart is not null)
                     {
                         newEndnotes = newDocument.MainDocumentPart.EndnotesPart.GetXDocument();
                         newEndnotes.Declaration.Standalone = Yes;
@@ -4096,7 +4099,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     .Elements(W.endnote)
                     .Where(p => ((string)p.Attribute(W.id)) == id)
                     .FirstOrDefault();
-                if (element != null)
+                if (element is not null)
                 {
                     var newElement = new XElement(element);
                     newElement.SetAttributeValue(W.id, number.ToString());
@@ -4137,7 +4140,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         private static void AddAtBeginning(IEnumerable<XElement> newContent, XElement contentToAdd)
         {
             var first = newContent.First();
-            if (first.Element(W.pPr) != null)
+            if (first.Element(W.pPr) is not null)
                 first.Element(W.pPr).AddAfterSelf(contentToAdd);
             else
                 first.AddFirst(new XElement(contentToAdd));
@@ -4146,7 +4149,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         private static void AddAtEnd(IEnumerable<XElement> newContent, XElement contentToAdd)
         {
             var last = newContent.Last();
-            if (last.Element(W.pPr) != null)
+            if (last.Element(W.pPr) is not null)
                 last.Element(W.pPr).AddAfterSelf(new XElement(contentToAdd));
             else
                 last.Add(new XElement(contentToAdd));
@@ -4173,10 +4176,10 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                         .Descendants(endElement)
                         .Where(o => o.Attribute(idAttribute).Value == rangeId)
                         .FirstOrDefault();
-                    if (end != null)
+                    if (end is not null)
                     {
                         AddAtEnd(newContent, new XElement(end));
-                        if (refElement != null)
+                        if (refElement is not null)
                         {
                             var newRef = new XElement(refElement, new XAttribute(idAttribute, rangeId));
                             AddAtEnd(newContent, new XElement(newRef));
@@ -4193,7 +4196,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                         .Descendants(startElement)
                         .Where(o => o.Attribute(idAttribute).Value == rangeId)
                         .FirstOrDefault();
-                    if (start != null)
+                    if (start is not null)
                         AddAtBeginning(newContent, new XElement(start));
                 }
             }
@@ -4238,9 +4241,9 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             foreach (var footnote in newContent.DescendantsAndSelf(W.footnoteReference))
             {
                 oldFootnotes ??= sourceDocument.MainDocumentPart.FootnotesPart.GetXDocument();
-                if (newFootnotes == null)
+                if (newFootnotes is null)
                 {
-                    if (newDocument.MainDocumentPart.FootnotesPart != null)
+                    if (newDocument.MainDocumentPart.FootnotesPart is not null)
                     {
                         newFootnotes = newDocument.MainDocumentPart.FootnotesPart.GetXDocument();
                         var ids = newFootnotes.Root.Elements(W.footnote).Select(f => (int)f.Attribute(W.id));
@@ -4262,7 +4265,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     .Elements(W.footnote)
                     .Where(p => ((string)p.Attribute(W.id)) == id)
                     .FirstOrDefault();
-                if (element != null)
+                if (element is not null)
                 {
                     var newElement = new XElement(element);
                     newElement.SetAttributeValue(W.id, number.ToString());
@@ -4272,8 +4275,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 }
             }
             if (
-                sourceDocument.MainDocumentPart.FootnotesPart != null
-                && newDocument.MainDocumentPart.FootnotesPart != null
+                sourceDocument.MainDocumentPart.FootnotesPart is not null
+                && newDocument.MainDocumentPart.FootnotesPart is not null
             )
             {
                 AddRelationships(
@@ -4303,9 +4306,9 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             foreach (var endnote in newContent.DescendantsAndSelf(W.endnoteReference))
             {
                 oldEndnotes ??= sourceDocument.MainDocumentPart.EndnotesPart.GetXDocument();
-                if (newEndnotes == null)
+                if (newEndnotes is null)
                 {
-                    if (newDocument.MainDocumentPart.EndnotesPart != null)
+                    if (newDocument.MainDocumentPart.EndnotesPart is not null)
                     {
                         newEndnotes = newDocument.MainDocumentPart.EndnotesPart.GetXDocument();
                         var ids = newEndnotes.Root.Elements(W.endnote).Select(f => (int)f.Attribute(W.id));
@@ -4334,8 +4337,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 number++;
             }
             if (
-                sourceDocument.MainDocumentPart.EndnotesPart != null
-                && newDocument.MainDocumentPart.EndnotesPart != null
+                sourceDocument.MainDocumentPart.EndnotesPart is not null
+                && newDocument.MainDocumentPart.EndnotesPart is not null
             )
             {
                 AddRelationships(
