@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-06-24",
-  "last_run_id": "28113570461",
+  "last_run": "2026-06-25",
+  "last_run_id": "28185041665",
   "backlog_cursor": {
     "issues": 311,
     "prs": 165
@@ -10,12 +10,13 @@
     "67": "2026-05-01",
     "77": "2026-05-01",
     "103": "2026-05-01",
-    "28": "2026-03-28"
+    "28": "2026-03-28",
+    "66": "2026-03-26"
   },
   "open_clippy_prs": [
     {"number": 163, "branch": "clippy/improve-custom-handler-66-20260326-f25d5328ab83f793", "title": "[Clippy] feat: add RegisterCustomHandler extensibility API to DocumentAssembler"},
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "[Clippy] feat(excel): add ExcelAssembler for template-based xlsx document assembly"},
-    {"number": null, "branch": "clippy/refactor-null-patterns-documentbuilder-20260624", "title": "[Clippy] refactor: modernize == null / != null → is null / is not null in DocumentBuilder.cs"}
+    {"number": null, "branch": "clippy/refactor-null-patterns-remaining-20260625", "title": "[Clippy] refactor: modernize == null / != null in ListItemRetriever.cs, HtmlToWmlConverterCore.cs, WmlComparer.Private.Methods.ProduceDocument.cs (367 replacements)"}
   ],
   "checked_off_by_maintainer": [],
   "m_issue": 311,
@@ -23,14 +24,15 @@
   "notes": [
     "v3.5.1 released 2026-06-23: SkiaSharp 4.x, System.CommandLine preview.5, MS.NET.Test.Sdk 18.7.0",
     "Monthly Activity issue for June 2026 is #311",
-    "System.CommandLine now at preview.5 (updated by maintainer in PR #346)",
-    "Null modernization remaining: ListItemRetriever.cs(95), HtmlToWmlConverterCore.cs(163), WmlComparer.Private.ProduceDocument.cs(89)"
+    "Null modernization series COMPLETE: all target files updated (ExcelConverters #344, FormattingAssembler #345, DocumentBuilder #349, ListItemRetriever+HtmlToWmlConverterCore+WmlComparer.ProduceDocument TBD)",
+    "PR #349 (DocumentBuilder.cs null patterns) merged 2026-06-24"
   ],
   "improvements_submitted": [
     "PR#342: test(cli) fix duplicate CLI test codes - merged 2026-06-23",
     "PR#343: chore(deps) TUnit 1.54.0->1.56.25 + JsonSchema.Net 9.2.1->9.2.2 - merged 2026-06-23",
     "PR#344: refactor Excel converters == null / != null -> is null / is not null - merged 2026-06-23",
     "PR#345: refactor FormattingAssembler.cs == null / != null -> is null / is not null - merged 2026-06-23",
-    "PR(TBD/#aw_db_null): refactor DocumentBuilder.cs == null / != null -> is null / is not null (189) - 2026-06-24"
+    "PR#349: refactor DocumentBuilder.cs == null / != null -> is null / is not null (189) - merged 2026-06-24",
+    "PR(TBD): refactor ListItemRetriever.cs+HtmlToWmlConverterCore.cs+WmlComparer.ProduceDocument.cs == null / != null -> is null / is not null (367) - 2026-06-25"
   ]
 }
