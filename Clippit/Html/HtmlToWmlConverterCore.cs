@@ -115,7 +115,7 @@ namespace Clippit.Html
         public static CssExpression GetProp(this XElement element, string propertyName)
         {
             var d = element.Annotation<Dictionary<string, CssExpression>>();
-            if (d != null)
+            if (d is not null)
             {
                 if (d.TryGetValue(propertyName, out var prop))
                     return prop;
@@ -147,7 +147,7 @@ namespace Clippit.Html
             string annotatedHtmlDumpFileName
         )
         {
-            if (emptyDocument == null)
+            if (emptyDocument is null)
                 emptyDocument = HtmlToWmlConverter.EmptyDocument;
 
             NextRectId = 1025;
@@ -191,7 +191,7 @@ namespace Clippit.Html
         private static object TransformToLower(XNode node)
         {
             var element = node as XElement;
-            if (element != null)
+            if (element is not null)
             {
                 var e = new XElement(
                     element.Name.LocalName.ToLower(),
@@ -209,15 +209,16 @@ namespace Clippit.Html
             {
                 var rowSpanCell = html.Descendants(XhtmlNoNamespace.td)
                     .FirstOrDefault(td =>
-                        td.Attribute(XhtmlNoNamespace.rowspan) != null && td.Attribute("HtmlToWmlVMergeRestart") == null
+                        td.Attribute(XhtmlNoNamespace.rowspan) is not null
+                        && td.Attribute("HtmlToWmlVMergeRestart") is null
                     );
-                if (rowSpanCell == null)
+                if (rowSpanCell is null)
                     break;
                 rowSpanCell.Add(new XAttribute("HtmlToWmlVMergeRestart", "true"));
                 var colNumber = rowSpanCell.ElementsBeforeSelf(XhtmlNoNamespace.td).Count();
                 var numberPseudoToAdd = (int)rowSpanCell.Attribute(XhtmlNoNamespace.rowspan) - 1;
                 var tr = rowSpanCell.Ancestors(XhtmlNoNamespace.tr).FirstOrDefault();
-                if (tr == null)
+                if (tr is null)
                     throw new OpenXmlPowerToolsException("Invalid HTML - td does not have parent tr");
                 var rowsToAddTo = tr.ElementsAfterSelf(XhtmlNoNamespace.tr).Take(numberPseudoToAdd).ToList();
                 foreach (var rowToAddTo in rowsToAddTo)
@@ -228,7 +229,7 @@ namespace Clippit.Html
                             .Elements(XhtmlNoNamespace.td)
                             .Skip(colNumber - 1)
                             .FirstOrDefault();
-                        if (tdToAddAfter == null)
+                        if (tdToAddAfter is null)
                         {
                             tdToAddAfter = rowToAddTo.Elements(XhtmlNoNamespace.td).LastOrDefault();
                         }
@@ -273,7 +274,7 @@ namespace Clippit.Html
                     .Where(a => a.Name == XhtmlNoNamespace.ol || a.Name == XhtmlNoNamespace.ul)
                     .LastOrDefault();
                 int numIdToUse;
-                if (parentOlUl != null)
+                if (parentOlUl is not null)
                     numIdToUse = parentOlUl.Annotation<NumberedItemAnnotation>().numId;
                 else
                     numIdToUse = numId++;
@@ -334,7 +335,7 @@ namespace Clippit.Html
         private static object TransformWhiteSpaceInPreCodeTtKbdSamp(XNode node, bool inPre, bool inOther)
         {
             var element = node as XElement;
-            if (element != null)
+            if (element is not null)
             {
                 if (element.Name == XhtmlNoNamespace.pre)
                 {
@@ -364,7 +365,7 @@ namespace Clippit.Html
                 );
             }
             var xt = node as XText;
-            if (xt != null && inPre)
+            if (xt is not null && inPre)
             {
                 var val = xt.Value.TrimStart('\r', '\n').TrimEnd('\r', '\n');
                 var groupedCharacters = val.GroupAdjacent(c => c is '\r' or '\n');
@@ -377,7 +378,7 @@ namespace Clippit.Html
                 });
                 return newNodes;
             }
-            if (xt != null && inOther)
+            if (xt is not null && inOther)
             {
                 var val = xt.Value.TrimStart('\r', '\n', '\t', ' ').TrimEnd('\r', '\n', '\t', ' ');
                 return new XText(val);
@@ -553,7 +554,7 @@ namespace Clippit.Html
         private static object TransformAndOrderElements(XNode node)
         {
             var element = node as XElement;
-            if (element != null)
+            if (element is not null)
             {
                 if (element.Name == W.pPr)
                     return new XElement(
@@ -659,16 +660,16 @@ namespace Clippit.Html
         private static void AddNonBreakingSpacesForSpansWithWidth(WordprocessingDocument wDoc, XElement body)
         {
             var runsWithWidth = body.Descendants(W.r)
-                .Where(r => r.Attribute(PtOpenXml.HtmlToWmlCssWidth) != null)
+                .Where(r => r.Attribute(PtOpenXml.HtmlToWmlCssWidth) is not null)
                 .ToList();
             foreach (var run in runsWithWidth)
             {
                 var p = run.Ancestors(W.p).FirstOrDefault();
-                var pPr = p != null ? p.Element(W.pPr) : null;
+                var pPr = p is not null ? p.Element(W.pPr) : null;
                 var rPr = run.Element(W.rPr);
-                var rFonts = rPr != null ? rPr.Element(W.rFonts) : null;
+                var rFonts = rPr is not null ? rPr.Element(W.rFonts) : null;
                 var str = run.Descendants(W.t).Select(t => (string)t).StringConcatenate();
-                if ((pPr == null) || (rPr == null) || (rFonts == null) || (str == ""))
+                if ((pPr is null) || (rPr is null) || (rFonts is null) || (str == ""))
                     continue;
 
                 AdjustFontAttributes(wDoc, run, pPr, rPr);
@@ -700,19 +701,19 @@ namespace Clippit.Html
                         break;
                 }
 
-                if (fontType != null)
+                if (fontType is not null)
                 {
                     var fontNameAttribute = run.Attribute(PtOpenXml.FontName);
-                    if (fontNameAttribute == null)
+                    if (fontNameAttribute is null)
                         run.Add(new XAttribute(PtOpenXml.FontName, fontType));
                     else
                         fontNameAttribute.SetValue(fontType);
                 }
 
-                if (languageType != null)
+                if (languageType is not null)
                 {
                     var languageTypeAttribute = run.Attribute(PtOpenXml.LanguageType);
-                    if (languageTypeAttribute == null)
+                    if (languageTypeAttribute is null)
                     {
                         run.Add(new XAttribute(PtOpenXml.LanguageType, languageType));
                     }
@@ -758,7 +759,7 @@ namespace Clippit.Html
         private static object NormalizeTransform(XNode node)
         {
             var element = node as XElement;
-            if (element != null)
+            if (element is not null)
             {
                 if (element.Name == W.p && element.Elements().Any(c => c.Name == W.p || c.Name == W.tbl))
                 {
@@ -799,12 +800,12 @@ namespace Clippit.Html
         )
         {
             var element = node as XElement;
-            if (element != null)
+            if (element is not null)
             {
                 if (element.Name == XhtmlNoNamespace.a)
                 {
                     var href = (string)element.Attribute(NoNamespace.href);
-                    if (href != null)
+                    if (href is not null)
                     {
                         Uri uri = null;
                         try
@@ -818,10 +819,10 @@ namespace Clippit.Html
                             return new[] { run };
                         }
 
-                        if (uri != null)
+                        if (uri is not null)
                         {
                             var newRel = wDoc.MainDocumentPart.AddHyperlinkRelationship(uri, true);
-                            if (element.Element(XhtmlNoNamespace.img) != null)
+                            if (element.Element(XhtmlNoNamespace.img) is not null)
                             {
                                 var imageTransformed = element
                                     .Nodes()
@@ -838,7 +839,7 @@ namespace Clippit.Html
                                                 .Elements(WP.inline)
                                                 .Elements(WP.docPr)
                                                 .FirstOrDefault();
-                                            if (docPr != null)
+                                            if (docPr is not null)
                                             {
                                                 var hlinkClick = new XElement(
                                                     A.hlinkClick,
@@ -926,7 +927,7 @@ namespace Clippit.Html
                         .Select(n => Transform(n, settings, wDoc, NextExpected.Run, preserveWhiteSpace));
 
                 var hi = HeadingTagMap.FirstOrDefault(htm => htm.Name == element.Name);
-                if (hi != null)
+                if (hi is not null)
                 {
                     return GenerateNextExpected(element, settings, wDoc, hi.StyleName, NextExpected.Paragraph, false);
                 }
@@ -1032,12 +1033,15 @@ namespace Clippit.Html
                     var dummyElement = new XElement("dummy", spanReplacement);
                     var firstChild = dummyElement.Elements().FirstOrDefault();
                     XElement run = null;
-                    if (firstChild != null && firstChild.Name == W.r)
+                    if (firstChild is not null && firstChild.Name == W.r)
                         run = firstChild;
-                    if (run != null)
+                    if (run is not null)
                     {
                         var computedProperties = element.Annotation<Dictionary<string, CssExpression>>();
-                        if (computedProperties != null && computedProperties.TryGetValue("width", out var widthExpr))
+                        if (
+                            computedProperties is not null
+                            && computedProperties.TryGetValue("width", out var widthExpr)
+                        )
                         {
                             string width = widthExpr;
                             if (width != "auto")
@@ -1045,7 +1049,7 @@ namespace Clippit.Html
                             var rFontsLocal = run.Element(W.rFonts);
                             XElement rFontsGlobal = null;
                             var styleDefPart = wDoc.MainDocumentPart.StyleDefinitionsPart;
-                            if (styleDefPart != null)
+                            if (styleDefPart is not null)
                             {
                                 rFontsGlobal = styleDefPart
                                     .GetXDocument()
@@ -1057,10 +1061,10 @@ namespace Clippit.Html
                             }
                             var rFontsNew = FontMerge(rFontsLocal, rFontsGlobal);
                             var rPr = run.Element(W.rPr);
-                            if (rPr != null)
+                            if (rPr is not null)
                             {
                                 var rFontsExisting = rPr.Element(W.rFonts);
-                                if (rFontsExisting == null)
+                                if (rFontsExisting is null)
                                     rPr.AddFirst(rFontsGlobal);
                                 else
                                     rFontsExisting.ReplaceWith(rFontsGlobal);
@@ -1203,32 +1207,38 @@ namespace Clippit.Html
 
         private static XElement FontMerge(XElement higherPriorityFont, XElement lowerPriorityFont)
         {
-            if (higherPriorityFont == null)
-                return lowerPriorityFont;
-            if (lowerPriorityFont == null)
-                return higherPriorityFont;
-            if (higherPriorityFont == null && lowerPriorityFont == null)
+            if (higherPriorityFont is null && lowerPriorityFont is null)
                 return null;
+            if (higherPriorityFont is null)
+                return lowerPriorityFont;
+            if (lowerPriorityFont is null)
+                return higherPriorityFont;
 
             var rFonts = new XElement(
                 W.rFonts,
-                (higherPriorityFont.Attribute(W.ascii) != null || higherPriorityFont.Attribute(W.asciiTheme) != null)
+                (
+                    higherPriorityFont.Attribute(W.ascii) is not null
+                    || higherPriorityFont.Attribute(W.asciiTheme) is not null
+                )
                     ? new[] { higherPriorityFont.Attribute(W.ascii), higherPriorityFont.Attribute(W.asciiTheme) }
                     : new[] { lowerPriorityFont.Attribute(W.ascii), lowerPriorityFont.Attribute(W.asciiTheme) },
-                (higherPriorityFont.Attribute(W.hAnsi) != null || higherPriorityFont.Attribute(W.hAnsiTheme) != null)
+                (
+                    higherPriorityFont.Attribute(W.hAnsi) is not null
+                    || higherPriorityFont.Attribute(W.hAnsiTheme) is not null
+                )
                     ? new[] { higherPriorityFont.Attribute(W.hAnsi), higherPriorityFont.Attribute(W.hAnsiTheme) }
                     : new[] { lowerPriorityFont.Attribute(W.hAnsi), lowerPriorityFont.Attribute(W.hAnsiTheme) },
                 (
-                    higherPriorityFont.Attribute(W.eastAsia) != null
-                    || higherPriorityFont.Attribute(W.eastAsiaTheme) != null
+                    higherPriorityFont.Attribute(W.eastAsia) is not null
+                    || higherPriorityFont.Attribute(W.eastAsiaTheme) is not null
                 )
                     ? new[] { higherPriorityFont.Attribute(W.eastAsia), higherPriorityFont.Attribute(W.eastAsiaTheme) }
                     : new[] { lowerPriorityFont.Attribute(W.eastAsia), lowerPriorityFont.Attribute(W.eastAsiaTheme) },
-                (higherPriorityFont.Attribute(W.cs) != null || higherPriorityFont.Attribute(W.cstheme) != null)
+                (higherPriorityFont.Attribute(W.cs) is not null || higherPriorityFont.Attribute(W.cstheme) is not null)
                     ? new[] { higherPriorityFont.Attribute(W.cs), higherPriorityFont.Attribute(W.cstheme) }
                     : new[] { lowerPriorityFont.Attribute(W.cs), lowerPriorityFont.Attribute(W.cstheme) },
                 (
-                    higherPriorityFont.Attribute(W.hint) != null
+                    higherPriorityFont.Attribute(W.hint) is not null
                         ? higherPriorityFont.Attribute(W.hint)
                         : lowerPriorityFont.Attribute(W.hint)
                 )
@@ -1272,7 +1282,7 @@ namespace Clippit.Html
                 ToggleProperties = new Dictionary<XName, bool?>();
                 Properties = new Dictionary<XName, XElement>();
 
-                if (rPr == null)
+                if (rPr is null)
                     return;
                 foreach (var xn in TogglePropertyNames)
                 {
@@ -1283,7 +1293,7 @@ namespace Clippit.Html
                     Properties[xn] = GetXmlProperty(rPr, xn);
                 }
                 var rFonts = rPr.Element(W.rFonts);
-                if (rFonts == null)
+                if (rFonts is null)
                 {
                     this.AsciiFont = null;
                     this.HAnsiFont = null;
@@ -1300,21 +1310,22 @@ namespace Clippit.Html
                     this.Hint = (string)(rFonts.Attribute(W.hint));
                 }
                 var csel = this.Properties[W.cs];
-                var cs = csel != null && (csel.Attribute(W.val) == null || csel.Attribute(W.val).ToBoolean() == true);
+                var cs =
+                    csel is not null && (csel.Attribute(W.val) is null || csel.Attribute(W.val).ToBoolean() == true);
                 var rtlel = this.Properties[W.rtl];
                 var rtl =
-                    rtlel != null && (rtlel.Attribute(W.val) == null || rtlel.Attribute(W.val).ToBoolean() == true);
+                    rtlel is not null && (rtlel.Attribute(W.val) is null || rtlel.Attribute(W.val).ToBoolean() == true);
                 var bidi = false;
-                if (pPr != null)
+                if (pPr is not null)
                 {
                     var bidiel = pPr.Element(W.bidi);
                     bidi =
-                        bidiel != null
-                        && (bidiel.Attribute(W.val) == null || bidiel.Attribute(W.val).ToBoolean() == true);
+                        bidiel is not null
+                        && (bidiel.Attribute(W.val) is null || bidiel.Attribute(W.val).ToBoolean() == true);
                 }
                 Rtl = cs || rtl || bidi;
                 var lang = rPr.Element(W.lang);
-                if (lang != null)
+                if (lang is not null)
                 {
                     LatinLang = (string)lang.Attribute(W.val);
                     BidiLang = (string)lang.Attribute(W.bidi);
@@ -1996,20 +2007,20 @@ namespace Clippit.Html
         )
         {
             XDocument themeXDoc = null;
-            if (wDoc.MainDocumentPart.ThemePart != null)
+            if (wDoc.MainDocumentPart.ThemePart is not null)
                 themeXDoc = wDoc.MainDocumentPart.ThemePart.GetXDocument();
 
             XElement fontScheme = null;
             XElement majorFont = null;
             XElement minorFont = null;
-            if (themeXDoc != null)
+            if (themeXDoc is not null)
             {
                 fontScheme = themeXDoc.Root.Element(A.themeElements).Element(A.fontScheme);
                 majorFont = fontScheme.Element(A.majorFont);
                 minorFont = fontScheme.Element(A.minorFont);
             }
             var rFonts = rPr.Element(W.rFonts);
-            if (rFonts == null)
+            if (rFonts is null)
             {
                 return;
             }
@@ -2027,75 +2038,75 @@ namespace Clippit.Html
             XElement majorLatin = null;
             string majorLatinTypeface = null;
 
-            if (minorFont != null)
+            if (minorFont is not null)
             {
                 minorLatin = minorFont.Element(A.latin);
                 minorLatinTypeface = (string)minorLatin.Attribute("typeface");
             }
 
-            if (majorFont != null)
+            if (majorFont is not null)
             {
                 majorLatin = majorFont.Element(A.latin);
                 majorLatinTypeface = (string)majorLatin.Attribute("typeface");
             }
-            if (asciiTheme != null)
+            if (asciiTheme is not null)
             {
-                if (asciiTheme.StartsWith("minor") && minorLatinTypeface != null)
+                if (asciiTheme.StartsWith("minor") && minorLatinTypeface is not null)
                 {
                     ascii = minorLatinTypeface;
                 }
-                else if (asciiTheme.StartsWith("major") && majorLatinTypeface != null)
+                else if (asciiTheme.StartsWith("major") && majorLatinTypeface is not null)
                 {
                     ascii = majorLatinTypeface;
                 }
             }
-            if (hAnsiTheme != null)
+            if (hAnsiTheme is not null)
             {
-                if (hAnsiTheme.StartsWith("minor") && minorLatinTypeface != null)
+                if (hAnsiTheme.StartsWith("minor") && minorLatinTypeface is not null)
                 {
                     hAnsi = minorLatinTypeface;
                 }
-                else if (hAnsiTheme.StartsWith("major") && majorLatinTypeface != null)
+                else if (hAnsiTheme.StartsWith("major") && majorLatinTypeface is not null)
                 {
                     hAnsi = majorLatinTypeface;
                 }
             }
-            if (eastAsiaTheme != null)
+            if (eastAsiaTheme is not null)
             {
-                if (eastAsiaTheme.StartsWith("minor") && minorLatinTypeface != null)
+                if (eastAsiaTheme.StartsWith("minor") && minorLatinTypeface is not null)
                 {
                     eastAsia = minorLatinTypeface;
                 }
-                else if (eastAsiaTheme.StartsWith("major") && majorLatinTypeface != null)
+                else if (eastAsiaTheme.StartsWith("major") && majorLatinTypeface is not null)
                 {
                     eastAsia = majorLatinTypeface;
                 }
             }
-            if (cstheme != null)
+            if (cstheme is not null)
             {
-                if (cstheme.StartsWith("minor") && minorFont != null)
+                if (cstheme.StartsWith("minor") && minorFont is not null)
                 {
                     cs = (string)minorFont.Element(A.cs).Attribute("typeface");
                 }
-                else if (cstheme.StartsWith("major") && majorFont != null)
+                else if (cstheme.StartsWith("major") && majorFont is not null)
                 {
                     cs = (string)majorFont.Element(A.cs).Attribute("typeface");
                 }
             }
 
-            if (ascii != null)
+            if (ascii is not null)
             {
                 rFonts.SetAttributeValue(W.ascii, ascii);
             }
-            if (hAnsi != null)
+            if (hAnsi is not null)
             {
                 rFonts.SetAttributeValue(W.hAnsi, hAnsi);
             }
-            if (eastAsia != null)
+            if (eastAsia is not null)
             {
                 rFonts.SetAttributeValue(W.eastAsia, eastAsia);
             }
-            if (cs != null)
+            if (cs is not null)
             {
                 rFonts.SetAttributeValue(W.cs, cs);
             }
@@ -2104,10 +2115,10 @@ namespace Clippit.Html
             var str = " ";
 
             // if there is a run with no text in it, then no need to do any of the rest of this method.
-            if (firstTextNode == null && paraOrRun.Name == W.r)
+            if (firstTextNode is null && paraOrRun.Name == W.r)
                 return;
 
-            if (firstTextNode != null)
+            if (firstTextNode is not null)
                 str = firstTextNode.Value;
 
             var csa = new CharStyleAttributes(pPr, rPr);
@@ -2167,9 +2178,9 @@ namespace Clippit.Html
                     break;
             }
 
-            if (fontType != null)
+            if (fontType is not null)
             {
-                if (paraOrRun.Attribute(PtOpenXml.FontName) == null)
+                if (paraOrRun.Attribute(PtOpenXml.FontName) is null)
                 {
                     var fta = new XAttribute(PtOpenXml.FontName, fontType);
                     paraOrRun.Add(fta);
@@ -2179,9 +2190,9 @@ namespace Clippit.Html
                     paraOrRun.Attribute(PtOpenXml.FontName).Value = fontType;
                 }
             }
-            if (languageType != null)
+            if (languageType is not null)
             {
-                if (paraOrRun.Attribute(PtOpenXml.LanguageType) == null)
+                if (paraOrRun.Attribute(PtOpenXml.LanguageType) is null)
                 {
                     var lta = new XAttribute(PtOpenXml.LanguageType, languageType);
                     paraOrRun.Add(lta);
@@ -2209,7 +2220,7 @@ namespace Clippit.Html
 
         private static decimal? GetFontSize(string languageType, XElement rPr)
         {
-            if (rPr == null)
+            if (rPr is null)
                 return null;
             return languageType == "bidi"
                 ? (decimal?)rPr.Elements(W.szCs).Attributes(W.val).FirstOrDefault()
@@ -2235,7 +2246,7 @@ namespace Clippit.Html
             if (nextExpected == NextExpected.Paragraph)
             {
                 var element = node as XElement;
-                if (element != null)
+                if (element is not null)
                 {
                     return new XElement(
                         W.p,
@@ -2246,7 +2257,7 @@ namespace Clippit.Html
                 else
                 {
                     var xTextNode = node as XText;
-                    if (xTextNode != null)
+                    if (xTextNode is not null)
                     {
                         var textNodeString = GetDisplayText(xTextNode, preserveWhiteSpace);
                         var p = new XElement(
@@ -2266,7 +2277,7 @@ namespace Clippit.Html
             else
             {
                 var element = node as XElement;
-                if (element != null)
+                if (element is not null)
                 {
                     return element.Nodes().Select(n => Transform(n, settings, wDoc, nextExpected, preserveWhiteSpace));
                 }
@@ -2327,7 +2338,7 @@ namespace Clippit.Html
             var srcAttribute = (string)element.Attribute(XhtmlNoNamespace.src);
             using var bmp = LoadImageForTransform(srcAttribute, settings);
 
-            if (bmp == null)
+            if (bmp is null)
                 return null;
 
             // Encode first; only add the image part to the package if encoding succeeds.
@@ -2335,10 +2346,10 @@ namespace Clippit.Html
             SKData encodedData;
             using (var image = SKImage.FromBitmap(bmp))
             {
-                if (image == null)
+                if (image is null)
                     return null;
                 var data = image.Encode(SKEncodedImageFormat.Png, quality: 80);
-                if (data == null)
+                if (data is null)
                     return null;
                 encodedData = data;
             }
@@ -2351,7 +2362,7 @@ namespace Clippit.Html
                 encodedData.SaveTo(partStream);
 
             var pid = wDoc.Annotation<PictureId>();
-            if (pid == null)
+            if (pid is null)
             {
                 pid = new PictureId { Id = 1 };
                 wDoc.AddAnnotation(pid);
@@ -2813,7 +2824,7 @@ namespace Clippit.Html
             var backgroundProperty = GetBackgroundProperty(blockLevelElement);
             var spacingProperty = GetSpacingProperties(blockLevelElement, settings); // spacing, ind, contextualSpacing
             var jc = GetJustification(blockLevelElement, settings);
-            var pStyle = styleName != null ? new XElement(W.pStyle, new XAttribute(W.val, styleName)) : null;
+            var pStyle = styleName is not null ? new XElement(W.pStyle, new XAttribute(W.val, styleName)) : null;
             var numPr = GetNumberingProperties(blockLevelElement, settings);
             var pBdr = GetBlockContentBorders(blockLevelElement, W.pBdr, true);
 
@@ -2867,9 +2878,9 @@ namespace Clippit.Html
             rightIndent += (long)((rightBorderSize / 8d) * 20d);
 #endif
 
-            if (leftPaddingProperty != null)
+            if (leftPaddingProperty is not null)
                 leftIndent += (Twip)leftPaddingProperty;
-            if (rightPaddingProperty != null)
+            if (rightPaddingProperty is not null)
                 rightIndent += (Twip)rightPaddingProperty;
 
             if (paragraph.Name == XhtmlNoNamespace.li)
@@ -2882,7 +2893,7 @@ namespace Clippit.Html
             listElement = paragraph
                 .Ancestors()
                 .FirstOrDefault(a => a.Name == XhtmlNoNamespace.ol || a.Name == XhtmlNoNamespace.ul);
-            if (listElement != null)
+            if (listElement is not null)
             {
                 numberedItemAnnotation = listElement.Annotation<NumberedItemAnnotation>();
                 leftIndent += 600 * (numberedItemAnnotation.ilvl + 1);
@@ -2892,13 +2903,13 @@ namespace Clippit.Html
             leftIndent += blockQuoteCount * 720;
             if (blockQuoteCount == 0)
             {
-                if (marginLeftProperty != null && marginLeftProperty.IsNotAuto && marginLeftProperty.IsNotNormal)
+                if (marginLeftProperty is not null && marginLeftProperty.IsNotAuto && marginLeftProperty.IsNotNormal)
                     leftIndent += (Twip)marginLeftProperty;
-                if (marginRightProperty != null && marginRightProperty.IsNotAuto && marginRightProperty.IsNotNormal)
+                if (marginRightProperty is not null && marginRightProperty.IsNotAuto && marginRightProperty.IsNotNormal)
                     rightIndent += (Twip)marginRightProperty;
             }
             var textIndentProperty = paragraph.GetProp("text-indent");
-            if (textIndentProperty != null)
+            if (textIndentProperty is not null)
             {
                 var twips = (Twip)textIndentProperty;
                 firstLine = twips;
@@ -2952,21 +2963,21 @@ namespace Clippit.Html
             // todo should check based on display property
             var numItem = paragraph.Name == XhtmlNoNamespace.li;
 
-            if (numItem && marginTopProperty != null && marginTopProperty.IsAuto)
+            if (numItem && marginTopProperty is not null && marginTopProperty.IsAuto)
                 beforeAutospacing = "1";
-            if (numItem && marginBottomProperty != null && marginBottomProperty.IsAuto)
+            if (numItem && marginBottomProperty is not null && marginBottomProperty.IsAuto)
                 afterAutospacing = "1";
-            if (marginTopProperty != null && marginTopProperty.IsNotAuto)
+            if (marginTopProperty is not null && marginTopProperty.IsNotAuto)
             {
                 before = (long)(Twip)marginTopProperty;
                 beforeAutospacing = "0";
             }
-            if (marginBottomProperty != null && marginBottomProperty.IsNotAuto)
+            if (marginBottomProperty is not null && marginBottomProperty.IsNotAuto)
             {
                 after = (long)(Twip)marginBottomProperty;
                 afterAutospacing = "0";
             }
-            if (lineHeightProperty != null && lineHeightProperty.IsNotAuto && lineHeightProperty.IsNotNormal)
+            if (lineHeightProperty is not null && lineHeightProperty.IsNotAuto && lineHeightProperty.IsNotNormal)
             {
                 // line is in twips if lineRule == "atLeast"
                 line = (Twip)lineHeightProperty;
@@ -2975,10 +2986,10 @@ namespace Clippit.Html
 
             var spacing = new XElement(
                 W.spacing,
-                before != null ? new XAttribute(W.before, before) : null,
-                beforeAutospacing != null ? new XAttribute(W.beforeAutospacing, beforeAutospacing) : null,
-                after != null ? new XAttribute(W.after, after) : null,
-                afterAutospacing != null ? new XAttribute(W.afterAutospacing, afterAutospacing) : null,
+                before is not null ? new XAttribute(W.before, before) : null,
+                beforeAutospacing is not null ? new XAttribute(W.beforeAutospacing, beforeAutospacing) : null,
+                after is not null ? new XAttribute(W.after, after) : null,
+                afterAutospacing is not null ? new XAttribute(W.afterAutospacing, afterAutospacing) : null,
                 new XAttribute(W.line, line),
                 new XAttribute(W.lineRule, lineRule)
             );
@@ -2993,17 +3004,17 @@ namespace Clippit.Html
                 var listElement2 = paragraph
                     .Ancestors()
                     .FirstOrDefault(a => a.Name == XhtmlNoNamespace.ol || a.Name == XhtmlNoNamespace.ul);
-                if (listElement2 != null)
+                if (listElement2 is not null)
                 {
                     thisNumberedItemAnnotation = listElement2.Annotation<NumberedItemAnnotation>();
                     var next = paragraph.ElementsAfterSelf().FirstOrDefault();
-                    if (next != null && next.Name == XhtmlNoNamespace.li)
+                    if (next is not null && next.Name == XhtmlNoNamespace.li)
                     {
                         var nextListElement = next.Ancestors()
                             .FirstOrDefault(a => a.Name == XhtmlNoNamespace.ol || a.Name == XhtmlNoNamespace.ul);
                         var nextNumberedItemAnnotation = nextListElement.Annotation<NumberedItemAnnotation>();
                         if (
-                            nextNumberedItemAnnotation != null
+                            nextNumberedItemAnnotation is not null
                             && thisNumberedItemAnnotation.numId == nextNumberedItemAnnotation.numId
                         )
                             contextualSpacing = new XElement(W.contextualSpacing);
@@ -3017,7 +3028,7 @@ namespace Clippit.Html
         internal static XElement GetRunProperties(XText textNode, HtmlToWmlConverterSettings settings)
         {
             var parent = textNode.Parent;
-            if (parent != null)
+            if (parent is not null)
             {
                 return GetRunProperties(parent, settings);
             }
@@ -3058,11 +3069,11 @@ namespace Clippit.Html
 
             var dirAttribute = element.Attribute(XhtmlNoNamespace.dir);
             var dirAttributeString = "";
-            if (dirAttribute != null)
+            if (dirAttribute is not null)
                 dirAttributeString = dirAttribute.Value.ToLower();
 
             XElement shd = null;
-            if (backgroundColorString != null && backgroundColorString != "transparent")
+            if (backgroundColorString is not null && backgroundColorString != "transparent")
                 shd = new XElement(
                     W.shd,
                     new XAttribute(W.val, "clear"),
@@ -3077,7 +3088,7 @@ namespace Clippit.Html
                 subSuper = new XElement(W.vertAlign, new XAttribute(W.val, "superscript"));
 
             XElement rFonts = null;
-            if (fontFamilyString != null)
+            if (fontFamilyString is not null)
             {
                 rFonts = new XElement(
                     W.rFonts,
@@ -3088,12 +3099,13 @@ namespace Clippit.Html
             }
 
             // todo I think this puts a color on every element.
-            var color =
-                colorPropertyString != null ? new XElement(W.color, new XAttribute(W.val, colorPropertyString)) : null;
+            var color = colorPropertyString is not null
+                ? new XElement(W.color, new XAttribute(W.val, colorPropertyString))
+                : null;
 
             XElement sz = null;
             XElement szCs = null;
-            if (fontSizeTPoint != null)
+            if (fontSizeTPoint is not null)
             {
                 sz = new XElement(W.sz, new XAttribute(W.val, (int)((double)fontSizeTPoint * 2)));
                 szCs = new XElement(W.szCs, new XAttribute(W.val, (int)((double)fontSizeTPoint * 2)));
@@ -3132,7 +3144,7 @@ namespace Clippit.Html
                 rStyle = new XElement(W.rStyle, new XAttribute(W.val, "Hyperlink"));
 
             XElement spacing = null;
-            if (letterSpacingProperty != null && letterSpacingProperty.IsNotNormal)
+            if (letterSpacingProperty is not null && letterSpacingProperty.IsNotNormal)
                 spacing = new XElement(W.spacing, new XAttribute(W.val, (long)(Twip)letterSpacingProperty));
 
             XElement rtl = null;
@@ -3213,7 +3225,7 @@ namespace Clippit.Html
             var listElement = paragraph
                 .Ancestors()
                 .FirstOrDefault(a => a.Name == XhtmlNoNamespace.ol || a.Name == XhtmlNoNamespace.ul);
-            if (listElement != null)
+            if (listElement is not null)
             {
                 numberedItemAnnotation = listElement.Annotation<NumberedItemAnnotation>();
             }
@@ -3236,7 +3248,7 @@ namespace Clippit.Html
                 textAlign = "center";
             else
                 textAlign = "left";
-            if (textAlignProperty != null)
+            if (textAlignProperty is not null)
                 textAlign = textAlignProperty.ToString();
             var jc = textAlign switch
             {
@@ -3256,7 +3268,7 @@ namespace Clippit.Html
                 };
             }
             XElement jcElement = null;
-            if (jc != null)
+            if (jc is not null)
                 jcElement = new XElement(W.jc, new XAttribute(W.val, jc));
             return jcElement;
         }
@@ -3283,10 +3295,10 @@ namespace Clippit.Html
         {
             var retValue = "ltr";
             var dirString = (string)element.Attribute(XhtmlNoNamespace.dir);
-            if (dirString != null && dirString.ToLower() == "rtl")
+            if (dirString is not null && dirString.ToLower() == "rtl")
                 retValue = "rtl";
             var directionProp = element.GetProp("direction");
-            if (directionProp != null)
+            if (directionProp is not null)
             {
                 var directionValue = directionProp.ToString();
                 if (directionValue.ToLower() == "rtl")
@@ -3414,7 +3426,7 @@ namespace Clippit.Html
             XAttribute space = null;
             XAttribute color = null;
 
-            if (styleProp != null)
+            if (styleProp is not null)
             {
                 if (BorderStyleMap.TryGetValue(styleProp.ToString(), out var borderStyle))
                     val = new XAttribute(W.val, borderStyle);
@@ -3432,7 +3444,7 @@ namespace Clippit.Html
                 space = new XAttribute(W.space, "0");
 #if false
                 // 2012-05-14 todo alternative algorithm for margin for cells
-                if (marginProp != null)
+                if (marginProp is not null)
                 {
                     // space is specified in points, not twips
                     TPoint points = 0;
@@ -3445,7 +3457,7 @@ namespace Clippit.Html
             else
             {
                 space = new XAttribute(W.space, "0");
-                if (paddingProp != null)
+                if (paddingProp is not null)
                 {
                     // space is specified in points, not twips
                     var points = (TPoint)paddingProp;
@@ -3453,7 +3465,7 @@ namespace Clippit.Html
                 }
             }
 
-            if (colorProp != null)
+            if (colorProp is not null)
                 color = new XAttribute(W.color, colorProp.ToString());
             // no default yet
 
@@ -3475,7 +3487,7 @@ namespace Clippit.Html
         {
             var widthProp = element.GetProp($"border-{whichBorder}-width");
 
-            if (widthProp != null && widthProp.Terms.Count == 1)
+            if (widthProp is not null && widthProp.Terms.Count == 1)
             {
                 var term = widthProp.Terms.First();
                 var twips = (Twip)widthProp;
@@ -3516,12 +3528,12 @@ namespace Clippit.Html
                 var columnWidth = new CssExpression { Terms = new List<CssTerm> { new CssTerm { Value = "auto" } } };
                 for (var r = 0; r < tableArray.Length; ++r)
                 {
-                    if (tableArray[r][c] != null)
+                    if (tableArray[r][c] is not null)
                     {
                         var cell = tableArray[r][c];
                         var width = cell.GetProp("width");
                         var colSpan = cell.Attribute(XhtmlNoNamespace.colspan);
-                        if (colSpan == null && columnWidth.ToString() == "auto" && width.ToString() != "auto")
+                        if (colSpan is null && columnWidth.ToString() == "auto" && width.ToString() != "auto")
                         {
                             columnWidth = width;
                             break;
@@ -3590,7 +3602,7 @@ namespace Clippit.Html
             var gridSpan = new XElement(W.gridSpan, new XAttribute(W.val, 3));
 
             var tcBorders = GetBlockContentBorders(element, W.tcBorders, false);
-            if (tcBorders == null)
+            if (tcBorders is null)
                 tcBorders = new XElement(
                     W.tcBorders,
                     new XElement(W.top, new XAttribute(W.val, "nil")),
@@ -3615,7 +3627,7 @@ namespace Clippit.Html
         {
             var colspan = (int?)element.Attribute(XhtmlNoNamespace.colspan);
             XElement gridSpan = null;
-            if (colspan != null)
+            if (colspan is not null)
                 gridSpan = new XElement(W.gridSpan, new XAttribute(W.val, colspan));
 
             var tblW = GetCellWidth(element);
@@ -3632,16 +3644,16 @@ namespace Clippit.Html
             var vAlign = new XElement(W.vAlign, new XAttribute(W.val, "center"));
 
             XElement vMerge = null;
-            if (element.Attribute("HtmlToWmlVMergeNoRestart") != null)
+            if (element.Attribute("HtmlToWmlVMergeNoRestart") is not null)
                 vMerge = new XElement(W.vMerge);
-            else if (element.Attribute("HtmlToWmlVMergeRestart") != null)
+            else if (element.Attribute("HtmlToWmlVMergeRestart") is not null)
                 vMerge = new XElement(W.vMerge, new XAttribute(W.val, "restart"));
 
             var vAlignValue = (string)element.Attribute(XhtmlNoNamespace.valign);
             var verticalAlignmentProp = element.GetProp("vertical-align");
-            if (verticalAlignmentProp != null && verticalAlignmentProp.ToString() != "inherit")
+            if (verticalAlignmentProp is not null && verticalAlignmentProp.ToString() != "inherit")
                 vAlignValue = verticalAlignmentProp.ToString();
-            if (vAlignValue != null)
+            if (vAlignValue is not null)
             {
                 if (vAlignValue == "middle" || (vAlignValue != "top" && vAlignValue != "bottom"))
                     vAlignValue = "center";
@@ -3655,7 +3667,7 @@ namespace Clippit.Html
         {
             //int? colspan = (int?)element.Attribute(Xhtml.colspan);
             //XElement gridSpan = null;
-            //if (colspan != null)
+            //if (colspan is not null)
             //    gridSpan = new XElement(W.gridSpan,
             //        new XAttribute(W.val, colspan));
 
@@ -3678,7 +3690,7 @@ namespace Clippit.Html
         private static XElement GetCellShading(XElement element)
         {
             var backgroundColorProp = element.GetProp("background-color");
-            if (backgroundColorProp != null && backgroundColorProp != "transparent")
+            if (backgroundColorProp is not null && backgroundColorProp != "transparent")
             {
                 var shd = new XElement(
                     W.shd,
@@ -3700,20 +3712,20 @@ namespace Clippit.Html
             if ((long)topProp == 0 && (long)leftProp == 0 && (long)bottomProp == 0 && (long)rightProp == 0)
                 return null;
             XElement top = null;
-            if (topProp != null)
+            if (topProp is not null)
                 top = new XElement(W.top, new XAttribute(W._w, (long)(Twip)topProp), new XAttribute(W.type, "dxa"));
             XElement left = null;
-            if (leftProp != null)
+            if (leftProp is not null)
                 left = new XElement(W.left, new XAttribute(W._w, (long)(Twip)leftProp), new XAttribute(W.type, "dxa"));
             XElement bottom = null;
-            if (bottomProp != null)
+            if (bottomProp is not null)
                 bottom = new XElement(
                     W.bottom,
                     new XAttribute(W._w, (long)(Twip)bottomProp),
                     new XAttribute(W.type, "dxa")
                 );
             XElement right = null;
-            if (rightProp != null)
+            if (rightProp is not null)
                 right = new XElement(
                     W.right,
                     new XAttribute(W._w, (long)(Twip)rightProp),
@@ -3742,15 +3754,15 @@ namespace Clippit.Html
         {
             var table = element.AncestorsAndSelf(XhtmlNoNamespace.table).FirstOrDefault();
             XElement tblCellSpacing = null;
-            if (table != null)
+            if (table is not null)
             {
                 var borderCollapse = table.GetProp("border-collapse");
-                if (borderCollapse == null || borderCollapse != "collapse")
+                if (borderCollapse is null || borderCollapse != "collapse")
                 {
                     // todo very incomplete
                     var borderSpacing = table.GetProp("border-spacing");
                     var marginTopProperty = element.GetProp("margin-top");
-                    if (marginTopProperty == null)
+                    if (marginTopProperty is null)
                         marginTopProperty = new CssExpression
                         {
                             Terms = new List<CssTerm>
@@ -3764,7 +3776,7 @@ namespace Clippit.Html
                             },
                         };
                     var marginBottomProperty = element.GetProp("margin-bottom");
-                    if (marginBottomProperty == null)
+                    if (marginBottomProperty is null)
                         marginBottomProperty = new CssExpression
                         {
                             Terms = new List<CssTerm>
@@ -3780,7 +3792,7 @@ namespace Clippit.Html
                     var twips1 = (Twip)marginTopProperty;
                     var twips2 = (Twip)marginBottomProperty;
                     Twip minTwips = 15;
-                    if (borderSpacing != null)
+                    if (borderSpacing is not null)
                         minTwips = (Twip)borderSpacing;
                     var twipToUse = Math.Max(twips1, twips2);
                     twipToUse = Math.Max(twipToUse, minTwips);
@@ -3820,16 +3832,16 @@ namespace Clippit.Html
         {
             XElement trPr = null;
             var table = element.AncestorsAndSelf(XhtmlNoNamespace.table).FirstOrDefault();
-            if (table != null)
+            if (table is not null)
             {
                 var heightProperty = element.GetProp("height");
                 //long? maxCellHeight = element.Elements(Xhtml.td).Aggregate((long?)null,
                 //    (XElement td, long? last) =>
                 //    {
                 //        Expression heightProp2 = td.GetProp("height");
-                //        if (heightProp2 == null)
+                //        if (heightProp2 is null)
                 //            return last;
-                //        if (last == null)
+                //        if (last is null)
                 //            return (long)(Twip)heightProp2;
                 //        return last + (long?)(long)(Twip)heightProp2;
                 //    });
@@ -3837,7 +3849,7 @@ namespace Clippit.Html
                     .Elements(XhtmlNoNamespace.td)
                     .Select(td => td.GetProp("height"))
                     .Append(heightProperty)
-                    .Where(d => d != null)
+                    .Where(d => d is not null)
                     .Select(e => (long)(Twip)e)
                     .ToList();
                 XElement trHeight = null;
@@ -3849,7 +3861,7 @@ namespace Clippit.Html
 
                 var borderCollapseProperty = table.GetProp("border-collapse");
                 XElement borderCollapse = null;
-                if (borderCollapseProperty != null && borderCollapseProperty != "collapse")
+                if (borderCollapseProperty is not null && borderCollapseProperty != "collapse")
                     borderCollapse = GetTableCellSpacing(element);
 
                 trPr = new XElement(W.trPr, GetTableCellSpacing(element), trHeight);
@@ -4273,7 +4285,7 @@ namespace Clippit.Html
 
         private static TPoint? GetUsedSizeFromFontSizeProperty(CssExpression fontSize)
         {
-            if (fontSize == null)
+            if (fontSize is null)
                 return null;
             if (fontSize.Terms.Count == 1)
             {
@@ -4292,7 +4304,7 @@ namespace Clippit.Html
 
         private static string GetUsedFontFromFontFamilyProperty(CssExpression fontFamily)
         {
-            if (fontFamily == null)
+            if (fontFamily is null)
                 return null;
             var fullFontFamily = fontFamily.Terms.Select(t => t + " ").StringConcatenate().Trim();
             var lcfont = fullFontFamily.ToLower();
@@ -4304,7 +4316,7 @@ namespace Clippit.Html
             var color = element.GetProp("background-color");
 
             // todo this really should test against default background color
-            if (color != null && color.ToString() != "transparent")
+            if (color is not null && color.ToString() != "transparent")
             {
                 var hexString = color.ToString();
                 var shd = new XElement(
@@ -4365,7 +4377,7 @@ namespace Clippit.Html
         public static void InitializeNumberingPart(WordprocessingDocument wDoc)
         {
             var numberingPart = wDoc.MainDocumentPart.NumberingDefinitionsPart;
-            if (numberingPart == null)
+            if (numberingPart is null)
             {
                 wDoc.MainDocumentPart.AddNewPart<NumberingDefinitionsPart>();
                 var npXDoc = new XDocument(new XElement(W.numbering, new XAttribute(XNamespace.Xmlns + "w", W.w)));
@@ -4723,11 +4735,11 @@ namespace Clippit.Html
                             var itemAtLevel = numberingElements.FirstOrDefault(nf =>
                             {
                                 var n = nf.Annotation<HtmlToWmlConverterCore.NumberedItemAnnotation>();
-                                if (n != null && n.numId == nia.numId && n.ilvl == i)
+                                if (n is not null && n.numId == nia.numId && n.ilvl == i)
                                     return true;
                                 return false;
                             });
-                            if (itemAtLevel != null)
+                            if (itemAtLevel is not null)
                             {
                                 var thisLevelNia =
                                     itemAtLevel.Annotation<HtmlToWmlConverterCore.NumberedItemAnnotation>();
@@ -4822,7 +4834,7 @@ namespace Clippit.Html
         {
             var styleXDoc = wDoc.MainDocumentPart.StyleDefinitionsPart.GetXDocument();
 
-            if (settings.DefaultSpacingElement != null)
+            if (settings.DefaultSpacingElement is not null)
             {
                 var spacingElement = styleXDoc
                     .Root.Elements(W.docDefaults)
@@ -4830,13 +4842,13 @@ namespace Clippit.Html
                     .Elements(W.pPr)
                     .Elements(W.spacing)
                     .FirstOrDefault();
-                if (spacingElement != null)
+                if (spacingElement is not null)
                     spacingElement.ReplaceWith(settings.DefaultSpacingElement);
             }
 
             var classes = html.DescendantsAndSelf()
                 .Where(d =>
-                    d.Attribute(XhtmlNoNamespace._class) != null
+                    d.Attribute(XhtmlNoNamespace._class) is not null
                     && ((string)d.Attribute(XhtmlNoNamespace._class)).Split().Length == 1
                 )
                 .Select(d => (string)d.Attribute(XhtmlNoNamespace._class));
@@ -4857,7 +4869,7 @@ namespace Clippit.Html
                         })
                         .FirstOrDefault();
                     var color = ruleSet.Declarations.FirstOrDefault(d => d.Name == "color");
-                    if (selector != null)
+                    if (selector is not null)
                     {
                         //Console.WriteLine("found ruleset and selector for {0}", item);
                         var styleName = item.ToLower();
@@ -4889,7 +4901,7 @@ namespace Clippit.Html
                                     new XAttribute(W.hAnsi, "Times New Roman"),
                                     new XAttribute(W.cs, "Times New Roman")
                                 ),
-                                color != null
+                                color is not null
                                     ? new XElement(W.color, new XAttribute(W.val, "this should be a color"))
                                     : null,
                                 new XElement(W.sz, new XAttribute(W.val, "24")),
@@ -4903,7 +4915,8 @@ namespace Clippit.Html
                                     (string)e.Attribute(W.type) == "paragraph"
                                     && ((string)e.Attribute(W.styleId)).ToLower() == styleName
                                 )
-                                .FirstOrDefault() == null
+                                .FirstOrDefault()
+                            is null
                         )
                             styleXDoc.Root.Add(newStyle);
                     }
@@ -5616,7 +5629,7 @@ namespace Clippit.Html
                 )
                 .FirstOrDefault();
             CssExpression majorFont = null;
-            if (majorFontElement != null)
+            if (majorFontElement is not null)
                 majorFont = majorFontElement.GetProp("font-family");
 
             var majorTypeface = themeXDoc
@@ -5626,10 +5639,10 @@ namespace Clippit.Html
                 .Elements(A.latin)
                 .Attributes(NoNamespace.typeface)
                 .FirstOrDefault();
-            if (majorTypeface != null && majorFont != null)
+            if (majorTypeface is not null && majorFont is not null)
             {
                 var term = majorFont.Terms.FirstOrDefault();
-                if (term != null)
+                if (term is not null)
                     majorTypeface.Value = term.Value;
             }
             var minorTypeface = themeXDoc
@@ -5639,10 +5652,10 @@ namespace Clippit.Html
                 .Elements(A.latin)
                 .Attributes(NoNamespace.typeface)
                 .FirstOrDefault();
-            if (minorTypeface != null && minorFont != null)
+            if (minorTypeface is not null && minorFont is not null)
             {
                 var term = minorFont.Terms.FirstOrDefault();
-                if (term != null)
+                if (term is not null)
                     minorTypeface.Value = term.Value;
             }
 

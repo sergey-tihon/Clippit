@@ -201,7 +201,7 @@ namespace Clippit
                 xDoc.Root?.Descendants(W.sectPr).Remove();
 
                 // move w:sectPr from source document into newly generated document.
-                if (savedSectPr != null)
+                if (savedSectPr is not null)
                 {
                     var xd = wDocWithRevisions.MainDocumentPart.GetXDocument();
 
@@ -315,7 +315,7 @@ namespace Clippit
 
                 var unknown = csList.FirstOrDefault(z => z.CorrelationStatus == CorrelationStatus.Unknown);
 
-                if (unknown != null)
+                if (unknown is not null)
                 {
                     // if unknown consists of a single group of the same type in each side, then can set some Unids in the 'after' document.
                     // if the unknown is a pair of single tables, then can set table Unid.
@@ -333,10 +333,10 @@ namespace Clippit
                     }
 
                     var newSequence = ProcessCorrelatedHashes(unknown, settings);
-                    if (newSequence == null)
+                    if (newSequence is null)
                     {
                         newSequence = FindCommonAtBeginningAndEnd(unknown, settings);
-                        if (newSequence == null)
+                        if (newSequence is null)
                         {
                             newSequence = DoLcsAlgorithm(unknown, settings);
                         }
@@ -383,16 +383,16 @@ namespace Clippit
                     if (ca is ComparisonUnitGroup { ComparisonUnitGroupType: ComparisonUnitGroupType.Row } cug)
                     {
                         var firstContentAtom = cug.DescendantContentAtoms().FirstOrDefault();
-                        if (firstContentAtom == null)
+                        if (firstContentAtom is null)
                             throw new OpenXmlPowerToolsException("Internal error");
 
                         var tr = firstContentAtom.AncestorElements.LastOrDefault(a => a.Name == W.tr);
 
-                        if (tr == null)
+                        if (tr is null)
                             throw new OpenXmlPowerToolsException("Internal error");
 
                         var trPr = tr.Element(W.trPr);
-                        if (trPr == null)
+                        if (trPr is null)
                         {
                             trPr = new XElement(W.trPr);
                             tr.AddFirst(trPr);
@@ -575,7 +575,7 @@ namespace Clippit
                 {
                     var cuaBefore = cua.ComparisonUnitAtomBefore;
                     var ancestorsAfter = cua.AncestorElements;
-                    if (cuaBefore != null)
+                    if (cuaBefore is not null)
                     {
                         var ancestorsBefore = cuaBefore.AncestorElements;
                         if (ancestorsAfter.Length == ancestorsBefore.Length)
@@ -586,7 +586,7 @@ namespace Clippit
                             {
                                 var afterUnidAtt = z.After.Attribute(PtOpenXml.Unid);
                                 var beforeUnidAtt = z.Before.Attribute(PtOpenXml.Unid);
-                                if (afterUnidAtt != null && beforeUnidAtt != null)
+                                if (afterUnidAtt is not null && beforeUnidAtt is not null)
                                     afterUnidAtt.Value = beforeUnidAtt.Value;
                             }
                         }
@@ -638,14 +638,14 @@ namespace Clippit
                             .AncestorElements.Select(ae =>
                             {
                                 var thisUnid = (string)ae.Attribute(PtOpenXml.Unid);
-                                if (thisUnid == null)
+                                if (thisUnid is null)
                                     throw new OpenXmlPowerToolsException("Internal error");
 
                                 return thisUnid;
                             })
                             .ToArray();
                         cua.AncestorUnids = currentAncestorUnids;
-                        if (deepestAncestorUnid != null)
+                        if (deepestAncestorUnid is not null)
                             cua.AncestorUnids[0] = deepestAncestorUnid;
                         continue;
                     }
@@ -657,7 +657,7 @@ namespace Clippit
                     .Select(ae =>
                     {
                         var thisUnid = (string)ae.Attribute(PtOpenXml.Unid);
-                        if (thisUnid == null)
+                        if (thisUnid is null)
                         {
                             thisUnid = Guid.NewGuid().ToString("N");
                             ae.SetAttributeValue(PtOpenXml.Unid, thisUnid);
@@ -666,7 +666,7 @@ namespace Clippit
                     });
                 var thisAncestorUnids = currentAncestorUnids.Concat(additionalAncestorUnids).ToArray();
                 cua.AncestorUnids = thisAncestorUnids;
-                if (deepestAncestorUnid != null)
+                if (deepestAncestorUnid is not null)
                     cua.AncestorUnids[0] = deepestAncestorUnid;
             }
 
@@ -684,7 +684,7 @@ namespace Clippit
             var skipUntilNextPpr = false;
             foreach (var cua in rComparisonUnitAtomList)
             {
-                if (currentAncestorUnids != null && cua.AncestorElements.Length < currentAncestorUnids.Length)
+                if (currentAncestorUnids is not null && cua.AncestorElements.Length < currentAncestorUnids.Length)
                 {
                     skipUntilNextPpr = true;
                     currentAncestorUnids = null;
@@ -717,7 +717,7 @@ namespace Clippit
                         .AncestorElements.Select(ae =>
                         {
                             var thisUnid = (string)ae.Attribute(PtOpenXml.Unid);
-                            if (thisUnid == null)
+                            if (thisUnid is null)
                                 throw new OpenXmlPowerToolsException("Internal error");
 
                             return thisUnid;
@@ -736,7 +736,7 @@ namespace Clippit
                     .Select(ae =>
                     {
                         var thisUnid = (string)ae.Attribute(PtOpenXml.Unid);
-                        if (thisUnid == null)
+                        if (thisUnid is null)
                         {
                             thisUnid = Guid.NewGuid().ToString("N");
                             ae.SetAttributeValue(PtOpenXml.Unid, thisUnid);
@@ -839,7 +839,7 @@ namespace Clippit
                 if (element.Name == W.pPr)
                 {
                     var status = (string)element.Attribute(PtOpenXml.Status);
-                    if (status == null)
+                    if (status is null)
                         return new XElement(
                             W.pPr,
                             element.Attributes(),
@@ -850,7 +850,7 @@ namespace Clippit
                     if (status == "Deleted")
                     {
                         var rPr = pPr.Element(W.rPr);
-                        if (rPr == null)
+                        if (rPr is null)
                             rPr = new XElement(W.rPr);
                         rPr.Add(
                             new XElement(
@@ -860,7 +860,7 @@ namespace Clippit
                                 new XAttribute(W.date, settings.DateTimeForRevisions)
                             )
                         );
-                        if (pPr.Element(W.rPr) != null)
+                        if (pPr.Element(W.rPr) is not null)
                             pPr.Element(W.rPr).ReplaceWith(rPr);
                         else
                             pPr.AddFirst(rPr);
@@ -876,7 +876,7 @@ namespace Clippit
                                 new XAttribute(W.date, settings.DateTimeForRevisions)
                             )
                         );
-                        if (pPr.Element(W.rPr) != null)
+                        if (pPr.Element(W.rPr) is not null)
                             pPr.Element(W.rPr).ReplaceWith(rPr);
                         else
                             pPr.AddFirst(rPr);
@@ -911,7 +911,7 @@ namespace Clippit
 
         private static void IgnorePt14Namespace(XElement root)
         {
-            if (root.Attribute(XNamespace.Xmlns + "pt14") == null)
+            if (root.Attribute(XNamespace.Xmlns + "pt14") is null)
             {
                 root.Add(new XAttribute(XNamespace.Xmlns + "pt14", PtOpenXml.pt.NamespaceName));
             }
@@ -946,16 +946,16 @@ namespace Clippit
             var endnotesPartAfter = mainDocumentPartAfter.EndnotesPart;
 
             XDocument footnotesPartBeforeXDoc = null;
-            if (footnotesPartBefore != null)
+            if (footnotesPartBefore is not null)
                 footnotesPartBeforeXDoc = footnotesPartBefore.GetXDocument();
             XDocument footnotesPartAfterXDoc = null;
-            if (footnotesPartAfter != null)
+            if (footnotesPartAfter is not null)
                 footnotesPartAfterXDoc = footnotesPartAfter.GetXDocument();
             XDocument endnotesPartBeforeXDoc = null;
-            if (endnotesPartBefore != null)
+            if (endnotesPartBefore is not null)
                 endnotesPartBeforeXDoc = endnotesPartBefore.GetXDocument();
             XDocument endnotesPartAfterXDoc = null;
-            if (endnotesPartAfter != null)
+            if (endnotesPartAfter is not null)
                 endnotesPartAfterXDoc = endnotesPartAfter.GetXDocument();
 
             var possiblyModifiedFootnotesEndNotes = listOfComparisonUnitAtoms
@@ -967,7 +967,7 @@ namespace Clippit
             foreach (var fn in possiblyModifiedFootnotesEndNotes)
             {
                 string beforeId = null;
-                if (fn.ContentElementBefore != null)
+                if (fn.ContentElementBefore is not null)
                     beforeId = (string)fn.ContentElementBefore.Attribute(W.id);
                 var afterId = (string)fn.ContentElement.Attribute(W.id);
 
@@ -1081,10 +1081,10 @@ namespace Clippit
                         if (!hasFootnoteReference)
                         {
                             var firstPara = tempElement.Descendants(W.p).FirstOrDefault();
-                            if (firstPara != null)
+                            if (firstPara is not null)
                             {
                                 var firstRun = firstPara.Element(W.r);
-                                if (firstRun != null)
+                                if (firstRun is not null)
                                 {
                                     if (fn.ContentElement.Name == W.footnoteReference)
                                         firstRun.AddBeforeSelf(
@@ -1116,7 +1116,7 @@ namespace Clippit
                         var newContentElement = newTempElement
                             .Descendants()
                             .FirstOrDefault(d => d.Name == W.footnote || d.Name == W.endnote);
-                        if (newContentElement == null)
+                        if (newContentElement is null)
                             throw new OpenXmlPowerToolsException("Internal error");
 
                         footnoteEndnoteAfter.ReplaceNodes(newContentElement.Nodes());
@@ -1194,10 +1194,10 @@ namespace Clippit
                     if (!hasFootnoteReference)
                     {
                         var firstPara = tempElement.Descendants(W.p).FirstOrDefault();
-                        if (firstPara != null)
+                        if (firstPara is not null)
                         {
                             var firstRun = firstPara.Descendants(W.r).FirstOrDefault();
-                            if (firstRun != null)
+                            if (firstRun is not null)
                             {
                                 if (fn.ContentElement.Name == W.footnoteReference)
                                     firstRun.AddBeforeSelf(
@@ -1229,7 +1229,7 @@ namespace Clippit
                     var newContentElement = newTempElement
                         .Descendants()
                         .FirstOrDefault(d => d.Name == W.footnote || d.Name == W.endnote);
-                    if (newContentElement == null)
+                    if (newContentElement is null)
                         throw new OpenXmlPowerToolsException("Internal error");
 
                     footnoteEndnoteAfter.ReplaceNodes(newContentElement.Nodes());
@@ -1308,10 +1308,10 @@ namespace Clippit
                         if (!hasFootnoteReference)
                         {
                             var firstPara = tempElement.Descendants(W.p).FirstOrDefault();
-                            if (firstPara != null)
+                            if (firstPara is not null)
                             {
                                 var firstRun = firstPara.Descendants(W.r).FirstOrDefault();
-                                if (firstRun != null)
+                                if (firstRun is not null)
                                 {
                                     if (fn.ContentElement.Name == W.footnoteReference)
                                         firstRun.AddBeforeSelf(
@@ -1343,7 +1343,7 @@ namespace Clippit
                         var newContentElement = newTempElement
                             .Descendants()
                             .FirstOrDefault(d => d.Name == W.footnote || d.Name == W.endnote);
-                        if (newContentElement == null)
+                        if (newContentElement is null)
                             throw new OpenXmlPowerToolsException("Internal error");
 
                         footnoteEndnoteBefore.ReplaceNodes(newContentElement.Nodes());
@@ -1372,15 +1372,15 @@ namespace Clippit
             var endnotesPartWithRevisions = mainDocumentPartWithRevisions.EndnotesPart;
 
             XDocument footnotesPartBeforeXDoc = null;
-            if (footnotesPartBefore != null)
+            if (footnotesPartBefore is not null)
                 footnotesPartBeforeXDoc = footnotesPartBefore.GetXDocument();
 
             XDocument footnotesPartAfterXDoc = null;
-            if (footnotesPartAfter != null)
+            if (footnotesPartAfter is not null)
                 footnotesPartAfterXDoc = footnotesPartAfter.GetXDocument();
 
             XDocument footnotesPartWithRevisionsXDoc = null;
-            if (footnotesPartWithRevisions != null)
+            if (footnotesPartWithRevisions is not null)
             {
                 footnotesPartWithRevisionsXDoc = footnotesPartWithRevisions.GetXDocument();
                 footnotesPartWithRevisionsXDoc
@@ -1390,15 +1390,15 @@ namespace Clippit
             }
 
             XDocument endnotesPartBeforeXDoc = null;
-            if (endnotesPartBefore != null)
+            if (endnotesPartBefore is not null)
                 endnotesPartBeforeXDoc = endnotesPartBefore.GetXDocument();
 
             XDocument endnotesPartAfterXDoc = null;
-            if (endnotesPartAfter != null)
+            if (endnotesPartAfter is not null)
                 endnotesPartAfterXDoc = endnotesPartAfter.GetXDocument();
 
             XDocument endnotesPartWithRevisionsXDoc = null;
-            if (endnotesPartWithRevisions != null)
+            if (endnotesPartWithRevisions is not null)
             {
                 endnotesPartWithRevisionsXDoc = endnotesPartWithRevisions.GetXDocument();
                 endnotesPartWithRevisionsXDoc
@@ -1424,14 +1424,14 @@ namespace Clippit
                 var footnote = footnotesPartAfterXDoc
                     .Root.Elements()
                     .FirstOrDefault(e => (string)e.Attribute(W.id) == oldId);
-                if (footnote == null)
+                if (footnote is null)
                 {
                     footnote = footnotesPartBeforeXDoc
                         .Root.Elements()
                         .FirstOrDefault(e => (string)e.Attribute(W.id) == oldId);
                 }
 
-                if (footnote == null)
+                if (footnote is null)
                     throw new OpenXmlPowerToolsException("Internal error");
 
                 var cloned = new XElement(footnote);
@@ -1456,14 +1456,14 @@ namespace Clippit
                 var endnote = endnotesPartAfterXDoc
                     .Root.Elements()
                     .FirstOrDefault(e => (string)e.Attribute(W.id) == oldId);
-                if (endnote == null)
+                if (endnote is null)
                 {
                     endnote = endnotesPartBeforeXDoc
                         .Root.Elements()
                         .FirstOrDefault(e => (string)e.Attribute(W.id) == oldId);
                 }
 
-                if (endnote == null)
+                if (endnote is null)
                     throw new OpenXmlPowerToolsException("Internal error");
 
                 var cloned = new XElement(endnote);
@@ -1471,7 +1471,7 @@ namespace Clippit
                 endnotesPartWithRevisionsXDoc.Root.Add(cloned);
             }
 
-            if (footnotesPartWithRevisionsXDoc != null)
+            if (footnotesPartWithRevisionsXDoc is not null)
             {
                 MarkContentAsDeletedOrInserted(footnotesPartWithRevisionsXDoc, settings);
                 CoalesceAdjacentRunsWithIdenticalFormatting(footnotesPartWithRevisionsXDoc);
@@ -1482,7 +1482,7 @@ namespace Clippit
                 footnotesPartWithRevisions.PutXDocument();
             }
 
-            if (endnotesPartWithRevisionsXDoc != null)
+            if (endnotesPartWithRevisionsXDoc is not null)
             {
                 MarkContentAsDeletedOrInserted(endnotesPartWithRevisionsXDoc, settings);
                 CoalesceAdjacentRunsWithIdenticalFormatting(endnotesPartWithRevisionsXDoc);
@@ -1497,14 +1497,14 @@ namespace Clippit
         private static void ConjoinDeletedInsertedParagraphMarks(MainDocumentPart mainDocumentPart, XDocument newXDoc)
         {
             ConjoinMultipleParagraphMarks(newXDoc);
-            if (mainDocumentPart.FootnotesPart != null)
+            if (mainDocumentPart.FootnotesPart is not null)
             {
                 var fnXDoc = mainDocumentPart.FootnotesPart.GetXDocument();
                 ConjoinMultipleParagraphMarks(fnXDoc);
                 mainDocumentPart.FootnotesPart.PutXDocument();
             }
 
-            if (mainDocumentPart.EndnotesPart != null)
+            if (mainDocumentPart.EndnotesPart is not null)
             {
                 var fnXDoc = mainDocumentPart.EndnotesPart.GetXDocument();
                 ConjoinMultipleParagraphMarks(fnXDoc);
@@ -1549,14 +1549,14 @@ namespace Clippit
         private static void FixUpRevisionIds(WordprocessingDocument wDocWithRevisions, XDocument newXDoc)
         {
             var footnoteRevisions = Enumerable.Empty<XElement>();
-            if (wDocWithRevisions.MainDocumentPart.FootnotesPart != null)
+            if (wDocWithRevisions.MainDocumentPart.FootnotesPart is not null)
             {
                 var fnxd = wDocWithRevisions.MainDocumentPart.FootnotesPart.GetXDocument();
                 footnoteRevisions = fnxd.Descendants().Where(d => d.Name == W.ins || d.Name == W.del);
             }
 
             var endnoteRevisions = Enumerable.Empty<XElement>();
-            if (wDocWithRevisions.MainDocumentPart.EndnotesPart != null)
+            if (wDocWithRevisions.MainDocumentPart.EndnotesPart is not null)
             {
                 var fnxd = wDocWithRevisions.MainDocumentPart.EndnotesPart.GetXDocument();
                 endnoteRevisions = fnxd.Descendants().Where(d => d.Name == W.ins || d.Name == W.del);
@@ -1574,9 +1574,9 @@ namespace Clippit
                 );
             foreach (var item in allRevisions)
                 item.Rev.Attribute(W.id).Value = item.Idx.ToString();
-            if (wDocWithRevisions.MainDocumentPart.FootnotesPart != null)
+            if (wDocWithRevisions.MainDocumentPart.FootnotesPart is not null)
                 wDocWithRevisions.MainDocumentPart.FootnotesPart.PutXDocument();
-            if (wDocWithRevisions.MainDocumentPart.EndnotesPart != null)
+            if (wDocWithRevisions.MainDocumentPart.EndnotesPart is not null)
                 wDocWithRevisions.MainDocumentPart.EndnotesPart.PutXDocument();
         }
 
@@ -1586,7 +1586,7 @@ namespace Clippit
                 .Root.Elements(W.body)
                 .Elements(W.p)
                 .LastOrDefault(p => p.Elements(W.pPr).Elements(W.sectPr).Any());
-            if (lastParaWithSectPr != null)
+            if (lastParaWithSectPr is not null)
             {
                 newXDoc.Root.Element(W.body).Add(lastParaWithSectPr.Elements(W.pPr).Elements(W.sectPr));
                 lastParaWithSectPr.Elements(W.pPr).Elements(W.sectPr).Remove();
@@ -1679,7 +1679,7 @@ namespace Clippit
             if (node is XElement element)
             {
                 // small optimization to eliminate the work for most elements
-                if (element.Element(W.del) != null || element.Element(W.ins) != null)
+                if (element.Element(W.del) is not null || element.Element(W.ins) is not null)
                 {
                     var hasFootnoteEndnoteReferencesThatNeedCleanedUp = element
                         .Elements()
@@ -1700,18 +1700,18 @@ namespace Clippit
                         var footnoteEndnoteReferencesToAdjust = clone
                             .Descendants()
                             .Where(d => d.Name == W.footnoteReference || d.Name == W.endnoteReference)
-                            .Where(d => d.Attribute(W.customMarkFollows) != null);
+                            .Where(d => d.Attribute(W.customMarkFollows) is not null);
                         foreach (var fnenr in footnoteEndnoteReferencesToAdjust)
                         {
                             var par = fnenr.Parent;
                             var gp = fnenr.Parent.Parent;
                             if (par.Name == W.r && gp.Name == W.del)
                             {
-                                if (par.Element(W.delText) != null)
+                                if (par.Element(W.delText) is not null)
                                     continue;
 
                                 var afterGp = gp.ElementsAfterSelf().FirstOrDefault();
-                                if (afterGp == null)
+                                if (afterGp is null)
                                     continue;
 
                                 var afterGpDelText = afterGp.Elements(W.r).Elements(W.delText);
@@ -1724,11 +1724,11 @@ namespace Clippit
 
                             if (par.Name == W.r && gp.Name == W.ins)
                             {
-                                if (par.Element(W.t) != null)
+                                if (par.Element(W.t) is not null)
                                     continue;
 
                                 var afterGp = gp.ElementsAfterSelf().FirstOrDefault();
-                                if (afterGp == null)
+                                if (afterGp is null)
                                     continue;
 
                                 var afterGpText = afterGp.Elements(W.r).Elements(W.t);
@@ -1766,7 +1766,7 @@ namespace Clippit
             foreach (var item in revMarksToChange)
             {
                 var idAtt = item.Attribute(W.id);
-                if (idAtt != null)
+                if (idAtt is not null)
                     idAtt.Value = nextId++.ToString();
             }
 
@@ -1785,7 +1785,7 @@ namespace Clippit
             foreach (var item in docPrToChange)
             {
                 var idAtt = item.Attribute("id");
-                if (idAtt != null)
+                if (idAtt is not null)
                     idAtt.Value = nextId++.ToString();
             }
 
@@ -1806,14 +1806,14 @@ namespace Clippit
                 var thisId = nextId++;
 
                 var idAtt = item.Attribute("id");
-                if (idAtt != null)
+                if (idAtt is not null)
                     idAtt.Value = thisId.ToString();
 
                 var oleObject = item.Parent.Element(O.OLEObject);
-                if (oleObject != null)
+                if (oleObject is not null)
                 {
                     var shapeIdAtt = oleObject.Attribute("ShapeID");
-                    if (shapeIdAtt != null)
+                    if (shapeIdAtt is not null)
                         shapeIdAtt.Value = thisId.ToString();
                 }
             }
@@ -1835,14 +1835,14 @@ namespace Clippit
                 var thisId = nextId++;
 
                 var idAtt = item.Attribute("id");
-                if (idAtt != null)
+                if (idAtt is not null)
                     idAtt.Value = thisId.ToString();
 
                 var shape = item.Parent.Element(VML.shape);
-                if (shape != null)
+                if (shape is not null)
                 {
                     var typeAtt = shape.Attribute("type");
-                    if (typeAtt != null)
+                    if (typeAtt is not null)
                         typeAtt.Value = thisId.ToString();
                 }
             }
@@ -1863,7 +1863,7 @@ namespace Clippit
                 var footnoteTextStyle = sXDoc
                     .Root.Elements(W.style)
                     .FirstOrDefault(s => (string)s.Attribute(W.styleId) == "FootnoteText");
-                if (footnoteTextStyle == null)
+                if (footnoteTextStyle is null)
                 {
                     var footnoteTextStyleMarkup =
                         @"<w:style w:type=""paragraph""
@@ -1892,7 +1892,7 @@ namespace Clippit
                 var footnoteTextCharStyle = sXDoc
                     .Root.Elements(W.style)
                     .FirstOrDefault(s => (string)s.Attribute(W.styleId) == "FootnoteTextChar");
-                if (footnoteTextCharStyle == null)
+                if (footnoteTextCharStyle is null)
                 {
                     var footnoteTextCharStyleMarkup =
                         @"<w:style w:type=""character""
@@ -1916,7 +1916,7 @@ namespace Clippit
                 var footnoteReferenceStyle = sXDoc
                     .Root.Elements(W.style)
                     .FirstOrDefault(s => (string)s.Attribute(W.styleId) == "FootnoteReference");
-                if (footnoteReferenceStyle == null)
+                if (footnoteReferenceStyle is null)
                 {
                     var footnoteReferenceStyleMarkup =
                         @"<w:style w:type=""character""
@@ -1941,7 +1941,7 @@ namespace Clippit
                 var endnoteTextStyle = sXDoc
                     .Root.Elements(W.style)
                     .FirstOrDefault(s => (string)s.Attribute(W.styleId) == "EndnoteText");
-                if (endnoteTextStyle == null)
+                if (endnoteTextStyle is null)
                 {
                     var endnoteTextStyleMarkup =
                         @"<w:style w:type=""paragraph""
@@ -1970,7 +1970,7 @@ namespace Clippit
                 var endnoteTextCharStyle = sXDoc
                     .Root.Elements(W.style)
                     .FirstOrDefault(s => (string)s.Attribute(W.styleId) == "EndnoteTextChar");
-                if (endnoteTextCharStyle == null)
+                if (endnoteTextCharStyle is null)
                 {
                     var endnoteTextCharStyleMarkup =
                         @"<w:style w:type=""character""
@@ -1994,7 +1994,7 @@ namespace Clippit
                 var endnoteReferenceStyle = sXDoc
                     .Root.Elements(W.style)
                     .FirstOrDefault(s => (string)s.Attribute(W.styleId) == "EndnoteReference");
-                if (endnoteReferenceStyle == null)
+                if (endnoteReferenceStyle is null)
                 {
                     var endnoteReferenceStyleMarkup =
                         @"<w:style w:type=""character""
@@ -2036,11 +2036,11 @@ namespace Clippit
                     .FirstOrDefault(st =>
                         (string)st.Attribute(W.type) == type && (string)st.Attribute(W.styleId) == styleId
                     );
-                if (styleInRevDoc != null)
+                if (styleInRevDoc is not null)
                     continue;
 
                 var cloned = new XElement(style);
-                if (cloned.Attribute(W._default) != null)
+                if (cloned.Attribute(W._default) is not null)
                     cloned.Attribute(W._default).Remove();
                 revisionsStylesXDoc.Root.Add(cloned);
             }
@@ -2051,7 +2051,7 @@ namespace Clippit
         private static void DeleteFootnotePropertiesInSettings(WordprocessingDocument wDocWithRevisions)
         {
             var settingsPart = wDocWithRevisions.MainDocumentPart.DocumentSettingsPart;
-            if (settingsPart != null)
+            if (settingsPart is not null)
             {
                 var sxDoc = settingsPart.GetXDocument();
                 sxDoc.Root?.Elements().Where(e => e.Name == W.footnotePr || e.Name == W.endnotePr).Remove();
@@ -2355,7 +2355,7 @@ namespace Clippit
                         commonEndSeq.Any(cu =>
                         {
                             var firstComparisonUnitAtom = cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
-                            if (firstComparisonUnitAtom == null)
+                            if (firstComparisonUnitAtom is null)
                                 return false;
 
                             return firstComparisonUnitAtom.ContentElement.Name == W.pPr;
@@ -2372,7 +2372,7 @@ namespace Clippit
                                     return false;
 
                                 var firstComparisonUnitAtom = cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
-                                if (firstComparisonUnitAtom == null)
+                                if (firstComparisonUnitAtom is null)
                                     return true;
 
                                 return firstComparisonUnitAtom.ContentElement.Name != W.pPr;
@@ -2388,7 +2388,7 @@ namespace Clippit
                                     return false;
 
                                 var firstComparisonUnitAtom = cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
-                                if (firstComparisonUnitAtom == null)
+                                if (firstComparisonUnitAtom is null)
                                     return true;
 
                                 return firstComparisonUnitAtom.ContentElement.Name != W.pPr;
@@ -2611,7 +2611,7 @@ namespace Clippit
             for (i = 0; i < cua.Length; i++)
             {
                 var atom = cua[i].DescendantContentAtoms().FirstOrDefault();
-                if (atom != null && atom.ContentElement.Name == W.pPr)
+                if (atom is not null && atom.ContentElement.Name == W.pPr)
                     break;
             }
 
@@ -3041,15 +3041,15 @@ namespace Clippit
             var newChildElements = CoalesceRecurse(part, g, level + 1, settings);
 
             object props1 = null;
-            if (props1XName != null)
+            if (props1XName is not null)
                 props1 = ancestorBeingConstructed.Elements(props1XName);
 
             object props2 = null;
-            if (props2XName != null)
+            if (props2XName is not null)
                 props2 = ancestorBeingConstructed.Elements(props2XName);
 
             object props3 = null;
-            if (props3XName != null)
+            if (props3XName is not null)
                 props3 = ancestorBeingConstructed.Elements(props3XName);
 
             var reconstructedElement = new XElement(
@@ -3087,7 +3087,7 @@ namespace Clippit
                         _ => null,
                     };
 
-                    if (takeThruName == null)
+                    if (takeThruName is null)
                         throw new OpenXmlPowerToolsException("Internal error");
 
                     var relevantAncestors = new List<XElement>();
@@ -3107,7 +3107,7 @@ namespace Clippit
                         .Select(a =>
                         {
                             var unid = (string)a.Attribute(PtOpenXml.Unid);
-                            if (unid == null)
+                            if (unid is null)
                                 throw new OpenXmlPowerToolsException("Internal error");
 
                             return unid;
@@ -3126,7 +3126,7 @@ namespace Clippit
                             if (z.Ancestor.Name == W.footnotes || z.Ancestor.Name == W.endnotes)
                                 continue;
 
-                            if (unid == null)
+                            if (unid is null)
                                 throw new OpenXmlPowerToolsException("Internal error");
 
                             unid.Value = z.Unid;
@@ -3192,8 +3192,8 @@ namespace Clippit
                                     cul1[thisI1] is ComparisonUnitGroup group1
                                     && cul2[thisI2] is ComparisonUnitGroup group2
                                     && group1.ComparisonUnitGroupType == group2.ComparisonUnitGroupType
-                                    && group1.CorrelatedSHA1Hash != null
-                                    && group2.CorrelatedSHA1Hash != null
+                                    && group1.CorrelatedSHA1Hash is not null
+                                    && group2.CorrelatedSHA1Hash is not null
                                     && group1.CorrelatedSHA1Hash == group2.CorrelatedSHA1Hash;
 
                                 if (match)
