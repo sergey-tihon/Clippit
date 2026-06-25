@@ -238,7 +238,7 @@ namespace Clippit.Word
                     isOverride = false;
                     return FromParagraph.Start(ilvl);
                 }
-                else if (this.FromStyle is not null)
+                else if (FromStyle is not null)
                 {
                     if (takeOverride)
                     {
@@ -265,7 +265,7 @@ namespace Clippit.Word
                         return (int)startOverride;
                     return null;
                 }
-                else if (this.FromStyle is not null)
+                else if (FromStyle is not null)
                 {
                     var startOverride = FromStyle.StartOverride(ilvl);
                     if (startOverride is not null)

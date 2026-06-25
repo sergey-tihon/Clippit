@@ -1207,12 +1207,12 @@ namespace Clippit.Html
 
         private static XElement FontMerge(XElement higherPriorityFont, XElement lowerPriorityFont)
         {
+            if (higherPriorityFont is null && lowerPriorityFont is null)
+                return null;
             if (higherPriorityFont is null)
                 return lowerPriorityFont;
             if (lowerPriorityFont is null)
                 return higherPriorityFont;
-            if (higherPriorityFont is null && lowerPriorityFont is null)
-                return null;
 
             var rFonts = new XElement(
                 W.rFonts,
@@ -2145,7 +2145,7 @@ namespace Clippit.Html
                         return null;
                 }
             })
-                .where(function (f) { return f is not null && f != ""; })
+                .where(function (f) { return f != null && f != ""; })
                 .distinct()
                 .select(function (f) { return new Pav.FontFamily(f); })
                 .toArray();
