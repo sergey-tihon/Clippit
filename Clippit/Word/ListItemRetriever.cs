@@ -45,7 +45,7 @@ namespace Clippit.Word
             public int? StartOverride(int ilvl)
             {
                 var lvlOverride = Num.Elements(W.lvlOverride).FirstOrDefault(nlo => (int)nlo.Attribute(W.ilvl) == ilvl);
-                if (lvlOverride != null)
+                if (lvlOverride is not null)
                     return (int?)lvlOverride.Elements(W.startOverride).Attributes(W.val).FirstOrDefault();
                 return null;
             }
@@ -64,7 +64,7 @@ namespace Clippit.Word
             public XElement Lvl(int ilvl)
             {
                 var overrideLvl = OverrideLvl(ilvl);
-                if (overrideLvl != null)
+                if (overrideLvl is not null)
                     return overrideLvl;
                 return AbstractLvl(ilvl);
             }
@@ -86,7 +86,7 @@ namespace Clippit.Word
 
                 NumStyleLinkName = (string)Main.AbstractNum.Elements(W.numStyleLink).Attributes(W.val).FirstOrDefault();
 
-                if (NumStyleLinkName != null)
+                if (NumStyleLinkName is not null)
                 {
                     var numStyleLinkNumId = (int?)
                         stylesXDoc
@@ -98,34 +98,34 @@ namespace Clippit.Word
                             .Attributes(W.val)
                             .FirstOrDefault();
 
-                    if (numStyleLinkNumId != null)
+                    if (numStyleLinkNumId is not null)
                         NumStyleLink = new ListItemSourceSet(numXDoc, stylesXDoc, (int)numStyleLinkNumId);
                 }
             }
 
             public XElement Lvl(int ilvl)
             {
-                if (NumStyleLink != null)
+                if (NumStyleLink is not null)
                 {
                     var lvl = NumStyleLink.Lvl(ilvl);
-                    if (lvl == null)
+                    if (lvl is null)
                     {
                         for (var i = ilvl - 1; i >= 0; i--)
                         {
                             lvl = NumStyleLink.Lvl(i);
-                            if (lvl != null)
+                            if (lvl is not null)
                                 break;
                         }
                     }
                     return lvl;
                 }
                 var lvl2 = Main.Lvl(ilvl);
-                if (lvl2 == null)
+                if (lvl2 is null)
                 {
                     for (var i = ilvl - 1; i >= 0; i--)
                     {
                         lvl2 = Main.Lvl(i);
-                        if (lvl2 != null)
+                        if (lvl2 is not null)
                             break;
                     }
                 }
@@ -134,10 +134,10 @@ namespace Clippit.Word
 
             public int? StartOverride(int ilvl)
             {
-                if (NumStyleLink != null)
+                if (NumStyleLink is not null)
                 {
                     var startOverride = NumStyleLink.StartOverride(ilvl);
-                    if (startOverride != null)
+                    if (startOverride is not null)
                         return startOverride;
                 }
                 return Main.StartOverride(ilvl);
@@ -147,7 +147,7 @@ namespace Clippit.Word
             {
                 var lvl = Lvl(ilvl);
                 var start = (int?)lvl.Elements(W.start).Attributes(W.val).FirstOrDefault();
-                if (start != null)
+                if (start is not null)
                     return (int)start;
                 return 0;
             }
@@ -176,11 +176,11 @@ namespace Clippit.Word
                     // it presumes that we are only interested in AbstractNumId
                     // however, it is easy enough to change if necessary
 
-                    if (mAbstractNumId != null)
+                    if (mAbstractNumId is not null)
                         return mAbstractNumId;
-                    if (FromParagraph != null)
+                    if (FromParagraph is not null)
                         mAbstractNumId = FromParagraph.AbstractNumId;
-                    else if (FromStyle != null)
+                    else if (FromStyle is not null)
                         mAbstractNumId = FromStyle.AbstractNumId;
                     return mAbstractNumId;
                 }
@@ -188,27 +188,27 @@ namespace Clippit.Word
 
             public XElement Lvl(int ilvl)
             {
-                if (FromParagraph != null)
+                if (FromParagraph is not null)
                 {
                     var lvl = FromParagraph.Lvl(ilvl);
-                    if (lvl == null)
+                    if (lvl is null)
                     {
                         for (var i = ilvl - 1; i >= 0; i--)
                         {
                             lvl = FromParagraph.Lvl(i);
-                            if (lvl != null)
+                            if (lvl is not null)
                                 break;
                         }
                     }
                     return lvl;
                 }
                 var lvl2 = FromStyle.Lvl(ilvl);
-                if (lvl2 == null)
+                if (lvl2 is null)
                 {
                     for (var i = ilvl - 1; i >= 0; i--)
                     {
                         lvl2 = FromParagraph.Lvl(i);
-                        if (lvl2 != null)
+                        if (lvl2 is not null)
                             break;
                     }
                 }
@@ -217,19 +217,19 @@ namespace Clippit.Word
 
             public int Start(int ilvl)
             {
-                if (FromParagraph != null)
+                if (FromParagraph is not null)
                     return FromParagraph.Start(ilvl);
                 return FromStyle.Start(ilvl);
             }
 
             public int Start(int ilvl, bool takeOverride, out bool isOverride)
             {
-                if (FromParagraph != null)
+                if (FromParagraph is not null)
                 {
                     if (takeOverride)
                     {
                         var startOverride = FromParagraph.StartOverride(ilvl);
-                        if (startOverride != null)
+                        if (startOverride is not null)
                         {
                             isOverride = true;
                             return (int)startOverride;
@@ -238,12 +238,12 @@ namespace Clippit.Word
                     isOverride = false;
                     return FromParagraph.Start(ilvl);
                 }
-                else if (this.FromStyle != null)
+                else if (FromStyle is not null)
                 {
                     if (takeOverride)
                     {
                         var startOverride = FromStyle.StartOverride(ilvl);
-                        if (startOverride != null)
+                        if (startOverride is not null)
                         {
                             isOverride = true;
                             return (int)startOverride;
@@ -258,17 +258,17 @@ namespace Clippit.Word
 
             public int? StartOverride(int ilvl)
             {
-                if (FromParagraph != null)
+                if (FromParagraph is not null)
                 {
                     var startOverride = FromParagraph.StartOverride(ilvl);
-                    if (startOverride != null)
+                    if (startOverride is not null)
                         return (int)startOverride;
                     return null;
                 }
-                else if (this.FromStyle != null)
+                else if (FromStyle is not null)
                 {
                     var startOverride = FromStyle.StartOverride(ilvl);
-                    if (startOverride != null)
+                    if (startOverride is not null)
                         return (int)startOverride;
                     return null;
                 }
@@ -281,11 +281,11 @@ namespace Clippit.Word
             {
                 get
                 {
-                    if (mNumId != null)
+                    if (mNumId is not null)
                         return (int)mNumId;
-                    if (FromParagraph != null)
+                    if (FromParagraph is not null)
                         mNumId = FromParagraph.Main.NumId;
-                    else if (FromStyle != null)
+                    else if (FromStyle is not null)
                         mNumId = FromStyle.Main.NumId;
                     return (int)mNumId;
                 }
@@ -303,7 +303,7 @@ namespace Clippit.Word
         public static void SetParagraphLevel(XElement paragraph, int ilvl)
         {
             var pi = paragraph.Annotation<ParagraphInfo>();
-            if (pi == null)
+            if (pi is null)
             {
                 pi = new ParagraphInfo() { Ilvl = ilvl };
                 paragraph.AddAnnotation(pi);
@@ -315,7 +315,7 @@ namespace Clippit.Word
         public static int GetParagraphLevel(XElement paragraph)
         {
             var pi = paragraph.Annotation<ParagraphInfo>();
-            if (pi != null)
+            if (pi is not null)
                 return pi.Ilvl;
             throw new OpenXmlPowerToolsException(
                 "Internal error - should never ask for ilvl without it first being set."
@@ -327,7 +327,7 @@ namespace Clippit.Word
             // The following is an optimization - only determine ListItemInfo once for a
             // paragraph.
             var listItemInfo = paragraph.Annotation<ListItemInfo>();
-            if (listItemInfo != null)
+            if (listItemInfo is not null)
                 return listItemInfo;
             throw new OpenXmlPowerToolsException("Attempting to retrieve ListItemInfo before initialization");
         }
@@ -347,7 +347,7 @@ namespace Clippit.Word
 
             var paragraphNumberingProperties = paragraph.Elements(W.pPr).Elements(W.numPr).FirstOrDefault();
 
-            if (paragraphNumberingProperties != null)
+            if (paragraphNumberingProperties is not null)
             {
                 paragraphNumId = (int?)
                     paragraphNumberingProperties.Elements(W.numId).Attributes(W.val).FirstOrDefault();
@@ -364,16 +364,16 @@ namespace Clippit.Word
             var paragraphStyleName = GetParagraphStyleName(stylesXDoc, paragraph);
 
             var listItemInfo = GetListItemInfoFromCache(numXDoc, paragraphStyleName, paragraphNumId);
-            if (listItemInfo != null)
+            if (listItemInfo is not null)
             {
                 paragraph.AddAnnotation(listItemInfo);
 
-                if (listItemInfo.FromParagraph != null)
+                if (listItemInfo.FromParagraph is not null)
                 {
                     var para_ilvl = (int?)
                         paragraphNumberingProperties.Elements(W.ilvl).Attributes(W.val).FirstOrDefault();
 
-                    if (para_ilvl == null)
+                    if (para_ilvl is null)
                         para_ilvl = 0;
 
                     var abstractNum = listItemInfo.FromParagraph.Main.AbstractNum;
@@ -384,7 +384,7 @@ namespace Clippit.Word
 
                     SetParagraphLevel(paragraph, (int)para_ilvl);
                 }
-                else if (listItemInfo.FromStyle != null)
+                else if (listItemInfo.FromStyle is not null)
                 {
                     var this_ilvl = listItemInfo.FromStyle.Style_ilvl;
                     var abstractNum = listItemInfo.FromStyle.Main.AbstractNum;
@@ -403,7 +403,7 @@ namespace Clippit.Word
             int? style_ilvl = null;
             bool? styleZeroNumId = null;
 
-            if (paragraphStyleName != null)
+            if (paragraphStyleName is not null)
             {
                 listItemInfo.FromStyle = InitializeStyleListItemSource(
                     numXDoc,
@@ -418,7 +418,7 @@ namespace Clippit.Word
             int? paragraph_ilvl = null;
             bool? paragraphZeroNumId = null;
 
-            if (paragraphNumberingProperties != null && paragraphNumberingProperties.Element(W.numId) != null)
+            if (paragraphNumberingProperties is not null && paragraphNumberingProperties.Element(W.numId) is not null)
             {
                 listItemInfo.FromParagraph = InitializeParagraphListItemSource(
                     numXDoc,
@@ -430,7 +430,7 @@ namespace Clippit.Word
                 );
             }
 
-            if (styleZeroNumId == true && paragraphZeroNumId == null || paragraphZeroNumId == true)
+            if (styleZeroNumId == true && paragraphZeroNumId is null || paragraphZeroNumId == true)
             {
                 paragraph.AddAnnotation(NotAListItem);
                 AddListItemInfoIntoCache(numXDoc, paragraphStyleName, paragraphNumId, NotAListItem);
@@ -438,19 +438,19 @@ namespace Clippit.Word
             }
 
             var ilvlToSet = 0;
-            if (paragraph_ilvl != null)
+            if (paragraph_ilvl is not null)
                 ilvlToSet = (int)paragraph_ilvl;
-            else if (style_ilvl != null)
+            else if (style_ilvl is not null)
                 ilvlToSet = (int)style_ilvl;
 
-            if (listItemInfo.FromParagraph != null)
+            if (listItemInfo.FromParagraph is not null)
             {
                 var abstractNum = listItemInfo.FromParagraph.Main.AbstractNum;
                 var multiLevelType = (string)abstractNum.Elements(W.multiLevelType).Attributes(W.val).FirstOrDefault();
                 if (multiLevelType == "singleLevel")
                     ilvlToSet = 0;
             }
-            else if (listItemInfo.FromStyle != null)
+            else if (listItemInfo.FromStyle is not null)
             {
                 var abstractNum = listItemInfo.FromStyle.Main.AbstractNum;
                 var multiLevelType = (string)abstractNum.Elements(W.multiLevelType).Attributes(W.val).FirstOrDefault();
@@ -460,7 +460,7 @@ namespace Clippit.Word
 
             SetParagraphLevel(paragraph, ilvlToSet);
 
-            listItemInfo.IsListItem = listItemInfo.FromStyle != null || listItemInfo.FromParagraph != null;
+            listItemInfo.IsListItem = listItemInfo.FromStyle is not null || listItemInfo.FromParagraph is not null;
             paragraph.AddAnnotation(listItemInfo);
             AddListItemInfoIntoCache(numXDoc, paragraphStyleName, paragraphNumId, listItemInfo);
         }
@@ -470,7 +470,7 @@ namespace Clippit.Word
             var paragraphStyleName = (string)
                 paragraph.Elements(W.pPr).Elements(W.pStyle).Attributes(W.val).FirstOrDefault();
 
-            if (paragraphStyleName == null)
+            if (paragraphStyleName is null)
                 paragraphStyleName = GetDefaultParagraphStyleName(stylesXDoc);
 
             return paragraphStyleName;
@@ -486,7 +486,7 @@ namespace Clippit.Word
                 .Elements(W.t)
                 .Any();
 
-            if (firstRun == null || !hasTextElement)
+            if (firstRun is null || !hasTextElement)
             {
                 if (paragraph.Elements(W.pPr).Elements(W.sectPr).Any())
                     return true;
@@ -510,14 +510,14 @@ namespace Clippit.Word
 
             ilvl = (int?)paragraphNumberingProperties.Elements(W.ilvl).Attributes(W.val).FirstOrDefault();
 
-            if (numId == null)
+            if (numId is null)
             {
                 zeroNumId = true;
                 return null;
             }
 
             var num = numXDoc.Root.Elements(W.num).FirstOrDefault(n => (int)n.Attribute(W.numId) == numId);
-            if (num == null)
+            if (num is null)
             {
                 zeroNumId = true;
                 return null;
@@ -525,7 +525,7 @@ namespace Clippit.Word
 
             zeroNumId = false;
 
-            if (ilvl == null)
+            if (ilvl is null)
                 ilvl = 0;
 
             var listItemSource = new ListItemSource(numXDoc, stylesXDoc, (int)numId);
@@ -548,17 +548,17 @@ namespace Clippit.Word
                 stylesXDoc,
                 GetDefaultParagraphStyleName(stylesXDoc)
             );
-            if (pPr != null)
+            if (pPr is not null)
             {
                 var styleNumberingProperties = pPr.Elements(W.numPr).FirstOrDefault();
 
-                if (styleNumberingProperties != null && styleNumberingProperties.Element(W.numId) != null)
+                if (styleNumberingProperties is not null && styleNumberingProperties.Element(W.numId) is not null)
                 {
                     var numId = (int)styleNumberingProperties.Elements(W.numId).Attributes(W.val).FirstOrDefault();
 
                     ilvl = (int?)styleNumberingProperties.Elements(W.ilvl).Attributes(W.val).FirstOrDefault();
 
-                    if (ilvl == null)
+                    if (ilvl is null)
                         ilvl = 0;
 
                     if (numId == 0)
@@ -573,7 +573,7 @@ namespace Clippit.Word
                         .Where(e => (int)e.Attribute(W.numId) == numId)
                         .FirstOrDefault();
 
-                    if (num == null)
+                    if (num is null)
                     {
                         zeroNumId = true;
                         return null;
@@ -597,7 +597,7 @@ namespace Clippit.Word
 
             var stylesInfo = stylesXDoc.Annotation<StylesInfo>();
 
-            if (stylesInfo != null)
+            if (stylesInfo is not null)
                 defaultParagraphStyleName = stylesInfo.DefaultParagraphStyleName;
             else
             {
@@ -609,12 +609,12 @@ namespace Clippit.Word
                             return false;
                         var defaultAttribute = s.Attribute(W._default);
                         var isDefault = false;
-                        if (defaultAttribute != null && (bool)s.Attribute(W._default).ToBoolean())
+                        if (defaultAttribute is not null && (bool)s.Attribute(W._default).ToBoolean())
                             isDefault = true;
                         return isDefault;
                     });
                 defaultParagraphStyleName = null;
-                if (defaultParagraphStyle != null)
+                if (defaultParagraphStyle is not null)
                     defaultParagraphStyleName = (string)defaultParagraphStyle.Attribute(W.styleId);
                 stylesInfo = new StylesInfo() { DefaultParagraphStyleName = defaultParagraphStyleName };
                 stylesXDoc.AddAnnotation(stylesInfo);
@@ -624,11 +624,11 @@ namespace Clippit.Word
 
         private static ListItemInfo GetListItemInfoFromCache(XDocument numXDoc, string styleName, int? numId)
         {
-            var key = (styleName == null ? "" : styleName) + "|" + (numId == null ? "" : numId.ToString());
+            var key = (styleName is null ? "" : styleName) + "|" + (numId is null ? "" : numId.ToString());
 
             var numXDocRoot = numXDoc.Root;
             var listItemInfoCache = numXDocRoot.Annotation<Dictionary<string, ListItemInfo>>();
-            if (listItemInfoCache == null)
+            if (listItemInfoCache is null)
             {
                 listItemInfoCache = new Dictionary<string, ListItemInfo>();
                 numXDocRoot.AddAnnotation(listItemInfoCache);
@@ -643,11 +643,11 @@ namespace Clippit.Word
             ListItemInfo listItemInfo
         )
         {
-            var key = (styleName == null ? "" : styleName) + "|" + (numId == null ? "" : numId.ToString());
+            var key = (styleName is null ? "" : styleName) + "|" + (numId is null ? "" : numId.ToString());
 
             var numXDocRoot = numXDoc.Root;
             var listItemInfoCache = numXDocRoot.Annotation<Dictionary<string, ListItemInfo>>();
-            if (listItemInfoCache == null)
+            if (listItemInfoCache is null)
             {
                 listItemInfoCache = new Dictionary<string, ListItemInfo>();
                 numXDocRoot.AddAnnotation(listItemInfoCache);
@@ -686,11 +686,11 @@ namespace Clippit.Word
             ListItemRetrieverSettings settings
         )
         {
-            if (wordDoc.MainDocumentPart.NumberingDefinitionsPart == null)
+            if (wordDoc.MainDocumentPart.NumberingDefinitionsPart is null)
                 return null;
 
             var listItemInfo = paragraph.Annotation<ListItemInfo>();
-            if (listItemInfo == null)
+            if (listItemInfo is null)
                 InitializeListItemRetriever(wordDoc, settings);
 
             listItemInfo = paragraph.Annotation<ListItemInfo>();
@@ -699,12 +699,12 @@ namespace Clippit.Word
 
             var numberingDefinitionsPart = wordDoc.MainDocumentPart.NumberingDefinitionsPart;
 
-            if (numberingDefinitionsPart == null)
+            if (numberingDefinitionsPart is null)
                 return null;
 
             var styleDefinitionsPart = wordDoc.MainDocumentPart.StyleDefinitionsPart;
 
-            if (styleDefinitionsPart == null)
+            if (styleDefinitionsPart is null)
                 return null;
 
             var numXDoc = numberingDefinitionsPart.GetXDocument();
@@ -713,11 +713,11 @@ namespace Clippit.Word
             var lvl = listItemInfo.Lvl(GetParagraphLevel(paragraph));
 
             var lvlText = (string)lvl.Elements(W.lvlText).Attributes(W.val).FirstOrDefault();
-            if (lvlText == null)
+            if (lvlText is null)
                 return null;
 
             var levelNumbersAnnotation = paragraph.Annotation<LevelNumbers>();
-            if (levelNumbersAnnotation == null)
+            if (levelNumbersAnnotation is null)
                 throw new OpenXmlPowerToolsException("Internal error");
 
             var levelNumbers = levelNumbersAnnotation.LevelNumbersArray;
@@ -750,7 +750,7 @@ namespace Clippit.Word
                 languageIdentifier = (string)
                     paragraph.Elements(W.r).Elements(W.rPr).Elements(W.lang).Attributes(W.val).FirstOrDefault();
 
-                if (languageIdentifier == null)
+                if (languageIdentifier is null)
                     languageIdentifier = (string)
                         stylesXDoc
                             .Root.Elements(W.docDefaults)
@@ -765,7 +765,7 @@ namespace Clippit.Word
                 languageIdentifier = (string)
                     paragraph.Elements(W.r).Elements(W.rPr).Elements(W.lang).Attributes(W.eastAsia).FirstOrDefault();
 
-                if (languageIdentifier == null)
+                if (languageIdentifier is null)
                     languageIdentifier = (string)
                         stylesXDoc
                             .Root.Elements(W.docDefaults)
@@ -780,7 +780,7 @@ namespace Clippit.Word
                 languageIdentifier = (string)
                     paragraph.Elements(W.r).Elements(W.rPr).Elements(W.lang).Attributes(W.bidi).FirstOrDefault();
 
-                if (languageIdentifier == null)
+                if (languageIdentifier is null)
                     languageIdentifier = (string)
                         stylesXDoc
                             .Root.Elements(W.docDefaults)
@@ -791,7 +791,7 @@ namespace Clippit.Word
                             .FirstOrDefault();
             }
 
-            if (languageIdentifier == null)
+            if (languageIdentifier is null)
                 languageIdentifier = "en-US";
             return languageIdentifier;
         }
@@ -811,7 +811,7 @@ namespace Clippit.Word
                 var paras = xDoc
                     .Descendants(W.p)
                     .Where(p =>
-                        p.Annotation<ListItemInfo>() == null);
+                        p.Annotation<ListItemInfo>() is null);
                 if (paras.Any())
                     Console.WriteLine("Error");
 	        }
@@ -827,12 +827,12 @@ namespace Clippit.Word
             var mainXDoc = part.GetXDocument();
 
             var numPart = wordDoc.MainDocumentPart.NumberingDefinitionsPart;
-            if (numPart == null)
+            if (numPart is null)
                 return;
             var numXDoc = numPart.GetXDocument();
 
             var stylesPart = wordDoc.MainDocumentPart.StyleDefinitionsPart;
-            if (stylesPart == null)
+            if (stylesPart is null)
                 return;
             var stylesXDoc = stylesPart.GetXDocument();
 
@@ -865,14 +865,14 @@ namespace Clippit.Word
                         return null;
                     return listItemInfo.AbstractNumId;
                 })
-                .Where(a => a != null)
+                .Where(a => a is not null)
                 .Distinct()
                 .ToList();
 
             // when debugging, it is sometimes useful to cause processing of a specific abstractNumId first.
             // the following code enables this.
             //int? abstractIdToProcessFirst = null;
-            //if (abstractIdToProcessFirst != null)
+            //if (abstractIdToProcessFirst is not null)
             //{
             //    abstractNumIds = (new[] { abstractIdToProcessFirst })
             //        .Concat(abstractNumIds.Where(ani => ani != abstractIdToProcessFirst))
@@ -930,14 +930,14 @@ namespace Clippit.Word
                         var numId = listItemInfo.NumId;
                         var startOverride = listItemInfo.StartOverride(level);
                         int? inEffectStartOverride = null;
-                        if (listItemInfoInEffect != null)
+                        if (listItemInfoInEffect is not null)
                             inEffectStartOverride = listItemInfoInEffect.StartOverride(level);
 
                         if (level == ilvl)
                         {
                             var lvl = listItemInfo.Lvl(ilvl);
                             var lvlRestart = (int?)lvl.Elements(W.lvlRestart).Attributes(W.val).FirstOrDefault();
-                            if (lvlRestart != null)
+                            if (lvlRestart is not null)
                             {
                                 var previousPara = PreviousParagraphsForLvlRestart(paragraph, (int)lvlRestart)
                                     .FirstOrDefault(p =>
@@ -945,33 +945,33 @@ namespace Clippit.Word
                                         var plvl = GetParagraphLevel(p);
                                         return plvl == ilvl;
                                     });
-                                if (previousPara != null)
+                                if (previousPara is not null)
                                     previous = previousPara.Annotation<LevelNumbers>().LevelNumbersArray.ToList();
                             }
                         }
 
                         if (
-                            previous == null
+                            previous is null
                             || level >= previous.Count
-                            || (level == ilvl && startOverride != null && !startOverrideAlreadyUsed.Contains(numId))
+                            || (level == ilvl && startOverride is not null && !startOverrideAlreadyUsed.Contains(numId))
                         )
                         {
-                            if (previous == null || level >= previous.Count)
+                            if (previous is null || level >= previous.Count)
                             {
                                 var start = listItemInfo.Start(level);
                                 // only look at startOverride if the level that we're examining is same as the paragraph's level.
                                 if (level == ilvl)
                                 {
-                                    if (startOverride != null && !startOverrideAlreadyUsed.Contains(numId))
+                                    if (startOverride is not null && !startOverrideAlreadyUsed.Contains(numId))
                                     {
                                         startOverrideAlreadyUsed.Add(numId);
                                         start = (int)startOverride;
                                     }
                                     else
                                     {
-                                        if (startOverride != null)
+                                        if (startOverride is not null)
                                             start = (int)startOverride;
-                                        if (inEffectStartOverride != null && inEffectStartOverride > start)
+                                        if (inEffectStartOverride is not null && inEffectStartOverride > start)
                                             start = (int)inEffectStartOverride;
                                     }
                                 }
@@ -983,7 +983,7 @@ namespace Clippit.Word
                                 // only look at startOverride if the level that we're examining is same as the paragraph's level.
                                 if (level == ilvl)
                                 {
-                                    if (startOverride != null)
+                                    if (startOverride is not null)
                                     {
                                         if (!startOverrideAlreadyUsed.Contains(numId))
                                         {
@@ -1000,7 +1000,7 @@ namespace Clippit.Word
                             int? thisNumber = null;
                             if (level == ilvl)
                             {
-                                if (startOverride != null)
+                                if (startOverride is not null)
                                 {
                                     if (!startOverrideAlreadyUsed.Contains(numId))
                                     {
@@ -1034,7 +1034,7 @@ namespace Clippit.Word
             while (true)
             {
                 var ra = current.Annotation<ReverseAxis>();
-                if (ra == null || ra.PreviousParagraph == null)
+                if (ra is null || ra.PreviousParagraph is null)
                     yield break;
                 var raLvl = GetParagraphLevel(ra.PreviousParagraph);
                 if (raLvl < ilvl)
@@ -1072,13 +1072,13 @@ namespace Clippit.Word
                         string levelText = null;
                         var rlvl = lii.Lvl(indentationLevel);
                         var numFmtForLevel = (string)rlvl.Elements(W.numFmt).Attributes(W.val).FirstOrDefault();
-                        if (numFmtForLevel == null)
+                        if (numFmtForLevel is null)
                         {
                             var numFmtElement = rlvl.Elements(MC.AlternateContent)
                                 .Elements(MC.Choice)
                                 .Elements(W.numFmt)
                                 .FirstOrDefault();
-                            if (numFmtElement != null && (string)numFmtElement.Attribute(W.val) == "custom")
+                            if (numFmtElement is not null && (string)numFmtElement.Attribute(W.val) == "custom")
                                 numFmtForLevel = (string)numFmtElement.Attribute(W.format);
                         }
                         if (numFmtForLevel != "none")
@@ -1086,12 +1086,12 @@ namespace Clippit.Word
                             if (isLgl && numFmtForLevel != "decimalZero")
                                 numFmtForLevel = "decimal";
                         }
-                        if (languageCultureName != null && settings != null)
+                        if (languageCultureName is not null && settings is not null)
                         {
                             if (settings.ListItemTextImplementations.TryGetValue(languageCultureName, out var impl))
                                 levelText = impl(languageCultureName, levelNumber, numFmtForLevel);
                         }
-                        if (levelText == null)
+                        if (levelText is null)
                             levelText = ListItemTextGetter_Default.GetListItemText(
                                 languageCultureName,
                                 levelNumber,
