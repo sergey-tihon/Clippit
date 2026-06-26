@@ -237,7 +237,7 @@ namespace Clippit.Word
                     var ruleToUpdate = rules.FirstOrDefault(r => r.ContentType == ct);
                     if (ruleToUpdate is null)
                         throw new OpenXmlPowerToolsException(
-                            "ContentTypeRexexExtension refers to content type that does not exist"
+                            "ContentTypeRegexExtension refers to content type that does not exist"
                         );
                     var oldRegexRules = ruleToUpdate.RegexArray.ToList();
                     var newRegexRules = ext.Elements("RegexExtension")

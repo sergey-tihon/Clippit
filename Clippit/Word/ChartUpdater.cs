@@ -615,7 +615,7 @@ namespace Clippit.Word
                 if (cellStyleXfs is not null)
                 {
                     cellStyleXfs.AddAfterSelf(new XElement(S.cellXfs, new XAttribute("count", 0)));
-                    cellXfs = xdSheet.Root.Element(S.cellXfs);
+                    cellXfs = xdStyle.Root.Element(S.cellXfs);
                 }
             }
             if (cellXfs is null)
