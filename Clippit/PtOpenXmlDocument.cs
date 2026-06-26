@@ -24,7 +24,7 @@ Here is read-only of a WmlDocument:
         {
             XDocument mainDocument = document.MainDocumentPart.GetXDocument();
             XElement backgroundElement = mainDocument.Descendants(W.background).FirstOrDefault();
-            return (backgroundElement == null) ? string.Empty : backgroundElement.Attribute(W.color).Value;
+            return (backgroundElement is null) ? string.Empty : backgroundElement.Attribute(W.color).Value;
         }
     }
 
@@ -523,7 +523,7 @@ namespace Clippit
                 ?? _docPackage
                     .GetRelationshipsByType("http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument")
                     .FirstOrDefault();
-            if (relationship == null)
+            if (relationship is null)
                 throw new PowerToolsDocumentException("Not an Open XML Document.");
             var part = _docPackage.GetPart(
                 PackUriHelper.ResolvePartUri(relationship.SourceUri, relationship.TargetUri)

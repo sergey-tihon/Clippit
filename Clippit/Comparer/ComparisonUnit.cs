@@ -19,7 +19,7 @@ namespace Clippit
         {
             get
             {
-                if (_descendantContentAtomsCount != null)
+                if (_descendantContentAtomsCount is not null)
                     return (int)_descendantContentAtomsCount;
 
                 _descendantContentAtomsCount = DescendantContentAtoms().Count();
@@ -44,7 +44,7 @@ namespace Clippit
             foreach (var cu in comparisonUnit.Contents)
             {
                 comparisonUnitList.Add(cu);
-                if (cu.Contents != null && cu.Contents.Any())
+                if (cu.Contents is not null && cu.Contents.Any())
                     DescendantsInternal(cu, comparisonUnitList);
             }
         }

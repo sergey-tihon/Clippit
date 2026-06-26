@@ -51,12 +51,12 @@ namespace Clippit
 
         public static void AddElementIfMissing(XDocument partXDoc, XElement existing, string newElement)
         {
-            if (existing != null)
+            if (existing is not null)
                 return;
 
             var newXElement = XElement.Parse(newElement);
             newXElement.Attributes().Where(a => a.IsNamespaceDeclaration).Remove();
-            if (partXDoc.Root != null)
+            if (partXDoc.Root is not null)
                 partXDoc.Root.Add(newXElement);
         }
     }
@@ -111,7 +111,7 @@ namespace Clippit
                             boundary = s.Substring(begLen, s.Length - begLen - 1).TrimStart('-');
                             continue;
                         }
-                        if (contentType == null)
+                        if (contentType is null)
                         {
                             contentType = s;
                             continue;
@@ -170,7 +170,7 @@ namespace Clippit
                         .Select(l => l + Environment.NewLine)
                         .StringConcatenate();
 
-                    if (partContentType != null && partContentType.Contains(";"))
+                    if (partContentType is not null && partContentType.Contains(";"))
                     {
                         string thisPartContentType = null;
                         var spl = partContentType.Split(';').Select(s => s.Trim()).ToArray();
@@ -183,7 +183,7 @@ namespace Clippit
                                 partCharSet = s.Substring(begLen, s.Length - begLen - 1);
                                 continue;
                             }
-                            if (thisPartContentType == null)
+                            if (thisPartContentType is null)
                             {
                                 thisPartContentType = s;
                                 continue;
@@ -194,7 +194,7 @@ namespace Clippit
                     }
 
                     if (
-                        contentTransferEncoding != null
+                        contentTransferEncoding is not null
                         && contentTransferEncoding.Equals("BASE64", StringComparison.OrdinalIgnoreCase)
                     )
                     {
@@ -211,7 +211,7 @@ namespace Clippit
                         Binary = partBinary,
                     };
                 })
-                .Where(p => p.ContentType != null)
+                .Where(p => p.ContentType is not null)
                 .ToArray();
 
             return new MhtParser()
@@ -229,7 +229,7 @@ namespace Clippit
         {
             var havePSVI = false;
             // validate, throw errors, add PSVI information
-            if (schema != null)
+            if (schema is not null)
             {
                 source.Validate(schema, null, true);
                 havePSVI = true;
@@ -475,7 +475,7 @@ namespace Clippit
                 document.WriteTo(xmlWriter);
 
             var decl = document.ChildNodes.OfType<XmlDeclaration>().FirstOrDefault();
-            if (decl != null)
+            if (decl is not null)
                 xDoc.Declaration = new XDeclaration(decl.Version, decl.Encoding, decl.Standalone);
 
             return xDoc;
@@ -486,7 +486,7 @@ namespace Clippit
             var xmlDoc = new XmlDocument();
             using var xmlReader = document.CreateReader();
             xmlDoc.Load(xmlReader);
-            if (document.Declaration != null)
+            if (document.Declaration is not null)
             {
                 var dec = xmlDoc.CreateXmlDeclaration(
                     document.Declaration.Version,
@@ -567,13 +567,13 @@ namespace Clippit
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public static IEnumerable<XElement> SiblingsBeforeSelfReverseDocumentOrder(this XElement element)
         {
-            if (element.Annotation<SiblingsReverseDocumentOrderInfo>() == null)
+            if (element.Annotation<SiblingsReverseDocumentOrderInfo>() is null)
                 InitializeSiblingsReverseDocumentOrder(element.Parent);
             var current = element;
             while (true)
             {
                 var previousElement = current.Annotation<SiblingsReverseDocumentOrderInfo>().PreviousSibling;
-                if (previousElement == null)
+                if (previousElement is null)
                     yield break;
 
                 yield return previousElement;
@@ -595,13 +595,13 @@ namespace Clippit
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public static IEnumerable<XElement> DescendantsBeforeSelfReverseDocumentOrder(this XElement element)
         {
-            if (element.Annotation<DescendantsReverseDocumentOrderInfo>() == null)
+            if (element.Annotation<DescendantsReverseDocumentOrderInfo>() is null)
                 InitializeDescendantsReverseDocumentOrder(element.AncestorsAndSelf().Last());
             var current = element;
             while (true)
             {
                 var previousElement = current.Annotation<DescendantsReverseDocumentOrderInfo>().PreviousElement;
-                if (previousElement == null)
+                if (previousElement is null)
                     yield break;
 
                 yield return previousElement;
@@ -626,7 +626,7 @@ namespace Clippit
             XName trimName
         )
         {
-            if (element.Annotation<DescendantsTrimmedReverseDocumentOrderInfo>() == null)
+            if (element.Annotation<DescendantsTrimmedReverseDocumentOrderInfo>() is null)
             {
                 var ances =
                     element.AncestorsAndSelf(W.txbxContent).FirstOrDefault() ?? element.AncestorsAndSelf().Last();
@@ -637,7 +637,7 @@ namespace Clippit
             while (true)
             {
                 var previousElement = current.Annotation<DescendantsTrimmedReverseDocumentOrderInfo>().PreviousElement;
-                if (previousElement == null)
+                if (previousElement is null)
                     yield break;
 
                 yield return previousElement;
@@ -745,7 +745,7 @@ namespace Clippit
 
         public static bool? ToBoolean(this XAttribute a)
         {
-            if (a == null)
+            if (a is null)
                 return null;
 
             var s = ((string)a).ToLower();
@@ -764,7 +764,7 @@ namespace Clippit
         private static string GetQName(XElement xe)
         {
             var prefix = xe.GetPrefixOfNamespace(xe.Name.Namespace);
-            if (xe.Name.Namespace == XNamespace.None || prefix == null)
+            if (xe.Name.Namespace == XNamespace.None || prefix is null)
                 return xe.Name.LocalName;
 
             return prefix + ":" + xe.Name.LocalName;
@@ -772,8 +772,8 @@ namespace Clippit
 
         private static string GetQName(XAttribute xa)
         {
-            var prefix = xa.Parent != null ? xa.Parent.GetPrefixOfNamespace(xa.Name.Namespace) : null;
-            if (xa.Name.Namespace == XNamespace.None || prefix == null)
+            var prefix = xa.Parent is not null ? xa.Parent.GetPrefixOfNamespace(xa.Name.Namespace) : null;
+            if (xa.Name.Namespace == XNamespace.None || prefix is null)
                 return xa.Name.ToString();
 
             return prefix + ":" + xa.Name.LocalName;
@@ -781,7 +781,7 @@ namespace Clippit
 
         private static string NameWithPredicate(XElement el)
         {
-            if (el.Parent != null && el.Parent.Elements(el.Name).Skip(1).Any())
+            if (el.Parent is not null && el.Parent.Elements(el.Name).Skip(1).Any())
                 return GetQName(el) + "[" + (el.ElementsBeforeSelf(el.Name).Count() + 1) + "]";
             else
                 return GetQName(el);
@@ -794,7 +794,7 @@ namespace Clippit
 
         public static string GetXPath(this XObject xobj)
         {
-            if (xobj.Parent == null)
+            if (xobj.Parent is null)
             {
                 return xobj switch
                 {
@@ -822,7 +822,7 @@ namespace Clippit
                     //        "text()"
                     //    );
                     //
-                    XComment com when com.Document != null => "/"
+                    XComment com when com.Document is not null => "/"
                         + (
                             com.Document.Nodes().OfType<XComment>().Skip(1).Any()
                                 ? "comment()[" + (com.NodesBeforeSelf().OfType<XComment>().Count() + 1) + "]"
@@ -830,7 +830,8 @@ namespace Clippit
                         ),
                     XProcessingInstruction pi => "/"
                         + (
-                            pi.Document != null && pi.Document.Nodes().OfType<XProcessingInstruction>().Skip(1).Any()
+                            pi.Document is not null
+                            && pi.Document.Nodes().OfType<XProcessingInstruction>().Skip(1).Any()
                                 ? "processing-instruction()["
                                     + (pi.NodesBeforeSelf().OfType<XProcessingInstruction>().Count() + 1)
                                     + "]"
@@ -846,32 +847,32 @@ namespace Clippit
                     XElement el => "/"
                         + el.Ancestors().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/")
                         + NameWithPredicate(el),
-                    XAttribute at when at.Parent != null => "/"
+                    XAttribute at when at.Parent is not null => "/"
                         + at.Parent.AncestorsAndSelf().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/")
                         + "@"
                         + GetQName(at),
-                    XComment com when com.Parent != null => "/"
+                    XComment com when com.Parent is not null => "/"
                         + com.Parent.AncestorsAndSelf().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/")
                         + (
                             com.Parent.Nodes().OfType<XComment>().Skip(1).Any()
                                 ? "comment()[" + (com.NodesBeforeSelf().OfType<XComment>().Count() + 1) + "]"
                                 : "comment()"
                         ),
-                    XCData cd when cd.Parent != null => "/"
+                    XCData cd when cd.Parent is not null => "/"
                         + cd.Parent.AncestorsAndSelf().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/")
                         + (
                             cd.Parent.Nodes().OfType<XText>().Skip(1).Any()
                                 ? "text()[" + (cd.NodesBeforeSelf().OfType<XText>().Count() + 1) + "]"
                                 : "text()"
                         ),
-                    XText tx when tx.Parent != null => "/"
+                    XText tx when tx.Parent is not null => "/"
                         + tx.Parent.AncestorsAndSelf().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/")
                         + (
                             tx.Parent.Nodes().OfType<XText>().Skip(1).Any()
                                 ? "text()[" + (tx.NodesBeforeSelf().OfType<XText>().Count() + 1) + "]"
                                 : "text()"
                         ),
-                    XProcessingInstruction pi when pi.Parent != null => "/"
+                    XProcessingInstruction pi when pi.Parent is not null => "/"
                         + pi.Parent.AncestorsAndSelf().InDocumentOrder().Select(e => NameWithPredicate(e)).StrCat("/")
                         + (
                             pi.Parent.Nodes().OfType<XProcessingInstruction>().Skip(1).Any()
@@ -982,7 +983,7 @@ namespace Clippit
         public static void Bucket(string bucket)
         {
             var now = DateTime.Now;
-            if (LastBucket != null)
+            if (LastBucket is not null)
             {
                 var d = now - LastTime;
                 if (Buckets.ContainsKey(LastBucket))

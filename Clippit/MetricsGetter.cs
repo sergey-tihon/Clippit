@@ -115,7 +115,7 @@ public class MetricsGetter
                     SKFontStyleWidth.Normal,
                     SKFontStyleSlant.Upright
                 );
-                if (normal == null)
+                if (normal is null)
                     return 0;
                 return _getTextWidth(normal, sz, text);
             }
@@ -129,7 +129,7 @@ public class MetricsGetter
                         SKFontStyleWidth.Normal,
                         SKFontStyleSlant.Upright
                     );
-                    if (bold == null)
+                    if (bold is null)
                         return 0;
                     return _getTextWidth(bold, sz, text);
                 }
@@ -137,7 +137,7 @@ public class MetricsGetter
                 {
                     // if both regular and bold fail, then get metrics for Times New Roman
                     using var fallback = SKTypeface.FromFamilyName("Times New Roman");
-                    if (fallback == null)
+                    if (fallback is null)
                         return 0;
                     return _getTextWidth(fallback, sz, text);
                 }

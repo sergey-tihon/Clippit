@@ -48,14 +48,14 @@ namespace Clippit
             }
             else
             {
-                if (ComparisonUnitArray1 != null)
+                if (ComparisonUnitArray1 is not null)
                 {
                     sb.Append(indentString4 + "ComparisonUnitList1 =====" + Environment.NewLine);
                     foreach (var item in ComparisonUnitArray1)
                         sb.Append(item.ToString(6) + Environment.NewLine);
                 }
 
-                if (ComparisonUnitArray2 != null)
+                if (ComparisonUnitArray2 is not null)
                 {
                     sb.Append(indentString4 + "ComparisonUnitList2 =====" + Environment.NewLine);
                     foreach (var item in ComparisonUnitArray2)

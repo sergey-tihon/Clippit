@@ -37,7 +37,7 @@ namespace Clippit
         private static void VerifyNoInvalidContent(XElement contentParent)
         {
             var invalidElement = contentParent.Descendants().FirstOrDefault(d => s_invalidElements.Contains(d.Name));
-            if (invalidElement == null)
+            if (invalidElement is null)
                 return;
 
             throw new NotSupportedException("Document contains " + invalidElement.Name.LocalName);
@@ -50,14 +50,14 @@ namespace Clippit
                 throw new OpenXmlPowerToolsException("Invalid document");
 
             var lastSectPr = lastSectPrList.FirstOrDefault();
-            if (lastSectPr != null)
+            if (lastSectPr is not null)
             {
                 var lastParagraph = contentParent.Elements(W.p).LastOrDefault();
-                if (lastParagraph == null)
+                if (lastParagraph is null)
                     throw new OpenXmlPowerToolsException("Invalid document");
 
                 var pPr = lastParagraph.Element(W.pPr);
-                if (pPr == null)
+                if (pPr is null)
                 {
                     pPr = new XElement(W.pPr);
                     lastParagraph.AddFirst(W.pPr);
@@ -99,7 +99,7 @@ namespace Clippit
                 foreach (var item in paraChildrenToProcess)
                     CreateComparisonUnitAtomListRecurse(part, item, comparisonUnitAtomList, settings);
                 var paraProps = element.Element(W.pPr);
-                if (paraProps == null)
+                if (paraProps is null)
                 {
                     var pPrComparisonUnitAtom = new ComparisonUnitAtom(
                         new XElement(W.pPr),
@@ -177,7 +177,7 @@ namespace Clippit
             }
 
             var re = s_recursionElements.FirstOrDefault(z => z.ElementName == element.Name);
-            if (re != null)
+            if (re is not null)
             {
                 AnnotateElementWithProps(part, element, comparisonUnitAtomList, re.ChildElementPropertyNames, settings);
                 return;
@@ -198,7 +198,7 @@ namespace Clippit
         )
         {
             IEnumerable<XElement> runChildrenToProcess;
-            if (childElementPropertyNames == null)
+            if (childElementPropertyNames is null)
                 runChildrenToProcess = element.Elements();
             else
                 runChildrenToProcess = element.Elements().Where(e => !childElementPropertyNames.Contains(e.Name));

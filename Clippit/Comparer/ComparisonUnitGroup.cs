@@ -25,7 +25,7 @@ namespace Clippit
                 .ToArray();
 
             var ancestor = ancestorsToLookAt[level];
-            if (ancestor == null)
+            if (ancestor is null)
                 throw new OpenXmlPowerToolsException("Internal error: ComparisonUnitGroup");
 
             SHA1Hash = (string)ancestor.Attribute(PtOpenXml.SHA1Hash);
