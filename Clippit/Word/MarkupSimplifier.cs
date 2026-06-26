@@ -79,19 +79,19 @@ namespace Clippit.Word
             foreach (var part in doc.ContentParts())
                 SimplifyMarkupForPart(part, settings);
 
-            if (doc.MainDocumentPart.StyleDefinitionsPart != null)
+            if (doc.MainDocumentPart.StyleDefinitionsPart is not null)
                 SimplifyMarkupForPart(doc.MainDocumentPart.StyleDefinitionsPart, settings);
-            if (doc.MainDocumentPart.StylesWithEffectsPart != null)
+            if (doc.MainDocumentPart.StylesWithEffectsPart is not null)
                 SimplifyMarkupForPart(doc.MainDocumentPart.StylesWithEffectsPart, settings);
 
             if (settings.RemoveComments)
             {
                 var commentsPart = doc.MainDocumentPart.WordprocessingCommentsPart;
-                if (commentsPart != null)
+                if (commentsPart is not null)
                     doc.MainDocumentPart.DeletePart(commentsPart);
 
                 var commentsExPart = doc.MainDocumentPart.WordprocessingCommentsExPart;
-                if (commentsExPart != null)
+                if (commentsExPart is not null)
                     doc.MainDocumentPart.DeletePart(commentsExPart);
             }
         }
@@ -99,7 +99,7 @@ namespace Clippit.Word
         private static void RemoveRsidInfoInSettings(WordprocessingDocument doc)
         {
             var part = doc.MainDocumentPart.DocumentSettingsPart;
-            if (part == null)
+            if (part is null)
                 return;
 
             var settingsXDoc = part.GetXDocument();
@@ -110,7 +110,7 @@ namespace Clippit.Word
         private static void RemoveElementsForDocumentComparison(WordprocessingDocument doc)
         {
             OpenXmlPart part = doc.ExtendedFilePropertiesPart;
-            if (part != null)
+            if (part is not null)
             {
                 var appPropsXDoc = part.GetXDocument();
                 appPropsXDoc.Descendants(EP.TotalTime).Remove();
@@ -118,7 +118,7 @@ namespace Clippit.Word
             }
 
             part = doc.CoreFilePropertiesPart;
-            if (part != null)
+            if (part is not null)
             {
                 var corePropsXDoc = part.GetXDocument();
                 corePropsXDoc.Descendants(CP.revision).Remove();
@@ -350,7 +350,7 @@ namespace Clippit.Word
             if (
                 settings.ReplaceTabsWithSpaces
                 && (element.Name == W.tab)
-                && (element.Parent != null && element.Parent.Name == W.r)
+                && (element.Parent is not null && element.Parent.Name == W.r)
             )
                 return new XElement(W.t, new XAttribute(XNamespace.Xml + "space", "preserve"), " ");
 
@@ -402,7 +402,7 @@ namespace Clippit.Word
             var havePsvi = false;
 
             // validate, throw errors, add PSVI information
-            if (schema != null)
+            if (schema is not null)
             {
                 source.Validate(schema, null, true);
                 havePsvi = true;
@@ -448,8 +448,8 @@ namespace Clippit.Word
                     if (havePsvi)
                     {
                         var schemaInfo = a.GetSchemaInfo();
-                        var schemaType = schemaInfo != null ? schemaInfo.SchemaType : null;
-                        var typeCode = schemaType != null ? schemaType.TypeCode : (XmlTypeCode?)null;
+                        var schemaType = schemaInfo is not null ? schemaInfo.SchemaType : null;
+                        var typeCode = schemaType is not null ? schemaType.TypeCode : (XmlTypeCode?)null;
 
                         switch (typeCode)
                         {
@@ -491,8 +491,8 @@ namespace Clippit.Word
             if (havePsvi)
             {
                 var schemaInfo = element.GetSchemaInfo();
-                var schemaType = schemaInfo != null ? schemaInfo.SchemaType : null;
-                var typeCode = schemaType != null ? schemaType.TypeCode : (XmlTypeCode?)null;
+                var schemaType = schemaInfo is not null ? schemaInfo.SchemaType : null;
+                var typeCode = schemaType is not null ? schemaType.TypeCode : (XmlTypeCode?)null;
 
                 switch (typeCode)
                 {
@@ -541,7 +541,7 @@ namespace Clippit.Word
                         .MainDocumentPart.GetXDocument()
                         .Descendants(W.bookmarkStart)
                         .FirstOrDefault(bm => (string)bm.Attribute(W.name) == "_GoBack");
-                    if (goBackBookmark != null)
+                    if (goBackBookmark is not null)
                         parameters.GoBackId = (int)goBackBookmark.Attribute(W.id);
                 }
             }
@@ -607,9 +607,9 @@ namespace Clippit.Word
 
                 var newXDoc = Normalize(new XDocument(newRoot), null);
                 newRoot = newXDoc.Root;
-                if (newRoot != null)
+                if (newRoot is not null)
                     foreach (var nsAttr in nsAttrs)
-                        if (newRoot.Attribute(nsAttr.Name) == null)
+                        if (newRoot.Attribute(nsAttr.Name) is null)
                             newRoot.Add(nsAttr);
 
                 part.PutXDocument(newXDoc);

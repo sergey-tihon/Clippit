@@ -129,7 +129,7 @@ namespace Clippit.Word
             var mainXDoc = doc.MainDocumentPart.GetXDocument(out var namespaceManager);
             namespaceManager.AddNamespace("w", "http://schemas.openxmlformats.org/wordprocessingml/2006/main");
             var addBefore = mainXDoc.XPathSelectElement(xPath, namespaceManager);
-            if (addBefore == null)
+            if (addBefore is null)
                 throw new OpenXmlPowerToolsException("XPath expression did not select an element");
 
             addBefore.AddBeforeSelf(sdt);
@@ -137,7 +137,7 @@ namespace Clippit.Word
 
             var settingsXDoc = doc.MainDocumentPart.DocumentSettingsPart.GetXDocument();
             var updateFields = settingsXDoc.Descendants(W.updateFields).FirstOrDefault();
-            if (updateFields != null)
+            if (updateFields is not null)
                 updateFields.SetAttributeValue(W.val, "true");
             else
             {
@@ -163,7 +163,7 @@ namespace Clippit.Word
             UpdateStylesPartForTof(doc);
             UpdateStylesWithEffectsPartForTof(doc);
 
-            if (rightTabPos == null)
+            if (rightTabPos is null)
                 rightTabPos = 9350;
 
             // {0} rightTabPosition (default = 9350)
@@ -202,7 +202,7 @@ namespace Clippit.Word
             var namespaceManager = new XmlNamespaceManager(nameTable);
             namespaceManager.AddNamespace("w", "http://schemas.openxmlformats.org/wordprocessingml/2006/main");
             var addBefore = mainXDoc.XPathSelectElement(xPath, namespaceManager);
-            if (addBefore == null)
+            if (addBefore is null)
                 throw new OpenXmlPowerToolsException("XPath expression did not select an element");
 
             addBefore.AddBeforeSelf(paragraph);
@@ -210,7 +210,7 @@ namespace Clippit.Word
 
             var settingsXDoc = doc.MainDocumentPart.DocumentSettingsPart.GetXDocument();
             var updateFields = settingsXDoc.Descendants(W.updateFields).FirstOrDefault();
-            if (updateFields != null)
+            if (updateFields is not null)
                 updateFields.Attribute(W.val).Value = "true";
             else
             {
@@ -285,7 +285,7 @@ namespace Clippit.Word
             var namespaceManager = new XmlNamespaceManager(nameTable);
             namespaceManager.AddNamespace("w", "http://schemas.openxmlformats.org/wordprocessingml/2006/main");
             var addBefore = mainXDoc.XPathSelectElement(xPath, namespaceManager);
-            if (addBefore == null)
+            if (addBefore is null)
                 throw new OpenXmlPowerToolsException("XPath expression did not select an element");
 
             addBefore.AddBeforeSelf(paragraph);
@@ -293,7 +293,7 @@ namespace Clippit.Word
 
             var settingsXDoc = doc.MainDocumentPart.DocumentSettingsPart.GetXDocument();
             var updateFields = settingsXDoc.Descendants(W.updateFields).FirstOrDefault();
-            if (updateFields != null)
+            if (updateFields is not null)
                 updateFields.SetAttributeValue(W.val, "true");
             else
             {
@@ -305,7 +305,7 @@ namespace Clippit.Word
 
         private static void AddElementIfMissing(XDocument partXDoc, XElement existing, string newElement)
         {
-            if (existing != null)
+            if (existing is not null)
                 return;
             var newXElement = XElement.Parse(newElement);
             newXElement.Attributes().Where(a => a.IsNamespaceDeclaration).Remove();
@@ -315,7 +315,7 @@ namespace Clippit.Word
         private static void UpdateFontTablePart(WordprocessingDocument doc)
         {
             var fontTablePart = doc.MainDocumentPart.FontTablePart;
-            if (fontTablePart == null)
+            if (fontTablePart is null)
                 throw new OpenXmlPowerToolsException("Font table part is missing and cannot be inserted automatically");
             var fontTableXDoc = fontTablePart.GetXDocument();
 
@@ -510,7 +510,7 @@ namespace Clippit.Word
         private static void UpdateStylesPartForToc(WordprocessingDocument doc)
         {
             StylesPart stylesPart = doc.MainDocumentPart.StyleDefinitionsPart;
-            if (stylesPart == null)
+            if (stylesPart is null)
                 return;
             UpdatePartForToc(stylesPart);
         }
@@ -518,7 +518,7 @@ namespace Clippit.Word
         private static void UpdateStylesWithEffectsPartForToc(WordprocessingDocument doc)
         {
             var stylesWithEffectsPart = doc.MainDocumentPart.StylesWithEffectsPart;
-            if (stylesWithEffectsPart == null)
+            if (stylesWithEffectsPart is null)
                 return;
             UpdatePartForToc(stylesWithEffectsPart);
         }
@@ -568,7 +568,7 @@ namespace Clippit.Word
         private static void UpdateStylesPartForTof(WordprocessingDocument doc)
         {
             StylesPart stylesPart = doc.MainDocumentPart.StyleDefinitionsPart;
-            if (stylesPart == null)
+            if (stylesPart is null)
                 return;
             UpdatePartForTof(stylesPart);
         }
@@ -576,7 +576,7 @@ namespace Clippit.Word
         private static void UpdateStylesWithEffectsPartForTof(WordprocessingDocument doc)
         {
             var stylesWithEffectsPart = doc.MainDocumentPart.StylesWithEffectsPart;
-            if (stylesWithEffectsPart == null)
+            if (stylesWithEffectsPart is null)
                 return;
             UpdatePartForTof(stylesWithEffectsPart);
         }
@@ -648,7 +648,7 @@ namespace Clippit.Word
         private static void UpdateStylesPartForToa(WordprocessingDocument doc)
         {
             StylesPart stylesPart = doc.MainDocumentPart.StyleDefinitionsPart;
-            if (stylesPart == null)
+            if (stylesPart is null)
                 return;
             UpdatePartForToa(stylesPart);
         }
@@ -656,7 +656,7 @@ namespace Clippit.Word
         private static void UpdateStylesWithEffectsPartForToa(WordprocessingDocument doc)
         {
             var stylesWithEffectsPart = doc.MainDocumentPart.StylesWithEffectsPart;
-            if (stylesWithEffectsPart == null)
+            if (stylesWithEffectsPart is null)
                 return;
             UpdatePartForToa(stylesWithEffectsPart);
         }
