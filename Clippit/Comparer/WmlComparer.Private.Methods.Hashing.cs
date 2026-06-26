@@ -52,7 +52,7 @@ namespace Clippit
 
                     var sha1Hash = WmlComparerUtil.SHA1HashStringForUTF8String(shaString);
                     var thisUnid = (string)blockLevelContent.Attribute(PtOpenXml.Unid);
-                    if (thisUnid != null)
+                    if (thisUnid is not null)
                     {
                         if (sourceUnidDict.ContainsKey(thisUnid))
                         {
@@ -120,7 +120,7 @@ namespace Clippit
 
                     var groupedRuns = clonedPara
                         .Elements()
-                        .GroupAdjacent(e => e.Name == W.r && e.Elements().Count() == 1 && e.Element(W.t) != null);
+                        .GroupAdjacent(e => e.Name == W.r && e.Elements().Count() == 1 && e.Element(W.t) is not null);
 
                     var clonedParaWithGroupedRuns = new XElement(
                         element.Name,
@@ -249,11 +249,11 @@ namespace Clippit
                                     try
                                     {
                                         var oxp = mainDocumentPart.GetPartById(rId);
-                                        if (oxp == null)
+                                        if (oxp is null)
                                             throw new FileFormatException("Invalid WordprocessingML Document");
 
                                         var anno = oxp.Annotation<PartSHA1HashAnnotation>();
-                                        if (anno != null)
+                                        if (anno is not null)
                                             return new XAttribute(a.Name, anno.Hash);
 
                                         if (!oxp.ContentType.EndsWith("xml"))
@@ -275,7 +275,7 @@ namespace Clippit
                                         var hr = mainDocumentPart.HyperlinkRelationships.FirstOrDefault(z =>
                                             z.Id == rId
                                         );
-                                        if (hr != null)
+                                        if (hr is not null)
                                         {
                                             var str = hr.Uri.ToString();
                                             return new XAttribute(a.Name, str);
@@ -285,7 +285,7 @@ namespace Clippit
                                         var er = mainDocumentPart.ExternalRelationships.FirstOrDefault(z =>
                                             z.Id == rId
                                         );
-                                        if (er != null)
+                                        if (er is not null)
                                         {
                                             var str = er.Uri.ToString();
                                             return new XAttribute(a.Name, str);

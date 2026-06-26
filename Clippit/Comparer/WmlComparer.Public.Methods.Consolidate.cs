@@ -52,7 +52,7 @@ namespace Clippit
             var originalWithUnids = PreProcessMarkup(original, settings.StartingIdForFootnotesEndnotes);
             var consolidated = new WmlDocument(originalWithUnids);
 
-            if (SaveIntermediateFilesForDebugging && settings.DebugTempFileDi != null)
+            if (SaveIntermediateFilesForDebugging && settings.DebugTempFileDi is not null)
             {
                 var name1 = "Original-with-Unids.docx";
                 var preProcFi1 = new FileInfo(Path.Combine(settings.DebugTempFileDi.FullName, name1));
@@ -76,7 +76,7 @@ namespace Clippit
 
                 var consolidatedByUnid = consolidatedMainDocPartXDoc
                     .Descendants()
-                    .Where(d => (d.Name == W.p || d.Name == W.tbl) && d.Attribute(PtOpenXml.Unid) != null)
+                    .Where(d => (d.Name == W.p || d.Name == W.tbl) && d.Attribute(PtOpenXml.Unid) is not null)
                     .ToDictionary(d => (string)d.Attribute(PtOpenXml.Unid));
 
                 var deltaNbr = 1;
@@ -90,7 +90,7 @@ namespace Clippit
                         false
                     );
 
-                    if (SaveIntermediateFilesForDebugging && settings.DebugTempFileDi != null)
+                    if (SaveIntermediateFilesForDebugging && settings.DebugTempFileDi is not null)
                     {
                         var name1 = $"Delta-{deltaNbr++}.docx";
                         var deltaFi = new FileInfo(Path.Combine(settings.DebugTempFileDi.FullName, name1));
@@ -126,13 +126,13 @@ namespace Clippit
                         while (true)
                         {
                             var unid = (string)elementLookingAt.Attribute(PtOpenXml.Unid);
-                            if (unid == null)
+                            if (unid is null)
                                 throw new OpenXmlPowerToolsException("Internal error");
 
                             XElement elementToInsertAfter = null;
                             consolidatedByUnid.TryGetValue(unid, out elementToInsertAfter);
 
-                            if (elementToInsertAfter != null)
+                            if (elementToInsertAfter is not null)
                             {
                                 var ci = new ConsolidationInfo();
                                 ci.Revisor = revisedDocumentInfo.Revisor;
@@ -147,7 +147,7 @@ namespace Clippit
                                         var footnote = fnXDoc
                                             .Root.Elements(W.footnote)
                                             .FirstOrDefault(fn => (int)fn.Attribute(W.id) == id);
-                                        if (footnote == null)
+                                        if (footnote is null)
                                             throw new OpenXmlPowerToolsException("Internal Error");
 
                                         return footnote;
@@ -162,7 +162,7 @@ namespace Clippit
                                         var endnote = enXDoc
                                             .Root.Elements(W.endnote)
                                             .FirstOrDefault(en => (int)en.Attribute(W.id) == id);
-                                        if (endnote == null)
+                                        if (endnote is null)
                                             throw new OpenXmlPowerToolsException("Internal Error");
 
                                         return endnote;
@@ -175,8 +175,8 @@ namespace Clippit
                             // find an element to insert after
                             var elementBeforeRevision = elementLookingAt
                                 .SiblingsBeforeSelfReverseDocumentOrder()
-                                .FirstOrDefault(e => e.Attribute(PtOpenXml.Unid) != null);
-                            if (elementBeforeRevision == null)
+                                .FirstOrDefault(e => e.Attribute(PtOpenXml.Unid) is not null);
+                            if (elementBeforeRevision is null)
                             {
                                 var firstElement = consolidatedMainDocPartXDoc
                                     .Root.Element(W.body)
@@ -197,7 +197,7 @@ namespace Clippit
                                         var footnote = fnXDoc
                                             .Root.Elements(W.footnote)
                                             .FirstOrDefault(fn => (int)fn.Attribute(W.id) == id);
-                                        if (footnote == null)
+                                        if (footnote is null)
                                             throw new OpenXmlPowerToolsException("Internal Error");
 
                                         return footnote;
@@ -212,7 +212,7 @@ namespace Clippit
                                         var endnote = enXDoc
                                             .Root.Elements(W.endnote)
                                             .FirstOrDefault(en => (int)en.Attribute(W.id) == id);
-                                        if (endnote == null)
+                                        if (endnote is null)
                                             throw new OpenXmlPowerToolsException("Internal Error");
 
                                         return endnote;
@@ -233,7 +233,7 @@ namespace Clippit
                 // so now the process is to go through and add the annotations to the document
                 var elementsToProcess = consolidatedMainDocPartXDoc
                     .Root.Descendants()
-                    .Where(d => d.Annotation<List<ConsolidationInfo>>() != null)
+                    .Where(d => d.Annotation<List<ConsolidationInfo>>() is not null)
                     .ToList();
 
                 var emptyParagraph = new XElement(
@@ -311,7 +311,9 @@ namespace Clippit
 
                             var dummyElement = new XElement("dummy", lci.First().RevisionElement);
 
-                            foreach (var rev in dummyElement.Descendants().Where(d => d.Attribute(W.author) != null))
+                            foreach (
+                                var rev in dummyElement.Descendants().Where(d => d.Attribute(W.author) is not null)
+                            )
                             {
                                 var aut = rev.Attribute(W.author);
                                 aut.Value = "ITU";
@@ -326,7 +328,7 @@ namespace Clippit
                         // therefore, they would be added to the consolidated document as separate revisions.
 
                         // create a log that shows what is different, in detail.
-                        if (settings.LogCallback != null)
+                        if (settings.LogCallback is not null)
                         {
                             var sb = new StringBuilder();
                             sb.Append(
@@ -415,7 +417,7 @@ namespace Clippit
 
                                 var dummyElement = new XElement("dummy", lci.First().RevisionElement);
 
-                                foreach(var rev in dummyElement.Descendants().Where(d => d.Attribute(W.author) != null))
+                                foreach(var rev in dummyElement.Descendants().Where(d => d.Attribute(W.author) is not null))
                                 {
                                     var aut = rev.Attribute(W.author);
                                     aut.Value = "ITU";
@@ -430,7 +432,7 @@ namespace Clippit
                             // therefore, they would be added to the consolidated document as separate revisions.
 
                             // create a log that shows what is different, in detail.
-                            if (settings.LogCallback != null)
+                            if (settings.LogCallback is not null)
                             {
                                 StringBuilder sb = new StringBuilder();
                                 sb.Append("====================================================================================================" + nl);
@@ -514,7 +516,7 @@ namespace Clippit
                 {
                     var id = (int)footnoteReference.Attribute(W.id);
                     var footnote = ci.Footnotes.FirstOrDefault(fn => (int)fn.Attribute(W.id) == id);
-                    if (footnote != null)
+                    if (footnote is not null)
                     {
                         var newId = ++maxFootnoteId;
                         footnoteReference.SetAttributeValue(W.id, newId);
@@ -535,7 +537,7 @@ namespace Clippit
                 {
                     var id = (int)endnoteReference.Attribute(W.id);
                     var endnote = ci.Endnotes.FirstOrDefault(fn => (int)fn.Attribute(W.id) == id);
-                    if (endnote != null)
+                    if (endnote is not null)
                     {
                         var newId = ++maxEndnoteId;
                         endnoteReference.SetAttributeValue(W.id, newId);
@@ -563,7 +565,7 @@ namespace Clippit
                 var thisId = nextId++;
 
                 var idAtt = item.Attribute("id");
-                if (idAtt != null)
+                if (idAtt is not null)
                     idAtt.Value = thisId.ToString();
             }
 
@@ -663,13 +665,13 @@ namespace Clippit
             var footnotesPart = wDoc.MainDocumentPart.FootnotesPart;
             var endnotesPart = wDoc.MainDocumentPart.EndnotesPart;
 
-            if (footnotesPart != null)
+            if (footnotesPart is not null)
             {
                 var footnotesPartXDoc = footnotesPart.GetXDocument();
                 IgnorePt14Namespace(footnotesPartXDoc.Root);
             }
 
-            if (endnotesPart != null)
+            if (endnotesPart is not null)
             {
                 var endnotesPartXDoc = endnotesPart.GetXDocument();
                 IgnorePt14Namespace(endnotesPartXDoc.Root);
@@ -797,7 +799,7 @@ namespace Clippit
                 var theCell = table.Descendants(W.tc).FirstOrDefault();
                 var lastPara = theCell?.Elements(W.p).LastOrDefault();
 
-                if (lastPara != null)
+                if (lastPara is not null)
                 {
                     var isDeleted = lastPara.Elements(W.pPr).Elements(W.rPr).Elements(W.del).Any();
 
@@ -835,7 +837,7 @@ namespace Clippit
                 });
 
                 var dummyElement = new XElement("dummy", content.SelectMany(m => m));
-                foreach (var rev in dummyElement.Descendants().Where(d => d.Attribute(W.author) != null))
+                foreach (var rev in dummyElement.Descendants().Where(d => d.Attribute(W.author) is not null))
                 {
                     rev.SetAttributeValue(W.author, revisor);
                 }
@@ -857,7 +859,7 @@ namespace Clippit
                 {
                     var id = (int)footnoteReference.Attribute(W.id);
                     var footnote = ci.Footnotes.FirstOrDefault(fn => (int)fn.Attribute(W.id) == id);
-                    if (footnote != null)
+                    if (footnote is not null)
                     {
                         var newId = ++maxFootnoteId;
                         footnoteReference.SetAttributeValue(W.id, newId);
@@ -885,7 +887,7 @@ namespace Clippit
                 {
                     var id = (int)endnoteReference.Attribute(W.id);
                     var endnote = ci.Endnotes.FirstOrDefault(fn => (int)fn.Attribute(W.id) == id);
-                    if (endnote != null)
+                    if (endnote is not null)
                     {
                         var newId = ++maxEndnoteId;
                         endnoteReference.SetAttributeValue(W.id, newId);
@@ -933,7 +935,7 @@ namespace Clippit
             consolidationInfo.RevisionHash = sha1Hash;
 
             var annotationList = elementToInsertAfter.Annotation<List<ConsolidationInfo>>();
-            if (annotationList == null)
+            if (annotationList is null)
             {
                 annotationList = new List<ConsolidationInfo>();
                 elementToInsertAfter.AddAnnotation(annotationList);
@@ -949,7 +951,7 @@ namespace Clippit
                 .Root?.Elements(W.style)
                 .FirstOrDefault(s => (string)s.Attribute(W.styleId) == "TableGridForRevisions");
 
-            if (tableGridStyle == null)
+            if (tableGridStyle is null)
             {
                 var tableGridForRevisionsStyleMarkup =
                     @"<w:style w:type=""table""
@@ -1002,7 +1004,7 @@ namespace Clippit
             var tableNormalStyle = sXDoc
                 .Root.Elements(W.style)
                 .FirstOrDefault(s => (string)s.Attribute(W.styleId) == "TableNormal");
-            if (tableNormalStyle == null)
+            if (tableNormalStyle is null)
             {
                 var tableNormalStyleMarkup =
                     @"<w:style w:type=""table""
