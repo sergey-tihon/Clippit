@@ -571,7 +571,7 @@ namespace Clippit
                 if (leftTables == 1 && leftLength == 1 && rightTables == 1 && rightLength == 1)
                 {
                     var result = DoLcsAlgorithmForTable(unknown);
-                    if (result != null)
+                    if (result is not null)
                         return result;
                 }
 
@@ -633,7 +633,7 @@ namespace Clippit
                                 rightContent,
                                 (l, r) =>
                                 {
-                                    if (l != null && r != null)
+                                    if (l is not null && r is not null)
                                     {
                                         var unknownCorrelatedSequence = new CorrelatedSequence
                                         {
@@ -644,7 +644,7 @@ namespace Clippit
                                         return new[] { unknownCorrelatedSequence };
                                     }
 
-                                    if (l == null)
+                                    if (l is null)
                                     {
                                         var insertedCorrelatedSequence = new CorrelatedSequence
                                         {
@@ -838,7 +838,7 @@ namespace Clippit
                         .ComparisonUnitArray2.Select(cu => cu.DescendantContentAtoms().Last())
                         .LastOrDefault();
 
-                    if (lastContentAtomLeft != null && lastContentAtomRight != null)
+                    if (lastContentAtomLeft is not null && lastContentAtomRight is not null)
                     {
                         if (
                             lastContentAtomLeft.ContentElement.Name == W.pPr
@@ -937,7 +937,7 @@ namespace Clippit
                         commonSeq.Any(cu =>
                         {
                             var firstComparisonUnitAtom = cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
-                            if (firstComparisonUnitAtom == null)
+                            if (firstComparisonUnitAtom is null)
                                 return false;
 
                             return firstComparisonUnitAtom.ContentElement.Name == W.pPr;
@@ -953,7 +953,7 @@ namespace Clippit
                                     return false;
 
                                 var firstComparisonUnitAtom = cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
-                                if (firstComparisonUnitAtom == null)
+                                if (firstComparisonUnitAtom is null)
                                     return true;
 
                                 return firstComparisonUnitAtom.ContentElement.Name != W.pPr;
@@ -968,7 +968,7 @@ namespace Clippit
                                     return false;
 
                                 var firstComparisonUnitAtom = cu.Contents.OfType<ComparisonUnitAtom>().FirstOrDefault();
-                                if (firstComparisonUnitAtom == null)
+                                if (firstComparisonUnitAtom is null)
                                     return true;
 
                                 return firstComparisonUnitAtom.ContentElement.Name != W.pPr;
@@ -1087,7 +1087,7 @@ namespace Clippit
                 var lastContentAtom = leftCuw.DescendantContentAtoms().LastOrDefault();
 
                 // if the middleEqual did not end with a paragraph mark
-                if (lastContentAtom != null && lastContentAtom.ContentElement.Name != W.pPr)
+                if (lastContentAtom is not null && lastContentAtom.ContentElement.Name != W.pPr)
                 {
                     var idx1 = FindIndexOfNextParaMark(remaining1);
                     var idx2 = FindIndexOfNextParaMark(remaining2);
@@ -1166,7 +1166,7 @@ namespace Clippit
             }
 
             var firstContentAtom1 = tblGroup1.DescendantContentAtoms().FirstOrDefault();
-            if (firstContentAtom1 == null)
+            if (firstContentAtom1 is null)
             {
                 throw new OpenXmlPowerToolsException("Internal error");
             }
@@ -1174,7 +1174,7 @@ namespace Clippit
             var tblElement1 = firstContentAtom1.AncestorElements.Last(a => a.Name == W.tbl);
 
             var firstContentAtom2 = tblGroup2.DescendantContentAtoms().FirstOrDefault();
-            if (firstContentAtom2 == null)
+            if (firstContentAtom2 is null)
             {
                 throw new OpenXmlPowerToolsException("Internal error");
             }
@@ -1190,8 +1190,8 @@ namespace Clippit
                 // If StructureSha1Hash is the same for both tables, then we know that the structure of the tables is
                 // identical, so we can break into correlated sequences for rows.
                 if (
-                    tblGroup1.StructureSHA1Hash != null
-                    && tblGroup2.StructureSHA1Hash != null
+                    tblGroup1.StructureSHA1Hash is not null
+                    && tblGroup2.StructureSHA1Hash is not null
                     && tblGroup1.StructureSHA1Hash == tblGroup2.StructureSHA1Hash
                 )
                 {

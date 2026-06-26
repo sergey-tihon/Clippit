@@ -162,7 +162,7 @@ namespace Clippit
 
         private static void SaveDocumentIfDesired(WmlDocument source, string name, WmlComparerSettings settings)
         {
-            if (SaveIntermediateFilesForDebugging && settings.DebugTempFileDi != null)
+            if (SaveIntermediateFilesForDebugging && settings.DebugTempFileDi is not null)
             {
                 var fileInfo = new FileInfo(Path.Combine(settings.DebugTempFileDi.FullName, name));
                 source.SaveAs(fileInfo.FullName);
@@ -175,7 +175,7 @@ namespace Clippit
             WmlComparerSettings settings
         )
         {
-            if (SaveIntermediateFilesForDebugging && settings.DebugTempFileDi != null)
+            if (SaveIntermediateFilesForDebugging && settings.DebugTempFileDi is not null)
             {
                 SaveDocumentIfDesired(
                     new WmlDocument("after1.docx", ms1),
@@ -196,7 +196,7 @@ namespace Clippit
             WmlComparerSettings settings
         )
         {
-            if (SaveIntermediateFilesForDebugging && settings.DebugTempFileDi != null)
+            if (SaveIntermediateFilesForDebugging && settings.DebugTempFileDi is not null)
             {
                 var cleanedSource = CleanPowerToolsAndRsid(source1);
                 SaveDocumentIfDesired(cleanedSource, "Cleaned-Source.docx", settings);

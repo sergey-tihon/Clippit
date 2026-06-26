@@ -128,7 +128,7 @@ namespace Clippit
             WmlComparerSettings settings
         )
         {
-            if (footnotesEndnotesPart == null)
+            if (footnotesEndnotesPart is null)
             {
                 return Enumerable.Empty<WmlComparerRevision>();
             }

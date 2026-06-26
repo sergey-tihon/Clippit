@@ -55,7 +55,7 @@ public class UnicodeMapper
     /// <returns>The corresponding Unicode value or U+0001.</returns>
     public static string RunToString(XElement element)
     {
-        if (element.Name == W.r && (element.Parent == null || element.Parent.Name != W.del))
+        if (element.Name == W.r && (element.Parent is null || element.Parent.Name != W.del))
             return element.Elements().Select(RunToString).StringConcatenate();
 
         // We need to ignore run properties.

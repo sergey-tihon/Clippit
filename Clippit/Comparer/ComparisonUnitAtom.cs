@@ -21,7 +21,7 @@ namespace Clippit
             Part = part;
             RevTrackElement = GetRevisionTrackingElementFromAncestors(contentElement, AncestorElements);
 
-            if (RevTrackElement == null)
+            if (RevTrackElement is null)
             {
                 CorrelationStatus = CorrelationStatus.Equal;
             }
@@ -38,7 +38,7 @@ namespace Clippit
             }
 
             var sha1Hash = (string)contentElement.Attribute(PtOpenXml.SHA1Hash);
-            if (sha1Hash != null)
+            if (sha1Hash is not null)
             {
                 SHA1Hash = sha1Hash;
             }
@@ -198,7 +198,7 @@ namespace Clippit
         private static string GetUnid(XElement p)
         {
             var unid = (string)p.Attribute(PtOpenXml.Unid);
-            return unid == null ? "" : "[" + unid.Substring(0, 8) + "]";
+            return unid is null ? "" : "[" + unid.Substring(0, 8) + "]";
         }
     }
 }

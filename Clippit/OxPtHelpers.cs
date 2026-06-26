@@ -81,7 +81,7 @@ namespace Clippit
                 {
                     var style = part.Styles.Elements<Style>().FirstOrDefault(s => s.StyleId == styleName);
                     //if the specified style is not present in word document add it
-                    if (style == null)
+                    if (style is null)
                     {
                         using var memoryStream = new MemoryStream();
 
@@ -314,7 +314,7 @@ AAsACwDBAgAAbCwAAAAA";
                             .FirstOrDefault();
 
                         //Check if the style is proper style. Ex, Heading1, Heading2
-                        if (templateStyle == null)
+                        if (templateStyle is null)
                             throw new OpenXmlPowerToolsException(
                                 $"Add-DocxText: The specified style name {styleName} is unsupported, Please specify the valid style. Ex, Heading1, Heading2, Title"
                             );
@@ -328,7 +328,7 @@ AAsACwDBAgAAbCwAAAAA";
                 run.AppendChild(runProperties);
                 run.AppendChild(new Text(strParagraph));
 
-                if (sectionProperties != null)
+                if (sectionProperties is not null)
                     body.InsertBefore(paragraph, sectionProperties);
                 else
                     body.AppendChild(paragraph);
@@ -376,20 +376,20 @@ AAsACwDBAgAAbCwAAAAA";
 
             // If the image format isn't one that we expect, ignore it,
             // and don't return markup for the link.
-            if (imageEncoder == null)
+            if (imageEncoder is null)
                 return null;
 
             var imageFileName = imageDirectoryName + "/image" + imageCounter + "." + extension;
-            if (imageInfo.Image == null)
+            if (imageInfo.Image is null)
                 return null;
             try
             {
                 using var fs = File.Open(imageFileName, FileMode.Create, FileAccess.Write);
                 using var image = SKImage.FromBitmap(imageInfo.Image);
-                if (image == null)
+                if (image is null)
                     return null;
                 using var data = image.Encode(imageEncoder.Value, quality: 80);
-                if (data == null)
+                if (data is null)
                     return null;
                 data.SaveTo(fs);
             }
@@ -401,7 +401,7 @@ AAsACwDBAgAAbCwAAAAA";
                 Xhtml.img,
                 new XAttribute(NoNamespace.src, imageFileName),
                 imageInfo.ImgStyleAttribute,
-                imageInfo.AltText != null ? new XAttribute(NoNamespace.alt, imageInfo.AltText) : null
+                imageInfo.AltText is not null ? new XAttribute(NoNamespace.alt, imageInfo.AltText) : null
             );
             return img;
         }
@@ -622,7 +622,7 @@ AAsACwDBAgAAbCwAAAAA";
         private static string GetStringForMetrics(XElement metricsXml, XName xName)
         {
             var ele = metricsXml.Element(xName);
-            if (ele == null)
+            if (ele is null)
                 return "";
             return (string)ele.Attribute(H.Val);
         }
@@ -630,7 +630,7 @@ AAsACwDBAgAAbCwAAAAA";
         private static bool GetBoolForMetrics(XElement metricsXml, XName xName)
         {
             var ele = metricsXml.Element(xName);
-            if (ele == null)
+            if (ele is null)
                 return false;
             return (bool)ele.Attribute(H.Val);
         }
@@ -638,7 +638,7 @@ AAsACwDBAgAAbCwAAAAA";
         private static int GetIntForMetrics(XElement metricsXml, XName xName)
         {
             var ele = metricsXml.Element(xName);
-            if (ele == null)
+            if (ele is null)
                 return 0;
             return (int)ele.Attribute(H.Val);
         }
@@ -646,7 +646,7 @@ AAsACwDBAgAAbCwAAAAA";
         private static XmlDocument GetXmlDocumentForMetrics(XElement metricsXml, XName xName)
         {
             var ele = metricsXml.Element(xName);
-            if (ele == null)
+            if (ele is null)
                 return null;
             return (new XDocument(metricsXml.Element(xName))).GetXmlDocument();
         }
