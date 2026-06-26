@@ -88,7 +88,7 @@ public partial class WmlDocument : OpenXmlPowerToolsDocument
             foreach (var replacementPart in replacementParts)
             {
                 var uriAttribute = replacementPart.Attribute(PtOpenXml.Uri);
-                if (uriAttribute == null)
+                if (uriAttribute is null)
                     throw new OpenXmlPowerToolsException("Replacement part does not contain a Uri as an attribute");
                 var uri = uriAttribute.Value;
                 var part = package.GetParts().FirstOrDefault(p => p.Uri.ToString() == uri);
@@ -117,7 +117,7 @@ public class PtMainDocumentPart : XElement
             using var ms = new MemoryStream(ParentWmlDocument.DocumentByteArray);
             using var wDoc = WordprocessingDocument.Open(ms, false);
             var commentsPart = wDoc.MainDocumentPart.WordprocessingCommentsPart;
-            if (commentsPart == null)
+            if (commentsPart is null)
                 return null;
             var partElement = commentsPart.GetXDocument().Root;
             var childNodes = partElement.Nodes().ToList();
