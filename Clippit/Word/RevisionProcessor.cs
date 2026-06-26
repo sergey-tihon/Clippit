@@ -30,11 +30,11 @@ namespace Clippit.Word
                 RejectRevisionsForPart(part);
             foreach (var part in doc.MainDocumentPart.FooterParts)
                 RejectRevisionsForPart(part);
-            if (doc.MainDocumentPart.EndnotesPart != null)
+            if (doc.MainDocumentPart.EndnotesPart is not null)
                 RejectRevisionsForPart(doc.MainDocumentPart.EndnotesPart);
-            if (doc.MainDocumentPart.FootnotesPart != null)
+            if (doc.MainDocumentPart.FootnotesPart is not null)
                 RejectRevisionsForPart(doc.MainDocumentPart.FootnotesPart);
-            if (doc.MainDocumentPart.StyleDefinitionsPart != null)
+            if (doc.MainDocumentPart.StyleDefinitionsPart is not null)
                 RejectRevisionsForStylesDefinitionPart(doc.MainDocumentPart.StyleDefinitionsPart);
 
             ReverseRevisions(doc);
@@ -43,11 +43,11 @@ namespace Clippit.Word
                 AcceptRevisionsForPart(part);
             foreach (var part in doc.MainDocumentPart.FooterParts)
                 AcceptRevisionsForPart(part);
-            if (doc.MainDocumentPart.EndnotesPart != null)
+            if (doc.MainDocumentPart.EndnotesPart is not null)
                 AcceptRevisionsForPart(doc.MainDocumentPart.EndnotesPart);
-            if (doc.MainDocumentPart.FootnotesPart != null)
+            if (doc.MainDocumentPart.FootnotesPart is not null)
                 AcceptRevisionsForPart(doc.MainDocumentPart.FootnotesPart);
-            if (doc.MainDocumentPart.StyleDefinitionsPart != null)
+            if (doc.MainDocumentPart.StyleDefinitionsPart is not null)
                 AcceptRevisionsForStylesDefinitionPart(doc.MainDocumentPart.StyleDefinitionsPart);
         }
 
@@ -87,7 +87,7 @@ namespace Clippit.Word
       </w:r>
     </w:p>
 #endif
-                if (element.Name == W.numPr && element.Element(W.ins) != null)
+                if (element.Name == W.numPr && element.Element(W.ins) is not null)
                     return null;
 
                 ////////////////////////////////////////////////////////////////////////////////////////
@@ -119,7 +119,7 @@ namespace Clippit.Word
       </w:r>
     </w:p>
 #endif
-                if (element.Name == W.pPr && element.Element(W.pPrChange) != null)
+                if (element.Name == W.pPr && element.Element(W.pPrChange) is not null)
                 {
                     var pPr = element.Element(W.pPrChange).Element(W.pPr) ?? new XElement(W.pPr);
                     var new_pPr = new XElement(pPr); // clone it
@@ -151,7 +151,7 @@ namespace Clippit.Word
           <w:bookmarkStart w:id="1" w:name="_GoBack"/>
         </w:p>
 #endif
-                if (element.Name == W.rPr && element.Element(W.rPrChange) != null)
+                if (element.Name == W.rPr && element.Element(W.rPrChange) is not null)
                 {
                     var new_rPr = element.Element(W.rPrChange).Element(W.rPr);
                     return RejectRevisionsForPartTransform(new_rPr);
@@ -202,7 +202,7 @@ namespace Clippit.Word
       </w:pPr>
     </w:p>
 #endif
-                if (element.Name == W.sectPr && element.Element(W.sectPrChange) != null)
+                if (element.Name == W.sectPr && element.Element(W.sectPrChange) is not null)
                 {
                     var newSectPr = element.Element(W.sectPrChange).Element(W.sectPr);
                     return RejectRevisionsForPartTransform(newSectPr);
@@ -224,7 +224,7 @@ namespace Clippit.Word
         </w:tblGridChange>
       </w:tblGrid>
 #endif
-                if (element.Name == W.tblGrid && element.Element(W.tblGridChange) != null)
+                if (element.Name == W.tblGrid && element.Element(W.tblGridChange) is not null)
                 {
                     var newTblGrid = element.Element(W.tblGridChange).Element(W.tblGrid);
                     return RejectRevisionsForPartTransform(newTblGrid);
@@ -249,7 +249,7 @@ namespace Clippit.Word
           </w:p>
         </w:tc>
 #endif
-                if (element.Name == W.tcPr && element.Element(W.tcPrChange) != null)
+                if (element.Name == W.tcPr && element.Element(W.tcPrChange) is not null)
                 {
                     var newTcPr = element.Element(W.tcPrChange).Element(W.tcPr);
                     return RejectRevisionsForPartTransform(newTcPr);
@@ -257,7 +257,7 @@ namespace Clippit.Word
 
                 ////////////////////////////////////////////////////////////////////////////////////
                 // trPrChange
-                if (element.Name == W.trPr && element.Element(W.trPrChange) != null)
+                if (element.Name == W.trPr && element.Element(W.trPrChange) is not null)
                 {
                     var newTrPr = element.Element(W.trPrChange).Element(W.trPr);
                     return RejectRevisionsForPartTransform(newTrPr);
@@ -303,7 +303,7 @@ namespace Clippit.Word
           </w:tblPrExChange>
         </w:tblPrEx>
 #endif
-                if (element.Name == W.tblPrEx && element.Element(W.tblPrExChange) != null)
+                if (element.Name == W.tblPrEx && element.Element(W.tblPrExChange) is not null)
                 {
                     var newTblPrEx = element.Element(W.tblPrExChange).Element(W.tblPrEx);
                     return RejectRevisionsForPartTransform(newTblPrEx);
@@ -326,7 +326,7 @@ namespace Clippit.Word
         </w:tblPrChange>
       </w:tblPr>
 #endif
-                if (element.Name == W.tblPr && element.Element(W.tblPrChange) != null)
+                if (element.Name == W.tblPr && element.Element(W.tblPrChange) is not null)
                 {
                     var newTrPr = element.Element(W.tblPrChange).Element(W.tblPr);
                     return RejectRevisionsForPartTransform(newTrPr);
@@ -376,13 +376,13 @@ namespace Clippit.Word
         {
             if (node is not XElement element)
                 return node;
-            if (element.Name == W.pPr && element.Element(W.pPrChange) != null)
+            if (element.Name == W.pPr && element.Element(W.pPrChange) is not null)
             {
                 var new_pPr = element.Element(W.pPrChange).Element(W.pPr);
                 return RejectRevisionsForStylesTransform(new_pPr);
             }
 
-            if (element.Name == W.rPr && element.Element(W.rPrChange) != null)
+            if (element.Name == W.rPr && element.Element(W.rPrChange) is not null)
             {
                 var new_rPr = element.Element(W.rPrChange).Element(W.rPr);
                 return RejectRevisionsForStylesTransform(new_rPr);
@@ -402,9 +402,9 @@ namespace Clippit.Word
                 ReverseRevisionsForPart(part);
             foreach (var part in doc.MainDocumentPart.FooterParts)
                 ReverseRevisionsForPart(part);
-            if (doc.MainDocumentPart.EndnotesPart != null)
+            if (doc.MainDocumentPart.EndnotesPart is not null)
                 ReverseRevisionsForPart(doc.MainDocumentPart.EndnotesPart);
-            if (doc.MainDocumentPart.FootnotesPart != null)
+            if (doc.MainDocumentPart.FootnotesPart is not null)
                 ReverseRevisionsForPart(doc.MainDocumentPart.FootnotesPart);
         }
 
@@ -447,7 +447,7 @@ namespace Clippit.Word
         {
             if (node is not XElement element)
                 return node;
-            if (element.Element(W.tbl) != null)
+            if (element.Element(W.tbl) is not null)
             {
                 var grouped = element
                     .Elements()
@@ -456,7 +456,7 @@ namespace Clippit.Word
                         if (e.Name != W.tbl)
                             return "";
                         var bidiVisual = e.Elements(W.tblPr).Elements(W.bidiVisual).FirstOrDefault();
-                        var bidiVisString = bidiVisual == null ? "" : "|bidiVisual";
+                        var bidiVisString = bidiVisual is null ? "" : "|bidiVisual";
                         var key = "tbl" + bidiVisString;
                         return key;
                     });
@@ -514,7 +514,7 @@ namespace Clippit.Word
                                                         .Elements(W.tcW)
                                                         .Attributes(W._w)
                                                         .FirstOrDefault();
-                                                if (w == null)
+                                                if (w is null)
                                                     return tc;
                                                 var cellsToLeft = tc.Parent.Elements(W.tc).TakeWhile(btc => btc != tc);
                                                 var widthToLeft = 0;
@@ -529,7 +529,7 @@ namespace Clippit.Word
                                                     rolled.Select((r, i) => new { GridValue = r, Index = i + 1 })
                                                 );
                                                 var start = rolledPairs.FirstOrDefault(t => t.GridValue >= widthToLeft);
-                                                if (start != null)
+                                                if (start is not null)
                                                 {
                                                     var gridsRequired = rolledPairs
                                                         .Skip(start.Index)
@@ -1272,11 +1272,11 @@ namespace Clippit.Word
                 AcceptRevisionsForPart(part);
             foreach (var part in doc.MainDocumentPart.FooterParts)
                 AcceptRevisionsForPart(part);
-            if (doc.MainDocumentPart.EndnotesPart != null)
+            if (doc.MainDocumentPart.EndnotesPart is not null)
                 AcceptRevisionsForPart(doc.MainDocumentPart.EndnotesPart);
-            if (doc.MainDocumentPart.FootnotesPart != null)
+            if (doc.MainDocumentPart.FootnotesPart is not null)
                 AcceptRevisionsForPart(doc.MainDocumentPart.FootnotesPart);
-            if (doc.MainDocumentPart.StyleDefinitionsPart != null)
+            if (doc.MainDocumentPart.StyleDefinitionsPart is not null)
                 AcceptRevisionsForStylesDefinitionPart(doc.MainDocumentPart.StyleDefinitionsPart);
         }
 
@@ -1367,7 +1367,7 @@ namespace Clippit.Word
                             return 2;
                         if (e.Name == W.ins && e.Elements(W.r).Elements(W.fldChar).Any())
                             return 3;
-                        if (e.Name == W.r && e.Element(W.instrText) != null)
+                        if (e.Name == W.r && e.Element(W.instrText) is not null)
                             return 4;
                         return 1;
                     });
@@ -1472,12 +1472,12 @@ namespace Clippit.Word
                 foreach (var tc in tr.Elements(W.tc))
                 {
                     var tcW = tc.Elements(W.tcPr).Elements(W.tcW).Attributes(W._w).FirstOrDefault();
-                    if (tcW != null)
+                    if (tcW is not null)
                     {
                         var gridSpan = (int?)
                             tc.Elements(W.tcPr).Elements(W.gridSpan).Attributes(W.val).FirstOrDefault();
 
-                        if (gridSpan == null)
+                        if (gridSpan is null)
                             gridSpan = 1;
 
                         var z = Math.Min(gridLines.Length - 1, lastUsed + (int)gridSpan);
@@ -1600,7 +1600,7 @@ namespace Clippit.Word
                     .GroupAdjacent(c =>
                     {
                         BlockContentInfo pi = c.GetParagraphInfo();
-                        if (pi.ThisBlockContentElement != null)
+                        if (pi.ThisBlockContentElement is not null)
                         {
                             var paragraphMarkIsInMoveFromRange =
                                 pi.ThisBlockContentElement.Elements(W.moveFromRangeStart).Any()
@@ -1609,9 +1609,9 @@ namespace Clippit.Word
                                 return MoveFromCollectionType.ParagraphEndTagInMoveFromRange;
                         }
                         XElement previousContentElement = c.ContentElementsBeforeSelf()
-                            .Where(e => e.GetParagraphInfo().ThisBlockContentElement != null)
+                            .Where(e => e.GetParagraphInfo().ThisBlockContentElement is not null)
                             .FirstOrDefault();
-                        if (previousContentElement != null)
+                        if (previousContentElement is not null)
                         {
                             BlockContentInfo pi2 = previousContentElement.GetParagraphInfo();
                             if (
@@ -1789,13 +1789,13 @@ namespace Clippit.Word
             // For convenience, there is a ParagraphInfo annotation on the contentContainer.
             // It contains the same information as the ParagraphInfo annotation on the first
             //   paragraph.
-            if (contentContainer.Annotation<BlockContentInfo>() != null)
+            if (contentContainer.Annotation<BlockContentInfo>() is not null)
                 return;
             var firstContentElement = contentContainer
                 .Elements()
                 .DescendantsAndSelf()
                 .FirstOrDefault(e => e.Name == W.p || e.Name == W.tbl);
-            if (firstContentElement == null)
+            if (firstContentElement is null)
                 return;
 
             // Add the annotation on the contentContainer.
@@ -1819,7 +1819,7 @@ namespace Clippit.Word
                         .ElementsAfterSelf()
                         .DescendantsAndSelf()
                         .FirstOrDefault(e => e.Name == W.p || e.Name == W.tbl);
-                    if (nextContentElement != null)
+                    if (nextContentElement is not null)
                     {
                         currentContentInfo.NextBlockContentElement = nextContentElement;
                         break;
@@ -1841,16 +1841,16 @@ namespace Clippit.Word
         private static IEnumerable<BlockContentInfo> IterateBlockContentElements(XElement element)
         {
             var current = element.Elements().FirstOrDefault();
-            if (current == null)
+            if (current is null)
                 yield break;
             AnnotateBlockContentElements(element);
             var currentBlockContentInfo = element.Annotation<BlockContentInfo>();
-            if (currentBlockContentInfo != null)
+            if (currentBlockContentInfo is not null)
             {
                 while (true)
                 {
                     yield return currentBlockContentInfo;
-                    if (currentBlockContentInfo.NextBlockContentElement == null)
+                    if (currentBlockContentInfo.NextBlockContentElement is null)
                         yield break;
                     currentBlockContentInfo =
                         currentBlockContentInfo.NextBlockContentElement.Annotation<BlockContentInfo>();
@@ -1932,12 +1932,12 @@ namespace Clippit.Word
                 List<XElement> runAncestorIntersection = null;
                 foreach (var run in runsInNewDocument)
                 {
-                    if (runAncestorIntersection == null)
+                    if (runAncestorIntersection is null)
                         runAncestorIntersection = run.Ancestors().ToList();
                     else
                         runAncestorIntersection = run.Ancestors().Intersect(runAncestorIntersection).ToList();
                 }
-                if (runAncestorIntersection == null)
+                if (runAncestorIntersection is null)
                     continue;
                 var commonAncestor = runAncestorIntersection.InDocumentOrder().Last();
                 // find child of common ancestor that contains first run
@@ -2229,7 +2229,7 @@ namespace Clippit.Word
                                         .Elements(W.del)
                                         .Any()
                                     && (
-                                        g.Last().BlockLevelContent.NextBlockContentElement == null
+                                        g.Last().BlockLevelContent.NextBlockContentElement is null
                                         || g.Last().BlockLevelContent.NextBlockContentElement.Name == W.tbl
                                     )
                                 )
@@ -2277,7 +2277,7 @@ namespace Clippit.Word
             var contentElements = childElements.Where(ce =>
             {
                 var b = IsRunContent(ce.Name);
-                if (b != null)
+                if (b is not null)
                     return (bool)b;
                 throw new OpenXmlPowerToolsException($"Internal error 20, found unexpected element {ce.Name}");
             });
@@ -2633,7 +2633,7 @@ namespace Clippit.Word
                     .GroupAdjacent(e =>
                     {
                         var cellAfter = e.ElementsAfterSelf(W.tc).FirstOrDefault();
-                        var cellAfterIsDeleted = cellAfter != null && cellAfter.Descendants(W.cellDel).Any();
+                        var cellAfterIsDeleted = cellAfter is not null && cellAfter.Descendants(W.cellDel).Any();
                         if (e.Name == W.tc && (cellAfterIsDeleted || e.Descendants(W.cellDel).Any()))
                         {
                             var a = new
@@ -2662,12 +2662,12 @@ namespace Clippit.Word
                         if (g.Key.CollectionType == DeletedCellCollectionType.Other)
                             return g;
                         var gridSpanElement = g.First().Elements(W.tcPr).Elements(W.gridSpan).FirstOrDefault();
-                        var gridSpan = gridSpanElement != null ? (int)gridSpanElement.Attribute(W.val) : 1;
+                        var gridSpan = gridSpanElement is not null ? (int)gridSpanElement.Attribute(W.val) : 1;
                         var newGridSpan = gridSpan + g.Count() - 1;
                         var currentTcPr = g.First().Elements(W.tcPr).FirstOrDefault();
                         var newTcPr = new XElement(
                             W.tcPr,
-                            currentTcPr != null ? currentTcPr.Attributes() : null,
+                            currentTcPr is not null ? currentTcPr.Attributes() : null,
                             new XElement(W.gridSpan, new XAttribute(W.val, newGridSpan)),
                             currentTcPr.Elements().Where(e => e.Name != W.gridSpan)
                         );
@@ -2798,10 +2798,10 @@ namespace Clippit.Word
             foreach (var part in doc.MainDocumentPart.FooterParts)
                 if (PartHasTrackedRevisions(part))
                     return true;
-            if (doc.MainDocumentPart.EndnotesPart != null)
+            if (doc.MainDocumentPart.EndnotesPart is not null)
                 if (PartHasTrackedRevisions(doc.MainDocumentPart.EndnotesPart))
                     return true;
-            if (doc.MainDocumentPart.FootnotesPart != null)
+            if (doc.MainDocumentPart.FootnotesPart is not null)
                 if (PartHasTrackedRevisions(doc.MainDocumentPart.FootnotesPart))
                     return true;
             return false;
@@ -2845,7 +2845,7 @@ namespace Clippit.Word
                     .DescendantsAndSelf()
                     .Where(e => e.Name == W.p || e.Name == W.tc || e.Name == W.txbxContent)
                     .FirstOrDefault();
-                if (paragraph != null && (paragraph.Name == W.tc || paragraph.Name == W.txbxContent))
+                if (paragraph is not null && (paragraph.Name == W.tc || paragraph.Name == W.txbxContent))
                     paragraph = null;
                 var pi = new BlockContentInfo()
                 {
@@ -2860,7 +2860,7 @@ namespace Clippit.Word
         public static BlockContentInfo GetParagraphInfo(this XElement contentElement)
         {
             var paragraphInfo = contentElement.Annotation<BlockContentInfo>();
-            if (paragraphInfo != null)
+            if (paragraphInfo is not null)
                 return paragraphInfo;
             InitializeParagraphInfo(contentElement.Parent);
             return contentElement.Annotation<BlockContentInfo>();
@@ -2872,7 +2872,7 @@ namespace Clippit.Word
             while (true)
             {
                 BlockContentInfo pi = current.GetParagraphInfo();
-                if (pi.PreviousBlockContentElement == null)
+                if (pi.PreviousBlockContentElement is null)
                     yield break;
                 yield return pi.PreviousBlockContentElement;
                 current = pi.PreviousBlockContentElement;

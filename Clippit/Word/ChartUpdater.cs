@@ -66,10 +66,10 @@ namespace Clippit.Word
                     (string)sdt.Elements(W.sdtPr).Elements(W.tag).Attributes(W.val).FirstOrDefault()
                     == contentControlTag
                 );
-            if (cc != null)
+            if (cc is not null)
             {
                 var chartRid = (string)cc.Descendants(C.chart).Attributes(R.id).FirstOrDefault();
-                if (chartRid != null)
+                if (chartRid is not null)
                 {
                     var chartPart = (ChartPart)mainDocumentPart.GetPartById(chartRid);
                     UpdateChart(chartPart, chartData);
@@ -137,7 +137,7 @@ namespace Clippit.Word
             var numRef = firstSeries.Elements(C.val).Elements(C.numRef).FirstOrDefault();
             string sheetName = null;
             var f = (string)firstSeries.Descendants(C.f).FirstOrDefault();
-            if (f != null)
+            if (f is not null)
                 sheetName = f.Split('!')[0];
 
             // remove all but first series
@@ -150,14 +150,14 @@ namespace Clippit.Word
                     XElement cat = null;
 
                     var oldCat = firstSeries.Elements(C.cat).FirstOrDefault();
-                    if (oldCat == null)
+                    if (oldCat is null)
                         throw new OpenXmlPowerToolsException("Invalid chart markup");
 
                     var catHasFormula = oldCat.Descendants(C.f).Any();
                     if (catHasFormula)
                     {
                         XElement newFormula = null;
-                        if (sheetName != null)
+                        if (sheetName is not null)
                             newFormula = new XElement(C.f, $"{sheetName}!$A$2:$A${chartData.CategoryNames.Length + 1}");
                         if (chartData.CategoryDataType == ChartDataType.String)
                         {
@@ -259,7 +259,7 @@ namespace Clippit.Word
 
                     XElement newCval = null;
 
-                    if (sheetName == null)
+                    if (sheetName is null)
                     {
                         newCval = new XElement(
                             C.val,
@@ -286,7 +286,7 @@ namespace Clippit.Word
                             C.val,
                             new XElement(
                                 C.numRef,
-                                sheetName != null
+                                sheetName is not null
                                     ? new XElement(
                                         C.f,
                                         string.Format(
@@ -299,7 +299,7 @@ namespace Clippit.Word
                                     : null,
                                 new XElement(
                                     C.numCache,
-                                    sheetName != null ? numRef.Descendants(C.formatCode) : null,
+                                    sheetName is not null ? numRef.Descendants(C.formatCode) : null,
                                     new XElement(C.ptCount, new XAttribute("val", chartData.CategoryNames.Length)),
                                     chartData.CategoryNames.Select(
                                         (string cn, int ci) =>
@@ -322,7 +322,7 @@ namespace Clippit.Word
                     if (serHasFormula)
                     {
                         XElement newFormula = null;
-                        if (sheetName != null)
+                        if (sheetName is not null)
                             newFormula = new XElement(C.f, $"{sheetName}!${SpreadsheetMLUtil.IntToColumnId(si + 1)}$1");
                         tx = new XElement(
                             C.tx,
@@ -450,7 +450,7 @@ namespace Clippit.Word
                         );
                     }
 
-                    if (newSer == null)
+                    if (newSer is null)
                         throw new OpenXmlPowerToolsException("Unsupported chart type");
 
                     var accentNumber = (si % 6) + 1;
@@ -467,17 +467,17 @@ namespace Clippit.Word
             var cpXDoc = chartPart.GetXDocument();
             var root = cpXDoc.Root;
             var firstSeries = root.Descendants(C.ser).FirstOrDefault();
-            if (firstSeries == null)
+            if (firstSeries is null)
                 return;
             var firstFormula = (string)firstSeries.Descendants(C.f).FirstOrDefault();
-            if (firstFormula == null)
+            if (firstFormula is null)
                 return;
             var sheet = firstFormula.Split('!')[0];
             var embeddedSpreadsheetRid = (string)root.Descendants(C.externalData).Attributes(R.id).FirstOrDefault();
-            if (embeddedSpreadsheetRid == null)
+            if (embeddedSpreadsheetRid is null)
                 return;
             var embeddedSpreadsheet = chartPart.GetPartById(embeddedSpreadsheetRid);
-            if (embeddedSpreadsheet != null)
+            if (embeddedSpreadsheet is not null)
             {
                 using var stream = embeddedSpreadsheet.GetStream();
                 using var sDoc = SpreadsheetDocument.Open(stream, true);
@@ -490,7 +490,7 @@ namespace Clippit.Word
                         .Where(s => (string)s.Attribute("name") == sheet)
                         .Attributes(R.id)
                         .FirstOrDefault();
-                if (sheetRid != null)
+                if (sheetRid is not null)
                 {
                     var sheetPart = workbookPart.GetPartById(sheetRid);
                     var xdSheet = sheetPart.GetXDocument();
@@ -572,7 +572,7 @@ namespace Clippit.Word
 
                     var tablePartRid = (string)
                         xdSheet.Root.Elements(S.tableParts).Elements(S.tablePart).Attributes(R.id).FirstOrDefault();
-                    if (tablePartRid != null)
+                    if (tablePartRid is not null)
                     {
                         var partTable = sheetPart.GetPartById(tablePartRid);
                         var xdTablePart = partTable.GetXDocument();
@@ -597,7 +597,7 @@ namespace Clippit.Word
                             )
                         );
                         var xeExistingTableColumns = xdTablePart.Root.Element(S.tableColumns);
-                        if (xeExistingTableColumns != null)
+                        if (xeExistingTableColumns is not null)
                             xeExistingTableColumns.ReplaceWith(xeNewTableColumns);
                         partTable.PutXDocument();
                     }
@@ -609,25 +609,25 @@ namespace Clippit.Word
         {
             // add xf to cellXfs
             var cellXfs = xdStyle.Root.Element(S.cellXfs);
-            if (cellXfs == null)
+            if (cellXfs is null)
             {
                 var cellStyleXfs = xdStyle.Root.Element(S.cellStyleXfs);
-                if (cellStyleXfs != null)
+                if (cellStyleXfs is not null)
                 {
                     cellStyleXfs.AddAfterSelf(new XElement(S.cellXfs, new XAttribute("count", 0)));
                     cellXfs = xdSheet.Root.Element(S.cellXfs);
                 }
             }
-            if (cellXfs == null)
+            if (cellXfs is null)
             {
                 var borders = xdStyle.Root.Element(S.borders);
-                if (borders != null)
+                if (borders is not null)
                 {
                     borders.AddAfterSelf(new XElement(S.cellXfs, new XAttribute("count", 0)));
                     cellXfs = xdSheet.Root.Element(S.cellXfs);
                 }
             }
-            if (cellXfs == null)
+            if (cellXfs is null)
                 throw new OpenXmlPowerToolsException("Internal error");
 
             var cnt = (int)cellXfs.Attribute("count");
@@ -655,7 +655,7 @@ namespace Clippit.Word
         private static object UpdateAccentTransform(XNode node, int accentNumber)
         {
             var element = node as XElement;
-            if (element != null)
+            if (element is not null)
             {
                 if (element.Name == A.schemeClr && (string)element.Attribute("val") == "accent1")
                     return new XElement(A.schemeClr, new XAttribute("val", "accent" + accentNumber));
@@ -674,13 +674,13 @@ namespace Clippit.Word
             var presentationPart = pDoc.PresentationPart;
             var pXDoc = presentationPart.GetXDocument();
             var sldIdElement = pXDoc.Root.Elements(P.sldIdLst).Elements(P.sldId).Skip(slideNumber - 1).FirstOrDefault();
-            if (sldIdElement != null)
+            if (sldIdElement is not null)
             {
                 var rId = (string)sldIdElement.Attribute(R.id);
                 var slidePart = presentationPart.GetPartById(rId);
                 var sXDoc = slidePart.GetXDocument();
                 var chartRid = (string)sXDoc.Descendants(C.chart).Attributes(R.id).FirstOrDefault();
-                if (chartRid != null)
+                if (chartRid is not null)
                 {
                     var chartPart = (ChartPart)slidePart.GetPartById(chartRid);
                     UpdateChart(chartPart, chartData);
