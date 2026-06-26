@@ -187,7 +187,7 @@ namespace Clippit.Html
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
-                    if (element.Parent != null)
+                    if (element.Parent is not null)
                         valueForPercentage = GetComputedPropertyValue(null, element, "font-size", settings);
                     return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
                 },
@@ -454,7 +454,7 @@ namespace Clippit.Html
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
-                    if (element.Parent != null)
+                    if (element.Parent is not null)
                         valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
                     return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
                 },
@@ -700,7 +700,7 @@ namespace Clippit.Html
                 },
                 InitialValue = (element, settings) =>
                 {
-                    if (settings.DefaultBlockContentMargin != null)
+                    if (settings.DefaultBlockContentMargin is not null)
                     {
                         if (settings.DefaultBlockContentMargin == "auto")
                             return new CssExpression
@@ -750,7 +750,7 @@ namespace Clippit.Html
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
-                    if (element.Parent != null)
+                    if (element.Parent is not null)
                         valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
                     return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
                 },
@@ -794,7 +794,7 @@ namespace Clippit.Html
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
-                    if (element.Parent != null)
+                    if (element.Parent is not null)
                         valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
                     return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
                 },
@@ -844,7 +844,7 @@ namespace Clippit.Html
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
-                    if (element.Parent != null)
+                    if (element.Parent is not null)
                         valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
                     return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
                 },
@@ -1189,17 +1189,17 @@ namespace Clippit.Html
                 },
                 InitialValue = (element, settings) =>
                 {
-                    if (element.Parent == null)
+                    if (element.Parent is null)
                     {
                         var pageWidth = (double?)settings.SectPr.Elements(W.pgSz).Attributes(W._w).FirstOrDefault();
-                        if (pageWidth == null)
+                        if (pageWidth is null)
                             pageWidth = 12240;
                         var leftMargin = (double?)settings.SectPr.Elements(W.pgMar).Attributes(W.left).FirstOrDefault();
-                        if (leftMargin == null)
+                        if (leftMargin is null)
                             leftMargin = 1440;
                         var rightMargin = (double?)
                             settings.SectPr.Elements(W.pgMar).Attributes(W.left).FirstOrDefault();
-                        if (rightMargin == null)
+                        if (rightMargin is null)
                             rightMargin = 1440;
                         var width = (double)(pageWidth - leftMargin - rightMargin) / 20;
                         return new CssExpression
@@ -1244,7 +1244,7 @@ namespace Clippit.Html
                     }
                     CssExpression valueForPercentage = null;
                     var elementToQuery = element.Parent;
-                    while (elementToQuery != null)
+                    while (elementToQuery is not null)
                     {
                         valueForPercentage = GetComputedPropertyValue(null, elementToQuery, "width", settings);
                         if (valueForPercentage.IsAuto)
@@ -1293,7 +1293,7 @@ namespace Clippit.Html
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
-                    if (element.Parent != null)
+                    if (element.Parent is not null)
                         valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
                     return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
                 },
@@ -1328,7 +1328,7 @@ namespace Clippit.Html
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
-                    if (element.Parent != null)
+                    if (element.Parent is not null)
                         valueForPercentage = GetComputedPropertyValue(null, element.Parent, "width", settings);
                     return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
                 },
@@ -1365,7 +1365,7 @@ namespace Clippit.Html
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
-                    if (element.Parent != null)
+                    if (element.Parent is not null)
                         valueForPercentage = GetComputedPropertyValue(null, element.Parent, "height", settings);
                     return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
                 },
@@ -1405,7 +1405,7 @@ namespace Clippit.Html
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
-                    if (element.Parent != null)
+                    if (element.Parent is not null)
                         valueForPercentage = GetComputedPropertyValue(null, element.Parent, "height", settings);
                     return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
                 },
@@ -1440,7 +1440,7 @@ namespace Clippit.Html
                 ComputedValue = (element, assignedValue, settings) =>
                 {
                     CssExpression valueForPercentage = null;
-                    if (element.Parent != null)
+                    if (element.Parent is not null)
                         valueForPercentage = GetComputedPropertyValue(null, element.Parent, "height", settings);
                     return ComputeAbsoluteLength(element, assignedValue, settings, valueForPercentage);
                 },
@@ -1568,7 +1568,7 @@ namespace Clippit.Html
             );
 
             //// todo dump here, see if margin is set on body.
-            //if (annotatedHtmlDumpFileName != null)
+            //if (annotatedHtmlDumpFileName is not null)
             //{
             //    StringBuilder sb = new StringBuilder();
             //    WriteXHtmlWithAnnotations(newXHtml, sb);
@@ -1614,7 +1614,7 @@ namespace Clippit.Html
 
             SetAllValues(newXHtml, settings);
 
-            if (annotatedHtmlDumpFileName != null)
+            if (annotatedHtmlDumpFileName is not null)
             {
                 var sb = new StringBuilder();
                 WriteXHtmlWithAnnotations(newXHtml, sb);
@@ -1667,7 +1667,7 @@ namespace Clippit.Html
             // if (property is already computed)
             //   return the computed value
             var computedValues = element.Annotation<Dictionary<string, CssExpression>>();
-            if (computedValues == null)
+            if (computedValues is null)
             {
                 computedValues = new Dictionary<string, CssExpression>();
                 element.AddAnnotation(computedValues);
@@ -1680,14 +1680,14 @@ namespace Clippit.Html
 
             // if property is not set or property is set to inherited value, then get inherited or initialized value.
             var pName = propertyName.ToLower();
-            if (propertyInfo == null)
+            if (propertyInfo is null)
             {
                 propertyInfo = PropertyInfoList.FirstOrDefault(pi => pi.Names.Contains(pName));
-                if (propertyInfo == null)
+                if (propertyInfo is null)
                     throw new OpenXmlPowerToolsException("all possible properties should be in the list");
             }
             var propList = element.Annotation<Dictionary<string, Property>>();
-            if (propList == null)
+            if (propList is null)
             {
                 var computedValue = GetInheritedOrInitializedValue(
                     computedValues,
@@ -1727,7 +1727,7 @@ namespace Clippit.Html
             }
             // if property is set, then compute the value, return the computed value
             CssExpression computedValue2;
-            if (propertyInfo.ComputedValue == null)
+            if (propertyInfo.ComputedValue is null)
                 computedValue2 = prop.Expression;
             else
             {
@@ -1757,7 +1757,7 @@ namespace Clippit.Html
         {
             if (
                 (propertyInfo.Inherits || valueIsInherit)
-                && element.Parent != null
+                && element.Parent is not null
                 && propertyInfo.Includes(element.Parent, settings)
             )
             {
@@ -1772,7 +1772,7 @@ namespace Clippit.Html
             }
             var initialPropertyValue = propertyInfo.InitialValue(element, settings);
             CssExpression computedValue;
-            if (propertyInfo.ComputedValue == null)
+            if (propertyInfo.ComputedValue is null)
                 computedValue = initialPropertyValue;
             else
                 computedValue = propertyInfo.ComputedValue(element, initialPropertyValue, settings);
@@ -1872,7 +1872,7 @@ namespace Clippit.Html
             if (unit is CssUnit.PT or null)
                 return assignedValue;
 
-            if (unit == CssUnit.Percent && lengthForPercentage == null)
+            if (unit == CssUnit.Percent && lengthForPercentage is null)
                 return new CssExpression
                 {
                     Terms = new List<CssTerm>
@@ -2139,7 +2139,7 @@ namespace Clippit.Html
                 if (selector.SimpleSelectors[currentSimpleSelector].Combinator == CssCombinator.ChildOf)
                 {
                     currentElement = currentElement.Parent;
-                    if (currentElement == null)
+                    if (currentElement is null)
                         return false;
                     currentSimpleSelector--;
                     continue;
@@ -2147,12 +2147,12 @@ namespace Clippit.Html
                 if (selector.SimpleSelectors[currentSimpleSelector].Combinator == CssCombinator.PrecededImmediatelyBy)
                 {
                     currentElement = currentElement.ElementsBeforeSelf().Reverse().FirstOrDefault();
-                    if (currentElement == null)
+                    if (currentElement is null)
                         return false;
                     currentSimpleSelector--;
                     continue;
                 }
-                if (selector.SimpleSelectors[currentSimpleSelector].Combinator == null)
+                if (selector.SimpleSelectors[currentSimpleSelector].Combinator is null)
                 {
                     var continueOuter = false;
                     foreach (var ancestor in element.Ancestors())
@@ -2180,34 +2180,34 @@ namespace Clippit.Html
             var idMatch = true;
             var attributeMatch = true;
 
-            if (simpleSelector.Pseudo != null)
+            if (simpleSelector.Pseudo is not null)
                 return false;
             if (
-                simpleSelector.ElementName != null
+                simpleSelector.ElementName is not null
                 && simpleSelector.ElementName != ""
                 && simpleSelector.ElementName != "*"
             )
                 elemantNameMatch = element.Name.ToString() == simpleSelector.ElementName;
             if (elemantNameMatch)
             {
-                if (simpleSelector.Class != null && simpleSelector.Class != "")
+                if (simpleSelector.Class is not null && simpleSelector.Class != "")
                     classNameMatch = ClassesOf(element).Contains(simpleSelector.Class);
                 if (classNameMatch)
                 {
-                    if (simpleSelector.Child != null)
+                    if (simpleSelector.Child is not null)
                         childSimpleSelectorMatch = DoesSimpleSelectorMatch(simpleSelector.Child, element);
                     if (childSimpleSelectorMatch)
                     {
-                        if (simpleSelector.ID != null && simpleSelector.ID != "")
+                        if (simpleSelector.ID is not null && simpleSelector.ID != "")
                         {
                             var id = (string)element.Attribute("ID");
-                            if (id == null)
+                            if (id is null)
                                 id = (string)element.Attribute("id");
                             idMatch = simpleSelector.ID == id;
                         }
                         if (idMatch)
                         {
-                            if (simpleSelector.Attribute != null)
+                            if (simpleSelector.Attribute is not null)
                                 attributeMatch = DoesAttributeMatch(simpleSelector.Attribute, element);
                         }
                     }
@@ -2221,9 +2221,9 @@ namespace Clippit.Html
         {
             var attName = attribute.Operand.ToLower();
             var attValue = (string)element.Attribute(attName);
-            if (attValue == null)
+            if (attValue is null)
                 return false;
-            if (attribute.Operator == null)
+            if (attribute.Operator is null)
                 return true;
             var value = attribute.Value;
             return attribute.Operator switch
@@ -2240,10 +2240,9 @@ namespace Clippit.Html
 
         private static int CountIdAttributesInSimpleSelector(CssSimpleSelector simpleSelector)
         {
-            var count =
-                simpleSelector.ID != null
-                    ? 1
-                    : 0 + (simpleSelector.Child != null ? CountIdAttributesInSimpleSelector(simpleSelector.Child) : 0);
+            var count = simpleSelector.ID is not null
+                ? 1
+                : 0 + (simpleSelector.Child is not null ? CountIdAttributesInSimpleSelector(simpleSelector.Child) : 0);
             return count;
         }
 
@@ -2256,9 +2255,9 @@ namespace Clippit.Html
         private static int CountAttributesInSimpleSelector(CssSimpleSelector simpleSelector)
         {
             var count =
-                (simpleSelector.Attribute != null ? 1 : 0)
-                + ((simpleSelector.Class != null && simpleSelector.Class != "") ? 1 : 0)
-                + (simpleSelector.Child != null ? CountAttributesInSimpleSelector(simpleSelector.Child) : 0);
+                (simpleSelector.Attribute is not null ? 1 : 0)
+                + ((simpleSelector.Class is not null && simpleSelector.Class != "") ? 1 : 0)
+                + (simpleSelector.Child is not null ? CountAttributesInSimpleSelector(simpleSelector.Child) : 0);
             return count;
         }
 
@@ -2272,12 +2271,17 @@ namespace Clippit.Html
         {
             var count =
                 (
-                    simpleSelector.ElementName != null
+                    simpleSelector.ElementName is not null
                     && simpleSelector.ElementName != ""
                     && simpleSelector.ElementName != "*"
                 )
                     ? 1
-                    : 0 + (simpleSelector.Child != null ? CountElementNamesInSimpleSelector(simpleSelector.Child) : 0);
+                    : 0
+                        + (
+                            simpleSelector.Child is not null
+                                ? CountElementNamesInSimpleSelector(simpleSelector.Child)
+                                : 0
+                        );
             return count;
         }
 
@@ -2292,7 +2296,7 @@ namespace Clippit.Html
             //if (property.Name == "direction")
             //    Console.WriteLine(1);
             var propList = element.Annotation<Dictionary<string, Property>>();
-            if (propList == null)
+            if (propList is null)
             {
                 propList = new Dictionary<string, Property>();
                 element.AddAnnotation(propList);
@@ -2322,7 +2326,7 @@ namespace Clippit.Html
         private static string[] ClassesOf(XElement element)
         {
             var classesString = (string)element.Attribute("class");
-            if (classesString == null)
+            if (classesString is null)
                 return [];
             return classesString.Split(' ');
         }
@@ -2376,7 +2380,7 @@ namespace Clippit.Html
             foreach (var element in xHtml.DescendantsAndSelf())
             {
                 var styleAtt = element.Attribute(XhtmlNoNamespace.style);
-                if (styleAtt != null)
+                if (styleAtt is not null)
                 {
                     var style = (string)styleAtt;
                     var cssString = element.Name + "{" + style + "}";
@@ -2392,7 +2396,7 @@ namespace Clippit.Html
                     );
                 }
                 var dirAtt = element.Attribute(XhtmlNoNamespace.dir);
-                if (dirAtt != null)
+                if (dirAtt is not null)
                 {
                     var dir = dirAtt.Value.ToLower();
                     var prop = new Property()
@@ -2464,7 +2468,7 @@ namespace Clippit.Html
         private static void ExpandShorthandPropertiesForElement(XElement element, HtmlToWmlConverterSettings settings)
         {
             var propertyList = element.Annotation<Dictionary<string, Property>>();
-            if (propertyList == null)
+            if (propertyList is null)
             {
                 propertyList = new Dictionary<string, Property>();
                 element.AddAnnotation(propertyList);
@@ -2528,7 +2532,7 @@ namespace Clippit.Html
                     }
                     foreach (var side in new[] { "top", "left", "bottom", "right" })
                     {
-                        if (borderWidth != null)
+                        if (borderWidth is not null)
                         {
                             var bwp = new Property
                             {
@@ -2542,7 +2546,7 @@ namespace Clippit.Html
                             };
                             AddPropertyToDictionary(propertyList, bwp);
                         }
-                        if (borderStyle != null)
+                        if (borderStyle is not null)
                         {
                             var bsp = new Property
                             {
@@ -2556,7 +2560,7 @@ namespace Clippit.Html
                             };
                             AddPropertyToDictionary(propertyList, bsp);
                         }
-                        if (borderColor != null)
+                        if (borderColor is not null)
                         {
                             var bc = new Property
                             {
@@ -2627,7 +2631,7 @@ namespace Clippit.Html
                             }
                         }
                     }
-                    if (borderWidth != null)
+                    if (borderWidth is not null)
                     {
                         var bwp = new Property
                         {
@@ -2641,7 +2645,7 @@ namespace Clippit.Html
                         };
                         AddPropertyToDictionary(propertyList, bwp);
                     }
-                    if (borderStyle != null)
+                    if (borderStyle is not null)
                     {
                         var bsp = new Property
                         {
@@ -2655,7 +2659,7 @@ namespace Clippit.Html
                         };
                         AddPropertyToDictionary(propertyList, bsp);
                     }
-                    if (borderColor != null)
+                    if (borderColor is not null)
                     {
                         var bc = new Property
                         {
@@ -3325,7 +3329,7 @@ namespace Clippit.Html
                 return CssDataType.BackgroundRepeat;
             if (BackgroundAttachmentValues.Contains(term.Value.ToLower()))
                 return CssDataType.BackgroundAttachment;
-            if (term.Function != null)
+            if (term.Function is not null)
                 return CssDataType.BackgroundImage;
             if (
                 term.Unit
@@ -3456,7 +3460,7 @@ namespace Clippit.Html
             var dummyElement = new XElement(element.Name, element.Attributes());
             sb.Append($"{"".PadRight(depth)}{dummyElement}" + Environment.NewLine);
             var propList = element.Annotation<Dictionary<string, Property>>();
-            if (propList != null)
+            if (propList is not null)
             {
                 sb.Append("".PadRight(depth + 2) + "Properties from Stylesheets" + Environment.NewLine);
                 sb.Append("".PadRight(depth + 2) + "===========================" + Environment.NewLine);
@@ -3470,7 +3474,7 @@ namespace Clippit.Html
                 sb.Append(Environment.NewLine);
             }
             var computedProperties = element.Annotation<Dictionary<string, CssExpression>>();
-            if (computedProperties != null)
+            if (computedProperties is not null)
             {
                 sb.Append("".PadRight(depth + 2) + "Computed Properties" + Environment.NewLine);
                 sb.Append("".PadRight(depth + 2) + "===================" + Environment.NewLine);
@@ -3505,7 +3509,7 @@ namespace Clippit.Html
         private static void DumpFunction(StringBuilder sb, int indent, CssFunction f)
         {
             Pr(sb, indent, "Function: {0}", f);
-            if (f != null)
+            if (f is not null)
             {
                 indent++;
                 Pr(sb, indent, "Name: {0}", f.Name);
@@ -3517,7 +3521,7 @@ namespace Clippit.Html
         private static void DumpAttribute(StringBuilder sb, int indent, CssAttribute a)
         {
             Pr(sb, indent, "Attribute: {0}", a);
-            if (a != null)
+            if (a is not null)
             {
                 indent++;
                 Pr(sb, indent, "Operand: {0}", a.Operand);
@@ -3532,7 +3536,7 @@ namespace Clippit.Html
         {
             indent++;
             Pr(sb, indent, "SimpleSelector: {0}", s);
-            if (s != null)
+            if (s is not null)
             {
                 indent++;
                 DumpAttribute(sb, indent, s.Attribute);
@@ -3615,7 +3619,7 @@ namespace Clippit.Html
 
         private static void Pr(StringBuilder sb, int indent, string format, object o)
         {
-            if (o == null)
+            if (o is null)
                 return;
             var text = string.Format(format, o);
             var sb2 = new StringBuilder("".PadRight(indent * 2) + text);

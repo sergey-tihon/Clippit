@@ -325,7 +325,7 @@ AAAAAAAAAAAAAAAANi8AAGRvY1Byb3BzL2FwcC54bWxQSwUGAAAAAAwADAAJAwAA3DEAAAAA";
         {
             get
             {
-                if (s_EmptyDocument == null)
+                if (s_EmptyDocument is null)
                 {
                     s_EmptyDocument = new WmlDocument(
                         "EmptyDocument.docx",
@@ -467,14 +467,14 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
             out double defaultFontSize
         )
         {
-            if (wDoc.MainDocumentPart.ThemePart != null)
+            if (wDoc.MainDocumentPart.ThemePart is not null)
             {
                 var fontScheme = wDoc
                     .MainDocumentPart.ThemePart.GetXDocument()
                     .Root.Elements(A.themeElements)
                     .Elements(A.fontScheme)
                     .FirstOrDefault();
-                if (fontScheme != null)
+                if (fontScheme is not null)
                 {
                     majorLatinFont = (string)
                         fontScheme
@@ -497,7 +497,7 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
                             .Elements(W.sz)
                             .Attributes(W.val)
                             .FirstOrDefault();
-                    if (defaultFontSizeString != null)
+                    if (defaultFontSizeString is not null)
                     {
                         if (double.TryParse(defaultFontSizeString, out var dfs))
                         {
@@ -516,7 +516,7 @@ BDO[DIR=""rtl""] { direction: rtl; unicode-bidi: bidi-override }
 
         public static string CleanUpCss(string css)
         {
-            if (css == null)
+            if (css is null)
                 return "";
             css = css.Trim();
             var cleanCss = Regex
