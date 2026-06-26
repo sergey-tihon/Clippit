@@ -171,7 +171,7 @@ namespace Clippit.Html
             var sb = new StringBuilder();
             sb.Append($"{Name} ");
 
-            if (Expression != null)
+            if (Expression is not null)
             {
                 sb.Append($"{Expression} ");
             }
@@ -258,7 +258,7 @@ namespace Clippit.Html
         {
             var sb = new StringBuilder();
             sb.Append("@import ");
-            if (Expression != null)
+            if (Expression is not null)
             {
                 sb.Append($"{Expression} ");
             }
@@ -314,7 +314,7 @@ namespace Clippit.Html
         {
             var sb = new StringBuilder();
             sb.Append("@page ");
-            if (Expression != null)
+            if (Expression is not null)
             {
                 sb.Append($"{Expression} ");
             }
@@ -359,7 +359,7 @@ namespace Clippit.Html
 
         public bool IsNotAuto
         {
-            get { return (this != null && this.ToString() != "auto"); }
+            get { return (this is not null && this.ToString() != "auto"); }
         }
 
         public bool IsAuto
@@ -438,7 +438,7 @@ namespace Clippit.Html
         {
             var sb = new StringBuilder();
             sb.Append($"{Name}(");
-            if (Expression != null)
+            if (Expression is not null)
             {
                 var first = true;
                 foreach (var t in Expression.Terms)
@@ -765,33 +765,33 @@ namespace Clippit.Html
                         break;
                 }
             }
-            if (ElementName != null)
+            if (ElementName is not null)
             {
                 sb.Append(ElementName);
             }
-            if (ID != null)
+            if (ID is not null)
             {
                 sb.Append($"#{ID}");
             }
-            if (Class != null)
+            if (Class is not null)
             {
                 sb.Append($".{Class}");
             }
-            if (Pseudo != null)
+            if (Pseudo is not null)
             {
                 sb.Append($":{Pseudo}");
             }
-            if (Attribute != null)
+            if (Attribute is not null)
             {
                 sb.Append(Attribute);
             }
-            if (Function != null)
+            if (Function is not null)
             {
                 sb.Append(Function);
             }
-            if (Child != null)
+            if (Child is not null)
             {
-                if (Child.ElementName != null)
+                if (Child.ElementName is not null)
                 {
                     sb.Append(" ");
                 }
@@ -805,13 +805,13 @@ namespace Clippit.Html
     {
         public CssTagType TagType { get; set; }
 
-        public bool IsIDSelector => Id != null;
+        public bool IsIDSelector => Id is not null;
 
-        public bool HasName => Name != null;
+        public bool HasName => Name is not null;
 
-        public bool HasClass => Class != null;
+        public bool HasClass => Class is not null;
 
-        public bool HasPseudoClass => Pseudo != null;
+        public bool HasPseudoClass => Pseudo is not null;
 
         public string Name { get; set; }
 
@@ -831,7 +831,7 @@ namespace Clippit.Html
         {
             var sb = new StringBuilder(ToShortString());
 
-            if (SubTag != null)
+            if (SubTag is not null)
             {
                 sb.Append(" ");
                 sb.Append(SubTag);
@@ -2349,7 +2349,7 @@ namespace Clippit.Html
                         ss.ID = "-";
                     }
                     Identity(out ident);
-                    if (ss.ID == null)
+                    if (ss.ID is null)
                     {
                         ss.ID = ident;
                     }
@@ -2395,7 +2395,7 @@ namespace Clippit.Html
                         child.ID = "-";
                     }
                     Identity(out ident);
-                    if (child.ID == null)
+                    if (child.ID is null)
                     {
                         child.ID = ident;
                     }
@@ -4135,7 +4135,7 @@ namespace Clippit.Html
 
         private void Close()
         {
-            if (!m_isUserStream && m_inputStream != null)
+            if (!m_isUserStream && m_inputStream is not null)
             {
                 m_inputStream.Close();
                 m_inputStream = null;
@@ -4187,7 +4187,7 @@ namespace Clippit.Html
             get { return m_currentPositionInBuffer + m_bufferStart; }
             set
             {
-                if (value >= m_inputStreamLength && m_inputStream != null && !m_inputStream.CanSeek)
+                if (value >= m_inputStreamLength && m_inputStream is not null && !m_inputStream.CanSeek)
                 {
                     while (value >= m_inputStreamLength && ReadNextStreamChunk() > 0)
                         ;
@@ -4202,7 +4202,7 @@ namespace Clippit.Html
                 {
                     m_currentPositionInBuffer = value - m_bufferStart;
                 }
-                else if (m_inputStream != null)
+                else if (m_inputStream is not null)
                 {
                     m_inputStream.Seek(value, SeekOrigin.Begin);
                     m_bufferLength = m_inputStream.Read(m_inputBuffer, 0, m_inputBuffer.Length);
@@ -4899,7 +4899,7 @@ namespace Clippit.Html
 
         public CssToken Scan()
         {
-            if (m_tokensAlreadyPeeked.m_nextToken == null)
+            if (m_tokensAlreadyPeeked.m_nextToken is null)
             {
                 return NextToken();
             }
@@ -4914,7 +4914,7 @@ namespace Clippit.Html
         {
             do
             {
-                if (m_currentPeekToken.m_nextToken == null)
+                if (m_currentPeekToken.m_nextToken is null)
                 {
                     m_currentPeekToken.m_nextToken = NextToken();
                 }
