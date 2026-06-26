@@ -624,7 +624,7 @@ namespace Clippit.Word
                 if (borders is not null)
                 {
                     borders.AddAfterSelf(new XElement(S.cellXfs, new XAttribute("count", 0)));
-                    cellXfs = xdSheet.Root.Element(S.cellXfs);
+                    cellXfs = xdStyle.Root.Element(S.cellXfs);
                 }
             }
             if (cellXfs is null)
