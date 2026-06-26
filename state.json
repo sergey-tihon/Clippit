@@ -1,22 +1,22 @@
 {
   "last_run": "2026-06-26",
-  "last_run_id": "28226866206",
+  "last_run_id": "28242095104",
   "backlog_cursor": {
     "issues": 311,
     "prs": 165
   },
   "comments_made": {
     "54": "2026-03-12",
-    "67": "2026-05-01",
-    "77": "2026-05-01",
-    "103": "2026-05-01",
+    "67": "2026-03-17",
+    "77": "2026-03-14",
+    "103": "2026-03-15",
     "28": "2026-03-28",
     "66": "2026-03-26"
   },
   "open_clippy_prs": [
     {"number": 163, "branch": "clippy/improve-custom-handler-66-20260326-f25d5328ab83f793", "title": "[Clippy] feat: add RegisterCustomHandler extensibility API to DocumentAssembler"},
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "[Clippy] feat(excel): add ExcelAssembler for template-based xlsx document assembly"},
-    {"number": null, "branch": "clippy/refactor-null-patterns-utils-20260626b", "title": "[Clippy] refactor: modernize == null / != null in utility and comparer files"}
+    {"number": null, "branch": "clippy/refactor-null-patterns-word-files-20260626", "title": "[Clippy] refactor: modernize == null / != null in Word/ files (445 replacements, 8 files)"}
   ],
   "checked_off_by_maintainer": [],
   "m_issue": 311,
@@ -24,9 +24,8 @@
   "notes": [
     "v3.5.1 released 2026-06-23: SkiaSharp 4.x, System.CommandLine preview.5, MS.NET.Test.Sdk 18.7.0",
     "Monthly Activity issue for June 2026 is #311",
-    "PR #350 (null patterns remaining 3 files, 2026-06-25) was merged",
-    "PR #351 (TUnit 1.56.25->1.56.35) was merged",
-    "Null modernization REMAINING: Word/ files (RevisionProcessor.cs ~50, DocumentAssembler.cs ~43, MarkupSimplifier.cs ~16, FieldRetriever.cs)"
+    "PR #352 (null patterns in PtUtil+OxPtHelpers+all WmlComparer files, 128 reps) merged 2026-06-26",
+    "Null modernization == null/!= null series COMPLETE for Word/ files (PR TBD, 2026-06-26)"
   ],
   "improvements_submitted": [
     "PR#342: test(cli) fix duplicate CLI test codes - merged 2026-06-23",
@@ -36,6 +35,7 @@
     "PR#349: refactor DocumentBuilder.cs == null / != null -> is null / is not null (189) - merged 2026-06-24",
     "PR#350: refactor ListItemRetriever+HtmlToWmlConverterCore+WmlComparer.ProduceDocument == null / != null (367) - merged 2026-06-26",
     "PR#351: chore(deps) TUnit 1.56.25->1.56.35 - merged 2026-06-26",
-    "PR(TBD): refactor PtUtil+OxPtHelpers+MetricsGetter+PtOpenXmlDocument+UnicodeMapper+PtOpenXmlUtil+WmlComparer_files == null / != null (128) - 2026-06-26"
+    "PR#352: refactor PtUtil+OxPtHelpers+all WmlComparer files == null / != null (128) - merged 2026-06-26",
+    "PR(TBD): refactor Word/ files (ChartUpdater+RevisionProcessor+DocumentAssembler+MarkupSimplifier+ReferenceAdder+WmlDocument+WmlToHtmlConverter+WmlToXml) == null / != null (445) - 2026-06-26"
   ]
 }
