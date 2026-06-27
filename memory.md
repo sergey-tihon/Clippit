@@ -1,7 +1,7 @@
 # Clippy Memory
 
 ## Last Run
-2026-06-26 16:28 UTC — Run 28251071047
+2026-06-27 16:02 UTC — Run 28294305804
 
 ## Comments Made
 - #54: CRC32 improvement idea — explained reflection is fragile; suggested profiling first
@@ -14,36 +14,31 @@
 ## Open Clippy PRs
 - #163: feat: RegisterCustomHandler extensibility API — open since March 2026
 - #165: feat(excel): ExcelAssembler — open since March 2026
-- #353: refactor: null patterns in Word/ files (8 files, 445 reps) — open 2026-06-26
-- TBD (2026-06-26): test(common): FieldRetriever.ParseField unit tests FR001-FR010 (19 cases)
-- TBD (2026-06-26): refactor(html): Html/ null patterns — HtmlToWmlCssApplier (63), HtmlToWmlCssParser (25), HtmlToWmlConverter (5) = 93 reps
+- #354: test(common): FieldRetriever.ParseField unit tests FR001-FR010 — open 2026-06-26
+- #355: refactor(html): Html/ null patterns — open 2026-06-26
+- TBD (2026-06-27): refactor batch5: 10 files (OpenXmlRegex, TextReplacer, HtmlConverter, PtOpenXmlUtil, XlsxTables, SSFormula, SmlCellFormatter, PowerToolsBlockExtensions, StronglyTypedBlock, FluentPresentationBuilder.Copy) + Lazy<T> KnownFamilies fix
 
 ## Backlog Cursor
-All 6 non-activity open issues (#28, #54, #66, #67, #77, #103) have Clippy comments. No new human activity as of 2026-06-26.
+All 6 non-activity open issues (#28, #54, #66, #67, #77, #103) have Clippy comments. No new human activity as of 2026-06-27.
 
 ## Notes
 - v3.5.1 released: SkiaSharp 4.x, System.CommandLine preview.5, MS.NET.Test.Sdk 18.7.0 (PR #346 merged 2026-06-23)
 - Monthly Activity issue: June 2026 is #311
-- PR #352 (null patterns in PtUtil+OxPtHelpers+WmlComparer files, 128 reps) MERGED 2026-06-26
-- Null modernization for remaining files: OpenXmlRegex.cs (30), TextReplacer.cs (13), Word/Assembler/HtmlConverter.cs (12), small files
+- Null modernization series COMPLETE for all core library files
+  - Only Excel/PegBase.cs (external library, CPOL license) was intentionally excluded
+- PR #353 (Word/ null patterns, 445 reps) MERGED 2026-06-26
 
-## Null Modernization Progress
-Completed:
-  - Excel converters #344 (merged)
-  - FormattingAssembler.cs #345 (merged)
-  - DocumentBuilder.cs #349 (merged)
-  - ListItemRetriever.cs+HtmlToWmlConverterCore.cs+WmlComparer.ProduceDocument.cs #350 (merged)
-  - PtUtil.cs+OxPtHelpers.cs+MetricsGetter.cs+PtOpenXmlDocument.cs+UnicodeMapper.cs+all WmlComparer files #352 (merged)
-  - Word/ files (8 files, 445 reps) #353 open
-  - Html/ files (3 files, 93 reps) TBD open 2026-06-26
+## Null Modernization Progress - COMPLETE
+All batches:
+  - #344 Excel converters (merged)
+  - #345 FormattingAssembler.cs (merged)
+  - #349 DocumentBuilder.cs (merged)
+  - #350 ListItemRetriever+HtmlToWmlConverterCore+WmlComparer.ProduceDocument (merged)
+  - #352 PtUtil+OxPtHelpers+MetricsGetter+PtOpenXmlDocument+UnicodeMapper+all WmlComparer files (merged)
+  - #353 Word/ root files (8 files, 445 reps) (merged)
+  - #355 Html/ files (3 files, 93 reps) (open)
+  - Batch5: 10 files (OpenXmlRegex, TextReplacer, HtmlConverter, PtOpenXmlUtil, XlsxTables, SSFormula, SmlCellFormatter, + small Core/PowerPoint files) + Lazy<T> KnownFamilies fix (open, created 2026-06-27)
 
-Remaining files with == null / != null:
-  - OpenXmlRegex.cs (30)
-  - Internal/TextReplacer.cs (13)
-  - Word/Assembler/HtmlConverter.cs (12)
-  - Excel/PegBase.cs (26) — generated parser, may be auto-generated
-  - Excel/SSFormula.cs (4)
-  - Excel/XlsxTables.cs (14)
-  - Comparer/CorrelatedSequence.cs (2)
-  - small others (1 each): FluentPresentationBuilder.Copy.cs, MetricsGetter.cs, SmlCellFormatter.cs, StronglyTypedBlock.cs, PowerToolsBlockExtensions.cs, FieldRetriever.cs
-  - HtmlToWmlConverterCore.cs (1 in JS comment — skip)
+## Future Ideas
+- ExcelAssembler row-repetition support (follow-up to #165)
+- Look at thread-safety in other static caches (UnknownFonts HashSet is still not thread-safe)
