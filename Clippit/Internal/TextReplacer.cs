@@ -22,7 +22,7 @@ namespace Clippit.Internal
                 var newElement = new XElement(element.Name, element.Attributes());
                 foreach (var child in element.Nodes())
                     newElement.Add(CloneWithAnnotation(child));
-                if (element.Annotation<MatchSemaphore>() != null)
+                if (element.Annotation<MatchSemaphore>() is not null)
                     newElement.AddAnnotation(element.Annotation<MatchSemaphore>());
                 return newElement;
             }
@@ -59,7 +59,7 @@ namespace Clippit.Internal
                             .Where(e =>
                             {
                                 var subRunElement = e.Elements().FirstOrDefault(el => el.Name != W.rPr);
-                                if (subRunElement == null)
+                                if (subRunElement is null)
                                     return false;
                                 return W.SubRunLevelContent.Contains(subRunElement.Name);
                             })
@@ -79,7 +79,7 @@ namespace Clippit.Internal
                             );
                             var dontMatch = zipped.Any(z =>
                             {
-                                if (z.ParagraphChildProjection.Annotation<MatchSemaphore>() != null)
+                                if (z.ParagraphChildProjection.Annotation<MatchSemaphore>() is not null)
                                     return true;
                                 bool b;
                                 if (matchCase)
@@ -109,7 +109,7 @@ namespace Clippit.Internal
                                 .Where(e =>
                                 {
                                     var sem = e.Annotation<MatchSemaphore>();
-                                    if (sem == null)
+                                    if (sem is null)
                                         return false;
                                     return sem.MatchId == id;
                                 })
@@ -131,9 +131,9 @@ namespace Clippit.Internal
                             {
                                 if (ce.Name != W.r)
                                     return "DontConsolidate";
-                                if (ce.Elements().Count(e => e.Name != W.rPr) != 1 || ce.Element(W.t) == null)
+                                if (ce.Elements().Count(e => e.Name != W.rPr) != 1 || ce.Element(W.t) is null)
                                     return "DontConsolidate";
-                                if (ce.Element(W.rPr) == null)
+                                if (ce.Element(W.rPr) is null)
                                     return "";
                                 return ce.Element(W.rPr).ToString(SaveOptions.None);
                             });
@@ -247,13 +247,13 @@ namespace Clippit.Internal
                 WmlSearchAndReplaceInXDocument(xDoc, search, replace, matchCase);
                 part.PutXDocument();
             }
-            if (wordDoc.MainDocumentPart.EndnotesPart != null)
+            if (wordDoc.MainDocumentPart.EndnotesPart is not null)
             {
                 xDoc = wordDoc.MainDocumentPart.EndnotesPart.GetXDocument();
                 WmlSearchAndReplaceInXDocument(xDoc, search, replace, matchCase);
                 wordDoc.MainDocumentPart.EndnotesPart.PutXDocument();
             }
-            if (wordDoc.MainDocumentPart.FootnotesPart != null)
+            if (wordDoc.MainDocumentPart.FootnotesPart is not null)
             {
                 xDoc = wordDoc.MainDocumentPart.FootnotesPart.GetXDocument();
                 WmlSearchAndReplaceInXDocument(xDoc, search, replace, matchCase);
@@ -283,7 +283,7 @@ namespace Clippit.Internal
                             .Where(e =>
                             {
                                 var subRunElement = e.Elements().FirstOrDefault(el => el.Name != A.rPr);
-                                if (subRunElement == null)
+                                if (subRunElement is null)
                                     return false;
                                 return subRunElement.Name == A.t;
                             })
@@ -303,7 +303,7 @@ namespace Clippit.Internal
                             );
                             var dontMatch = zipped.Any(z =>
                             {
-                                if (z.ParagraphChildProjection.Annotation<MatchSemaphore>() != null)
+                                if (z.ParagraphChildProjection.Annotation<MatchSemaphore>() is not null)
                                     return true;
                                 bool b;
                                 if (matchCase)
@@ -333,7 +333,7 @@ namespace Clippit.Internal
                                 .Where(e =>
                                 {
                                     var sem = e.Annotation<MatchSemaphore>();
-                                    if (sem == null)
+                                    if (sem is null)
                                         return false;
                                     return sem.MatchId == id;
                                 })
@@ -356,9 +356,9 @@ namespace Clippit.Internal
                             {
                                 if (ce.Name != A.r)
                                     return "DontConsolidate";
-                                if (ce.Elements().Count(e => e.Name != A.rPr) != 1 || ce.Element(A.t) == null)
+                                if (ce.Elements().Count(e => e.Name != A.rPr) != 1 || ce.Element(A.t) is null)
                                     return "DontConsolidate";
-                                if (ce.Element(A.rPr) == null)
+                                if (ce.Element(A.rPr) is null)
                                     return "";
                                 return ce.Element(A.rPr).ToString(SaveOptions.None);
                             });

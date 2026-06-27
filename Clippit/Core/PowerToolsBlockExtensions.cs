@@ -46,7 +46,7 @@ public static class PowerToolsBlockExtensions
 
         foreach (var part in package.GetAllParts())
         {
-            if (part.Annotations<XDocument>().Any() && part.RootElement != null)
+            if (part.Annotations<XDocument>().Any() && part.RootElement is not null)
                 part.RootElement.Reload();
         }
     }
