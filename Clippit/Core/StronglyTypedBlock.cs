@@ -49,7 +49,7 @@ namespace Clippit.Core
 
         public void Dispose()
         {
-            if (_package == null)
+            if (_package is null)
                 return;
 
             _package.BeginPowerToolsBlock();

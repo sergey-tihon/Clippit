@@ -1166,7 +1166,7 @@ internal sealed partial class FluentPresentationBuilder
         // Find the last element that should come before our element
         var insertAfter = parent.Elements().LastOrDefault(e => order.GetValueOrDefault(e.Name, 999) < targetOrder);
 
-        if (insertAfter != null)
+        if (insertAfter is not null)
         {
             // Insert after the found element
             insertAfter.AddAfterSelf(elementToInsert);

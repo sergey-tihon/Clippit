@@ -42,8 +42,7 @@ namespace Clippit.Excel
         {
             color = null;
 
-            if (formatCode == null)
-                formatCode = "General";
+            formatCode ??= "General";
 
             var splitFormatCode = formatCode.Split(';');
             if (splitFormatCode.Length == 1)
