@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-06-27",
-  "last_run_id": "28294305804",
+  "last_run": "2026-06-28",
+  "last_run_id": "28327906587",
   "backlog_cursor": {
     "issues": 311,
     "prs": 165
@@ -14,11 +14,9 @@
     "66": "2026-03-26"
   },
   "open_clippy_prs": [
-    {"number": 163, "branch": "clippy/improve-custom-handler-66-20260326-f25d5328ab83f793", "title": "[Clippy] feat: add RegisterCustomHandler extensibility API to DocumentAssembler"},
-    {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "[Clippy] feat(excel): add ExcelAssembler for template-based xlsx document assembly"},
-    {"number": 354, "branch": "clippy/test-fieldretriever-parsefields-20260626-df586285ba9cb534", "title": "[Clippy] test(common): add FieldRetriever.ParseField unit tests FR001-FR010"},
-    {"number": 355, "branch": "clippy/improve-html-null-patterns-20260626-3ef8e6aedabb47cc", "title": "[Clippy] refactor(html): modernize == null / != null in Html/ files (93 replacements)"},
-    {"number": null, "branch": "clippy/refactor-null-patterns-batch5-20260627", "title": "[Clippy] refactor: modernize == null / != null (batch 5, 10 files + Lazy<T> fix)"}
+    {"number": 163, "branch": "clippy/improve-custom-handler-66-20260326-f25d5328ab83f793", "title": "[Clippy] feat: add RegisterCustomHandler extensibility API to DocumentAssembler", "rebased": "2026-06-28"},
+    {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "[Clippy] feat(excel): add ExcelAssembler for template-based xlsx document assembly", "rebased": "2026-06-28"},
+    {"number": null, "branch": "clippy/eng-tunit-1.57.0-20260628", "title": "[Clippy] chore(deps): update TUnit 1.56.35 → 1.57.0", "created": "2026-06-28"}
   ],
   "checked_off_by_maintainer": [],
   "m_issue": 311,
@@ -26,8 +24,11 @@
   "notes": [
     "v3.5.1 released 2026-06-23: SkiaSharp 4.x, System.CommandLine preview.5, MS.NET.Test.Sdk 18.7.0",
     "Monthly Activity issue for June 2026 is #311",
-    "PR #353 (Word/ null patterns, 445 reps) MERGED 2026-06-26",
-    "Null modernization series COMPLETE: all core library files done except Excel/PegBase.cs (external library)"
+    "PR #354 (FieldRetriever tests) MERGED 2026-06-28",
+    "PR #355 (Html/ null patterns) MERGED 2026-06-28",
+    "PR #356 (batch5 null modernization) MERGED 2026-06-28",
+    "Null modernization series COMPLETE: all core library files done (Excel/PegBase.cs excluded - external library)",
+    "PR #163 and #165 rebased on master 2026-06-28 - fresh CI triggered"
   ],
   "improvements_submitted": [
     "PR#342: test(cli) fix duplicate CLI test codes - merged 2026-06-23",
@@ -39,8 +40,9 @@
     "PR#351: chore(deps) TUnit 1.56.25->1.56.35 - merged 2026-06-26",
     "PR#352: refactor PtUtil+OxPtHelpers+all WmlComparer files == null / != null (128) - merged 2026-06-26",
     "PR#353: refactor Word/ files (8 files, 445 reps) == null / != null - merged 2026-06-26",
-    "PR#354: test(common) FieldRetriever.ParseField unit tests FR001-FR010 (19 cases) - open 2026-06-26",
-    "PR#355: refactor Html/ files (3 files, 93 reps) == null / != null - open 2026-06-26",
-    "PR(TBD): refactor batch5: 10 files (85 reps) + Lazy<T> KnownFamilies fix - open 2026-06-27"
+    "PR#354: test(common) FieldRetriever.ParseField unit tests FR001-FR010 (19 cases) - merged 2026-06-28",
+    "PR#355: refactor Html/ files (3 files, 93 reps) == null / != null - merged 2026-06-28",
+    "PR#356: refactor batch5 (10 files, 85 reps) + Lazy<T> KnownFamilies + ??= improvements - merged 2026-06-28",
+    "PR(TBD-357?): chore(deps) TUnit 1.56.35->1.57.0 - open 2026-06-28"
   ]
 }
