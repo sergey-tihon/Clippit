@@ -51,8 +51,8 @@ namespace Clippit.Excel
             var rowStart = int.Parse(XlsxTables.SplitAddress(refStart)[1]);
             var refEnd = Ref.Split(':').ElementAt(1);
             var rowEnd = int.Parse(XlsxTables.SplitAddress(refEnd)[1]);
-            var headerRowsCount = HeaderRowCount == null ? 0 : (int)HeaderRowCount;
-            var totalRowsCount = TotalsRowCount == null ? 0 : (int)TotalsRowCount;
+            var headerRowsCount = HeaderRowCount ?? 0;
+            var totalRowsCount = TotalsRowCount ?? 0;
             return Parent
                 .Rows()
                 .Skip(headerRowsCount)
@@ -92,7 +92,7 @@ namespace Clippit.Excel
                 var tc = Parent
                     .TableColumns()
                     .FirstOrDefault(x => string.Equals(x.Name, columnName, StringComparison.OrdinalIgnoreCase));
-                if (tc == null)
+                if (tc is null)
                     throw new ArgumentException($"Invalid column name: {columnName}", nameof(columnName));
                 var refs = Parent.Ref.Split(':');
                 var startRefs = XlsxTables.SplitAddress(refs[0]);
@@ -100,7 +100,7 @@ namespace Clippit.Excel
                     XlsxTables.ColumnAddressToIndex(startRefs[0]) + tc.ColumnIndex
                 );
                 var cell = Row.Cells().FirstOrDefault(c => c.ColumnAddress == columnAddress);
-                if (cell != null)
+                if (cell is not null)
                 {
                     if (cell.Type == "s")
                         return new TableCell(cell.SharedString);
@@ -153,7 +153,7 @@ namespace Clippit.Excel
 
         public static explicit operator string(TableCell cell)
         {
-            if (cell == null)
+            if (cell is null)
                 return null;
             return cell.Value;
         }
@@ -166,7 +166,7 @@ namespace Clippit.Excel
 
         public static explicit operator bool?(TableCell cell)
         {
-            if (cell == null)
+            if (cell is null)
                 return null;
             return cell.Value == "1";
         }
@@ -179,7 +179,7 @@ namespace Clippit.Excel
 
         public static explicit operator int?(TableCell cell)
         {
-            if (cell == null)
+            if (cell is null)
                 return null;
             return int.Parse(cell.Value);
         }
@@ -192,7 +192,7 @@ namespace Clippit.Excel
 
         public static explicit operator uint?(TableCell cell)
         {
-            if (cell == null)
+            if (cell is null)
                 return null;
             return uint.Parse(cell.Value);
         }
@@ -205,7 +205,7 @@ namespace Clippit.Excel
 
         public static explicit operator long?(TableCell cell)
         {
-            if (cell == null)
+            if (cell is null)
                 return null;
             return long.Parse(cell.Value);
         }
@@ -218,7 +218,7 @@ namespace Clippit.Excel
 
         public static explicit operator ulong?(TableCell cell)
         {
-            if (cell == null)
+            if (cell is null)
                 return null;
             return ulong.Parse(cell.Value);
         }
@@ -231,7 +231,7 @@ namespace Clippit.Excel
 
         public static explicit operator float?(TableCell cell)
         {
-            if (cell == null)
+            if (cell is null)
                 return null;
             return float.Parse(cell.Value);
         }
@@ -244,7 +244,7 @@ namespace Clippit.Excel
 
         public static explicit operator double?(TableCell cell)
         {
-            if (cell == null)
+            if (cell is null)
                 return null;
             return double.Parse(cell.Value);
         }
@@ -257,7 +257,7 @@ namespace Clippit.Excel
 
         public static explicit operator decimal?(TableCell cell)
         {
-            if (cell == null)
+            if (cell is null)
                 return null;
             return decimal.Parse(cell.Value);
         }
@@ -270,7 +270,7 @@ namespace Clippit.Excel
 
         public static implicit operator DateTime?(TableCell cell)
         {
-            if (cell == null)
+            if (cell is null)
                 return null;
             return new DateTime(1900, 1, 1).AddDays(int.Parse(cell.Value) - 2);
         }

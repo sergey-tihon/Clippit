@@ -57,7 +57,7 @@ namespace Clippit
                 null,
                 (x, m) =>
                 {
-                    if (found != null)
+                    if (found is not null)
                         found.Invoke(x, m);
                     return true;
                 },
@@ -145,7 +145,7 @@ namespace Clippit
             IEnumerable<XElement> contentList = content as IList<XElement> ?? content.ToList();
 
             var first = contentList.FirstOrDefault();
-            if (first == null)
+            if (first is null)
                 return 0;
 
             if (first.Name.Namespace == W.w)
@@ -180,7 +180,7 @@ namespace Clippit
                         )
                         .Max() + 1;
                 var revTrackingWithoutId = root.DescendantsAndSelf()
-                    .Where(d => RevTrackMarkupWithId.Contains(d.Name) && (d.Attribute(W.id) == null));
+                    .Where(d => RevTrackMarkupWithId.Contains(d.Name) && (d.Attribute(W.id) is null));
                 foreach (var item in revTrackingWithoutId)
                     item.Add(new XAttribute(W.id, nextId++));
 
@@ -193,7 +193,7 @@ namespace Clippit
                 foreach (var gc in group.Skip(1))
                 {
                     var xAttribute = gc.Attribute(W.id);
-                    if (xAttribute != null)
+                    if (xAttribute is not null)
                         xAttribute.Value = nextId.ToString();
                     nextId++;
                 }
@@ -239,7 +239,7 @@ namespace Clippit
 
                 var preliminaryContent = paragraph
                     .DescendantsTrimmed(W.txbxContent)
-                    .Where(d => d.Name == W.r && (d.Parent == null || d.Parent.Name != W.del))
+                    .Where(d => d.Name == W.r && (d.Parent is null || d.Parent.Name != W.del))
                     .Select(UnicodeMapper.RunToString)
                     .StringConcatenate();
                 if (regex.IsMatch(preliminaryContent))
@@ -265,7 +265,7 @@ namespace Clippit
 
                     var runsTrimmed = paragraphWithSplitRuns
                         .DescendantsTrimmed(W.txbxContent)
-                        .Where(d => d.Name == W.r && (d.Parent == null || d.Parent.Name != W.del));
+                        .Where(d => d.Name == W.r && (d.Parent is null || d.Parent.Name != W.del));
 
                     var charsAndRuns = runsTrimmed.Select(r => new { Ch = UnicodeMapper.RunToString(r), r }).ToList();
 
@@ -279,9 +279,9 @@ namespace Clippit
                     replInfo.Count += matchCollection.Count;
 
                     // Process Match
-                    if (replacement == null)
+                    if (replacement is null)
                     {
-                        if (callback == null)
+                        if (callback is null)
                             return paragraph;
 
                         foreach (var match in matchCollection.Cast<Match>())
@@ -295,7 +295,7 @@ namespace Clippit
                     {
                         if (match.Length == 0)
                             continue;
-                        if ((callback != null) && !callback(paragraph, match))
+                        if ((callback is not null) && !callback(paragraph, match))
                             continue;
 
                         var runCollection = alignedRuns.Skip(match.Index).Take(match.Length).ToList();
@@ -323,7 +323,7 @@ namespace Clippit
                                     newRuns
                                 );
 
-                                if (firstRun.Parent != null && firstRun.Parent.Name == W.ins)
+                                if (firstRun.Parent is not null && firstRun.Parent.Name == W.ins)
                                     firstRun.Parent.AddBeforeSelf(newIns);
                                 else
                                     firstRun.AddBeforeSelf(newIns);
@@ -331,12 +331,12 @@ namespace Clippit
 
                             foreach (var run in runCollection)
                             {
-                                var isInIns = run.Parent != null && run.Parent.Name == W.ins;
+                                var isInIns = run.Parent is not null && run.Parent.Name == W.ins;
                                 if (isInIns)
                                 {
                                     var parentIns = run.Parent;
                                     var grandParentParagraph = parentIns.Parent;
-                                    if (grandParentParagraph != null)
+                                    if (grandParentParagraph is not null)
                                     {
                                         if (
                                             (string)parentIns.Attributes(W.author).FirstOrDefault()
@@ -390,7 +390,7 @@ namespace Clippit
                         else // not tracked revisions
                         {
                             foreach (var runToDelete in runCollection.Skip(1).ToList())
-                                if (runToDelete.Parent != null && runToDelete.Parent.Name == W.ins)
+                                if (runToDelete.Parent is not null && runToDelete.Parent.Name == W.ins)
                                     runToDelete.Parent.Remove();
                                 else
                                     runToDelete.Remove();
@@ -400,7 +400,7 @@ namespace Clippit
                             // set coalesceContent to false.
                             var newTextValue = match.Result(replacement);
                             var newRuns = UnicodeMapper.StringToCoalescedRunList(newTextValue, firstRunProperties);
-                            if (firstRun.Parent != null && firstRun.Parent.Name == W.ins)
+                            if (firstRun.Parent is not null && firstRun.Parent.Name == W.ins)
                                 firstRun.Parent.ReplaceWith(newRuns);
                             else
                                 firstRun.ReplaceWith(newRuns);
@@ -467,7 +467,7 @@ namespace Clippit
                     .Select(c =>
                     {
                         var elements = c as IEnumerable<XElement>;
-                        return elements != null
+                        return elements is not null
                             ? elements.Select(ixc => new XElement(W.ins, element.Attributes(), ixc))
                             : c;
                     })
@@ -552,7 +552,9 @@ namespace Clippit
                 var runsTrimmed = paragraphWithSplitRuns.Descendants(A.r).ToList();
 
                 var charsAndRuns = runsTrimmed
-                    .Select(r => r.Element(A.t) != null ? new { Ch = r.Element(A.t).Value, r } : new { Ch = "\x01", r })
+                    .Select(r =>
+                        r.Element(A.t) is not null ? new { Ch = r.Element(A.t).Value, r } : new { Ch = "\x01", r }
+                    )
                     .ToList();
 
                 var content = charsAndRuns.Select(t => t.Ch).StringConcatenate();
@@ -560,7 +562,7 @@ namespace Clippit
 
                 var matchCollection = regex.Matches(content);
                 counter.Count += matchCollection.Count;
-                if (replacement == null)
+                if (replacement is null)
                 {
                     foreach (var match in matchCollection.Cast<Match>())
                         callback(paragraph, match);
@@ -569,7 +571,7 @@ namespace Clippit
                 {
                     foreach (var match in matchCollection.Cast<Match>())
                     {
-                        if ((callback != null) && !callback(paragraph, match))
+                        if ((callback is not null) && !callback(paragraph, match))
                             continue;
 
                         var runCollection = alignedRuns.Skip(match.Index).Take(match.Length).ToList();
@@ -606,11 +608,11 @@ namespace Clippit
                         {
                             if (ce.Name != A.r)
                                 return DontConsolidate;
-                            if ((ce.Elements().Count(e => e.Name != A.rPr) != 1) || (ce.Element(A.t) == null))
+                            if ((ce.Elements().Count(e => e.Name != A.rPr) != 1) || (ce.Element(A.t) is null))
                                 return DontConsolidate;
 
                             var rPr = ce.Element(A.rPr);
-                            return rPr == null ? "" : rPr.ToString(SaveOptions.None);
+                            return rPr is null ? "" : rPr.ToString(SaveOptions.None);
                         });
                     var paragraphWithConsolidatedRuns = new XElement(
                         A.p,

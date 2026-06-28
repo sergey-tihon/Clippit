@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Concurrent;
 using System.IO.Compression;
 using System.IO.Packaging;
 using System.Runtime.CompilerServices;
@@ -143,7 +144,7 @@ namespace Clippit
             ArgumentNullException.ThrowIfNull(part);
 
             var partXDocument = part.GetXDocument();
-            if (partXDocument != null)
+            if (partXDocument is not null)
             {
 #if true
                 using var partStream = part.GetStream(FileMode.Create, FileAccess.Write);
@@ -163,7 +164,7 @@ namespace Clippit
                 throw new ArgumentNullException(nameof(part));
 
             var partXDocument = part.GetXDocument();
-            if (partXDocument != null)
+            if (partXDocument is not null)
             {
                 using var partStream = part.GetStream(FileMode.Create, FileAccess.Write);
                 var settings = new XmlWriterSettings();
@@ -269,10 +270,10 @@ namespace Clippit
             foreach (var ftr in doc.MainDocumentPart.FooterParts)
                 yield return ftr;
 
-            if (doc.MainDocumentPart.FootnotesPart != null)
+            if (doc.MainDocumentPart.FootnotesPart is not null)
                 yield return doc.MainDocumentPart.FootnotesPart;
 
-            if (doc.MainDocumentPart.EndnotesPart != null)
+            if (doc.MainDocumentPart.EndnotesPart is not null)
                 yield return doc.MainDocumentPart.EndnotesPart;
         }
 
@@ -410,7 +411,7 @@ namespace Clippit
             using var xmlReader = document.CreateReader();
             var xmlDoc = new XmlDocument();
             xmlDoc.Load(xmlReader);
-            if (document.Declaration != null)
+            if (document.Declaration is not null)
             {
                 var dec = xmlDoc.CreateXmlDeclaration(
                     document.Declaration.Version,
@@ -428,7 +429,7 @@ namespace Clippit
             using (var xmlWriter = xDoc.CreateWriter())
                 document.WriteTo(xmlWriter);
             var decl = document.ChildNodes.OfType<XmlDeclaration>().FirstOrDefault();
-            if (decl != null)
+            if (decl is not null)
                 xDoc.Declaration = new XDeclaration(decl.Version, decl.Encoding, decl.Standalone);
             return xDoc;
         }
@@ -600,16 +601,13 @@ namespace Clippit
 
     public static class WordprocessingMLUtil
     {
-        private static readonly HashSet<string> UnknownFonts = new HashSet<string>();
-        private static HashSet<string> KnownFamilies;
+        private static readonly ConcurrentDictionary<string, byte> s_unknownFonts = [];
+        private static readonly Lazy<HashSet<string>> s_knownFamilies = new(() =>
+            new HashSet<string>(SKFontManager.Default.FontFamilies)
+        );
 
         private static (double width, decimal tabLength) CalcWidthOfRun(XElement r)
         {
-            if (KnownFamilies == null)
-            {
-                KnownFamilies = new HashSet<string>(SKFontManager.Default.FontFamilies);
-            }
-
             var tabLength = r.DescendantsTrimmed(W.txbxContent)
                 .Where(e => e.Name == W.tab)
                 .Select(t => (decimal)t.Attribute(PtOpenXml.TabWidth))
@@ -620,7 +618,7 @@ namespace Clippit
                 ?? (string)r.Ancestors(W.p).First().Attribute(PtOpenXml.pt + "FontName")
                 ?? throw new OpenXmlPowerToolsException("Internal Error, should have FontName attribute");
 
-            if (UnknownFonts.Contains(fontName))
+            if (s_unknownFonts.ContainsKey(fontName))
                 return (0, tabLength);
 
             var rPr =
@@ -629,7 +627,7 @@ namespace Clippit
             var sz = GetFontSize(r) ?? 22m;
 
             // unknown font families will throw ArgumentException, in which case just return 0
-            if (!KnownFamilies.Contains(fontName))
+            if (!s_knownFamilies.Value.Contains(fontName))
                 return (0, tabLength);
 
             var weight = SKFontStyleWeight.Normal;
@@ -643,9 +641,9 @@ namespace Clippit
 
             // in theory, all unknown fonts are found by the above test, but if not...
             using var typeface = SKTypeface.FromFamilyName(fontName, weight, SKFontStyleWidth.Normal, slant);
-            if (typeface == null)
+            if (typeface is null)
             {
-                UnknownFonts.Add(fontName);
+                s_unknownFonts.TryAdd(fontName, default);
                 return (0, tabLength);
             }
 
@@ -710,7 +708,7 @@ namespace Clippit
 
         public static decimal? GetFontSize(string languageType, XElement rPr)
         {
-            if (rPr == null)
+            if (rPr is null)
                 return null;
             return languageType == "bidi"
                 ? (decimal?)rPr.Elements(W.szCs).Attributes(W.val).FirstOrDefault()
@@ -720,10 +718,10 @@ namespace Clippit
         public static bool GetBoolProp(XElement runProps, XName xName)
         {
             var p = runProps.Element(xName);
-            if (p == null)
+            if (p is null)
                 return false;
             var v = p.Attribute(W.val);
-            if (v == null)
+            if (v is null)
                 return true;
             var s = v.Value.ToLower();
             return s switch
@@ -760,12 +758,12 @@ namespace Clippit
                             return dontConsolidate;
 
                         var rPr = ce.Element(W.rPr);
-                        var rPrString = rPr != null ? rPr.ToString(SaveOptions.None) : string.Empty;
+                        var rPrString = rPr?.ToString(SaveOptions.None) ?? string.Empty;
 
-                        if (ce.Element(W.t) != null)
+                        if (ce.Element(W.t) is not null)
                             return "Wt" + rPrString;
 
-                        if (ce.Element(W.instrText) != null)
+                        if (ce.Element(W.instrText) is not null)
                             return "WinstrText" + rPrString;
 
                         return dontConsolidate;
@@ -818,7 +816,7 @@ namespace Clippit
                         var dateIns2 = ce.Attribute(W.date);
 
                         var authorIns2 = (string)ce.Attribute(W.author) ?? string.Empty;
-                        var dateInsString2 = dateIns2 != null ? ((DateTime)dateIns2).ToString("s") : string.Empty;
+                        var dateInsString2 = dateIns2 is not null ? ((DateTime)dateIns2).ToString("s") : string.Empty;
 
                         var idIns2 = (string)ce.Attribute(W.id);
 
@@ -843,7 +841,7 @@ namespace Clippit
                         var dateDel2 = ce.Attribute(W.date);
 
                         var authorDel2 = (string)ce.Attribute(W.author) ?? string.Empty;
-                        var dateDelString2 = dateDel2 != null ? ((DateTime)dateDel2).ToString("s") : string.Empty;
+                        var dateDelString2 = dateDel2 is not null ? ((DateTime)dateDel2).ToString("s") : string.Empty;
 
                         return "Wdel"
                             + authorDel2
@@ -876,7 +874,7 @@ namespace Clippit
 
                     if (g.First().Name == W.r)
                     {
-                        if (g.First().Element(W.t) != null)
+                        if (g.First().Element(W.t) is not null)
                         {
                             var statusAtt = g.Select(r => r.Descendants(W.t).Take(1).Attributes(PtOpenXml.Status));
                             return new XElement(
@@ -886,7 +884,7 @@ namespace Clippit
                             );
                         }
 
-                        if (g.First().Element(W.instrText) != null)
+                        if (g.First().Element(W.instrText) is not null)
                             return new XElement(
                                 W.r,
                                 g.First().Elements(W.rPr),
@@ -1319,7 +1317,7 @@ listSeparator
         public static object WmlOrderElementsPerStandard(XNode node)
         {
             var element = node as XElement;
-            if (element != null)
+            if (element is not null)
             {
                 if (element.Name == W.pPr)
                     return new XElement(
@@ -1482,11 +1480,11 @@ listSeparator
             using (var wDoc = WordprocessingDocument.Open(ms, true))
             {
                 var efpp = wDoc.ExtendedFilePropertiesPart;
-                if (efpp != null)
+                if (efpp is not null)
                 {
                     var xd = efpp.GetXDocument();
                     var template = xd.Descendants(EP.Template).FirstOrDefault();
-                    if (template != null)
+                    if (template is not null)
                         template.Value = "";
                     efpp.PutXDocument();
                 }
@@ -1677,11 +1675,11 @@ listSeparator
         public static bool? GetBoolProp(XElement rPr, XName propertyName)
         {
             var propAtt = rPr.Element(propertyName);
-            if (propAtt == null)
+            if (propAtt is null)
                 return null;
 
             var val = propAtt.Attribute(W.val);
-            if (val == null)
+            if (val is null)
                 return true;
 
             var s = ((string)val).ToLower();
@@ -1821,7 +1819,13 @@ listSeparator
             if (field.Length == 0)
                 return emptyField;
             var fieldType = field.TrimStart().Split(' ').FirstOrDefault();
-            if (fieldType == null || fieldType.ToUpper() != "HYPERLINK" || fieldType.ToUpper() != "REF")
+            if (
+                fieldType is null
+                || (
+                    !fieldType.Equals("HYPERLINK", StringComparison.OrdinalIgnoreCase)
+                    && !fieldType.Equals("REF", StringComparison.OrdinalIgnoreCase)
+                )
+            )
                 return emptyField;
             var tokens = GetTokens(field);
             if (tokens.Length == 0)
