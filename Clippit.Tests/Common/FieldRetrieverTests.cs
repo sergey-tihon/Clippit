@@ -11,9 +11,13 @@ public class FieldRetrieverTests
     // ── FR001: empty or whitespace-only input → empty FieldInfo ─────────────
 
     [Test]
-    public async Task FR001_ParseField_EmptyString_ReturnsEmptyFieldInfo()
+    [Arguments("")]
+    [Arguments(" ")]
+    [Arguments("\t")]
+    [Arguments("   \t  ")]
+    public async Task FR001_ParseField_EmptyOrWhitespace_ReturnsEmptyFieldInfo(string field)
     {
-        var result = FieldRetriever.ParseField(string.Empty);
+        var result = FieldRetriever.ParseField(field);
 
         await Assert.That(result.FieldType).IsEqualTo(string.Empty);
         await Assert.That(result.Arguments).IsEmpty();
@@ -40,7 +44,7 @@ public class FieldRetrieverTests
     // ── FR003: HYPERLINK with no arguments ──────────────────────────────────
 
     [Test]
-    public async Task FR003_ParseField_HyperlinkNoArguments_ReturnsSwitchesAndNoArguments()
+    public async Task FR003_ParseField_HyperlinkNoArguments_ReturnsNoSwitchesAndNoArguments()
     {
         var result = FieldRetriever.ParseField("HYPERLINK");
 
@@ -133,7 +137,7 @@ public class FieldRetrieverTests
     {
         var result = FieldRetriever.ParseField(field);
 
-        // ParseField accepts any case; the FieldType preserves the original casing from the token.
+        // ParseField accepts any case for supported field types.
         await Assert.That(result.FieldType.Equals(expectedFieldType, StringComparison.OrdinalIgnoreCase)).IsTrue();
         await Assert.That(result.Arguments).IsNotEmpty();
     }
