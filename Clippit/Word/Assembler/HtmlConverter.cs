@@ -40,7 +40,7 @@ namespace Clippit.Word.Assembler
         {
             var xPath = (string)element.Attribute(PA.Select);
             var optionalString = (string)element.Attribute(PA.Optional);
-            bool optional = (optionalString != null && optionalString.ToLower() == "true");
+            var optional = string.Equals(optionalString, "true", StringComparison.OrdinalIgnoreCase);
 
             string[] values = data.EvaluateXPath(xPath, optional);
 
@@ -127,7 +127,7 @@ namespace Clippit.Word.Assembler
         }
 
         private static bool IsSoftBreak(XElement element) =>
-            element.Name == W.r && element.Elements().Count() == 1 && element.Element(W.br) != null;
+            element.Name == W.r && element.Elements().Count() == 1 && element.Element(W.br) is not null;
 
         private static List<object> FlattenResults(object obj)
         {
@@ -159,11 +159,11 @@ namespace Clippit.Word.Assembler
 
                     XElement element = obj as XElement;
                     IEnumerable<XElement> runs = element.DescendantsAndSelf(W.r);
-                    if (runs != null && runs.Any())
+                    if (runs is not null && runs.Any())
                     {
                         foreach (var run in runs)
                         {
-                            if (run.Parent != null && run.Parent.Name == W.hyperlink)
+                            if (run.Parent is not null && run.Parent.Name == W.hyperlink)
                             {
                                 result.Add(run.Parent);
                             }
@@ -188,12 +188,12 @@ namespace Clippit.Word.Assembler
         )
         {
             var element = node as XElement;
-            if (element != null)
+            if (element is not null)
             {
                 if (element.Name == XhtmlNoNamespace.a)
                 {
                     var href = (string)element.Attribute(NoNamespace.href);
-                    if (href != null)
+                    if (href is not null)
                     {
                         Uri uri = null;
                         try
@@ -207,10 +207,10 @@ namespace Clippit.Word.Assembler
                             return new[] { run };
                         }
 
-                        if (uri != null)
+                        if (uri is not null)
                         {
                             var newRel = part.AddHyperlinkRelationship(uri, true);
-                            if (element.Element(XhtmlNoNamespace.img) != null)
+                            if (element.Element(XhtmlNoNamespace.img) is not null)
                             {
                                 var imageTransformed = element
                                     .Nodes()
@@ -227,7 +227,7 @@ namespace Clippit.Word.Assembler
                                                 .Elements(WP.inline)
                                                 .Elements(WP.docPr)
                                                 .FirstOrDefault();
-                                            if (docPr != null)
+                                            if (docPr is not null)
                                             {
                                                 var hlinkClick = new XElement(
                                                     A.hlinkClick,
@@ -369,7 +369,7 @@ namespace Clippit.Word.Assembler
             if (nextExpected == NextExpected.Paragraph)
             {
                 var element = node as XElement;
-                if (element != null)
+                if (element is not null)
                 {
                     return new XElement(
                         W.p,
@@ -379,7 +379,7 @@ namespace Clippit.Word.Assembler
                 else
                 {
                     var xTextNode = node as XText;
-                    if (xTextNode != null)
+                    if (xTextNode is not null)
                     {
                         var textNodeString = HtmlToWmlConverterCore.GetDisplayText(xTextNode, preserveWhiteSpace);
                         var p = new XElement(
@@ -402,7 +402,7 @@ namespace Clippit.Word.Assembler
             else
             {
                 var element = node as XElement;
-                if (element != null)
+                if (element is not null)
                 {
                     return element
                         .Nodes()

@@ -41,21 +41,21 @@ namespace Clippit.Excel
         // Recursive function that will replace values from last to first
         private void ReplaceNode(PegNode node, int id, string oldName, string newName, StringBuilder text)
         {
-            if (node.next_ != null)
+            if (node.next_ is not null)
                 ReplaceNode(node.next_, id, oldName, newName, text);
             if (node.id_ == id && _parser.GetSource().Substring(node.match_._posBeg, node.match_.Length) == oldName)
             {
                 text.Remove(node.match_._posBeg, node.match_.Length);
                 text.Insert(node.match_._posBeg, newName);
             }
-            else if (node.child_ != null)
+            else if (node.child_ is not null)
                 ReplaceNode(node.child_, id, oldName, newName, text);
         }
 
         // Recursive function that will adjust relative cells from last to first
         private void ReplaceRelativeCell(PegNode node, int rowOffset, int colOffset, StringBuilder text)
         {
-            if (node.next_ != null)
+            if (node.next_ is not null)
                 ReplaceRelativeCell(node.next_, rowOffset, colOffset, text);
             if (node.id_ == (int)EExcelFormula.A1Row && _parser.GetSource().Substring(node.match_._posBeg, 1) != "$")
             {
@@ -72,7 +72,7 @@ namespace Clippit.Excel
                 text.Remove(node.match_._posBeg, node.match_.Length);
                 text.Insert(node.match_._posBeg, GetColumnId(colNumber + colOffset));
             }
-            else if (node.child_ != null)
+            else if (node.child_ is not null)
                 ReplaceRelativeCell(node.child_, rowOffset, colOffset, text);
         }
 
