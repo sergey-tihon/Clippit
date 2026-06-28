@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Concurrent;
 using System.IO.Compression;
 using System.IO.Packaging;
 using System.Runtime.CompilerServices;
@@ -600,7 +601,7 @@ namespace Clippit
 
     public static class WordprocessingMLUtil
     {
-        private static readonly HashSet<string> UnknownFonts = [];
+        private static readonly ConcurrentDictionary<string, byte> s_unknownFonts = [];
         private static readonly Lazy<HashSet<string>> s_knownFamilies = new(() =>
             new HashSet<string>(SKFontManager.Default.FontFamilies)
         );
@@ -617,7 +618,7 @@ namespace Clippit
                 ?? (string)r.Ancestors(W.p).First().Attribute(PtOpenXml.pt + "FontName")
                 ?? throw new OpenXmlPowerToolsException("Internal Error, should have FontName attribute");
 
-            if (UnknownFonts.Contains(fontName))
+            if (s_unknownFonts.ContainsKey(fontName))
                 return (0, tabLength);
 
             var rPr =
@@ -642,7 +643,7 @@ namespace Clippit
             using var typeface = SKTypeface.FromFamilyName(fontName, weight, SKFontStyleWidth.Normal, slant);
             if (typeface is null)
             {
-                UnknownFonts.Add(fontName);
+                s_unknownFonts.TryAdd(fontName, default);
                 return (0, tabLength);
             }
 
@@ -1818,7 +1819,13 @@ listSeparator
             if (field.Length == 0)
                 return emptyField;
             var fieldType = field.TrimStart().Split(' ').FirstOrDefault();
-            if (fieldType is null || fieldType.ToUpper() != "HYPERLINK" || fieldType.ToUpper() != "REF")
+            if (
+                fieldType is null
+                || (
+                    !fieldType.Equals("HYPERLINK", StringComparison.OrdinalIgnoreCase)
+                    && !fieldType.Equals("REF", StringComparison.OrdinalIgnoreCase)
+                )
+            )
                 return emptyField;
             var tokens = GetTokens(field);
             if (tokens.Length == 0)

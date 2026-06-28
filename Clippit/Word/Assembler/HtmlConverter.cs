@@ -40,7 +40,7 @@ namespace Clippit.Word.Assembler
         {
             var xPath = (string)element.Attribute(PA.Select);
             var optionalString = (string)element.Attribute(PA.Optional);
-            bool optional = (optionalString is not null && optionalString.ToLower() == "true");
+            var optional = string.Equals(optionalString, "true", StringComparison.OrdinalIgnoreCase);
 
             string[] values = data.EvaluateXPath(xPath, optional);
 
