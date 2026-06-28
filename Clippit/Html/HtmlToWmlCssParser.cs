@@ -359,7 +359,7 @@ namespace Clippit.Html
 
         public bool IsNotAuto
         {
-            get { return (this is not null && this.ToString() != "auto"); }
+            get { return ToString() != "auto"; }
         }
 
         public bool IsAuto

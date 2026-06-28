@@ -2240,9 +2240,9 @@ namespace Clippit.Html
 
         private static int CountIdAttributesInSimpleSelector(CssSimpleSelector simpleSelector)
         {
-            var count = simpleSelector.ID is not null
-                ? 1
-                : 0 + (simpleSelector.Child is not null ? CountIdAttributesInSimpleSelector(simpleSelector.Child) : 0);
+            var count =
+                (simpleSelector.ID is not null ? 1 : 0)
+                + (simpleSelector.Child is not null ? CountIdAttributesInSimpleSelector(simpleSelector.Child) : 0);
             return count;
         }
 
