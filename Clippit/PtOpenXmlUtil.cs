@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Concurrent;
+using System.Collections.Frozen;
 using System.IO.Compression;
 using System.IO.Packaging;
 using System.Runtime.CompilerServices;
@@ -948,7 +949,7 @@ namespace Clippit
             return runContainerWithConsolidatedRuns;
         }
 
-        private static readonly Dictionary<XName, int> Order_settings = new Dictionary<XName, int>
+        private static readonly FrozenDictionary<XName, int> Order_settings = new Dictionary<XName, int>
         {
             { W.writeProtection, 10 },
             { W.view, 20 },
@@ -1046,7 +1047,7 @@ namespace Clippit
             { W.doNotEmbedSmartTags, 940 },
             { W.decimalSymbol, 950 },
             { W.listSeparator, 960 },
-        };
+        }.ToFrozenDictionary();
 
 #if false
 // from the schema in the standard
@@ -1149,7 +1150,7 @@ decimalSymbol
 listSeparator
 #endif
 
-        private static readonly Dictionary<XName, int> Order_pPr = new Dictionary<XName, int>
+        private static readonly FrozenDictionary<XName, int> Order_pPr = new Dictionary<XName, int>
         {
             { W.pStyle, 10 },
             { W.keepNext, 20 },
@@ -1187,9 +1188,9 @@ listSeparator
             { W.rPr, 350 },
             { W.sectPr, 360 },
             { W.pPrChange, 370 },
-        };
+        }.ToFrozenDictionary();
 
-        private static readonly Dictionary<XName, int> Order_rPr = new Dictionary<XName, int>
+        private static readonly FrozenDictionary<XName, int> Order_rPr = new Dictionary<XName, int>
         {
             { W.ins, 10 },
             { W.del, 20 },
@@ -1237,9 +1238,9 @@ listSeparator
             { W.eastAsianLayout, 440 },
             { W.specVanish, 450 },
             { W.oMath, 460 },
-        };
+        }.ToFrozenDictionary();
 
-        private static readonly Dictionary<XName, int> Order_tblPr = new Dictionary<XName, int>
+        private static readonly FrozenDictionary<XName, int> Order_tblPr = new Dictionary<XName, int>
         {
             { W.tblStyle, 10 },
             { W.tblpPr, 20 },
@@ -1258,9 +1259,9 @@ listSeparator
             { W.tblLook, 150 },
             { W.tblCaption, 160 },
             { W.tblDescription, 170 },
-        };
+        }.ToFrozenDictionary();
 
-        private static readonly Dictionary<XName, int> Order_tblBorders = new Dictionary<XName, int>
+        private static readonly FrozenDictionary<XName, int> Order_tblBorders = new Dictionary<XName, int>
         {
             { W.top, 10 },
             { W.left, 20 },
@@ -1270,9 +1271,9 @@ listSeparator
             { W.end, 60 },
             { W.insideH, 70 },
             { W.insideV, 80 },
-        };
+        }.ToFrozenDictionary();
 
-        private static readonly Dictionary<XName, int> Order_tcPr = new Dictionary<XName, int>
+        private static readonly FrozenDictionary<XName, int> Order_tcPr = new Dictionary<XName, int>
         {
             { W.cnfStyle, 10 },
             { W.tcW, 20 },
@@ -1288,9 +1289,9 @@ listSeparator
             { W.vAlign, 120 },
             { W.hideMark, 130 },
             { W.headers, 140 },
-        };
+        }.ToFrozenDictionary();
 
-        private static readonly Dictionary<XName, int> Order_tcBorders = new Dictionary<XName, int>
+        private static readonly FrozenDictionary<XName, int> Order_tcBorders = new Dictionary<XName, int>
         {
             { W.top, 10 },
             { W.start, 20 },
@@ -1302,9 +1303,9 @@ listSeparator
             { W.insideV, 80 },
             { W.tl2br, 90 },
             { W.tr2bl, 100 },
-        };
+        }.ToFrozenDictionary();
 
-        private static readonly Dictionary<XName, int> Order_pBdr = new Dictionary<XName, int>
+        private static readonly FrozenDictionary<XName, int> Order_pBdr = new Dictionary<XName, int>
         {
             { W.top, 10 },
             { W.left, 20 },
@@ -1312,7 +1313,7 @@ listSeparator
             { W.right, 40 },
             { W.between, 50 },
             { W.bar, 60 },
-        };
+        }.ToFrozenDictionary();
 
         public static object WmlOrderElementsPerStandard(XNode node)
         {
@@ -1326,12 +1327,7 @@ listSeparator
                         element
                             .Elements()
                             .Select(e => (XElement)WmlOrderElementsPerStandard(e))
-                            .OrderBy(e =>
-                            {
-                                if (Order_pPr.ContainsKey(e.Name))
-                                    return Order_pPr[e.Name];
-                                return 999;
-                            })
+                            .OrderBy(e => Order_pPr.GetValueOrDefault(e.Name, 999))
                     );
 
                 if (element.Name == W.rPr)
@@ -1341,12 +1337,7 @@ listSeparator
                         element
                             .Elements()
                             .Select(e => (XElement)WmlOrderElementsPerStandard(e))
-                            .OrderBy(e =>
-                            {
-                                if (Order_rPr.ContainsKey(e.Name))
-                                    return Order_rPr[e.Name];
-                                return 999;
-                            })
+                            .OrderBy(e => Order_rPr.GetValueOrDefault(e.Name, 999))
                     );
 
                 if (element.Name == W.tblPr)
@@ -1356,12 +1347,7 @@ listSeparator
                         element
                             .Elements()
                             .Select(e => (XElement)WmlOrderElementsPerStandard(e))
-                            .OrderBy(e =>
-                            {
-                                if (Order_tblPr.ContainsKey(e.Name))
-                                    return Order_tblPr[e.Name];
-                                return 999;
-                            })
+                            .OrderBy(e => Order_tblPr.GetValueOrDefault(e.Name, 999))
                     );
 
                 if (element.Name == W.tcPr)
@@ -1371,12 +1357,7 @@ listSeparator
                         element
                             .Elements()
                             .Select(e => (XElement)WmlOrderElementsPerStandard(e))
-                            .OrderBy(e =>
-                            {
-                                if (Order_tcPr.ContainsKey(e.Name))
-                                    return Order_tcPr[e.Name];
-                                return 999;
-                            })
+                            .OrderBy(e => Order_tcPr.GetValueOrDefault(e.Name, 999))
                     );
 
                 if (element.Name == W.tcBorders)
@@ -1386,12 +1367,7 @@ listSeparator
                         element
                             .Elements()
                             .Select(e => (XElement)WmlOrderElementsPerStandard(e))
-                            .OrderBy(e =>
-                            {
-                                if (Order_tcBorders.ContainsKey(e.Name))
-                                    return Order_tcBorders[e.Name];
-                                return 999;
-                            })
+                            .OrderBy(e => Order_tcBorders.GetValueOrDefault(e.Name, 999))
                     );
 
                 if (element.Name == W.tblBorders)
@@ -1401,12 +1377,7 @@ listSeparator
                         element
                             .Elements()
                             .Select(e => (XElement)WmlOrderElementsPerStandard(e))
-                            .OrderBy(e =>
-                            {
-                                if (Order_tblBorders.ContainsKey(e.Name))
-                                    return Order_tblBorders[e.Name];
-                                return 999;
-                            })
+                            .OrderBy(e => Order_tblBorders.GetValueOrDefault(e.Name, 999))
                     );
 
                 if (element.Name == W.pBdr)
@@ -1416,12 +1387,7 @@ listSeparator
                         element
                             .Elements()
                             .Select(e => (XElement)WmlOrderElementsPerStandard(e))
-                            .OrderBy(e =>
-                            {
-                                if (Order_pBdr.ContainsKey(e.Name))
-                                    return Order_pBdr[e.Name];
-                                return 999;
-                            })
+                            .OrderBy(e => Order_pBdr.GetValueOrDefault(e.Name, 999))
                     );
 
                 if (element.Name == W.p)
@@ -1456,12 +1422,7 @@ listSeparator
                         element
                             .Elements()
                             .Select(e => (XElement)WmlOrderElementsPerStandard(e))
-                            .OrderBy(e =>
-                            {
-                                if (Order_settings.ContainsKey(e.Name))
-                                    return Order_settings[e.Name];
-                                return 999;
-                            })
+                            .OrderBy(e => Order_settings.GetValueOrDefault(e.Name, 999))
                     );
 
                 return new XElement(

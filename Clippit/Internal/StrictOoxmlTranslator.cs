@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Frozen;
+
 namespace Clippit.Internal;
 
 /// <summary>
@@ -19,7 +21,9 @@ internal static class StrictOoxmlTranslator
 {
     // Strict XML namespace URI → Transitional XML namespace URI
     // Source: dotnet/Open-XML-SDK OpenXmlNamespaceResolver._strictTransitionalNamespaces
-    private static readonly Dictionary<string, string> s_namespaces = new(StringComparer.Ordinal)
+    private static readonly FrozenDictionary<string, string> s_namespaces = new Dictionary<string, string>(
+        StringComparer.Ordinal
+    )
     {
         ["http://purl.oclc.org/ooxml/descriptions/base"] = "http://descriptions.openxmlformats.org/description/base",
         ["http://purl.oclc.org/ooxml/descriptions/full"] = "http://descriptions.openxmlformats.org/description/full",
@@ -74,11 +78,13 @@ internal static class StrictOoxmlTranslator
         ["http://purl.org/dc/terms/"] = "http://purl.org/dc/terms/",
         ["http://www.w3.org/2001/XMLSchema"] = "http://www.w3.org/2001/XMLSchema",
         ["http://www.w3.org/2001/XMLSchema-instance"] = "http://www.w3.org/2001/XMLSchema-instance",
-    };
+    }.ToFrozenDictionary(StringComparer.Ordinal);
 
     // Strict relationship type URI → Transitional relationship type URI
     // Source: dotnet/Open-XML-SDK OpenXmlNamespaceResolver._strictTransitionalRelationshipPairs
-    private static readonly Dictionary<string, string> s_relTypes = new(StringComparer.Ordinal)
+    private static readonly FrozenDictionary<string, string> s_relTypes = new Dictionary<string, string>(
+        StringComparer.Ordinal
+    )
     {
         ["http://purl.oclc.org/ooxml/officeDocument/relationships/aFChunk"] =
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/aFChunk",
@@ -241,7 +247,7 @@ internal static class StrictOoxmlTranslator
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet",
         ["http://purl.oclc.org/ooxml/officeDocument/relationships/xmlMaps"] =
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/xmlMaps",
-    };
+    }.ToFrozenDictionary(StringComparer.Ordinal);
 
     /// <summary>
     /// Returns the Transitional namespace URI for a given Strict namespace URI,
