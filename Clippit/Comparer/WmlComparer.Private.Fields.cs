@@ -44,15 +44,14 @@ namespace Clippit
             W.drawing
         );
 
-        private static readonly FrozenSet<XName> s_attributesToTrimWhenCloning = new HashSet<XName>
-        {
+        private static readonly FrozenSet<XName> s_attributesToTrimWhenCloning = FrozenSet.Create<XName>(
             WP14.anchorId,
             WP14.editId,
             "ObjectID",
             "ShapeID",
             "id",
-            "type",
-        }.ToFrozenSet();
+            "type"
+        );
 
         private static int s_maxId;
 
