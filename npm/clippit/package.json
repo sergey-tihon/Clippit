@@ -24,7 +24,8 @@
     "@sergey-tihon/clippit-bin-win32-x64": "0.0.0",
     "@sergey-tihon/clippit-bin-darwin-x64": "0.0.0",
     "@sergey-tihon/clippit-bin-darwin-arm64": "0.0.0",
-    "@sergey-tihon/clippit-bin-linux-x64": "0.0.0"
+    "@sergey-tihon/clippit-bin-linux-x64": "0.0.0",
+    "@sergey-tihon/clippit-bin-linux-arm64": "0.0.0"
   },
   "engines": {
     "node": ">=18"

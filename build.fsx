@@ -22,6 +22,9 @@ let cliRuntimes =
         BinaryName = "clippit" }
       { Rid = "linux-x64"
         NpmDirectory = "clippit-linux-x64"
+        BinaryName = "clippit" }
+      { Rid = "linux-arm64"
+        NpmDirectory = "clippit-linux-arm64"
         BinaryName = "clippit" } ]
 
 let requestedRids =
@@ -169,7 +172,7 @@ let publishCliBinaries () =
 let packNpmPackages () =
     if not allCliRuntimesRequested then
         failwith
-            "NPM wrapper package requires all CLI runtimes. Set CLIPPIT_PUBLISH_RIDS=win-x64,osx-x64,osx-arm64,linux-x64."
+            "NPM wrapper package requires all CLI runtimes. Set CLIPPIT_PUBLISH_RIDS=win-x64,osx-x64,osx-arm64,linux-x64,linux-arm64."
 
     let npmDir = System.IO.Path.Combine(__SOURCE_DIRECTORY__, "npm")
 
