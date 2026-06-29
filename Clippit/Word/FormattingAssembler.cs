@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Frozen;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
@@ -1500,8 +1501,7 @@ namespace Clippit.Word
             return rolledStyle;
         }
 
-        private static readonly HashSet<XName> SpecialCaseChildProperties =
-        [
+        private static readonly FrozenSet<XName> SpecialCaseChildProperties = FrozenSet.Create<XName>(
             W.tblPr,
             W.trPr,
             W.tcPr,
@@ -1516,8 +1516,8 @@ namespace Clippit.Word
             W.tcBorders,
             W.tblBorders,
             W.lang,
-            W.numPr,
-        ];
+            W.numPr
+        );
 
         private static readonly XName[] MergeChildProperties =
         {
@@ -2698,7 +2698,7 @@ namespace Clippit.Word
             private static readonly XName[] PropertyNames = new[] { W.cs, W.rtl, W.u, W.color, W.highlight, W.shd };
         }
 
-        private static readonly HashSet<char> WeakAndNeutralDirectionalCharacters = new()
+        private static readonly FrozenSet<char> WeakAndNeutralDirectionalCharacters = new HashSet<char>
         {
             '0',
             '1',
@@ -2793,7 +2793,7 @@ namespace Clippit.Word
             '\x06F7',
             '\x06F8',
             '\x06F9',
-        };
+        }.ToFrozenSet();
 
         private static void AdjustFontAttributes(
             WordprocessingDocument wDoc,

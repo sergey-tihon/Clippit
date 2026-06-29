@@ -1902,7 +1902,7 @@ namespace Clippit.Html
             return FontType.HAnsi;
         }
 
-        private static readonly HashSet<char> WeakAndNeutralDirectionalCharacters = new HashSet<char>()
+        private static readonly FrozenSet<char> WeakAndNeutralDirectionalCharacters = new HashSet<char>()
         {
             '0',
             '1',
@@ -1997,7 +1997,7 @@ namespace Clippit.Html
             '\x06F7',
             '\x06F8',
             '\x06F9',
-        };
+        }.ToFrozenSet();
 
         private static void AdjustFontAttributes(
             WordprocessingDocument wDoc,
