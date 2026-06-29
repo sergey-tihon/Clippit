@@ -37,6 +37,9 @@ jobs:
           - rid: win-x64
             os: windows-latest
             binary: clippit.exe
+          - rid: win-arm64
+            os: windows-11-arm
+            binary: clippit.exe
           - rid: osx-x64
             os: macos-15-intel
             binary: clippit
@@ -108,6 +111,12 @@ jobs:
           name: clippit-win-x64
           path: bin/cli/win-x64
 
+      - name: Download win-arm64 binary
+        uses: actions/download-artifact@v8
+        with:
+          name: clippit-win-arm64
+          path: bin/cli/win-arm64
+
       - name: Download osx-x64 binary
         uses: actions/download-artifact@v8
         with:
@@ -123,7 +132,7 @@ jobs:
       - name: Pack npm packages
         run: dotnet fsi build.fsx -- -p pack-npm
         env:
-          CLIPPIT_PUBLISH_RIDS: win-x64,osx-x64,osx-arm64,linux-x64,linux-arm64
+          CLIPPIT_PUBLISH_RIDS: win-x64,win-arm64,osx-x64,osx-arm64,linux-x64,linux-arm64
 
       - name: Upload npm tarballs
         uses: actions/upload-artifact@v7
@@ -140,6 +149,7 @@ jobs:
           npm publish bin/npm/sergey-tihon-clippit-bin-darwin-arm64-*.tgz --provenance --access public
           npm publish bin/npm/sergey-tihon-clippit-bin-linux-x64-*.tgz --provenance --access public
           npm publish bin/npm/sergey-tihon-clippit-bin-linux-arm64-*.tgz --provenance --access public
+          npm publish bin/npm/sergey-tihon-clippit-bin-win32-arm64-*.tgz --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

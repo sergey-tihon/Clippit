@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.6.0] - 2026-06-29
+
+- feat(npm): add Windows ARM64 native binary support — new npm platform package
+  `@sergey-tihon/clippit-bin-win32-arm64` built on GitHub Actions
+  `windows-11-arm` runners (#363)
+
 ## [0.5.0] - 2026-06-29
 
 - feat(npm): add Linux ARM64 native binary support — new npm platform package

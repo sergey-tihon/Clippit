@@ -68,6 +68,7 @@ Published JSON schemas for manifests and result payloads are available at
 | Platform      | Package                                   |
 | ------------- | ----------------------------------------- |
 | Windows x64   | `@sergey-tihon/clippit-bin-win32-x64`     |
+| Windows arm64 | `@sergey-tihon/clippit-bin-win32-arm64`   |
 | macOS x64     | `@sergey-tihon/clippit-bin-darwin-x64`    |
 | macOS arm64   | `@sergey-tihon/clippit-bin-darwin-arm64`  |
 | Linux x64     | `@sergey-tihon/clippit-bin-linux-x64`     |
