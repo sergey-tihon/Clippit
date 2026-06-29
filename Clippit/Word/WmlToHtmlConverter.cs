@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
@@ -3135,7 +3136,7 @@ namespace Clippit.Word
         // Symbol/dingbat fonts that use non-standard character encodings. Directional marks
         // (LRM/RLM) must not be inserted into runs using these fonts as the marks render as
         // visible glyphs rather than invisible control characters.
-        private static readonly HashSet<string> s_symbolFonts = new(StringComparer.OrdinalIgnoreCase)
+        private static readonly FrozenSet<string> s_symbolFonts = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "Symbol",
             "Webdings",
@@ -3144,7 +3145,7 @@ namespace Clippit.Word
             "Wingdings 2",
             "Wingdings3",
             "Wingdings 3",
-        };
+        }.ToFrozenSet(StringComparer.OrdinalIgnoreCase);
 
         private static readonly Dictionary<string, string> FontFallback = new()
         {

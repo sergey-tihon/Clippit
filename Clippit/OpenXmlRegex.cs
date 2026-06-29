@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Frozen;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
@@ -10,8 +11,7 @@ namespace Clippit
     {
         private const string DontConsolidate = "DontConsolidate";
 
-        private static readonly HashSet<XName> RevTrackMarkupWithId = new()
-        {
+        private static readonly FrozenSet<XName> RevTrackMarkupWithId = FrozenSet.Create<XName>(
             W.cellDel,
             W.cellIns,
             W.cellMerge,
@@ -37,8 +37,8 @@ namespace Clippit
             W.tblGridChange,
             W.tblPrChange,
             W.tblPrExChange,
-            W.tcPrChange,
-        };
+            W.tcPrChange
+        );
 
         public static int Match(IEnumerable<XElement> content, Regex regex)
         {

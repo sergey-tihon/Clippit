@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Frozen;
 using System.Xml.Linq;
 
 namespace Clippit
@@ -35,23 +36,27 @@ namespace Clippit
             new(MC.Ignorable, "w14 wp14"),
         ];
 
-        // HashSets give O(1) Contains() vs O(n) for arrays; static readonly avoids per-call allocation.
-        private static readonly HashSet<XName> s_revElementsWithNoText = [M.oMath, M.oMathPara, W.drawing];
+        // FrozenSet gives faster O(1) Contains() for static read-only membership tests;
+        // static readonly avoids per-call allocation.
+        private static readonly FrozenSet<XName> s_revElementsWithNoText = FrozenSet.Create<XName>(
+            M.oMath,
+            M.oMathPara,
+            W.drawing
+        );
 
-        private static readonly HashSet<XName> s_attributesToTrimWhenCloning =
-        [
+        private static readonly FrozenSet<XName> s_attributesToTrimWhenCloning = new HashSet<XName>
+        {
             WP14.anchorId,
             WP14.editId,
             "ObjectID",
             "ShapeID",
             "id",
             "type",
-        ];
+        }.ToFrozenSet();
 
         private static int s_maxId;
 
-        private static readonly HashSet<XName> s_wordBreakElements =
-        [
+        private static readonly FrozenSet<XName> s_wordBreakElements = FrozenSet.Create<XName>(
             W.pPr,
             W.tab,
             W.br,
@@ -75,11 +80,10 @@ namespace Clippit
             M.oMathPara,
             M.oMath,
             W.footnoteReference,
-            W.endnoteReference,
-        ];
+            W.endnoteReference
+        );
 
-        private static readonly HashSet<XName> s_allowableRunChildren =
-        [
+        private static readonly FrozenSet<XName> s_allowableRunChildren = FrozenSet.Create<XName>(
             W.br,
             W.drawing,
             W.cr,
@@ -100,11 +104,10 @@ namespace Clippit
             M.oMathPara,
             M.oMath,
             W.fldChar,
-            W.instrText,
-        ];
+            W.instrText
+        );
 
-        private static readonly HashSet<XName> s_elementsToThrowAway =
-        [
+        private static readonly FrozenSet<XName> s_elementsToThrowAway = FrozenSet.Create<XName>(
             W.bookmarkStart,
             W.bookmarkEnd,
             W.commentRangeStart,
@@ -118,22 +121,20 @@ namespace Clippit
             W.footnoteRef,
             W.endnoteRef,
             W.separator,
-            W.continuationSeparator,
-        ];
+            W.continuationSeparator
+        );
 
-        private static readonly HashSet<XName> s_elementsToHaveSha1Hash =
-        [
+        private static readonly FrozenSet<XName> s_elementsToHaveSha1Hash = FrozenSet.Create<XName>(
             W.p,
             W.tbl,
             W.tr,
             W.tc,
             W.drawing,
             W.pict,
-            W.txbxContent,
-        ];
+            W.txbxContent
+        );
 
-        private static readonly HashSet<XName> s_invalidElements =
-        [
+        private static readonly FrozenSet<XName> s_invalidElements = FrozenSet.Create<XName>(
             W.altChunk,
             W.customXml,
             W.customXmlDelRangeEnd,
@@ -150,8 +151,8 @@ namespace Clippit
             W.moveTo,
             W.moveToRangeStart,
             W.moveToRangeEnd,
-            W.subDoc,
-        ];
+            W.subDoc
+        );
 
         // Array (not HashSet) since this is searched by FirstOrDefault with a predicate on ElementName.
         private static readonly RecursionInfo[] s_recursionElements =
@@ -178,6 +179,12 @@ namespace Clippit
             new() { ElementName = W.ruby, ChildElementPropertyNames = [W.rubyPr] },
         ];
 
-        private static readonly HashSet<XName> s_comparisonGroupingElements = [W.p, W.tbl, W.tr, W.tc, W.txbxContent];
+        private static readonly FrozenSet<XName> s_comparisonGroupingElements = FrozenSet.Create<XName>(
+            W.p,
+            W.tbl,
+            W.tr,
+            W.tc,
+            W.txbxContent
+        );
     }
 }

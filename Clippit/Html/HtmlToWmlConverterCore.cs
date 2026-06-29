@@ -96,6 +96,7 @@
 // then need to make sure that all of the cells below the caption have the border on the appropriate sides so that it looks as if the table
 // has a border.
 
+using System.Collections.Frozen;
 using System.Xml.Linq;
 using Clippit.Internal;
 using Clippit.Word;
@@ -1902,7 +1903,7 @@ namespace Clippit.Html
             return FontType.HAnsi;
         }
 
-        private static readonly HashSet<char> WeakAndNeutralDirectionalCharacters = new HashSet<char>()
+        private static readonly FrozenSet<char> WeakAndNeutralDirectionalCharacters = new HashSet<char>()
         {
             '0',
             '1',
@@ -1997,7 +1998,7 @@ namespace Clippit.Html
             '\x06F7',
             '\x06F8',
             '\x06F9',
-        };
+        }.ToFrozenSet();
 
         private static void AdjustFontAttributes(
             WordprocessingDocument wDoc,
