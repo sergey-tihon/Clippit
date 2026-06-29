@@ -65,12 +65,13 @@ Published JSON schemas for manifests and result payloads are available at
 
 ## Supported platforms
 
-| Platform    | Package                                  |
-| ----------- | ---------------------------------------- |
-| Windows x64 | `@sergey-tihon/clippit-bin-win32-x64`    |
-| macOS x64   | `@sergey-tihon/clippit-bin-darwin-x64`   |
-| macOS arm64 | `@sergey-tihon/clippit-bin-darwin-arm64` |
-| Linux x64   | `@sergey-tihon/clippit-bin-linux-x64`    |
+| Platform      | Package                                   |
+| ------------- | ----------------------------------------- |
+| Windows x64   | `@sergey-tihon/clippit-bin-win32-x64`     |
+| macOS x64     | `@sergey-tihon/clippit-bin-darwin-x64`    |
+| macOS arm64   | `@sergey-tihon/clippit-bin-darwin-arm64`  |
+| Linux x64     | `@sergey-tihon/clippit-bin-linux-x64`     |
+| Linux arm64   | `@sergey-tihon/clippit-bin-linux-arm64`   |
 
 The correct binary package is installed automatically as an optional dependency.
 
