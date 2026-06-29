@@ -22,6 +22,9 @@ let cliRuntimes =
         BinaryName = "clippit" }
       { Rid = "linux-x64"
         NpmDirectory = "clippit-linux-x64"
+        BinaryName = "clippit" }
+      { Rid = "linux-arm64"
+        NpmDirectory = "clippit-linux-arm64"
         BinaryName = "clippit" } ]
 
 let requestedRids =

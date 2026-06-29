@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0] - 2026-06-29
+
+- feat(npm): add Linux ARM64 native binary support — new npm platform package
+  `@sergey-tihon/clippit-bin-linux-arm64` built on GitHub Actions
+  `ubuntu-24.04-arm` runners (#360)
+- chore(deps): bump actions/checkout from 6 to 7 (#347)
+
 ## [0.4.1] - 2026-06-23
 
 - chore(deps): update SkiaSharp 3.119.4 → 4.148.0 with migration fix (#346)

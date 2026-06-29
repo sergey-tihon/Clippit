@@ -31,6 +31,9 @@ jobs:
           - rid: linux-x64
             os: ubuntu-latest
             binary: clippit
+          - rid: linux-arm64
+            os: ubuntu-24.04-arm
+            binary: clippit
           - rid: win-x64
             os: windows-latest
             binary: clippit.exe
@@ -51,7 +54,7 @@ jobs:
           global-json-file: global.json
 
       - name: Install Linux NativeAOT toolchain
-        if: matrix.rid == 'linux-x64'
+        if: startsWith(matrix.rid, 'linux-')
         run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
 
       - name: Publish NativeAOT binary
@@ -93,6 +96,12 @@ jobs:
           name: clippit-linux-x64
           path: bin/cli/linux-x64
 
+      - name: Download linux-arm64 binary
+        uses: actions/download-artifact@v8
+        with:
+          name: clippit-linux-arm64
+          path: bin/cli/linux-arm64
+
       - name: Download win-x64 binary
         uses: actions/download-artifact@v8
         with:
@@ -114,7 +123,7 @@ jobs:
       - name: Pack npm packages
         run: dotnet fsi build.fsx -- -p pack-npm
         env:
-          CLIPPIT_PUBLISH_RIDS: win-x64,osx-x64,osx-arm64,linux-x64
+          CLIPPIT_PUBLISH_RIDS: win-x64,osx-x64,osx-arm64,linux-x64,linux-arm64
 
       - name: Upload npm tarballs
         uses: actions/upload-artifact@v7
@@ -130,6 +139,7 @@ jobs:
           npm publish bin/npm/sergey-tihon-clippit-bin-darwin-x64-*.tgz --provenance --access public
           npm publish bin/npm/sergey-tihon-clippit-bin-darwin-arm64-*.tgz --provenance --access public
           npm publish bin/npm/sergey-tihon-clippit-bin-linux-x64-*.tgz --provenance --access public
+          npm publish bin/npm/sergey-tihon-clippit-bin-linux-arm64-*.tgz --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
