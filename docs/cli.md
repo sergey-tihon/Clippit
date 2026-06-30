@@ -8,6 +8,7 @@ clippit version
 clippit pptx split deck.pptx --output slides --manifest
 clippit pptx build run slides/deck.manifest.json --output final.pptx
 clippit pptx verify final.pptx
+clippit word compare before.docx after.docx --output compared.docx
 clippit word verify document.docx
 clippit word to-html document.docx
 clippit word from-html article.html --css styles.css
@@ -62,6 +63,7 @@ Agents and scripts should use `--format json` when they need machine-readable co
 | stdout | Successful JSON command | Command-specific result JSON. |
 | stdout | `pptx verify` finds validation diagnostics | Verify result JSON with `valid: false`; process exits `4`. |
 | stdout | `word verify` finds validation diagnostics | Verify result JSON with `valid: false`; process exits `4`. |
+| stdout | `word compare` | Result JSON (e.g. `{"source":...,"revised":...,"output":...,"revisions":...}`); compared DOCX written to `--output` path. |
 | stdout | `excel verify` finds validation diagnostics | Verify result JSON with `valid: false`; process exits `4`. |
 | stdout | `word to-html` / `word from-html` | Result JSON (e.g. `{"input":...,"output":...,"outputSize":...}`); converted content written to `--output` path. |
 | stdout | `excel to-html` | Result JSON (e.g. `{"input":...,"output":...,"outputSize":...}`); converted HTML written to `--output` path. |
@@ -92,6 +94,7 @@ Commands that accept files use `-` for stdin where binary or JSON streaming is s
 cat deck.pptx | clippit pptx split - --output slides --format json
 cat deck.json | clippit pptx build run - --output - > final.pptx
 cat deck.pptx | clippit pptx verify - --format json
+cat before.docx | clippit word compare - after.docx --output compared.docx --format json
 cat document.docx | clippit word verify - --format json
 cat document.docx | clippit word to-html - --inline-images --output -
 cat article.html | clippit word from-html - --minor-font "Georgia" --output -
@@ -316,6 +319,39 @@ Valid JSON example:
 {"input":"/work/document.docx","officeVersion":"Microsoft365","valid":true,"diagnostics":[]}
 ```
 
+## `word compare`
+
+Compares two `.docx` files and writes a result document with tracked revisions.
+The command wraps `WmlComparer.Compare`.
+
+Synopsis:
+
+```text
+clippit word compare <source.docx|-> <revised.docx|-> [--output <file.docx|->] [--author <text>] [--date-time <text>] [--case-insensitive] [--format json|text] [--quiet]
+```
+
+```bash
+clippit word compare before.docx after.docx
+clippit word compare before.docx after.docx --output compared.docx --format json
+clippit word compare before.docx after.docx --author "Jane Doe" --date-time 2026-01-01T00:00:00Z
+cat before.docx | clippit word compare - after.docx --output compared.docx --format json
+```
+
+Options:
+
+| Option | Description |
+| ------ | ----------- |
+| `--output`, `-o` | Output path for the compared `.docx` file. Defaults to `<source>-compared.docx`. Use `-` to write binary content to stdout. |
+| `--author` | Author value used for generated tracked revisions. |
+| `--date-time` | Date/time value used for generated tracked revisions. |
+| `--case-insensitive` | Ignore case when comparing words. |
+
+JSON example:
+
+```json
+{"source":"/work/before.docx","revised":"/work/after.docx","output":"/work/compared.docx","outputSize":59321,"revisions":8,"authorForRevisions":"Open-Xml-PowerTools","dateTimeForRevisions":"2026-01-01T00:00:00.0000000Z","caseInsensitive":false}
+```
+
 ## `excel verify`
 
 Validates that a `.xlsx` file is a readable and structurally correct Open XML spreadsheet. The command checks package readability, Open XML schema errors, dangling relationships, and markup compatibility issues.
@@ -434,4 +470,5 @@ Canonical schema URLs:
 | `pptx split` result | `https://sergey-tihon.github.io/Clippit/schemas/split-result.v1.json` |
 | `pptx build run` result | `https://sergey-tihon.github.io/Clippit/schemas/build-result.v1.json` |
 | `pptx verify`, `word verify`, `excel verify` result | `https://sergey-tihon.github.io/Clippit/schemas/verify-result.v1.json` |
+| `word compare` result | `https://sergey-tihon.github.io/Clippit/schemas/compare-result.v1.json` |
 | `word to-html`, `word from-html` result | `https://sergey-tihon.github.io/Clippit/schemas/convert-result.v1.json` |
