@@ -346,10 +346,15 @@ Options:
 | `--date-time` | Date/time value used for generated tracked revisions. |
 | `--case-insensitive` | Ignore case when comparing words. |
 
-JSON example:
+The `authorForRevisions` and `dateTimeForRevisions` fields echo back the effective
+values. When `--author`/`--date-time` are omitted they default to `Open-Xml-PowerTools`
+and the current local time (round-trip `o` format). When provided, the exact strings are
+echoed back without reformatting.
+
+JSON example (for `--author "Jane Doe" --date-time 2026-01-01T00:00:00Z --output compared.docx --format json`):
 
 ```json
-{"source":"/work/before.docx","revised":"/work/after.docx","output":"/work/compared.docx","outputSize":59321,"revisions":8,"authorForRevisions":"Open-Xml-PowerTools","dateTimeForRevisions":"2026-01-01T00:00:00.0000000Z","caseInsensitive":false}
+{"source":"/work/before.docx","revised":"/work/after.docx","output":"/work/compared.docx","outputSize":59321,"revisions":8,"authorForRevisions":"Jane Doe","dateTimeForRevisions":"2026-01-01T00:00:00Z","caseInsensitive":false}
 ```
 
 ## `excel verify`

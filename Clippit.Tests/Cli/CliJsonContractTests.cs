@@ -131,6 +131,52 @@ internal sealed class CliJsonContractTests : TestsBase
     }
 
     [Test]
+    public async Task CLI108_WordCompare_JsonResult_MatchesSchema()
+    {
+        var directory = CliTestRunner.CreateTempDirectory("contract-compare-result");
+        var source = CliTestRunner.TestFile("WC/WC011-Before.docx");
+        var revised = CliTestRunner.TestFile("WC/WC011-After.docx");
+        var output = new FileInfo(Path.Combine(directory.FullName, "compared.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "compare",
+                source.FullName,
+                revised.FullName,
+                "--output",
+                output.FullName,
+                "--format",
+                "json"
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        using var payload = result.ReadStdoutJson();
+        ValidateJsonAgainstSchema(payload.RootElement, "compare-result.v1.json");
+    }
+
+    [Test]
+    public async Task CLI109_CompareResult_Schema_RejectsInvalidPayloads()
+    {
+        using var missingRevisions = JsonDocument.Parse(
+            """
+            {"source":"/tmp/before.docx","revised":"/tmp/after.docx","output":"/tmp/out.docx","outputSize":100,"authorForRevisions":"a","dateTimeForRevisions":"2026-01-01T00:00:00Z","caseInsensitive":false}
+            """
+        );
+        await Assert.That(IsValid(missingRevisions.RootElement, "compare-result.v1.json")).IsFalse();
+
+        using var wrongCaseInsensitiveType = JsonDocument.Parse(
+            """
+            {"source":"/tmp/before.docx","revised":"/tmp/after.docx","output":"/tmp/out.docx","outputSize":100,"revisions":1,"authorForRevisions":"a","dateTimeForRevisions":"2026-01-01T00:00:00Z","caseInsensitive":"no"}
+            """
+        );
+        await Assert.That(IsValid(wrongCaseInsensitiveType.RootElement, "compare-result.v1.json")).IsFalse();
+    }
+
+    [Test]
     public async Task CLI107_ConvertResult_Schema_RejectsInvalidPayloads()
     {
         using var missingInput = JsonDocument.Parse(

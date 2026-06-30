@@ -44,11 +44,21 @@ internal static class WordCompareService
         var revisions = WmlComparer.GetRevisions(compared, settings);
 
         string? tempPath = null;
+        Stream outputStream;
         try
         {
             output.EnsureCanWrite(force: true, "output");
             output.EnsureDirectoryExists();
-            using (var outputStream = output.OpenWrite(out tempPath))
+            outputStream = output.OpenWrite(out tempPath);
+        }
+        catch (Exception ex) when (ex is not CliException)
+        {
+            throw CliException.OutputError($"Could not open output for writing: {ex.Message}");
+        }
+
+        try
+        {
+            try
             {
                 outputStream.Write(compared.DocumentByteArray, 0, compared.DocumentByteArray.Length);
                 outputStream.Flush();
@@ -56,12 +66,17 @@ internal static class WordCompareService
                 if (output.IsStdout)
                     output.Flush(outputStream);
             }
+            finally
+            {
+                outputStream.Dispose();
+            }
 
             if (!output.IsStdout)
-            {
                 output.Commit(tempPath);
-                tempPath = null;
-            }
+        }
+        catch (Exception ex) when (ex is not CliException)
+        {
+            throw CliException.OutputError($"Could not write output: {ex.Message}");
         }
         finally
         {
