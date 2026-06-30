@@ -1,8 +1,8 @@
 {
-  "last_run": "2026-06-29",
-  "last_run_id": "28388143441",
+  "last_run": "2026-06-30",
+  "last_run_id": "28459820592",
   "backlog_cursor": {
-    "issues": 311,
+    "issues": 364,
     "prs": 165
   },
   "comments_made": {
@@ -11,13 +11,12 @@
     "77": "2026-03-14",
     "103": "2026-03-15",
     "28": "2026-03-28",
-    "66": "2026-03-26"
+    "66": "2026-03-26",
+    "364": "2026-06-30"
   },
   "open_clippy_prs": [
-    {"number": 163, "branch": "clippy/improve-custom-handler-66-20260326-f25d5328ab83f793", "title": "[Clippy] feat: add RegisterCustomHandler extensibility API to DocumentAssembler", "rebased": "2026-06-28", "note": "131+ commits behind master - cannot auto-rebase"},
-    {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "[Clippy] feat(excel): add ExcelAssembler for template-based xlsx document assembly", "rebased": "2026-06-28", "note": "131+ commits behind master - cannot auto-rebase"},
-    {"number": null, "branch": "clippy/perf-frozenset-readonly-lookups-20260629", "title": "[Clippy] perf: convert static readonly HashSet fields to FrozenSet", "created": "2026-06-29"},
-    {"number": null, "branch": "clippy/perf-frozendictionary-order-lookups-20260629", "title": "[Clippy] perf: convert static readonly Dictionary fields to FrozenDictionary", "created": "2026-06-29"}
+    {"number": 163, "branch": "clippy/improve-custom-handler-66-20260326-f25d5328ab83f793", "title": "[Clippy] feat: add RegisterCustomHandler extensibility API to DocumentAssembler", "note": "131+ commits behind master"},
+    {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "[Clippy] feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "131+ commits behind master"}
   ],
   "checked_off_by_maintainer": [],
   "m_issue": 311,
@@ -25,28 +24,32 @@
   "notes": [
     "v3.5.1 released 2026-06-23: SkiaSharp 4.x, System.CommandLine preview.5, MS.NET.Test.Sdk 18.7.0",
     "Monthly Activity issue for June 2026 is #311",
+    "PR #361 (FrozenSet) MERGED 2026-06-29 - was incorrectly labeled #363 in previous memory",
+    "PR #362 (FrozenDictionary) MERGED 2026-06-29 - was incorrectly labeled #364 in previous memory",
+    "PR #363 (Windows ARM64 npm) MERGED 2026-06-29 by maintainer - NOT a Clippy PR",
     "PR #359 (TUnit 1.57.0) MERGED 2026-06-28",
-    "PR #360 (Linux ARM64 npm) MERGED by maintainer 2026-06-29",
+    "PR #360 (Linux ARM64 npm) MERGED 2026-06-29 by maintainer",
     "Null modernization series COMPLETE: all core library files done (Excel/PegBase.cs excluded - external library)",
-    "PRs #163/#165 are 131+ commits behind master - attempted rebase 2026-06-28 failed due to TUnit dep conflicts; left for human rebase or close",
-    "FrozenSet PR (branch clippy/perf-frozenset-readonly-lookups-20260629): 13 HashSet->FrozenSet in 5 files, created run 28388143441",
-    "FrozenDictionary PR (branch clippy/perf-frozendictionary-order-lookups-20260629): 19 Dict->FrozenDict in 4 files + ContainsKey->GetValueOrDefault, created run 28388143441"
+    "PRs #163/#165 are 131+ commits behind master - left for human rebase or close",
+    "Issue #364 created 2026-06-30: 'Add cli command for docx document comparison' (sergey-tihon)",
+    "PR #365 by Copilot coding agent: 'Add word compare CLI command' implements issue #364 - draft, pending review",
+    "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade"
   ],
   "improvements_submitted": [
     "PR#342: test(cli) fix duplicate CLI test codes - merged 2026-06-23",
     "PR#343: chore(deps) TUnit 1.54.0->1.56.25 + JsonSchema.Net 9.2.1->9.2.2 - merged 2026-06-23",
-    "PR#344: refactor Excel converters == null / != null -> is null / is not null - merged 2026-06-23",
-    "PR#345: refactor FormattingAssembler.cs == null / != null -> is null / is not null - merged 2026-06-23",
-    "PR#349: refactor DocumentBuilder.cs == null / != null -> is null / is not null (189) - merged 2026-06-24",
-    "PR#350: refactor ListItemRetriever+HtmlToWmlConverterCore+WmlComparer.ProduceDocument == null / != null (367) - merged 2026-06-26",
+    "PR#344: refactor Excel converters is null/is not null - merged 2026-06-23",
+    "PR#345: refactor FormattingAssembler.cs is null/is not null - merged 2026-06-23",
+    "PR#349: refactor DocumentBuilder.cs is null/is not null (189) - merged 2026-06-24",
+    "PR#350: refactor ListItemRetriever+HtmlToWmlConverterCore+WmlComparer.ProduceDocument (367) - merged 2026-06-26",
     "PR#351: chore(deps) TUnit 1.56.25->1.56.35 - merged 2026-06-26",
-    "PR#352: refactor PtUtil+OxPtHelpers+all WmlComparer files == null / != null (128) - merged 2026-06-26",
-    "PR#353: refactor Word/ files (8 files, 445 reps) == null / != null - merged 2026-06-26",
-    "PR#354: test(common) FieldRetriever.ParseField unit tests FR001-FR010 (19 cases) - merged 2026-06-28",
-    "PR#355: refactor Html/ files (3 files, 93 reps) == null / != null - merged 2026-06-28",
-    "PR#356: refactor batch5 (10 files, 85 reps) + Lazy<T> KnownFamilies + ??= improvements - merged 2026-06-28",
+    "PR#352: refactor PtUtil+OxPtHelpers+WmlComparer files (128) - merged 2026-06-26",
+    "PR#353: refactor Word/ files (8 files, 445 reps) - merged 2026-06-26",
+    "PR#354: test(common) FieldRetriever.ParseField unit tests - merged 2026-06-28",
+    "PR#355: refactor Html/ files (3 files, 93 reps) - merged 2026-06-28",
+    "PR#356: refactor batch5 (10 files) + Lazy<T> + ??= - merged 2026-06-28",
     "PR#359: chore(deps) TUnit 1.56.35->1.57.0 - merged 2026-06-28",
-    "PR(~#363): perf FrozenSet conversion - 13 HashSet->FrozenSet in 5 files - open 2026-06-29",
-    "PR(~#364): perf FrozenDictionary conversion - 19 Dict->FrozenDict in 4 files - open 2026-06-29"
+    "PR#361: perf FrozenSet conversion - 13 HashSet->FrozenSet in 5 files - merged 2026-06-29",
+    "PR#362: perf FrozenDictionary conversion - 19 Dict->FrozenDict in 4 files - merged 2026-06-29"
   ]
 }
