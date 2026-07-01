@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Clippit CLI | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Clippit CLI | Clippit ">
+      
+      
+      <link rel="icon" href="images/logo-site.png">
+      <link rel="stylesheet" href="public/docfx.min.css">
+      <link rel="stylesheet" href="public/main.css">
+      <meta name="docfx:navrel" content="toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/blob/master/docs/cli.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="index.html">
+            <img id="logo" class="svg" src="images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="clippit-cli">Clippit CLI</h1>
+
+<p>Clippit CLI exposes PowerPoint, Word, and Excel workflows from the Clippit library as scriptable commands. It is designed for build pipelines, local deck automation, DOCX↔HTML conversion, and tools that need stable JSON output.</p>
+<pre><code class="lang-bash">clippit --help
+clippit version
+clippit pptx split deck.pptx --output slides --manifest
+clippit pptx build run slides/deck.manifest.json --output final.pptx
+clippit pptx verify final.pptx
+clippit word compare before.docx after.docx --output compared.docx
+clippit word verify document.docx
+clippit word to-html document.docx
+clippit word from-html article.html --css styles.css
+clippit excel to-html spreadsheet.xlsx
+clippit excel verify spreadsheet.xlsx
+</code></pre>
+<h2 id="installation">Installation</h2>
+<p>You can install Clippit CLI either as a .NET global tool (NuGet) or as a Node.js global package (npm).</p>
+<h3 id="install-from-nuget-dotnet-tool">Install from NuGet (<code>dotnet tool</code>)</h3>
+<pre><code class="lang-bash">dotnet tool install -g Clippit.Cli
+clippit --version
+</code></pre>
+<p>Update / uninstall:</p>
+<pre><code class="lang-bash">dotnet tool update -g Clippit.Cli
+dotnet tool uninstall -g Clippit.Cli
+</code></pre>
+<h3 id="install-from-npm">Install from npm</h3>
+<pre><code class="lang-bash">npm install -g clippit
+clippit --version
+</code></pre>
+<p>Update / uninstall:</p>
+<pre><code class="lang-bash">npm install -g clippit@latest
+npm uninstall -g clippit
+</code></pre>
+<h2 id="output-behavior">Output Behavior</h2>
+<p>Every command supports <code>--format json|text</code> and <code>--quiet</code> unless it writes binary content to stdout. Text output is intended for humans; JSON output is compact and stable for automation.</p>
+<p>Success payloads are written to stdout. Command execution errors are written to stderr as compact JSON with a stable symbolic <code>code</code>. Parser and help errors use System.CommandLine usage output.</p>
+<h2 id="automation-contract">Automation Contract</h2>
+<p>Agents and scripts should use <code>--format json</code> when they need machine-readable command results.</p>
+<table>
+<thead>
+<tr>
+<th>Stream</th>
+<th>Condition</th>
+<th>Payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>stdout</td>
+<td>Successful JSON command</td>
+<td>Command-specific result JSON.</td>
+</tr>
+<tr>
+<td>stdout</td>
+<td><code>pptx verify</code> finds validation diagnostics</td>
+<td>Verify result JSON with <code>valid: false</code>; process exits <code>4</code>.</td>
+</tr>
+<tr>
+<td>stdout</td>
+<td><code>word verify</code> finds validation diagnostics</td>
+<td>Verify result JSON with <code>valid: false</code>; process exits <code>4</code>.</td>
+</tr>
+<tr>
+<td>stdout</td>
+<td><code>word compare</code></td>
+<td>Result JSON (e.g. <code>{&quot;source&quot;:...,&quot;revised&quot;:...,&quot;output&quot;:...,&quot;revisions&quot;:...}</code>); compared DOCX written to <code>--output</code> path.</td>
+</tr>
+<tr>
+<td>stdout</td>
+<td><code>excel verify</code> finds validation diagnostics</td>
+<td>Verify result JSON with <code>valid: false</code>; process exits <code>4</code>.</td>
+</tr>
+<tr>
+<td>stdout</td>
+<td><code>word to-html</code> / <code>word from-html</code></td>
+<td>Result JSON (e.g. <code>{&quot;input&quot;:...,&quot;output&quot;:...,&quot;outputSize&quot;:...}</code>); converted content written to <code>--output</code> path.</td>
+</tr>
+<tr>
+<td>stdout</td>
+<td><code>excel to-html</code></td>
+<td>Result JSON (e.g. <code>{&quot;input&quot;:...,&quot;output&quot;:...,&quot;outputSize&quot;:...}</code>); converted HTML written to <code>--output</code> path.</td>
+</tr>
+<tr>
+<td>stdout</td>
+<td><code>pptx build run --output -</code></td>
+<td>Binary <code>.pptx</code>; no success summary is written.</td>
+</tr>
+<tr>
+<td>stdout</td>
+<td><code>word to-html --output -</code> / <code>word from-html --output -</code></td>
+<td>Binary/HTML content streamed to stdout; no success summary is written.</td>
+</tr>
+<tr>
+<td>stdout</td>
+<td><code>excel to-html --output -</code></td>
+<td>HTML content streamed to stdout; no success summary is written.</td>
+</tr>
+<tr>
+<td>stderr</td>
+<td>Command execution error</td>
+<td>Compact JSON error object: <code>{&quot;error&quot;:&quot;...&quot;,&quot;code&quot;:&quot;...&quot;}</code>.</td>
+</tr>
+<tr>
+<td>stderr/stdout</td>
+<td>Parser, arity, and help output</td>
+<td>System.CommandLine text output, not JSON.</td>
+</tr>
+</tbody>
+</table>
+<p>Do not parse text output for automation. Prefer JSON schemas and the documented properties below.</p>
+<p>Common exit codes:</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code></td>
+<td>Success</td>
+</tr>
+<tr>
+<td><code>1</code></td>
+<td>Internal error</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td>Invalid arguments</td>
+</tr>
+<tr>
+<td><code>3</code></td>
+<td>File not found</td>
+</tr>
+<tr>
+<td><code>4</code></td>
+<td>Invalid format or validation failure</td>
+</tr>
+<tr>
+<td><code>5</code></td>
+<td>Output error</td>
+</tr>
+</tbody>
+</table>
+<h2 id="stdin-and-stdout">Stdin And Stdout</h2>
+<p>Commands that accept files use <code>-</code> for stdin where binary or JSON streaming is supported.</p>
+<pre><code class="lang-bash">cat deck.pptx | clippit pptx split - --output slides --format json
+cat deck.json | clippit pptx build run - --output - &gt; final.pptx
+cat deck.pptx | clippit pptx verify - --format json
+cat before.docx | clippit word compare - after.docx --output compared.docx --format json
+cat document.docx | clippit word verify - --format json
+cat document.docx | clippit word to-html - --inline-images --output -
+cat article.html | clippit word from-html - --minor-font &quot;Georgia&quot; --output -
+cat spreadsheet.xlsx | clippit excel verify - --format json
+</code></pre>
+<p>When <code>pptx build run --output -</code> writes a <code>.pptx</code> to stdout, the success summary is suppressed automatically so the binary stream is not corrupted.</p>
+<p>When <code>word to-html --output -</code> or <code>word from-html --output -</code> writes content to stdout, the success summary is also suppressed so the output stream is not corrupted.</p>
+<p>Binary stdout output is buffered in memory before it is written to stdout. Prefer file output for very large decks.</p>
+<h2 id="version"><code>version</code></h2>
+<p>Prints the Clippit CLI version and the Open XML SDK version used by the tool.</p>
+<p>Synopsis:</p>
+<pre><code class="lang-text">clippit version [--format json|text] [--quiet]
+clippit --version
+</code></pre>
+<pre><code class="lang-bash">clippit version
+clippit version --format json
+clippit --version
+</code></pre>
+<p>JSON example:</p>
+<pre><code class="lang-json">{&quot;version&quot;:&quot;0.1.0&quot;,&quot;openXmlSdkVersion&quot;:&quot;4.0.0&quot;}
+</code></pre>
+<h2 id="pptx-split"><code>pptx split</code></h2>
+<p>Splits a <code>.pptx</code> file into individual single-slide presentations.</p>
+<p>Synopsis:</p>
+<pre><code class="lang-text">clippit pptx split &lt;input.pptx|-&gt; [--output &lt;dir&gt;] [--slides &lt;expr&gt;] [--manifest] [--force] [--format json|text] [--quiet]
+</code></pre>
+<pre><code class="lang-bash">clippit pptx split deck.pptx --output slides
+clippit pptx split deck.pptx --slides 1,3,6-9 --output slides
+clippit pptx split deck.pptx --output slides --manifest
+clippit pptx split deck.pptx --output slides --force
+</code></pre>
+<p>Options:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Output directory. Defaults to the source directory, or the current directory for stdin.</td>
+</tr>
+<tr>
+<td><code>--slides</code>, <code>-s</code></td>
+<td>1-based slide numbers and inclusive ranges, for example <code>1,3,6-9</code>. Defaults to all slides.</td>
+</tr>
+<tr>
+<td><code>--manifest</code></td>
+<td>Also writes a <code>pptx build run</code> compatible manifest beside the split slides.</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Overwrite existing output files.</td>
+</tr>
+</tbody>
+</table>
+<p>The generated manifest preserves source presentation sections when present.</p>
+<p>JSON example:</p>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/deck.pptx&quot;,&quot;outputDir&quot;:&quot;/work/slides&quot;,&quot;manifest&quot;:&quot;/work/slides/deck.manifest.json&quot;,&quot;count&quot;:2,&quot;slides&quot;:[{&quot;index&quot;:1,&quot;file&quot;:&quot;/work/slides/deck-001.pptx&quot;,&quot;title&quot;:&quot;Intro&quot;},{&quot;index&quot;:3,&quot;file&quot;:&quot;/work/slides/deck-003.pptx&quot;,&quot;title&quot;:null}]}
+</code></pre>
+<h2 id="pptx-build-init"><code>pptx build init</code></h2>
+<p>Scaffolds an empty deck manifest.</p>
+<p>Synopsis:</p>
+<pre><code class="lang-text">clippit pptx build init [--output &lt;manifest.json|-&gt;] [--force] [--format json|text] [--quiet]
+</code></pre>
+<pre><code class="lang-bash">clippit pptx build init
+clippit pptx build init --output deck.json --force
+clippit pptx build init --output - &gt; deck.json
+</code></pre>
+<p>Options:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Manifest path. Defaults to <code>./clippit-deck.json</code>. Use <code>-</code> to write JSON to stdout.</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Overwrite an existing manifest file.</td>
+</tr>
+</tbody>
+</table>
+<p>Deck manifests include a <code>$schema</code> URL so editors and CI jobs can validate authored input files against <code>docs/schemas/deck-manifest.v1.json</code>.</p>
+<p>Minimal manifest example:</p>
+<pre><code class="lang-json">{
+  &quot;$schema&quot;: &quot;https://sergey-tihon.github.io/Clippit/schemas/deck-manifest.v1.json&quot;,
+  &quot;title&quot;: &quot;Conference Deck&quot;,
+  &quot;output&quot;: &quot;final.pptx&quot;,
+  &quot;deck&quot;: [
+    { &quot;section&quot;: &quot;Opening&quot; },
+    &quot;intro.pptx&quot;,
+    { &quot;file&quot;: &quot;demo.pptx&quot;, &quot;keepSections&quot;: true },
+    { &quot;section&quot;: &quot;Appendix&quot; },
+    { &quot;file&quot;: &quot;appendix.pptx&quot;, &quot;masters&quot;: true, &quot;slides&quot;: true }
+  ]
+}
+</code></pre>
+<p>Manifest rules for agents:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td>Yes</td>
+<td>Written to output presentation core properties.</td>
+</tr>
+<tr>
+<td><code>output</code></td>
+<td>Yes</td>
+<td>Relative paths resolve against the manifest file directory.</td>
+</tr>
+<tr>
+<td><code>deck</code></td>
+<td>Yes</td>
+<td>Ordered entries; must contain at least one entry.</td>
+</tr>
+<tr>
+<td>string entry</td>
+<td>No</td>
+<td><code>[Section Name]</code> creates a section divider; any other string is a source <code>.pptx</code> path.</td>
+</tr>
+<tr>
+<td><code>{ &quot;section&quot;: &quot;Name&quot; }</code></td>
+<td>No</td>
+<td>Explicit section divider.</td>
+</tr>
+<tr>
+<td><code>{ &quot;file&quot;: &quot;deck.pptx&quot; }</code></td>
+<td>No</td>
+<td>Source <code>.pptx</code> entry. Optional booleans: <code>masters</code>, <code>slides</code>, <code>keepSections</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="pptx-build-run"><code>pptx build run</code></h2>
+<p>Builds a final <code>.pptx</code> from a deck manifest.</p>
+<p>Synopsis:</p>
+<pre><code class="lang-text">clippit pptx build run &lt;manifest.json|-&gt; [--output &lt;file.pptx|-&gt;] [--force] [--format json|text] [--quiet]
+</code></pre>
+<pre><code class="lang-bash">clippit pptx build run deck.json
+clippit pptx build run deck.json --output final.pptx --force
+clippit pptx build run deck.json --format json
+cat deck.json | clippit pptx build run - --output - &gt; final.pptx
+</code></pre>
+<p>Options:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Override the manifest output path. Use <code>-</code> to write the binary <code>.pptx</code> to stdout.</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Overwrite the output presentation if it already exists.</td>
+</tr>
+</tbody>
+</table>
+<p>Without <code>--force</code>, the command fails before replacing an existing output file.</p>
+<p>JSON example:</p>
+<pre><code class="lang-json">{&quot;output&quot;:&quot;/work/final.pptx&quot;,&quot;totalSlides&quot;:12,&quot;entries&quot;:[{&quot;section&quot;:&quot;Opening&quot;},{&quot;file&quot;:&quot;intro.pptx&quot;,&quot;slides&quot;:3},{&quot;file&quot;:&quot;demo.pptx&quot;,&quot;slides&quot;:9}]}
+</code></pre>
+<h2 id="pptx-verify"><code>pptx verify</code></h2>
+<p>Validates that a <code>.pptx</code> file is a readable and structurally correct Open XML presentation. The command checks package readability, Open XML schema errors, dangling relationships, markup compatibility issues, and Clippit presentation-section metadata.</p>
+<p>Synopsis:</p>
+<pre><code class="lang-text">clippit pptx verify &lt;input.pptx|-&gt; [--office-version &lt;version&gt;] [--format json|text] [--quiet]
+</code></pre>
+<pre><code class="lang-bash">clippit pptx verify deck.pptx
+clippit pptx verify deck.pptx --format json
+clippit pptx verify deck.pptx --office-version Office2021
+cat deck.pptx | clippit pptx verify - --format json
+</code></pre>
+<p>Options:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--office-version</code></td>
+<td>Open XML schema version to validate against. Defaults to <code>Microsoft365</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Invalid-but-readable presentations produce a validation result on stdout and exit with code <code>4</code>. JSON results include <code>diagnostics</code>; each diagnostic has a <code>kind</code>, message, and optional validator code/location fields.</p>
+<p>Current diagnostic kinds are documented in <a href="schemas/README.md">schemas/README.md</a>.</p>
+<p>Valid JSON example:</p>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/deck.pptx&quot;,&quot;officeVersion&quot;:&quot;Microsoft365&quot;,&quot;valid&quot;:true,&quot;diagnostics&quot;:[]}
+</code></pre>
+<p>Invalid JSON example:</p>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/deck.pptx&quot;,&quot;officeVersion&quot;:&quot;Microsoft365&quot;,&quot;valid&quot;:false,&quot;diagnostics&quot;:[{&quot;kind&quot;:&quot;relationship&quot;,&quot;code&quot;:null,&quot;description&quot;:&quot;Dangling relationship target.&quot;,&quot;part&quot;:&quot;/ppt/slides/slide1.xml&quot;,&quot;path&quot;:null,&quot;element&quot;:null,&quot;attribute&quot;:&quot;id&quot;,&quot;relationshipId&quot;:&quot;rId9&quot;}]}
+</code></pre>
+<h2 id="word-verify"><code>word verify</code></h2>
+<p>Validates that a <code>.docx</code> file is a readable and structurally correct Open XML document. The command checks package readability, Open XML schema errors, dangling relationships, and markup compatibility issues.</p>
+<p>Synopsis:</p>
+<pre><code class="lang-text">clippit word verify &lt;input.docx|-&gt; [--office-version &lt;version&gt;] [--format json|text] [--quiet]
+</code></pre>
+<pre><code class="lang-bash">clippit word verify document.docx
+clippit word verify document.docx --format json
+clippit word verify document.docx --office-version Office2021
+cat document.docx | clippit word verify - --format json
+</code></pre>
+<p>Options:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--office-version</code></td>
+<td>Open XML schema version to validate against. Defaults to <code>Microsoft365</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Invalid-but-readable documents produce a validation result on stdout and exit with code <code>4</code>. JSON results include <code>diagnostics</code>; each diagnostic has a <code>kind</code>, message, and optional validator code/location fields. The payload shape matches <code>pptx verify</code> and is documented in <a href="schemas/README.md">schemas/README.md</a>.</p>
+<p>Valid JSON example:</p>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/document.docx&quot;,&quot;officeVersion&quot;:&quot;Microsoft365&quot;,&quot;valid&quot;:true,&quot;diagnostics&quot;:[]}
+</code></pre>
+<h2 id="word-compare"><code>word compare</code></h2>
+<p>Compares two <code>.docx</code> files and writes a result document with tracked revisions.
+The command wraps <code>WmlComparer.Compare</code>.</p>
+<p>Synopsis:</p>
+<pre><code class="lang-text">clippit word compare &lt;source.docx|-&gt; &lt;revised.docx|-&gt; [--output &lt;file.docx|-&gt;] [--author &lt;text&gt;] [--date-time &lt;text&gt;] [--case-insensitive] [--format json|text] [--quiet]
+</code></pre>
+<pre><code class="lang-bash">clippit word compare before.docx after.docx
+clippit word compare before.docx after.docx --output compared.docx --format json
+clippit word compare before.docx after.docx --author &quot;Jane Doe&quot; --date-time 2026-01-01T00:00:00Z
+cat before.docx | clippit word compare - after.docx --output compared.docx --format json
+</code></pre>
+<p>Options:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Output path for the compared <code>.docx</code> file. Defaults to <code>&lt;source&gt;-compared.docx</code>. Use <code>-</code> to write binary content to stdout.</td>
+</tr>
+<tr>
+<td><code>--author</code></td>
+<td>Author value used for generated tracked revisions.</td>
+</tr>
+<tr>
+<td><code>--date-time</code></td>
+<td>Date/time value used for generated tracked revisions.</td>
+</tr>
+<tr>
+<td><code>--case-insensitive</code></td>
+<td>Ignore case when comparing words.</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>authorForRevisions</code> and <code>dateTimeForRevisions</code> fields echo back the effective
+values. When <code>--author</code>/<code>--date-time</code> are omitted they default to <code>Open-Xml-PowerTools</code>
+and the current local time (round-trip <code>o</code> format). When provided, the exact strings are
+echoed back without reformatting.</p>
+<p>JSON example (for <code>--author &quot;Jane Doe&quot; --date-time 2026-01-01T00:00:00Z --output compared.docx --format json</code>):</p>
+<pre><code class="lang-json">{&quot;source&quot;:&quot;/work/before.docx&quot;,&quot;revised&quot;:&quot;/work/after.docx&quot;,&quot;output&quot;:&quot;/work/compared.docx&quot;,&quot;outputSize&quot;:59321,&quot;revisions&quot;:8,&quot;authorForRevisions&quot;:&quot;Jane Doe&quot;,&quot;dateTimeForRevisions&quot;:&quot;2026-01-01T00:00:00Z&quot;,&quot;caseInsensitive&quot;:false}
+</code></pre>
+<h2 id="excel-verify"><code>excel verify</code></h2>
+<p>Validates that a <code>.xlsx</code> file is a readable and structurally correct Open XML spreadsheet. The command checks package readability, Open XML schema errors, dangling relationships, and markup compatibility issues.</p>
+<p>Synopsis:</p>
+<pre><code class="lang-text">clippit excel verify &lt;input.xlsx|-&gt; [--office-version &lt;version&gt;] [--format json|text] [--quiet]
+</code></pre>
+<pre><code class="lang-bash">clippit excel verify spreadsheet.xlsx
+clippit excel verify spreadsheet.xlsx --format json
+clippit excel verify spreadsheet.xlsx --office-version Office2021
+cat spreadsheet.xlsx | clippit excel verify - --format json
+</code></pre>
+<p>Options:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--office-version</code></td>
+<td>Open XML schema version to validate against. Defaults to <code>Microsoft365</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Invalid-but-readable spreadsheets produce a validation result on stdout and exit with code <code>4</code>. JSON results include <code>diagnostics</code>; each diagnostic has a <code>kind</code>, message, and optional validator code/location fields. The payload shape matches <code>pptx verify</code> and is documented in <a href="schemas/README.md">schemas/README.md</a>.</p>
+<p>Valid JSON example:</p>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/spreadsheet.xlsx&quot;,&quot;officeVersion&quot;:&quot;Microsoft365&quot;,&quot;valid&quot;:true,&quot;diagnostics&quot;:[]}
+</code></pre>
+<h2 id="word-to-html"><code>word to-html</code></h2>
+<p>Converts a <code>.docx</code> file to HTML/CSS with high-fidelity layout preservation.
+Images can be embedded as base64 data URIs (<code>--inline-images</code>) or referenced as
+separate files. The command wraps <code>WmlToHtmlConverter</code> from the Clippit library.</p>
+<p>Synopsis:</p>
+<pre><code class="lang-text">clippit word to-html &lt;input.docx|-&gt; [--output &lt;file.html|-&gt;] [--page-title &lt;text&gt;] [--additional-css &lt;css&gt;] [--css-prefix &lt;prefix&gt;] [--inline-images] [--no-fabricate-css] [--format json|text] [--quiet]
+</code></pre>
+<pre><code class="lang-bash">clippit word to-html report.docx
+clippit word to-html report.docx --page-title &quot;Q3 Report&quot; --additional-css &quot;body { max-width: 800px; }&quot;
+clippit word to-html report.docx --inline-images --output - &gt; report.html
+cat document.docx | clippit word to-html - --inline-images --format json
+</code></pre>
+<p>Options:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Output path for the generated <code>.html</code> file. Defaults to <code>&lt;input&gt;.html</code>. Use <code>-</code> to write HTML content to stdout.</td>
+</tr>
+<tr>
+<td><code>--page-title</code></td>
+<td>HTML page <code>&lt;title&gt;</code>. Defaults to the source file name.</td>
+</tr>
+<tr>
+<td><code>--additional-css</code></td>
+<td>Extra CSS rules injected into the generated <code>&lt;style&gt;</code> block.</td>
+</tr>
+<tr>
+<td><code>--css-prefix</code></td>
+<td>Prefix for auto-generated CSS class names (default: <code>pt-</code>).</td>
+</tr>
+<tr>
+<td><code>--inline-images</code></td>
+<td>Embed images as base64 data URIs instead of linking to external files.</td>
+</tr>
+<tr>
+<td><code>--no-fabricate-css</code></td>
+<td>Skip CSS class generation and use inline <code>style</code> attributes instead.</td>
+</tr>
+</tbody>
+</table>
+<p>JSON example:</p>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/report.docx&quot;,&quot;output&quot;:&quot;/work/report.html&quot;,&quot;outputSize&quot;:28473}
+</code></pre>
+<h2 id="word-from-html"><code>word from-html</code></h2>
+<p>Converts an HTML document to a <code>.docx</code> file, restoring styles, images, and layout
+as Open XML markup. CSS in the HTML <code>&lt;style&gt;</code> element is extracted automatically;
+external CSS can also be passed with <code>--css</code>. The command wraps
+<code>HtmlToWmlConverter</code> from the Clippit library.</p>
+<p>Synopsis:</p>
+<pre><code class="lang-text">clippit word from-html &lt;input.html|-&gt; [--output &lt;file.docx|-&gt;] [--css &lt;file&gt;] [--default-css &lt;file&gt;] [--user-css &lt;css&gt;] [--base-uri &lt;uri&gt;] [--major-font &lt;name&gt;] [--minor-font &lt;name&gt;] [--font-size &lt;pt&gt;] [--format json|text] [--quiet]
+</code></pre>
+<pre><code class="lang-bash">clippit word from-html article.html
+clippit word from-html article.html -c styles.css -o article.docx
+clippit word from-html article.html --minor-font &quot;Georgia&quot; --font-size 11
+cat article.html | clippit word from-html - --base-uri https://example.com/images/ --format json
+</code></pre>
+<p>Options:</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Output path for the generated <code>.docx</code> file. Defaults to <code>&lt;input&gt;.docx</code>. Use <code>-</code> to write binary content to stdout.</td>
+</tr>
+<tr>
+<td><code>--css</code>, <code>-c</code></td>
+<td>Path to an external author CSS file. When omitted, CSS is extracted from the HTML <code>&lt;style&gt;</code> element.</td>
+</tr>
+<tr>
+<td><code>--default-css</code></td>
+<td>Path to a default CSS file to override the built-in default CSS.</td>
+</tr>
+<tr>
+<td><code>--user-css</code></td>
+<td>Additional CSS rules to apply as user overrides.</td>
+</tr>
+<tr>
+<td><code>--base-uri</code></td>
+<td>Base URI for resolving relative image <code>src</code> references. Defaults to the source HTML file's parent directory.</td>
+</tr>
+<tr>
+<td><code>--major-font</code></td>
+<td>Theme major (heading) font name (default: <code>Calibri Light</code>).</td>
+</tr>
+<tr>
+<td><code>--minor-font</code></td>
+<td>Theme minor (body) font name (default: <code>Times New Roman</code>).</td>
+</tr>
+<tr>
+<td><code>--font-size</code></td>
+<td>Default font size in points (default: <code>12</code>).</td>
+</tr>
+</tbody>
+</table>
+<p>JSON example:</p>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/article.html&quot;,&quot;output&quot;:&quot;/work/article.docx&quot;,&quot;outputSize&quot;:45021}
+</code></pre>
+<h2 id="json-schemas">JSON Schemas</h2>
+<p>Schemas for deck manifests and CLI result payloads are published in <a href="schemas/README.md">docs/schemas</a>. Result schemas are intended for documentation, integration tests, and downstream contract validation; result payloads do not embed schema URLs.</p>
+<p>Canonical schema URLs:</p>
+<table>
+<thead>
+<tr>
+<th>Payload</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Deck manifest</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/deck-manifest.v1.json</code></td>
+</tr>
+<tr>
+<td><code>pptx split</code> result</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/split-result.v1.json</code></td>
+</tr>
+<tr>
+<td><code>pptx build run</code> result</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/build-result.v1.json</code></td>
+</tr>
+<tr>
+<td><code>pptx verify</code>, <code>word verify</code>, <code>excel verify</code> result</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/verify-result.v1.json</code></td>
+</tr>
+<tr>
+<td><code>word compare</code> result</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/compare-result.v1.json</code></td>
+</tr>
+<tr>
+<td><code>word to-html</code>, <code>word from-html</code> result</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/convert-result.v1.json</code></td>
+</tr>
+</tbody>
+</table>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/cli.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
