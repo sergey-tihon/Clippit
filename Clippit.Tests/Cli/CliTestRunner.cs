@@ -67,8 +67,18 @@ internal static class CliTestRunner
         });
         var stderrTask = process.StandardError.ReadToEndAsync();
 
-        await process.StandardInput.BaseStream.WriteAsync(stdin).ConfigureAwait(false);
-        await process.StandardInput.BaseStream.FlushAsync().ConfigureAwait(false);
+        try
+        {
+            await process.StandardInput.BaseStream.WriteAsync(stdin).ConfigureAwait(false);
+            await process.StandardInput.BaseStream.FlushAsync().ConfigureAwait(false);
+        }
+        catch (IOException)
+        {
+            // The process may exit before consuming all stdin (e.g. validation
+            // rejects the inputs). Ignore the broken-pipe error and let the
+            // caller inspect the exit code and stderr.
+        }
+
         process.StandardInput.Close();
 
         using var timeoutTokenSource = new CancellationTokenSource(s_defaultTimeout);

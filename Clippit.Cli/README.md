@@ -23,6 +23,9 @@ clippit pptx verify presentation.pptx
 # Validate a DOCX file
 clippit word verify document.docx
 
+# Compare two DOCX files with tracked revisions
+clippit word compare before.docx after.docx --output compared.docx
+
 # Convert DOCX to HTML
 clippit word to-html document.docx
 
@@ -44,6 +47,7 @@ clippit pptx split presentation.pptx --format json
 | `pptx build init` | Scaffold a deck manifest (JSON). |
 | `pptx build run` | Assemble a `.pptx` from a deck manifest. |
 | `pptx verify` | Validate a PPTX — schema, relationships, markup compatibility, and sections. |
+| `word compare` | Compare two DOCX files and produce a tracked-revision DOCX. |
 | `word verify` | Validate a DOCX — schema and relationships. |
 | `word to-html` | Convert a DOCX to HTML/CSS. |
 | `word from-html` | Convert HTML/CSS to a DOCX. |

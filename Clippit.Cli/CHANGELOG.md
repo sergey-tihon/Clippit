@@ -2,6 +2,13 @@
 
 ## [0.6.0] - 2026-06-29
 
+- Added `word compare` command to compare two `.docx` files with `WmlComparer` and
+  write a tracked-revision result document. Supports `--output`/`-o` (defaults to
+  `<source>-compared.docx`, `-` for stdout), `--author` and `--date-time` for
+  generated revision metadata, and `--case-insensitive`. The JSON result reports
+  `source`, `revised`, `output`, `outputSize`, `revisions`, `authorForRevisions`,
+  `dateTimeForRevisions`, and `caseInsensitive`. Supports stdin (`-`) for one input,
+  `--format json`, and `--quiet`. Published schema: `compare-result.v1.json` (#365).
 - feat(npm): add Windows ARM64 native binary support — new npm platform package
   `@sergey-tihon/clippit-bin-win32-arm64` built on GitHub Actions
   `windows-11-arm` runners (#363)
