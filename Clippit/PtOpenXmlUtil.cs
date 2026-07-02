@@ -161,17 +161,18 @@ namespace Clippit
 
         public static void PutXDocumentWithFormatting(this OpenXmlPart part)
         {
-            if (part is null)
-                throw new ArgumentNullException(nameof(part));
+            ArgumentNullException.ThrowIfNull(part);
 
             var partXDocument = part.GetXDocument();
             if (partXDocument is not null)
             {
                 using var partStream = part.GetStream(FileMode.Create, FileAccess.Write);
-                var settings = new XmlWriterSettings();
-                settings.Indent = true;
-                settings.OmitXmlDeclaration = true;
-                settings.NewLineOnAttributes = true;
+                var settings = new XmlWriterSettings
+                {
+                    Indent = true,
+                    OmitXmlDeclaration = true,
+                    NewLineOnAttributes = true,
+                };
                 using var partXmlWriter = XmlWriter.Create(partStream, settings);
                 partXDocument.Save(partXmlWriter);
             }
@@ -179,14 +180,12 @@ namespace Clippit
 
         public static void PutXDocument(this OpenXmlPart part, XDocument document)
         {
-            if (part is null)
-                throw new ArgumentNullException(nameof(part));
-            if (document is null)
-                throw new ArgumentNullException(nameof(document));
+            ArgumentNullException.ThrowIfNull(part);
+            ArgumentNullException.ThrowIfNull(document);
 
-            using (var partStream = part.GetStream(FileMode.Create, FileAccess.Write))
-            using (var partXmlWriter = XmlWriter.Create(partStream))
-                document.Save(partXmlWriter);
+            using var partStream = part.GetStream(FileMode.Create, FileAccess.Write);
+            using var partXmlWriter = XmlWriter.Create(partStream);
+            document.Save(partXmlWriter);
 
             part.RemoveAnnotations<XDocument>();
             part.AddAnnotation(document);
@@ -733,8 +732,7 @@ namespace Clippit
             };
         }
 
-        private static readonly List<XName> AdditionalRunContainerNames = new List<XName>
-        {
+        private static readonly FrozenSet<XName> AdditionalRunContainerNames = FrozenSet.Create<XName>(
             W.w + "bdo",
             W.customXml,
             W.dir,
@@ -742,8 +740,8 @@ namespace Clippit
             W.hyperlink,
             W.moveFrom,
             W.moveTo,
-            W.sdtContent,
-        };
+            W.sdtContent
+        );
 
         public static XElement CoalesceAdjacentRunsWithIdenticalFormatting(XElement runContainer)
         {
