@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Frozen;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -530,16 +531,15 @@ namespace Clippit.Word
         [GeneratedRegex(@"<#(.*?)#>", RegexOptions.Singleline)]
         private static partial Regex TemplateDirectiveSinglelineRegex();
 
-        private static readonly List<string> s_aliasList = new()
-        {
+        private static readonly FrozenSet<string> s_aliasList = FrozenSet.Create(
             "Image",
             "Content",
             "Table",
             "Repeat",
             "EndRepeat",
             "Conditional",
-            "EndConditional",
-        };
+            "EndConditional"
+        );
 
         private static object TransformToMetadata(XNode node, TemplateError te)
         {
