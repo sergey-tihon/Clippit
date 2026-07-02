@@ -1,8 +1,8 @@
 {
-  "last_run": "2026-07-01",
-  "last_run_id": "28532414844",
+  "last_run": "2026-07-02",
+  "last_run_id": "28604984557",
   "backlog_cursor": {
-    "issues": 364,
+    "issues": 370,
     "prs": 165
   },
   "comments_made": {
@@ -11,44 +11,44 @@
     "77": "2026-03-14",
     "103": "2026-03-15",
     "28": "2026-03-28",
-    "66": "2026-03-26",
-    "364": "2026-06-30"
+    "66": "2026-03-26"
   },
   "open_clippy_prs": [
     {"number": 163, "branch": "clippy/improve-custom-handler-66-20260326-f25d5328ab83f793", "title": "[Clippy] feat: add RegisterCustomHandler extensibility API to DocumentAssembler", "note": "131+ commits behind master"},
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "[Clippy] feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "131+ commits behind master"},
-    {"number": null, "branch": "clippy/deps-tunit-1.57.17-20260701", "title": "[Clippy] chore(deps): update TUnit 1.57.0 → 1.57.17", "note": "created 2026-07-01"},
-    {"number": null, "branch": "clippy/release-v3.6.0-20260701", "title": "[Clippy] docs: add v3.6.0 changelog entry", "note": "created 2026-07-01"}
+    {"number": null, "branch": "clippy/improve-frozen-set-and-modernize-20260702", "title": "[Clippy] perf: convert remaining static List<T> to FrozenSet<T> and modernize PtOpenXmlUtil.cs", "note": "created 2026-07-02"},
+    {"number": null, "branch": "clippy/release-v3.6.0-20260702", "title": "[Clippy] docs: add v3.6.0 changelog entry", "note": "created 2026-07-02"}
   ],
   "checked_off_by_maintainer": [],
-  "m_issue": null,
+  "m_issue": 370,
   "m_month": "2026-07",
   "notes": [
     "v3.5.1 released 2026-06-23: SkiaSharp 4.x, System.CommandLine preview.5, MS.NET.Test.Sdk 18.7.0",
-    "Monthly Activity issue for July 2026 created this run (number pending)",
-    "June 2026 activity issue #311 closed this run",
-    "PR #365 (word compare CLI, by Copilot coding agent) - all CI passes, pending maintainer review",
+    "PR #369 (TUnit 1.57.17) merged 2026-07-01",
+    "PR #365 (word compare CLI) merged 2026-07-01",
     "PRs #163/#165 are 131+ commits behind master - left for human rebase or close",
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
-    "Task 3 not applicable this run: no bug/help-wanted issues fixable; all help-wanted are questions already commented on"
+    "Monthly Activity issue for July 2026 is #370",
+    "Release PR for v3.6.0 created 2026-07-02 (branch: clippy/release-v3.6.0-20260702)"
   ],
   "improvements_submitted": [
     "PR#342: test(cli) fix duplicate CLI test codes - merged 2026-06-23",
-    "PR#343: chore(deps) TUnit 1.54.0->1.56.25 + JsonSchema.Net 9.2.1->9.2.2 - merged 2026-06-23",
+    "PR#343: chore(deps) TUnit 1.54.0->1.56.25 + JsonSchema.Net - merged 2026-06-23",
     "PR#344: refactor Excel converters is null/is not null - merged 2026-06-23",
     "PR#345: refactor FormattingAssembler.cs is null/is not null - merged 2026-06-23",
-    "PR#349: refactor DocumentBuilder.cs is null/is not null (189) - merged 2026-06-24",
-    "PR#350: refactor ListItemRetriever+HtmlToWmlConverterCore+WmlComparer.ProduceDocument (367) - merged 2026-06-26",
+    "PR#349: refactor DocumentBuilder.cs is null/is not null - merged 2026-06-24",
+    "PR#350: refactor ListItemRetriever+HtmlToWmlConverterCore+WmlComparer - merged 2026-06-26",
     "PR#351: chore(deps) TUnit 1.56.25->1.56.35 - merged 2026-06-26",
-    "PR#352: refactor PtUtil+OxPtHelpers+WmlComparer files (128) - merged 2026-06-26",
-    "PR#353: refactor Word/ files (8 files, 445 reps) - merged 2026-06-26",
+    "PR#352: refactor PtUtil+OxPtHelpers+WmlComparer files - merged 2026-06-26",
+    "PR#353: refactor Word/ files (8 files) - merged 2026-06-26",
     "PR#354: test(common) FieldRetriever.ParseField unit tests - merged 2026-06-28",
-    "PR#355: refactor Html/ files (3 files, 93 reps) - merged 2026-06-28",
+    "PR#355: refactor Html/ files - merged 2026-06-28",
     "PR#356: refactor batch5 (10 files) + Lazy<T> + ??= - merged 2026-06-28",
     "PR#359: chore(deps) TUnit 1.56.35->1.57.0 - merged 2026-06-28",
-    "PR#361: perf FrozenSet conversion - 13 HashSet->FrozenSet in 5 files - merged 2026-06-29",
-    "PR#362: perf FrozenDictionary conversion - 19 Dict->FrozenDict in 4 files - merged 2026-06-29",
-    "PR(TBD): chore(deps) TUnit 1.57.0->1.57.17 - created 2026-07-01",
-    "PR(TBD): docs v3.6.0 changelog (ARM64+perf+refactor since v3.5.1) - created 2026-07-01"
+    "PR#361: perf FrozenSet conversion - merged 2026-06-29",
+    "PR#362: perf FrozenDictionary conversion - merged 2026-06-29",
+    "PR#369: chore(deps) TUnit 1.57.0->1.57.17 - merged 2026-07-01",
+    "PR(TBD): perf remaining List<T>->FrozenSet<T> + PtOpenXmlUtil modernize - created 2026-07-02",
+    "PR(TBD): docs v3.6.0 changelog - created 2026-07-02"
   ]
 }
