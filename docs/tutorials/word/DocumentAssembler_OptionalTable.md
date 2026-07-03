@@ -15,7 +15,8 @@ By default, when a `Table` directive's `Select` XPath returns no data, `Document
 
 Adding `Optional="true"` (or `Optional="1"`) suppresses this error and silently removes the table from the output document instead.
 
-This brings `Table` into parity with `Repeat` and `Content`, which already support the `Optional` attribute.
+This brings `Table` into parity with `Repeat`, `Content`, and `Conditional`, which support the `Optional`
+attribute.
 
 ## Usage
 
@@ -93,7 +94,7 @@ Omitting the attribute entirely is equivalent to `Optional="false"`.
 
 ## Further Reading
 
-- `Repeat` directive also supports `Optional="true"` — see the existing directive reference for `Repeat`.
+- `Repeat` and `Conditional` directives also support `Optional="true"` for missing XPath results.
 - For template testing and examples, see `DocumentAssemblerTests.cs` in the test project, particularly the `DA_Table_Optional_*` test methods.
 
 Changes merged in: [#150](https://github.com/sergey-tihon/Clippit/pull/150)
