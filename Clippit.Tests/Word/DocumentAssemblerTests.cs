@@ -1369,6 +1369,129 @@ public class DocumentAssemblerTests : TestsBase
         );
     }
 
+    /// <summary>
+    /// Verifies that a <c>Table</c> directive with no <c>HeaderRowCount</c> attribute defaults to
+    /// 1 header row — the existing behavior: first row is the header, second is the prototype.
+    /// Regression guard for issue #387.
+    /// </summary>
+    [Test]
+    public async Task DA_Table_HeaderRowCount_Default_OnlyFirstRowIsHeader()
+    {
+        var directiveParagraph = new XElement(
+            W.p,
+            new XElement(W.r, new XElement(W.t, @"<# <Table Select=""Items/Item"" /> #>"))
+        );
+        var tableXml = new XElement(
+            W.tbl,
+            new XElement(W.tblPr),
+            new XElement(W.tblGrid, new XElement(W.gridCol, new XAttribute(W._w, "9216"))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "./Name")))))
+        );
+        var bodyXml = new XElement(W.body, directiveParagraph, tableXml, new XElement(W.sectPr));
+        var wmlTemplate = BuildTemplate("headerrowcount-default.docx", bodyXml);
+        var xmlData = XElement.Parse(
+            "<Data><Items><Item><Name>Alice</Name></Item><Item><Name>Bob</Name></Item></Items></Data>"
+        );
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+
+        var rows = resultDoc.MainDocumentPart!.GetXDocument().Descendants(W.tr).ToList();
+        // 1 header row + 2 data rows
+        await Assert.That(rows).HasCount(3);
+        var headerText = rows[0].Descendants(W.t).Select(t => (string)t).Aggregate(string.Concat);
+        await Assert.That(headerText).IsEqualTo("Header");
+    }
+
+    /// <summary>
+    /// Verifies that <c>HeaderRowCount="2"</c> preserves both header rows and uses the third row
+    /// as the prototype data row, closing issue #387.
+    /// </summary>
+    [Test]
+    public async Task DA_Table_HeaderRowCount_Two_PreservesTwoHeaderRows()
+    {
+        var directiveParagraph = new XElement(
+            W.p,
+            new XElement(W.r, new XElement(W.t, @"<# <Table Select=""Items/Item"" HeaderRowCount=""2"" /> #>"))
+        );
+        var tableXml = new XElement(
+            W.tbl,
+            new XElement(W.tblPr),
+            new XElement(W.tblGrid, new XElement(W.gridCol, new XAttribute(W._w, "9216"))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header1"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header2"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "./Name")))))
+        );
+        var bodyXml = new XElement(W.body, directiveParagraph, tableXml, new XElement(W.sectPr));
+        var wmlTemplate = BuildTemplate("headerrowcount-two.docx", bodyXml);
+        var xmlData = XElement.Parse(
+            "<Data><Items><Item><Name>Alice</Name></Item><Item><Name>Bob</Name></Item></Items></Data>"
+        );
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+
+        var rows = resultDoc.MainDocumentPart!.GetXDocument().Descendants(W.tr).ToList();
+        // 2 header rows + 2 data rows
+        await Assert.That(rows).HasCount(4);
+        var headerTexts = rows.Take(2)
+            .Select(r => r.Descendants(W.t).Select(t => (string)t).Aggregate(string.Concat))
+            .ToList();
+        await Assert.That(headerTexts[0]).IsEqualTo("Header1");
+        await Assert.That(headerTexts[1]).IsEqualTo("Header2");
+        var dataTexts = rows.Skip(2)
+            .Select(r => r.Descendants(W.t).Select(t => (string)t).Aggregate(string.Concat))
+            .ToList();
+        await Assert.That(dataTexts[0]).IsEqualTo("Alice");
+        await Assert.That(dataTexts[1]).IsEqualTo("Bob");
+    }
+
+    /// <summary>
+    /// Verifies that an invalid <c>HeaderRowCount</c> value in a pre-existing <c>Table</c>
+    /// metadata element produces a template error instead of throwing.
+    /// </summary>
+    [Test]
+    public async Task DA_Table_InvalidHeaderRowCountValueReturnsError()
+    {
+        var tableDirective = new XElement(
+            "Table",
+            new XAttribute("Select", "Items/Item"),
+            // Overflows Int32 parsing while still matching xs:positiveInteger lexical form.
+            new XAttribute("HeaderRowCount", "9999999999999999999")
+        );
+        var tableXml = new XElement(
+            W.tbl,
+            new XElement(W.tblPr),
+            new XElement(W.tblGrid, new XElement(W.gridCol, new XAttribute(W._w, "9216"))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "./Name")))))
+        );
+        var bodyXml = new XElement(W.body, tableDirective, tableXml, new XElement(W.sectPr));
+        var wmlTemplate = BuildTemplate("invalid-headerrowcount-table-template.docx", bodyXml);
+        var xmlData = XElement.Parse("<Data><Items><Item><Name>Alice</Name></Item></Items></Data>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsTrue();
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        var documentText = resultDoc
+            .MainDocumentPart!.GetXDocument()
+            .Descendants(W.t)
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
+        await Assert.That(documentText).Contains("Invalid value for HeaderRowCount attribute");
+    }
+
     private static WmlDocument BuildTemplate(string docName, XElement body)
     {
         byte[] docxBytes;

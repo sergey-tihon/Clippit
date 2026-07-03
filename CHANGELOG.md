@@ -11,6 +11,7 @@
 - perf: replace remaining `List<T>` with `FrozenSet<T>` in `PtOpenXmlUtil` (#371)
 - fix: guard `TextReplacer` against `IndexOutOfRangeException` on empty replacement string (#381)
 - fix(word): add `Optional="true"` support to `Conditional` directive in `DocumentAssembler` (#382)
+- feat(word): add `HeaderRowCount` attribute to `DocumentAssembler` `Table` directive for multi-row headers (#387)
 - fix: guard `WmlComparer.HashBlockLevelContent` against `ArgumentNullException` from missing `pt:Unid` attributes (#380)
 - fix: guard `WmlComparer.FindIndexOfNextParaMark` against `InvalidCastException` from non-`ComparisonUnitWord` units (#385)
 - fix(html): preserve `w:anchor` fragment on external hyperlinks — append `#anchor` when the URL has no existing fragment (#384)

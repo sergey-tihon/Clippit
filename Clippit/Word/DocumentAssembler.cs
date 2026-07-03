@@ -894,6 +894,7 @@ namespace Clippit.Word
                         <xs:complexType>
                             <xs:attribute name='Select' type='xs:string' use='required' />
                             <xs:attribute name='Optional' type='xs:boolean' use='optional' />
+                            <xs:attribute name='HeaderRowCount' type='xs:positiveInteger' use='optional' />
                         </xs:complexType>
                         </xs:element>
                     </xs:schema>"
@@ -1676,9 +1677,27 @@ namespace Clippit.Word
                         return null;
                     return element.CreateContextErrorMessage("Table Select returned no data", templateError);
                 }
+                int headerRowCount;
+                string GetInvalidHeaderRowCountError()
+                {
+                    var headerRowCountValue = (string?)element.Attribute(PA.HeaderRowCount) ?? string.Empty;
+                    return $"Table: Invalid value for HeaderRowCount attribute '{headerRowCountValue}'; expected a positive integer";
+                }
+                try
+                {
+                    headerRowCount = Math.Max(1, (int?)element.Attribute(PA.HeaderRowCount) ?? 1);
+                }
+                catch (FormatException)
+                {
+                    return element.CreateContextErrorMessage(GetInvalidHeaderRowCountError(), templateError);
+                }
+                catch (OverflowException)
+                {
+                    return element.CreateContextErrorMessage(GetInvalidHeaderRowCountError(), templateError);
+                }
                 var table = element.Element(W.tbl);
-                var protoRow = table.Elements(W.tr).Skip(1).FirstOrDefault();
-                var footerRowsBeforeTransform = table.Elements(W.tr).Skip(2).ToList();
+                var protoRow = table.Elements(W.tr).Skip(headerRowCount).FirstOrDefault();
+                var footerRowsBeforeTransform = table.Elements(W.tr).Skip(headerRowCount + 1).ToList();
                 var footerRows = footerRowsBeforeTransform
                     .Select(x => ContentReplacementTransform(x, data, templateError, part))
                     .ToList();
@@ -1689,7 +1708,7 @@ namespace Clippit.Word
                 var newTable = new XElement(
                     W.tbl,
                     table.Elements().Where(e => e.Name != W.tr),
-                    table.Elements(W.tr).FirstOrDefault(),
+                    table.Elements(W.tr).Take(headerRowCount),
                     tableData.Select(d => new XElement(
                         W.tr,
                         protoRow.Elements().Where(r => r.Name != W.tc),
