@@ -1,36 +1,37 @@
 # Clippy Memory
 
 ## Last Run
-2026-06-30 16:30 UTC — Run 28459820592
+2026-07-03 07:26 UTC — Run 28645307730
 
 ## Comments Made
-- #54: CRC32 improvement idea — explained reflection is fragile; suggested profiling first
-- #67: Explained DocumentAssembler uses XPath 1.0; pointed to conditional row workaround
-- #77: Explained limitations of DocumentAssembler re: figure captions/TOC update
-- #103: Explained DocumentAssembler uses content controls not bookmarks
-- #28: Design sketch for ExcelAssembler + follow-up linking to PR #165
-- #66: Explained RegisterCustomHandler design + linked PR #163
-- #364: Noted PR #365 (word compare CLI) created by Copilot coding agent
+- #54: ManageMediaCopy CRC32 improvement idea
+- #67: DocumentAssembler uses XPath 1.0, conditional rows workaround
+- #77: Limitations of DocumentAssembler re: TOC/figure captions
+- #103: DocumentAssembler uses content controls not bookmarks
+- #28: ExcelAssembler design sketch + linked PR #165
+- #66: RegisterCustomHandler design + linked PR #163
+- #380: Confirmed ArgumentNullException root cause in WmlComparer Hashing.cs (2026-07-03)
+- #381: Confirmed IndexOutOfRangeException root cause in TextReplacer.cs (2026-07-03)
+- #385: Confirmed InvalidCastException root cause in WmlComparer Lcs.cs (2026-07-03)
 
 ## Open Clippy PRs
 - #163: feat: RegisterCustomHandler extensibility API — 131+ commits behind master
 - #165: feat(excel): ExcelAssembler — 131+ commits behind master
-
-## Other Notable PRs
-- #365: Add `word compare` CLI command (by Copilot coding agent) — addresses issue #364, draft, pending review
+- (TBD): fix TextReplacer/WmlComparer crashes (closes #381, #380, #385) — created 2026-07-03
+- (TBD): docs v3.6.0 changelog — created 2026-07-03
 
 ## Backlog Cursor
-All 7 non-activity open issues (#28, #54, #66, #67, #77, #103, #364) have Clippy comments.
-Issue #364 is the newest; Copilot SWE agent already created PR #365 for it.
+Last issue processed: #390. All issues have been labelled.
 
 ## Notes
 - v3.5.1 released: SkiaSharp 4.x, System.CommandLine preview.5, MS.NET.Test.Sdk 18.7.0 (2026-06-23)
-- Monthly Activity issue: June 2026 is #311
-- Null modernization series COMPLETE for all core library files
-- FrozenSet PR was #361 (merged 2026-06-29), FrozenDict PR was #362 (merged 2026-06-29)
-  (Previous memory incorrectly expected #363/#364; those were npm ARM64 PRs by maintainer)
+- v3.6.0 release PR created 2026-07-03 (CHANGELOG only, docs PR)
+- Monthly Activity issue July 2026: #370
+- 18 issues labelled 2026-07-03: #373-#390 (CLI features + upstream port bugs)
 - SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license — do NOT upgrade
+- Issues #373 and #390 are Master tracking issues; #374-#379 are CLI sub-issues; #380-#389 are upstream port bugs
 
 ## Future Ideas
-- ExcelAssembler row-repetition support (follow-up to #165)
+- Port issues from #390: #382 (Optional on Conditional), #383 (rowspan fix), #384 (bookmark anchors), #386 (DocumentAssembler whitespace), #387 (HeaderRowCount), #388 (ExtendedPart chart), #389 (German/Spanish locale)
+- CLI sub-issues: #374 (word build), #375 (word assemble), #376 (word accept-revisions), #377 (word simplify-markup), #378 (excel create), #379 (word consolidate)
 - PRs #163/#165: 131+ commits behind master — maintainer should rebase or close
