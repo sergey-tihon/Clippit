@@ -67,6 +67,7 @@ The `Optional` attribute accepts any XSD `xs:boolean` value:
 Omitting the attribute entirely is equivalent to `Optional="false"`.
 
 The `HeaderRowCount` attribute accepts an XSD `xs:positiveInteger` value. Omitting it is equivalent to `HeaderRowCount="1"`.
+When processing pre-existing metadata elements, values less than `1` are treated as `1`.
 
 ## Example
 
