@@ -1,6 +1,6 @@
 {
   "last_run": "2026-07-03",
-  "last_run_id": "28661021141",
+  "last_run_id": "28671842707",
   "backlog_cursor": {
     "issues": 390,
     "prs": 165
@@ -21,14 +21,16 @@
     "388": "2026-07-03",
     "386": "2026-07-03",
     "387": "2026-07-03",
-    "389": "2026-07-03"
+    "389": "2026-07-03",
+    "390": "2026-07-03"
   },
   "open_clippy_prs": [
     {"number": 163, "branch": "clippy/improve-custom-handler-66-20260326-f25d5328ab83f793", "title": "[Clippy] feat: add RegisterCustomHandler extensibility API to DocumentAssembler", "note": "131+ commits behind master"},
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "[Clippy] feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "131+ commits behind master"},
-    {"number": 394, "branch": "clippy/fix-htmlconverter-383-384", "title": "[Clippy] fix(html): correct rowspan with gridSpan and preserve anchor in external hyperlinks", "note": "MERGED 2026-07-03, closed #383 #384"},
-    {"number": null, "branch": "clippy/fix-documentassembler-382-optional-conditional", "title": "[Clippy] fix(word): add Optional attribute support to DocumentAssembler Conditional directive", "note": "created 2026-07-03, closes #382"},
-    {"number": null, "branch": "clippy/fix-presentationbuilder-388-extendedpart", "title": "[Clippy] fix(pptx): handle ExtendedPart chart workbooks in CopyChartObjects and CopyExtendedChartObjects", "note": "created 2026-07-03, closes #388"}
+    {"number": 395, "branch": "clippy/fix-documentassembler-382-optional-conditional", "title": "[Clippy] fix(word): add Optional attribute support to DocumentAssembler Conditional directive", "note": "MERGED 2026-07-03, closed #382"},
+    {"number": 396, "branch": "clippy/fix-presentationbuilder-388-extendedpart", "title": "[Clippy] fix(pptx): handle ExtendedPart chart workbooks in CopyChartObjects and CopyExtendedChartObjects", "note": "MERGED 2026-07-03, closed #388"},
+    {"number": null, "branch": "clippy/fix-documentassembler-387-headerrowcount", "title": "[Clippy] feat(word): add HeaderRowCount attribute to DocumentAssembler Table directive", "note": "created 2026-07-03, closes #387"},
+    {"number": null, "branch": "clippy/fix-389-de-es-locales", "title": "[Clippy] feat(word): add German and Spanish list-item text getters", "note": "created 2026-07-03, closes #389"}
   ],
   "checked_off_by_maintainer": [],
   "m_issue": 370,
@@ -38,6 +40,8 @@
     "v3.6.0 changelog PR #393 merged 2026-07-03",
     "PR #391 (fix TextReplacer+WmlComparer crashes) merged 2026-07-03",
     "PR #394 (rowspan+gridSpan + external hyperlink anchor) merged 2026-07-03",
+    "PR #395 (Optional on Conditional directive) merged 2026-07-03",
+    "PR #396 (ExtendedPart chart workbooks in PresentationBuilder) merged 2026-07-03",
     "PR #371 (FrozenSet+PtOpenXmlUtil) merged 2026-07-02",
     "PR #369 (TUnit 1.57.17) merged 2026-07-01",
     "PRs #163/#165 are 131+ commits behind master - left for human rebase or close",
@@ -46,9 +50,7 @@
     "18 issues labelled 2026-07-03: #373-#390",
     "Issues #373-#390 all created 2026-07-03 by maintainer (CLI feature tracking + upstream port bugs)",
     "All deps current as of 2026-07-03",
-    "Issues #382 and #388 fixed + PRs created 2026-07-03",
-    "Issues #383 and #384 auto-closed by PR #394 merge",
-    "Next: port #386 (whitespace/lastRenderedPageBreak/UnicodeMapper), #387 (HeaderRowCount), #389 (de_DE/es_ES locales)"
+    "Next: port #386 (whitespace/lastRenderedPageBreak/UnicodeMapper)"
   ],
   "improvements_submitted": [
     "PR#342: test(cli) fix duplicate CLI test codes - merged 2026-06-23",
@@ -71,7 +73,9 @@
     "PR#391: fix TextReplacer+WmlComparer crashes (closes #381 #380 #385) - merged 2026-07-03",
     "PR#393: docs v3.6.0 changelog - merged 2026-07-03",
     "PR#394: fix rowspan+gridSpan + external hyperlink anchor (closes #383 #384) - merged 2026-07-03",
-    "PR(TBD): fix(word) Optional attribute on Conditional directive (closes #382) - created 2026-07-03",
-    "PR(TBD): fix(pptx) ExtendedPart in CopyChartObjects (closes #388) - created 2026-07-03"
+    "PR#395: fix(word) Optional attribute on Conditional directive (closes #382) - merged 2026-07-03",
+    "PR#396: fix(pptx) ExtendedPart in CopyChartObjects (closes #388) - merged 2026-07-03",
+    "PR(TBD): feat(word) HeaderRowCount on Table directive (closes #387) - created 2026-07-03",
+    "PR(TBD): feat(word) de-DE + es-ES list-item text getters (closes #389) - created 2026-07-03"
   ]
 }
