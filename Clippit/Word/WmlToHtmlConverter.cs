@@ -405,16 +405,18 @@ namespace Clippit.Word
             {
                 try
                 {
+                    var externalUri = wordDoc
+                        .MainDocumentPart.HyperlinkRelationships.First(x => x.Id == (string)element.Attribute(R.id))
+                        .Uri.ToString();
+
+                    // When both r:id and w:anchor are present, append the anchor as a URL fragment (#384).
+                    var anchor = (string)element.Attribute(W.anchor);
+                    if (anchor is not null && !externalUri.Contains('#'))
+                        externalUri += "#" + anchor;
+
                     var a = new XElement(
                         Xhtml.a,
-                        new XAttribute(
-                            "href",
-                            wordDoc
-                                .MainDocumentPart.HyperlinkRelationships.First(x =>
-                                    x.Id == (string)element.Attribute(R.id)
-                                )
-                                .Uri
-                        ),
+                        new XAttribute("href", externalUri),
                         element.Elements(W.r).Select(run => ConvertRun(wordDoc, settings, run))
                     );
                     if (!a.Nodes().Any())
@@ -962,7 +964,12 @@ namespace Clippit.Word
                 if ((string)tcPr.Elements(W.vMerge).Attributes(W.val).FirstOrDefault() == "restart")
                 {
                     var currentRow = element.Parent.ElementsBeforeSelf(W.tr).Count();
-                    var currentCell = element.ElementsBeforeSelf(W.tc).Count();
+                    // Compute the grid-column position of this cell by summing gridSpan of preceding cells (#383).
+                    var currentGridCol = element
+                        .ElementsBeforeSelf(W.tc)
+                        .Sum(tc =>
+                            (int?)tc.Elements(W.tcPr).Elements(W.gridSpan).Attributes(W.val).FirstOrDefault() ?? 1
+                        );
                     var tbl = element.Parent.Parent;
                     var rowSpanCount = 1;
                     currentRow += 1;
@@ -971,7 +978,19 @@ namespace Clippit.Word
                         var row = tbl.Elements(W.tr).Skip(currentRow).FirstOrDefault();
                         if (row is null)
                             break;
-                        var cell2 = row.Elements(W.tc).Skip(currentCell).FirstOrDefault();
+                        // Find the cell that starts at the same grid column position.
+                        XElement cell2 = null;
+                        var gridColCount = 0;
+                        foreach (var tc in row.Elements(W.tc))
+                        {
+                            if (gridColCount == currentGridCol)
+                            {
+                                cell2 = tc;
+                                break;
+                            }
+                            gridColCount +=
+                                (int?)tc.Elements(W.tcPr).Elements(W.gridSpan).Attributes(W.val).FirstOrDefault() ?? 1;
+                        }
                         if (cell2 is null)
                             break;
                         if (cell2.Elements(W.tcPr).Elements(W.vMerge).FirstOrDefault() is null)

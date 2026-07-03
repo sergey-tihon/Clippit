@@ -884,6 +884,143 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         await Assert.That(paragraphsWithPageBreak).IsEmpty();
     }
 
+    [Test]
+    public async Task HC073_ExternalHyperlinkWithAnchorPreservesFragment()
+    {
+        // Regression test: when w:hyperlink has both r:id (external URL) and w:anchor (bookmark),
+        // the generated href should be "url#anchor". Fixes issue #384.
+        XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+        XNamespace r = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
+            mainPart.AddNewPart<DocumentSettingsPart>().Settings = new Settings();
+
+            var relId = mainPart.AddHyperlinkRelationship(new Uri("https://example.com/page"), true).Id;
+
+            var body = new XElement(
+                w + "body",
+                new XElement(
+                    w + "p",
+                    new XElement(
+                        w + "hyperlink",
+                        new XAttribute(r + "id", relId),
+                        new XAttribute(w + "anchor", "section1"),
+                        new XElement(w + "r", new XElement(w + "t", "Link with anchor"))
+                    )
+                )
+            );
+            mainPart.PutXDocument(new XDocument(new XElement(w + "document", body)));
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = false,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+
+        var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+        var links = html.Descendants(Xhtml.a).ToList();
+        await Assert.That(links).HasCount().GreaterThan(0);
+        var href = links[0].Attribute("href")?.Value;
+        await Assert.That(href).IsEqualTo("https://example.com/page#section1");
+    }
+
+    [Test]
+    public async Task HC074_RowspanCorrectWhenPrecedingCellUsesGridSpan()
+    {
+        // Regression test: when a cell before the vMerge:restart cell spans multiple columns
+        // (w:gridSpan > 1), the rowspan count must still be correct. Fixes issue #383.
+        XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+
+        // Build a 3-row, 3-column table where column 0 spans 2 grid columns (gridSpan=2)
+        // and column 1 (the third physical column) is vertically merged across rows 0..1.
+        //
+        //  |   col A (span 2)    | col B |
+        //  |   col A (span 2)    | col B | ← vMerge continuation
+        //  | col C | col D | col E |       ← normal row
+        //
+        // Expected HTML: col B gets rowspan="2".
+
+        XElement MakeTc(int? gridSpan, string? vMergeVal, string text)
+        {
+            var tcPrContent = new List<XElement>();
+            if (gridSpan is not null)
+                tcPrContent.Add(new XElement(w + "gridSpan", new XAttribute(w + "val", gridSpan)));
+            if (vMergeVal is not null)
+                tcPrContent.Add(new XElement(w + "vMerge", new XAttribute(w + "val", vMergeVal)));
+            else if (text == "")
+                tcPrContent.Add(new XElement(w + "vMerge"));
+            return new XElement(
+                w + "tc",
+                tcPrContent.Count > 0 ? new XElement(w + "tcPr", tcPrContent) : null,
+                new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", text)))
+            );
+        }
+
+        using var memoryStream = new MemoryStream();
+        using (var wordDoc = WordprocessingDocument.Create(memoryStream, WordprocessingDocumentType.Document, true))
+        {
+            var mainPart = wordDoc.AddMainDocumentPart();
+            mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
+            mainPart.AddNewPart<DocumentSettingsPart>().Settings = new Settings();
+
+            var tbl = new XElement(
+                w + "tbl",
+                new XElement(w + "tblPr"),
+                new XElement(
+                    w + "tr",
+                    MakeTc(gridSpan: 2, vMergeVal: null, text: "A1"),
+                    MakeTc(gridSpan: null, vMergeVal: "restart", text: "B")
+                ),
+                new XElement(
+                    w + "tr",
+                    MakeTc(gridSpan: 2, vMergeVal: null, text: "A2"),
+                    MakeTc(gridSpan: null, vMergeVal: null, text: "")
+                ),
+                new XElement(
+                    w + "tr",
+                    MakeTc(gridSpan: null, vMergeVal: null, text: "C"),
+                    MakeTc(gridSpan: null, vMergeVal: null, text: "D"),
+                    MakeTc(gridSpan: null, vMergeVal: null, text: "E")
+                )
+            );
+
+            var body = new XElement(w + "body", tbl);
+            mainPart.PutXDocument(new XDocument(new XElement(w + "document", body)));
+            wordDoc.Save();
+        }
+
+        memoryStream.Position = 0;
+        using var wDoc = WordprocessingDocument.Open(memoryStream, true);
+        var settings = new WmlToHtmlConverterSettings
+        {
+            FabricateCssClasses = false,
+            CssClassPrefix = "pt-",
+            RestrictToSupportedLanguages = false,
+            RestrictToSupportedNumberingFormats = false,
+        };
+
+        var html = WmlToHtmlConverter.ConvertToHtml(wDoc, settings);
+        var cells = html.Descendants(Xhtml.td).ToList();
+
+        // The cell with text "B" in row 0 should have rowspan="2"
+        var bCell = cells.FirstOrDefault(td => td.Value.Contains("B"));
+        await Assert.That(bCell).IsNotNull();
+        await Assert.That(bCell!.Attribute("rowspan")?.Value).IsEqualTo("2");
+
+        // The continuation cell in row 1 should be suppressed (null → omitted from output)
+        await Assert.That(cells.Count(td => td.Attribute("rowspan") is not null)).IsEqualTo(1);
+    }
+
     private static XElement BuildTextBoxParagraph(
         XNamespace w,
         XNamespace wp,
