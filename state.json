@@ -1,6 +1,6 @@
 {
   "last_run": "2026-07-03",
-  "last_run_id": "28654190401",
+  "last_run_id": "28661021141",
   "backlog_cursor": {
     "issues": 390,
     "prs": 165
@@ -16,12 +16,19 @@
     "381": "2026-07-03",
     "385": "2026-07-03",
     "383": "2026-07-03",
-    "384": "2026-07-03"
+    "384": "2026-07-03",
+    "382": "2026-07-03",
+    "388": "2026-07-03",
+    "386": "2026-07-03",
+    "387": "2026-07-03",
+    "389": "2026-07-03"
   },
   "open_clippy_prs": [
     {"number": 163, "branch": "clippy/improve-custom-handler-66-20260326-f25d5328ab83f793", "title": "[Clippy] feat: add RegisterCustomHandler extensibility API to DocumentAssembler", "note": "131+ commits behind master"},
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "[Clippy] feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "131+ commits behind master"},
-    {"number": null, "branch": "clippy/fix-htmlconverter-383-384", "title": "[Clippy] fix(html): correct rowspan with gridSpan and preserve anchor in external hyperlinks", "note": "created 2026-07-03, closes #383 #384"}
+    {"number": 394, "branch": "clippy/fix-htmlconverter-383-384", "title": "[Clippy] fix(html): correct rowspan with gridSpan and preserve anchor in external hyperlinks", "note": "MERGED 2026-07-03, closed #383 #384"},
+    {"number": null, "branch": "clippy/fix-documentassembler-382-optional-conditional", "title": "[Clippy] fix(word): add Optional attribute support to DocumentAssembler Conditional directive", "note": "created 2026-07-03, closes #382"},
+    {"number": null, "branch": "clippy/fix-presentationbuilder-388-extendedpart", "title": "[Clippy] fix(pptx): handle ExtendedPart chart workbooks in CopyChartObjects and CopyExtendedChartObjects", "note": "created 2026-07-03, closes #388"}
   ],
   "checked_off_by_maintainer": [],
   "m_issue": 370,
@@ -30,15 +37,18 @@
     "v3.5.1 released 2026-06-23: SkiaSharp 4.x, System.CommandLine preview.5, MS.NET.Test.Sdk 18.7.0",
     "v3.6.0 changelog PR #393 merged 2026-07-03",
     "PR #391 (fix TextReplacer+WmlComparer crashes) merged 2026-07-03",
+    "PR #394 (rowspan+gridSpan + external hyperlink anchor) merged 2026-07-03",
     "PR #371 (FrozenSet+PtOpenXmlUtil) merged 2026-07-02",
     "PR #369 (TUnit 1.57.17) merged 2026-07-01",
     "PRs #163/#165 are 131+ commits behind master - left for human rebase or close",
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "Monthly Activity issue for July 2026 is #370",
-    "Bug fix PR for #383/#384 created 2026-07-03 (branch: clippy/fix-htmlconverter-383-384)",
     "18 issues labelled 2026-07-03: #373-#390",
     "Issues #373-#390 all created 2026-07-03 by maintainer (CLI feature tracking + upstream port bugs)",
-    "All deps current as of 2026-07-03"
+    "All deps current as of 2026-07-03",
+    "Issues #382 and #388 fixed + PRs created 2026-07-03",
+    "Issues #383 and #384 auto-closed by PR #394 merge",
+    "Next: port #386 (whitespace/lastRenderedPageBreak/UnicodeMapper), #387 (HeaderRowCount), #389 (de_DE/es_ES locales)"
   ],
   "improvements_submitted": [
     "PR#342: test(cli) fix duplicate CLI test codes - merged 2026-06-23",
@@ -60,6 +70,8 @@
     "PR#371: perf remaining List<T>->FrozenSet<T> + PtOpenXmlUtil modernize - merged 2026-07-02",
     "PR#391: fix TextReplacer+WmlComparer crashes (closes #381 #380 #385) - merged 2026-07-03",
     "PR#393: docs v3.6.0 changelog - merged 2026-07-03",
-    "PR(TBD): fix rowspan+gridSpan + external hyperlink anchor (closes #383 #384) - created 2026-07-03"
+    "PR#394: fix rowspan+gridSpan + external hyperlink anchor (closes #383 #384) - merged 2026-07-03",
+    "PR(TBD): fix(word) Optional attribute on Conditional directive (closes #382) - created 2026-07-03",
+    "PR(TBD): fix(pptx) ExtendedPart in CopyChartObjects (closes #388) - created 2026-07-03"
   ]
 }
