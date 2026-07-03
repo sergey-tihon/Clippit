@@ -8,8 +8,13 @@
 - perf: use `FrozenSet<T>` for `HashSet` lookups (#361)
 - perf: convert `Dictionary` to `FrozenDictionary` (#362)
 - perf: replace remaining `List<T>` with `FrozenSet<T>` in `PtOpenXmlUtil` (#371)
+- fix: guard `TextReplacer` against `IndexOutOfRangeException` on empty replacement string (#381)
+- fix: guard `WmlComparer.HashBlockLevelContent` against `ArgumentNullException` from missing `pt:Unid` attributes (#380)
+- fix: guard `WmlComparer.FindIndexOfNextParaMark` against `InvalidCastException` from non-`ComparisonUnitWord` units (#385)
 - refactor: modernize `== null`/`!= null` to `is null`/`is not null` across 20+ files (#349, #350, #352, #353, #355, #356)
 - test: add `FieldRetriever.ParseField` unit tests FR001–FR010 (#354)
+- test: add regression tests for `TextReplacer` empty-string replacement TR007–TR008 (#381)
+- test: add regression tests for `WmlComparer` defensive fixes WC380, WC385 (#380, #385)
 - chore(deps): update TUnit 1.56.35 → 1.57.17 (#351, #359, #369)
 - chore(ci): update `actions/checkout` v6 → v7 (#347)
 
