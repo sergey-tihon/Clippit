@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.6.0] - July 3, 2026
+
+- feat(cli): add `word compare` command for DOCX diff (#365)
+- feat(cli): add Windows ARM64 npm binary (#363)
+- feat(cli): add Linux ARM64 npm binary (#360)
+- perf: use `FrozenSet<T>` for `HashSet` lookups (#361)
+- perf: convert `Dictionary` to `FrozenDictionary` (#362)
+- perf: replace remaining `List<T>` with `FrozenSet<T>` in `PtOpenXmlUtil` (#371)
+- refactor: modernize `== null`/`!= null` to `is null`/`is not null` across 20+ files (#349, #350, #352, #353, #355, #356)
+- test: add `FieldRetriever.ParseField` unit tests FR001–FR010 (#354)
+- chore(deps): update TUnit 1.56.35 → 1.57.17 (#351, #359, #369)
+- chore(ci): update `actions/checkout` v6 → v7 (#347)
+
 ## [3.5.1] - June 23, 2026
 
 - chore(deps): update SkiaSharp 3.119.4 → 4.148.0 with migration fix (#346)
