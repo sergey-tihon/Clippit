@@ -930,6 +930,7 @@ namespace Clippit.Word
                             <xs:attribute name='Select' type='xs:string' use='required' />
                             <xs:attribute name='Match' type='xs:string' use='optional' />
                             <xs:attribute name='NotMatch' type='xs:string' use='optional' />
+                            <xs:attribute name='Optional' type='xs:boolean' use='optional' />
                         </xs:complexType>
                         </xs:element>
                     </xs:schema>"
@@ -1798,7 +1799,15 @@ namespace Clippit.Word
                 string testValue;
                 try
                 {
-                    testValue = data.EvaluateXPathToString(xPath, false);
+                    var optional = (bool?)element.Attribute(PA.Optional) ?? false;
+                    testValue = data.EvaluateXPathToString(xPath, optional);
+                }
+                catch (FormatException)
+                {
+                    return element.CreateContextErrorMessage(
+                        $"Conditional: Invalid value for Optional attribute '{(string)element.Attribute(PA.Optional)}'; expected true, false, 1, or 0",
+                        templateError
+                    );
                 }
                 catch (XPathException e)
                 {

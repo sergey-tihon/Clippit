@@ -1224,6 +1224,176 @@ public class DocumentAssemblerTests : TestsBase
         await Assert.That(documentText).Contains("Invalid value for Optional attribute");
     }
 
+    /// <summary>
+    /// Verifies that an invalid <c>Optional</c> value in a pre-existing <c>Conditional</c> metadata element
+    /// produces a template error instead of throwing a <see cref="FormatException"/>.
+    /// </summary>
+    [Test]
+    public async Task DA_Conditional_InvalidOptionalValueReturnsError()
+    {
+        var conditionalDirective = new XElement(
+            "Conditional",
+            new XAttribute("Select", "MissingNode"),
+            new XAttribute("Match", "x"),
+            new XAttribute("Optional", "yes")
+        ); // invalid XSD boolean — not true/false/1/0
+        var endConditionalDirective = new XElement("EndConditional");
+        var bodyXml = new XElement(
+            W.body,
+            conditionalDirective,
+            new XElement(W.p, new XElement(W.r, new XElement(W.t, "ConditionalContent"))),
+            endConditionalDirective,
+            new XElement(W.sectPr)
+        );
+
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                mainPart.PutXDocument(new XDocument(new XElement(W.document, bodyXml)));
+            }
+            docxBytes = ms.ToArray();
+        }
+
+        var wmlTemplate = new WmlDocument("invalid-optional-conditional-template.docx", docxBytes);
+        var xmlData = XElement.Parse("<Data/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsTrue();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        var documentText = resultDoc
+            .MainDocumentPart!.GetXDocument()
+            .Descendants(W.t)
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
+        await Assert.That(documentText).Contains("Invalid value for Optional attribute");
+    }
+
+    /// <summary>
+    /// Regression test for issue #382: <c>&lt;Conditional Select="..." Optional="true" Match=""/&gt;</c>
+    /// should not throw when the XPath selects a missing node.
+    /// A missing node with Optional=true is treated as an empty string;
+    /// Match="" succeeds, so the conditional content is included.
+    /// </summary>
+    [Test]
+    public async Task DA_Conditional_Optional_MissingNode_MatchEmpty_IncludesContent()
+    {
+        var body = BuildConditionalBody(@"<Conditional Select=""MissingNode"" Optional=""true"" Match=""""/>");
+        var wmlTemplate = BuildTemplate("cond-optional-match-empty.docx", body);
+        var xmlData = XElement.Parse("<Data/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+        var text = ExtractText(resultDoc);
+        await Assert.That(text).Contains("ConditionalContent");
+    }
+
+    /// <summary>
+    /// Regression test for issue #382: <c>&lt;Conditional Select="..." Optional="true" Match="x"/&gt;</c>
+    /// with a missing node treats the value as empty, so Match="x" fails and content is excluded.
+    /// </summary>
+    [Test]
+    public async Task DA_Conditional_Optional_MissingNode_MatchNonEmpty_ExcludesContent()
+    {
+        var body = BuildConditionalBody(@"<Conditional Select=""MissingNode"" Optional=""true"" Match=""x""/>");
+        var wmlTemplate = BuildTemplate("cond-optional-match-nonempty.docx", body);
+        var xmlData = XElement.Parse("<Data/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+        var text = ExtractText(resultDoc);
+        await Assert.That(text).DoesNotContain("ConditionalContent");
+    }
+
+    /// <summary>
+    /// Regression test for issue #382: without Optional, a missing node must produce a template error.
+    /// </summary>
+    [Test]
+    public async Task DA_Conditional_NoOptional_MissingNode_ReturnsError()
+    {
+        var body = BuildConditionalBody(@"<Conditional Select=""MissingNode"" Match=""x""/>");
+        var wmlTemplate = BuildTemplate("cond-no-optional.docx", body);
+        var xmlData = XElement.Parse("<Data/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsTrue();
+    }
+
+    /// <summary>
+    /// Regression test for issue #382: when the node is present, Optional=true behaves normally.
+    /// </summary>
+    [Test]
+    public async Task DA_Conditional_Optional_PresentNode_Matches()
+    {
+        var body = BuildConditionalBody(@"<Conditional Select=""Flag"" Optional=""true"" Match=""yes""/>");
+        var wmlTemplate = BuildTemplate("cond-optional-present.docx", body);
+        var xmlData = XElement.Parse("<Data><Flag>yes</Flag></Data>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+        var text = ExtractText(resultDoc);
+        await Assert.That(text).Contains("ConditionalContent");
+    }
+
+    private static XElement BuildConditionalBody(string directiveXml)
+    {
+        return new XElement(
+            W.body,
+            new XElement(W.p, new XElement(W.r, new XElement(W.t, $"<# {directiveXml} #>"))),
+            new XElement(W.p, new XElement(W.r, new XElement(W.t, "ConditionalContent"))),
+            new XElement(W.p, new XElement(W.r, new XElement(W.t, "<# <EndConditional/> #>"))),
+            new XElement(W.sectPr)
+        );
+    }
+
+    private static WmlDocument BuildTemplate(string docName, XElement body)
+    {
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                wordDoc.AddMainDocumentPart().PutXDocument(new XDocument(new XElement(W.document, body)));
+            }
+            docxBytes = ms.ToArray();
+        }
+        return new WmlDocument(docName, docxBytes);
+    }
+
+    private static string ExtractText(WordprocessingDocument doc) =>
+        doc.MainDocumentPart!.GetXDocument()
+            .Descendants(W.t)
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
+
     private async Task ValidateAsync(FileInfo fi)
     {
         using var wDoc = WordprocessingDocument.Open(fi.FullName, false);
