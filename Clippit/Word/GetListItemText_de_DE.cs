@@ -91,7 +91,6 @@ public class ListItemTextGetter_de_DE
 
         // Thousands
         var t1 = n / 1000;
-        var t2 = n % 1000;
         if (t1 == 1)
             result += "tausend";
         else if (t1 >= 2)
@@ -99,7 +98,6 @@ public class ListItemTextGetter_de_DE
 
         // Hundreds
         var h1 = (n % 1000) / 100;
-        var h2 = n % 100;
         if (h1 >= 1)
             result += Hundreds[h1 - 1];
 
