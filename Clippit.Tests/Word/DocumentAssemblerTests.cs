@@ -1225,6 +1225,61 @@ public class DocumentAssemblerTests : TestsBase
     }
 
     /// <summary>
+    /// Verifies that an invalid <c>Optional</c> value in a pre-existing <c>Conditional</c> metadata element
+    /// produces a template error instead of throwing a <see cref="FormatException"/>.
+    /// </summary>
+    [Test]
+    public async Task DA_Conditional_InvalidOptionalValueReturnsError()
+    {
+        var conditionalDirective = new XElement(
+            "Conditional",
+            new XAttribute("Select", "MissingNode"),
+            new XAttribute("Match", "x"),
+            new XAttribute("Optional", "yes")
+        ); // invalid XSD boolean — not true/false/1/0
+        var endConditionalDirective = new XElement("EndConditional");
+        var bodyXml = new XElement(
+            W.body,
+            conditionalDirective,
+            new XElement(W.p, new XElement(W.r, new XElement(W.t, "ConditionalContent"))),
+            endConditionalDirective,
+            new XElement(W.sectPr)
+        );
+
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                mainPart.PutXDocument(new XDocument(new XElement(W.document, bodyXml)));
+            }
+            docxBytes = ms.ToArray();
+        }
+
+        var wmlTemplate = new WmlDocument("invalid-optional-conditional-template.docx", docxBytes);
+        var xmlData = XElement.Parse("<Data/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsTrue();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        var documentText = resultDoc
+            .MainDocumentPart!.GetXDocument()
+            .Descendants(W.t)
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
+        await Assert.That(documentText).Contains("Invalid value for Optional attribute");
+    }
+
+    /// <summary>
     /// Regression test for issue #382: <c>&lt;Conditional Select="..." Optional="true" Match=""/&gt;</c>
     /// should not throw when the XPath selects a missing node.
     /// A missing node with Optional=true is treated as an empty string;

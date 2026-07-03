@@ -1802,6 +1802,13 @@ namespace Clippit.Word
                     var optional = (bool?)element.Attribute(PA.Optional) ?? false;
                     testValue = data.EvaluateXPathToString(xPath, optional);
                 }
+                catch (FormatException)
+                {
+                    return element.CreateContextErrorMessage(
+                        $"Conditional: Invalid value for Optional attribute '{(string)element.Attribute(PA.Optional)}'; expected true, false, 1, or 0",
+                        templateError
+                    );
+                }
                 catch (XPathException e)
                 {
                     return element.CreateContextErrorMessage(e.Message, templateError);
