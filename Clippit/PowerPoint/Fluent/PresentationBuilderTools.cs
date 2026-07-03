@@ -178,6 +178,21 @@ namespace Clippit.PowerPoint.Fluent
 
                             continue;
                         }
+                        case ExtendedPart oldExtendedPart:
+                        {
+                            var fileInfo = new FileInfo(oldExtendedPart.Uri.OriginalString);
+                            var relType = StrictOoxmlTranslator.TranslateRelationshipType(
+                                oldExtendedPart.RelationshipType
+                            );
+                            var newPart = newChart.AddExtendedPart(
+                                relType,
+                                oldExtendedPart.ContentType,
+                                fileInfo.Extension
+                            );
+                            newPart.FeedDataFrom(oldExtendedPart);
+                            dataReference.Attribute(R.id).Set(newChart.GetIdOfPart(newPart));
+                            continue;
+                        }
                     }
                 }
                 else
@@ -269,6 +284,21 @@ namespace Clippit.PowerPoint.Fluent
                                 );
                             }
 
+                            continue;
+                        }
+                        case ExtendedPart oldExtendedPart:
+                        {
+                            var fileInfo = new FileInfo(oldExtendedPart.Uri.OriginalString);
+                            var relType = StrictOoxmlTranslator.TranslateRelationshipType(
+                                oldExtendedPart.RelationshipType
+                            );
+                            var newPart = newChart.AddExtendedPart(
+                                relType,
+                                oldExtendedPart.ContentType,
+                                fileInfo.Extension
+                            );
+                            newPart.FeedDataFrom(oldExtendedPart);
+                            dataReference.Attribute(R.id).Set(newChart.GetIdOfPart(newPart));
                             continue;
                         }
                     }

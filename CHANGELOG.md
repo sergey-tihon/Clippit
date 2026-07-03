@@ -14,6 +14,7 @@
 - fix: guard `WmlComparer.FindIndexOfNextParaMark` against `InvalidCastException` from non-`ComparisonUnitWord` units (#385)
 - fix(html): preserve `w:anchor` fragment on external hyperlinks — append `#anchor` when the URL has no existing fragment (#384)
 - fix(html): correct `rowspan` for vertically merged cells when preceding cells use `w:gridSpan` (#383)
+- fix(pptx): handle `ExtendedPart` chart workbooks in `CopyChartObjects` and `CopyExtendedChartObjects` — prevents silent data loss when a chart's external data relationship resolves to an `ExtendedPart` (#388)
 - refactor: modernize `== null`/`!= null` to `is null`/`is not null` across 20+ files (#349, #350, #352, #353, #355, #356)
 - test: add `FieldRetriever.ParseField` unit tests FR001–FR010 (#354)
 - test: add regression tests for `TextReplacer` empty-string replacement TR007–TR008 (#381)
