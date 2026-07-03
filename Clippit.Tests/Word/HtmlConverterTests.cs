@@ -884,11 +884,14 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         await Assert.That(paragraphsWithPageBreak).IsEmpty();
     }
 
+    [Arguments("https://example.com/page", "https://example.com/page#section1")]
+    [Arguments("https://example.com/page#existing", "https://example.com/page#existing")]
     [Test]
-    public async Task HC073_ExternalHyperlinkWithAnchorPreservesFragment()
+    public async Task HC073_ExternalHyperlinkWithAnchorPreservesFragment(string baseUrl, string expectedHref)
     {
         // Regression test: when w:hyperlink has both r:id (external URL) and w:anchor (bookmark),
         // the generated href should be "url#anchor". Fixes issue #384.
+        // When the URL already contains a fragment, the anchor must not be appended (guard branch).
         XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
         XNamespace r = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 
@@ -899,7 +902,7 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
             mainPart.AddNewPart<StyleDefinitionsPart>().Styles = new Styles();
             mainPart.AddNewPart<DocumentSettingsPart>().Settings = new Settings();
 
-            var relId = mainPart.AddHyperlinkRelationship(new Uri("https://example.com/page"), true).Id;
+            var relId = mainPart.AddHyperlinkRelationship(new Uri(baseUrl), true).Id;
 
             var body = new XElement(
                 w + "body",
@@ -931,7 +934,7 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         var links = html.Descendants(Xhtml.a).ToList();
         await Assert.That(links).HasCount().GreaterThan(0);
         var href = links[0].Attribute("href")?.Value;
-        await Assert.That(href).IsEqualTo("https://example.com/page#section1");
+        await Assert.That(href).IsEqualTo(expectedHref);
     }
 
     [Test]
