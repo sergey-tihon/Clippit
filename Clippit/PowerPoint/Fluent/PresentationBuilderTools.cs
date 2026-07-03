@@ -178,6 +178,24 @@ namespace Clippit.PowerPoint.Fluent
 
                             continue;
                         }
+                        case ExtendedPart oldExtendedPart:
+                        {
+                            var fileInfo = new FileInfo(oldExtendedPart.Uri.OriginalString);
+                            var relType = StrictOoxmlTranslator.TranslateRelationshipType(
+                                oldExtendedPart.RelationshipType
+                            );
+                            var newPart = newChart.AddExtendedPart(
+                                relType,
+                                oldExtendedPart.ContentType,
+                                fileInfo.Extension
+                            );
+                            using (var oldStream = oldExtendedPart.GetStream(FileMode.Open, FileAccess.Read))
+                            {
+                                newPart.FeedData(oldStream);
+                            }
+                            dataReference.Attribute(R.id).Set(newChart.GetIdOfPart(newPart));
+                            continue;
+                        }
                     }
                 }
                 else
@@ -269,6 +287,24 @@ namespace Clippit.PowerPoint.Fluent
                                 );
                             }
 
+                            continue;
+                        }
+                        case ExtendedPart oldExtendedPart:
+                        {
+                            var fileInfo = new FileInfo(oldExtendedPart.Uri.OriginalString);
+                            var relType = StrictOoxmlTranslator.TranslateRelationshipType(
+                                oldExtendedPart.RelationshipType
+                            );
+                            var newPart = newChart.AddExtendedPart(
+                                relType,
+                                oldExtendedPart.ContentType,
+                                fileInfo.Extension
+                            );
+                            using (var oldStream = oldExtendedPart.GetStream(FileMode.Open, FileAccess.Read))
+                            {
+                                newPart.FeedData(oldStream);
+                            }
+                            dataReference.Attribute(R.id).Set(newChart.GetIdOfPart(newPart));
                             continue;
                         }
                     }
