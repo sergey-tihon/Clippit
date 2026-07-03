@@ -1,6 +1,6 @@
 {
   "last_run": "2026-07-03",
-  "last_run_id": "28645307730",
+  "last_run_id": "28654190401",
   "backlog_cursor": {
     "issues": 390,
     "prs": 165
@@ -14,29 +14,31 @@
     "66": "2026-03-26",
     "380": "2026-07-03",
     "381": "2026-07-03",
-    "385": "2026-07-03"
+    "385": "2026-07-03",
+    "383": "2026-07-03",
+    "384": "2026-07-03"
   },
   "open_clippy_prs": [
     {"number": 163, "branch": "clippy/improve-custom-handler-66-20260326-f25d5328ab83f793", "title": "[Clippy] feat: add RegisterCustomHandler extensibility API to DocumentAssembler", "note": "131+ commits behind master"},
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "[Clippy] feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "131+ commits behind master"},
-    {"number": null, "branch": "clippy/fix-wmlcomparer-textreplacement-crashes-20260703", "title": "[Clippy] fix: guard against IndexOutOfRange/ArgumentNull/InvalidCast crashes in TextReplacer and WmlComparer", "note": "created 2026-07-03, closes #381 #380 #385"},
-    {"number": null, "branch": "clippy/release-v3.6.0-20260703", "title": "[Clippy] docs: add v3.6.0 changelog entry", "note": "created 2026-07-03"}
+    {"number": null, "branch": "clippy/fix-htmlconverter-383-384", "title": "[Clippy] fix(html): correct rowspan with gridSpan and preserve anchor in external hyperlinks", "note": "created 2026-07-03, closes #383 #384"}
   ],
   "checked_off_by_maintainer": [],
   "m_issue": 370,
   "m_month": "2026-07",
   "notes": [
     "v3.5.1 released 2026-06-23: SkiaSharp 4.x, System.CommandLine preview.5, MS.NET.Test.Sdk 18.7.0",
+    "v3.6.0 changelog PR #393 merged 2026-07-03",
+    "PR #391 (fix TextReplacer+WmlComparer crashes) merged 2026-07-03",
     "PR #371 (FrozenSet+PtOpenXmlUtil) merged 2026-07-02",
     "PR #369 (TUnit 1.57.17) merged 2026-07-01",
-    "PR #365 (word compare CLI) merged 2026-07-01",
     "PRs #163/#165 are 131+ commits behind master - left for human rebase or close",
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "Monthly Activity issue for July 2026 is #370",
-    "Bug fix PR for #381/#380/#385 created 2026-07-03 (branch: clippy/fix-wmlcomparer-textreplacement-crashes-20260703)",
-    "Release PR for v3.6.0 created 2026-07-03 (branch: clippy/release-v3.6.0-20260703)",
+    "Bug fix PR for #383/#384 created 2026-07-03 (branch: clippy/fix-htmlconverter-383-384)",
     "18 issues labelled 2026-07-03: #373-#390",
-    "Issues #373-#390 all created 2026-07-03 by maintainer (CLI feature tracking + upstream port bugs)"
+    "Issues #373-#390 all created 2026-07-03 by maintainer (CLI feature tracking + upstream port bugs)",
+    "All deps current as of 2026-07-03"
   ],
   "improvements_submitted": [
     "PR#342: test(cli) fix duplicate CLI test codes - merged 2026-06-23",
@@ -56,7 +58,8 @@
     "PR#362: perf FrozenDictionary conversion - merged 2026-06-29",
     "PR#369: chore(deps) TUnit 1.57.0->1.57.17 - merged 2026-07-01",
     "PR#371: perf remaining List<T>->FrozenSet<T> + PtOpenXmlUtil modernize - merged 2026-07-02",
-    "PR(TBD): fix TextReplacer+WmlComparer crashes (closes #381 #380 #385) - created 2026-07-03",
-    "PR(TBD): docs v3.6.0 changelog - created 2026-07-03"
+    "PR#391: fix TextReplacer+WmlComparer crashes (closes #381 #380 #385) - merged 2026-07-03",
+    "PR#393: docs v3.6.0 changelog - merged 2026-07-03",
+    "PR(TBD): fix rowspan+gridSpan + external hyperlink anchor (closes #383 #384) - created 2026-07-03"
   ]
 }
