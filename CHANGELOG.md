@@ -11,6 +11,8 @@
 - fix: guard `TextReplacer` against `IndexOutOfRangeException` on empty replacement string (#381)
 - fix: guard `WmlComparer.HashBlockLevelContent` against `ArgumentNullException` from missing `pt:Unid` attributes (#380)
 - fix: guard `WmlComparer.FindIndexOfNextParaMark` against `InvalidCastException` from non-`ComparisonUnitWord` units (#385)
+- fix(html): preserve `w:anchor` fragment on external hyperlinks — append `#anchor` when the URL has no existing fragment (#384)
+- fix(html): correct `rowspan` for vertically merged cells when preceding cells use `w:gridSpan` (#383)
 - refactor: modernize `== null`/`!= null` to `is null`/`is not null` across 20+ files (#349, #350, #352, #353, #355, #356)
 - test: add `FieldRetriever.ParseField` unit tests FR001–FR010 (#354)
 - test: add regression tests for `TextReplacer` empty-string replacement TR007–TR008 (#381)
