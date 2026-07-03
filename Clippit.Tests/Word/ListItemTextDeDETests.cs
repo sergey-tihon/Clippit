@@ -140,4 +140,16 @@ public class ListItemTextDeDETests
         var result = ListItemTextGetter_de_DE.GetListItemText("de-DE", number, "ordinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
+
+    // ── ordinalText: thousands ───────────────────────────────────────────────
+
+    [Test]
+    [Arguments(1000, "Tausendste")]
+    [Arguments(2000, "Zweitausendste")]
+    [Arguments(1100, "Tausendhundertste")]
+    public async Task LDE013_OrdinalText_Thousands(int number, string expected)
+    {
+        var result = ListItemTextGetter_de_DE.GetListItemText("de-DE", number, "ordinalText");
+        await Assert.That(result).IsEqualTo(expected);
+    }
 }

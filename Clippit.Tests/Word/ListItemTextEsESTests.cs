@@ -150,4 +150,19 @@ public class ListItemTextEsESTests
         var result = ListItemTextGetter_es_ES.GetListItemText("es-ES", number, "ordinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
+
+    // ── ordinalText: hundreds and thousands ─────────────────────────────────
+
+    [Test]
+    [Arguments(100, "Centésimo")]
+    [Arguments(101, "Centésimo primero")]
+    [Arguments(200, "Ducentésimo")]
+    [Arguments(345, "Tricentésimo cuadragésimo quinto")]
+    [Arguments(1000, "Milésimo")]
+    [Arguments(2000, "Dos milésimo")]
+    public async Task LES013_OrdinalText_HundredsAndThousands(int number, string expected)
+    {
+        var result = ListItemTextGetter_es_ES.GetListItemText("es-ES", number, "ordinalText");
+        await Assert.That(result).IsEqualTo(expected);
+    }
 }

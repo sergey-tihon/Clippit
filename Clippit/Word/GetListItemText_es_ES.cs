@@ -194,7 +194,7 @@ public class ListItemTextGetter_es_ES
                 return levelNumber.ToString();
 
             var z = levelNumber % 100;
-            string ordinalSuffix;
+            string? ordinalSuffix;
 
             if (z >= 1 && z <= 10)
                 ordinalSuffix = OrdinalOneThroughTen[z - 1];
