@@ -2,6 +2,7 @@
 
 ## [3.6.0] - July 3, 2026
 
+- feat(word): add German and Spanish localized list-item text getters (`de-DE`, `es-ES`) (#389)
 - feat(cli): add `word compare` command for DOCX diff (#365)
 - feat(cli): add Windows ARM64 npm binary (#363)
 - feat(cli): add Linux ARM64 npm binary (#360)

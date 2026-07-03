@@ -10,6 +10,8 @@ namespace Clippit.Word
     {
         public static Dictionary<string, Func<string, int, string, string>> DefaultListItemTextImplementations = new()
         {
+            { "de-DE", ListItemTextGetter_de_DE.GetListItemText },
+            { "es-ES", ListItemTextGetter_es_ES.GetListItemText },
             { "fr-FR", ListItemTextGetter_fr_FR.GetListItemText },
             { "tr-TR", ListItemTextGetter_tr_TR.GetListItemText },
             { "ru-RU", ListItemTextGetter_ru_RU.GetListItemText },
