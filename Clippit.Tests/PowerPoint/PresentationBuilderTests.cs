@@ -111,6 +111,25 @@ public class PresentationBuilderTests : TestsBase
         await Assert.That(newMediaDataContentTypes).IsEquivalentTo(oldMediaDataContentTypes);
     }
 
+    [Test]
+    public async Task PB007_ChartWithExtendedPartWorkbook()
+    {
+        // Regression test for #388: chart workbook stored as ExtendedPart must be copied correctly.
+        // The fixture uses a non-standard relationship type that the SDK resolves as ExtendedPart.
+        var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+        var sourcePptx = new FileInfo(Path.Combine(sourceDir.FullName, "PB007-Chart-ExtendedPart-Workbook.pptx"));
+        var sources = new List<SlideSource> { new(new PmlDocument(sourcePptx.FullName), true) };
+        var outputPptx = new FileInfo(Path.Combine(TempDir, "PB007-Output.pptx"));
+        PresentationBuilder.BuildPresentation(sources).SaveAs(outputPptx.FullName);
+
+        using var pptx = PresentationDocument.Open(outputPptx.FullName, false);
+        await Validate(pptx);
+
+        var chartPart = pptx.PresentationPart!.SlideParts.Single().ChartParts.Single();
+        var extendedParts = chartPart.Parts.Where(p => p.OpenXmlPart is ExtendedPart).ToList();
+        await Assert.That(extendedParts).HasCount().EqualTo(1);
+    }
+
     private static string[] GetMediaDataContentTypes(FileInfo fi)
     {
         using var ptDoc = PresentationDocument.Open(fi.FullName, false);

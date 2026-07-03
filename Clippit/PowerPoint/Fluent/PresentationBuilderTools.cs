@@ -189,10 +189,7 @@ namespace Clippit.PowerPoint.Fluent
                                 oldExtendedPart.ContentType,
                                 fileInfo.Extension
                             );
-                            using (var oldStream = oldExtendedPart.GetStream(FileMode.Open, FileAccess.Read))
-                            {
-                                newPart.FeedData(oldStream);
-                            }
+                            newPart.FeedDataFrom(oldExtendedPart);
                             dataReference.Attribute(R.id).Set(newChart.GetIdOfPart(newPart));
                             continue;
                         }
@@ -300,10 +297,7 @@ namespace Clippit.PowerPoint.Fluent
                                 oldExtendedPart.ContentType,
                                 fileInfo.Extension
                             );
-                            using (var oldStream = oldExtendedPart.GetStream(FileMode.Open, FileAccess.Read))
-                            {
-                                newPart.FeedData(oldStream);
-                            }
+                            newPart.FeedDataFrom(oldExtendedPart);
                             dataReference.Attribute(R.id).Set(newChart.GetIdOfPart(newPart));
                             continue;
                         }
