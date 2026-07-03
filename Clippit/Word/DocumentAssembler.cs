@@ -1677,7 +1677,25 @@ namespace Clippit.Word
                         return null;
                     return element.CreateContextErrorMessage("Table Select returned no data", templateError);
                 }
-                var headerRowCount = Math.Max(1, (int?)element.Attribute(PA.HeaderRowCount) ?? 1);
+                int headerRowCount;
+                try
+                {
+                    headerRowCount = Math.Max(1, (int?)element.Attribute(PA.HeaderRowCount) ?? 1);
+                }
+                catch (FormatException)
+                {
+                    return element.CreateContextErrorMessage(
+                        $"Table: Invalid value for HeaderRowCount attribute '{(string)element.Attribute(PA.HeaderRowCount)}'; expected a positive integer",
+                        templateError
+                    );
+                }
+                catch (OverflowException)
+                {
+                    return element.CreateContextErrorMessage(
+                        $"Table: Invalid value for HeaderRowCount attribute '{(string)element.Attribute(PA.HeaderRowCount)}'; expected a positive integer",
+                        templateError
+                    );
+                }
                 var table = element.Element(W.tbl);
                 var protoRow = table.Elements(W.tr).Skip(headerRowCount).FirstOrDefault();
                 var footerRowsBeforeTransform = table.Elements(W.tr).Skip(headerRowCount + 1).ToList();

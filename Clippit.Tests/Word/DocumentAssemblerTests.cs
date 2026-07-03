@@ -1455,6 +1455,42 @@ public class DocumentAssemblerTests : TestsBase
         await Assert.That(dataTexts[1]).IsEqualTo("Bob");
     }
 
+    /// <summary>
+    /// Verifies that an invalid <c>HeaderRowCount</c> value in a pre-existing <c>Table</c>
+    /// metadata element produces a template error instead of throwing.
+    /// </summary>
+    [Test]
+    public async Task DA_Table_InvalidHeaderRowCountValueReturnsError()
+    {
+        var tableDirective = new XElement(
+            "Table",
+            new XAttribute("Select", "Items/Item"),
+            new XAttribute("HeaderRowCount", "999999999999999999999999999999")
+        );
+        var tableXml = new XElement(
+            W.tbl,
+            new XElement(W.tblPr),
+            new XElement(W.tblGrid, new XElement(W.gridCol, new XAttribute(W._w, "9216"))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "./Name")))))
+        );
+        var bodyXml = new XElement(W.body, tableDirective, tableXml, new XElement(W.sectPr));
+        var wmlTemplate = BuildTemplate("invalid-headerrowcount-table-template.docx", bodyXml);
+        var xmlData = XElement.Parse("<Data><Items><Item><Name>Alice</Name></Item></Items></Data>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsTrue();
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        var documentText = resultDoc
+            .MainDocumentPart!.GetXDocument()
+            .Descendants(W.t)
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
+        await Assert.That(documentText).Contains("Invalid value for HeaderRowCount attribute");
+    }
+
     private static WmlDocument BuildTemplate(string docName, XElement body)
     {
         byte[] docxBytes;

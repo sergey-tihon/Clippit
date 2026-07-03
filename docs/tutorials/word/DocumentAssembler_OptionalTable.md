@@ -7,7 +7,10 @@ Namespace: `Clippit.Word`
 
 ## Introduction
 
-The `Table` directive in `DocumentAssembler` supports an `Optional` attribute that controls the behavior when the XPath `Select` expression returns no matching data.
+The `Table` directive in `DocumentAssembler` supports:
+
+- `Optional` — controls behavior when the XPath `Select` expression returns no matching data.
+- `HeaderRowCount` — declares how many leading rows are treated as table headers.
 
 By default, when a `Table` directive's `Select` XPath returns no data, `DocumentAssembler` produces a template error:
 
@@ -40,6 +43,16 @@ Alternatively, use a Word content control (structured document tag) with the `Do
 
 Place this directive inside a content control that precedes the table in your document.
 
+### Multi-row header table
+
+Use `HeaderRowCount` when the table has more than one header row:
+
+```xml
+<# <Table Select="Orders/Order" HeaderRowCount="2" /> #>
+```
+
+With this setting, the first two `w:tr` rows are preserved as headers and the third row is used as the prototype row.
+
 ## Accepted Values
 
 The `Optional` attribute accepts any XSD `xs:boolean` value:
@@ -52,6 +65,8 @@ The `Optional` attribute accepts any XSD `xs:boolean` value:
 | `0`     | Not optional (default) |
 
 Omitting the attribute entirely is equivalent to `Optional="false"`.
+
+The `HeaderRowCount` attribute accepts an XSD `xs:positiveInteger` value. Omitting it is equivalent to `HeaderRowCount="1"`.
 
 ## Example
 
