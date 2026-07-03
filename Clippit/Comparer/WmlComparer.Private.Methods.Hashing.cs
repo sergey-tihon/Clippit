@@ -28,7 +28,9 @@ namespace Clippit
                 var sourceMainRoot = sourceMainXDoc.Root ?? throw new ArgumentException();
                 var sourceUnidDict = sourceMainRoot
                     .Descendants()
-                    .Where(d => d.Name == W.p || d.Name == W.tbl || d.Name == W.tr)
+                    .Where(d =>
+                        (d.Name == W.p || d.Name == W.tbl || d.Name == W.tr) && d.Attribute(PtOpenXml.Unid) is not null
+                    )
                     .ToDictionary(d => (string)d.Attribute(PtOpenXml.Unid));
 
                 var afterProcMainXDoc = wDocAfterProc.MainDocumentPart.GetXDocument();
