@@ -1465,7 +1465,8 @@ public class DocumentAssemblerTests : TestsBase
         var tableDirective = new XElement(
             "Table",
             new XAttribute("Select", "Items/Item"),
-            new XAttribute("HeaderRowCount", "999999999999999999999999999999")
+            // Overflows Int32 parsing while still matching xs:positiveInteger lexical form.
+            new XAttribute("HeaderRowCount", "9999999999999999999")
         );
         var tableXml = new XElement(
             W.tbl,
