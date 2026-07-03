@@ -145,7 +145,7 @@ namespace Clippit.Internal
                                     return (object)g;
                                 var textValue = g.Select(r => r.Element(W.t).Value).StringConcatenate();
                                 XAttribute xs = null;
-                                if (textValue[0] == ' ' || textValue[^1] == ' ')
+                                if (textValue.Length > 0 && (textValue[0] == ' ' || textValue[^1] == ' '))
                                     xs = new XAttribute(XNamespace.Xml + "space", "preserve");
                                 return new XElement(W.r, g.First().Elements(W.rPr), new XElement(W.t, xs, textValue));
                             })
