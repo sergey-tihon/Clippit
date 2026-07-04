@@ -10,6 +10,7 @@ jobs:
         runs-on: ubuntu-latest
         permissions:
             contents: write
+            id-token: write
 
         steps:
             - name: Checkout
@@ -20,10 +21,23 @@ jobs:
                   global-json-file: global.json
             - name: Build and Pack
               run: dotnet fsi build.fsx -- -p build
+            - name: Get NuGet API Key via OIDC
+              id: get-nuget-key
+              run: |
+                  OIDC_TOKEN=$(curl -sSf \
+                    -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+                    "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api.nuget.org" \
+                    | jq -r .value)
+                  NUGET_API_KEY=$(curl -sSf \
+                    -X POST "https://www.nuget.org/api/v1/authorize-exchange" \
+                    -H "Content-Type: application/json" \
+                    --data-raw "{\"oidcToken\":\"${OIDC_TOKEN}\"}" \
+                    | jq -r .apiKey)
+                  echo "apiKey=${NUGET_API_KEY}" >> "${GITHUB_OUTPUT}"
             - name: Publish to NuGet
               run: |
                   dotnet nuget push bin/*.nupkg \
-                    --api-key ${{ secrets.NUGET_API_KEY }} \
+                    --api-key ${{ steps.get-nuget-key.outputs.apiKey }} \
                     --source https://api.nuget.org/v3/index.json \
                     --skip-duplicate
             - name: Create GitHub Release
