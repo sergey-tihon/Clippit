@@ -15,6 +15,7 @@ published for documentation, integration validation, and contract tests.
 | [`build-result.v1.json`](./build-result.v1.json)       | Stdout payload of `clippit pptx build run` (JSON mode)       |
 | [`verify-result.v1.json`](./verify-result.v1.json)     | Stdout payload of `clippit pptx verify`, `clippit word verify`, `clippit excel verify` (JSON mode) |
 | [`compare-result.v1.json`](./compare-result.v1.json)   | Stdout payload of `clippit word compare` (JSON mode)          |
+| [`assemble-result.v1.json`](./assemble-result.v1.json) | Stdout payload of `clippit word assemble` (JSON mode)         |
 | [`convert-result.v1.json`](./convert-result.v1.json)   | Stdout payload of `clippit word to-html`, `clippit word from-html`, or `clippit excel to-html` (JSON mode) |
 
 ## Output discipline
