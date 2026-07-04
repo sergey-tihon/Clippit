@@ -1,8 +1,8 @@
 {
-  "last_run": "2026-07-03",
-  "last_run_id": "28683777110",
+  "last_run": "2026-07-04",
+  "last_run_id": "28711697000",
   "backlog_cursor": {
-    "issues": 390,
+    "issues": 401,
     "prs": 165
   },
   "comments_made": {
@@ -25,15 +25,14 @@
     "390": "2026-07-03",
     "374": "2026-07-03",
     "376": "2026-07-03",
-    "377": "2026-07-03"
+    "377": "2026-07-03",
+    "401": "2026-07-04"
   },
   "open_clippy_prs": [
     {"number": 163, "branch": "clippy/improve-custom-handler-66-20260326-f25d5328ab83f793", "title": "[Clippy] feat: add RegisterCustomHandler extensibility API to DocumentAssembler", "note": "131+ commits behind master"},
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "[Clippy] feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "131+ commits behind master"},
-    {"number": 397, "branch": "clippy/fix-documentassembler-387-headerrowcount", "title": "[Clippy] feat(word): add HeaderRowCount attribute to DocumentAssembler Table directive", "note": "MERGED 2026-07-03, closed #387"},
-    {"number": 398, "branch": "clippy/fix-389-de-es-locales", "title": "[Clippy] feat(word): add German and Spanish list-item text getters", "note": "MERGED 2026-07-03, closed #389"},
-    {"number": null, "branch": "clippy/fix-issue-375-word-assemble", "title": "[Clippy] feat(cli): add `clippit word assemble` command", "note": "created 2026-07-03, closes #375, 8 tests"},
-    {"number": null, "branch": "clippy/fix-issue-376-word-accept-revisions", "title": "[Clippy] feat(cli): add `clippit word accept-revisions` command", "note": "created 2026-07-03, closes #376, 6 tests"}
+    {"number": null, "branch": "clippy/fix-issue-375-word-assemble-v2", "title": "[Clippy] feat(cli): add `clippit word assemble` command", "note": "created 2026-07-04 v2, closes #375, 8 tests CLI110-CLI117"},
+    {"number": null, "branch": "clippy/eng-nuget-trusted-publishing-20260704", "title": "[Clippy] ci: migrate NuGet publish to trusted publishing (OIDC)", "note": "created 2026-07-04, closes #401, requires NuGet.org trusted publisher setup"}
   ],
   "checked_off_by_maintainer": [],
   "m_issue": 370,
@@ -41,48 +40,19 @@
   "notes": [
     "v3.5.1 released 2026-06-23: SkiaSharp 4.x, System.CommandLine preview.5, MS.NET.Test.Sdk 18.7.0",
     "v3.6.0 changelog PR #393 merged 2026-07-03",
-    "PR #391 (fix TextReplacer+WmlComparer crashes) merged 2026-07-03",
-    "PR #394 (rowspan+gridSpan + external hyperlink anchor) merged 2026-07-03",
-    "PR #395 (Optional on Conditional directive) merged 2026-07-03",
-    "PR #396 (ExtendedPart chart workbooks in PresentationBuilder) merged 2026-07-03",
-    "PR #397 (HeaderRowCount on Table directive) merged 2026-07-03",
-    "PR #398 (de-DE + es-ES list-item getters) merged 2026-07-03",
-    "PR #371 (FrozenSet+PtOpenXmlUtil) merged 2026-07-02",
-    "PR #369 (TUnit 1.57.17) merged 2026-07-01",
     "PRs #163/#165 are 131+ commits behind master - left for human rebase or close",
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "Monthly Activity issue for July 2026 is #370",
     "18 issues labelled 2026-07-03: #373-#390",
-    "Issues #373-#390 all created 2026-07-03 by maintainer (CLI feature tracking + upstream port bugs)",
+    "Issue #401 labelled enhancement 2026-07-04",
     "All deps current as of 2026-07-03",
-    "Next: port #386 (whitespace/lastRenderedPageBreak/UnicodeMapper); CLI issues #377-#379"
+    "Previous run PRs for #375/#376 (v1) had empty branches - v2 for #375 created 2026-07-04",
+    "Accept-revisions PR for #376 still needs v2 branch with actual commits",
+    "Next: port #386 (whitespace/lastRenderedPageBreak/UnicodeMapper); CLI issues #377-#379; create #376 v2 PR"
   ],
   "improvements_submitted": [
-    "PR#342: test(cli) fix duplicate CLI test codes - merged 2026-06-23",
-    "PR#343: chore(deps) TUnit 1.54.0->1.56.25 + JsonSchema.Net - merged 2026-06-23",
-    "PR#344: refactor Excel converters is null/is not null - merged 2026-06-23",
-    "PR#345: refactor FormattingAssembler.cs is null/is not null - merged 2026-06-23",
-    "PR#349: refactor DocumentBuilder.cs is null/is not null - merged 2026-06-24",
-    "PR#350: refactor ListItemRetriever+HtmlToWmlConverterCore+WmlComparer - merged 2026-06-26",
-    "PR#351: chore(deps) TUnit 1.56.25->1.56.35 - merged 2026-06-26",
-    "PR#352: refactor PtUtil+OxPtHelpers+WmlComparer files - merged 2026-06-26",
-    "PR#353: refactor Word/ files (8 files) - merged 2026-06-26",
-    "PR#354: test(common) FieldRetriever.ParseField unit tests - merged 2026-06-28",
-    "PR#355: refactor Html/ files - merged 2026-06-28",
-    "PR#356: refactor batch5 (10 files) + Lazy<T> + ??= - merged 2026-06-28",
-    "PR#359: chore(deps) TUnit 1.56.35->1.57.0 - merged 2026-06-28",
-    "PR#361: perf FrozenSet conversion - merged 2026-06-29",
-    "PR#362: perf FrozenDictionary conversion - merged 2026-06-29",
-    "PR#369: chore(deps) TUnit 1.57.0->1.57.17 - merged 2026-07-01",
-    "PR#371: perf remaining List<T>->FrozenSet<T> + PtOpenXmlUtil modernize - merged 2026-07-02",
-    "PR#391: fix TextReplacer+WmlComparer crashes (closes #381 #380 #385) - merged 2026-07-03",
-    "PR#393: docs v3.6.0 changelog - merged 2026-07-03",
-    "PR#394: fix rowspan+gridSpan + external hyperlink anchor (closes #383 #384) - merged 2026-07-03",
-    "PR#395: fix(word) Optional attribute on Conditional directive (closes #382) - merged 2026-07-03",
-    "PR#396: fix(pptx) ExtendedPart in CopyChartObjects (closes #388) - merged 2026-07-03",
-    "PR#397: feat(word) HeaderRowCount on Table directive (closes #387) - merged 2026-07-03",
-    "PR#398: feat(word) de-DE + es-ES list-item text getters (closes #389) - merged 2026-07-03",
-    "PR(TBD): feat(cli) word assemble command (closes #375) - created 2026-07-03",
-    "PR(TBD): feat(cli) word accept-revisions command (closes #376) - created 2026-07-03"
+    "PR#342-#356, #359, #361-#362, #369, #371, #391, #393-#398: various improvements - all merged",
+    "PR(TBD): feat(cli) word assemble command v2 (closes #375) - created 2026-07-04",
+    "PR(TBD): ci NuGet trusted publishing (closes #401) - created 2026-07-04"
   ]
 }
