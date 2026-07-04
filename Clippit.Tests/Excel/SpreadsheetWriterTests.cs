@@ -360,6 +360,69 @@ namespace Clippit.Tests.Excel
             await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
         }
 
+        // Reproduces the malformed-table scenario: a sheet has fewer ColumnHeadings than
+        // data cells in the widest row, which previously caused tableColumns/@count to
+        // disagree with the actual number of tableColumn elements and Excel to remove the
+        // table on repair.
+        [Test]
+        public async Task SaveWorksheet_WithDataRowsWiderThanHeadings_ProducesValidTable()
+        {
+            var wb = new WorkbookDfn
+            {
+                Worksheets =
+                [
+                    new WorksheetDfn
+                    {
+                        Name = "WiderRows",
+                        TableName = "WiderTable",
+                        ColumnHeadings =
+                        [
+                            new CellDfn { Value = "A", Bold = true },
+                            new CellDfn { Value = "B", Bold = true },
+                            new CellDfn { Value = "C", Bold = true },
+                        ],
+                        Rows =
+                        [
+                            new RowDfn
+                            {
+                                Cells =
+                                [
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "a" },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "b" },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "c" },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "d" },
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "e" },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            var fileName = Path.Combine(TempDir, "SW006-WiderRows.xlsx");
+            await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+                wb.WriteTo(stream);
+
+            using var sDoc = SpreadsheetDocument.Open(fileName, false);
+            var tablePart = sDoc.WorkbookPart.WorksheetParts.First().TableDefinitionParts.First();
+            var tableDoc = tablePart.GetXDocument();
+            var tableColumns = tableDoc.Root.Element(S.tableColumns);
+
+            var declaredCount = (int)tableColumns.Attribute("count");
+            var actualColumns = tableColumns.Elements(S.tableColumn).Count();
+            await Assert.That(declaredCount).IsEqualTo(5);
+            await Assert.That(actualColumns).IsEqualTo(5);
+
+            var names = tableColumns.Elements(S.tableColumn).Select(c => (string)c.Attribute("name")).ToList();
+            await Assert.That(names[0]).IsEqualTo("A");
+            await Assert.That(names[1]).IsEqualTo("B");
+            await Assert.That(names[2]).IsEqualTo("C");
+            await Assert.That(names[3]).IsEqualTo("Column4");
+            await Assert.That(names[4]).IsEqualTo("Column5");
+
+            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
+        }
+
         [Test]
         public async Task AddWorksheetToWorkbook()
         {
