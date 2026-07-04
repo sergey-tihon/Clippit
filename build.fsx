@@ -262,6 +262,18 @@ pipeline "build" {
     stage "NuGet" {
         run (fun ctx ->
             let releaseNotes = version.ReleaseNotes.Trim()
+            let releaseNotesFile = "bin/RELEASE_NOTES.md"
+            System.IO.File.WriteAllText(releaseNotesFile, releaseNotes)
+
+            let releaseTitle =
+                match version.DateTime with
+                | Some d ->
+                    let dateFormat = "MMMM d, yyyy"
+                    $"{version.Version} - {d.ToString(dateFormat, System.Globalization.CultureInfo.InvariantCulture)}"
+                | None -> version.Version
+
+            System.IO.File.WriteAllText("bin/RELEASE_TITLE", releaseTitle)
+
             let targetsPath = "Clippit/Directory.Build.targets"
 
             System.IO.File.WriteAllText(

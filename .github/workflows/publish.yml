@@ -9,7 +9,7 @@ jobs:
     publish:
         runs-on: ubuntu-latest
         permissions:
-            contents: read
+            contents: write
 
         steps:
             - name: Checkout
@@ -26,3 +26,10 @@ jobs:
                     --api-key ${{ secrets.NUGET_API_KEY }} \
                     --source https://api.nuget.org/v3/index.json \
                     --skip-duplicate
+            - name: Create GitHub Release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  gh release create "${{ github.ref_name }}" \
+                    --title "$(cat bin/RELEASE_TITLE)" \
+                    --notes-file bin/RELEASE_NOTES.md

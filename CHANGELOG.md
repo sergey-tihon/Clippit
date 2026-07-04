@@ -1,6 +1,6 @@
 # Changelog
 
-## [3.6.0] - July 3, 2026
+## [3.6.0] - July 4, 2026
 
 - feat(word): add German and Spanish localized list-item text getters (`de-DE`, `es-ES`) (#389)
 - feat(cli): add `word compare` command for DOCX diff (#365)
