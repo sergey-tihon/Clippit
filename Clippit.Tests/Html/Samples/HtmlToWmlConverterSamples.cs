@@ -24,8 +24,10 @@ namespace Clippit.Tests.Html.Samples
         [Test]
         public void Sample2()
         {
+            var outDir = Path.Combine(TempDir, "HtmlToWmlConverterSamples");
+            Directory.CreateDirectory(outDir);
             var templateDoc = new FileInfo(GetFilePath("Sample2/TemplateDocument.docx"));
-            var dataFile = new FileInfo(Path.Combine(TempDir, "Data.xml"));
+            var dataFile = new FileInfo(Path.Combine(outDir, "Data.xml"));
             // The following method generates a large data file with random data.
             // In a real world scenario, this is where you would query your data source and produce XML that will drive your document generation process.
             var numberOfDocumentsToGenerate = 100;
@@ -34,7 +36,7 @@ namespace Clippit.Tests.Html.Samples
             var count = 1;
             foreach (var customer in data.Elements("Customer"))
             {
-                var assembledDoc = new FileInfo(Path.Combine(TempDir, $"Letter-{count++:0000}.docx"));
+                var assembledDoc = new FileInfo(Path.Combine(outDir, $"Letter-{count++:0000}.docx"));
                 Console.WriteLine("Generating {0}", assembledDoc.Name);
                 var wmlAssembledDoc = DocumentAssembler.AssembleDocument(wmlDoc, customer, out var templateError);
                 if (templateError)
@@ -45,9 +47,9 @@ namespace Clippit.Tests.Html.Samples
 
                 wmlAssembledDoc.SaveAs(assembledDoc.FullName);
                 Console.WriteLine("Converting to HTML {0}", assembledDoc.Name);
-                var htmlFileName = ConvertToHtml(assembledDoc.FullName, TempDir);
+                var htmlFileName = ConvertToHtml(assembledDoc.FullName, outDir);
                 Console.WriteLine("Converting back to DOCX {0}", htmlFileName.Name);
-                ConvertToDocx(htmlFileName.FullName, TempDir);
+                ConvertToDocx(htmlFileName.FullName, outDir);
             }
         }
 
@@ -138,7 +140,7 @@ namespace Clippit.Tests.Html.Samples
             memoryStream.Write(byteArray, 0, byteArray.Length);
             using var wDoc = WordprocessingDocument.Open(memoryStream, true);
             var destFileName = new FileInfo(fi.Name.Replace(".docx", ".html"));
-            destFileName = new FileInfo(Path.Combine(TempDir, destFileName.Name));
+            destFileName = new FileInfo(Path.Combine(outputDirectory, destFileName.Name));
             var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
             var imageCounter = 0;
             var pageTitle = fi.FullName;
