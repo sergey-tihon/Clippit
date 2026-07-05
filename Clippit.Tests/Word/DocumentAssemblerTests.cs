@@ -573,6 +573,37 @@ public class DocumentAssemblerTests : TestsBase
     }
 
     [Test]
+    public async Task DA_Content_HyperlinkText_LeadingAndTrailingWhitespace_Preserved()
+    {
+        using var documentStream = new MemoryStream();
+        using var wordDoc = WordprocessingDocument.Create(
+            documentStream,
+            DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+        );
+        var mainPart = wordDoc.AddMainDocumentPart();
+        mainPart.PutXDocument(new XDocument(new XElement(W.document, new XElement(W.body, new XElement(W.p)))));
+
+        var templateError = new Clippit.Word.Assembler.TemplateError();
+        var runs = Clippit.Word.Assembler.HtmlConverter.ConvertTextToRunsWithMarkupSupport(
+            ["<p><a href=\"https://example.com\">  padded link  </a></p>"],
+            mainPart,
+            templateError
+        );
+
+        await Assert.That(templateError.HasError).IsFalse();
+
+        var hyperlinkTextElement = runs.SelectMany(e => e.DescendantsAndSelf(W.t))
+            .FirstOrDefault(t => ((string)t)?.Trim() == "padded link");
+        await Assert.That(hyperlinkTextElement).IsNotNull();
+        await Assert.That(((string)hyperlinkTextElement)!.StartsWith(" ", StringComparison.Ordinal)).IsTrue();
+        await Assert.That(((string)hyperlinkTextElement)!.EndsWith(" ", StringComparison.Ordinal)).IsTrue();
+
+        var hyperlinkXmlSpaceAttribute = hyperlinkTextElement!.Attribute(XNamespace.Xml + "space");
+        await Assert.That(hyperlinkXmlSpaceAttribute).IsNotNull();
+        await Assert.That(hyperlinkXmlSpaceAttribute!.Value).IsEqualTo("preserve");
+    }
+
+    [Test]
     [Arguments("DA-Issue-95-Template.docx", "DA-Issue-95-Data.xml", false)]
     public async Task DA_Issue_95_Repro(string name, string data, bool err)
     {
