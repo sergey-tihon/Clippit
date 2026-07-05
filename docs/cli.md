@@ -9,6 +9,7 @@ clippit pptx split deck.pptx --output slides --manifest
 clippit pptx build run slides/deck.manifest.json --output final.pptx
 clippit pptx verify final.pptx
 clippit word compare before.docx after.docx --output compared.docx
+clippit word accept-revisions draft.docx
 clippit word verify document.docx
 clippit word to-html document.docx
 clippit word from-html article.html --css styles.css
@@ -66,9 +67,11 @@ Agents and scripts should use `--format json` when they need machine-readable co
 | stdout | `word compare` | Result JSON (e.g. `{"source":...,"revised":...,"output":...,"revisions":...}`); compared DOCX written to `--output` path. |
 | stdout | `excel verify` finds validation diagnostics | Verify result JSON with `valid: false`; process exits `4`. |
 | stdout | `word to-html` / `word from-html` | Result JSON (e.g. `{"input":...,"output":...,"outputSize":...}`); converted content written to `--output` path. |
+| stdout | `word accept-revisions` | Result JSON (e.g. `{"input":...,"output":...,"outputSize":...}`); cleaned DOCX written to `--output` path. |
 | stdout | `excel to-html` | Result JSON (e.g. `{"input":...,"output":...,"outputSize":...}`); converted HTML written to `--output` path. |
 | stdout | `pptx build run --output -` | Binary `.pptx`; no success summary is written. |
 | stdout | `word to-html --output -` / `word from-html --output -` | Binary/HTML content streamed to stdout; no success summary is written. |
+| stdout | `word accept-revisions --output -` | Binary `.docx` streamed to stdout; no success summary is written. |
 | stdout | `excel to-html --output -` | HTML content streamed to stdout; no success summary is written. |
 | stderr | Command execution error | Compact JSON error object: `{"error":"...","code":"..."}`. |
 | stderr/stdout | Parser, arity, and help output | System.CommandLine text output, not JSON. |
@@ -96,6 +99,7 @@ cat deck.json | clippit pptx build run - --output - > final.pptx
 cat deck.pptx | clippit pptx verify - --format json
 cat before.docx | clippit word compare - after.docx --output compared.docx --format json
 cat document.docx | clippit word verify - --format json
+cat document.docx | clippit word accept-revisions - --output clean.docx --format json
 cat document.docx | clippit word to-html - --inline-images --output -
 cat article.html | clippit word from-html - --minor-font "Georgia" --output -
 cat spreadsheet.xlsx | clippit excel verify - --format json
@@ -104,6 +108,8 @@ cat spreadsheet.xlsx | clippit excel verify - --format json
 When `pptx build run --output -` writes a `.pptx` to stdout, the success summary is suppressed automatically so the binary stream is not corrupted.
 
 When `word to-html --output -` or `word from-html --output -` writes content to stdout, the success summary is also suppressed so the output stream is not corrupted.
+
+When `word accept-revisions --output -` writes a `.docx` to stdout, the success summary is also suppressed so the binary stream is not corrupted.
 
 Binary stdout output is buffered in memory before it is written to stdout. Prefer file output for very large decks.
 
@@ -357,6 +363,37 @@ JSON example (for `--author "Jane Doe" --date-time 2026-01-01T00:00:00Z --output
 {"source":"/work/before.docx","revised":"/work/after.docx","output":"/work/compared.docx","outputSize":59321,"revisions":8,"authorForRevisions":"Jane Doe","dateTimeForRevisions":"2026-01-01T00:00:00Z","caseInsensitive":false}
 ```
 
+## `word accept-revisions`
+
+Accepts all tracked revisions in a `.docx` file and writes the cleaned document.
+The command wraps `RevisionAccepter.AcceptRevisions`.
+
+Synopsis:
+
+```text
+clippit word accept-revisions <input.docx|-> [--output <file.docx|->] [--force] [--format json|text] [--quiet]
+```
+
+```bash
+clippit word accept-revisions draft.docx
+clippit word accept-revisions draft.docx --output clean.docx --format json
+clippit word accept-revisions draft.docx --output - > clean.docx
+cat draft.docx | clippit word accept-revisions - --output clean.docx --format json
+```
+
+Options:
+
+| Option | Description |
+| ------ | ----------- |
+| `--output`, `-o` | Output path for the cleaned `.docx` file. Defaults to `<input>-accepted.docx`. Use `-` to write binary content to stdout. |
+| `--force` | Overwrite the output file if it already exists. |
+
+JSON example:
+
+```json
+{"input":"/work/draft.docx","output":"/work/draft-accepted.docx","outputSize":42130}
+```
+
 ## `excel verify`
 
 Validates that a `.xlsx` file is a readable and structurally correct Open XML spreadsheet. The command checks package readability, Open XML schema errors, dangling relationships, and markup compatibility issues.
@@ -476,4 +513,4 @@ Canonical schema URLs:
 | `pptx build run` result | `https://sergey-tihon.github.io/Clippit/schemas/build-result.v1.json` |
 | `pptx verify`, `word verify`, `excel verify` result | `https://sergey-tihon.github.io/Clippit/schemas/verify-result.v1.json` |
 | `word compare` result | `https://sergey-tihon.github.io/Clippit/schemas/compare-result.v1.json` |
-| `word to-html`, `word from-html` result | `https://sergey-tihon.github.io/Clippit/schemas/convert-result.v1.json` |
+| `word to-html`, `word from-html`, `word accept-revisions` result | `https://sergey-tihon.github.io/Clippit/schemas/convert-result.v1.json` |
