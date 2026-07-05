@@ -2,6 +2,19 @@
 
 ## [0.7.0] - 2026-07-05
 
+- Added `word simplify-markup` command to remove non-content markup from a `.docx` file.
+  Wraps `MarkupSimplifier.SimplifyMarkup`. Accepts one flag per `SimplifyMarkupSettings`
+  boolean field (`--accept-revisions`, `--remove-rsid-info`, `--remove-markup-for-document-comparison`,
+  `--remove-comments`, `--remove-bookmarks`, `--remove-content-controls`,
+  `--remove-end-and-footnotes`, `--remove-field-codes`, `--remove-go-back-bookmark`,
+  `--remove-hyperlinks`, `--remove-last-rendered-page-break`, `--remove-permissions`,
+  `--remove-proof`, `--remove-smart-tags`, `--remove-soft-hyphens`, `--remove-web-hidden`,
+  `--replace-tabs-with-spaces`, `--normalize-xml`) plus `--all` as a convenience preset
+  that enables every option. Supports `--output`/`-o` (defaults to
+  `<input>-simplified.docx`, `-` for stdout), `--force`, `--format json`, and `--quiet`.
+  At least one flag must be supplied or `INVALID_ARGUMENTS` (exit 2) is returned.
+  The JSON result reuses the `convert-result.v1.json` shape (`input`, `output`,
+  `outputSize`). Supports stdin (`-`) for input (#377).
 - Added `word assemble` command to generate a `.docx` from a template and XML data.
   Wraps `DocumentAssembler.AssembleDocument`. Supports `--output`/`-o` (defaults to
   `<template>-assembled.docx`, `-` for stdout), `--force`, `--format json`, and
