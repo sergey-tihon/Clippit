@@ -356,7 +356,8 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
         using var stream = docEntry!.Open();
         using var reader = new StreamReader(stream, Encoding.UTF8);
         var xmlContent = await reader.ReadToEndAsync().ConfigureAwait(false);
-        // Tab character elements (<w:tab/> with no attributes, inside runs) must be gone
+        // Tab character elements must be replaced; the self-closing <w:tab/> form
+        // (no attributes) is what appears inside runs and is what the simplifier removes.
         await Assert.That(xmlContent).DoesNotContain("<w:tab/>");
 
         using var doc = WordprocessingDocument.Open(output.FullName, false);
