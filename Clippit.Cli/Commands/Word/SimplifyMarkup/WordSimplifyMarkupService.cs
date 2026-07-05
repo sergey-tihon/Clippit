@@ -5,51 +5,28 @@ namespace Clippit.Cli.Commands.Word.SimplifyMarkup;
 
 internal static class WordSimplifyMarkupService
 {
-    public static ConvertResult Execute(
-        InputSource input,
-        OutputTarget output,
-        bool force,
-        bool all,
-        bool acceptRevisions,
-        bool removeRsidInfo,
-        bool removeMarkupForDocComp,
-        bool removeComments,
-        bool removeBookmarks,
-        bool removeContentControls,
-        bool removeEndAndFootnotes,
-        bool removeFieldCodes,
-        bool removeGoBackBookmark,
-        bool removeHyperlinks,
-        bool removeLastRenderedPageBreak,
-        bool removePermissions,
-        bool removeProof,
-        bool removeSmartTags,
-        bool removeSoftHyphens,
-        bool removeWebHidden,
-        bool replaceTabsWithSpaces,
-        bool normalizeXml
-    )
+    public static ConvertResult Execute(InputSource input, OutputTarget output, WordSimplifyMarkupOptions options)
     {
         var settings = new SimplifyMarkupSettings
         {
-            AcceptRevisions = all || acceptRevisions,
-            RemoveRsidInfo = all || removeRsidInfo || removeMarkupForDocComp,
-            RemoveMarkupForDocumentComparison = all || removeMarkupForDocComp,
-            RemoveComments = all || removeComments,
-            RemoveBookmarks = all || removeBookmarks,
-            RemoveContentControls = all || removeContentControls,
-            RemoveEndAndFootNotes = all || removeEndAndFootnotes,
-            RemoveFieldCodes = all || removeFieldCodes,
-            RemoveGoBackBookmark = all || removeGoBackBookmark,
-            RemoveHyperlinks = all || removeHyperlinks,
-            RemoveLastRenderedPageBreak = all || removeLastRenderedPageBreak,
-            RemovePermissions = all || removePermissions,
-            RemoveProof = all || removeProof,
-            RemoveSmartTags = all || removeSmartTags,
-            RemoveSoftHyphens = all || removeSoftHyphens,
-            RemoveWebHidden = all || removeWebHidden,
-            ReplaceTabsWithSpaces = all || replaceTabsWithSpaces,
-            NormalizeXml = all || normalizeXml,
+            AcceptRevisions = options.All || options.AcceptRevisions,
+            RemoveRsidInfo = options.All || options.RemoveRsidInfo || options.RemoveMarkupForDocComp,
+            RemoveMarkupForDocumentComparison = options.All || options.RemoveMarkupForDocComp,
+            RemoveComments = options.All || options.RemoveComments,
+            RemoveBookmarks = options.All || options.RemoveBookmarks,
+            RemoveContentControls = options.All || options.RemoveContentControls,
+            RemoveEndAndFootNotes = options.All || options.RemoveEndAndFootnotes,
+            RemoveFieldCodes = options.All || options.RemoveFieldCodes,
+            RemoveGoBackBookmark = options.All || options.RemoveGoBackBookmark,
+            RemoveHyperlinks = options.All || options.RemoveHyperlinks,
+            RemoveLastRenderedPageBreak = options.All || options.RemoveLastRenderedPageBreak,
+            RemovePermissions = options.All || options.RemovePermissions,
+            RemoveProof = options.All || options.RemoveProof,
+            RemoveSmartTags = options.All || options.RemoveSmartTags,
+            RemoveSoftHyphens = options.All || options.RemoveSoftHyphens,
+            RemoveWebHidden = options.All || options.RemoveWebHidden,
+            ReplaceTabsWithSpaces = options.All || options.ReplaceTabsWithSpaces,
+            NormalizeXml = options.All || options.NormalizeXml,
         };
 
         if (
@@ -107,7 +84,7 @@ internal static class WordSimplifyMarkupService
         Stream outputStream;
         try
         {
-            output.EnsureCanWrite(force, "output");
+            output.EnsureCanWrite(options.Force, "output");
             output.EnsureDirectoryExists();
             outputStream = output.OpenWrite(out tempPath);
         }

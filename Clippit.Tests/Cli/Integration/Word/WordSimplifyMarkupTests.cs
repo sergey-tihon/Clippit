@@ -1,6 +1,8 @@
 using System.IO.Compression;
 using System.Text;
+using System.Xml.Linq;
 using Clippit.Word;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Tests.Cli.Integration.Word;
@@ -356,9 +358,9 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
         using var stream = docEntry!.Open();
         using var reader = new StreamReader(stream, Encoding.UTF8);
         var xmlContent = await reader.ReadToEndAsync().ConfigureAwait(false);
-        // Tab character elements must be replaced; the self-closing <w:tab/> form
-        // (no attributes) is what appears inside runs and is what the simplifier removes.
-        await Assert.That(xmlContent).DoesNotContain("<w:tab/>");
+        var docXml = XDocument.Parse(xmlContent);
+        var runTabElements = docXml.Descendants(W.r).Elements(W.tab).ToList();
+        await Assert.That(runTabElements).IsEmpty();
 
         using var doc = WordprocessingDocument.Open(output.FullName, false);
         await ValidateRelationships(doc);
@@ -397,6 +399,451 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
         using var doc = WordprocessingDocument.Open(output.FullName, false);
         await ValidateRelationships(doc);
         await Validate(doc);
+    }
+
+    [Test]
+    public async Task CLI131_WordSimplifyMarkup_RemoveGoBackBookmark_RemovesOnlyGoBackBookmark()
+    {
+        var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-go-back-bookmark");
+        var input = await CreateDocxWithMainDocumentXmlAsync(
+            tempDir,
+            "in.docx",
+            """
+            <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+              <w:body>
+                <w:p>
+                  <w:bookmarkStart w:id="0" w:name="_GoBack"/>
+                  <w:bookmarkEnd w:id="0"/>
+                  <w:bookmarkStart w:id="1" w:name="KeepMe"/>
+                  <w:r><w:t>Text</w:t></w:r>
+                  <w:bookmarkEnd w:id="1"/>
+                </w:p>
+              </w:body>
+            </w:document>
+            """
+        );
+        var output = new FileInfo(Path.Combine(tempDir.FullName, "out.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "simplify-markup",
+                input.FullName,
+                "--remove-go-back-bookmark",
+                "--output",
+                output.FullName
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        var docXml = await ReadPartXmlAsync(output, "word/document.xml");
+        var bookmarkStarts = docXml.Descendants(W.bookmarkStart).Select(x => (string?)x.Attribute(W.name)).ToList();
+        await Assert.That(bookmarkStarts).Contains("KeepMe");
+        await Assert.That(bookmarkStarts).DoesNotContain("_GoBack");
+    }
+
+    [Test]
+    public async Task CLI132_WordSimplifyMarkup_RemoveMarkupForDocumentComparison_RemovesRsidAttributes()
+    {
+        var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-markup-for-document-comparison");
+        var input = await CreateDocxWithMainDocumentXmlAsync(
+            tempDir,
+            "in.docx",
+            """
+            <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+              <w:body>
+                <w:p w:rsidR="001234AB" w:rsidRDefault="001234AB">
+                  <w:r w:rsidRPr="00AB1234">
+                    <w:t>Hello</w:t>
+                  </w:r>
+                </w:p>
+              </w:body>
+            </w:document>
+            """
+        );
+        var output = new FileInfo(Path.Combine(tempDir.FullName, "out.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "simplify-markup",
+                input.FullName,
+                "--remove-markup-for-document-comparison",
+                "--output",
+                output.FullName
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        var docXml = await ReadPartXmlAsync(output, "word/document.xml");
+        var rsidAttributes = docXml
+            .Descendants()
+            .SelectMany(e => e.Attributes())
+            .Where(a => a.Name.Namespace == W.rsidR.Namespace && a.Name.LocalName.StartsWith("rsid"))
+            .ToList();
+        await Assert.That(rsidAttributes).IsEmpty();
+    }
+
+    [Test]
+    public async Task CLI133_WordSimplifyMarkup_RemoveComments_RemovesCommentMarkup()
+    {
+        var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-comments");
+        var input = await CreateDocxWithMainDocumentXmlAsync(
+            tempDir,
+            "in.docx",
+            """
+            <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+              <w:body>
+                <w:p>
+                  <w:commentRangeStart w:id="1"/>
+                  <w:r><w:t>Hello</w:t></w:r>
+                  <w:commentRangeEnd w:id="1"/>
+                  <w:r>
+                    <w:rPr><w:rStyle w:val="CommentReference"/></w:rPr>
+                    <w:commentReference w:id="1"/>
+                  </w:r>
+                </w:p>
+              </w:body>
+            </w:document>
+            """,
+            commentsXml: """
+            <w:comments xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+              <w:comment w:id="1" w:author="A" w:date="2024-01-01T00:00:00Z">
+                <w:p><w:r><w:t>Comment</w:t></w:r></w:p>
+              </w:comment>
+            </w:comments>
+            """
+        );
+        var output = new FileInfo(Path.Combine(tempDir.FullName, "out.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "simplify-markup",
+                input.FullName,
+                "--remove-comments",
+                "--output",
+                output.FullName
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        var docXml = await ReadPartXmlAsync(output, "word/document.xml");
+        await Assert.That(docXml.Descendants(W.commentRangeStart)).IsEmpty();
+        await Assert.That(docXml.Descendants(W.commentRangeEnd)).IsEmpty();
+        await Assert.That(docXml.Descendants(W.commentReference)).IsEmpty();
+    }
+
+    [Test]
+    public async Task CLI134_WordSimplifyMarkup_RemoveEndAndFootnotes_RemovesNoteReferences()
+    {
+        var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-end-and-footnotes");
+        var input = await CreateDocxWithMainDocumentXmlAsync(
+            tempDir,
+            "in.docx",
+            """
+            <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+              <w:body>
+                <w:p>
+                  <w:r><w:t xml:space="preserve">Some text</w:t></w:r>
+                  <w:r><w:footnoteReference w:id="1"/></w:r>
+                  <w:r><w:endnoteReference w:id="1"/></w:r>
+                </w:p>
+              </w:body>
+            </w:document>
+            """
+        );
+        var output = new FileInfo(Path.Combine(tempDir.FullName, "out.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "simplify-markup",
+                input.FullName,
+                "--remove-end-and-footnotes",
+                "--output",
+                output.FullName
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        var docXml = await ReadPartXmlAsync(output, "word/document.xml");
+        await Assert.That(docXml.Descendants(W.footnoteReference)).IsEmpty();
+        await Assert.That(docXml.Descendants(W.endnoteReference)).IsEmpty();
+    }
+
+    [Test]
+    public async Task CLI135_WordSimplifyMarkup_RemoveLastRenderedPageBreak_RemovesElement()
+    {
+        var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-last-rendered-page-break");
+        var input = await CreateDocxWithMainDocumentXmlAsync(
+            tempDir,
+            "in.docx",
+            """
+            <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+              <w:body>
+                <w:p>
+                  <w:r><w:lastRenderedPageBreak/><w:t>Text</w:t></w:r>
+                </w:p>
+              </w:body>
+            </w:document>
+            """
+        );
+        var output = new FileInfo(Path.Combine(tempDir.FullName, "out.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "simplify-markup",
+                input.FullName,
+                "--remove-last-rendered-page-break",
+                "--output",
+                output.FullName
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        var docXml = await ReadPartXmlAsync(output, "word/document.xml");
+        await Assert.That(docXml.Descendants(W.lastRenderedPageBreak)).IsEmpty();
+    }
+
+    [Test]
+    public async Task CLI136_WordSimplifyMarkup_RemovePermissions_RemovesPermissionMarkup()
+    {
+        var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-permissions");
+        var input = await CreateDocxWithMainDocumentXmlAsync(
+            tempDir,
+            "in.docx",
+            """
+            <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+              <w:body>
+                <w:p>
+                  <w:permStart w:id="1" w:edGrp="everyone"/>
+                  <w:r><w:t>Protected text</w:t></w:r>
+                  <w:permEnd w:id="1"/>
+                </w:p>
+              </w:body>
+            </w:document>
+            """
+        );
+        var output = new FileInfo(Path.Combine(tempDir.FullName, "out.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "simplify-markup",
+                input.FullName,
+                "--remove-permissions",
+                "--output",
+                output.FullName
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        var docXml = await ReadPartXmlAsync(output, "word/document.xml");
+        await Assert.That(docXml.Descendants(W.permStart)).IsEmpty();
+        await Assert.That(docXml.Descendants(W.permEnd)).IsEmpty();
+    }
+
+    [Test]
+    public async Task CLI137_WordSimplifyMarkup_RemoveProof_RemovesProofErrElements()
+    {
+        var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-proof");
+        var input = await CreateDocxWithMainDocumentXmlAsync(
+            tempDir,
+            "in.docx",
+            """
+            <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+              <w:body>
+                <w:p>
+                  <w:proofErr w:type="spellStart"/>
+                  <w:r><w:t>mispelled</w:t></w:r>
+                  <w:proofErr w:type="spellEnd"/>
+                </w:p>
+              </w:body>
+            </w:document>
+            """
+        );
+        var output = new FileInfo(Path.Combine(tempDir.FullName, "out.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync("word", "simplify-markup", input.FullName, "--remove-proof", "--output", output.FullName)
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        var docXml = await ReadPartXmlAsync(output, "word/document.xml");
+        await Assert.That(docXml.Descendants(W.proofErr)).IsEmpty();
+    }
+
+    [Test]
+    public async Task CLI138_WordSimplifyMarkup_RemoveSmartTags_RemovesSmartTagWrappers()
+    {
+        var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-smart-tags");
+        var input = await CreateDocxWithMainDocumentXmlAsync(
+            tempDir,
+            "in.docx",
+            """
+            <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+              <w:body>
+                <w:p>
+                  <w:smartTag w:uri="urn:schemas-microsoft-com:office:smarttags" w:element="country-region">
+                    <w:r><w:t>Algeria</w:t></w:r>
+                  </w:smartTag>
+                </w:p>
+              </w:body>
+            </w:document>
+            """
+        );
+        var output = new FileInfo(Path.Combine(tempDir.FullName, "out.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "simplify-markup",
+                input.FullName,
+                "--remove-smart-tags",
+                "--output",
+                output.FullName
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        var docXml = await ReadPartXmlAsync(output, "word/document.xml");
+        await Assert.That(docXml.Descendants(W.smartTag)).IsEmpty();
+    }
+
+    [Test]
+    public async Task CLI139_WordSimplifyMarkup_RemoveSoftHyphens_RemovesSoftHyphenElements()
+    {
+        var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-soft-hyphens");
+        var input = await CreateDocxWithMainDocumentXmlAsync(
+            tempDir,
+            "in.docx",
+            """
+            <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+              <w:body>
+                <w:p>
+                  <w:r>
+                    <w:t xml:space="preserve">extra</w:t>
+                    <w:softHyphen/>
+                    <w:t>ordinary</w:t>
+                  </w:r>
+                </w:p>
+              </w:body>
+            </w:document>
+            """
+        );
+        var output = new FileInfo(Path.Combine(tempDir.FullName, "out.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "simplify-markup",
+                input.FullName,
+                "--remove-soft-hyphens",
+                "--output",
+                output.FullName
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        var docXml = await ReadPartXmlAsync(output, "word/document.xml");
+        await Assert.That(docXml.Descendants(W.softHyphen)).IsEmpty();
+    }
+
+    [Test]
+    public async Task CLI140_WordSimplifyMarkup_RemoveWebHidden_RemovesWebHiddenElement()
+    {
+        var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-web-hidden");
+        var input = await CreateDocxWithMainDocumentXmlAsync(
+            tempDir,
+            "in.docx",
+            """
+            <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+              <w:body>
+                <w:p>
+                  <w:r>
+                    <w:rPr><w:webHidden/></w:rPr>
+                    <w:t>Hidden on web</w:t>
+                  </w:r>
+                </w:p>
+              </w:body>
+            </w:document>
+            """
+        );
+        var output = new FileInfo(Path.Combine(tempDir.FullName, "out.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "simplify-markup",
+                input.FullName,
+                "--remove-web-hidden",
+                "--output",
+                output.FullName
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        var docXml = await ReadPartXmlAsync(output, "word/document.xml");
+        await Assert.That(docXml.Descendants(W.webHidden)).IsEmpty();
+    }
+
+    private static async Task<FileInfo> CreateDocxWithMainDocumentXmlAsync(
+        DirectoryInfo directory,
+        string fileName,
+        string mainDocumentXml,
+        string? commentsXml = null
+    )
+    {
+        var path = Path.Combine(directory.FullName, fileName);
+
+        await using (var file = File.Create(path))
+        using (var doc = WordprocessingDocument.Create(file, WordprocessingDocumentType.Document))
+        {
+            var mainPart = doc.AddMainDocumentPart();
+            mainPart.PutXDocument(XDocument.Parse(mainDocumentXml));
+
+            if (commentsXml is not null)
+            {
+                var commentsPart = mainPart.AddNewPart<WordprocessingCommentsPart>();
+                commentsPart.PutXDocument(XDocument.Parse(commentsXml));
+            }
+        }
+
+        return new FileInfo(path);
+    }
+
+    private static async Task<XDocument> ReadPartXmlAsync(FileInfo docxFile, string partPath)
+    {
+        using var zip = ZipFile.OpenRead(docxFile.FullName);
+        var partEntry = zip.GetEntry(partPath);
+        await Assert.That(partEntry).IsNotNull();
+
+        using var stream = partEntry!.Open();
+        using var reader = new StreamReader(stream, Encoding.UTF8);
+        var xmlContent = await reader.ReadToEndAsync().ConfigureAwait(false);
+        return XDocument.Parse(xmlContent);
     }
 }
 #pragma warning restore CA1707

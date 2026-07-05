@@ -128,30 +128,32 @@ internal static class WordSimplifyMarkupCommand
         cmd.SetAction(parseResult =>
             CommandRunner.Execute(() =>
                 Run(
-                    parseResult.GetValue(inputArg)!,
-                    parseResult.GetValue(outputOption),
-                    parseResult.GetValue(forceOption),
-                    parseResult.GetValue(allOption),
-                    parseResult.GetValue(acceptRevisionsOption),
-                    parseResult.GetValue(removeRsidInfoOption),
-                    parseResult.GetValue(removeMarkupForDocCompOption),
-                    parseResult.GetValue(removeCommentsOption),
-                    parseResult.GetValue(removeBookmarksOption),
-                    parseResult.GetValue(removeContentControlsOption),
-                    parseResult.GetValue(removeEndAndFootnotesOption),
-                    parseResult.GetValue(removeFieldCodesOption),
-                    parseResult.GetValue(removeGoBackBookmarkOption),
-                    parseResult.GetValue(removeHyperlinksOption),
-                    parseResult.GetValue(removeLastRenderedPageBreakOption),
-                    parseResult.GetValue(removePermissionsOption),
-                    parseResult.GetValue(removeProofOption),
-                    parseResult.GetValue(removeSmartTagsOption),
-                    parseResult.GetValue(removeSoftHyphensOption),
-                    parseResult.GetValue(removeWebHiddenOption),
-                    parseResult.GetValue(replaceTabsWithSpacesOption),
-                    parseResult.GetValue(normalizeXmlOption),
-                    parseResult.GetValue(formatOption),
-                    parseResult.GetValue(quietOption)
+                    new WordSimplifyMarkupOptions(
+                        parseResult.GetValue(inputArg)!,
+                        parseResult.GetValue(outputOption),
+                        parseResult.GetValue(forceOption),
+                        parseResult.GetValue(allOption),
+                        parseResult.GetValue(acceptRevisionsOption),
+                        parseResult.GetValue(removeRsidInfoOption),
+                        parseResult.GetValue(removeMarkupForDocCompOption),
+                        parseResult.GetValue(removeCommentsOption),
+                        parseResult.GetValue(removeBookmarksOption),
+                        parseResult.GetValue(removeContentControlsOption),
+                        parseResult.GetValue(removeEndAndFootnotesOption),
+                        parseResult.GetValue(removeFieldCodesOption),
+                        parseResult.GetValue(removeGoBackBookmarkOption),
+                        parseResult.GetValue(removeHyperlinksOption),
+                        parseResult.GetValue(removeLastRenderedPageBreakOption),
+                        parseResult.GetValue(removePermissionsOption),
+                        parseResult.GetValue(removeProofOption),
+                        parseResult.GetValue(removeSmartTagsOption),
+                        parseResult.GetValue(removeSoftHyphensOption),
+                        parseResult.GetValue(removeWebHiddenOption),
+                        parseResult.GetValue(replaceTabsWithSpacesOption),
+                        parseResult.GetValue(normalizeXmlOption),
+                        parseResult.GetValue(formatOption),
+                        parseResult.GetValue(quietOption)
+                    )
                 )
             )
         );
@@ -159,67 +161,19 @@ internal static class WordSimplifyMarkupCommand
         return cmd;
     }
 
-    private static int Run(
-        string inputPath,
-        string? outputPath,
-        bool force,
-        bool all,
-        bool acceptRevisions,
-        bool removeRsidInfo,
-        bool removeMarkupForDocComp,
-        bool removeComments,
-        bool removeBookmarks,
-        bool removeContentControls,
-        bool removeEndAndFootnotes,
-        bool removeFieldCodes,
-        bool removeGoBackBookmark,
-        bool removeHyperlinks,
-        bool removeLastRenderedPageBreak,
-        bool removePermissions,
-        bool removeProof,
-        bool removeSmartTags,
-        bool removeSoftHyphens,
-        bool removeWebHidden,
-        bool replaceTabsWithSpaces,
-        bool normalizeXml,
-        OutputFormat format,
-        bool quiet
-    )
+    private static int Run(WordSimplifyMarkupOptions options)
     {
-        var input = InputSource.From(inputPath, "stdin.docx");
+        var input = InputSource.From(options.InputPath, "stdin.docx");
         var defaultOutput = input.IsStdin
             ? "simplified.docx"
             : Path.Combine(
                 Path.GetDirectoryName(input.DisplayName)!,
                 $"{Path.GetFileNameWithoutExtension(input.DisplayName)}-simplified.docx"
             );
-        var output = OutputTarget.FromOption(outputPath, () => defaultOutput);
-        var writer = new OutputWriter(format, quiet || output.IsStdout);
+        var output = OutputTarget.FromOption(options.OutputPath, () => defaultOutput);
+        var writer = new OutputWriter(options.Format, options.Quiet || output.IsStdout);
 
-        var result = WordSimplifyMarkupService.Execute(
-            input,
-            output,
-            force,
-            all,
-            acceptRevisions,
-            removeRsidInfo,
-            removeMarkupForDocComp,
-            removeComments,
-            removeBookmarks,
-            removeContentControls,
-            removeEndAndFootnotes,
-            removeFieldCodes,
-            removeGoBackBookmark,
-            removeHyperlinks,
-            removeLastRenderedPageBreak,
-            removePermissions,
-            removeProof,
-            removeSmartTags,
-            removeSoftHyphens,
-            removeWebHidden,
-            replaceTabsWithSpaces,
-            normalizeXml
-        );
+        var result = WordSimplifyMarkupService.Execute(input, output, options);
 
         writer.WriteResult(result, CliJsonContext.Default.ConvertResult, ConvertResult.WriteText);
         return ExitCodes.Success;
