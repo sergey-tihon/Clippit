@@ -8,13 +8,14 @@ editors (VS Code, JetBrains, etc.) can validate and autocomplete authored
 manifest files. Result schemas are not embedded in stdout payloads; they are
 published for documentation, integration validation, and contract tests.
 
-| File                                                   | What it describes                                            |
-| ------------------------------------------------------ | ------------------------------------------------------------ |
-| [`deck-manifest.v1.json`](./deck-manifest.v1.json)     | Input manifest consumed by `clippit pptx build run`          |
-| [`split-result.v1.json`](./split-result.v1.json)       | Stdout payload of `clippit pptx split` (JSON mode)           |
-| [`build-result.v1.json`](./build-result.v1.json)       | Stdout payload of `clippit pptx build run` (JSON mode)       |
-| [`verify-result.v1.json`](./verify-result.v1.json)     | Stdout payload of `clippit pptx verify`, `clippit word verify`, `clippit excel verify` (JSON mode) |
-| [`compare-result.v1.json`](./compare-result.v1.json)   | Stdout payload of `clippit word compare` (JSON mode)          |
+| File                                                   | What it describes                                                                                                                                                           |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`deck-manifest.v1.json`](./deck-manifest.v1.json)     | Input manifest consumed by `clippit pptx build run`                                                                                                                         |
+| [`split-result.v1.json`](./split-result.v1.json)       | Stdout payload of `clippit pptx split` (JSON mode)                                                                                                                          |
+| [`build-result.v1.json`](./build-result.v1.json)       | Stdout payload of `clippit pptx build run` (JSON mode)                                                                                                                      |
+| [`verify-result.v1.json`](./verify-result.v1.json)     | Stdout payload of `clippit pptx verify`, `clippit word verify`, `clippit excel verify` (JSON mode)                                                                          |
+| [`compare-result.v1.json`](./compare-result.v1.json)   | Stdout payload of `clippit word compare` (JSON mode)                                                                                                                        |
+| [`assemble-result.v1.json`](./assemble-result.v1.json) | Stdout payload of `clippit word assemble` (JSON mode)                                                                                                                       |
 | [`convert-result.v1.json`](./convert-result.v1.json)   | Stdout payload of `clippit word to-html`, `clippit word from-html`, `clippit word accept-revisions`, `clippit word simplify-markup`, or `clippit excel to-html` (JSON mode) |
 
 ## Output discipline
@@ -28,7 +29,7 @@ published for documentation, integration validation, and contract tests.
   `--format` or `--quiet`. The shape is:
 
   ```json
-  {"error": "<human-readable message>", "code": "<symbolic code>"}
+  { "error": "<human-readable message>", "code": "<symbolic code>" }
   ```
 
   Parser/help errors come from System.CommandLine and may include usage text.
@@ -46,14 +47,14 @@ published for documentation, integration validation, and contract tests.
 
 ## Exit codes
 
-| Code | Symbolic            | Meaning                                                |
-| ---- | ------------------- | ------------------------------------------------------ |
-| 0    | —                   | Success                                                |
-| 1    | `INTERNAL_ERROR`    | Unexpected / unclassified failure                      |
-| 2    | `INVALID_ARGUMENTS` | CLI argument or manifest validation failed             |
-| 3    | `FILE_NOT_FOUND`    | A referenced input file does not exist                 |
-| 4    | `INVALID_FORMAT`    | A file exists but is not a valid OpenXml / JSON input  |
-| 5    | `OUTPUT_ERROR`      | Could not write output (permission, collision, etc.)   |
+| Code | Symbolic            | Meaning                                               |
+| ---- | ------------------- | ----------------------------------------------------- |
+| 0    | —                   | Success                                               |
+| 1    | `INTERNAL_ERROR`    | Unexpected / unclassified failure                     |
+| 2    | `INVALID_ARGUMENTS` | CLI argument or manifest validation failed            |
+| 3    | `FILE_NOT_FOUND`    | A referenced input file does not exist                |
+| 4    | `INVALID_FORMAT`    | A file exists but is not a valid OpenXml / JSON input |
+| 5    | `OUTPUT_ERROR`      | Could not write output (permission, collision, etc.)  |
 
 ## Diagnostics
 
@@ -63,15 +64,15 @@ values; Clippit-specific diagnostics use custom kind values.
 
 Current diagnostic kinds:
 
-| Kind                  | Source                              |
-| --------------------- | ----------------------------------- |
-| `schema`              | OpenXml SDK schema validation       |
-| `semantic`            | OpenXml SDK semantic validation     |
-| `package`             | OpenXml package/readability checks  |
-| `markupCompatibility` | OpenXml SDK compatibility checks    |
-| `relationship`        | Clippit dangling relationship check |
-| `presentation.section`| Clippit PPTX section validation     |
-| `unknown`             | Future/unknown SDK validation type  |
+| Kind                   | Source                              |
+| ---------------------- | ----------------------------------- |
+| `schema`               | OpenXml SDK schema validation       |
+| `semantic`             | OpenXml SDK semantic validation     |
+| `package`              | OpenXml package/readability checks  |
+| `markupCompatibility`  | OpenXml SDK compatibility checks    |
+| `relationship`         | Clippit dangling relationship check |
+| `presentation.section` | Clippit PPTX section validation     |
+| `unknown`              | Future/unknown SDK validation type  |
 
 SDK diagnostics may report `element` as `{namespace}localName`. Relationship
 diagnostics report element and attribute local names plus the dangling

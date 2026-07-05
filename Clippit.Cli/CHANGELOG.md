@@ -2,6 +2,12 @@
 
 ## [0.7.0] - 2026-07-05
 
+- Added `word assemble` command to generate a `.docx` from a template and XML data.
+  Wraps `DocumentAssembler.AssembleDocument`. Supports `--output`/`-o` (defaults to
+  `<template>-assembled.docx`, `-` for stdout), `--force`, `--format json`, and
+  `--quiet`. The JSON result reports `template`, `data`, `output`, `outputSize`,
+  and `templateError`. Supports stdin (`-`) for one input. Published schema:
+  `assemble-result.v1.json` (#375).
 - Added `word accept-revisions` command to accept all tracked revisions in a `.docx` file.
   Wraps `RevisionAccepter.AcceptRevisions`. Supports `--output`/`-o` (defaults to
   `<input>-accepted.docx`, `-` for stdout), `--force`, `--format json`, and `--quiet`.
