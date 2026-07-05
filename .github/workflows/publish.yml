@@ -21,23 +21,15 @@ jobs:
                   global-json-file: global.json
             - name: Build and Pack
               run: dotnet fsi build.fsx -- -p build
-            - name: Get NuGet API Key via OIDC
-              id: get-nuget-key
-              run: |
-                  OIDC_TOKEN=$(curl -sSf \
-                    -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
-                    "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=api.nuget.org" \
-                    | jq -r .value)
-                  NUGET_API_KEY=$(curl -sSf \
-                    -X POST "https://www.nuget.org/api/v1/authorize-exchange" \
-                    -H "Content-Type: application/json" \
-                    --data-raw "{\"oidcToken\":\"${OIDC_TOKEN}\"}" \
-                    | jq -r .apiKey)
-                  echo "apiKey=${NUGET_API_KEY}" >> "${GITHUB_OUTPUT}"
+            - name: NuGet login (OIDC → temp API key)
+              uses: NuGet/login@v1
+              id: login
+              with:
+                  user: ${{ secrets.NUGET_USER }}
             - name: Publish to NuGet
               run: |
                   dotnet nuget push bin/*.nupkg \
-                    --api-key ${{ steps.get-nuget-key.outputs.apiKey }} \
+                    --api-key ${{ steps.login.outputs.NUGET_API_KEY }} \
                     --source https://api.nuget.org/v3/index.json \
                     --skip-duplicate
             - name: Create GitHub Release
