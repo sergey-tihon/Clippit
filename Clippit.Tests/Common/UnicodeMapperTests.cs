@@ -128,4 +128,31 @@ public class UnicodeMapperTests
         await Assert.That(symFromChar2.ToString(SaveOptions.None)).IsEqualTo(symFromChar1.ToString(SaveOptions.None));
         await Assert.That(symFromChar3.ToString(SaveOptions.None)).IsEqualTo(symFromChar1.ToString(SaveOptions.None));
     }
+
+    [Test]
+    public async Task UM001_TrimsWhitespaceWithoutXmlSpacePreserve()
+    {
+        // Without xml:space="preserve", Word normalises leading/trailing whitespace on w:t.
+        var t = new XElement(W.t, "  hello  ");
+        await Assert.That(UnicodeMapper.RunToString(t)).IsEqualTo("hello");
+    }
+
+    [Test]
+    public async Task UM002_PreservesWhitespaceWithXmlSpacePreserve()
+    {
+        // With xml:space="preserve", all whitespace must be retained.
+        var t = new XElement(W.t, new XAttribute(XNamespace.Xml + "space", "preserve"), "  hello  ");
+        await Assert.That(UnicodeMapper.RunToString(t)).IsEqualTo("  hello  ");
+    }
+
+    [Test]
+    public async Task UM003_RunToString_WhitespacePreservedThroughRunElement()
+    {
+        // When the w:t has xml:space="preserve", the surrounding w:r should keep spaces.
+        var run = new XElement(
+            W.r,
+            new XElement(W.t, new XAttribute(XNamespace.Xml + "space", "preserve"), " leading")
+        );
+        await Assert.That(UnicodeMapper.RunToString(run)).IsEqualTo(" leading");
+    }
 }
