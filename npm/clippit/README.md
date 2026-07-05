@@ -38,8 +38,10 @@ clippit pptx split presentation.pptx --format json
 | `pptx split`      | Split a `.pptx` into individual single-slide files. Supports slide range selection (`--slides`) and manifest generation (`--manifest`). |
 | `pptx build init` | Scaffold a deck manifest (JSON).                                                                                                        |
 | `pptx build run`  | Assemble a `.pptx` from a deck manifest.                                                                                                |
-| `pptx verify`     | Validate a PPTX — schema, relationships, markup compatibility, and sections.                                                            |
-| `word verify`     | Validate a DOCX — schema and relationships.                                                                                             |
+| `pptx verify`           | Validate a PPTX — schema, relationships, markup compatibility, and sections.                                                            |
+| `word compare`          | Compare two DOCX files and produce a tracked-revision DOCX.                                                                             |
+| `word accept-revisions` | Accept all tracked revisions in a DOCX file.                                                                                            |
+| `word verify`           | Validate a DOCX — schema and relationships.                                                                                             |
 | `word to-html`    | Convert a DOCX to HTML/CSS.                                                                                                             |
 | `word from-html`  | Convert HTML/CSS to a DOCX.                                                                                                             |
 | `excel to-html`   | Convert an XLSX sheet, range, or table to HTML/CSS.                                                                                     |

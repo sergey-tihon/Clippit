@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0] - 2026-07-05
+
+- Added `word accept-revisions` command to accept all tracked revisions in a `.docx` file.
+  Wraps `RevisionAccepter.AcceptRevisions`. Supports `--output`/`-o` (defaults to
+  `<input>-accepted.docx`, `-` for stdout), `--force`, `--format json`, and `--quiet`.
+  The JSON result reports `input`, `output`, and `outputSize` (same shape as
+  `convert-result.v1.json`). Supports stdin (`-`) for input (#376).
+
 ## [0.6.0] - 2026-06-29
 
 - Added `word compare` command to compare two `.docx` files with `WmlComparer` and
