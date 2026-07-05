@@ -196,6 +196,17 @@ public class OpenXmlRegexTests : TestsBase
   </w:body>
 </w:document>";
 
+    private const string LastRenderedPageBreakDocumentXmlString =
+        @"<w:document xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"">
+  <w:body>
+    <w:p>
+      <w:r><w:t>ABC</w:t></w:r>
+      <w:r><w:lastRenderedPageBreak/></w:r>
+      <w:r><w:t>DEF</w:t></w:r>
+    </w:p>
+  </w:body>
+</w:document>";
+
     private static string InnerText(XContainer e)
     {
         return e.Descendants(W.r)
@@ -377,5 +388,34 @@ public class OpenXmlRegexTests : TestsBase
         await Assert
             .That(innerText)
             .IsEqualTo("As stated in Article {__1} and this Section {__1.1}, this is described in Exhibit 4.");
+    }
+
+    [Test]
+    public async Task CanMatchAndReplaceAcrossLastRenderedPageBreak()
+    {
+        var partDocument = XDocument.Parse(LastRenderedPageBreakDocumentXmlString);
+        var p = partDocument.Descendants(W.p).First();
+        var innerText = InnerText(p);
+
+        await Assert.That(innerText).IsEqualTo("ABCDEF");
+
+        using var stream = new MemoryStream();
+        using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+        var part = wordDocument.AddMainDocumentPart();
+        part.PutXDocument(partDocument);
+
+        var content = partDocument.Descendants(W.p);
+        var regex = new Regex("CDE");
+
+        var matchCount = OpenXmlRegex.Match(content, regex);
+        await Assert.That(matchCount).IsEqualTo(1);
+
+        var replaceCount = OpenXmlRegex.Replace(content, regex, "X", null);
+        await Assert.That(replaceCount).IsEqualTo(1);
+
+        p = partDocument.Descendants(W.p).First();
+        innerText = InnerText(p);
+        await Assert.That(innerText).IsEqualTo("ABXF");
+        await Assert.That(p.Descendants(W.lastRenderedPageBreak)).IsNotEmpty();
     }
 }
