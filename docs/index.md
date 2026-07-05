@@ -270,7 +270,7 @@
 
 # Clippit — Fresh PowerTools for OpenXml
 
-Clippit is a .NET library for programmatically creating, modifying, and converting Word (DOCX), Excel (XLSX), and PowerPoint (PPTX) documents. Built on top of the [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), it provides high-level APIs that handle the complexity of the Open XML format so you can focus on your content. It also includes a [scriptable CLI](cli.md) for PowerPoint split/build workflows, Word template assembly, and document validation/conversion tasks.
+Clippit is a .NET library for programmatically creating, modifying, and converting Word (DOCX), Excel (XLSX), and PowerPoint (PPTX) documents. Built on top of the [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), it provides high-level APIs that handle the complexity of the Open XML format so you can focus on your content. It also includes a [scriptable CLI](cli.md) with a compact start page and dedicated [PowerPoint](cli-pptx.md), [Word](cli-word.md), and [Excel](cli-excel.md) command references.
 
 ## Getting Started
 
@@ -338,7 +338,7 @@ signatures and code samples.
 
 | Feature | Description |
 | ------- | ----------- |
-| [Clippit CLI](cli.md) | Scriptable PPTX split/build/verify, DOCX validation, and DOCX↔HTML conversion with human-readable text output, stable JSON output, stdin/stdout support, and JSON schemas for automation |
+| [Clippit CLI](cli.md) | Scriptable PPTX split/build/verify, DOCX validation and conversion, and XLSX validation/conversion with a concise start page plus dedicated [PowerPoint](cli-pptx.md), [Word](cli-word.md), and [Excel](cli-excel.md) references |
 
 ### Common
 

@@ -2,6 +2,13 @@
   href: index.md
 - name: CLI
   href: cli.md
+  items:
+    - name: PowerPoint CLI (pptx)
+      href: cli-pptx.md
+    - name: Word CLI (word)
+      href: cli-word.md
+    - name: Excel CLI (excel)
+      href: cli-excel.md
 - name: Tutorials
   href: tutorials/
 - name: API Documentation
