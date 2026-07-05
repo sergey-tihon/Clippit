@@ -8,6 +8,7 @@ clippit version
 clippit pptx split deck.pptx --output slides --manifest
 clippit pptx build run slides/deck.manifest.json --output final.pptx
 clippit pptx verify final.pptx
+clippit word assemble template.docx data.xml --output assembled.docx
 clippit word compare before.docx after.docx --output compared.docx
 clippit word accept-revisions draft.docx
 clippit word verify document.docx
@@ -64,12 +65,14 @@ Agents and scripts should use `--format json` when they need machine-readable co
 | stdout | Successful JSON command | Command-specific result JSON. |
 | stdout | `pptx verify` finds validation diagnostics | Verify result JSON with `valid: false`; process exits `4`. |
 | stdout | `word verify` finds validation diagnostics | Verify result JSON with `valid: false`; process exits `4`. |
+| stdout | `word assemble` | Result JSON (e.g. `{"template":...,"data":...,"output":...,"outputSize":...,"templateError":...}`); assembled DOCX written to `--output` path. |
 | stdout | `word compare` | Result JSON (e.g. `{"source":...,"revised":...,"output":...,"revisions":...}`); compared DOCX written to `--output` path. |
 | stdout | `excel verify` finds validation diagnostics | Verify result JSON with `valid: false`; process exits `4`. |
 | stdout | `word to-html` / `word from-html` | Result JSON (e.g. `{"input":...,"output":...,"outputSize":...}`); converted content written to `--output` path. |
 | stdout | `word accept-revisions` | Result JSON (e.g. `{"input":...,"output":...,"outputSize":...}`); cleaned DOCX written to `--output` path. |
 | stdout | `excel to-html` | Result JSON (e.g. `{"input":...,"output":...,"outputSize":...}`); converted HTML written to `--output` path. |
 | stdout | `pptx build run --output -` | Binary `.pptx`; no success summary is written. |
+| stdout | `word assemble --output -` | Binary `.docx` streamed to stdout; no success summary is written. |
 | stdout | `word to-html --output -` / `word from-html --output -` | Binary/HTML content streamed to stdout; no success summary is written. |
 | stdout | `word accept-revisions --output -` | Binary `.docx` streamed to stdout; no success summary is written. |
 | stdout | `excel to-html --output -` | HTML content streamed to stdout; no success summary is written. |
@@ -97,6 +100,7 @@ Commands that accept files use `-` for stdin where binary or JSON streaming is s
 cat deck.pptx | clippit pptx split - --output slides --format json
 cat deck.json | clippit pptx build run - --output - > final.pptx
 cat deck.pptx | clippit pptx verify - --format json
+cat data.xml | clippit word assemble template.docx - --output assembled.docx --format json
 cat before.docx | clippit word compare - after.docx --output compared.docx --format json
 cat document.docx | clippit word verify - --format json
 cat document.docx | clippit word accept-revisions - --output clean.docx --format json
@@ -106,6 +110,8 @@ cat spreadsheet.xlsx | clippit excel verify - --format json
 ```
 
 When `pptx build run --output -` writes a `.pptx` to stdout, the success summary is suppressed automatically so the binary stream is not corrupted.
+
+When `word assemble --output -` writes a `.docx` to stdout, the success summary is also suppressed so the binary stream is not corrupted.
 
 When `word to-html --output -` or `word from-html --output -` writes content to stdout, the success summary is also suppressed so the output stream is not corrupted.
 
@@ -363,6 +369,39 @@ JSON example (for `--author "Jane Doe" --date-time 2026-01-01T00:00:00Z --output
 {"source":"/work/before.docx","revised":"/work/after.docx","output":"/work/compared.docx","outputSize":59321,"revisions":8,"authorForRevisions":"Jane Doe","dateTimeForRevisions":"2026-01-01T00:00:00Z","caseInsensitive":false}
 ```
 
+## `word assemble`
+
+Assembles a `.docx` document from a template and XML data.
+The command wraps `DocumentAssembler.AssembleDocument`.
+
+Synopsis:
+
+```text
+clippit word assemble <template.docx|-> <data.xml|-> [--output <file.docx|->] [--force] [--format json|text] [--quiet]
+```
+
+```bash
+clippit word assemble template.docx data.xml
+clippit word assemble template.docx data.xml --output assembled.docx --format json
+clippit word assemble template.docx - --output assembled.docx
+cat data.xml | clippit word assemble template.docx - --output assembled.docx --format json
+```
+
+Options:
+
+| Option | Description |
+| ------ | ----------- |
+| `--output`, `-o` | Output path for the assembled `.docx` file. Defaults to `<template>-assembled.docx`. Use `-` to write binary content to stdout. |
+| `--force` | Overwrite the output file if it already exists. |
+
+Only one input can be read from stdin at a time. The output path must not overwrite the template or XML data input file, even when `--force` is used.
+
+JSON example:
+
+```json
+{"template":"/work/template.docx","data":"/work/data.xml","output":"/work/template-assembled.docx","outputSize":42130,"templateError":false}
+```
+
 ## `word accept-revisions`
 
 Accepts all tracked revisions in a `.docx` file and writes the cleaned document.
@@ -512,5 +551,6 @@ Canonical schema URLs:
 | `pptx split` result | `https://sergey-tihon.github.io/Clippit/schemas/split-result.v1.json` |
 | `pptx build run` result | `https://sergey-tihon.github.io/Clippit/schemas/build-result.v1.json` |
 | `pptx verify`, `word verify`, `excel verify` result | `https://sergey-tihon.github.io/Clippit/schemas/verify-result.v1.json` |
+| `word assemble` result | `https://sergey-tihon.github.io/Clippit/schemas/assemble-result.v1.json` |
 | `word compare` result | `https://sergey-tihon.github.io/Clippit/schemas/compare-result.v1.json` |
 | `word to-html`, `word from-html`, `word accept-revisions` result | `https://sergey-tihon.github.io/Clippit/schemas/convert-result.v1.json` |
