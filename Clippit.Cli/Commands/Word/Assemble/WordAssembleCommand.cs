@@ -21,7 +21,8 @@ internal static class WordAssembleCommand
         {
             Description =
                 "Output path for the assembled .docx file. "
-                + "Defaults to <template>-assembled.docx. Use '-' to write binary content to stdout.",
+                + "Defaults to the template file name with '-assembled.docx' appended. "
+                + "Use '-' to write binary content to stdout.",
         };
 
         var forceOption = new Option<bool>("--force", "-f")

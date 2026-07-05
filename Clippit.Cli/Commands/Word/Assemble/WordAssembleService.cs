@@ -8,7 +8,7 @@ internal static class WordAssembleService
 {
     public static AssembleResult Execute(InputSource template, InputSource data, OutputTarget output, bool force)
     {
-        ValidateInputs(template, data);
+        ValidateInputs(template, data, output);
 
         byte[] templateBytes;
         using (var stream = template.OpenSeekable())
@@ -18,17 +18,13 @@ internal static class WordAssembleService
             templateBytes = memory.ToArray();
         }
 
-        string xmlContent;
-        using (var stream = data.OpenSeekable())
-        using (var reader = new StreamReader(stream))
-        {
-            xmlContent = reader.ReadToEnd();
-        }
-
-        var xmlDoc = new XmlDocument();
+        var xmlDoc = new XmlDocument { XmlResolver = null };
         try
         {
-            xmlDoc.LoadXml(xmlContent);
+            using var stream = data.OpenSeekable();
+            var settings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Prohibit, XmlResolver = null };
+            using var reader = XmlReader.Create(stream, settings);
+            xmlDoc.Load(reader);
         }
         catch (XmlException ex)
         {
@@ -36,16 +32,7 @@ internal static class WordAssembleService
         }
 
         var templateDoc = new WmlDocument(template.LogicalName, templateBytes);
-        WmlDocument assembled;
-        bool templateError;
-        try
-        {
-            assembled = DocumentAssembler.AssembleDocument(templateDoc, xmlDoc, out templateError);
-        }
-        catch (Exception ex) when (ex is not CliException)
-        {
-            throw CliException.InvalidFormat($"Failed to assemble document: {ex.Message}");
-        }
+        var assembled = DocumentAssembler.AssembleDocument(templateDoc, xmlDoc, out var templateError);
 
         string? tempPath = null;
         Stream outputStream;
@@ -97,9 +84,26 @@ internal static class WordAssembleService
         };
     }
 
-    private static void ValidateInputs(InputSource template, InputSource data)
+    private static void ValidateInputs(InputSource template, InputSource data, OutputTarget output)
     {
         if (template.IsStdin && data.IsStdin)
             throw CliException.InvalidArguments("Only one input can be read from stdin.");
+
+        if (output.IsStdout)
+            return;
+
+        if (!template.IsStdin && PathsEqual(output.DisplayPath, template.DisplayName))
+            throw CliException.OutputError("Output path must not overwrite the template document.");
+
+        if (!data.IsStdin && PathsEqual(output.DisplayPath, data.DisplayName))
+            throw CliException.OutputError("Output path must not overwrite the XML data file.");
     }
+
+    private static bool PathsEqual(string left, string right) =>
+        string.Equals(Path.GetFullPath(left), Path.GetFullPath(right), PathComparison);
+
+    private static StringComparison PathComparison =>
+        OperatingSystem.IsWindows() || OperatingSystem.IsMacOS()
+            ? StringComparison.OrdinalIgnoreCase
+            : StringComparison.Ordinal;
 }

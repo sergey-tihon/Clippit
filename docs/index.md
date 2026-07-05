@@ -270,7 +270,7 @@
 
 # Clippit — Fresh PowerTools for OpenXml
 
-Clippit is a .NET library for programmatically creating, modifying, and converting Word (DOCX), Excel (XLSX), and PowerPoint (PPTX) documents. Built on top of the [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), it provides high-level APIs that handle the complexity of the Open XML format so you can focus on your content. It also includes a [scriptable CLI](cli.md) for PowerPoint split, build, and validation workflows.
+Clippit is a .NET library for programmatically creating, modifying, and converting Word (DOCX), Excel (XLSX), and PowerPoint (PPTX) documents. Built on top of the [Open XML SDK](https://github.com/OfficeDev/Open-XML-SDK), it provides high-level APIs that handle the complexity of the Open XML format so you can focus on your content. It also includes a [scriptable CLI](cli.md) for PowerPoint split/build workflows, Word template assembly, and document validation/conversion tasks.
 
 ## Getting Started
 

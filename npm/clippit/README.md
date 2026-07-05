@@ -24,6 +24,9 @@ clippit pptx verify presentation.pptx
 # Validate a DOCX file
 clippit word verify document.docx
 
+# Assemble a DOCX template with XML data
+clippit word assemble template.docx data.xml --output assembled.docx
+
 # Validate an XLSX file
 clippit excel verify spreadsheet.xlsx
 
@@ -39,6 +42,7 @@ clippit pptx split presentation.pptx --format json
 | `pptx build init` | Scaffold a deck manifest (JSON).                                                                                                        |
 | `pptx build run`  | Assemble a `.pptx` from a deck manifest.                                                                                                |
 | `pptx verify`           | Validate a PPTX — schema, relationships, markup compatibility, and sections.                                                            |
+| `word assemble`         | Assemble a DOCX template with XML data.                                                                                                  |
 | `word compare`          | Compare two DOCX files and produce a tracked-revision DOCX.                                                                             |
 | `word accept-revisions` | Accept all tracked revisions in a DOCX file.                                                                                            |
 | `word verify`           | Validate a DOCX — schema and relationships.                                                                                             |
