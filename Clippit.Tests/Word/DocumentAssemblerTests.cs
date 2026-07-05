@@ -5,8 +5,10 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Clippit.Word;
+using Clippit.Word.Assembler;
 using DocumentFormat.OpenXml.Packaging;
 using SkiaSharp;
+using AssemblerHtmlConverter = Clippit.Word.Assembler.HtmlConverter;
 
 namespace Clippit.Tests.Word;
 
@@ -539,6 +541,68 @@ public class DocumentAssemblerTests : TestsBase
         await Assert.That(paras.ElementAt(3).Descendants(W.tab)).HasSingleItem();
         await Assert.That(paras.ElementAt(3).Elements(W.r).First().Elements(W.tab)).IsEmpty();
         await Assert.That(paras.ElementAt(3).Elements(W.r).Last().Elements(W.tab)).IsEmpty();
+    }
+
+    [Test]
+    public async Task DA_Content_LeadingAndTrailingWhitespace_Preserved()
+    {
+        var bodyXml = new XElement(
+            W.body,
+            new XElement(W.p, new XElement(W.r, new XElement(W.t, @"<# <Content Select=""./Value"" /> #>"))),
+            new XElement(W.sectPr)
+        );
+
+        var wmlTemplate = BuildTemplate("content-whitespace-template.docx", bodyXml);
+        var xmlData = XElement.Parse("<Data><Value>  padded value  </Value></Data>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+
+        var textElement = resultDoc
+            .MainDocumentPart!.GetXDocument()
+            .Descendants(W.t)
+            .FirstOrDefault(t => (string)t == "  padded value  ");
+        await Assert.That(textElement).IsNotNull();
+
+        var xmlSpaceAttribute = textElement!.Attribute(XNamespace.Xml + "space");
+        await Assert.That(xmlSpaceAttribute).IsNotNull();
+        await Assert.That(xmlSpaceAttribute!.Value).IsEqualTo("preserve");
+    }
+
+    [Test]
+    public async Task DA290_Content_HyperlinkText_LeadingAndTrailingWhitespace_Preserved()
+    {
+        using var documentStream = new MemoryStream();
+        using var wordDoc = WordprocessingDocument.Create(
+            documentStream,
+            DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+        );
+        var mainPart = wordDoc.AddMainDocumentPart();
+        mainPart.PutXDocument(new XDocument(new XElement(W.document, new XElement(W.body, new XElement(W.p)))));
+
+        var templateError = new TemplateError();
+        var runs = AssemblerHtmlConverter.ConvertTextToRunsWithMarkupSupport(
+            ["<p><a href=\"https://example.com\">  padded link  </a></p>"],
+            mainPart,
+            templateError
+        );
+
+        await Assert.That(templateError.HasError).IsFalse();
+
+        var hyperlinkTextElement = runs.SelectMany(e => e.DescendantsAndSelf(W.t))
+            .FirstOrDefault(t => t.Value.Trim() == "padded link");
+        await Assert.That(hyperlinkTextElement).IsNotNull();
+        var hyperlinkText = (string)hyperlinkTextElement ?? string.Empty;
+        await Assert.That(hyperlinkText).IsEqualTo("  padded link  ");
+
+        var hyperlinkXmlSpaceAttribute = hyperlinkTextElement!.Attribute(XNamespace.Xml + "space");
+        await Assert.That(hyperlinkXmlSpaceAttribute).IsNotNull();
+        await Assert.That(hyperlinkXmlSpaceAttribute!.Value).IsEqualTo("preserve");
     }
 
     [Test]
