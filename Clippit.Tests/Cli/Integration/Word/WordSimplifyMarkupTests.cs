@@ -85,6 +85,8 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
         using var doc = WordprocessingDocument.Open(output.FullName, false);
         await Assert.That(RevisionAccepter.HasTrackedRevisions(doc)).IsFalse();
         await ValidateRelationships(doc);
+        // Full schema validation is intentionally omitted here: RA001-Tracked-Revisions-01.docx
+        // contains pre-existing schema errors unrelated to revision acceptance.
     }
 
     [Test]
@@ -118,6 +120,14 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
         using var reader = new StreamReader(stream, Encoding.UTF8);
         var xmlContent = await reader.ReadToEndAsync().ConfigureAwait(false);
         await Assert.That(xmlContent).DoesNotContain(":rsid");
+
+        // Verify the w:rsids element is also removed from word/settings.xml
+        var settingsEntry = zip.GetEntry("word/settings.xml");
+        await Assert.That(settingsEntry).IsNotNull();
+        using var settingsStream = settingsEntry!.Open();
+        using var settingsReader = new StreamReader(settingsStream, Encoding.UTF8);
+        var settingsContent = await settingsReader.ReadToEndAsync().ConfigureAwait(false);
+        await Assert.That(settingsContent).DoesNotContain("w:rsids");
     }
 
     [Test]
@@ -206,10 +216,186 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
         await Assert.That(result.ExitCode).IsEqualTo(0);
         await Assert.That(result.StandardError).IsEmpty();
 
-        // Output should be a DOCX (ZIP/PK header)
+        // Output should be a valid DOCX, not just a ZIP/PK header
         await Assert.That(result.StandardOutput.Length).IsGreaterThan(0);
         await Assert.That(result.StandardOutput[0]).IsEqualTo((byte)'P');
         await Assert.That(result.StandardOutput[1]).IsEqualTo((byte)'K');
+
+        using var ms = new MemoryStream(result.StandardOutput);
+        using var doc = WordprocessingDocument.Open(ms, false);
+        await ValidateRelationships(doc);
+        await Validate(doc);
+    }
+
+    [Test]
+    public async Task CLI126_WordSimplifyMarkup_RemoveBookmarks_EliminatesBookmarkElements()
+    {
+        var input = CliTestRunner.TestFile("DB007-Spec.docx");
+        var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-bookmarks");
+        var output = new FileInfo(Path.Combine(tempDir.FullName, "out.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "simplify-markup",
+                input.FullName,
+                "--remove-bookmarks",
+                "--output",
+                output.FullName
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        using var zip = ZipFile.OpenRead(output.FullName);
+        var docEntry = zip.GetEntry("word/document.xml");
+        await Assert.That(docEntry).IsNotNull();
+        using var stream = docEntry!.Open();
+        using var reader = new StreamReader(stream, Encoding.UTF8);
+        var xmlContent = await reader.ReadToEndAsync().ConfigureAwait(false);
+        await Assert.That(xmlContent).DoesNotContain("w:bookmarkStart");
+
+        using var doc = WordprocessingDocument.Open(output.FullName, false);
+        await ValidateRelationships(doc);
+        await Validate(doc);
+    }
+
+    [Test]
+    public async Task CLI127_WordSimplifyMarkup_RemoveContentControls_EliminatesSdtElements()
+    {
+        var input = CliTestRunner.TestFile("HC030-Content-Controls.docx");
+        var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-content-controls");
+        var output = new FileInfo(Path.Combine(tempDir.FullName, "out.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "simplify-markup",
+                input.FullName,
+                "--remove-content-controls",
+                "--output",
+                output.FullName
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        using var zip = ZipFile.OpenRead(output.FullName);
+        var docEntry = zip.GetEntry("word/document.xml");
+        await Assert.That(docEntry).IsNotNull();
+        using var stream = docEntry!.Open();
+        using var reader = new StreamReader(stream, Encoding.UTF8);
+        var xmlContent = await reader.ReadToEndAsync().ConfigureAwait(false);
+        await Assert.That(xmlContent).DoesNotContain("w:sdt");
+
+        using var doc = WordprocessingDocument.Open(output.FullName, false);
+        await ValidateRelationships(doc);
+        await Validate(doc);
+    }
+
+    [Test]
+    public async Task CLI128_WordSimplifyMarkup_RemoveHyperlinks_EliminatesHyperlinkElements()
+    {
+        var input = CliTestRunner.TestFile("HC023-Hyperlink.docx");
+        var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-hyperlinks");
+        var output = new FileInfo(Path.Combine(tempDir.FullName, "out.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "simplify-markup",
+                input.FullName,
+                "--remove-hyperlinks",
+                "--output",
+                output.FullName
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        using var zip = ZipFile.OpenRead(output.FullName);
+        var docEntry = zip.GetEntry("word/document.xml");
+        await Assert.That(docEntry).IsNotNull();
+        using var stream = docEntry!.Open();
+        using var reader = new StreamReader(stream, Encoding.UTF8);
+        var xmlContent = await reader.ReadToEndAsync().ConfigureAwait(false);
+        await Assert.That(xmlContent).DoesNotContain("w:hyperlink");
+
+        using var doc = WordprocessingDocument.Open(output.FullName, false);
+        await ValidateRelationships(doc);
+        await Validate(doc);
+    }
+
+    [Test]
+    public async Task CLI129_WordSimplifyMarkup_ReplaceTabsWithSpaces_RemovesTabCharacterElements()
+    {
+        var input = CliTestRunner.TestFile("HC024-Tabs-01.docx");
+        var tempDir = CliTestRunner.CreateTempDirectory("simplify-replace-tabs");
+        var output = new FileInfo(Path.Combine(tempDir.FullName, "out.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "simplify-markup",
+                input.FullName,
+                "--replace-tabs-with-spaces",
+                "--output",
+                output.FullName
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        using var zip = ZipFile.OpenRead(output.FullName);
+        var docEntry = zip.GetEntry("word/document.xml");
+        await Assert.That(docEntry).IsNotNull();
+        using var stream = docEntry!.Open();
+        using var reader = new StreamReader(stream, Encoding.UTF8);
+        var xmlContent = await reader.ReadToEndAsync().ConfigureAwait(false);
+        // Tab character elements (<w:tab/> with no attributes, inside runs) must be gone
+        await Assert.That(xmlContent).DoesNotContain("<w:tab/>");
+
+        using var doc = WordprocessingDocument.Open(output.FullName, false);
+        await ValidateRelationships(doc);
+        await Validate(doc);
+    }
+
+    [Test]
+    public async Task CLI130_WordSimplifyMarkup_RemoveFieldCodes_EliminatesInstrTextElements()
+    {
+        var input = CliTestRunner.TestFile("HC040-Hyperlink-Fieldcode-01.docx");
+        var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-field-codes");
+        var output = new FileInfo(Path.Combine(tempDir.FullName, "out.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "simplify-markup",
+                input.FullName,
+                "--remove-field-codes",
+                "--output",
+                output.FullName
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        using var zip = ZipFile.OpenRead(output.FullName);
+        var docEntry = zip.GetEntry("word/document.xml");
+        await Assert.That(docEntry).IsNotNull();
+        using var stream = docEntry!.Open();
+        using var reader = new StreamReader(stream, Encoding.UTF8);
+        var xmlContent = await reader.ReadToEndAsync().ConfigureAwait(false);
+        await Assert.That(xmlContent).DoesNotContain("w:instrText");
+
+        using var doc = WordprocessingDocument.Open(output.FullName, false);
+        await ValidateRelationships(doc);
+        await Validate(doc);
     }
 }
 #pragma warning restore CA1707
