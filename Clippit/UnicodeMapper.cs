@@ -68,7 +68,7 @@ public class UnicodeMapper
         {
             var text = (string)element;
             if (element.Attribute(XNamespace.Xml + "space")?.Value != "preserve")
-                text = text.Trim();
+                text = text.Trim(' ');
             return text;
         }
 
