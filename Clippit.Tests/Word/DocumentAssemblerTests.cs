@@ -5,8 +5,10 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Clippit.Word;
+using Clippit.Word.Assembler;
 using DocumentFormat.OpenXml.Packaging;
 using SkiaSharp;
+using AssemblerHtmlConverter = Clippit.Word.Assembler.HtmlConverter;
 
 namespace Clippit.Tests.Word;
 
@@ -573,7 +575,7 @@ public class DocumentAssemblerTests : TestsBase
     }
 
     [Test]
-    public async Task DA_Content_HyperlinkText_LeadingAndTrailingWhitespace_Preserved()
+    public async Task DA290_Content_HyperlinkText_LeadingAndTrailingWhitespace_Preserved()
     {
         using var documentStream = new MemoryStream();
         using var wordDoc = WordprocessingDocument.Create(
@@ -583,8 +585,8 @@ public class DocumentAssemblerTests : TestsBase
         var mainPart = wordDoc.AddMainDocumentPart();
         mainPart.PutXDocument(new XDocument(new XElement(W.document, new XElement(W.body, new XElement(W.p)))));
 
-        var templateError = new Clippit.Word.Assembler.TemplateError();
-        var runs = Clippit.Word.Assembler.HtmlConverter.ConvertTextToRunsWithMarkupSupport(
+        var templateError = new TemplateError();
+        var runs = AssemblerHtmlConverter.ConvertTextToRunsWithMarkupSupport(
             ["<p><a href=\"https://example.com\">  padded link  </a></p>"],
             mainPart,
             templateError
@@ -593,10 +595,10 @@ public class DocumentAssemblerTests : TestsBase
         await Assert.That(templateError.HasError).IsFalse();
 
         var hyperlinkTextElement = runs.SelectMany(e => e.DescendantsAndSelf(W.t))
-            .FirstOrDefault(t => ((string)t)?.Trim() == "padded link");
+            .FirstOrDefault(t => t.Value.Trim() == "padded link");
         await Assert.That(hyperlinkTextElement).IsNotNull();
-        await Assert.That(((string)hyperlinkTextElement)!.StartsWith(" ", StringComparison.Ordinal)).IsTrue();
-        await Assert.That(((string)hyperlinkTextElement)!.EndsWith(" ", StringComparison.Ordinal)).IsTrue();
+        var hyperlinkText = (string)hyperlinkTextElement ?? string.Empty;
+        await Assert.That(hyperlinkText).IsEqualTo("  padded link  ");
 
         var hyperlinkXmlSpaceAttribute = hyperlinkTextElement!.Attribute(XNamespace.Xml + "space");
         await Assert.That(hyperlinkXmlSpaceAttribute).IsNotNull();
