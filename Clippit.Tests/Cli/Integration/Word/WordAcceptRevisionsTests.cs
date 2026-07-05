@@ -35,9 +35,10 @@ internal sealed class WordAcceptRevisionsTests : CliIntegrationTestBase
         await Assert.That(json.RootElement.GetProperty("outputSize").GetInt64()).IsGreaterThan(0);
         await Assert.That(output.Exists).IsTrue();
 
-        // Verify all tracked revisions are gone
+        // Verify all tracked revisions are gone and no relationships are broken
         using var doc = WordprocessingDocument.Open(output.FullName, false);
         await Assert.That(RevisionAccepter.HasTrackedRevisions(doc)).IsFalse();
+        await ValidateRelationships(doc);
     }
 
     [Test]
@@ -161,6 +162,51 @@ internal sealed class WordAcceptRevisionsTests : CliIntegrationTestBase
         await Assert.That(result.ExitCode).IsEqualTo(5);
         await Assert.That(result.StandardOutput).IsEmpty();
         await Assert.That(result.StandardError).Contains("OUTPUT_ERROR");
+    }
+
+    [Test]
+    public async Task CLI103_WordAcceptRevisions_OutputToStdout_StreamsBinaryDocx()
+    {
+        var input = CliTestRunner.TestFile("RA001-Tracked-Revisions-01.docx");
+        var inputBytes = await File.ReadAllBytesAsync(input.FullName).ConfigureAwait(false);
+
+        var result = await CliTestRunner
+            .RunManagedWithStdinAsync(inputBytes, "word", "accept-revisions", "-", "--output", "-")
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        // When --output -, stdout is the binary DOCX content, not a success payload
+        await Assert.That(result.StandardOutput.Length).IsGreaterThan(0);
+        // Verify it looks like a ZIP/DOCX (PK header)
+        await Assert.That(result.StandardOutput[0]).IsEqualTo((byte)'P');
+        await Assert.That(result.StandardOutput[1]).IsEqualTo((byte)'K');
+    }
+
+    [Test]
+    public async Task CLI104_WordAcceptRevisions_InvalidDocxInput_ReturnsInvalidFormat()
+    {
+        var tempDir = CliTestRunner.CreateTempDirectory("accept-revisions-invalid");
+        var badInput = new FileInfo(Path.Combine(tempDir.FullName, "not-a-docx.docx"));
+        await File.WriteAllTextAsync(badInput.FullName, "This is not a valid DOCX file.").ConfigureAwait(false);
+        var output = new FileInfo(Path.Combine(tempDir.FullName, "output.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "accept-revisions",
+                badInput.FullName,
+                "--output",
+                output.FullName,
+                "--format",
+                "json"
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(4);
+        await Assert.That(result.StandardOutput).IsEmpty();
+        await Assert.That(result.StandardError).Contains("INVALID_FORMAT");
     }
 }
 #pragma warning restore CA1707
