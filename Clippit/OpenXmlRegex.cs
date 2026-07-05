@@ -531,8 +531,8 @@ namespace Clippit
             if (run.Name != W.r)
                 return false;
 
-            var nonPropertyElements = run.Elements().Where(e => e.Name != W.rPr).ToList();
-            return nonPropertyElements.Count > 0 && nonPropertyElements.All(e => e.Name == W.lastRenderedPageBreak);
+            var nonPropertyElements = run.Elements().Where(e => e.Name != W.rPr);
+            return nonPropertyElements.Any() && nonPropertyElements.All(e => e.Name == W.lastRenderedPageBreak);
         }
 
         private static object PmlSearchAndReplaceTransform(
