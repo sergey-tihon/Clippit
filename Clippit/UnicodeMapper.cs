@@ -62,9 +62,15 @@ public class UnicodeMapper
         if (element.Name == W.rPr)
             return string.Empty;
 
-        // For w:t elements, we obviously want the element's value.
+        // For w:t elements, respect xml:space="preserve".
+        // Without it, Word trims leading/trailing whitespace, mimicking XML default whitespace handling.
         if (element.Name == W.t)
-            return (string)element;
+        {
+            var text = (string)element;
+            if (element.Attribute(XNamespace.Xml + "space")?.Value != "preserve")
+                text = text.Trim();
+            return text;
+        }
 
         // Turn elements representing special characters into their corresponding
         // unicode characters.
