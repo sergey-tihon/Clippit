@@ -11,7 +11,7 @@ namespace Clippit.Tests.Cli.Integration.Word;
 internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
 {
     [Test]
-    public async Task CLI118_WordSimplifyMarkup_NoFlags_ReturnsInvalidArguments()
+    public async Task CLI141_WordSimplifyMarkup_NoFlags_ReturnsInvalidArguments()
     {
         var input = CliTestRunner.TestFile("DB007-Spec.docx");
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-no-flags");
@@ -27,7 +27,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI119_WordSimplifyMarkup_AllFlag_ProducesValidDocx()
+    public async Task CLI142_WordSimplifyMarkup_AllFlag_ProducesValidDocx()
     {
         var input = CliTestRunner.TestFile("DB007-Spec.docx");
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-all");
@@ -61,7 +61,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI120_WordSimplifyMarkup_AcceptRevisions_RemovesTrackedChanges()
+    public async Task CLI143_WordSimplifyMarkup_AcceptRevisions_RemovesTrackedChanges()
     {
         var input = CliTestRunner.TestFile("RA001-Tracked-Revisions-01.docx");
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-accept-revisions");
@@ -92,7 +92,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI121_WordSimplifyMarkup_RemoveRsidInfo_EliminatesRsidAttributes()
+    public async Task CLI144_WordSimplifyMarkup_RemoveRsidInfo_EliminatesRsidAttributes()
     {
         var input = CliTestRunner.TestFile("DB007-Spec.docx");
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-rsid");
@@ -133,7 +133,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI122_WordSimplifyMarkup_DefaultOutputPath_DerivedFromInput()
+    public async Task CLI145_WordSimplifyMarkup_DefaultOutputPath_DerivedFromInput()
     {
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-default-output");
         var source = CliTestRunner.TestFile("DB007-Spec.docx");
@@ -155,7 +155,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI123_WordSimplifyMarkup_QuietSuppressesStdout()
+    public async Task CLI146_WordSimplifyMarkup_QuietSuppressesStdout()
     {
         var input = CliTestRunner.TestFile("DB007-Spec.docx");
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-quiet");
@@ -180,7 +180,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI124_WordSimplifyMarkup_InvalidInput_ReturnsInvalidFormat()
+    public async Task CLI147_WordSimplifyMarkup_InvalidInput_ReturnsInvalidFormat()
     {
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-invalid-input");
         var badInput = new FileInfo(Path.Combine(tempDir.FullName, "not-a-docx.docx"));
@@ -206,7 +206,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI125_WordSimplifyMarkup_OutputToStdout_StreamsBinaryDocx()
+    public async Task CLI148_WordSimplifyMarkup_OutputToStdout_StreamsBinaryDocx()
     {
         var input = CliTestRunner.TestFile("DB007-Spec.docx");
         var inputBytes = await File.ReadAllBytesAsync(input.FullName).ConfigureAwait(false);
@@ -230,7 +230,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI126_WordSimplifyMarkup_RemoveBookmarks_EliminatesBookmarkElements()
+    public async Task CLI149_WordSimplifyMarkup_RemoveBookmarks_EliminatesBookmarkElements()
     {
         var input = CliTestRunner.TestFile("DB007-Spec.docx");
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-bookmarks");
@@ -264,7 +264,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI127_WordSimplifyMarkup_RemoveContentControls_EliminatesSdtElements()
+    public async Task CLI150_WordSimplifyMarkup_RemoveContentControls_EliminatesSdtElements()
     {
         var input = CliTestRunner.TestFile("HC030-Content-Controls.docx");
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-content-controls");
@@ -298,7 +298,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI128_WordSimplifyMarkup_RemoveHyperlinks_EliminatesHyperlinkElements()
+    public async Task CLI151_WordSimplifyMarkup_RemoveHyperlinks_EliminatesHyperlinkElements()
     {
         var input = CliTestRunner.TestFile("HC023-Hyperlink.docx");
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-hyperlinks");
@@ -332,7 +332,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI129_WordSimplifyMarkup_ReplaceTabsWithSpaces_RemovesTabCharacterElements()
+    public async Task CLI152_WordSimplifyMarkup_ReplaceTabsWithSpaces_RemovesTabCharacterElements()
     {
         var input = CliTestRunner.TestFile("HC024-Tabs-01.docx");
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-replace-tabs");
@@ -368,7 +368,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI130_WordSimplifyMarkup_RemoveFieldCodes_EliminatesInstrTextElements()
+    public async Task CLI153_WordSimplifyMarkup_RemoveFieldCodes_EliminatesInstrTextElements()
     {
         var input = CliTestRunner.TestFile("HC040-Hyperlink-Fieldcode-01.docx");
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-field-codes");
@@ -402,7 +402,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI131_WordSimplifyMarkup_RemoveGoBackBookmark_RemovesOnlyGoBackBookmark()
+    public async Task CLI154_WordSimplifyMarkup_RemoveGoBackBookmark_RemovesOnlyGoBackBookmark()
     {
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-go-back-bookmark");
         var input = await CreateDocxWithMainDocumentXmlAsync(
@@ -445,7 +445,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI132_WordSimplifyMarkup_RemoveMarkupForDocumentComparison_RemovesRsidAttributes()
+    public async Task CLI155_WordSimplifyMarkup_RemoveMarkupForDocumentComparison_RemovesRsidAttributes()
     {
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-markup-for-document-comparison");
         var input = await CreateDocxWithMainDocumentXmlAsync(
@@ -489,7 +489,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI133_WordSimplifyMarkup_RemoveComments_RemovesCommentMarkup()
+    public async Task CLI156_WordSimplifyMarkup_RemoveComments_RemovesCommentMarkup()
     {
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-comments");
         var input = await CreateDocxWithMainDocumentXmlAsync(
@@ -541,7 +541,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI134_WordSimplifyMarkup_RemoveEndAndFootnotes_RemovesNoteReferences()
+    public async Task CLI157_WordSimplifyMarkup_RemoveEndAndFootnotes_RemovesNoteReferences()
     {
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-end-and-footnotes");
         var input = await CreateDocxWithMainDocumentXmlAsync(
@@ -581,7 +581,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI135_WordSimplifyMarkup_RemoveLastRenderedPageBreak_RemovesElement()
+    public async Task CLI158_WordSimplifyMarkup_RemoveLastRenderedPageBreak_RemovesElement()
     {
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-last-rendered-page-break");
         var input = await CreateDocxWithMainDocumentXmlAsync(
@@ -618,7 +618,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI136_WordSimplifyMarkup_RemovePermissions_RemovesPermissionMarkup()
+    public async Task CLI159_WordSimplifyMarkup_RemovePermissions_RemovesPermissionMarkup()
     {
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-permissions");
         var input = await CreateDocxWithMainDocumentXmlAsync(
@@ -658,7 +658,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI137_WordSimplifyMarkup_RemoveProof_RemovesProofErrElements()
+    public async Task CLI160_WordSimplifyMarkup_RemoveProof_RemovesProofErrElements()
     {
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-proof");
         var input = await CreateDocxWithMainDocumentXmlAsync(
@@ -690,7 +690,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI138_WordSimplifyMarkup_RemoveSmartTags_RemovesSmartTagWrappers()
+    public async Task CLI161_WordSimplifyMarkup_RemoveSmartTags_RemovesSmartTagWrappers()
     {
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-smart-tags");
         var input = await CreateDocxWithMainDocumentXmlAsync(
@@ -729,7 +729,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI139_WordSimplifyMarkup_RemoveSoftHyphens_RemovesSoftHyphenElements()
+    public async Task CLI162_WordSimplifyMarkup_RemoveSoftHyphens_RemovesSoftHyphenElements()
     {
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-soft-hyphens");
         var input = await CreateDocxWithMainDocumentXmlAsync(
@@ -770,7 +770,7 @@ internal sealed class WordSimplifyMarkupTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI140_WordSimplifyMarkup_RemoveWebHidden_RemovesWebHiddenElement()
+    public async Task CLI163_WordSimplifyMarkup_RemoveWebHidden_RemovesWebHiddenElement()
     {
         var tempDir = CliTestRunner.CreateTempDirectory("simplify-remove-web-hidden");
         var input = await CreateDocxWithMainDocumentXmlAsync(
