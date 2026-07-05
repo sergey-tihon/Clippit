@@ -13,8 +13,7 @@ internal static class WordSimplifyMarkupCommand
         {
             Description =
                 "Output path for the simplified .docx. "
-                + "Defaults to <input>-simplified.docx. Use '-' to write binary content to stdout.",
-        };
+                + "Defaults to <input>-simplified.docx (or simplified.docx when reading from stdin). Use '-' to write binary content to stdout.",
 
         var forceOption = new Option<bool>("--force")
         {
