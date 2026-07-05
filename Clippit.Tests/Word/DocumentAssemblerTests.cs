@@ -542,6 +542,37 @@ public class DocumentAssemblerTests : TestsBase
     }
 
     [Test]
+    public async Task DA_Content_LeadingAndTrailingWhitespace_Preserved()
+    {
+        var bodyXml = new XElement(
+            W.body,
+            new XElement(W.p, new XElement(W.r, new XElement(W.t, @"<# <Content Select=""./Value"" /> #>"))),
+            new XElement(W.sectPr)
+        );
+
+        var wmlTemplate = BuildTemplate("content-whitespace-template.docx", bodyXml);
+        var xmlData = XElement.Parse("<Data><Value>  padded value  </Value></Data>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+
+        var textElement = resultDoc
+            .MainDocumentPart!.GetXDocument()
+            .Descendants(W.t)
+            .FirstOrDefault(t => (string)t == "  padded value  ");
+        await Assert.That(textElement).IsNotNull();
+
+        var xmlSpaceAttribute = textElement!.Attribute(XNamespace.Xml + "space");
+        await Assert.That(xmlSpaceAttribute).IsNotNull();
+        await Assert.That(xmlSpaceAttribute!.Value).IsEqualTo("preserve");
+    }
+
+    [Test]
     [Arguments("DA-Issue-95-Template.docx", "DA-Issue-95-Data.xml", false)]
     public async Task DA_Issue_95_Repro(string name, string data, bool err)
     {

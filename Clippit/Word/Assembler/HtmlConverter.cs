@@ -93,7 +93,7 @@ namespace Clippit.Word.Assembler
                                 if (splitRun == "\t")
                                     results.Add(SoftTab);
                                 else
-                                    results.Add(new XElement(W.r, new XElement(W.t, splitRun)));
+                                    results.Add(new XElement(W.r, CreateTextElement(splitRun)));
                             }
                         }
                     }
@@ -128,6 +128,11 @@ namespace Clippit.Word.Assembler
 
         private static bool IsSoftBreak(XElement element) =>
             element.Name == W.r && element.Elements().Count() == 1 && element.Element(W.br) is not null;
+
+        private static XElement CreateTextElement(string value)
+        {
+            return new XElement(W.t, XmlUtil.GetXmlSpaceAttribute(value), value);
+        }
 
         private static List<object> FlattenResults(object obj)
         {
@@ -203,7 +208,7 @@ namespace Clippit.Word.Assembler
                         catch (UriFormatException)
                         {
                             var rPr = HtmlToWmlConverterCore.GetRunProperties(element, settings);
-                            var run = new XElement(W.r, rPr, new XElement(W.t, element.Value));
+                            var run = new XElement(W.r, rPr, CreateTextElement(element.Value));
                             return new[] { run };
                         }
 
@@ -249,7 +254,7 @@ namespace Clippit.Word.Assembler
                             var hyperlink = new XElement(
                                 W.hyperlink,
                                 new XAttribute(R.id, newRel.Id),
-                                new XElement(W.r, rPr, new XElement(W.t, element.Value))
+                                new XElement(W.r, rPr, CreateTextElement(element.Value))
                             );
 
                             if (nextExpected == NextExpected.Paragraph)
