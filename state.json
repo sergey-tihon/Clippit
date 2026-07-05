@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-07-04",
-  "last_run_id": "28711697000",
+  "last_run": "2026-07-05",
+  "last_run_id": "28746586082",
   "backlog_cursor": {
     "issues": 401,
     "prs": 165
@@ -31,28 +31,27 @@
   "open_clippy_prs": [
     {"number": 163, "branch": "clippy/improve-custom-handler-66-20260326-f25d5328ab83f793", "title": "[Clippy] feat: add RegisterCustomHandler extensibility API to DocumentAssembler", "note": "131+ commits behind master"},
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "[Clippy] feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "131+ commits behind master"},
-    {"number": null, "branch": "clippy/fix-issue-375-word-assemble-v2", "title": "[Clippy] feat(cli): add `clippit word assemble` command", "note": "created 2026-07-04 v2, closes #375, 8 tests CLI110-CLI117"},
-    {"number": null, "branch": "clippy/eng-nuget-trusted-publishing-20260704", "title": "[Clippy] ci: migrate NuGet publish to trusted publishing (OIDC)", "note": "created 2026-07-04, closes #401, requires NuGet.org trusted publisher setup"}
+    {"number": 405, "branch": "clippy/fix-issue-375-word-assemble-v2-df92cf484a01ea81", "title": "[Clippy] feat(cli): add `clippit word assemble` command", "note": "CI green, closes #375"},
+    {"number": null, "branch": "clippy/fix-issue-386-unicodemapper-xmlspace", "title": "[Clippy] fix(word): respect xml:space=preserve in UnicodeMapper.RunToString", "note": "created 2026-07-05, closes #386 sub-fix 3"},
+    {"number": null, "branch": "clippy/fix-issue-377-word-simplify-markup", "title": "[Clippy] feat(cli): add `clippit word simplify-markup` command", "note": "created 2026-07-05, closes #377"}
   ],
   "checked_off_by_maintainer": [],
   "m_issue": 370,
   "m_month": "2026-07",
   "notes": [
-    "v3.5.1 released 2026-06-23: SkiaSharp 4.x, System.CommandLine preview.5, MS.NET.Test.Sdk 18.7.0",
+    "v3.5.1 released 2026-06-23",
     "v3.6.0 changelog PR #393 merged 2026-07-03",
     "PRs #163/#165 are 131+ commits behind master - left for human rebase or close",
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "Monthly Activity issue for July 2026 is #370",
-    "18 issues labelled 2026-07-03: #373-#390",
-    "Issue #401 labelled enhancement 2026-07-04",
-    "All deps current as of 2026-07-03",
-    "Previous run PRs for #375/#376 (v1) had empty branches - v2 for #375 created 2026-07-04",
-    "Accept-revisions PR for #376 still needs v2 branch with actual commits",
-    "Next: port #386 (whitespace/lastRenderedPageBreak/UnicodeMapper); CLI issues #377-#379; create #376 v2 PR"
+    "All deps current as of 2026-07-05",
+    "Issues #376/#401 closed; PRs #406/#407/#408 merged by maintainer 2026-07-05",
+    "PR #409 open: sergey-tihon's OpenXmlRegex lastRenderedPageBreak fix (part 2 of #386)",
+    "Issue #386: parts 1+2+3 fixed; part 4 (stream leaks) overlaps #25/#15"
   ],
   "improvements_submitted": [
-    "PR#342-#356, #359, #361-#362, #369, #371, #391, #393-#398: various improvements - all merged",
-    "PR(TBD): feat(cli) word assemble command v2 (closes #375) - created 2026-07-04",
-    "PR(TBD): ci NuGet trusted publishing (closes #401) - created 2026-07-04"
+    "PR#342-#356, #359, #361-#362, #369, #371, #391, #393-#398, #405, #406, #407: various - most merged",
+    "PR(TBD): fix(word) UnicodeMapper.RunToString xml:space (closes #386 sub-fix 3) - created 2026-07-05",
+    "PR(TBD): feat(cli) word simplify-markup command (closes #377) - created 2026-07-05"
   ]
 }
