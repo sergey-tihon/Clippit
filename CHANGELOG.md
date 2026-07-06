@@ -1,5 +1,29 @@
 # Changelog
 
+## [3.6.0] - July 4, 2026
+
+- feat(word): add German and Spanish localized list-item text getters (`de-DE`, `es-ES`) (#389)
+- feat(cli): add `word compare` command for DOCX diff (#365)
+- feat(cli): add Windows ARM64 npm binary (#363)
+- feat(cli): add Linux ARM64 npm binary (#360)
+- perf: use `FrozenSet<T>` for `HashSet` lookups (#361)
+- perf: convert `Dictionary` to `FrozenDictionary` (#362)
+- perf: replace remaining `List<T>` with `FrozenSet<T>` in `PtOpenXmlUtil` (#371)
+- fix: guard `TextReplacer` against `IndexOutOfRangeException` on empty replacement string (#381)
+- fix(word): add `Optional="true"` support to `Conditional` directive in `DocumentAssembler` (#382)
+- feat(word): add `HeaderRowCount` attribute to `DocumentAssembler` `Table` directive for multi-row headers (#387)
+- fix: guard `WmlComparer.HashBlockLevelContent` against `ArgumentNullException` from missing `pt:Unid` attributes (#380)
+- fix: guard `WmlComparer.FindIndexOfNextParaMark` against `InvalidCastException` from non-`ComparisonUnitWord` units (#385)
+- fix(html): preserve `w:anchor` fragment on external hyperlinks — append `#anchor` when the URL has no existing fragment (#384)
+- fix(html): correct `rowspan` for vertically merged cells when preceding cells use `w:gridSpan` (#383)
+- fix(pptx): handle `ExtendedPart` chart workbooks in `CopyChartObjects` and `CopyExtendedChartObjects` — prevents silent data loss when a chart's external data relationship resolves to an `ExtendedPart` (#388)
+- refactor: modernize `== null`/`!= null` to `is null`/`is not null` across 20+ files (#349, #350, #352, #353, #355, #356)
+- test: add `FieldRetriever.ParseField` unit tests FR001–FR010 (#354)
+- test: add regression tests for `TextReplacer` empty-string replacement TR007–TR008 (#381)
+- test: add regression tests for `WmlComparer` defensive fixes WC380, WC385 (#380, #385)
+- chore(deps): update TUnit 1.56.35 → 1.57.17 (#351, #359, #369)
+- chore(ci): update `actions/checkout` v6 → v7 (#347)
+
 ## [3.5.1] - June 23, 2026
 
 - chore(deps): update SkiaSharp 3.119.4 → 4.148.0 with migration fix (#346)

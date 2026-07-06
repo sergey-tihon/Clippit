@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Frozen;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
@@ -10,8 +11,7 @@ namespace Clippit
     {
         private const string DontConsolidate = "DontConsolidate";
 
-        private static readonly HashSet<XName> RevTrackMarkupWithId = new()
-        {
+        private static readonly FrozenSet<XName> RevTrackMarkupWithId = FrozenSet.Create<XName>(
             W.cellDel,
             W.cellIns,
             W.cellMerge,
@@ -37,8 +37,8 @@ namespace Clippit
             W.tblGridChange,
             W.tblPrChange,
             W.tblPrExChange,
-            W.tcPrChange,
-        };
+            W.tcPrChange
+        );
 
         public static int Match(IEnumerable<XElement> content, Regex regex)
         {
@@ -267,7 +267,10 @@ namespace Clippit
                         .DescendantsTrimmed(W.txbxContent)
                         .Where(d => d.Name == W.r && (d.Parent is null || d.Parent.Name != W.del));
 
-                    var charsAndRuns = runsTrimmed.Select(r => new { Ch = UnicodeMapper.RunToString(r), r }).ToList();
+                    var charsAndRuns = runsTrimmed
+                        .Select(r => new { Ch = UnicodeMapper.RunToString(r), r })
+                        .Where(t => !(string.IsNullOrEmpty(t.Ch) && IsRunWithOnlyLastRenderedPageBreak(t.r)))
+                        .ToList();
 
                     var content = charsAndRuns
                         // each run should take some space in content to be able to be covered by regex and replaced/deleted
@@ -521,6 +524,15 @@ namespace Clippit
                 return new XElement(W.delText, XmlUtil.GetXmlSpaceAttribute(element.Value), element.Value);
 
             return new XElement(element.Name, element.Attributes(), element.Nodes().Select(TransformToDelText));
+        }
+
+        private static bool IsRunWithOnlyLastRenderedPageBreak(XElement run)
+        {
+            if (run.Name != W.r)
+                return false;
+
+            var nonPropertyElements = run.Elements().Where(e => e.Name != W.rPr);
+            return nonPropertyElements.Any() && nonPropertyElements.All(e => e.Name == W.lastRenderedPageBreak);
         }
 
         private static object PmlSearchAndReplaceTransform(

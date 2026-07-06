@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
@@ -404,16 +405,18 @@ namespace Clippit.Word
             {
                 try
                 {
+                    var externalUri = wordDoc
+                        .MainDocumentPart.HyperlinkRelationships.First(x => x.Id == (string)element.Attribute(R.id))
+                        .Uri.ToString();
+
+                    // When both r:id and w:anchor are present, append the anchor as a URL fragment (#384).
+                    var anchor = (string)element.Attribute(W.anchor);
+                    if (anchor is not null && !externalUri.Contains('#'))
+                        externalUri += "#" + anchor;
+
                     var a = new XElement(
                         Xhtml.a,
-                        new XAttribute(
-                            "href",
-                            wordDoc
-                                .MainDocumentPart.HyperlinkRelationships.First(x =>
-                                    x.Id == (string)element.Attribute(R.id)
-                                )
-                                .Uri
-                        ),
+                        new XAttribute("href", externalUri),
                         element.Elements(W.r).Select(run => ConvertRun(wordDoc, settings, run))
                     );
                     if (!a.Nodes().Any())
@@ -961,7 +964,12 @@ namespace Clippit.Word
                 if ((string)tcPr.Elements(W.vMerge).Attributes(W.val).FirstOrDefault() == "restart")
                 {
                     var currentRow = element.Parent.ElementsBeforeSelf(W.tr).Count();
-                    var currentCell = element.ElementsBeforeSelf(W.tc).Count();
+                    // Compute the grid-column position of this cell by summing gridSpan of preceding cells (#383).
+                    var currentGridCol = element
+                        .ElementsBeforeSelf(W.tc)
+                        .Sum(tc =>
+                            (int?)tc.Elements(W.tcPr).Elements(W.gridSpan).Attributes(W.val).FirstOrDefault() ?? 1
+                        );
                     var tbl = element.Parent.Parent;
                     var rowSpanCount = 1;
                     currentRow += 1;
@@ -970,7 +978,19 @@ namespace Clippit.Word
                         var row = tbl.Elements(W.tr).Skip(currentRow).FirstOrDefault();
                         if (row is null)
                             break;
-                        var cell2 = row.Elements(W.tc).Skip(currentCell).FirstOrDefault();
+                        // Find the cell that starts at the same grid column position.
+                        XElement cell2 = null;
+                        var gridColCount = 0;
+                        foreach (var tc in row.Elements(W.tc))
+                        {
+                            if (gridColCount == currentGridCol)
+                            {
+                                cell2 = tc;
+                                break;
+                            }
+                            gridColCount +=
+                                (int?)tc.Elements(W.tcPr).Elements(W.gridSpan).Attributes(W.val).FirstOrDefault() ?? 1;
+                        }
                         if (cell2 is null)
                             break;
                         if (cell2.Elements(W.tcPr).Elements(W.vMerge).FirstOrDefault() is null)
@@ -3135,7 +3155,7 @@ namespace Clippit.Word
         // Symbol/dingbat fonts that use non-standard character encodings. Directional marks
         // (LRM/RLM) must not be inserted into runs using these fonts as the marks render as
         // visible glyphs rather than invisible control characters.
-        private static readonly HashSet<string> s_symbolFonts = new(StringComparer.OrdinalIgnoreCase)
+        private static readonly FrozenSet<string> s_symbolFonts = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "Symbol",
             "Webdings",
@@ -3144,7 +3164,7 @@ namespace Clippit.Word
             "Wingdings 2",
             "Wingdings3",
             "Wingdings 3",
-        };
+        }.ToFrozenSet(StringComparer.OrdinalIgnoreCase);
 
         private static readonly Dictionary<string, string> FontFallback = new()
         {
@@ -3447,13 +3467,12 @@ namespace Clippit.Word
         // Don't process wmf files (with contentType == "image/x-wmf") because GDI consumes huge amounts
         // of memory when dealing with wmf perhaps because it loads a DLL to do the rendering?
         // It actually works, but is not recommended.
-        private static readonly List<string> ImageContentTypes = new()
-        {
+        private static readonly FrozenSet<string> ImageContentTypes = FrozenSet.Create(
             "image/png",
             "image/gif",
             "image/tiff",
-            "image/jpeg",
-        };
+            "image/jpeg"
+        );
 
         public static XElement ProcessImage(
             WordprocessingDocument wordDoc,

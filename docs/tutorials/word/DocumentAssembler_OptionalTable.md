@@ -7,7 +7,10 @@ Namespace: `Clippit.Word`
 
 ## Introduction
 
-The `Table` directive in `DocumentAssembler` supports an `Optional` attribute that controls the behavior when the XPath `Select` expression returns no matching data.
+The `Table` directive in `DocumentAssembler` supports:
+
+- `Optional` — controls behavior when the XPath `Select` expression returns no matching data.
+- `HeaderRowCount` — declares how many leading rows are treated as table headers.
 
 By default, when a `Table` directive's `Select` XPath returns no data, `DocumentAssembler` produces a template error:
 
@@ -15,7 +18,8 @@ By default, when a `Table` directive's `Select` XPath returns no data, `Document
 
 Adding `Optional="true"` (or `Optional="1"`) suppresses this error and silently removes the table from the output document instead.
 
-This brings `Table` into parity with `Repeat` and `Content`, which already support the `Optional` attribute.
+This brings `Table` into parity with `Repeat`, `Content`, and `Conditional`, which support the `Optional`
+attribute.
 
 ## Usage
 
@@ -39,6 +43,16 @@ Alternatively, use a Word content control (structured document tag) with the `Do
 
 Place this directive inside a content control that precedes the table in your document.
 
+### Multi-row header table
+
+Use `HeaderRowCount` when the table has more than one header row:
+
+```xml
+<# <Table Select="Orders/Order" HeaderRowCount="2" /> #>
+```
+
+With this setting, the first two `w:tr` rows are preserved as headers and the third row is used as the prototype row.
+
 ## Accepted Values
 
 The `Optional` attribute accepts any XSD `xs:boolean` value:
@@ -51,6 +65,9 @@ The `Optional` attribute accepts any XSD `xs:boolean` value:
 | `0`     | Not optional (default) |
 
 Omitting the attribute entirely is equivalent to `Optional="false"`.
+
+The `HeaderRowCount` attribute accepts an XSD `xs:positiveInteger` value. Omitting it is equivalent to `HeaderRowCount="1"`.
+When processing pre-existing metadata elements that bypass schema validation, parsed integer values less than `1` are treated as `1`.
 
 ## Example
 
@@ -93,7 +110,7 @@ Omitting the attribute entirely is equivalent to `Optional="false"`.
 
 ## Further Reading
 
-- `Repeat` directive also supports `Optional="true"` — see the existing directive reference for `Repeat`.
+- `Repeat` and `Conditional` directives also support `Optional="true"` for missing XPath results.
 - For template testing and examples, see `DocumentAssemblerTests.cs` in the test project, particularly the `DA_Table_Optional_*` test methods.
 
 Changes merged in: [#150](https://github.com/sergey-tihon/Clippit/pull/150)

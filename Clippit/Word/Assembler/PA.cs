@@ -24,4 +24,5 @@ internal static class PA
     public static readonly XName Data = "Data";
     public static readonly XName PageBreakAfter = "PageBreakAfter";
     public static readonly XName FitWithin = "FitWithin";
+    public static readonly XName HeaderRowCount = "HeaderRowCount";
 }

@@ -1249,7 +1249,10 @@ namespace Clippit
         {
             for (var i = 0; i < cul.Length; i++)
             {
-                var cuw = (ComparisonUnitWord)cul[i];
+                if (cul[i] is not ComparisonUnitWord cuw)
+                {
+                    continue;
+                }
                 var lastAtom = cuw.DescendantContentAtoms().LastOrDefault();
                 if (lastAtom?.ContentElement.Name == W.pPr)
                 {

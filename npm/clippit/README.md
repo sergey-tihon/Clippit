@@ -24,6 +24,9 @@ clippit pptx verify presentation.pptx
 # Validate a DOCX file
 clippit word verify document.docx
 
+# Assemble a DOCX template with XML data
+clippit word assemble template.docx data.xml --output assembled.docx
+
 # Validate an XLSX file
 clippit excel verify spreadsheet.xlsx
 
@@ -38,8 +41,11 @@ clippit pptx split presentation.pptx --format json
 | `pptx split`      | Split a `.pptx` into individual single-slide files. Supports slide range selection (`--slides`) and manifest generation (`--manifest`). |
 | `pptx build init` | Scaffold a deck manifest (JSON).                                                                                                        |
 | `pptx build run`  | Assemble a `.pptx` from a deck manifest.                                                                                                |
-| `pptx verify`     | Validate a PPTX — schema, relationships, markup compatibility, and sections.                                                            |
-| `word verify`     | Validate a DOCX — schema and relationships.                                                                                             |
+| `pptx verify`           | Validate a PPTX — schema, relationships, markup compatibility, and sections.                                                            |
+| `word assemble`         | Assemble a DOCX template with XML data.                                                                                                  |
+| `word compare`          | Compare two DOCX files and produce a tracked-revision DOCX.                                                                             |
+| `word accept-revisions` | Accept all tracked revisions in a DOCX file.                                                                                            |
+| `word verify`           | Validate a DOCX — schema and relationships.                                                                                             |
 | `word to-html`    | Convert a DOCX to HTML/CSS.                                                                                                             |
 | `word from-html`  | Convert HTML/CSS to a DOCX.                                                                                                             |
 | `excel to-html`   | Convert an XLSX sheet, range, or table to HTML/CSS.                                                                                     |
@@ -65,12 +71,14 @@ Published JSON schemas for manifests and result payloads are available at
 
 ## Supported platforms
 
-| Platform    | Package                                  |
-| ----------- | ---------------------------------------- |
-| Windows x64 | `@sergey-tihon/clippit-bin-win32-x64`    |
-| macOS x64   | `@sergey-tihon/clippit-bin-darwin-x64`   |
-| macOS arm64 | `@sergey-tihon/clippit-bin-darwin-arm64` |
-| Linux x64   | `@sergey-tihon/clippit-bin-linux-x64`    |
+| Platform      | Package                                   |
+| ------------- | ----------------------------------------- |
+| Windows x64   | `@sergey-tihon/clippit-bin-win32-x64`     |
+| Windows arm64 | `@sergey-tihon/clippit-bin-win32-arm64`   |
+| macOS x64     | `@sergey-tihon/clippit-bin-darwin-x64`    |
+| macOS arm64   | `@sergey-tihon/clippit-bin-darwin-arm64`  |
+| Linux x64     | `@sergey-tihon/clippit-bin-linux-x64`     |
+| Linux arm64   | `@sergey-tihon/clippit-bin-linux-arm64`   |
 
 The correct binary package is installed automatically as an optional dependency.
 

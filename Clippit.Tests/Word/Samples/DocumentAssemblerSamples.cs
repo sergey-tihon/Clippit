@@ -26,7 +26,9 @@ public class DocumentAssemblerSamples : TestsBase
     [Test]
     public void Sample2()
     {
-        var dataFile = new FileInfo(Path.Combine(TempDir, "Data.xml"));
+        var outDir = Path.Combine(TempDir, "DocumentAssemblerSamples");
+        Directory.CreateDirectory(outDir);
+        var dataFile = new FileInfo(Path.Combine(outDir, "Data.xml"));
         // The following method generates a large data file with random data.
         // In a real world scenario, this is where you would query your data source and produce XML that will drive your document generation process.
         var data = GenerateDataFromDataSource(dataFile);
@@ -34,7 +36,7 @@ public class DocumentAssemblerSamples : TestsBase
         var count = 1;
         foreach (var customer in data.Elements("Customer"))
         {
-            var assembledDoc = new FileInfo(Path.Combine(TempDir, $"Letter-{count++:0000}.docx"));
+            var assembledDoc = new FileInfo(Path.Combine(outDir, $"Letter-{count++:0000}.docx"));
             Console.WriteLine(assembledDoc.Name);
             var wmlAssembledDoc = DocumentAssembler.AssembleDocument(wmlDoc, customer, out var templateError);
             if (templateError)

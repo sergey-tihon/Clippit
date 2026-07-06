@@ -9,7 +9,8 @@ jobs:
     publish:
         runs-on: ubuntu-latest
         permissions:
-            contents: read
+            contents: write
+            id-token: write
 
         steps:
             - name: Checkout
@@ -20,9 +21,19 @@ jobs:
                   global-json-file: global.json
             - name: Build and Pack
               run: dotnet fsi build.fsx -- -p build
+            - name: NuGet login (OIDC → temp API key)
+              uses: NuGet/login@v1
+              id: login
             - name: Publish to NuGet
               run: |
                   dotnet nuget push bin/*.nupkg \
-                    --api-key ${{ secrets.NUGET_API_KEY }} \
+                    --api-key ${{ steps.login.outputs.NUGET_API_KEY }} \
                     --source https://api.nuget.org/v3/index.json \
                     --skip-duplicate
+            - name: Create GitHub Release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  gh release create "${{ github.ref_name }}" \
+                    --title "$(cat bin/RELEASE_TITLE)" \
+                    --notes-file bin/RELEASE_NOTES.md

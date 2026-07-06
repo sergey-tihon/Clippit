@@ -5,8 +5,10 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Clippit.Word;
+using Clippit.Word.Assembler;
 using DocumentFormat.OpenXml.Packaging;
 using SkiaSharp;
+using AssemblerHtmlConverter = Clippit.Word.Assembler.HtmlConverter;
 
 namespace Clippit.Tests.Word;
 
@@ -539,6 +541,68 @@ public class DocumentAssemblerTests : TestsBase
         await Assert.That(paras.ElementAt(3).Descendants(W.tab)).HasSingleItem();
         await Assert.That(paras.ElementAt(3).Elements(W.r).First().Elements(W.tab)).IsEmpty();
         await Assert.That(paras.ElementAt(3).Elements(W.r).Last().Elements(W.tab)).IsEmpty();
+    }
+
+    [Test]
+    public async Task DA_Content_LeadingAndTrailingWhitespace_Preserved()
+    {
+        var bodyXml = new XElement(
+            W.body,
+            new XElement(W.p, new XElement(W.r, new XElement(W.t, @"<# <Content Select=""./Value"" /> #>"))),
+            new XElement(W.sectPr)
+        );
+
+        var wmlTemplate = BuildTemplate("content-whitespace-template.docx", bodyXml);
+        var xmlData = XElement.Parse("<Data><Value>  padded value  </Value></Data>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+
+        var textElement = resultDoc
+            .MainDocumentPart!.GetXDocument()
+            .Descendants(W.t)
+            .FirstOrDefault(t => (string)t == "  padded value  ");
+        await Assert.That(textElement).IsNotNull();
+
+        var xmlSpaceAttribute = textElement!.Attribute(XNamespace.Xml + "space");
+        await Assert.That(xmlSpaceAttribute).IsNotNull();
+        await Assert.That(xmlSpaceAttribute!.Value).IsEqualTo("preserve");
+    }
+
+    [Test]
+    public async Task DA290_Content_HyperlinkText_LeadingAndTrailingWhitespace_Preserved()
+    {
+        using var documentStream = new MemoryStream();
+        using var wordDoc = WordprocessingDocument.Create(
+            documentStream,
+            DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+        );
+        var mainPart = wordDoc.AddMainDocumentPart();
+        mainPart.PutXDocument(new XDocument(new XElement(W.document, new XElement(W.body, new XElement(W.p)))));
+
+        var templateError = new TemplateError();
+        var runs = AssemblerHtmlConverter.ConvertTextToRunsWithMarkupSupport(
+            ["<p><a href=\"https://example.com\">  padded link  </a></p>"],
+            mainPart,
+            templateError
+        );
+
+        await Assert.That(templateError.HasError).IsFalse();
+
+        var hyperlinkTextElement = runs.SelectMany(e => e.DescendantsAndSelf(W.t))
+            .FirstOrDefault(t => t.Value.Trim() == "padded link");
+        await Assert.That(hyperlinkTextElement).IsNotNull();
+        var hyperlinkText = (string)hyperlinkTextElement ?? string.Empty;
+        await Assert.That(hyperlinkText).IsEqualTo("  padded link  ");
+
+        var hyperlinkXmlSpaceAttribute = hyperlinkTextElement!.Attribute(XNamespace.Xml + "space");
+        await Assert.That(hyperlinkXmlSpaceAttribute).IsNotNull();
+        await Assert.That(hyperlinkXmlSpaceAttribute!.Value).IsEqualTo("preserve");
     }
 
     [Test]
@@ -1223,6 +1287,299 @@ public class DocumentAssemblerTests : TestsBase
             .Aggregate(string.Empty, string.Concat);
         await Assert.That(documentText).Contains("Invalid value for Optional attribute");
     }
+
+    /// <summary>
+    /// Verifies that an invalid <c>Optional</c> value in a pre-existing <c>Conditional</c> metadata element
+    /// produces a template error instead of throwing a <see cref="FormatException"/>.
+    /// </summary>
+    [Test]
+    public async Task DA_Conditional_InvalidOptionalValueReturnsError()
+    {
+        var conditionalDirective = new XElement(
+            "Conditional",
+            new XAttribute("Select", "MissingNode"),
+            new XAttribute("Match", "x"),
+            new XAttribute("Optional", "yes")
+        ); // invalid XSD boolean — not true/false/1/0
+        var endConditionalDirective = new XElement("EndConditional");
+        var bodyXml = new XElement(
+            W.body,
+            conditionalDirective,
+            new XElement(W.p, new XElement(W.r, new XElement(W.t, "ConditionalContent"))),
+            endConditionalDirective,
+            new XElement(W.sectPr)
+        );
+
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                var mainPart = wordDoc.AddMainDocumentPart();
+                mainPart.PutXDocument(new XDocument(new XElement(W.document, bodyXml)));
+            }
+            docxBytes = ms.ToArray();
+        }
+
+        var wmlTemplate = new WmlDocument("invalid-optional-conditional-template.docx", docxBytes);
+        var xmlData = XElement.Parse("<Data/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsTrue();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        var documentText = resultDoc
+            .MainDocumentPart!.GetXDocument()
+            .Descendants(W.t)
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
+        await Assert.That(documentText).Contains("Invalid value for Optional attribute");
+    }
+
+    /// <summary>
+    /// Regression test for issue #382: <c>&lt;Conditional Select="..." Optional="true" Match=""/&gt;</c>
+    /// should not throw when the XPath selects a missing node.
+    /// A missing node with Optional=true is treated as an empty string;
+    /// Match="" succeeds, so the conditional content is included.
+    /// </summary>
+    [Test]
+    public async Task DA_Conditional_Optional_MissingNode_MatchEmpty_IncludesContent()
+    {
+        var body = BuildConditionalBody(@"<Conditional Select=""MissingNode"" Optional=""true"" Match=""""/>");
+        var wmlTemplate = BuildTemplate("cond-optional-match-empty.docx", body);
+        var xmlData = XElement.Parse("<Data/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+        var text = ExtractText(resultDoc);
+        await Assert.That(text).Contains("ConditionalContent");
+    }
+
+    /// <summary>
+    /// Regression test for issue #382: <c>&lt;Conditional Select="..." Optional="true" Match="x"/&gt;</c>
+    /// with a missing node treats the value as empty, so Match="x" fails and content is excluded.
+    /// </summary>
+    [Test]
+    public async Task DA_Conditional_Optional_MissingNode_MatchNonEmpty_ExcludesContent()
+    {
+        var body = BuildConditionalBody(@"<Conditional Select=""MissingNode"" Optional=""true"" Match=""x""/>");
+        var wmlTemplate = BuildTemplate("cond-optional-match-nonempty.docx", body);
+        var xmlData = XElement.Parse("<Data/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+        var text = ExtractText(resultDoc);
+        await Assert.That(text).DoesNotContain("ConditionalContent");
+    }
+
+    /// <summary>
+    /// Regression test for issue #382: without Optional, a missing node must produce a template error.
+    /// </summary>
+    [Test]
+    public async Task DA_Conditional_NoOptional_MissingNode_ReturnsError()
+    {
+        var body = BuildConditionalBody(@"<Conditional Select=""MissingNode"" Match=""x""/>");
+        var wmlTemplate = BuildTemplate("cond-no-optional.docx", body);
+        var xmlData = XElement.Parse("<Data/>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsTrue();
+    }
+
+    /// <summary>
+    /// Regression test for issue #382: when the node is present, Optional=true behaves normally.
+    /// </summary>
+    [Test]
+    public async Task DA_Conditional_Optional_PresentNode_Matches()
+    {
+        var body = BuildConditionalBody(@"<Conditional Select=""Flag"" Optional=""true"" Match=""yes""/>");
+        var wmlTemplate = BuildTemplate("cond-optional-present.docx", body);
+        var xmlData = XElement.Parse("<Data><Flag>yes</Flag></Data>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+        var text = ExtractText(resultDoc);
+        await Assert.That(text).Contains("ConditionalContent");
+    }
+
+    private static XElement BuildConditionalBody(string directiveXml)
+    {
+        return new XElement(
+            W.body,
+            new XElement(W.p, new XElement(W.r, new XElement(W.t, $"<# {directiveXml} #>"))),
+            new XElement(W.p, new XElement(W.r, new XElement(W.t, "ConditionalContent"))),
+            new XElement(W.p, new XElement(W.r, new XElement(W.t, "<# <EndConditional/> #>"))),
+            new XElement(W.sectPr)
+        );
+    }
+
+    /// <summary>
+    /// Verifies that a <c>Table</c> directive with no <c>HeaderRowCount</c> attribute defaults to
+    /// 1 header row — the existing behavior: first row is the header, second is the prototype.
+    /// Regression guard for issue #387.
+    /// </summary>
+    [Test]
+    public async Task DA_Table_HeaderRowCount_Default_OnlyFirstRowIsHeader()
+    {
+        var directiveParagraph = new XElement(
+            W.p,
+            new XElement(W.r, new XElement(W.t, @"<# <Table Select=""Items/Item"" /> #>"))
+        );
+        var tableXml = new XElement(
+            W.tbl,
+            new XElement(W.tblPr),
+            new XElement(W.tblGrid, new XElement(W.gridCol, new XAttribute(W._w, "9216"))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "./Name")))))
+        );
+        var bodyXml = new XElement(W.body, directiveParagraph, tableXml, new XElement(W.sectPr));
+        var wmlTemplate = BuildTemplate("headerrowcount-default.docx", bodyXml);
+        var xmlData = XElement.Parse(
+            "<Data><Items><Item><Name>Alice</Name></Item><Item><Name>Bob</Name></Item></Items></Data>"
+        );
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+
+        var rows = resultDoc.MainDocumentPart!.GetXDocument().Descendants(W.tr).ToList();
+        // 1 header row + 2 data rows
+        await Assert.That(rows).HasCount(3);
+        var headerText = rows[0].Descendants(W.t).Select(t => (string)t).Aggregate(string.Concat);
+        await Assert.That(headerText).IsEqualTo("Header");
+    }
+
+    /// <summary>
+    /// Verifies that <c>HeaderRowCount="2"</c> preserves both header rows and uses the third row
+    /// as the prototype data row, closing issue #387.
+    /// </summary>
+    [Test]
+    public async Task DA_Table_HeaderRowCount_Two_PreservesTwoHeaderRows()
+    {
+        var directiveParagraph = new XElement(
+            W.p,
+            new XElement(W.r, new XElement(W.t, @"<# <Table Select=""Items/Item"" HeaderRowCount=""2"" /> #>"))
+        );
+        var tableXml = new XElement(
+            W.tbl,
+            new XElement(W.tblPr),
+            new XElement(W.tblGrid, new XElement(W.gridCol, new XAttribute(W._w, "9216"))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header1"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header2"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "./Name")))))
+        );
+        var bodyXml = new XElement(W.body, directiveParagraph, tableXml, new XElement(W.sectPr));
+        var wmlTemplate = BuildTemplate("headerrowcount-two.docx", bodyXml);
+        var xmlData = XElement.Parse(
+            "<Data><Items><Item><Name>Alice</Name></Item><Item><Name>Bob</Name></Item></Items></Data>"
+        );
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+
+        var rows = resultDoc.MainDocumentPart!.GetXDocument().Descendants(W.tr).ToList();
+        // 2 header rows + 2 data rows
+        await Assert.That(rows).HasCount(4);
+        var headerTexts = rows.Take(2)
+            .Select(r => r.Descendants(W.t).Select(t => (string)t).Aggregate(string.Concat))
+            .ToList();
+        await Assert.That(headerTexts[0]).IsEqualTo("Header1");
+        await Assert.That(headerTexts[1]).IsEqualTo("Header2");
+        var dataTexts = rows.Skip(2)
+            .Select(r => r.Descendants(W.t).Select(t => (string)t).Aggregate(string.Concat))
+            .ToList();
+        await Assert.That(dataTexts[0]).IsEqualTo("Alice");
+        await Assert.That(dataTexts[1]).IsEqualTo("Bob");
+    }
+
+    /// <summary>
+    /// Verifies that an invalid <c>HeaderRowCount</c> value in a pre-existing <c>Table</c>
+    /// metadata element produces a template error instead of throwing.
+    /// </summary>
+    [Test]
+    public async Task DA_Table_InvalidHeaderRowCountValueReturnsError()
+    {
+        var tableDirective = new XElement(
+            "Table",
+            new XAttribute("Select", "Items/Item"),
+            // Overflows Int32 parsing while still matching xs:positiveInteger lexical form.
+            new XAttribute("HeaderRowCount", "9999999999999999999")
+        );
+        var tableXml = new XElement(
+            W.tbl,
+            new XElement(W.tblPr),
+            new XElement(W.tblGrid, new XElement(W.gridCol, new XAttribute(W._w, "9216"))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "Header"))))),
+            new XElement(W.tr, new XElement(W.tc, new XElement(W.p, new XElement(W.r, new XElement(W.t, "./Name")))))
+        );
+        var bodyXml = new XElement(W.body, tableDirective, tableXml, new XElement(W.sectPr));
+        var wmlTemplate = BuildTemplate("invalid-headerrowcount-table-template.docx", bodyXml);
+        var xmlData = XElement.Parse("<Data><Items><Item><Name>Alice</Name></Item></Items></Data>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsTrue();
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        var documentText = resultDoc
+            .MainDocumentPart!.GetXDocument()
+            .Descendants(W.t)
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
+        await Assert.That(documentText).Contains("Invalid value for HeaderRowCount attribute");
+    }
+
+    private static WmlDocument BuildTemplate(string docName, XElement body)
+    {
+        byte[] docxBytes;
+        using (var ms = new MemoryStream())
+        {
+            using (
+                var wordDoc = WordprocessingDocument.Create(
+                    ms,
+                    DocumentFormat.OpenXml.WordprocessingDocumentType.Document
+                )
+            )
+            {
+                wordDoc.AddMainDocumentPart().PutXDocument(new XDocument(new XElement(W.document, body)));
+            }
+            docxBytes = ms.ToArray();
+        }
+        return new WmlDocument(docName, docxBytes);
+    }
+
+    private static string ExtractText(WordprocessingDocument doc) =>
+        doc.MainDocumentPart!.GetXDocument()
+            .Descendants(W.t)
+            .Select(t => (string)t)
+            .Aggregate(string.Empty, string.Concat);
 
     private async Task ValidateAsync(FileInfo fi)
     {

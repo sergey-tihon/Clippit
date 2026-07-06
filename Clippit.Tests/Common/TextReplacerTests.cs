@@ -114,4 +114,30 @@ public class TextReplacerTests
         var result = TextReplacer.SearchAndReplace(doc, "Find me", "Found it", true);
         await Assert.That(GetDocumentText(result)).IsEqualTo("Found it");
     }
+
+    /// <summary>
+    /// Regression test for issue #381 — replacing a match with an empty string must not
+    /// throw <see cref="IndexOutOfRangeException"/> when consolidating adjacent runs.
+    /// </summary>
+    [Test]
+    public async Task TR007_SearchAndReplace_EmptyReplacement_DoesNotThrow()
+    {
+        var doc = CreateDocxWithText("Remove this word");
+        // Replacing with "" previously crashed with IndexOutOfRangeException
+        var result = TextReplacer.SearchAndReplace(doc, "Remove this word", "", true);
+        var text = GetDocumentText(result);
+        await Assert.That(text).IsEqualTo("");
+    }
+
+    /// <summary>
+    /// Variant of TR007: replace a partial match (not the whole run) with empty string.
+    /// </summary>
+    [Test]
+    public async Task TR008_SearchAndReplace_PartialMatchEmptyReplacement_DoesNotThrow()
+    {
+        var doc = CreateDocxWithText("Hello World");
+        var result = TextReplacer.SearchAndReplace(doc, "Hello ", "", true);
+        var text = GetDocumentText(result);
+        await Assert.That(text).IsEqualTo("World");
+    }
 }

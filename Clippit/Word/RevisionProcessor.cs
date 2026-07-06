@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Frozen;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
@@ -550,9 +551,7 @@ namespace Clippit.Word
                                                         tcPr.Elements()
                                                             .OrderBy(e =>
                                                             {
-                                                                if (Order_tcPr.ContainsKey(e.Name))
-                                                                    return Order_tcPr[e.Name];
-                                                                return 999;
+                                                                return Order_tcPr.GetValueOrDefault(e.Name, 999);
                                                             })
                                                     );
                                                     var newCell = new XElement(
@@ -1443,7 +1442,7 @@ namespace Clippit.Word
             );
         }
 
-        private static readonly Dictionary<XName, int> Order_tcPr = new()
+        private static readonly FrozenDictionary<XName, int> Order_tcPr = new Dictionary<XName, int>()
         {
             { W.cnfStyle, 10 },
             { W.tcW, 20 },
@@ -1459,7 +1458,7 @@ namespace Clippit.Word
             { W.vAlign, 120 },
             { W.hideMark, 130 },
             { W.headers, 140 },
-        };
+        }.ToFrozenDictionary();
 
         private static XElement FixWidths(XElement tbl)
         {
@@ -1996,9 +1995,7 @@ namespace Clippit.Word
                             .Elements()
                             .OrderBy(e =>
                             {
-                                if (Order_sdt.ContainsKey(e.Name))
-                                    return Order_sdt[e.Name];
-                                return 999;
+                                return Order_sdt.GetValueOrDefault(e.Name, 999);
                             })
                     );
 
@@ -2034,9 +2031,7 @@ namespace Clippit.Word
                         .Elements()
                         .OrderBy(e =>
                         {
-                            if (Order_sdt.ContainsKey(e.Name))
-                                return Order_sdt[e.Name];
-                            return 999;
+                            return Order_sdt.GetValueOrDefault(e.Name, 999);
                         })
                 );
 
@@ -2045,14 +2040,14 @@ namespace Clippit.Word
             return newDocument;
         }
 
-        private static readonly Dictionary<XName, int> Order_sdt = new()
+        private static readonly FrozenDictionary<XName, int> Order_sdt = new Dictionary<XName, int>()
         {
             { W.sdtPr, 10 },
             { W.sdtEndPr, 20 },
             { W.sdtContent, 30 },
             { W.bookmarkStart, 40 },
             { W.bookmarkEnd, 50 },
-        };
+        }.ToFrozenDictionary();
 
         private static XElement AcceptDeletedAndMoveFromParagraphMarks(XElement element)
         {
@@ -2677,9 +2672,7 @@ namespace Clippit.Word
                                 .Elements()
                                 .OrderBy(e =>
                                 {
-                                    if (Order_tcPr.ContainsKey(e.Name))
-                                        return Order_tcPr[e.Name];
-                                    return 999;
+                                    return Order_tcPr.GetValueOrDefault(e.Name, 999);
                                 })
                         );
                         var newTc = new XElement(W.tc, orderedTcPr, g.First().Elements().Where(e => e.Name != W.tcPr));

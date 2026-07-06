@@ -1,5 +1,52 @@
 # Changelog
 
+## [0.7.0] - 2026-07-05
+
+- Added `word simplify-markup` command to remove non-content markup from a `.docx` file.
+  Wraps `MarkupSimplifier.SimplifyMarkup`. Accepts one flag per `SimplifyMarkupSettings`
+  boolean field (`--accept-revisions`, `--remove-rsid-info`, `--remove-markup-for-document-comparison`,
+  `--remove-comments`, `--remove-bookmarks`, `--remove-content-controls`,
+  `--remove-end-and-footnotes`, `--remove-field-codes`, `--remove-go-back-bookmark`,
+  `--remove-hyperlinks`, `--remove-last-rendered-page-break`, `--remove-permissions`,
+  `--remove-proof`, `--remove-smart-tags`, `--remove-soft-hyphens`, `--remove-web-hidden`,
+  `--replace-tabs-with-spaces`, `--normalize-xml`) plus `--all` as a convenience preset
+  that enables every option. Supports `--output`/`-o` (defaults to
+  `<input>-simplified.docx`, `-` for stdout), `--force`, `--format json`, and `--quiet`.
+  At least one flag must be supplied or `INVALID_ARGUMENTS` (exit 2) is returned.
+  The JSON result reuses the `convert-result.v1.json` shape (`input`, `output`,
+  `outputSize`). Supports stdin (`-`) for input (#377).
+- Added `word assemble` command to generate a `.docx` from a template and XML data.
+  Wraps `DocumentAssembler.AssembleDocument`. Supports `--output`/`-o` (defaults to
+  `<template>-assembled.docx`, `-` for stdout), `--force`, `--format json`, and
+  `--quiet`. The JSON result reports `template`, `data`, `output`, `outputSize`,
+  and `templateError`. Supports stdin (`-`) for one input. Published schema:
+  `assemble-result.v1.json` (#375).
+- Added `word accept-revisions` command to accept all tracked revisions in a `.docx` file.
+  Wraps `RevisionAccepter.AcceptRevisions`. Supports `--output`/`-o` (defaults to
+  `<input>-accepted.docx`, `-` for stdout), `--force`, `--format json`, and `--quiet`.
+  The JSON result reports `input`, `output`, and `outputSize` (same shape as
+  `convert-result.v1.json`). Supports stdin (`-`) for input (#376).
+
+## [0.6.0] - 2026-06-29
+
+- Added `word compare` command to compare two `.docx` files with `WmlComparer` and
+  write a tracked-revision result document. Supports `--output`/`-o` (defaults to
+  `<source>-compared.docx`, `-` for stdout), `--author` and `--date-time` for
+  generated revision metadata, and `--case-insensitive`. The JSON result reports
+  `source`, `revised`, `output`, `outputSize`, `revisions`, `authorForRevisions`,
+  `dateTimeForRevisions`, and `caseInsensitive`. Supports stdin (`-`) for one input,
+  `--format json`, and `--quiet`. Published schema: `compare-result.v1.json` (#365).
+- feat(npm): add Windows ARM64 native binary support — new npm platform package
+  `@sergey-tihon/clippit-bin-win32-arm64` built on GitHub Actions
+  `windows-11-arm` runners (#363)
+
+## [0.5.0] - 2026-06-29
+
+- feat(npm): add Linux ARM64 native binary support — new npm platform package
+  `@sergey-tihon/clippit-bin-linux-arm64` built on GitHub Actions
+  `ubuntu-24.04-arm` runners (#360)
+- chore(deps): bump actions/checkout from 6 to 7 (#347)
+
 ## [0.4.1] - 2026-06-23
 
 - chore(deps): update SkiaSharp 3.119.4 → 4.148.0 with migration fix (#346)

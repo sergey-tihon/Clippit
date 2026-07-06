@@ -96,8 +96,8 @@
 // then need to make sure that all of the cells below the caption have the border on the appropriate sides so that it looks as if the table
 // has a border.
 
+using System.Collections.Frozen;
 using System.Xml.Linq;
-using Clippit.Internal;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
 using SkiaSharp;
@@ -386,7 +386,7 @@ namespace Clippit.Html
             return node;
         }
 
-        private static readonly Dictionary<XName, int> Order_pPr = new Dictionary<XName, int>
+        private static readonly FrozenDictionary<XName, int> Order_pPr = new Dictionary<XName, int>
         {
             { W.pStyle, 10 },
             { W.keepNext, 20 },
@@ -424,9 +424,9 @@ namespace Clippit.Html
             { W.rPr, 350 },
             { W.sectPr, 360 },
             { W.pPrChange, 370 },
-        };
+        }.ToFrozenDictionary();
 
-        private static readonly Dictionary<XName, int> Order_rPr = new Dictionary<XName, int>
+        private static readonly FrozenDictionary<XName, int> Order_rPr = new Dictionary<XName, int>
         {
             { W.ins, 10 },
             { W.del, 20 },
@@ -474,9 +474,9 @@ namespace Clippit.Html
             { W.eastAsianLayout, 440 },
             { W.specVanish, 450 },
             { W.oMath, 460 },
-        };
+        }.ToFrozenDictionary();
 
-        private static readonly Dictionary<XName, int> Order_tblPr = new Dictionary<XName, int>
+        private static readonly FrozenDictionary<XName, int> Order_tblPr = new Dictionary<XName, int>
         {
             { W.tblStyle, 10 },
             { W.tblpPr, 20 },
@@ -495,9 +495,9 @@ namespace Clippit.Html
             { W.tblLook, 150 },
             { W.tblCaption, 160 },
             { W.tblDescription, 170 },
-        };
+        }.ToFrozenDictionary();
 
-        private static readonly Dictionary<XName, int> Order_tblBorders = new Dictionary<XName, int>
+        private static readonly FrozenDictionary<XName, int> Order_tblBorders = new Dictionary<XName, int>
         {
             { W.top, 10 },
             { W.left, 20 },
@@ -507,9 +507,9 @@ namespace Clippit.Html
             { W.end, 60 },
             { W.insideH, 70 },
             { W.insideV, 80 },
-        };
+        }.ToFrozenDictionary();
 
-        private static readonly Dictionary<XName, int> Order_tcPr = new Dictionary<XName, int>
+        private static readonly FrozenDictionary<XName, int> Order_tcPr = new Dictionary<XName, int>
         {
             { W.cnfStyle, 10 },
             { W.tcW, 20 },
@@ -525,9 +525,9 @@ namespace Clippit.Html
             { W.vAlign, 120 },
             { W.hideMark, 130 },
             { W.headers, 140 },
-        };
+        }.ToFrozenDictionary();
 
-        private static readonly Dictionary<XName, int> Order_tcBorders = new Dictionary<XName, int>
+        private static readonly FrozenDictionary<XName, int> Order_tcBorders = new Dictionary<XName, int>
         {
             { W.top, 10 },
             { W.start, 20 },
@@ -539,9 +539,9 @@ namespace Clippit.Html
             { W.insideV, 80 },
             { W.tl2br, 90 },
             { W.tr2bl, 100 },
-        };
+        }.ToFrozenDictionary();
 
-        private static readonly Dictionary<XName, int> Order_pBdr = new Dictionary<XName, int>
+        private static readonly FrozenDictionary<XName, int> Order_pBdr = new Dictionary<XName, int>
         {
             { W.top, 10 },
             { W.left, 20 },
@@ -549,7 +549,7 @@ namespace Clippit.Html
             { W.right, 40 },
             { W.between, 50 },
             { W.bar, 60 },
-        };
+        }.ToFrozenDictionary();
 
         private static object TransformAndOrderElements(XNode node)
         {
@@ -1902,7 +1902,7 @@ namespace Clippit.Html
             return FontType.HAnsi;
         }
 
-        private static readonly HashSet<char> WeakAndNeutralDirectionalCharacters = new HashSet<char>()
+        private static readonly FrozenSet<char> WeakAndNeutralDirectionalCharacters = new HashSet<char>()
         {
             '0',
             '1',
@@ -1997,7 +1997,7 @@ namespace Clippit.Html
             '\x06F7',
             '\x06F8',
             '\x06F9',
-        };
+        }.ToFrozenSet();
 
         private static void AdjustFontAttributes(
             WordprocessingDocument wDoc,

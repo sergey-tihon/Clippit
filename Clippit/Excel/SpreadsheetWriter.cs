@@ -376,34 +376,52 @@ namespace Clippit.Excel
 
                         var tableCount = sDoc.WorkbookPart!.WorksheetParts.Sum(wp => wp.TableDefinitionParts.Count());
 
+                        // Materialize the headings so we can handle data rows that are wider
+                        // (or narrower) than the supplied header row without producing a
+                        // malformed table definition.
+                        var columnHeadings = worksheetData.ColumnHeadings!.ToList();
+                        var tableRef = "A1:" + SpreadsheetMLUtil.IntToColumnId(totalColumns - 1) + totalRows;
+
+                        var usedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                        var fallbackSuffix = 1;
+                        var tableColumns = new List<XElement>(totalColumns);
+                        for (var i = 0; i < totalColumns; i++)
+                        {
+                            var heading = i < columnHeadings.Count ? columnHeadings[i] : null;
+                            var name = heading?.Value?.ToString().Trim() ?? string.Empty;
+
+                            if (string.IsNullOrWhiteSpace(name) || !usedNames.Add(name))
+                            {
+                                var fallbackBase = $"Column{i + 1}";
+                                var fallback = fallbackBase;
+                                while (!usedNames.Add(fallback))
+                                {
+                                    fallback = $"{fallbackBase}_{fallbackSuffix++}";
+                                }
+                                name = fallback;
+                            }
+
+                            tableColumns.Add(
+                                new XElement(
+                                    S.tableColumn,
+                                    new XAttribute(SSNoNamespace.id, i + 1),
+                                    new XAttribute(SSNoNamespace.name, name)
+                                )
+                            );
+                        }
+
                         var table = new XElement(
                             S.table,
                             new XAttribute(SSNoNamespace.id, tableCount + 1),
                             new XAttribute(SSNoNamespace.name, worksheetData.TableName),
                             new XAttribute(SSNoNamespace.displayName, worksheetData.TableName),
-                            new XAttribute(
-                                SSNoNamespace._ref,
-                                "A1:" + SpreadsheetMLUtil.IntToColumnId(totalColumns - 1) + totalRows
-                            ),
+                            new XAttribute(SSNoNamespace._ref, tableRef),
                             new XAttribute(SSNoNamespace.totalsRowShown, 0),
-                            new XElement(
-                                S.autoFilter,
-                                new XAttribute(
-                                    SSNoNamespace._ref,
-                                    "A1:" + SpreadsheetMLUtil.IntToColumnId(totalColumns - 1) + totalRows
-                                )
-                            ),
+                            new XElement(S.autoFilter, new XAttribute(SSNoNamespace._ref, tableRef)),
                             new XElement(
                                 S.tableColumns,
                                 new XAttribute(SSNoNamespace.count, totalColumns),
-                                worksheetData.ColumnHeadings.Select(
-                                    (ch, i) =>
-                                        new XElement(
-                                            S.tableColumn,
-                                            new XAttribute(SSNoNamespace.id, i + 1),
-                                            new XAttribute(SSNoNamespace.name, ch.Value)
-                                        )
-                                )
+                                tableColumns
                             ),
                             new XElement(
                                 S.tableStyleInfo,
