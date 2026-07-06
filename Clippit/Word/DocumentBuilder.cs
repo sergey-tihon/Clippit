@@ -3363,7 +3363,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     throw new DocumentBuilderException("Invalid document - target part is not ImagePart");
 
                 var oldPart = (ImagePart)ipp2.OpenXmlPart;
-                var temp = ManageImageCopy(oldPart, newContentPart, images);
+                var temp = ManageImageCopy(oldPart, images);
                 if (temp.ImagePart is null)
                 {
                     var newPart = newContentPart switch
@@ -4356,13 +4356,11 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         }
 
         // General function for handling images that tries to use an existing image if they are the same
-        private static ImageData ManageImageCopy(ImagePart oldImage, OpenXmlPart newContentPart, List<ImageData> images)
+        private static ImageData ManageImageCopy(ImagePart oldImage, List<ImageData> images)
         {
             var oldImageData = new ImageData(oldImage);
             foreach (var item in images)
             {
-                if (newContentPart != item.ImagePart)
-                    continue;
                 if (item.Compare(oldImageData))
                     return item;
             }

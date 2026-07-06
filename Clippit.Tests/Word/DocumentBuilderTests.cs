@@ -740,6 +740,51 @@ public class DocumentBuilderTests : TestsBase
     }
 
     [Test]
+    public async Task DB017_ImageDeduplicationAcrossSources()
+    {
+        // DB005-Headers-With-Images.docx is added twice as source.
+        // After the fix, the output should contain each unique image only ONCE,
+        // even though the same source (and its header image) is referenced twice.
+        var sourceDocx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB005-Headers-With-Images.docx"));
+        var noImageDocx = new FileInfo(Path.Combine(_sourceDir.FullName, "DB002-Landscape-Section.docx"));
+
+        int sourceImageCount;
+        using (var wDocSource = WordprocessingDocument.Open(sourceDocx.FullName, false))
+        {
+            sourceImageCount = wDocSource
+                .MainDocumentPart.Parts.Concat(wDocSource.MainDocumentPart.HeaderParts.SelectMany(h => h.Parts))
+                .Count(p => p.OpenXmlPart is ImagePart);
+        }
+
+        var sources = new List<ISource>
+        {
+            new Source(new WmlDocument(sourceDocx.FullName)) { KeepSections = true },
+            new Source(new WmlDocument(noImageDocx.FullName))
+            {
+                KeepSections = true,
+                DiscardHeadersAndFootersInKeptSections = true,
+            },
+            new Source(new WmlDocument(sourceDocx.FullName)) { KeepSections = true },
+        };
+
+        var processedDestDocx = new FileInfo(Path.Combine(TempDir, "DB017.docx"));
+        DocumentBuilder.BuildDocument(sources, processedDestDocx.FullName);
+
+        // With deduplication working, using the same source twice should yield
+        // no more unique image parts than a single use of that source.
+        using var wDocDest = WordprocessingDocument.Open(processedDestDocx.FullName, false);
+        var destImageParts = wDocDest
+            .MainDocumentPart.Parts.Concat(wDocDest.MainDocumentPart.HeaderParts.SelectMany(h => h.Parts))
+            .Where(p => p.OpenXmlPart is ImagePart)
+            .Select(p => p.OpenXmlPart)
+            .Distinct()
+            .Count();
+
+        await Assert.That(destImageParts).IsLessThanOrEqualTo(sourceImageCount);
+        Validate(processedDestDocx);
+    }
+
+    [Test]
     [Arguments(
         "DB100-00010",
         "DB/GlossaryDocuments/CellLevelContentControl-built.docx",
