@@ -3,6 +3,7 @@
 
 using System.Collections.Concurrent;
 using System.Collections.Frozen;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -78,15 +79,15 @@ namespace Clippit.Word
                 s_customHandlers.TryRemove(xName, out _);
         }
 
-        private static bool TryParseXName(string name, out XName xName)
+        private static bool TryParseXName(string name, [NotNullWhen(true)] out XName? xName)
         {
-            xName = null!;
+            xName = null;
             if (string.IsNullOrWhiteSpace(name))
                 return false;
             try
             {
-                xName = XName.Get(name);
                 XmlConvert.VerifyNCName(name);
+                xName = XName.Get(name);
                 return true;
             }
             catch (XmlException)
