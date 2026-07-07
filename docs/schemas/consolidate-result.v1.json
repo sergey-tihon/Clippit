@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sergey-tihon.github.io/Clippit/schemas/consolidate-result.v1.json",
+  "title": "Clippit word consolidate result",
+  "description": "Result payload of `clippit word consolidate` written to stdout in JSON mode.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["original", "revisions", "output", "outputSize"],
+  "properties": {
+    "original": {
+      "type": "string",
+      "description": "Absolute path of the original .docx file, or '<stdin>' when read from stdin."
+    },
+    "revisions": {
+      "type": "array",
+      "description": "One entry per revision document.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["file", "revisor", "color"],
+        "properties": {
+          "file": {
+            "type": "string",
+            "description": "Absolute path of the revision file, or '<stdin>' when read from stdin."
+          },
+          "revisor": {
+            "type": "string",
+            "description": "Reviewer name used for tracked revisions from this document."
+          },
+          "color": {
+            "type": "string",
+            "description": "Hex color (#RRGGBB) assigned to this reviewer's tracked changes.",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          }
+        }
+      }
+    },
+    "output": {
+      "type": "string",
+      "description": "Absolute path of the consolidated output file, or '<stdout>' when written to stdout."
+    },
+    "outputSize": {
+      "type": "integer",
+      "description": "Size of the consolidated output .docx file in bytes."
+    }
+  }
+}
