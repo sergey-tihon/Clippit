@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-07-06",
-  "last_run_id": "28807672752",
+  "last_run": "2026-07-07",
+  "last_run_id": "28882167735",
   "backlog_cursor": {
     "issues": 414,
     "prs": 165
@@ -14,34 +14,37 @@
     "279": "2026-05-20",
     "286": "2026-05-20",
     "290": "2026-05-27",
+    "373": "2026-07-07",
     "374": "2026-07-03",
     "377": "2026-07-03",
+    "379": "2026-07-07",
     "401": "2026-07-04"
   },
   "open_clippy_prs": [
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "rebased onto master 2026-07-06"},
-    {"number": 415, "branch": "clippy/perf-fix-image-deduplication-20260706", "title": "perf(word): fix image deduplication in DocumentBuilder"},
-    {"number": 416, "branch": "clippy/feat-register-custom-handler-20260706", "title": "feat(word): add RegisterCustomHandler extensibility to DocumentAssembler", "note": "fresh reimpl of stale PR #163 (closes #66)"}
+    {"number": 417, "branch": "clippy/feat-register-custom-handler-20260706", "title": "feat(word): add RegisterCustomHandler extensibility to DocumentAssembler", "note": "closes #66; fresh reimpl of stale PR #163"},
+    {"number": "aw_pr_wcons", "branch": "clippy/feat-word-consolidate-20260707", "title": "feat: add clippit word consolidate command", "note": "closes #379; 14 tests CLI164-CLI177"}
   ],
   "closed_stale_prs": [
-    {"number": 163, "reason": "149 commits behind master, ImageSharp->SkiaSharp conflict; replaced by PR #416"}
+    {"number": 163, "reason": "149 commits behind master, ImageSharp->SkiaSharp conflict; replaced by PR #417"}
   ],
   "checked_off_by_maintainer": [],
   "monthly_activity_issue": 370,
   "notes": [
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "Monthly Activity issue for July 2026 is #370",
-    "PR #163 (RegisterCustomHandler) is STALE - replaced by PR #416 this run; maintainer should close #163",
+    "PR #163 (RegisterCustomHandler) is STALE - replaced by PR #417; maintainer should close #163",
     "PR #165 (ExcelAssembler) rebased onto master 2026-07-06 - all 9 tests pass",
-    "PR #415 (image deduplication fix): fixes ManageImageCopy dead guard in DocumentBuilder",
-    "PR #416 (RegisterCustomHandler): fresh impl on master, closes #66, 5 tests DA500-DA504",
-    "Issue #379 (CLI word consolidate) - good candidate for next fix PR",
+    "PR #415 (image deduplication fix): MERGED",
+    "PR #417 (RegisterCustomHandler): fresh impl on master, closes #66, 5 tests DA500-DA504",
+    "PR word-consolidate (aw_pr_wcons): closes #379, 14 tests CLI164-CLI177",
     "Issue #378 (CLI excel create) - depends on ExcelAssembler landing first",
-    "All Dependabot deps are current as of 2026-07-04"
+    "All Dependabot deps are current as of 2026-07-07"
   ],
   "improvements_submitted": [
-    "PR#415: perf(word) fix image deduplication ManageImageCopy (2026-07-06)",
-    "PR#416: feat(word) RegisterCustomHandler extensibility API (2026-07-06)",
+    "PR(aw_pr_wcons): feat(cli) word consolidate command (2026-07-07)",
+    "PR#417: feat(word) RegisterCustomHandler extensibility API (2026-07-06)",
+    "PR#415: perf(word) fix image deduplication ManageImageCopy (merged 2026-07-06)",
     "PR#412: fix(word) UnicodeMapper.RunToString xml:space=preserve (merged 2026-07-05)",
     "PR#411: feat(cli) word simplify-markup (merged 2026-07-05)",
     "PR#407: ci NuGet OIDC trusted publishing (merged 2026-07-04)",
