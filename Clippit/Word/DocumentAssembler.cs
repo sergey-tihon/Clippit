@@ -28,7 +28,7 @@ namespace Clippit.Word
     /// The replacement content (e.g. an <c>XElement</c> or <c>IEnumerable&lt;XNode&gt;</c>),
     /// or <c>null</c> to silently remove the directive.
     /// </returns>
-    public delegate object CustomAssemblerHandler(XElement directive, XElement data, OpenXmlPart part);
+    public delegate object? CustomAssemblerHandler(XElement directive, XElement data, OpenXmlPart part);
 
     public static partial class DocumentAssembler
     {
@@ -56,13 +56,15 @@ namespace Clippit.Word
         {
             ArgumentNullException.ThrowIfNull(elementName);
             ArgumentNullException.ThrowIfNull(handler);
-            if (s_paSchemaSets.ContainsKey(elementName))
+            if (!TryParseXName(elementName, out var xName))
+                throw new ArgumentException($"'{elementName}' is not a valid XML local name.", nameof(elementName));
+            if (s_paSchemaSets.ContainsKey(xName))
                 throw new ArgumentException(
                     $"'{elementName}' is a built-in DocumentAssembler element name and cannot be overridden.",
                     nameof(elementName)
                 );
             var schema = schemaXsd is not null ? new PASchemaSet(schemaXsd) : null;
-            s_customHandlers[(XName)elementName] = (schema, handler);
+            s_customHandlers[xName] = (schema, handler);
         }
 
         /// <summary>
@@ -72,7 +74,25 @@ namespace Clippit.Word
         public static void UnregisterCustomHandler(string elementName)
         {
             ArgumentNullException.ThrowIfNull(elementName);
-            s_customHandlers.TryRemove((XName)elementName, out _);
+            if (TryParseXName(elementName, out var xName))
+                s_customHandlers.TryRemove(xName, out _);
+        }
+
+        private static bool TryParseXName(string name, out XName xName)
+        {
+            xName = null!;
+            if (string.IsNullOrWhiteSpace(name))
+                return false;
+            try
+            {
+                xName = XName.Get(name);
+                XmlConvert.VerifyNCName(name);
+                return true;
+            }
+            catch (XmlException)
+            {
+                return false;
+            }
         }
 
         public static WmlDocument AssembleDocument(WmlDocument templateDoc, XmlDocument data, out bool templateError)
@@ -611,7 +631,7 @@ namespace Clippit.Word
                 if (
                     string.IsNullOrEmpty(alias)
                     || s_aliasList.Contains(alias)
-                    || s_customHandlers.ContainsKey((XName)alias)
+                    || (TryParseXName(alias, out var aliasXName) && s_customHandlers.ContainsKey(aliasXName))
                 )
                 {
                     var ccContents = element
@@ -886,7 +906,7 @@ namespace Clippit.Word
             return xml;
         }
 
-        private static string ValidatePerSchema(XElement element)
+        private static string? ValidatePerSchema(XElement element)
         {
             if (s_paSchemaSets.TryGetValue(element.Name, out var paSchemaSet) == false)
             {
@@ -903,7 +923,7 @@ namespace Clippit.Word
             }
 
             var d = new XDocument(element);
-            string message = null;
+            string? message = null;
             d.Validate(
                 paSchemaSet.SchemaSet,
                 (_, e) =>
