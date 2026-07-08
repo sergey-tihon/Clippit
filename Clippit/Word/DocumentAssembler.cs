@@ -43,6 +43,7 @@ namespace Clippit.Word
         /// <summary>
         /// Registers a custom directive handler so DocumentAssembler can process
         /// <c>&lt;ElementName .../&gt;</c> directives embedded in Word templates.
+        /// Registration is process-wide; avoid registering/unregistering per call in concurrent scenarios unless you synchronize access.
         /// </summary>
         /// <param name="elementName">
         /// The local name of the custom XML element (e.g. <c>"QrCode"</c>).
@@ -75,8 +76,9 @@ namespace Clippit.Word
         public static void UnregisterCustomHandler(string elementName)
         {
             ArgumentNullException.ThrowIfNull(elementName);
-            if (TryParseXName(elementName, out var xName))
-                s_customHandlers.TryRemove(xName, out _);
+            if (!TryParseXName(elementName, out var xName))
+                throw new ArgumentException($"'{elementName}' is not a valid XML local name.", nameof(elementName));
+            s_customHandlers.TryRemove(xName, out _);
         }
 
         private static bool TryParseXName(string name, [NotNullWhen(true)] out XName? xName)
