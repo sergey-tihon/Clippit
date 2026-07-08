@@ -360,6 +360,7 @@ internal sealed class WordConsolidateTests : CliIntegrationTestBase
             .ConfigureAwait(false);
 
         await Assert.That(result.ExitCode).IsNotEqualTo(0);
+        await Assert.That(result.StandardError).Contains("stdin");
     }
 }
 #pragma warning restore CA1707
