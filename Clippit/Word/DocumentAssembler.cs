@@ -90,7 +90,7 @@ namespace Clippit.Word
                 xName = XName.Get(name);
                 return true;
             }
-            catch (XmlException)
+            catch (Exception e) when (e is XmlException or ArgumentException)
             {
                 return false;
             }

@@ -1702,6 +1702,7 @@ public class DocumentAssemblerTests : TestsBase
 
             using var resultStream = new MemoryStream(result.DocumentByteArray);
             using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+            await Validate(resultDoc, s_expectedErrors);
             var text = resultDoc
                 .MainDocumentPart!.GetXDocument()
                 .Descendants(w + "t")
@@ -1739,6 +1740,7 @@ public class DocumentAssemblerTests : TestsBase
 
             using var resultStream = new MemoryStream(result.DocumentByteArray);
             using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+            await Validate(resultDoc, s_expectedErrors);
             XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
             var allText = resultDoc
                 .MainDocumentPart!.GetXDocument()
@@ -1773,6 +1775,7 @@ public class DocumentAssemblerTests : TestsBase
 
             using var resultStream = new MemoryStream(result.DocumentByteArray);
             using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+            await Validate(resultDoc, s_expectedErrors);
             XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
             var allText = resultDoc
                 .MainDocumentPart!.GetXDocument()
@@ -1805,6 +1808,10 @@ public class DocumentAssemblerTests : TestsBase
         var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
 
         await Assert.That(hasError).IsTrue();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
     }
 
     /// <summary>DA504 — a custom handler with a schema validates directive attributes.</summary>
@@ -1845,6 +1852,7 @@ public class DocumentAssemblerTests : TestsBase
             XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
             using var resultStream = new MemoryStream(result.DocumentByteArray);
             using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+            await Validate(resultDoc, s_expectedErrors);
             var text = resultDoc
                 .MainDocumentPart!.GetXDocument()
                 .Descendants(w + "t")
