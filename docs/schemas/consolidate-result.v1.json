@@ -21,7 +21,7 @@
         "properties": {
           "file": {
             "type": "string",
-            "description": "Absolute path of the revision file, or '<stdin>' when read from stdin."
+            "description": "Absolute path of the revision file."
           },
           "revisor": {
             "type": "string",
@@ -37,7 +37,7 @@
     },
     "output": {
       "type": "string",
-      "description": "Absolute path of the consolidated output file, or '<stdout>' when written to stdout."
+      "description": "Absolute path of the consolidated output file. When --output - is used, stdout is reserved for the binary DOCX stream and no JSON result is emitted."
     },
     "outputSize": {
       "type": "integer",

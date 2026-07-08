@@ -351,5 +351,15 @@ internal sealed class WordConsolidateTests : CliIntegrationTestBase
         using var doc = WordprocessingDocument.Open(output.FullName, false);
         await Validate(doc, s_expectedErrors);
     }
+
+    [Test]
+    public async Task CLI178_WordConsolidate_StdinForRevision_ReturnsInvalidArguments()
+    {
+        var result = await CliTestRunner
+            .RunManagedAsync("word", "consolidate", s_original, "-", "--output", Path.Combine(TempDir, "out.docx"))
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsNotEqualTo(0);
+    }
 }
 #pragma warning restore CA1707

@@ -9,9 +9,11 @@
   revision file name and a rotating palette). Additional options: `--author`,
   `--date-time`, `--case-insensitive`, `--no-table-consolidation`, `--output`/`-o`
   (defaults to `<original>-consolidated.docx`, `-` for stdout), `--force`,
-  `--format json`, `--quiet`. Supports stdin (`-`) for the original. Mismatched
-  `--revisor`/`--color` counts or zero revision files return `INVALID_ARGUMENTS`
-  (exit 2). Published schema: `consolidate-result.v1.json` (#379).
+  `--format json`, `--quiet`. Supports stdin (`-`) for the original document; revision
+  files must be filesystem paths. Mismatched `--revisor`/`--color` counts or zero
+  revision files return `INVALID_ARGUMENTS` (exit 2). When `--output -` is used, stdout
+  is reserved for the binary DOCX stream and the JSON result is suppressed. Published
+  schema: `consolidate-result.v1.json` (#379).
 
 ## [0.7.0] - 2026-07-05
 

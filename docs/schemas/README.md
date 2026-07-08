@@ -46,6 +46,10 @@ published for documentation, integration validation, and contract tests.
   reserved for the converted HTML/DOCX stream and the success payload is
   suppressed.
 
+  `word compare` and `word consolidate` follow the same pattern: when
+  `--output -` is used, stdout carries the binary DOCX and the JSON result is
+  suppressed.
+
 ## Exit codes
 
 | Code | Symbolic            | Meaning                                               |

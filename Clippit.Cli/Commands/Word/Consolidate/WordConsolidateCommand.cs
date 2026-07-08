@@ -17,7 +17,11 @@ internal static class WordConsolidateCommand
             var values = result.GetValueOrDefault<string[]>() ?? [];
             foreach (var value in values)
             {
-                if (value != InputSource.StdinToken && !File.Exists(value))
+                if (value == InputSource.StdinToken)
+                    result.AddError(
+                        "Revision files must be filesystem paths; stdin ('-') is not permitted for revisions."
+                    );
+                else if (!File.Exists(value))
                     result.AddError($"Revision file not found: {value}");
             }
         });
