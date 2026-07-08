@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sergey-tihon.github.io/Clippit/schemas/word-build-result.v1.json",
+  "title": "Clippit word build run result",
+  "description": "Result payload of `clippit word build run` written to stdout on success (JSON mode).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["output", "outputSize", "entryCount", "entries"],
+  "properties": {
+    "output": {
+      "type": "string",
+      "description": "Absolute path of the produced .docx file, or '<stdout>' when written to stdout."
+    },
+    "outputSize": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Size of the output .docx file in bytes."
+    },
+    "entryCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of deck entries (sections + file entries)."
+    },
+    "entries": {
+      "type": "array",
+      "description": "Per-entry breakdown in deck order. Each entry is either a section label or a file contribution.",
+      "items": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "section": {
+          "type": "string",
+          "description": "Name of a logical section label (mutually exclusive with 'file')."
+        },
+        "file": {
+          "type": "string",
+          "description": "Manifest-relative path of a source .docx file (mutually exclusive with 'section')."
+        },
+        "elements": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of body elements copied from this file entry."
+        }
+      },
+      "oneOf": [
+        { "required": ["section"] },
+        { "required": ["file", "elements"] }
+      ]
+    }
+  }
+}

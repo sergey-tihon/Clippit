@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sergey-tihon.github.io/Clippit/schemas/word-build-manifest.v1.json",
+  "title": "Clippit Word build manifest",
+  "description": "Manifest consumed by `clippit word build run` to merge multiple .docx sources into a single document.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "output",
+    "deck"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema URL for editor validation and completion."
+    },
+    "output": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Output .docx path. Relative paths resolve against the manifest file directory."
+    },
+    "deck": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Ordered deck entries. Each entry is either a string shorthand or an object with explicit options.",
+      "items": {
+        "oneOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "description": "String shorthand: `[Section Name]` creates a logical section label; any other value is a source .docx file path."
+          },
+          {
+            "$ref": "#/$defs/sectionEntry"
+          },
+          {
+            "$ref": "#/$defs/fileEntry"
+          }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "sectionEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "section"
+      ],
+      "properties": {
+        "section": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Name of a logical section label (no content is added to the document)."
+        }
+      }
+    },
+    "fileEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file"
+      ],
+      "properties": {
+        "file": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Source .docx file path. Relative paths resolve against the manifest file directory."
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "0-based index of the first body element to copy. Defaults to 0 (beginning of document)."
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum number of body elements to copy. Defaults to all remaining elements."
+        },
+        "keepSections": {
+          "type": "boolean",
+          "default": false,
+          "description": "When true, preserve this source document's section structure in the merged output."
+        },
+        "discardHeadersAndFootersInKeptSections": {
+          "type": "boolean",
+          "default": false,
+          "description": "When keepSections is true, discard the source document's headers and footers."
+        }
+      }
+    }
+  }
+}
