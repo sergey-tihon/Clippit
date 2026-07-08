@@ -24,8 +24,26 @@ clippit pptx verify presentation.pptx
 # Validate a DOCX file
 clippit word verify document.docx
 
+# Compare two DOCX files with tracked revisions
+clippit word compare before.docx after.docx --output compared.docx
+
+# Consolidate multiple DOCX revisions into one tracked-changes file
+clippit word consolidate original.docx alice.docx bob.docx --output consolidated.docx
+
 # Assemble a DOCX template with XML data
 clippit word assemble template.docx data.xml --output assembled.docx
+
+# Accept all tracked revisions in a DOCX file
+clippit word accept-revisions draft.docx
+
+# Remove non-content markup from a DOCX file
+clippit word simplify-markup document.docx --accept-revisions --remove-comments
+
+# Convert DOCX to HTML
+clippit word to-html document.docx
+
+# Convert HTML to DOCX
+clippit word from-html article.html --css styles.css
 
 # Validate an XLSX file
 clippit excel verify spreadsheet.xlsx
@@ -44,7 +62,9 @@ clippit pptx split presentation.pptx --format json
 | `pptx verify`           | Validate a PPTX — schema, relationships, markup compatibility, and sections.                                                            |
 | `word assemble`         | Assemble a DOCX template with XML data.                                                                                                  |
 | `word compare`          | Compare two DOCX files and produce a tracked-revision DOCX.                                                                             |
+| `word consolidate`      | Combine multiple DOCX revisions into one tracked-changes DOCX.                                                                          |
 | `word accept-revisions` | Accept all tracked revisions in a DOCX file.                                                                                            |
+| `word simplify-markup`  | Remove non-content markup from a DOCX file.                                                                                             |
 | `word verify`           | Validate a DOCX — schema and relationships.                                                                                             |
 | `word to-html`    | Convert a DOCX to HTML/CSS.                                                                                                             |
 | `word from-html`  | Convert HTML/CSS to a DOCX.                                                                                                             |

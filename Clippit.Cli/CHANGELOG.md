@@ -2,6 +2,18 @@
 
 ## [0.7.0] - 2026-07-05
 
+- Added `word consolidate` command to combine multiple revisions of a document into one
+  file with tracked changes. Wraps `WmlComparer.Consolidate`. Supports one positional
+  original argument and one or more revision arguments. Reviewer names and hex colors
+  can be assigned with `--revisor` and `--color` (repeated per revision; defaults to the
+  revision file name and a rotating palette). Additional options: `--author`,
+  `--date-time`, `--case-insensitive`, `--no-table-consolidation`, `--output`/`-o`
+  (defaults to `<original>-consolidated.docx`, `-` for stdout), `--force`,
+  `--format json`, `--quiet`. Supports stdin (`-`) for the original document; revision
+  files must be filesystem paths. Mismatched `--revisor`/`--color` counts or zero
+  revision files return `INVALID_ARGUMENTS` (exit 2). When `--output -` is used, stdout
+  is reserved for the binary DOCX stream and the JSON result is suppressed. Published
+  schema: `consolidate-result.v1.json` (#379).
 - Added `word simplify-markup` command to remove non-content markup from a `.docx` file.
   Wraps `MarkupSimplifier.SimplifyMarkup`. Accepts one flag per `SimplifyMarkupSettings`
   boolean field (`--accept-revisions`, `--remove-rsid-info`, `--remove-markup-for-document-comparison`,

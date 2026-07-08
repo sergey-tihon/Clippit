@@ -6,6 +6,7 @@ using Clippit.Cli.Commands.Pptx.Verify;
 using Clippit.Cli.Commands.Version;
 using Clippit.Cli.Commands.Word.Assemble;
 using Clippit.Cli.Commands.Word.Compare;
+using Clippit.Cli.Commands.Word.Consolidate;
 using Clippit.Cli.Infrastructure;
 
 namespace Clippit.Cli;
@@ -31,6 +32,8 @@ namespace Clippit.Cli;
 [JsonSerializable(typeof(ConvertResult))]
 [JsonSerializable(typeof(CompareResult))]
 [JsonSerializable(typeof(AssembleResult))]
+[JsonSerializable(typeof(ConsolidateResult))]
+[JsonSerializable(typeof(IReadOnlyList<RevisionInfoResult>))]
 [JsonSerializable(typeof(ErrorResult))]
 [JsonSourceGenerationOptions(
     WriteIndented = false,
