@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Concurrent;
 using System.Collections.Frozen;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
@@ -17,8 +19,85 @@ using Path = System.IO.Path;
 
 namespace Clippit.Word
 {
+    /// <summary>
+    /// Handles a custom DocumentAssembler directive element during content replacement.
+    /// </summary>
+    /// <param name="directive">The custom element extracted from the template.</param>
+    /// <param name="data">The current data context (XElement).</param>
+    /// <param name="part">The OpenXml part being assembled.</param>
+    /// <returns>
+    /// The replacement content (e.g. an <c>XElement</c> or <c>IEnumerable&lt;XNode&gt;</c>),
+    /// or <c>null</c> to silently remove the directive.
+    /// </returns>
+    public delegate object? CustomAssemblerHandler(XElement directive, XElement data, OpenXmlPart part);
+
     public static partial class DocumentAssembler
     {
+        // ── Custom handler registration ───────────────────────────────────────────────────────────
+
+        private static readonly ConcurrentDictionary<
+            XName,
+            (PASchemaSet? Schema, CustomAssemblerHandler Handler)
+        > s_customHandlers = new();
+
+        /// <summary>
+        /// Registers a custom directive handler so DocumentAssembler can process
+        /// <c>&lt;ElementName .../&gt;</c> directives embedded in Word templates.
+        /// Registration is process-wide; avoid registering/unregistering per call in concurrent scenarios unless you synchronize access.
+        /// </summary>
+        /// <param name="elementName">
+        /// The local name of the custom XML element (e.g. <c>"QrCode"</c>).
+        /// Must not conflict with built-in names (<c>Content</c>, <c>Table</c>, <c>Repeat</c>, etc.).
+        /// </param>
+        /// <param name="schemaXsd">
+        /// Optional XSD fragment that validates the directive's attributes (same format as the
+        /// built-in schemas in <c>s_paSchemaSets</c>). Pass <c>null</c> to skip validation.
+        /// </param>
+        /// <param name="handler">The delegate that replaces the directive with real content.</param>
+        public static void RegisterCustomHandler(string elementName, string? schemaXsd, CustomAssemblerHandler handler)
+        {
+            ArgumentNullException.ThrowIfNull(elementName);
+            ArgumentNullException.ThrowIfNull(handler);
+            if (!TryParseXName(elementName, out var xName))
+                throw new ArgumentException($"'{elementName}' is not a valid XML local name.", nameof(elementName));
+            if (s_paSchemaSets.ContainsKey(xName))
+                throw new ArgumentException(
+                    $"'{elementName}' is a built-in DocumentAssembler element name and cannot be overridden.",
+                    nameof(elementName)
+                );
+            var schema = schemaXsd is not null ? new PASchemaSet(schemaXsd) : null;
+            s_customHandlers[xName] = (schema, handler);
+        }
+
+        /// <summary>
+        /// Removes a previously registered custom handler.
+        /// Silently does nothing if <paramref name="elementName"/> was never registered.
+        /// </summary>
+        public static void UnregisterCustomHandler(string elementName)
+        {
+            ArgumentNullException.ThrowIfNull(elementName);
+            if (!TryParseXName(elementName, out var xName))
+                throw new ArgumentException($"'{elementName}' is not a valid XML local name.", nameof(elementName));
+            s_customHandlers.TryRemove(xName, out _);
+        }
+
+        private static bool TryParseXName(string name, [NotNullWhen(true)] out XName? xName)
+        {
+            xName = null;
+            if (string.IsNullOrWhiteSpace(name))
+                return false;
+            try
+            {
+                XmlConvert.VerifyNCName(name);
+                xName = XName.Get(name);
+                return true;
+            }
+            catch (Exception e) when (e is XmlException or ArgumentException)
+            {
+                return false;
+            }
+        }
+
         public static WmlDocument AssembleDocument(WmlDocument templateDoc, XmlDocument data, out bool templateError)
         {
             var xDoc = data.GetXDocument();
@@ -220,6 +299,9 @@ namespace Clippit.Word
             PA.DocumentTemplate,
         };
 
+        private static bool IsMetaToForceToBlock(XName name) =>
+            s_metaToForceToBlock.Contains(name) || s_customHandlers.ContainsKey(name);
+
         private static object ForceBlockLevelAsAppropriate(XNode node, TemplateError te)
         {
             if (node is not XElement element)
@@ -227,7 +309,7 @@ namespace Clippit.Word
 
             if (element.Name == W.p)
             {
-                var childMeta = element.Elements().Where(n => s_metaToForceToBlock.Contains(n.Name)).ToList();
+                var childMeta = element.Elements().Where(n => IsMetaToForceToBlock(n.Name)).ToList();
                 if (childMeta.Count == 1)
                 {
                     var child = childMeta.First();
@@ -240,7 +322,7 @@ namespace Clippit.Word
                     if (otherTextInParagraph != "")
                     {
                         var newPara = new XElement(element);
-                        var newMeta = newPara.Elements().First(n => s_metaToForceToBlock.Contains(n.Name));
+                        var newMeta = newPara.Elements().First(n => IsMetaToForceToBlock(n.Name));
                         newMeta.ReplaceWith(
                             ErrorHandler.CreateRunErrorMessage(
                                 "Error: Unmatched metadata can't be in paragraph with other text",
@@ -549,7 +631,11 @@ namespace Clippit.Word
             if (element.Name == W.sdt)
             {
                 var alias = (string)element.Elements(W.sdtPr).Elements(W.alias).Attributes(W.val).FirstOrDefault();
-                if (string.IsNullOrEmpty(alias) || s_aliasList.Contains(alias))
+                if (
+                    string.IsNullOrEmpty(alias)
+                    || s_aliasList.Contains(alias)
+                    || (TryParseXName(alias, out var aliasXName) && s_customHandlers.ContainsKey(aliasXName))
+                )
                 {
                     var ccContents = element
                         .DescendantsTrimmed(W.txbxContent)
@@ -823,15 +909,24 @@ namespace Clippit.Word
             return xml;
         }
 
-        private static string ValidatePerSchema(XElement element)
+        private static string? ValidatePerSchema(XElement element)
         {
             if (s_paSchemaSets.TryGetValue(element.Name, out var paSchemaSet) == false)
             {
-                return $"Invalid XML: {element.Name.LocalName} is not a valid element";
+                if (s_customHandlers.TryGetValue(element.Name, out var customEntry))
+                {
+                    if (customEntry.Schema is null)
+                        return null;
+                    paSchemaSet = customEntry.Schema;
+                }
+                else
+                {
+                    return $"Invalid XML: {element.Name.LocalName} is not a valid element";
+                }
             }
 
             var d = new XDocument(element);
-            string message = null;
+            string? message = null;
             d.Validate(
                 paSchemaSet.SchemaSet,
                 (_, e) =>
@@ -1901,6 +1996,20 @@ namespace Clippit.Word
                             element.Nodes().Select(n => ContentReplacementTransform(n, data, templateError, part))
                         );
                     }
+                }
+            }
+
+            // Dispatch to registered custom handlers before the generic passthrough.
+            if (s_customHandlers.TryGetValue(element.Name, out var customEntry))
+            {
+                try
+                {
+                    var result = customEntry.Handler(element, data, part);
+                    return result ?? Enumerable.Empty<XNode>();
+                }
+                catch (Exception e)
+                {
+                    return element.CreateContextErrorMessage($"{element.Name.LocalName}: {e.Message}", templateError);
                 }
             }
 
