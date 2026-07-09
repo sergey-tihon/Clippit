@@ -1,8 +1,8 @@
 {
-  "last_run": "2026-07-08",
-  "last_run_id": "28957803142",
+  "last_run": "2026-07-09",
+  "last_run_id": "29033561827",
   "backlog_cursor": {
-    "issues": 414,
+    "issues": 420,
     "prs": 165
   },
   "comments_made": {
@@ -21,7 +21,10 @@
   },
   "open_clippy_prs": [
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "rebased onto master 2026-07-06"},
-    {"number": "aw_pr_wbuild", "branch": "clippy/feat-word-build-374-20260708", "title": "feat(cli): add `clippit word build init/run` command", "note": "closes #374; 14 tests CLI180-CLI193"}
+    {"number": "aw_pr_xcreate", "branch": "clippy/feat-excel-create-378-20260709", "title": "feat(cli): add `clippit excel create` command", "note": "closes #378; 14 tests CLI179-CLI192"}
+  ],
+  "fallback_issues": [
+    {"number": 420, "note": "word build fallback issue - PR blocked by README.md; patch in run 28957803142 artifacts; branch created but no commits"}
   ],
   "closed_stale_prs": [
     {"number": 163, "reason": "149 commits behind master, ImageSharp->SkiaSharp conflict; replaced by PR #417 (merged)"}
@@ -32,14 +35,14 @@
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "Monthly Activity issue for July 2026 is #370",
     "PR #165 (ExcelAssembler) rebased onto master 2026-07-06 - all 9 tests pass",
-    "PR #417 (RegisterCustomHandler): MERGED 2026-07-08, closes #66",
-    "PR #419 (word consolidate): MERGED 2026-07-08, closes #379",
-    "PR aw_pr_wbuild: feat(cli) word build init/run, closes #374, 14 tests CLI180-CLI193",
-    "Issue #378 (CLI excel create) - implementation guidance posted 2026-07-08; no external deps, ready to implement",
+    "PR aw_pr_xcreate: feat(cli) excel create command, closes #378, 14 tests CLI179-CLI192",
+    "Issue #420: word build fallback issue; PR was blocked by README.md protection; patch in run 28957803142 artifacts",
+    "Issue #374 (CLI word build): word build PR was blocked by README.md protection; can re-attempt without README changes",
     "All Dependabot deps are current as of 2026-07-07"
   ],
   "improvements_submitted": [
-    "PR(aw_pr_wbuild): feat(cli) word build init/run command (2026-07-08)",
+    "PR(aw_pr_xcreate): feat(cli) excel create command (2026-07-09), closes #378, 14 tests CLI179-CLI192",
+    "Issue#420: word build fallback (2026-07-08) - patch available for manual apply, closes #374",
     "PR#419: feat(cli) word consolidate command (merged 2026-07-08)",
     "PR#417: feat(word) RegisterCustomHandler extensibility API (merged 2026-07-08)",
     "PR#415: perf(word) fix image deduplication ManageImageCopy (merged 2026-07-06)",
