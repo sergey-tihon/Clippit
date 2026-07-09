@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Clippit.Cli.Commands.Common.Verify;
+using Clippit.Cli.Commands.Excel.Create;
 using Clippit.Cli.Commands.Pptx.Build;
 using Clippit.Cli.Commands.Pptx.Split;
 using Clippit.Cli.Commands.Pptx.Verify;
@@ -34,6 +35,8 @@ namespace Clippit.Cli;
 [JsonSerializable(typeof(AssembleResult))]
 [JsonSerializable(typeof(ConsolidateResult))]
 [JsonSerializable(typeof(IReadOnlyList<RevisionInfoResult>))]
+[JsonSerializable(typeof(WorkbookDefinition))]
+[JsonSerializable(typeof(CreateResult))]
 [JsonSerializable(typeof(ErrorResult))]
 [JsonSourceGenerationOptions(
     WriteIndented = false,
