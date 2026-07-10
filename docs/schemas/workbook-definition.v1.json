@@ -26,8 +26,10 @@
       "properties": {
         "name": {
           "type": "string",
-          "description": "Sheet name. Must be ≤31 characters and must not contain * [ ] / \\ : ?",
-          "maxLength": 31
+          "description": "Sheet name. Must be ≤31 characters, must not start with ' (apostrophe), and must not contain * [ ] / \\ : ?",
+          "minLength": 1,
+          "maxLength": 31,
+          "pattern": "^(?!')[^*\\[\\]/\\\\:?]+$"
         },
         "tableName": {
           "type": "string",

@@ -21,7 +21,7 @@ internal static class ExcelCreateService
             throw CliException.InvalidFormat($"Invalid workbook definition JSON: {ex.Message}");
         }
 
-        if (definition.Worksheets.Count == 0)
+        if (definition.Worksheets is null || definition.Worksheets.Count == 0)
             throw CliException.InvalidArguments("Workbook definition must contain at least one worksheet.");
 
         var workbook = MapWorkbook(definition);
@@ -31,12 +31,17 @@ internal static class ExcelCreateService
         {
             workbook.WriteTo(memStream);
         }
+        catch (Exception ex) when (ex is InvalidSheetNameException or WorksheetAlreadyExistsException)
+        {
+            throw CliException.InvalidArguments(ex.Message);
+        }
         catch (Exception ex) when (ex is not CliException)
         {
             throw CliException.InvalidFormat($"Could not generate workbook: {ex.Message}");
         }
 
-        var bytes = memStream.ToArray();
+        var outputSize = memStream.Length;
+        memStream.Position = 0;
 
         string? tempPath = null;
         try
@@ -45,7 +50,7 @@ internal static class ExcelCreateService
             output.EnsureDirectoryExists();
             using (var outStream = output.OpenWrite(out tempPath))
             {
-                outStream.Write(bytes, 0, bytes.Length);
+                memStream.CopyTo(outStream);
                 outStream.Flush();
 
                 if (output.IsStdout)
@@ -68,7 +73,7 @@ internal static class ExcelCreateService
         {
             Input = input.DisplayName,
             Output = output.DisplayPath,
-            OutputSize = bytes.Length,
+            OutputSize = outputSize,
             WorksheetCount = definition.Worksheets.Count,
         };
     }
@@ -81,12 +86,14 @@ internal static class ExcelCreateService
         var dfn = new WorksheetDfn
         {
             Name = ws.Name,
-            Rows = ws.Rows.Select(r => new RowDfn { Cells = r.Cells.Select(MapCell).ToList() }).ToList(),
+            Rows = (ws.Rows ?? [])
+                .Select(r => new RowDfn { Cells = (r.Cells ?? []).Select(MapCell).ToList() })
+                .ToList(),
         };
         // TableName and ColumnHeadings are optional in WorksheetDfn (legacy API accepts null)
         if (ws.TableName is not null)
             dfn.TableName = ws.TableName;
-        if (ws.ColumnHeadings is not null)
+        if (ws.ColumnHeadings is { Count: > 0 })
             dfn.ColumnHeadings = ws.ColumnHeadings.Select(MapCell).ToList();
         return dfn;
     }
@@ -131,7 +138,12 @@ internal static class ExcelCreateService
     {
         if (
             dataType == CellDataType.Date
-            && DateTime.TryParse(value, null, System.Globalization.DateTimeStyles.RoundtripKind, out var dt)
+            && DateTime.TryParse(
+                value,
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.RoundtripKind,
+                out var dt
+            )
         )
             return dt;
 

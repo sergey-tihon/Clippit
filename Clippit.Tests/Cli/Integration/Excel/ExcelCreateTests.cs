@@ -353,7 +353,7 @@ internal sealed class ExcelCreateTests : CliIntegrationTestBase
     }
 
     [Test]
-    public async Task CLI192_ExcelCreate_QuietMode_SupressesPayload()
+    public async Task CLI192_ExcelCreate_QuietMode_SuppressesPayload()
     {
         var dir = CliTestRunner.CreateTempDirectory("excel-create-quiet");
         var input = await WriteWorkbookJsonAsync(dir, SimpleWorkbook()).ConfigureAwait(false);
@@ -367,6 +367,29 @@ internal sealed class ExcelCreateTests : CliIntegrationTestBase
         await Assert.That(result.StandardOutput).IsEmpty();
         await Assert.That(result.StandardError).IsEmpty();
         await Assert.That(output.Exists).IsTrue();
+    }
+
+    [Test]
+    public async Task CLI193_ExcelCreate_InvalidSheetName_ReturnsInvalidArguments()
+    {
+        var dir = CliTestRunner.CreateTempDirectory("excel-create-invalid-sheet");
+        var content = """
+            {
+              "worksheets": [
+                {
+                  "name": "Bad/Name",
+                  "rows": [{ "cells": [{ "value": "x" }] }]
+                }
+              ]
+            }
+            """;
+        var input = await WriteWorkbookJsonAsync(dir, content).ConfigureAwait(false);
+
+        var result = await CliTestRunner.RunManagedAsync("excel", "create", input.FullName).ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(2);
+        using var json = result.ReadStderrJson();
+        await Assert.That(json.RootElement.GetProperty("code").GetString()).IsEqualTo("INVALID_ARGUMENTS");
     }
 }
 #pragma warning restore CA1707

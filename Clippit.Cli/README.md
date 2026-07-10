@@ -47,6 +47,9 @@ clippit word from-html article.html --css styles.css
 # Validate an XLSX file
 clippit excel verify spreadsheet.xlsx
 
+# Create an XLSX workbook from a JSON definition
+clippit excel create workbook.json --output report.xlsx
+
 # Get JSON output for scripting
 clippit pptx split presentation.pptx --format json
 ```
@@ -68,6 +71,7 @@ clippit pptx split presentation.pptx --format json
 | `word to-html` | Convert a DOCX to HTML/CSS. |
 | `word from-html` | Convert HTML/CSS to a DOCX. |
 | `excel to-html` | Convert an XLSX sheet, range, or table to HTML/CSS. |
+| `excel create` | Generate an `.xlsx` workbook from a JSON workbook definition. |
 | `excel verify` | Validate an XLSX — schema and relationships. |
 | `version` | Print version information. |
 
