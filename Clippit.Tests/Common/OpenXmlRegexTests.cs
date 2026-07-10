@@ -505,7 +505,9 @@ public class OpenXmlRegexTests : TestsBase
             (_, _) =>
             {
                 if (replaced)
+                {
                     return false;
+                }
                 replaced = true;
                 return true;
             }

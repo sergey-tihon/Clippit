@@ -148,7 +148,6 @@ public class TextReplacerTests
 
     private static readonly XNamespace A = "http://schemas.openxmlformats.org/drawingml/2006/main";
     private static readonly XNamespace P = "http://schemas.openxmlformats.org/presentationml/2006/main";
-    private static readonly XNamespace R = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 
     /// <summary>
     /// Creates a minimal in-memory PmlDocument with a single slide containing the given text.
@@ -170,7 +169,9 @@ public class TextReplacerTests
                 );
 
                 var slidePart = pressPart.AddNewPart<SlidePart>();
-                var slideId = pressPart.Presentation.SlideIdList!.AppendChild(new SlideId());
+                var slideIdList = pressPart.Presentation.SlideIdList
+                    ?? throw new InvalidOperationException("Presentation.SlideIdList was not initialized.");
+                var slideId = slideIdList.AppendChild(new SlideId());
                 slideId.Id = 256;
                 slideId.RelationshipId = pressPart.GetIdOfPart(slidePart);
 
