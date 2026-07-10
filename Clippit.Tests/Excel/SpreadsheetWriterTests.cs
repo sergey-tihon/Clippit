@@ -644,6 +644,12 @@ namespace Clippit.Tests.Excel
             await Assert.That(dimension).IsNotNull();
             await Assert.That((string)dimension.Attribute("ref")).IsEqualTo("A1:B2");
 
+            // <dimension> must appear before <sheetData> in the worksheet child element order.
+            var children = wsXDoc.Root?.Elements().ToList();
+            var dimensionIndex = children?.FindIndex(e => e.Name == S.dimension) ?? -1;
+            var sheetDataIndex = children?.FindIndex(e => e.Name == S.sheetData) ?? -1;
+            await Assert.That(dimensionIndex).IsLessThan(sheetDataIndex);
+
             await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
         }
 

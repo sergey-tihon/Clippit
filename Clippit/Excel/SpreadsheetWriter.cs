@@ -339,13 +339,15 @@ namespace Clippit.Excel
             {
                 using (var partXmlWriter = XmlWriter.Create(partStream))
                 {
-                    // Materialize rows up front so we can compute dimensions before writing the
-                    // <dimension> element, which must appear before <sheetData> in a valid worksheet.
+                    // Materialize both collections up front so we can compute dimensions before
+                    // writing the <dimension> element (which must appear before <sheetData>) and
+                    // avoid re-enumerating iterator-based IEnumerable sequences multiple times.
                     var materializedRows = worksheetData.Rows?.ToList() ?? [];
-                    var headingColumns = worksheetData.ColumnHeadings?.Count() ?? 0;
+                    var materializedHeadings = worksheetData.ColumnHeadings?.ToList();
+                    var headingColumns = materializedHeadings?.Count ?? 0;
                     var dataColumns = materializedRows.Count > 0 ? materializedRows.Max(r => r.Cells?.Count() ?? 0) : 0;
                     var preColumns = Math.Max(headingColumns, dataColumns);
-                    var preHeadingRows = worksheetData.ColumnHeadings is not null ? 1 : 0;
+                    var preHeadingRows = materializedHeadings is not null ? 1 : 0;
                     var preRows = preHeadingRows + materializedRows.Count;
 
                     partXmlWriter.WriteStartDocument();
@@ -365,9 +367,9 @@ namespace Clippit.Excel
 
                     var numColumnHeadingRows = 0;
                     var numColumns = 0;
-                    if (worksheetData.ColumnHeadings is not null)
+                    if (materializedHeadings is not null)
                     {
-                        var row = new RowDfn { Cells = worksheetData.ColumnHeadings };
+                        var row = new RowDfn { Cells = materializedHeadings };
                         SerializeRows(sDoc, partXmlWriter, new[] { row }, 1, out numColumns, out numColumnHeadingRows);
                     }
                     SerializeRows(
@@ -380,7 +382,7 @@ namespace Clippit.Excel
                     );
                     var totalRows = numColumnHeadingRows + numRows;
                     var totalColumns = Math.Max(numColumns, numColumnsInRows);
-                    if (worksheetData.ColumnHeadings is not null && worksheetData.TableName is not null && numRows > 0)
+                    if (materializedHeadings is not null && worksheetData.TableName is not null && numRows > 0)
                     {
                         partXmlWriter.WriteEndElement();
                         // Compute tableCount BEFORE adding the new part so the id is correct.
@@ -396,10 +398,7 @@ namespace Clippit.Excel
                         partXmlWriter.WriteValue(rId2);
                         var tXDoc = tdp.GetXDocument();
 
-                        // Materialize the headings so we can handle data rows that are wider
-                        // (or narrower) than the supplied header row without producing a
-                        // malformed table definition.
-                        var columnHeadings = worksheetData.ColumnHeadings!.ToList();
+                        var columnHeadings = materializedHeadings;
                         var tableRef = "A1:" + SpreadsheetMLUtil.IntToColumnId(totalColumns - 1) + totalRows;
 
                         var usedNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
