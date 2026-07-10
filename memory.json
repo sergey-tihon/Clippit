@@ -1,8 +1,8 @@
 {
-  "last_run": "2026-07-09",
-  "last_run_id": "29033561827",
+  "last_run": "2026-07-10",
+  "last_run_id": "29076606037",
   "backlog_cursor": {
-    "issues": 420,
+    "issues": 424,
     "prs": 165
   },
   "comments_made": {
@@ -17,17 +17,14 @@
     "374": "2026-07-03",
     "377": "2026-07-03",
     "378": "2026-07-08",
-    "401": "2026-07-04"
+    "401": "2026-07-04",
+    "424": "2026-07-10"
   },
   "open_clippy_prs": [
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "rebased onto master 2026-07-06"},
-    {"number": "aw_pr_xcreate", "branch": "clippy/feat-excel-create-378-20260709", "title": "feat(cli): add `clippit excel create` command", "note": "closes #378; 14 tests CLI179-CLI192"}
-  ],
-  "fallback_issues": [
-    {"number": 420, "note": "word build fallback issue - PR blocked by README.md; patch in run 28957803142 artifacts; branch created but no commits"}
-  ],
-  "closed_stale_prs": [
-    {"number": 163, "reason": "149 commits behind master, ImageSharp->SkiaSharp conflict; replaced by PR #417 (merged)"}
+    {"number": 422, "branch": "clippy/feat-word-build-374-20260708-fa672b956cc3e953", "title": "feat(cli): add `clippit word build init/run` command", "note": "closes #374; 14 tests CLI180-CLI193"},
+    {"number": 423, "branch": "clippy/feat-excel-create-378-20260709-5ef1068ea6e297e5", "title": "feat(cli): add `clippit excel create` command", "note": "closes #378; 14 tests CLI179-CLI192"},
+    {"number": "aw_fix424", "branch": "clippy/fix-spreadsheetwriter-424", "title": "fix(excel): correct dimension element and table id in SpreadsheetWriter", "note": "closes #424; 3 regression tests SW007-SW009"}
   ],
   "checked_off_by_maintainer": [],
   "monthly_activity_issue": 370,
@@ -35,14 +32,15 @@
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "Monthly Activity issue for July 2026 is #370",
     "PR #165 (ExcelAssembler) rebased onto master 2026-07-06 - all 9 tests pass",
-    "PR aw_pr_xcreate: feat(cli) excel create command, closes #378, 14 tests CLI179-CLI192",
-    "Issue #420: word build fallback issue; PR was blocked by README.md protection; patch in run 28957803142 artifacts",
-    "Issue #374 (CLI word build): word build PR was blocked by README.md protection; can re-attempt without README changes",
+    "PR #422: feat(cli) word build command, closes #374, 14 tests",
+    "PR #423: feat(cli) excel create command, closes #378, 14 tests CLI179-CLI192",
+    "PR aw_fix424: fix(excel) SpreadsheetWriter dimension+tableId, closes #424, 3 regression tests SW007-SW009",
     "All Dependabot deps are current as of 2026-07-07"
   ],
   "improvements_submitted": [
-    "PR(aw_pr_xcreate): feat(cli) excel create command (2026-07-09), closes #378, 14 tests CLI179-CLI192",
-    "Issue#420: word build fallback (2026-07-08) - patch available for manual apply, closes #374",
+    "PR(aw_fix424): fix(excel) SpreadsheetWriter missing dimension + wrong table id (2026-07-10), closes #424",
+    "PR(423): feat(cli) excel create command (2026-07-09), closes #378, 14 tests CLI179-CLI192",
+    "PR(422): feat(cli) word build command (2026-07-09), closes #374, 14 tests",
     "PR#419: feat(cli) word consolidate command (merged 2026-07-08)",
     "PR#417: feat(word) RegisterCustomHandler extensibility API (merged 2026-07-08)",
     "PR#415: perf(word) fix image deduplication ManageImageCopy (merged 2026-07-06)",
