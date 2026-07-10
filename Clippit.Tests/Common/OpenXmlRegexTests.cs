@@ -418,4 +418,128 @@ public class OpenXmlRegexTests : TestsBase
         await Assert.That(innerText).IsEqualTo("ABXF");
         await Assert.That(p.Descendants(W.lastRenderedPageBreak)).IsNotEmpty();
     }
+
+    [Test]
+    public async Task OXR001_Match_WithCallback_InvokesCallbackForEachMatch()
+    {
+        var partDocument = XDocument.Parse(QuotationMarksDocumentXmlString);
+
+        using var stream = new MemoryStream();
+        using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+        var part = wordDocument.AddMainDocumentPart();
+        part.PutXDocument(partDocument);
+
+        var content = partDocument.Descendants(W.p);
+        var regex = new Regex($"{LeftDoubleQuotationMarks}(?<words>{Words}){RightDoubleQuotationMarks}");
+        var matchedTexts = new List<string>();
+
+        var count = OpenXmlRegex.Match(content, regex, (_, m) => matchedTexts.Add(m.Value));
+
+        await Assert.That(count).IsEqualTo(2);
+        await Assert.That(matchedTexts).HasCount(2);
+        await Assert.That(matchedTexts[0]).Contains("normal double quotes");
+        await Assert.That(matchedTexts[1]).Contains("double angle quotation marks");
+    }
+
+    [Test]
+    public async Task OXR002_Match_NoMatches_ReturnsZero()
+    {
+        var partDocument = XDocument.Parse(QuotationMarksDocumentXmlString);
+
+        using var stream = new MemoryStream();
+        using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+        var part = wordDocument.AddMainDocumentPart();
+        part.PutXDocument(partDocument);
+
+        var content = partDocument.Descendants(W.p);
+        var regex = new Regex(@"NOMATCH_\d+");
+        var invoked = false;
+
+        var count = OpenXmlRegex.Match(content, regex, (_, _) => invoked = true);
+
+        await Assert.That(count).IsEqualTo(0);
+        await Assert.That(invoked).IsFalse();
+    }
+
+    [Test]
+    public async Task OXR003_Replace_EmptyReplacement_DeletesAllMatches()
+    {
+        var partDocument = XDocument.Parse(QuotationMarksDocumentXmlString);
+
+        using var stream = new MemoryStream();
+        using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+        var part = wordDocument.AddMainDocumentPart();
+        part.PutXDocument(partDocument);
+
+        var content = partDocument.Descendants(W.p);
+        var regex = new Regex($"{LeftDoubleQuotationMarks}({Words}){RightDoubleQuotationMarks}");
+        var count = OpenXmlRegex.Replace(content, regex, "", null);
+
+        var p = partDocument.Descendants(W.p).First();
+        var innerText = InnerText(p);
+
+        await Assert.That(count).IsEqualTo(2);
+        // Both quoted phrases deleted; surrounding text remains
+        await Assert.That(innerText).IsEqualTo("Text can be enclosed in  and in .");
+    }
+
+    [Test]
+    public async Task OXR004_Replace_WithSelectiveCallback_ReplacesOnlyFirstMatch()
+    {
+        var partDocument = XDocument.Parse(QuotationMarksDocumentXmlString);
+
+        using var stream = new MemoryStream();
+        using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+        var part = wordDocument.AddMainDocumentPart();
+        part.PutXDocument(partDocument);
+
+        var content = partDocument.Descendants(W.p);
+        var regex = new Regex($"{LeftDoubleQuotationMarks}(?<words>{Words}){RightDoubleQuotationMarks}");
+        var replaced = false;
+
+        // Callback returns true for the first match only; count is matches found (not replacements)
+        var count = OpenXmlRegex.Replace(
+            content,
+            regex,
+            "'${words}'",
+            (_, _) =>
+            {
+                if (replaced)
+                    return false;
+                replaced = true;
+                return true;
+            }
+        );
+
+        var p = partDocument.Descendants(W.p).First();
+        var innerText = InnerText(p);
+
+        // count == total matches found (2), regardless of callback return value
+        await Assert.That(count).IsEqualTo(2);
+        // Only first match was replaced
+        await Assert.That(innerText).Contains("'normal double quotes'");
+        await Assert.That(innerText).Contains("«double angle quotation marks»");
+    }
+
+    [Test]
+    public async Task OXR005_Replace_CallbackAlwaysFalse_MakesNoReplacements()
+    {
+        var partDocument = XDocument.Parse(QuotationMarksDocumentXmlString);
+        var p = partDocument.Descendants(W.p).First();
+        var originalText = InnerText(p);
+
+        using var stream = new MemoryStream();
+        using var wordDocument = WordprocessingDocument.Create(stream, DocumentType);
+        var part = wordDocument.AddMainDocumentPart();
+        part.PutXDocument(partDocument);
+
+        var content = partDocument.Descendants(W.p);
+        var regex = new Regex($"{LeftDoubleQuotationMarks}({Words}){RightDoubleQuotationMarks}");
+        // count == matches found (2), even though no replacements are made
+        var count = OpenXmlRegex.Replace(content, regex, "REPLACED", (_, _) => false);
+
+        p = partDocument.Descendants(W.p).First();
+        await Assert.That(count).IsEqualTo(2);
+        await Assert.That(InnerText(p)).IsEqualTo(originalText);
+    }
 }
