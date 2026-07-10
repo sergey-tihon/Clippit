@@ -339,8 +339,28 @@ namespace Clippit.Excel
             {
                 using (var partXmlWriter = XmlWriter.Create(partStream))
                 {
+                    // Materialize rows up front so we can compute dimensions before writing the
+                    // <dimension> element, which must appear before <sheetData> in a valid worksheet.
+                    var materializedRows = worksheetData.Rows?.ToList() ?? [];
+                    var headingColumns = worksheetData.ColumnHeadings?.Count() ?? 0;
+                    var dataColumns = materializedRows.Count > 0 ? materializedRows.Max(r => r.Cells?.Count() ?? 0) : 0;
+                    var preColumns = Math.Max(headingColumns, dataColumns);
+                    var preHeadingRows = worksheetData.ColumnHeadings is not null ? 1 : 0;
+                    var preRows = preHeadingRows + materializedRows.Count;
+
                     partXmlWriter.WriteStartDocument();
                     partXmlWriter.WriteStartElement("worksheet", ws);
+
+                    if (preRows > 0 && preColumns > 0)
+                    {
+                        var dimRef = "A1:" + SpreadsheetMLUtil.IntToColumnId(preColumns - 1) + preRows;
+                        partXmlWriter.WriteStartElement("dimension", ws);
+                        partXmlWriter.WriteStartAttribute("ref");
+                        partXmlWriter.WriteValue(dimRef);
+                        partXmlWriter.WriteEndAttribute();
+                        partXmlWriter.WriteEndElement();
+                    }
+
                     partXmlWriter.WriteStartElement("sheetData", ws);
 
                     var numColumnHeadingRows = 0;
@@ -353,7 +373,7 @@ namespace Clippit.Excel
                     SerializeRows(
                         sDoc,
                         partXmlWriter,
-                        worksheetData.Rows,
+                        materializedRows,
                         numColumnHeadingRows + 1,
                         out var numColumnsInRows,
                         out var numRows
@@ -363,6 +383,8 @@ namespace Clippit.Excel
                     if (worksheetData.ColumnHeadings is not null && worksheetData.TableName is not null && numRows > 0)
                     {
                         partXmlWriter.WriteEndElement();
+                        // Compute tableCount BEFORE adding the new part so the id is correct.
+                        var tableCount = sDoc.WorkbookPart!.WorksheetParts.Sum(wp => wp.TableDefinitionParts.Count());
                         var tdp = worksheetPart.AddNewPart<TableDefinitionPart>();
                         var rId2 = worksheetPart.GetIdOfPart(tdp);
                         partXmlWriter.WriteStartElement("tableParts", ws);
@@ -373,8 +395,6 @@ namespace Clippit.Excel
                         partXmlWriter.WriteStartAttribute("id", relns);
                         partXmlWriter.WriteValue(rId2);
                         var tXDoc = tdp.GetXDocument();
-
-                        var tableCount = sDoc.WorkbookPart!.WorksheetParts.Sum(wp => wp.TableDefinitionParts.Count());
 
                         // Materialize the headings so we can handle data rows that are wider
                         // (or narrower) than the supplied header row without producing a
