@@ -2,10 +2,13 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Xml.Linq;
+using Clippit;
 using Clippit.Internal;
+using Clippit.PowerPoint;
 using Clippit.Word;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Presentation;
 
 namespace Clippit.Tests.Common;
 
@@ -139,5 +142,109 @@ public class TextReplacerTests
         var result = TextReplacer.SearchAndReplace(doc, "Hello ", "", true);
         var text = GetDocumentText(result);
         await Assert.That(text).IsEqualTo("World");
+    }
+
+    // ── PPTX overload tests ───────────────────────────────────────────────────
+
+    private static readonly XNamespace A = "http://schemas.openxmlformats.org/drawingml/2006/main";
+    private static readonly XNamespace P = "http://schemas.openxmlformats.org/presentationml/2006/main";
+
+    /// <summary>
+    /// Creates a minimal in-memory PmlDocument with a single slide containing the given text.
+    /// </summary>
+    private static PmlDocument CreatePptxWithText(string text)
+    {
+        byte[] bytes;
+        using (var ms = new MemoryStream())
+        {
+            using (var pptx = PresentationDocument.Create(ms, PresentationDocumentType.Presentation))
+            {
+                var pressPart = pptx.AddPresentationPart();
+
+                // Minimal Presentation element
+                pressPart.Presentation = new Presentation(
+                    new SlideIdList(),
+                    new SlideSize { Cx = 9144000, Cy = 5143500 },
+                    new NotesSize { Cx = 6858000, Cy = 9144000 }
+                );
+
+                var slidePart = pressPart.AddNewPart<SlidePart>();
+                var slideIdList =
+                    pressPart.Presentation.SlideIdList
+                    ?? throw new InvalidOperationException("Presentation.SlideIdList was not initialized.");
+                var slideId = slideIdList.AppendChild(new SlideId());
+                slideId.Id = 256;
+                slideId.RelationshipId = pressPart.GetIdOfPart(slidePart);
+
+                // Minimal slide XML with a text run containing 'text'
+                var slideXml = new XDocument(
+                    new XElement(
+                        P + "sld",
+                        new XAttribute(XNamespace.Xmlns + "a", A.NamespaceName),
+                        new XAttribute(XNamespace.Xmlns + "p", P.NamespaceName),
+                        new XElement(
+                            P + "cSld",
+                            new XElement(
+                                P + "spTree",
+                                new XElement(
+                                    P + "sp",
+                                    new XElement(
+                                        P + "txBody",
+                                        new XElement(A + "p", new XElement(A + "r", new XElement(A + "t", text)))
+                                    )
+                                )
+                            )
+                        )
+                    )
+                );
+                slidePart.PutXDocument(slideXml);
+                pressPart.Presentation.Save();
+            }
+            bytes = ms.ToArray();
+        }
+        return new PmlDocument("test.pptx", bytes);
+    }
+
+    /// <summary>Reads back all a:t text from all slides and concatenates it.</summary>
+    private static string GetPptxText(PmlDocument doc)
+    {
+        using var ms = new MemoryStream(doc.DocumentByteArray);
+        using var pptx = PresentationDocument.Open(ms, false);
+        return string.Concat(
+            pptx.PresentationPart!.SlideParts.SelectMany(sp => sp.GetXDocument().Descendants(A + "t"))
+                .Select(t => (string)t)
+        );
+    }
+
+    [Test]
+    public async Task TR009_Pptx_SearchAndReplace_MatchFound_ReplacesText()
+    {
+        var doc = CreatePptxWithText("Hello Presentation");
+        var result = TextReplacer.SearchAndReplace(doc, "Presentation", "World", true);
+        await Assert.That(GetPptxText(result)).IsEqualTo("Hello World");
+    }
+
+    [Test]
+    public async Task TR010_Pptx_SearchAndReplace_CaseInsensitive_MatchesAnyCase()
+    {
+        var doc = CreatePptxWithText("Hello Presentation");
+        var result = TextReplacer.SearchAndReplace(doc, "hello", "Hi", false);
+        await Assert.That(GetPptxText(result)).IsEqualTo("Hi Presentation");
+    }
+
+    [Test]
+    public async Task TR011_Pptx_SearchAndReplace_CaseSensitive_DoesNotMatchWrongCase()
+    {
+        var doc = CreatePptxWithText("Hello Presentation");
+        var result = TextReplacer.SearchAndReplace(doc, "hello", "Hi", true);
+        await Assert.That(GetPptxText(result)).IsEqualTo("Hello Presentation");
+    }
+
+    [Test]
+    public async Task TR012_Pptx_SearchAndReplace_NoMatch_ReturnsOriginalText()
+    {
+        var doc = CreatePptxWithText("Hello Presentation");
+        var result = TextReplacer.SearchAndReplace(doc, "NotPresent", "X", true);
+        await Assert.That(GetPptxText(result)).IsEqualTo("Hello Presentation");
     }
 }
