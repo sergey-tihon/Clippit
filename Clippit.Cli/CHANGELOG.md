@@ -2,6 +2,14 @@
 
 ## [0.7.0] - 2026-07-05
 
+- Added `excel create` command to generate an `.xlsx` workbook from a JSON workbook
+  definition. Wraps `SpreadsheetWriter`/`WorkbookDfn`. Supports one positional input
+  argument (`-` for stdin). Options: `--output`/`-o` (defaults to `<input>.xlsx`,
+  `-` for stdout), `--force`, `--format json`, `--quiet`. The JSON result reports
+  `input`, `output`, `outputSize`, and `worksheetCount`. Invalid sheet names or
+  duplicate worksheet names return `INVALID_ARGUMENTS` (exit 2). Published schemas:
+  `workbook-definition.v1.json` (input) and `excel-create-result.v1.json` (result)
+  (#378).
 - Added `word consolidate` command to combine multiple revisions of a document into one
   file with tracked changes. Wraps `WmlComparer.Consolidate`. Supports one positional
   original argument and one or more revision arguments. Reviewer names and hex colors
