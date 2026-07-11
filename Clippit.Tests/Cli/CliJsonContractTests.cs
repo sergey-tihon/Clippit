@@ -209,6 +209,96 @@ internal sealed class CliJsonContractTests : TestsBase
     }
 
     [Test]
+    public async Task CLI110_WordAssemble_JsonResult_MatchesSchema()
+    {
+        var directory = CliTestRunner.CreateTempDirectory("contract-assemble-result");
+        var template = CliTestRunner.TestFile("DA/DA001-TemplateDocument.docx");
+        var data = CliTestRunner.TestFile("DA/DA-Data.xml");
+        var output = new FileInfo(Path.Combine(directory.FullName, "assembled.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "assemble",
+                template.FullName,
+                data.FullName,
+                "--output",
+                output.FullName,
+                "--format",
+                "json"
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        using var payload = result.ReadStdoutJson();
+        ValidateJsonAgainstSchema(payload.RootElement, "assemble-result.v1.json");
+    }
+
+    [Test]
+    public async Task CLI111_WordConsolidate_JsonResult_MatchesSchema()
+    {
+        var directory = CliTestRunner.CreateTempDirectory("contract-consolidate-result");
+        var original = CliTestRunner.TestFile("WC/WC027-Twenty-Paras-Before.docx");
+        var rev1 = CliTestRunner.TestFile("WC/WC027-Twenty-Paras-After-1.docx");
+        var output = new FileInfo(Path.Combine(directory.FullName, "consolidated.docx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync(
+                "word",
+                "consolidate",
+                original.FullName,
+                rev1.FullName,
+                "--output",
+                output.FullName,
+                "--format",
+                "json"
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        using var payload = result.ReadStdoutJson();
+        ValidateJsonAgainstSchema(payload.RootElement, "consolidate-result.v1.json");
+    }
+
+    [Test]
+    public async Task CLI112_ExcelCreate_JsonResult_MatchesSchema()
+    {
+        var directory = CliTestRunner.CreateTempDirectory("contract-excel-create-result");
+        var input = new FileInfo(Path.Combine(directory.FullName, "workbook.json"));
+        await File.WriteAllTextAsync(
+                input.FullName,
+                """
+                {
+                  "worksheets": [
+                    {
+                      "name": "Sheet1",
+                      "rows": [
+                        { "cells": [{ "value": "Hello" }, { "value": 1, "cellDataType": "Number" }] }
+                      ]
+                    }
+                  ]
+                }
+                """
+            )
+            .ConfigureAwait(false);
+        var output = new FileInfo(Path.Combine(directory.FullName, "result.xlsx"));
+
+        var result = await CliTestRunner
+            .RunManagedAsync("excel", "create", input.FullName, "--output", output.FullName, "--format", "json")
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        using var payload = result.ReadStdoutJson();
+        ValidateJsonAgainstSchema(payload.RootElement, "excel-create-result.v1.json");
+    }
+
+    [Test]
     public async Task CLI104_JsonSchema_RejectsInvalidPayloads()
     {
         using var negativeCount = JsonDocument.Parse(
