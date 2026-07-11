@@ -599,6 +599,156 @@ namespace Clippit.Tests.Excel
             await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
         }
 
+        // Regression test for issue #424: SpreadsheetWriter must emit a <dimension> element
+        // before <sheetData> so Excel does not report a repair-needed error on open.
+        [Test]
+        public async Task SW007_Worksheet_HasDimensionElement()
+        {
+            var wb = new WorkbookDfn
+            {
+                Worksheets =
+                [
+                    new WorksheetDfn
+                    {
+                        Name = "Report",
+                        TableName = "ReportTable",
+                        ColumnHeadings =
+                        [
+                            new CellDfn { Value = "A", Bold = true },
+                            new CellDfn { Value = "B", Bold = true },
+                        ],
+                        Rows =
+                        [
+                            new RowDfn
+                            {
+                                Cells =
+                                [
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "x" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = 1 },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            using var stream = new MemoryStream();
+            wb.WriteTo(stream);
+            stream.Position = 0;
+            using var sDoc = SpreadsheetDocument.Open(stream, false);
+
+            var worksheetPart = sDoc.WorkbookPart.WorksheetParts.First();
+            var wsXDoc = worksheetPart.GetXDocument();
+            var dimension = wsXDoc.Root?.Element(S.dimension);
+
+            await Assert.That(dimension).IsNotNull();
+            await Assert.That((string)dimension.Attribute("ref")).IsEqualTo("A1:B2");
+
+            // <dimension> must appear before <sheetData> in the worksheet child element order.
+            var children = wsXDoc.Root?.Elements().ToList();
+            var dimensionIndex = children?.FindIndex(e => e.Name == S.dimension) ?? -1;
+            var sheetDataIndex = children?.FindIndex(e => e.Name == S.sheetData) ?? -1;
+            await Assert.That(dimensionIndex).IsLessThan(sheetDataIndex);
+
+            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
+        }
+
+        // Regression test for issue #424: The first table's id attribute must be 1, not 2.
+        // Previously tableCount was computed after AddNewPart<TableDefinitionPart>(), which
+        // already included the new part, causing id to be off by one.
+        [Test]
+        public async Task SW008_FirstTable_HasCorrectId()
+        {
+            var wb = new WorkbookDfn
+            {
+                Worksheets =
+                [
+                    new WorksheetDfn
+                    {
+                        Name = "Report",
+                        TableName = "ReportTable",
+                        ColumnHeadings =
+                        [
+                            new CellDfn { Value = "A", Bold = true },
+                            new CellDfn { Value = "B", Bold = true },
+                        ],
+                        Rows =
+                        [
+                            new RowDfn
+                            {
+                                Cells =
+                                [
+                                    new CellDfn { CellDataType = CellDataType.String, Value = "x" },
+                                    new CellDfn { CellDataType = CellDataType.Number, Value = 1 },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            using var stream = new MemoryStream();
+            wb.WriteTo(stream);
+            stream.Position = 0;
+            using var sDoc = SpreadsheetDocument.Open(stream, false);
+
+            var worksheetPart = sDoc.WorkbookPart.WorksheetParts.First();
+            var tablePart = worksheetPart.TableDefinitionParts.First();
+            var tableXDoc = tablePart.GetXDocument();
+            var tableId = (int?)tableXDoc.Root?.Attribute(SSNoNamespace.id);
+
+            await Assert.That(tableId).IsEqualTo(1);
+
+            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
+        }
+
+        // Verifies that two-sheet workbooks produce table ids 1 and 2 respectively (not 2 and 3).
+        [Test]
+        public async Task SW009_MultipleSheets_TableIdsAreSequential()
+        {
+            var wb = new WorkbookDfn
+            {
+                Worksheets =
+                [
+                    new WorksheetDfn
+                    {
+                        Name = "Sheet1",
+                        TableName = "Table1",
+                        ColumnHeadings = [new CellDfn { Value = "Col", Bold = true }],
+                        Rows =
+                        [
+                            new RowDfn { Cells = [new CellDfn { CellDataType = CellDataType.String, Value = "a" }] },
+                        ],
+                    },
+                    new WorksheetDfn
+                    {
+                        Name = "Sheet2",
+                        TableName = "Table2",
+                        ColumnHeadings = [new CellDfn { Value = "Col", Bold = true }],
+                        Rows =
+                        [
+                            new RowDfn { Cells = [new CellDfn { CellDataType = CellDataType.String, Value = "b" }] },
+                        ],
+                    },
+                ],
+            };
+
+            using var stream = new MemoryStream();
+            wb.WriteTo(stream);
+            stream.Position = 0;
+            using var sDoc = SpreadsheetDocument.Open(stream, false);
+
+            var tableIds = sDoc
+                .WorkbookPart.WorksheetParts.SelectMany(wp => wp.TableDefinitionParts)
+                .Select(tdp => (int?)tdp.GetXDocument().Root?.Attribute(SSNoNamespace.id))
+                .OrderBy(id => id)
+                .ToList();
+
+            await Assert.That(tableIds).IsEquivalentTo(new List<int?> { 1, 2 });
+
+            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
+        }
+
         private async Task Validate(string fileName)
         {
             using var sDoc = SpreadsheetDocument.Open(fileName, false);

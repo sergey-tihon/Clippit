@@ -10,7 +10,8 @@ namespace Clippit.Cli.Commands.Word.Build;
 ///                        "file.docx"   → file entry
 ///   - a JSON object  → standard WordDeckEntry deserialization (full options)
 ///
-/// Serializes always as objects for a stable round-trip.
+/// Serializes using string shorthand when only <c>section</c> or <c>file</c> is set,
+/// and falls back to objects for entries with additional options.
 /// Fully AOT-safe: uses CliJsonContext source-gen for the object branch.
 /// </summary>
 internal sealed class WordDeckEntryListConverter : JsonConverter<IList<WordDeckEntry>>

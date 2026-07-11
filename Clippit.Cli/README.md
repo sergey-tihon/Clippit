@@ -1,6 +1,6 @@
 # Clippit CLI — `dotnet tool`
 
-**Clippit CLI** is a command-line tool for working with OpenXml files (PowerPoint, Word, Excel), built on [Clippit](https://github.com/sergey-tihon/Clippit) — the .NET OpenXml PowerTools library. It supports PPTX split/build/verify workflows, DOCX template assembly, and DOCX↔HTML conversion.
+**Clippit CLI** is a command-line tool for working with OpenXml files (PowerPoint, Word, Excel), built on [Clippit](https://github.com/sergey-tihon/Clippit) — the .NET OpenXml PowerTools library. It supports PPTX split/build/verify workflows, manifest-driven DOCX build/assembly/compare workflows, DOCX↔HTML conversion, and XLSX create/verify workflows.
 
 ## Installation
 
@@ -22,6 +22,10 @@ clippit pptx verify presentation.pptx
 
 # Validate a DOCX file
 clippit word verify document.docx
+
+# Scaffold a Word build manifest and merge it into a DOCX
+clippit word build init --output word-build.json
+clippit word build run word-build.json --output merged.docx
 
 # Compare two DOCX files with tracked revisions
 clippit word compare before.docx after.docx --output compared.docx
@@ -47,6 +51,9 @@ clippit word from-html article.html --css styles.css
 # Validate an XLSX file
 clippit excel verify spreadsheet.xlsx
 
+# Create an XLSX workbook from a JSON definition
+clippit excel create workbook.json --output report.xlsx
+
 # Get JSON output for scripting
 clippit pptx split presentation.pptx --format json
 ```
@@ -59,6 +66,8 @@ clippit pptx split presentation.pptx --format json
 | `pptx build init` | Scaffold a deck manifest (JSON). |
 | `pptx build run` | Assemble a `.pptx` from a deck manifest. |
 | `pptx verify` | Validate a PPTX — schema, relationships, markup compatibility, and sections. |
+| `word build init` | Scaffold a Word build manifest (JSON). |
+| `word build run` | Assemble a `.docx` from a Word build manifest. |
 | `word assemble` | Assemble a DOCX template with XML data. |
 | `word compare` | Compare two DOCX files and produce a tracked-revision DOCX. |
 | `word consolidate` | Combine multiple DOCX revisions into one tracked-changes DOCX. |
@@ -68,6 +77,7 @@ clippit pptx split presentation.pptx --format json
 | `word to-html` | Convert a DOCX to HTML/CSS. |
 | `word from-html` | Convert HTML/CSS to a DOCX. |
 | `excel to-html` | Convert an XLSX sheet, range, or table to HTML/CSS. |
+| `excel create` | Generate an `.xlsx` workbook from a JSON workbook definition. |
 | `excel verify` | Validate an XLSX — schema and relationships. |
 | `version` | Print version information. |
 

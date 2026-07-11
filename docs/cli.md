@@ -7,7 +7,7 @@ Clippit CLI is a scriptable command-line interface for PowerPoint (`pptx`), Word
 | Page | Scope |
 | --- | --- |
 | [PowerPoint CLI (`pptx`)](cli-pptx.md) | `pptx split`, `pptx build init`, `pptx build run`, `pptx verify` |
-| [Word CLI (`word`)](cli-word.md) | `word verify`, `word compare`, `word assemble`, `word accept-revisions`, `word to-html`, `word from-html` |
+| [Word CLI (`word`)](cli-word.md) | `word verify`, `word build init`, `word build run`, `word compare`, `word assemble`, `word accept-revisions`, `word to-html`, `word from-html` |
 | [Excel CLI (`excel`)](cli-excel.md) | `excel verify`, `excel to-html` |
 
 ## Installation
@@ -79,6 +79,7 @@ Examples:
 cat deck.pptx | clippit pptx split - --output slides --format json
 cat deck.json | clippit pptx build run - --output - > final.pptx
 cat document.docx | clippit word verify - --format json
+cat word-build.json | clippit word build run - --output - > merged.docx
 cat article.html | clippit word from-html - --output - > article.docx
 cat spreadsheet.xlsx | clippit excel verify - --format json
 ```
@@ -103,8 +104,10 @@ Schemas for manifests/results are in [schemas/README.md](schemas/README.md).
 | Payload | URL |
 | --- | --- |
 | Deck manifest | `https://sergey-tihon.github.io/Clippit/schemas/deck-manifest.v1.json` |
+| Word build manifest | `https://sergey-tihon.github.io/Clippit/schemas/word-build-manifest.v1.json` |
 | `pptx split` result | `https://sergey-tihon.github.io/Clippit/schemas/split-result.v1.json` |
 | `pptx build run` result | `https://sergey-tihon.github.io/Clippit/schemas/build-result.v1.json` |
+| `word build run` result | `https://sergey-tihon.github.io/Clippit/schemas/word-build-result.v1.json` |
 | `pptx verify`, `word verify`, `excel verify` result | `https://sergey-tihon.github.io/Clippit/schemas/verify-result.v1.json` |
 | `word assemble` result | `https://sergey-tihon.github.io/Clippit/schemas/assemble-result.v1.json` |
 | `word compare` result | `https://sergey-tihon.github.io/Clippit/schemas/compare-result.v1.json` |

@@ -10,6 +10,8 @@ Use this page for Word (`.docx`) command reference.
 | Command | Purpose |
 | --- | --- |
 | `clippit word verify` | Validate package/schema/relationships |
+| `clippit word build init` | Scaffold a Word build manifest |
+| `clippit word build run` | Merge DOCX sources from a manifest |
 | `clippit word compare` | Compare two docs and emit tracked revisions |
 | `clippit word assemble` | Fill a template with XML data |
 | `clippit word accept-revisions` | Accept all revisions in a document |
@@ -36,6 +38,48 @@ clippit word verify document.docx --format json
 
 ```json
 {"input":"/work/document.docx","officeVersion":"Microsoft365","valid":true,"diagnostics":[]}
+```
+
+## `word build init`
+
+Scaffold a `clippit-word-build.json` manifest with example section/file entries.
+
+```text
+clippit word build init [--output <manifest.json|->] [--force] [--format json|text] [--quiet]
+```
+
+| Option | Description |
+| --- | --- |
+| `--output`, `-o` | Manifest output path (default: `clippit-word-build.json`). Use `-` for stdout. |
+| `--force` | Overwrite an existing manifest file. |
+
+```bash
+clippit word build init --output word-build.json
+```
+
+## `word build run`
+
+Merge `.docx` sources listed in a manifest via `DocumentBuilder`.
+
+```text
+clippit word build run <manifest.json|-> [--output <file.docx|->] [--force] [--format json|text] [--quiet]
+```
+
+| Option | Description |
+| --- | --- |
+| `--output`, `-o` | Output DOCX path (default: manifest `output`, otherwise `merged.docx`). Use `-` for stdout. |
+| `--force` | Overwrite an existing output file. |
+
+Deck entries may use string shorthand (`"[Section]"`, `"chapter1.docx"`) or object form for
+options like `start`, `count`, `keepSections`, and
+`discardHeadersAndFootersInKeptSections`.
+
+```bash
+clippit word build run word-build.json --output merged.docx --format json
+```
+
+```json
+{"output":"/work/merged.docx","outputSize":59321,"entryCount":2,"entries":[{"section":"Part 1"},{"file":"chapter1.docx","elements":12}]}
 ```
 
 ## `word compare`
@@ -156,4 +200,3 @@ clippit word from-html article.html --css styles.css --output article.docx --for
 ```json
 {"input":"/work/article.html","output":"/work/article.docx","outputSize":45021}
 ```
-

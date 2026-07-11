@@ -1,4 +1,5 @@
 using System.CommandLine;
+using Clippit.Cli.Commands.Excel.Create;
 using Clippit.Cli.Commands.Excel.ToHtml;
 using Clippit.Cli.Commands.Excel.Verify;
 
@@ -14,6 +15,7 @@ internal static class ExcelCommand
         var cmd = new Command("excel", "Work with Excel (.xlsx) files");
         cmd.Subcommands.Add(ExcelVerifyCommand.Build());
         cmd.Subcommands.Add(ExcelToHtmlCommand.Build());
+        cmd.Subcommands.Add(ExcelCreateCommand.Build());
         return cmd;
     }
 }

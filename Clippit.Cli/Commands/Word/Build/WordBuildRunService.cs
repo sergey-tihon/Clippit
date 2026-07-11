@@ -117,7 +117,7 @@ internal static class WordBuildRunService
             }
             catch (IOException ex)
             {
-                throw CliException.FileNotFound($"Could not read source file '{absPath}': {ex.Message}");
+                throw CliException.FileNotFound($"Source file not found or could not be read: {absPath}. {ex.Message}");
             }
 
             var actualElements = CountBodyElements(fileBytes, start, count);
@@ -144,14 +144,23 @@ internal static class WordBuildRunService
         string? tempPath = null;
         try
         {
-            using (var outputStream = target.OpenWrite(out tempPath))
+            if (target.IsStdout)
             {
-                outputStream.Write(merged.DocumentByteArray, 0, merged.DocumentByteArray.Length);
-                target.Flush(outputStream);
+                using var stdout = Console.OpenStandardOutput();
+                stdout.Write(merged.DocumentByteArray, 0, merged.DocumentByteArray.Length);
+                stdout.Flush();
             }
+            else
+            {
+                using (var outputStream = target.OpenWrite(out tempPath))
+                {
+                    outputStream.Write(merged.DocumentByteArray, 0, merged.DocumentByteArray.Length);
+                    outputStream.Flush();
+                }
 
-            target.Commit(tempPath);
-            tempPath = null;
+                target.Commit(tempPath);
+                tempPath = null;
+            }
         }
         catch (Exception ex) when (ex is not CliException)
         {
