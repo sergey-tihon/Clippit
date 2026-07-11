@@ -338,7 +338,7 @@ signatures and code samples.
 
 | Feature | Description |
 | ------- | ----------- |
-| [Clippit CLI](cli.md) | Scriptable PPTX split/build/verify, manifest-driven DOCX build/compare/consolidate/conversion, and XLSX create/validation/conversion with a concise start page plus dedicated [PowerPoint](cli-pptx.md), [Word](cli-word.md), and [Excel](cli-excel.md) references |
+| [Clippit CLI](cli.md) | Scriptable PPTX split/build/verify, manifest-driven DOCX build/compare/consolidate, DOCX assembly/cleanup/validation/HTML conversion, and XLSX create/validation/conversion with a concise start page plus dedicated [PowerPoint](cli-pptx.md), [Word](cli-word.md), and [Excel](cli-excel.md) references |
 
 ### Common
 
