@@ -11,6 +11,7 @@ Use this page for Excel (`.xlsx`) command reference.
 | --- | --- |
 | `clippit excel verify` | Validate package/schema/relationships |
 | `clippit excel to-html` | Convert workbook range/sheet/table to HTML/CSS |
+| `clippit excel create` | Generate an XLSX workbook from a JSON definition |
 
 All commands support `--format json|text` and `--quiet`.
 
@@ -63,3 +64,25 @@ clippit excel to-html spreadsheet.xlsx --sheet "Q3 Data" --range "B2:F15" --outp
 {"input":"/work/spreadsheet.xlsx","output":"/work/sheet.html","outputSize":18231}
 ```
 
+## `excel create`
+
+Generate an `.xlsx` workbook from a JSON workbook definition.
+
+```text
+clippit excel create <input.json|-> [--output <file.xlsx|->] [--force] [--format json|text] [--quiet]
+```
+
+| Option | Description |
+| --- | --- |
+| `--output`, `-o` | Output XLSX path (default: `<input>.xlsx`). Use `-` for stdout. |
+| `--force` | Overwrite existing output file. |
+
+The input JSON must contain at least one worksheet. See the workbook definition schema in [schemas/README.md](schemas/README.md).
+
+```bash
+clippit excel create workbook.json --output report.xlsx --format json
+```
+
+```json
+{"input":"/work/workbook.json","output":"/work/report.xlsx","outputSize":24576,"worksheetCount":2}
+```

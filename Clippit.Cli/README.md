@@ -1,6 +1,6 @@
 # Clippit CLI — `dotnet tool`
 
-**Clippit CLI** is a command-line tool for working with OpenXml files (PowerPoint, Word, Excel), built on [Clippit](https://github.com/sergey-tihon/Clippit) — the .NET OpenXml PowerTools library. It supports PPTX split/build/verify workflows, manifest-driven DOCX build/assembly/compare workflows, DOCX↔HTML conversion, and XLSX create/verify workflows.
+**Clippit CLI** is a command-line tool for working with OpenXml files (PowerPoint, Word, Excel), built on [Clippit](https://github.com/sergey-tihon/Clippit) — the .NET OpenXml PowerTools library. It supports PPTX split/build/verify workflows, manifest-driven DOCX build/compare/consolidate workflows, DOCX template assembly and markup cleanup, DOCX↔HTML conversion, and XLSX create/verify workflows.
 
 ## Installation
 

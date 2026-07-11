@@ -1,6 +1,7 @@
 # clippit
 
 **Clippit CLI** is a command-line tool for working with OpenXml files (PowerPoint, Word, Excel).
+It supports PPTX split/build/verify workflows, manifest-driven DOCX build/compare/consolidate workflows, DOCX template assembly and markup cleanup, DOCX↔HTML conversion, and XLSX create/verify workflows.
 This npm package provides native binaries for all platforms — no .NET runtime required.
 
 ## Installation
