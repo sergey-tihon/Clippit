@@ -50,11 +50,11 @@ internal static class WordBuildRunService
 
     private static void ValidateManifest(WordBuildManifest manifest, string manifestDir, OutputTarget target)
     {
-        if (manifest.Deck.Count == 0)
-            throw CliException.InvalidArguments("Manifest 'deck' must contain at least one entry.");
+        if (manifest.Entries.Count == 0)
+            throw CliException.InvalidArguments("Manifest 'entries' must contain at least one entry.");
 
         var hasFileEntry = false;
-        foreach (var entry in manifest.Deck)
+        foreach (var entry in manifest.Entries)
         {
             var error = entry.Validate();
             if (error is not null)
@@ -73,7 +73,7 @@ internal static class WordBuildRunService
         }
 
         if (!hasFileEntry)
-            throw CliException.InvalidArguments("Manifest 'deck' must contain at least one file entry.");
+            throw CliException.InvalidArguments("Manifest 'entries' must contain at least one file entry.");
     }
 
     private static string ResolvePath(string manifestDir, string path) =>
@@ -96,7 +96,7 @@ internal static class WordBuildRunService
         var sources = new List<ISource>();
         var entryResults = new List<WordBuildEntryResult>();
 
-        foreach (var entry in manifest.Deck)
+        foreach (var entry in manifest.Entries)
         {
             if (entry.IsSection)
             {
@@ -115,7 +115,7 @@ internal static class WordBuildRunService
             {
                 fileBytes = File.ReadAllBytes(absPath);
             }
-            catch (IOException ex)
+            catch (IOException ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
             {
                 throw CliException.FileNotFound($"Source file not found or could not be read: {absPath}. {ex.Message}");
             }

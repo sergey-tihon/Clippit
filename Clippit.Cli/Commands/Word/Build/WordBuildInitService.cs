@@ -16,7 +16,7 @@ internal static class WordBuildInitService
         {
             Schema = CliConstants.WordBuildManifestSchema,
             Output = "merged.docx",
-            Deck = [new WordDeckEntry { Section = "Part 1" }, new WordDeckEntry { File = "part1.docx" }],
+            Entries = [new WordEntryItem { Section = "Part 1" }, new WordEntryItem { File = "part1.docx" }],
         };
 
         var json = JsonSerializer.Serialize(manifest, CliJsonContextIndented.Default.WordBuildManifest);

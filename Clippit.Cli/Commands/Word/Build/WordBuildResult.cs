@@ -15,7 +15,7 @@ internal sealed record WordBuildResult
         if (result.Entries.Count == 0)
             return;
 
-        writer.WriteLine("Deck:");
+        writer.WriteLine("Entries:");
         foreach (var entry in result.Entries)
         {
             if (entry.Section is not null)

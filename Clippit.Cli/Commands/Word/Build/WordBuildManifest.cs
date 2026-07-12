@@ -15,7 +15,7 @@ internal sealed class WordBuildManifest
     public required string Output { get; set; }
 
     /// <summary>
-    /// Ordered list of deck entries defining the merged document.
+    /// Ordered list of entries defining the merged document.
     /// Each entry is either a plain string (section label or file path)
     /// or an object with explicit options.
     ///
@@ -28,15 +28,15 @@ internal sealed class WordBuildManifest
     ///   { "file": "path/to/file.docx", "start": 0, "count": 50,
     ///     "keepSections": true, "discardHeadersAndFootersInKeptSections": false }
     /// </summary>
-    [JsonConverter(typeof(WordDeckEntryListConverter))]
-    public required IList<WordDeckEntry> Deck { get; set; }
+    [JsonConverter(typeof(WordEntryListConverter))]
+    public required IList<WordEntryItem> Entries { get; set; }
 }
 
 /// <summary>
-/// A single entry in the Word build deck. Exactly one of <see cref="Section"/>
+/// A single entry in the Word build manifest. Exactly one of <see cref="Section"/>
 /// or <see cref="File"/> must be non-null.
 /// </summary>
-internal sealed class WordDeckEntry
+internal sealed class WordEntryItem
 {
     /// <summary>Non-null → logical section label; no content is added to the document.</summary>
     public string? Section { get; init; }
@@ -67,12 +67,12 @@ internal sealed class WordDeckEntry
     ///   "[Name]"    → section label
     ///   "path.docx" → file entry (all elements, default settings)
     /// </summary>
-    public static WordDeckEntry FromString(string value)
+    public static WordEntryItem FromString(string value)
     {
         var trimmed = value.Trim();
         if (trimmed.StartsWith('[') && trimmed.EndsWith(']'))
-            return new WordDeckEntry { Section = trimmed[1..^1].Trim() };
-        return new WordDeckEntry { File = trimmed };
+            return new WordEntryItem { Section = trimmed[1..^1].Trim() };
+        return new WordEntryItem { File = trimmed };
     }
 
     public string? Validate()

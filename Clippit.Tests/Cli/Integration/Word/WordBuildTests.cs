@@ -63,7 +63,7 @@ internal sealed class WordBuildTests : CliIntegrationTestBase
             .That(manifestJson.RootElement.GetProperty("$schema").GetString())
             .IsEqualTo(WordBuildManifestSchema);
         await Assert.That(manifestJson.RootElement.GetProperty("output").GetString()).IsEqualTo("merged.docx");
-        await Assert.That(manifestJson.RootElement.GetProperty("deck").GetArrayLength()).IsEqualTo(2);
+        await Assert.That(manifestJson.RootElement.GetProperty("entries").GetArrayLength()).IsEqualTo(2);
     }
 
     [Test]
@@ -106,7 +106,7 @@ internal sealed class WordBuildTests : CliIntegrationTestBase
             new
             {
                 output = outputName,
-                deck = new object[]
+                entries = new object[]
                 {
                     new { section = "Part 1" },
                     Source1.FullName,
@@ -149,7 +149,7 @@ internal sealed class WordBuildTests : CliIntegrationTestBase
             new
             {
                 output = outputName,
-                deck = new object[]
+                entries = new object[]
                 {
                     new
                     {
@@ -189,7 +189,7 @@ internal sealed class WordBuildTests : CliIntegrationTestBase
         await Assert.That(result.StandardError).IsEmpty();
         using var manifest = JsonDocument.Parse(result.StandardOutput);
         await Assert.That(manifest.RootElement.GetProperty("$schema").GetString()).IsEqualTo(WordBuildManifestSchema);
-        await Assert.That(manifest.RootElement.GetProperty("deck").GetArrayLength()).IsEqualTo(2);
+        await Assert.That(manifest.RootElement.GetProperty("entries").GetArrayLength()).IsEqualTo(2);
     }
 
     [Test]
@@ -222,7 +222,7 @@ internal sealed class WordBuildTests : CliIntegrationTestBase
         var directory = CliTestRunner.CreateTempDirectory("word-build-missing");
         var manifest = new FileInfo(Path.Combine(directory.FullName, "word-build.json"));
         var json = JsonSerializer.Serialize(
-            new { output = "out.docx", deck = new[] { Path.Combine(directory.FullName, "missing.docx") } }
+            new { output = "out.docx", entries = new[] { Path.Combine(directory.FullName, "missing.docx") } }
         );
         await File.WriteAllTextAsync(manifest.FullName, json).ConfigureAwait(false);
 
@@ -243,7 +243,7 @@ internal sealed class WordBuildTests : CliIntegrationTestBase
         var source = new FileInfo(Path.Combine(directory.FullName, "source.docx"));
         File.Copy(Source1.FullName, source.FullName);
         var manifest = new FileInfo(Path.Combine(directory.FullName, "word-build.json"));
-        var json = JsonSerializer.Serialize(new { output = source.Name, deck = new[] { source.FullName } });
+        var json = JsonSerializer.Serialize(new { output = source.Name, entries = new[] { source.FullName } });
         await File.WriteAllTextAsync(manifest.FullName, json).ConfigureAwait(false);
 
         var result = await CliTestRunner
@@ -300,7 +300,7 @@ internal sealed class WordBuildTests : CliIntegrationTestBase
     {
         var directory = CliTestRunner.CreateTempDirectory("word-build-empty-deck");
         var manifest = new FileInfo(Path.Combine(directory.FullName, "word-build.json"));
-        var json = JsonSerializer.Serialize(new { output = "out.docx", deck = Array.Empty<string>() });
+        var json = JsonSerializer.Serialize(new { output = "out.docx", entries = Array.Empty<string>() });
         await File.WriteAllTextAsync(manifest.FullName, json).ConfigureAwait(false);
 
         var result = await CliTestRunner
@@ -317,7 +317,9 @@ internal sealed class WordBuildTests : CliIntegrationTestBase
     {
         var directory = CliTestRunner.CreateTempDirectory("word-build-sections-only");
         var manifest = new FileInfo(Path.Combine(directory.FullName, "word-build.json"));
-        var json = JsonSerializer.Serialize(new { output = "out.docx", deck = new[] { "[Section A]", "[Section B]" } });
+        var json = JsonSerializer.Serialize(
+            new { output = "out.docx", entries = new[] { "[Section A]", "[Section B]" } }
+        );
         await File.WriteAllTextAsync(manifest.FullName, json).ConfigureAwait(false);
 
         var result = await CliTestRunner
@@ -357,7 +359,7 @@ internal sealed class WordBuildTests : CliIntegrationTestBase
             new
             {
                 output = "merged.docx",
-                deck = new object[]
+                entries = new object[]
                 {
                     new { file = Source1.FullName, keepSections = true },
                     new { file = Source2.FullName, keepSections = true },
@@ -382,7 +384,7 @@ internal sealed class WordBuildTests : CliIntegrationTestBase
     {
         var manifest = new FileInfo(Path.Combine(directory.FullName, "word-build.json"));
         var json = JsonSerializer.Serialize(
-            new { output, deck = new object[] { new { section = "CLI Section" }, source.FullName } }
+            new { output, entries = new object[] { new { section = "CLI Section" }, source.FullName } }
         );
         await File.WriteAllTextAsync(manifest.FullName, json).ConfigureAwait(false);
         return manifest;

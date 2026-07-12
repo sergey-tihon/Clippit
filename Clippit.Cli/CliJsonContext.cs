@@ -37,7 +37,7 @@ namespace Clippit.Cli;
 [JsonSerializable(typeof(ConsolidateResult))]
 [JsonSerializable(typeof(IReadOnlyList<RevisionInfoResult>))]
 [JsonSerializable(typeof(WordBuildManifest))]
-[JsonSerializable(typeof(WordDeckEntry))]
+[JsonSerializable(typeof(WordEntryItem))]
 [JsonSerializable(typeof(WordBuildResult))]
 [JsonSerializable(typeof(WordBuildEntryResult))]
 [JsonSerializable(typeof(WordBuildInitResult))]

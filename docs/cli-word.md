@@ -69,10 +69,10 @@ clippit word build run <manifest.json|-> [--output <file.docx|->] [--force] [--f
 
 | Option | Description |
 | --- | --- |
-| `--output`, `-o` | Output DOCX path (default: manifest `output`, otherwise `merged.docx`). Use `-` for stdout. |
+| `--output`, `-o` | Output DOCX path (default: manifest `output`). Use `-` for stdout. |
 | `--force` | Overwrite an existing output file. |
 
-Deck entries may use string shorthand (`"[Section]"`, `"chapter1.docx"`) or object form for
+Entries may use string shorthand (`"[Section]"`, `"chapter1.docx"`) or object form for
 options like `start`, `count`, `keepSections`, and
 `discardHeadersAndFootersInKeptSections`.
 
