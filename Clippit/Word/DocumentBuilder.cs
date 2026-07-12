@@ -433,7 +433,7 @@ namespace Clippit.Word
                 InitRelationshipMarkup();
 
             // This list is used to eliminate duplicate images
-            var images = new List<ImageData>();
+            var images = new Dictionary<ContentDataKey, ImageData>();
             var mainPart = output.MainDocumentPart.GetXDocument();
             mainPart.Declaration.Standalone = Yes;
             mainPart.Declaration.Encoding = Utf8;
@@ -1062,7 +1062,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         private static void WriteGlossaryDocumentPart(
             WmlDocument wmlGlossaryDocument,
             WordprocessingDocument output,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             using var ms = new MemoryStream();
@@ -1643,7 +1643,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             WordprocessingDocument sourceDocument,
             WordprocessingDocument newDocument,
             XElement sectionMarkup,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             var headerReferences = sectionMarkup.Elements(W.headerReference);
@@ -2122,7 +2122,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             WordprocessingDocument sourceDocument,
             WordprocessingDocument newDocument,
             IEnumerable<XElement> newContent,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             var commentIdMap = new Dictionary<int, int>();
@@ -2308,7 +2308,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             List<XElement> newContent,
             bool keepSection,
             string insertId,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             FixRanges(sourceDocument.MainDocumentPart.GetXDocument(), newContent);
@@ -2423,7 +2423,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             List<XElement> newContent,
             bool keepSection,
             string insertId,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             // Append contents
@@ -2477,7 +2477,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 )
             )
             {
-                var images = new List<ImageData>();
+                var images = new Dictionary<ContentDataKey, ImageData>();
 
                 var mdp = outWDoc.AddMainDocumentPart();
                 var mdpXd = mdp.GetXDocument();
@@ -2500,7 +2500,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             WordprocessingDocument sourceDocument,
             WordprocessingDocument newDocument,
             IEnumerable<XElement> newContent,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             // Copy all styles to the new document
@@ -2594,7 +2594,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             WordprocessingDocument sourceDocument,
             WordprocessingDocument newDocument,
             IEnumerable<XElement> newContent,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             // Copy all styles to the new document
@@ -2841,7 +2841,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             WordprocessingDocument sourceDocument,
             WordprocessingDocument newDocument,
             IEnumerable<XElement> newContent,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             var numIdMap = new Dictionary<int, int>();
@@ -3004,7 +3004,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             NumberingDefinitionsPart sourceNumberingPart,
             WordprocessingDocument newDocument,
             IEnumerable<XElement> newContent,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             var numIdMap = new Dictionary<int, int>();
@@ -3164,7 +3164,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             NumberingDefinitionsPart sourceNumberingPart,
             WordprocessingDocument newDocument,
             IEnumerable<XElement> newContent,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             var numIdMap = new Dictionary<int, int>();
@@ -3336,7 +3336,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             OpenXmlPart newContentPart,
             XElement imageReference,
             XName attributeName,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             var relId = (string)imageReference.Attribute(attributeName);
@@ -3442,7 +3442,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             OpenXmlPart oldContentPart,
             OpenXmlPart newContentPart,
             IEnumerable<XElement> newContent,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             var relevantElements = newContent
@@ -3862,7 +3862,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         private static void CopyStartingParts(
             WordprocessingDocument sourceDocument,
             WordprocessingDocument newDocument,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             // A Core File Properties part does not have implicit or explicit relationships to other parts.
@@ -4003,7 +4003,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             WordprocessingDocument sourceDocument,
             WordprocessingDocument newDocument,
             XDocument settingsXDoc,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             var number = 0;
@@ -4059,7 +4059,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             WordprocessingDocument sourceDocument,
             WordprocessingDocument newDocument,
             XDocument settingsXDoc,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             var number = 0;
@@ -4232,7 +4232,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             WordprocessingDocument sourceDocument,
             WordprocessingDocument newDocument,
             IEnumerable<XElement> newContent,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             var number = 0;
@@ -4297,7 +4297,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             WordprocessingDocument sourceDocument,
             WordprocessingDocument newDocument,
             IEnumerable<XElement> newContent,
-            List<ImageData> images
+            Dictionary<ContentDataKey, ImageData> images
         )
         {
             var number = 0;
@@ -4356,15 +4356,13 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
         }
 
         // General function for handling images that tries to use an existing image if they are the same
-        private static ImageData ManageImageCopy(ImagePart oldImage, List<ImageData> images)
+        private static ImageData ManageImageCopy(ImagePart oldImage, Dictionary<ContentDataKey, ImageData> images)
         {
             var oldImageData = new ImageData(oldImage);
-            foreach (var item in images)
-            {
-                if (item.Compare(oldImageData))
-                    return item;
-            }
-            images.Add(oldImageData);
+            var key = oldImageData.Key;
+            if (images.TryGetValue(key, out var existing))
+                return existing;
+            images[key] = oldImageData;
             return oldImageData;
         }
 
