@@ -1,12 +1,12 @@
 {
-  "last_run": "2026-07-11",
-  "last_run_id": "29158917189",
+  "last_run": "2026-07-12",
+  "last_run_id": "29199252713",
   "backlog_cursor": {
     "issues": 424,
     "prs": 165
   },
   "comments_made": {
-    "54": "2026-05-01",
+    "54": "2026-07-12",
     "67": "2026-05-01",
     "77": "2026-05-01",
     "103": "2026-05-01",
@@ -22,8 +22,8 @@
   },
   "open_clippy_prs": [
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "rebased onto master 2026-07-06"},
-    {"number": 422, "branch": "clippy/feat-word-build-374-20260708-fa672b956cc3e953", "title": "feat(cli): add `clippit word build init/run` command", "note": "closes #374; Copilot coding agent actively working on docs/merge-conflicts"},
-    {"number": "aw_pr_json110", "branch": "clippy/test-cli-json-contracts", "title": "test(cli): add JSON contract tests for word assemble, consolidate, and excel create", "note": "CLI110-CLI112; 13 contract tests pass"}
+    {"number": "aw_pr_imgdict", "branch": "clippy/perf-doc-builder-image-dedup-dict-20260712", "title": "perf(word): use Dictionary for O(1) image deduplication in DocumentBuilder", "note": "closes #54; 2256 tests pass"},
+    {"number": "aw_pr_skia150", "branch": "clippy/eng-skia-4.150-20260712", "title": "chore(deps): update SkiaSharp 4.148.0 → 4.150.0", "note": "minor update; HTML converter tests pass"}
   ],
   "checked_off_by_maintainer": [],
   "monthly_activity_issue": 370,
@@ -31,35 +31,34 @@
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "Monthly Activity issue for July 2026 is #370",
     "PR #165 (ExcelAssembler) rebased onto master 2026-07-06 - all 9 tests pass",
-    "PR #422: feat(cli) word build command, closes #374 - Copilot coding agent updated docs/conflicts",
-    "PR #423: merged 2026-07-11",
-    "PR #425: merged 2026-07-10",
-    "PR #426: merged 2026-07-10",
-    "PR aw_pr_json110: test(cli) JSON contract tests CLI110-CLI112 (2026-07-11)",
-    "All Dependabot deps are current as of 2026-07-07"
+    "PR #422: merged 2026-07-12 (word build command)",
+    "PR #427: merged 2026-07-11 (JSON contract tests)",
+    "All Dependabot deps are current as of 2026-07-12 except SkiaSharp (covered by aw_pr_skia150)"
   ],
   "improvements_submitted": [
-    "PR(aw_pr_json110): test(cli) JSON contract tests CLI110-CLI112 (2026-07-11)",
+    "PR(aw_pr_skia150): chore(deps) SkiaSharp 4.148->4.150 (2026-07-12)",
+    "PR(aw_pr_imgdict): perf(word) O(1) image dedup Dictionary (2026-07-12), closes #54",
+    "PR(427): test(cli) JSON contract tests CLI110-CLI112 (merged 2026-07-11)",
+    "PR(422): feat(cli) word build command (merged 2026-07-12), closes #374",
     "PR(426): test OpenXmlRegex callback/delete + PPTX TextReplacer (merged 2026-07-10)",
     "PR(425): fix(excel) SpreadsheetWriter dimension+tableId (merged 2026-07-10), closes #424",
     "PR(423): feat(cli) excel create command (merged 2026-07-11), closes #378",
-    "PR(422): feat(cli) word build command (2026-07-09), closes #374",
-    "PR#419: feat(cli) word consolidate command (merged 2026-07-08)",
-    "PR#417: feat(word) RegisterCustomHandler extensibility API (merged 2026-07-08)",
-    "PR#415: perf(word) fix image deduplication ManageImageCopy (merged 2026-07-06)",
-    "PR#412: fix(word) UnicodeMapper.RunToString xml:space=preserve (merged 2026-07-05)",
-    "PR#411: feat(cli) word simplify-markup (merged 2026-07-05)",
-    "PR#407: ci NuGet OIDC trusted publishing (merged 2026-07-04)",
-    "PR#406: feat(cli) word accept-revisions (merged 2026-07-03)",
-    "PR#405: feat(cli) word assemble (merged 2026-07-04)",
-    "PR#398: feat(word) de-DE + es-ES list-item text getters (merged 2026-07-03)",
-    "PR#397: feat(word) HeaderRowCount in DocumentAssembler Table (merged 2026-07-03)",
-    "PR#396: fix(pptx) ExtendedPart chart workbooks (merged 2026-07-03)",
-    "PR#395: fix(word) Optional attr in DocumentAssembler Conditional (merged 2026-07-03)",
-    "PR#394: fix(html) rowspan/gridSpan + external hyperlinks (merged 2026-07-03)",
-    "PR#393: docs v3.6.0 changelog (merged 2026-07-03)",
-    "PR#391: fix TextReplacer+WmlComparer crashes (merged 2026-07-03)",
-    "PR#371: perf FrozenSet+PtOpenXmlUtil modernize (merged 2026-07-02)",
-    "PR#369: chore(deps) TUnit 1.57.0->1.57.17 (merged 2026-07-01)"
+    "PR(419): feat(cli) word consolidate (merged 2026-07-07)",
+    "PR(417): feat(word) RegisterCustomHandler extensibility API (merged 2026-07-08)",
+    "PR(415): perf(word) fix image deduplication ManageImageCopy (merged 2026-07-06)",
+    "PR(412): fix(word) UnicodeMapper.RunToString xml:space=preserve (merged 2026-07-05)",
+    "PR(411): feat(cli) word simplify-markup (merged 2026-07-05)",
+    "PR(407): ci NuGet OIDC trusted publishing (merged 2026-07-04)",
+    "PR(406): feat(cli) word accept-revisions (merged 2026-07-03)",
+    "PR(405): feat(cli) word assemble (merged 2026-07-04)",
+    "PR(398): feat(word) de-DE + es-ES list-item text getters (merged 2026-07-03)",
+    "PR(397): feat(word) HeaderRowCount in DocumentAssembler Table (merged 2026-07-03)",
+    "PR(396): fix(pptx) ExtendedPart chart workbooks (merged 2026-07-03)",
+    "PR(395): fix(word) Optional attr in DocumentAssembler Conditional (merged 2026-07-03)",
+    "PR(394): fix(html) rowspan/gridSpan + external hyperlinks (merged 2026-07-03)",
+    "PR(393): docs v3.6.0 changelog (merged 2026-07-03)",
+    "PR(391): fix TextReplacer+WmlComparer crashes (merged 2026-07-03)",
+    "PR(371): perf FrozenSet+PtOpenXmlUtil modernize (merged 2026-07-02)",
+    "PR(369): chore(deps) TUnit 1.57.0->1.57.17 (merged 2026-07-01)"
   ]
 }
