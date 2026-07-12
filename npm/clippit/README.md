@@ -1,6 +1,7 @@
 # clippit
 
 **Clippit CLI** is a command-line tool for working with OpenXml files (PowerPoint, Word, Excel).
+It supports PPTX split/build/verify workflows, manifest-driven DOCX build/compare/consolidate workflows, DOCX template assembly and markup cleanup, DOCX↔HTML conversion, and XLSX create/verify workflows.
 This npm package provides native binaries for all platforms — no .NET runtime required.
 
 ## Installation
@@ -23,6 +24,10 @@ clippit pptx verify presentation.pptx
 
 # Validate a DOCX file
 clippit word verify document.docx
+
+# Scaffold a Word build manifest and merge it into a DOCX
+clippit word build init --output word-build.json
+clippit word build run word-build.json --output merged.docx
 
 # Compare two DOCX files with tracked revisions
 clippit word compare before.docx after.docx --output compared.docx
@@ -62,6 +67,8 @@ clippit pptx split presentation.pptx --format json
 | `pptx split`      | Split a `.pptx` into individual single-slide files. Supports slide range selection (`--slides`) and manifest generation (`--manifest`). |
 | `pptx build init` | Scaffold a deck manifest (JSON).                                                                                                        |
 | `pptx build run`  | Assemble a `.pptx` from a deck manifest.                                                                                                |
+| `word build init` | Scaffold a Word build manifest (JSON).                                                                                                  |
+| `word build run`  | Assemble a `.docx` from a Word build manifest.                                                                                          |
 | `pptx verify`           | Validate a PPTX — schema, relationships, markup compatibility, and sections.                                                            |
 | `word assemble`         | Assemble a DOCX template with XML data.                                                                                                  |
 | `word compare`          | Compare two DOCX files and produce a tracked-revision DOCX.                                                                             |

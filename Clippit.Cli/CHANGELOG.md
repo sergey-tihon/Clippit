@@ -10,6 +10,13 @@
   duplicate worksheet names return `INVALID_ARGUMENTS` (exit 2). Published schemas:
   `workbook-definition.v1.json` (input) and `excel-create-result.v1.json` (result)
   (#378).
+- Added `word build init` and `word build run` commands for manifest-driven DOCX
+  merging with `DocumentBuilder`. `word build init` scaffolds a
+  `clippit-word-build.json` manifest (or writes it to stdout with `--output -`).
+  `word build run` reads a manifest from a file or stdin, supports shorthand or
+  object-form deck entries, writes the merged `.docx` to a file or stdout, and
+  reports per-entry element counts in JSON mode. Published schemas:
+  `word-build-manifest.v1.json`, `word-build-result.v1.json` (#374).
 - Added `word consolidate` command to combine multiple revisions of a document into one
   file with tracked changes. Wraps `WmlComparer.Consolidate`. Supports one positional
   original argument and one or more revision arguments. Reviewer names and hex colors

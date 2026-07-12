@@ -6,6 +6,7 @@ using Clippit.Cli.Commands.Pptx.Split;
 using Clippit.Cli.Commands.Pptx.Verify;
 using Clippit.Cli.Commands.Version;
 using Clippit.Cli.Commands.Word.Assemble;
+using Clippit.Cli.Commands.Word.Build;
 using Clippit.Cli.Commands.Word.Compare;
 using Clippit.Cli.Commands.Word.Consolidate;
 using Clippit.Cli.Infrastructure;
@@ -35,6 +36,11 @@ namespace Clippit.Cli;
 [JsonSerializable(typeof(AssembleResult))]
 [JsonSerializable(typeof(ConsolidateResult))]
 [JsonSerializable(typeof(IReadOnlyList<RevisionInfoResult>))]
+[JsonSerializable(typeof(WordBuildManifest))]
+[JsonSerializable(typeof(WordEntryItem))]
+[JsonSerializable(typeof(WordBuildResult))]
+[JsonSerializable(typeof(WordBuildEntryResult))]
+[JsonSerializable(typeof(WordBuildInitResult))]
 [JsonSerializable(typeof(WorkbookDefinition))]
 [JsonSerializable(typeof(CreateResult))]
 [JsonSerializable(typeof(ErrorResult))]
@@ -47,9 +53,10 @@ internal sealed partial class CliJsonContext : JsonSerializerContext { }
 
 /// <summary>
 /// Indented variant used only for human-editable on-disk artifacts (e.g. the
-/// manifest file scaffolded by <c>pptx build init</c>).
+/// manifest file scaffolded by <c>pptx build init</c> or <c>word build init</c>).
 /// </summary>
 [JsonSerializable(typeof(BuildManifest))]
+[JsonSerializable(typeof(WordBuildManifest))]
 [JsonSourceGenerationOptions(
     WriteIndented = true,
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,

@@ -11,9 +11,11 @@ published for documentation, integration validation, and contract tests.
 | File                                                   | What it describes                                                                                                                                                           |
 | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [`deck-manifest.v1.json`](./deck-manifest.v1.json)     | Input manifest consumed by `clippit pptx build run`                                                                                                                         |
+| [`word-build-manifest.v1.json`](./word-build-manifest.v1.json) | Input manifest consumed by `clippit word build run`                                                                                                               |
 | [`workbook-definition.v1.json`](./workbook-definition.v1.json) | Input document consumed by `clippit excel create`                                                                                                                   |
 | [`split-result.v1.json`](./split-result.v1.json)       | Stdout payload of `clippit pptx split` (JSON mode)                                                                                                                          |
 | [`build-result.v1.json`](./build-result.v1.json)       | Stdout payload of `clippit pptx build run` (JSON mode)                                                                                                                      |
+| [`word-build-result.v1.json`](./word-build-result.v1.json) | Stdout payload of `clippit word build run` (JSON mode)                                                                                                                  |
 | [`verify-result.v1.json`](./verify-result.v1.json)     | Stdout payload of `clippit pptx verify`, `clippit word verify`, `clippit excel verify` (JSON mode)                                                                          |
 | [`compare-result.v1.json`](./compare-result.v1.json)   | Stdout payload of `clippit word compare` (JSON mode)                                                                                                                        |
 | [`assemble-result.v1.json`](./assemble-result.v1.json) | Stdout payload of `clippit word assemble` (JSON mode)                                                                                                                       |
@@ -48,7 +50,7 @@ published for documentation, integration validation, and contract tests.
   reserved for the converted HTML/DOCX stream and the success payload is
   suppressed.
 
-  `word compare` and `word consolidate` follow the same pattern: when
+  `word build`, `word compare`, and `word consolidate` follow the same pattern: when
   `--output -` is used, stdout carries the binary DOCX and the JSON result is
   suppressed.
 
