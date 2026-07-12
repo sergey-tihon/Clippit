@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.7.0] - 2026-07-05
+## [0.7.0] - 2026-07-12
 
 - Added `excel create` command to generate an `.xlsx` workbook from a JSON workbook
   definition. Wraps `SpreadsheetWriter`/`WorkbookDfn`. Supports one positional input

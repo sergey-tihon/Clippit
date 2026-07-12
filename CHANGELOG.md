@@ -1,5 +1,26 @@
 # Changelog
 
+## [3.7.0] - July 12, 2026
+
+- feat(cli): add `clippit word build init/run` command (#422)
+- feat(cli): add `clippit excel create` command (#423)
+- feat: add `clippit word consolidate` command (#419)
+- feat(word): add `RegisterCustomHandler` extensibility to `DocumentAssembler` (#417)
+- feat(cli): add `clippit word simplify-markup` command (#412)
+- feat(cli): add `clippit word assemble` command (#405)
+- feat(cli): add `clippit word accept-revisions` command (#406)
+- perf(word): fix image deduplication in `DocumentBuilder` (#415)
+- fix(excel): correct dimension element and table id in `SpreadsheetWriter` (#425)
+- fix(excel): keep `tableColumns` count in sync when data rows are wider than headings (#404)
+- fix(word): respect `xml:space="preserve"` in `UnicodeMapper.RunToString` (#411)
+- fix: correct `OpenXmlRegex` matching with `lastRenderedPageBreak` (#409)
+- fix(word): correct `DocumentAssembler` `xml:space` preservation for content text (#408)
+- fix: isolate Sample2 output dirs to prevent parallel test collision
+- test(cli): add JSON contract tests for word assemble, consolidate, and excel create (#427)
+- test: add `OpenXmlRegex` callback/delete tests and PPTX `TextReplacer` tests (#426)
+- docs: split CLI docs by format (#413)
+- ci: migrate NuGet publish to trusted publishing (OIDC) (#407)
+
 ## [3.6.0] - July 4, 2026
 
 - feat(word): add German and Spanish localized list-item text getters (`de-DE`, `es-ES`) (#389)
