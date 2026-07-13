@@ -67,6 +67,14 @@ public class PtUtilsTests
     // ── StringExtensions.SplitAndKeep ──────────────────────────────────────
 
     [Test]
+    public async Task SplitAndKeep_NullString_ReturnsEmpty()
+    {
+        string? s = null;
+        var result = s.SplitAndKeep(',');
+        await Assert.That(result).IsEmpty();
+    }
+
+    [Test]
     public async Task SplitAndKeep_NoDelimitersFound_ReturnsSinglePart()
     {
         var result = "hello".SplitAndKeep(',');
@@ -78,6 +86,13 @@ public class PtUtilsTests
     {
         var result = string.Empty.SplitAndKeep(',');
         await Assert.That(result).IsEmpty();
+    }
+
+    [Test]
+    public async Task SplitAndKeep_ConsecutiveDelimiters_EachIsOwnElement()
+    {
+        var result = "a\n\nb".SplitAndKeep('\n');
+        await Assert.That(result).IsEquivalentTo(["a", "\n", "\n", "b"]);
     }
 
     [Test]

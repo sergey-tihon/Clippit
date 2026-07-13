@@ -281,12 +281,6 @@ public class ListItemTextGetter_fr_FR
                 return result[0..1].ToUpper() + result[1..];
             }
 
-            if (levelNumber < 20)
-            {
-                result += OrdinalOneThroughNineteen[tens * 10 + ones];
-                return result[0..1].ToUpper() + result[1..];
-            }
-
             result += OrdinalOneThroughNineteen[tens * 10 + ones];
             return result[0..1].ToUpper() + result[1..];
         }
