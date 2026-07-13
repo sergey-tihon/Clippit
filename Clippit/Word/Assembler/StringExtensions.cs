@@ -2,7 +2,7 @@
 
 public static class StringExtensions
 {
-    public static IList<string> SplitAndKeep(this string s, params char[] delimiters)
+    public static IList<string> SplitAndKeep(this string? s, params char[] delimiters)
     {
         var parts = new List<string>();
         if (string.IsNullOrEmpty(s))
