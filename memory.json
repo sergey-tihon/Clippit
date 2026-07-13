@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-07-12",
-  "last_run_id": "29199252713",
+  "last_run": "2026-07-13",
+  "last_run_id": "29266658918",
   "backlog_cursor": {
     "issues": 424,
     "prs": 165
@@ -22,8 +22,7 @@
   },
   "open_clippy_prs": [
     {"number": 165, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930", "title": "feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "rebased onto master 2026-07-06"},
-    {"number": "aw_pr_imgdict", "branch": "clippy/perf-doc-builder-image-dedup-dict-20260712", "title": "perf(word): use Dictionary for O(1) image deduplication in DocumentBuilder", "note": "closes #54; 2256 tests pass"},
-    {"number": "aw_pr_skia150", "branch": "clippy/eng-skia-4.150-20260712", "title": "chore(deps): update SkiaSharp 4.148.0 → 4.150.0", "note": "minor update; HTML converter tests pass"}
+    {"number": "aw_pr_str_fr", "branch": "clippy/test-string-extensions-and-fr-fr-cleanup-20260713", "title": "test+refactor: StringExtensions.SplitAndKeep tests + fr_FR dead code removal", "note": "10 new tests; dead code removal; 2026-07-13"}
   ],
   "checked_off_by_maintainer": [],
   "monthly_activity_issue": 370,
@@ -31,13 +30,16 @@
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "Monthly Activity issue for July 2026 is #370",
     "PR #165 (ExcelAssembler) rebased onto master 2026-07-06 - all 9 tests pass",
+    "PR #428: merged 2026-07-12 (perf word image dedup Dictionary)",
+    "PR #429: merged 2026-07-12 (SkiaSharp 4.148->4.150)",
     "PR #422: merged 2026-07-12 (word build command)",
     "PR #427: merged 2026-07-11 (JSON contract tests)",
-    "All Dependabot deps are current as of 2026-07-12 except SkiaSharp (covered by aw_pr_skia150)"
+    "All Dependabot deps are current as of 2026-07-13"
   ],
   "improvements_submitted": [
-    "PR(aw_pr_skia150): chore(deps) SkiaSharp 4.148->4.150 (2026-07-12)",
-    "PR(aw_pr_imgdict): perf(word) O(1) image dedup Dictionary (2026-07-12), closes #54",
+    "PR(aw_pr_str_fr): test StringExtensions.SplitAndKeep SSK001-010 + fr_FR dead code removal (2026-07-13)",
+    "PR(429): chore(deps) SkiaSharp 4.148->4.150 (merged 2026-07-12)",
+    "PR(428): perf(word) O(1) image dedup Dictionary (merged 2026-07-12), closes #54",
     "PR(427): test(cli) JSON contract tests CLI110-CLI112 (merged 2026-07-11)",
     "PR(422): feat(cli) word build command (merged 2026-07-12), closes #374",
     "PR(426): test OpenXmlRegex callback/delete + PPTX TextReplacer (merged 2026-07-10)",
