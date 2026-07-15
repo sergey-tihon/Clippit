@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -92,7 +93,7 @@ namespace Clippit.PowerPoint.Fluent
             { P.extLst, 80 },
         };
 
-        private static readonly Dictionary<XName, XName[]> s_relationshipMarkup = new()
+        private static readonly FrozenDictionary<XName, XName[]> s_relationshipMarkup = new Dictionary<XName, XName[]>
         {
             { A.audioFile, new[] { R.link } },
             { A.videoFile, new[] { R.link } },
@@ -123,7 +124,7 @@ namespace Clippit.PowerPoint.Fluent
             { VML.stroke, new[] { R.id } },
             { WNE.toolbarData, new[] { R.id } },
             { Plegacy.textdata, new[] { XName.Get("id") } },
-        };
+        }.ToFrozenDictionary();
 
         internal static void CopyChartObjects(ChartPart oldChart, ChartPart newChart)
         {

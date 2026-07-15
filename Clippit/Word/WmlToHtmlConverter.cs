@@ -1951,15 +1951,15 @@ namespace Clippit.Word
             }
         }
 
-        private static readonly Dictionary<string, int> BorderTypePriority = new()
+        private static readonly FrozenDictionary<string, int> BorderTypePriority = new Dictionary<string, int>
         {
             { "single", 1 },
             { "thick", 2 },
             { "double", 3 },
             { "dotted", 4 },
-        };
+        }.ToFrozenDictionary();
 
-        private static readonly Dictionary<string, int> BorderNumber = new()
+        private static readonly FrozenDictionary<string, int> BorderNumber = new Dictionary<string, int>
         {
             { "single", 1 },
             { "thick", 2 },
@@ -1986,7 +1986,7 @@ namespace Clippit.Word
             { "threeDEngrave", 7 },
             { "outset", 7 },
             { "inset", 7 },
-        };
+        }.ToFrozenDictionary();
 
         private static void ResolveCellBorder(XElement border1, XElement border2)
         {

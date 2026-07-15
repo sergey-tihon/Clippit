@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
@@ -68,7 +69,7 @@ internal abstract class SlidePartData<T> : IComparable<SlidePartData<T>>
         }
     }
 
-    private static readonly Dictionary<XName, string[]> s_resizableAttributes = new()
+    private static readonly FrozenDictionary<XName, string[]> s_resizableAttributes = new Dictionary<XName, string[]>
     {
         { A.off, ["x", "y"] }, // <a:off x="2054132" y="1665577"/>
         { A.ext, ["cx", "cy"] }, // <a:ext cx="2289267" cy="3074329"/>
@@ -80,7 +81,7 @@ internal abstract class SlidePartData<T> : IComparable<SlidePartData<T>>
         { A.endParaRPr, ["sz"] }, // <a:endParaRPr lang="en-US" sz="2400" kern="0">
         { A.gridCol, ["w"] }, // <a:gridCol w="347223">
         { A.tr, ["h"] }, // <a:tr h="229849">
-    };
+    }.ToFrozenDictionary();
 
     public static void ScaleShapes(XElement root, double scale)
     {

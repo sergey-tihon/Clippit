@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Frozen;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
@@ -95,7 +96,7 @@ namespace Clippit.Word
             UpdateSeries(chartPart, chartData);
         }
 
-        private static readonly Dictionary<int, string> FormatCodes = new()
+        private static readonly FrozenDictionary<int, string> FormatCodes = new Dictionary<int, string>
         {
             { 0, "general" },
             { 1, "0" },
@@ -125,7 +126,7 @@ namespace Clippit.Word
             { 47, "mmss.0" },
             { 48, "##0.0E+0" },
             { 49, "@" },
-        };
+        }.ToFrozenDictionary();
 
         private static void UpdateSeries(ChartPart chartPart, ChartData chartData)
         {
