@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Frozen;
 using System.Globalization;
 using System.Text;
 using System.Xml.Linq;
@@ -2084,7 +2085,7 @@ namespace Clippit.Html
             return newExpr;
         }
 
-        private static readonly Dictionary<string, double> FontSizeMap = new()
+        private static readonly FrozenDictionary<string, double> FontSizeMap = new Dictionary<string, double>
         {
             { "xx-small", 7.5d },
             { "x-small", 10d },
@@ -2093,7 +2094,7 @@ namespace Clippit.Html
             { "large", 18d },
             { "x-large", 24d },
             { "xx-large", 36d },
-        };
+        }.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
 
         private static void ApplySelector(
             CssSelector selector,
@@ -3694,7 +3695,7 @@ namespace Clippit.Html
             }
         }
 
-        private static readonly Dictionary<string, string> ColorMap = new()
+        private static readonly FrozenDictionary<string, string> ColorMap = new Dictionary<string, string>
         {
             { "maroon", "800000" },
             { "red", "FF0000" },
@@ -3717,7 +3718,7 @@ namespace Clippit.Html
             { "darkgray", "A9A9A9" },
             { "beige", "F5F5DC" },
             { "windowtext", "000000" },
-        };
+        }.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
 
         public static string GetWmlColorFromExpression(CssExpression color)
         {
