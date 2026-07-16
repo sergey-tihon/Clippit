@@ -1349,15 +1349,15 @@ namespace Clippit.Word
             }
         }
 
-        private static readonly Dictionary<string, int> BorderTypePriority = new()
+        private static readonly FrozenDictionary<string, int> BorderTypePriority = new Dictionary<string, int>
         {
             { "single", 1 },
             { "thick", 2 },
             { "double", 3 },
             { "dotted", 4 },
-        };
+        }.ToFrozenDictionary();
 
-        private static readonly Dictionary<string, int> BorderNumber = new()
+        private static readonly FrozenDictionary<string, int> BorderNumber = new Dictionary<string, int>
         {
             { "single", 1 },
             { "thick", 2 },
@@ -1384,7 +1384,7 @@ namespace Clippit.Word
             { "threeDEngrave", 23 },
             { "outset", 24 },
             { "inset", 25 },
-        };
+        }.ToFrozenDictionary();
 
         private static XElement ResolveInsideBorder(XElement inside1, XElement sideToReplace)
         {
@@ -1548,7 +1548,10 @@ namespace Clippit.Word
             "swCell",
         };
 
-        private static readonly Dictionary<string, XName> TableStyleOverrideXNameMap = new()
+        private static readonly FrozenDictionary<string, XName> TableStyleOverrideXNameMap = new Dictionary<
+            string,
+            XName
+        >
         {
             { "band1Vert", W.oddVBand },
             { "band2Vert", W.evenVBand },
@@ -1562,9 +1565,12 @@ namespace Clippit.Word
             { "nwCell", W.firstRowFirstColumn },
             { "seCell", W.lastRowLastColumn },
             { "swCell", W.lastRowFirstColumn },
-        };
+        }.ToFrozenDictionary();
 
-        private static readonly Dictionary<XName, string> TableStyleOverrideXNameRevMap = new()
+        private static readonly FrozenDictionary<XName, string> TableStyleOverrideXNameRevMap = new Dictionary<
+            XName,
+            string
+        >
         {
             { W.oddVBand, "band1Vert" },
             { W.evenVBand, "band2Vert" },
@@ -1574,7 +1580,7 @@ namespace Clippit.Word
             { W.lastColumn, "lastCol" },
             { W.firstRow, "firstRow" },
             { W.lastRow, "lastRow" },
-        };
+        }.ToFrozenDictionary();
 
         private static XElement MergeStyleElement(XElement higherPriorityElement, XElement lowerPriorityElement)
         {

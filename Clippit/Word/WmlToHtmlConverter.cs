@@ -2807,7 +2807,10 @@ namespace Clippit.Word
             public decimal CssSize;
         }
 
-        private static readonly Dictionary<string, BorderMappingInfo> BorderStyleMap = new()
+        private static readonly FrozenDictionary<string, BorderMappingInfo> BorderStyleMap = new Dictionary<
+            string,
+            BorderMappingInfo
+        >
         {
             {
                 "single",
@@ -2905,7 +2908,7 @@ namespace Clippit.Word
                 "inset",
                 new BorderMappingInfo() { CssName = "inset", CssSize = 4.5m }
             },
-        };
+        }.ToFrozenDictionary();
 
         private static void GenerateBorderStyle(
             XElement pBdr,
@@ -3009,7 +3012,10 @@ namespace Clippit.Word
             }
         }
 
-        private static readonly Dictionary<string, Func<string, string, string>> ShadeMapper = new()
+        private static readonly FrozenDictionary<string, Func<string, string, string>> ShadeMapper = new Dictionary<
+            string,
+            Func<string, string, string>
+        >
         {
             { "auto", (c, f) => c },
             { "clear", (c, f) => f },
@@ -3048,7 +3054,7 @@ namespace Clippit.Word
             { "thinHorzStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
             { "thinReverseDiagStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
             { "thinVertStripe", (c, f) => ConvertColorFillPct(c, f, .25) },
-        };
+        }.ToFrozenDictionary();
 
         private static readonly Dictionary<string, string> ShadeCache = new();
 
@@ -3095,7 +3101,7 @@ namespace Clippit.Word
             }
         }
 
-        private static readonly Dictionary<string, string> NamedColors = new()
+        private static readonly FrozenDictionary<string, string> NamedColors = new Dictionary<string, string>
         {
             { "black", "black" },
             { "blue", "blue" },
@@ -3114,7 +3120,7 @@ namespace Clippit.Word
             { "darkGray", "#A9A9A9" },
             { "lightGray", "#D3D3D3" },
             { "none", "" },
-        };
+        }.ToFrozenDictionary();
 
         private static void CreateColorProperty(string propertyName, string color, Dictionary<string, string> style)
         {
@@ -3166,7 +3172,7 @@ namespace Clippit.Word
             "Wingdings 3",
         }.ToFrozenSet(StringComparer.OrdinalIgnoreCase);
 
-        private static readonly Dictionary<string, string> FontFallback = new()
+        private static readonly FrozenDictionary<string, string> FontFallback = new Dictionary<string, string>
         {
             // Sans-serif fonts
             { "Arial", @"'{0}', sans-serif" },
@@ -3209,7 +3215,7 @@ namespace Clippit.Word
             { "Consolas", @"'{0}', monospace" },
             { "Courier New", @"'{0}', monospace" },
             { "Lucida Console", @"'{0}', monospace" },
-        };
+        }.ToFrozenDictionary();
 
         private static void CreateFontCssProperty(string font, Dictionary<string, string> style)
         {
