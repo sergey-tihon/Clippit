@@ -2094,7 +2094,7 @@ namespace Clippit.Html
             { "large", 18d },
             { "x-large", 24d },
             { "xx-large", 36d },
-        }.ToFrozenDictionary();
+        }.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
 
         private static void ApplySelector(
             CssSelector selector,
@@ -3718,7 +3718,7 @@ namespace Clippit.Html
             { "darkgray", "A9A9A9" },
             { "beige", "F5F5DC" },
             { "windowtext", "000000" },
-        }.ToFrozenDictionary();
+        }.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
 
         public static string GetWmlColorFromExpression(CssExpression color)
         {
