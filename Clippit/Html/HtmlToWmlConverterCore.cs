@@ -3391,7 +3391,7 @@ namespace Clippit.Html
             return borders;
         }
 
-        private static readonly Dictionary<string, string> BorderStyleMap = new Dictionary<string, string>()
+        private static readonly FrozenDictionary<string, string> BorderStyleMap = new Dictionary<string, string>()
         {
             { "none", "none" },
             { "hidden", "none" },
@@ -3403,7 +3403,7 @@ namespace Clippit.Html
             { "ridge", "outset" },
             { "inset", "inset" },
             { "outset", "outset" },
-        };
+        }.ToFrozenDictionary();
 
         private static List<XAttribute> GetBorderAttributes(XElement element, string whichBorder)
         {
@@ -3878,7 +3878,7 @@ namespace Clippit.Html
             return null;
         }
 
-        private static readonly Dictionary<string, string> InstalledFonts = new Dictionary<string, string>
+        private static readonly FrozenDictionary<string, string> InstalledFonts = new Dictionary<string, string>
         {
             { "serif", "Times New Roman" },
             { "sans-serif", "Arial" },
@@ -4281,7 +4281,7 @@ namespace Clippit.Html
             { "wingdings 3", "Wingdings 3" },
             { "wingdings2", "Wingdings 2" },
             { "wingdings3", "Wingdings 3" },
-        };
+        }.ToFrozenDictionary();
 
         private static TPoint? GetUsedSizeFromFontSizeProperty(CssExpression fontSize)
         {
