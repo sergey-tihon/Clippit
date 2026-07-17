@@ -939,7 +939,7 @@ namespace Clippit.Word
             return message;
         }
 
-        private static readonly Dictionary<XName, PASchemaSet> s_paSchemaSets = new()
+        private static readonly FrozenDictionary<XName, PASchemaSet> s_paSchemaSets = new Dictionary<XName, PASchemaSet>
         {
             {
                 PA.Content,
@@ -1053,7 +1053,7 @@ namespace Clippit.Word
                     </xs:schema>"
                 )
             },
-        };
+        }.ToFrozenDictionary();
 
         /// <summary>
         /// Calculates the maximum docPr id. The identifier is

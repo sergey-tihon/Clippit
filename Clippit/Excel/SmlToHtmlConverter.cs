@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
@@ -695,7 +696,7 @@ namespace Clippit.Excel
             }
         }
 
-        private static readonly Dictionary<string, string> FontFallback = new()
+        private static readonly FrozenDictionary<string, string> FontFallback = new Dictionary<string, string>
         {
             { "Arial", @"'{0}', sans-serif" },
             { "Arial Narrow", @"'{0}', sans-serif" },
@@ -728,7 +729,7 @@ namespace Clippit.Excel
             { "Wide Latin", @"'{0}', serif" },
             { "Courier New", @"'{0}', monospace" },
             { "Lucida Console", @"'{0}', monospace" },
-        };
+        }.ToFrozenDictionary();
 
         private static void CreateFontCssProperty(string font, Dictionary<string, string> style)
         {
