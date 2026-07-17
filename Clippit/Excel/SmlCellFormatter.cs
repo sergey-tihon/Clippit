@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Frozen;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -21,17 +22,18 @@ namespace Clippit.Excel
             public string FormatCode;
         }
 
-        private static readonly Dictionary<string, FormatConfig> ExcelFormatCodeToNetFormatCodeExceptionMap = new()
-        {
+        private static readonly FrozenDictionary<string, FormatConfig> ExcelFormatCodeToNetFormatCodeExceptionMap =
+            new Dictionary<string, FormatConfig>
             {
-                "# ?/?",
-                new FormatConfig { CellType = CellType.Number, FormatCode = "0.00" }
-            },
-            {
-                "# ??/??",
-                new FormatConfig { CellType = CellType.Number, FormatCode = "0.00" }
-            },
-        };
+                {
+                    "# ?/?",
+                    new FormatConfig { CellType = CellType.Number, FormatCode = "0.00" }
+                },
+                {
+                    "# ??/??",
+                    new FormatConfig { CellType = CellType.Number, FormatCode = "0.00" }
+                },
+            }.ToFrozenDictionary();
 
         // Up to four sections of format codes can be specified. The format codes, separated by semicolons, define the
         // formats for positive numbers, negative numbers, zero values, and text, in that order. If only two sections are
