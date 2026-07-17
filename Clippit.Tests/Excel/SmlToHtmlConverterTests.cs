@@ -180,7 +180,7 @@ public class SmlToHtmlConverterTests : TestsBase
 
         await Assert.That(field).IsNotNull();
 
-        var fontFallback = (Dictionary<string, string>)field!.GetValue(null)!;
+        var fontFallback = (IReadOnlyDictionary<string, string>)field!.GetValue(null)!;
         await Assert.That(fontFallback.TryGetValue(fontName, out var cssTemplate)).IsTrue();
         await Assert.That(string.Format(cssTemplate!, fontName)).IsEqualTo(expectedCss);
     }
