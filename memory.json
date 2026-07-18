@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-07-17",
-  "last_run_id": "29594647585",
+  "last_run": "2026-07-18",
+  "last_run_id": "29651041713",
   "backlog_cursor": {
     "issues": 424,
     "prs": 165
@@ -21,9 +21,7 @@
     "424": "2026-07-10"
   },
   "open_clippy_prs": [
-    {"number": "aw_excel_asm2", "actual_number": 432, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930-rebase", "title": "feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "created 2026-07-14"},
-    {"number": "aw_mg_tests", "branch": "clippy/test-metrics-getter-assertions-20260717", "title": "test(common): strengthen MetricsGetter tests with structural assertions (MG002-MG014)", "note": "created 2026-07-17"},
-    {"number": "aw_frozen3", "branch": "clippy/perf-frozen-dict-excel-html-word-20260717", "title": "perf: convert static readonly Dictionary to FrozenDictionary in Excel, Html, and Word", "note": "created 2026-07-17"}
+    {"number": 432, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930-rebase-d103ed54a42dca60", "title": "feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "created 2026-07-14, rebased 2026-07-18"}
   ],
   "prs_to_close": [
     {"number": 165, "reason": "superseded by #432 - commented on PR"}
@@ -34,20 +32,23 @@
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "Monthly Activity issue for July 2026 is #370",
     "PR #165 (ExcelAssembler): commented, superseded by #432 - maintainer should close",
-    "PR #432: ExcelAssembler - open, awaiting review",
+    "PR #432: ExcelAssembler - open, awaiting review (rebased 2026-07-18)",
+    "PR #437: merged 2026-07-17 (FrozenDictionary Excel/Html/Word)",
+    "PR #436: merged 2026-07-17 (MetricsGetter tests)",
     "PR #435: merged 2026-07-17 (FrozenDictionary in Word/Html PR#aw_frozen2)",
     "PR #434: merged 2026-07-15 (FrozenDictionary in PPTX/Word areas)",
     "PR #431: merged (deps update)",
     "PR #430: merged (test StringExtensions + fr_FR dead code removal)",
     "All Dependabot deps are current as of 2026-07-14",
-    "No static readonly Dictionaries remaining in main library except public ones (SpreadsheetWriter.StandardFormats) and mutable runtime caches (UnicodeMapper, ShadeCache, InstalledFonts already frozen)"
+    "No static readonly Dictionaries remaining in main library except public ones (SpreadsheetWriter.StandardFormats) and mutable runtime caches"
   ],
   "improvements_submitted": [
-    "PR(aw_frozen3): perf: FrozenDictionary Excel/Html/Word - SmlCellFormatter, SmlToHtmlConverter, HtmlToWmlConverterCore×2, DocumentAssembler (2026-07-17)",
-    "PR(aw_mg_tests): test(common): MetricsGetter tests MG002-MG014, 8->23 tests (2026-07-17)",
-    "PR(aw_frozen2/435): perf: FrozenDictionary Word/Html - FormattingAssembler, WmlToHtmlConverter, HtmlToWmlCssApplier (merged 2026-07-17)",
-    "PR(434): perf: FrozenDictionary in PowerPoint/Word (SlidePartData, PresentationBuilderTools, ChartUpdater, WmlToHtmlConverter) (merged 2026-07-15)",
-    "PR(432): feat(excel) ExcelAssembler squash-rebase supersedes #165 (2026-07-14)",
+    "PR(432): feat(excel) ExcelAssembler squash-rebase supersedes #165, rebased 2026-07-18",
+    "PR(aw_frozen3/437): perf: FrozenDictionary Excel/Html/Word (merged 2026-07-17)",
+    "PR(aw_mg_tests/436): test(common): MetricsGetter tests MG002-MG014 (merged 2026-07-17)",
+    "PR(aw_frozen2/435): perf: FrozenDictionary Word/Html (merged 2026-07-17)",
+    "PR(434): perf: FrozenDictionary in PowerPoint/Word (merged 2026-07-15)",
+    "PR(432): feat(excel) ExcelAssembler (2026-07-14)",
     "PR(431): chore(deps) SkiaSharp 4.150.1+TUnit 1.59.0+TestSdk 18.8.1 (merged 2026-07-14)",
     "PR(430): test+refactor: StringExtensions.SplitAndKeep SSK001-010 + fr_FR dead code removal (merged 2026-07-13)",
     "PR(429): chore(deps) SkiaSharp 4.148->4.150 (merged 2026-07-12)",
@@ -56,23 +57,6 @@
     "PR(422): feat(cli) word build command (merged 2026-07-12), closes #374",
     "PR(426): test OpenXmlRegex callback/delete + PPTX TextReplacer (merged 2026-07-10)",
     "PR(425): fix(excel) SpreadsheetWriter dimension+tableId (merged 2026-07-10), closes #424",
-    "PR(423): feat(cli) excel create command (merged 2026-07-11), closes #378",
-    "PR(419): feat(word) word consolidate (merged 2026-07-07)",
-    "PR(417): feat(word) RegisterCustomHandler extensibility API (merged 2026-07-08)",
-    "PR(415): perf(word) fix image deduplication ManageImageCopy (merged 2026-07-06)",
-    "PR(412): fix(word) UnicodeMapper.RunToString xml:space=preserve (merged 2026-07-05)",
-    "PR(411): feat(cli) word simplify-markup (merged 2026-07-05)",
-    "PR(407): ci NuGet OIDC trusted publishing (merged 2026-07-04)",
-    "PR(406): feat(cli) word accept-revisions (merged 2026-07-03)",
-    "PR(405): feat(cli) word assemble (merged 2026-07-04)",
-    "PR(398): feat(word) de-DE + es-ES list-item text getters (merged 2026-07-03)",
-    "PR(397): feat(word) HeaderRowCount in DocumentAssembler Table (merged 2026-07-03)",
-    "PR(396): fix(pptx) ExtendedPart chart workbooks (merged 2026-07-03)",
-    "PR(395): fix(word) Optional attr in DocumentAssembler Conditional (merged 2026-07-03)",
-    "PR(394): fix(html) rowspan/gridSpan + external hyperlinks (merged 2026-07-03)",
-    "PR(393): docs v3.6.0 changelog (merged 2026-07-03)",
-    "PR(391): fix TextReplacer+WmlComparer crashes (merged 2026-07-03)",
-    "PR(371): perf FrozenSet+PtOpenXmlUtil modernize (merged 2026-07-02)",
-    "PR(369): chore(deps) TUnit 1.57.0->1.57.17 (merged 2026-07-01)"
+    "PR(423): feat(cli) excel create command (merged 2026-07-11), closes #378"
   ]
 }
