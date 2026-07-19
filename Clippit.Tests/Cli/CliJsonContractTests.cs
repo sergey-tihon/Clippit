@@ -299,6 +299,38 @@ internal sealed class CliJsonContractTests : TestsBase
     }
 
     [Test]
+    public async Task CLI199_InstallSkills_JsonResult_MatchesSchema()
+    {
+        var directory = CliTestRunner.CreateTempDirectory("contract-install-result");
+
+        var result = await CliTestRunner
+            .RunManagedAsync(directory, "install", "--skills=all", "--format", "json")
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        using var payload = result.ReadStdoutJson();
+        ValidateJsonAgainstSchema(payload.RootElement, "install-result.v1.json");
+    }
+
+    [Test]
+    public async Task CLI200_InstallSkillsDryRun_JsonPlan_MatchesSchema()
+    {
+        var directory = CliTestRunner.CreateTempDirectory("contract-install-plan");
+
+        var result = await CliTestRunner
+            .RunManagedAsync(directory, "install", "--skills=all", "--dry-run", "--format", "json")
+            .ConfigureAwait(false);
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.StandardError).IsEmpty();
+
+        using var payload = result.ReadStdoutJson();
+        ValidateJsonAgainstSchema(payload.RootElement, "install-plan.v1.json");
+    }
+
+    [Test]
     public async Task CLI104_JsonSchema_RejectsInvalidPayloads()
     {
         using var negativeCount = JsonDocument.Parse(

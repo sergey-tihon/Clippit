@@ -18,6 +18,8 @@ workflows.
 
 🛠️ **[CLI usage →](https://sergey-tihon.github.io/Clippit/cli.html)**
 
+🤖 **Workspace skills for coding assistants:** `clippit install --skills`
+
 ## Installation
 
 ```bash

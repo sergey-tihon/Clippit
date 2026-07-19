@@ -38,6 +38,13 @@ internal static class CliTestRunner
         RunAsync("dotnet", [GetManagedCliDll().FullName, .. arguments], RepositoryRoot.FullName, s_defaultTimeout);
 
     /// <summary>
+    /// Runs the managed CLI in <paramref name="workingDirectory"/> instead of the repository root. Use for
+    /// commands whose behavior depends on the current directory (e.g. <c>install --skills</c>).
+    /// </summary>
+    public static Task<CliResult> RunManagedAsync(DirectoryInfo workingDirectory, params string[] arguments) =>
+        RunAsync("dotnet", [GetManagedCliDll().FullName, .. arguments], workingDirectory.FullName, s_defaultTimeout);
+
+    /// <summary>
     /// Runs the managed CLI with content piped into stdin. Returned stdout is
     /// captured as raw bytes so callers can verify binary <c>--output -</c>
     /// pipelines (e.g. <c>pptx build run - --output -</c>).
@@ -127,7 +134,7 @@ internal static class CliTestRunner
         return new CliResult(process.ExitCode, stdout, stderr);
     }
 
-    private static FileInfo GetManagedCliDll()
+    public static FileInfo GetManagedCliDll()
     {
         var testOutputDirectory = new DirectoryInfo(AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar));
         var targetFramework = testOutputDirectory.Name;

@@ -8,6 +8,13 @@ This npm package provides native binaries for all platforms — no .NET runtime 
 
 ```bash
 npm install -g clippit
+clippit --version
+```
+
+To update an existing global npm installation:
+
+```bash
+npm install -g clippit@latest
 ```
 
 ## Quick Start
@@ -60,28 +67,44 @@ clippit excel create workbook.json --output report.xlsx
 clippit pptx split presentation.pptx --format json
 ```
 
+## Workspace skills
+
+Clippit can install local workspace skills for compatible coding assistants.
+
+```bash
+clippit install --skills          # .agents/skills/clippit
+clippit install --skills=claude   # .claude/skills/clippit
+clippit install --skills=all      # both targets
+```
+
+The default writes the shared `.agents` project-local skill location used by OpenCode
+and Pi. Use `--skills=claude` for Claude Code or `--skills=all` for workspaces that
+use multiple assistants. Re-running the command replaces installed skills with the
+current bundled versions. Use `--dry-run` to preview paths.
+
 ## Commands
 
-| Command           | Description                                                                                                                             |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `pptx split`      | Split a `.pptx` into individual single-slide files. Supports slide range selection (`--slides`) and manifest generation (`--manifest`). |
-| `pptx build init` | Scaffold a deck manifest (JSON).                                                                                                        |
-| `pptx build run`  | Assemble a `.pptx` from a deck manifest.                                                                                                |
-| `word build init` | Scaffold a Word build manifest (JSON).                                                                                                  |
-| `word build run`  | Assemble a `.docx` from a Word build manifest.                                                                                          |
-| `pptx verify`           | Validate a PPTX — schema, relationships, markup compatibility, and sections.                                                            |
-| `word assemble`         | Assemble a DOCX template with XML data.                                                                                                  |
-| `word compare`          | Compare two DOCX files and produce a tracked-revision DOCX.                                                                             |
-| `word consolidate`      | Combine multiple DOCX revisions into one tracked-changes DOCX.                                                                          |
-| `word accept-revisions` | Accept all tracked revisions in a DOCX file.                                                                                            |
-| `word simplify-markup`  | Remove non-content markup from a DOCX file.                                                                                             |
-| `word verify`           | Validate a DOCX — schema and relationships.                                                                                             |
-| `word to-html`    | Convert a DOCX to HTML/CSS.                                                                                                             |
-| `word from-html`  | Convert HTML/CSS to a DOCX.                                                                                                             |
-| `excel to-html`   | Convert an XLSX sheet, range, or table to HTML/CSS.                                                                                     |
-| `excel create`    | Generate an `.xlsx` workbook from a JSON workbook definition.                                                                           |
-| `excel verify`    | Validate an XLSX — schema and relationships.                                                                                            |
-| `version`         | Print version information.                                                                                                              |
+| Command | Description |
+| --- | --- |
+| `pptx split` | Split a `.pptx` into individual single-slide files. Supports slide range selection (`--slides`) and manifest generation (`--manifest`). |
+| `pptx build init` | Scaffold a deck manifest (JSON). |
+| `pptx build run` | Assemble a `.pptx` from a deck manifest. |
+| `pptx verify` | Validate a PPTX — schema, relationships, markup compatibility, and sections. |
+| `word build init` | Scaffold a Word build manifest (JSON). |
+| `word build run` | Assemble a `.docx` from a Word build manifest. |
+| `word assemble` | Assemble a DOCX template with XML data. |
+| `word compare` | Compare two DOCX files and produce a tracked-revision DOCX. |
+| `word consolidate` | Combine multiple DOCX revisions into one tracked-changes DOCX. |
+| `word accept-revisions` | Accept all tracked revisions in a DOCX file. |
+| `word simplify-markup` | Remove non-content markup from a DOCX file. |
+| `word verify` | Validate a DOCX — schema and relationships. |
+| `word to-html` | Convert a DOCX to HTML/CSS. |
+| `word from-html` | Convert HTML/CSS to a DOCX. |
+| `excel to-html` | Convert an XLSX sheet, range, or table to HTML/CSS. |
+| `excel create` | Generate an `.xlsx` workbook from a JSON workbook definition. |
+| `excel verify` | Validate an XLSX — schema and relationships. |
+| `install --skills` | Install Clippit workspace skills into the current workspace. |
+| `version` | Print version information. |
 
 ### Common flags
 
