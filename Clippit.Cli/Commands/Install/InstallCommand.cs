@@ -24,6 +24,7 @@ internal static class InstallCommand
                 + "\n\nExamples:"
                 + "\n  clippit install --skills"
                 + "\n  clippit install --skills=agents"
+                + "\n  clippit install --skills=claude"
                 + "\n  clippit install --skills=all"
         );
         cmd.Options.Add(skillsOption);

@@ -21,6 +21,7 @@ internal static class InstallSkillsService
     public static InstallResult Install(string? targetValue)
     {
         var targets = ResolveTargets(targetValue);
+        var files = ReadBundledSkillFiles();
         var installed = new List<InstalledSkillResult>();
 
         foreach (var target in targets)
@@ -32,7 +33,7 @@ internal static class InstallSkillsService
                 targetDirectory.Delete(recursive: true);
 
             targetDirectory.Create();
-            WriteSkillFiles(targetDirectory, ReadBundledSkillFiles());
+            WriteSkillFiles(targetDirectory, files);
 
             installed.Add(
                 new InstalledSkillResult { Target = target, Path = RelativeToCurrentDirectory(skillFile.FullName) }

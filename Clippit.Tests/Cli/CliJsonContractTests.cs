@@ -299,7 +299,7 @@ internal sealed class CliJsonContractTests : TestsBase
     }
 
     [Test]
-    public async Task CLI199_InstallSkills_JsonResult_MatchesSchema()
+    public async Task CLI201_InstallSkills_JsonResult_MatchesSchema()
     {
         var directory = CliTestRunner.CreateTempDirectory("contract-install-result");
 
@@ -315,7 +315,7 @@ internal sealed class CliJsonContractTests : TestsBase
     }
 
     [Test]
-    public async Task CLI200_InstallSkillsDryRun_JsonPlan_MatchesSchema()
+    public async Task CLI202_InstallSkillsDryRun_JsonPlan_MatchesSchema()
     {
         var directory = CliTestRunner.CreateTempDirectory("contract-install-plan");
 
