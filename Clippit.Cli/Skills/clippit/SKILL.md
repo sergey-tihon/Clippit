@@ -1,122 +1,57 @@
 ---
 name: clippit
-description: Work with OpenXml PowerPoint, Word, and Excel files using Clippit CLI: split/build/verify PPTX, build/compare/assemble DOCX, convert DOCX/XLSX to HTML, and create XLSX.
-allowed-tools: Bash(clippit:*) Bash(dotnet:*)
+description: PPTX automation with Clippit CLI (split, build, verify). Also supports DOCX and XLSX workflows via references.
+allowed-tools: Bash(clippit:*)
 ---
 <!-- clippit-skill-version: bundled -->
 
 # Clippit CLI
 
-Use `clippit` for deterministic OpenXml document operations. Prefer it over manual zip/XML edits for `.pptx`, `.docx`, and `.xlsx` files.
+Use `clippit` for deterministic OpenXml operations. Prefer it over manual zip/XML edits for `.pptx`, `.docx`, and `.xlsx`.
 
-## Discover commands
+## PowerPoint (primary)
 
-```bash
-clippit --help
-clippit pptx --help
-clippit word --help
-clippit excel --help
-```
-
-Run command-specific help before using unfamiliar options:
-
-```bash
-clippit pptx split --help
-clippit word simplify-markup --help
-```
-
-## Automation rules
-
-- Validate generated Office files with the matching `verify` command.
-- Use `--format json` when another step needs machine-readable output.
-- Do not overwrite user documents unless explicitly requested; write a new output file.
-- Prefer manifest scaffolding commands over hand-authoring manifests from scratch.
-- Success payloads are stdout. Command errors are stderr JSON with a stable `code`.
-- For full options, trust `clippit <command> --help`; this skill is a compact runbook, not the full docs.
-
-## Validate files
-
-```bash
-clippit pptx verify deck.pptx --format json
-clippit word verify document.docx --format json
-clippit excel verify workbook.xlsx --format json
-```
-
-If validation fails, inspect stderr/stdout JSON and report the diagnostics instead of assuming the file is usable.
-
-## PowerPoint workflows
-
-Split a deck:
+Split a deck into single-slide files with a manifest:
 
 ```bash
 clippit pptx split deck.pptx --output slides --manifest
 ```
 
-Extract selected slides:
+Extract a subset of slides:
 
 ```bash
-clippit pptx split deck.pptx --slides 1,3,6-9 --output slides
+clippit pptx split deck.pptx --slides 1,3,6-9 --output subset
 ```
 
 Build a deck from a manifest:
 
 ```bash
-clippit pptx build init --output deck-manifest.json
-clippit pptx build run deck-manifest.json --output rebuilt.pptx
-clippit pptx verify rebuilt.pptx --format json
+clippit pptx build init --output deck.json
+clippit pptx build run deck.json --output built.pptx
+clippit pptx verify built.pptx --format json
 ```
 
-## Word workflows
-
-Build/merge documents:
+Verify any PPTX:
 
 ```bash
-clippit word build init --output word-build.json
-clippit word build run word-build.json --output merged.docx
-clippit word verify merged.docx --format json
+clippit pptx verify deck.pptx --format json
 ```
 
-Compare or consolidate revisions:
+## Other formats
 
-```bash
-clippit word compare before.docx after.docx --output compared.docx
-clippit word consolidate original.docx alice.docx bob.docx --output consolidated.docx
-```
+For DOCX (build, compare, assemble, HTML conversion) and XLSX (create, to-html), see `references/workflows.md`.
 
-Assemble a template with XML data:
+## Rules
 
-```bash
-clippit word assemble template.docx data.xml --output assembled.docx
-clippit word verify assembled.docx --format json
-```
+- Run `clippit pptx <command> --help` for full options.
+- Use `--format json` for machine-readable output.
+- Prefer manifest scaffolding (`pptx build init`) over hand-authoring manifests.
+- Validate generated files with the matching `verify` command.
+- Success payloads go to stdout; errors are stderr JSON with a stable `code`.
+- Do not overwrite user documents unless explicitly requested.
 
-Clean markup safely:
+## References
 
-```bash
-clippit word accept-revisions draft.docx --output accepted.docx
-clippit word simplify-markup document.docx --accept-revisions --remove-comments --output simplified.docx
-```
-
-Convert Word and HTML:
-
-```bash
-clippit word to-html document.docx --output document.html
-clippit word from-html article.html --output article.docx
-```
-
-## Excel workflows
-
-```bash
-clippit excel verify workbook.xlsx --format json
-clippit excel to-html workbook.xlsx --sheet "Sheet1" --output sheet.html
-clippit excel create workbook.json --output workbook.xlsx
-clippit excel verify workbook.xlsx --format json
-```
-
-## More details
-
-Read these only when needed:
-
-- `references/workflows.md` for multi-step PPTX, DOCX, and XLSX recipes.
-- `references/manifests.md` for minimal manifest examples and schema guidance.
-- `references/output.md` for JSON output, exit codes, and scripting patterns.
+- `references/workflows.md` — multi-step recipes for PPTX, DOCX, XLSX.
+- `references/manifests.md` — manifest examples and schema guidance.
+- `references/output.md` — JSON contracts, exit codes, scripting patterns.
