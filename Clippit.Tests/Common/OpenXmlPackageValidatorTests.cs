@@ -1,12 +1,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using System.IO.Compression;
-using System.Xml.Linq;
 using Clippit.Core;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Presentation;
 using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Clippit.Tests.Common;
@@ -51,7 +48,9 @@ public class OpenXmlPackageValidatorTests : TestsBase
     [Test]
     public async Task OPV003_NullPackage_ThrowsArgumentNullException()
     {
-        await Assert.That(() => OpenXmlPackageValidator.Validate(null!)).Throws<ArgumentNullException>();
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+        await Assert.That(() => OpenXmlPackageValidator.Validate(null)).Throws<ArgumentNullException>();
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
     }
 
     // ── OPV004: result reflects the OfficeVersion from options ──────────────
@@ -189,7 +188,14 @@ public class OpenXmlPackageValidatorTests : TestsBase
         var result = new OpenXmlValidationResult
         {
             OfficeVersion = FileFormatVersions.Microsoft365,
-            Diagnostics = [new OpenXmlValidationDiagnostic { Kind = "schema", Description = "test error" }],
+            Diagnostics =
+            [
+                new OpenXmlValidationDiagnostic
+                {
+                    Kind = OpenXmlValidationDiagnosticKinds.Schema,
+                    Description = "test error",
+                },
+            ],
         };
 
         await Assert.That(result.Valid).IsFalse();
