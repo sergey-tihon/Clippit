@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-07-18",
-  "last_run_id": "29651041713",
+  "last_run": "2026-07-19",
+  "last_run_id": "29693929881",
   "backlog_cursor": {
     "issues": 424,
     "prs": 165
@@ -21,7 +21,9 @@
     "424": "2026-07-10"
   },
   "open_clippy_prs": [
-    {"number": 432, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930-rebase-d103ed54a42dca60", "title": "feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "created 2026-07-14, rebased 2026-07-18"}
+    {"number": 432, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930-rebase-d103ed54a42dca60", "title": "feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "created 2026-07-14, rebased 2026-07-18, CI green"},
+    {"number": "aw_opv_tests", "branch": "clippy/test-openxml-package-validator-20260719", "title": "test(common): add OpenXmlPackageValidator tests OPV001-OPV008", "note": "created 2026-07-19"},
+    {"number": "aw_ci_refactor", "branch": "clippy/ci-cache-substr-ranges-20260719", "title": "ci+refactor: NuGet caching in CI + range indexers in WmlToHtmlConverter", "note": "created 2026-07-19"}
   ],
   "prs_to_close": [
     {"number": 165, "reason": "superseded by #432 - commented on PR"}
@@ -32,7 +34,7 @@
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "Monthly Activity issue for July 2026 is #370",
     "PR #165 (ExcelAssembler): commented, superseded by #432 - maintainer should close",
-    "PR #432: ExcelAssembler - open, awaiting review (rebased 2026-07-18)",
+    "PR #432: ExcelAssembler - open, awaiting review (rebased 2026-07-18, CI green 2026-07-19)",
     "PR #437: merged 2026-07-17 (FrozenDictionary Excel/Html/Word)",
     "PR #436: merged 2026-07-17 (MetricsGetter tests)",
     "PR #435: merged 2026-07-17 (FrozenDictionary in Word/Html PR#aw_frozen2)",
@@ -40,9 +42,11 @@
     "PR #431: merged (deps update)",
     "PR #430: merged (test StringExtensions + fr_FR dead code removal)",
     "All Dependabot deps are current as of 2026-07-14",
-    "No static readonly Dictionaries remaining in main library except public ones (SpreadsheetWriter.StandardFormats) and mutable runtime caches"
+    "No static readonly Dictionaries remaining in main library except public ones and mutable runtime caches"
   ],
   "improvements_submitted": [
+    "PR(aw_ci_refactor): ci+refactor: NuGet caching in CI + Substring range indexers (2026-07-19)",
+    "PR(aw_opv_tests): test(common): OpenXmlPackageValidator tests OPV001-OPV008 (2026-07-19)",
     "PR(432): feat(excel) ExcelAssembler squash-rebase supersedes #165, rebased 2026-07-18",
     "PR(aw_frozen3/437): perf: FrozenDictionary Excel/Html/Word (merged 2026-07-17)",
     "PR(aw_mg_tests/436): test(common): MetricsGetter tests MG002-MG014 (merged 2026-07-17)",
