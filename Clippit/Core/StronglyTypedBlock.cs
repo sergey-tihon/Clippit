@@ -7,8 +7,8 @@ namespace Clippit.Core;
 
 /// <summary>
 /// Provides an elegant way of wrapping a set of invocations of the strongly typed
-/// classes provided by the Open XML SDK) in a using statement that demarcates those
-/// invokations as one "block" before and after which the PowerTools can be used safely.
+/// classes provided by the Open XML SDK in a using statement that demarcates those
+/// invocations as one "block" before and after which the PowerTools can be used safely.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -19,7 +19,7 @@ namespace Clippit.Core;
 /// <code>
 ///     [Your code using the PowerTools]
 ///
-///     using (new NonPowerToolsBlock(wordprocessingDocument))
+///     using (new StronglyTypedBlock(wordprocessingDocument))
 ///     {
 ///         [Your code using the strongly typed classes]
 ///     }
