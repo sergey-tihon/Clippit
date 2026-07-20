@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sergey-tihon.github.io/Clippit/schemas/install-result.v1.json",
+  "title": "InstallResult",
+  "description": "Stdout payload of `clippit install --skills` (JSON mode).",
+  "type": "object",
+  "required": ["installed", "version"],
+  "additionalProperties": false,
+  "properties": {
+    "installed": {
+      "type": "array",
+      "description": "Skill targets installed by the command.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["target", "path"],
+        "additionalProperties": false,
+        "properties": {
+          "target": {
+            "type": "string",
+            "description": "Installed skill target.",
+            "enum": ["claude", "agents"]
+          },
+          "path": {
+            "type": "string",
+            "description": "Workspace-relative path to the installed SKILL.md file."
+          }
+        }
+      }
+    },
+    "version": {
+      "type": "string",
+      "description": "Clippit CLI version used to stamp the installed skill."
+    }
+  }
+}

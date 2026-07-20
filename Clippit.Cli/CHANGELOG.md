@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.8.0] - 2026-07-19
+
+- Added `install --skills` command to install bundled Clippit workspace skills into
+  the current workspace. By default, `--skills` installs `.agents/skills/clippit`, a
+  shared project-local location supported by OpenCode and Pi. Use `--skills=claude`
+  for `.claude/skills/clippit`, or `--skills=all` to install both locations for
+  workspaces that use multiple assistants. Re-running the command replaces installed
+  skills with the current bundled versions; `--dry-run` prints the planned `SKILL.md`
+  paths without writing files.
+
 ## [0.7.0] - 2026-07-12
 
 - Added `excel create` command to generate an `.xlsx` workbook from a JSON workbook

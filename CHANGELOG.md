@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.8.0] - July 19, 2026
+
+- feat(cli): add `clippit install --skills` command to install bundled Clippit workspace skills for OpenCode, Pi, and Claude Code assistants
+- perf: convert static readonly `Dictionary` to `FrozenDictionary` in PowerPoint and Word (#434)
+- perf: convert static readonly `Dictionary` to `FrozenDictionary` in Word and Html (#435)
+- perf: convert static readonly `Dictionary` to `FrozenDictionary` in Excel, Html, and Word (#437)
+- perf(word): use `Dictionary` for O(1) image deduplication in `DocumentBuilder` (#428)
+- test(common): strengthen `MetricsGetter` tests with structural assertions (MG002-MG014) (#436)
+- test+refactor: `StringExtensions.SplitAndKeep` tests + `fr_FR` dead code removal (#430)
+- chore(deps): update SkiaSharp 4.148.0 → 4.150.0 (#429)
+- chore(deps): update SkiaSharp 4.150.0→4.150.1, TUnit 1.58.0→1.59.0, Test.Sdk 18.7.0→18.8.1 (#431)
+- chore(deps): bump actions/setup-node from 6 to 7 (#433)
+
 ## [3.7.0] - July 12, 2026
 
 - feat(cli): add `clippit word build init/run` command (#422)

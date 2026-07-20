@@ -6,6 +6,29 @@
 
 ```bash
 dotnet tool install -g Clippit.Cli
+clippit --version
+```
+
+To update an existing global tool installation:
+
+```bash
+dotnet tool update -g Clippit.Cli
+```
+
+## Workspace skills
+
+Install local workspace skills for compatible coding assistants:
+
+```bash
+clippit install --skills          # .agents/skills/clippit
+clippit install --skills=claude   # .claude/skills/clippit
+clippit install --skills=all      # both targets
+```
+
+The default writes the shared `.agents` project-local skill location used by OpenCode and Pi. Use `--skills=claude` for Claude Code or `--skills=all` for workspaces that use multiple assistants. Re-running the command replaces installed skills with the current bundled versions. Use `--dry-run` to preview target paths.
+
+```bash
+clippit install --skills=all --dry-run
 ```
 
 ## Quick Start
@@ -79,6 +102,7 @@ clippit pptx split presentation.pptx --format json
 | `excel to-html` | Convert an XLSX sheet, range, or table to HTML/CSS. |
 | `excel create` | Generate an `.xlsx` workbook from a JSON workbook definition. |
 | `excel verify` | Validate an XLSX — schema and relationships. |
+| `install --skills` | Install Clippit workspace skills into the current workspace. |
 | `version` | Print version information. |
 
 ### Common flags

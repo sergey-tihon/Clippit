@@ -1,6 +1,6 @@
 # Clippit CLI
 
-Clippit CLI is a scriptable command-line interface for PowerPoint (`pptx`), Word (`word`), and Excel (`excel`) document workflows. This documentation is split into focused pages so humans and LLM agents can load only the command set they need.
+Clippit CLI is a scriptable command-line interface for PowerPoint (`pptx`), Word (`word`), and Excel (`excel`) document workflows. This documentation is split into focused pages by command area.
 
 ## CLI pages
 
@@ -38,13 +38,36 @@ npm install -g clippit@latest
 npm uninstall -g clippit
 ```
 
+## Workspace skills
+
+Clippit can install local Agent Skills files for coding assistants that support
+workspace skills.
+
+Run the installer from the workspace where you want the skill files to live:
+
+```bash
+clippit install --skills          # installs .agents/skills/clippit
+clippit install --skills=claude   # installs .claude/skills/clippit
+clippit install --skills=all      # installs both targets
+```
+
+Running the command again replaces the installed skill files with the current
+bundled versions. Use `--dry-run` to preview the paths that would be written.
+
+```bash
+clippit install --skills=all --dry-run
+```
+
+For full command options and payload contracts, use these docs,
+`clippit <command> --help`, and the schemas listed below.
+
 ## Supported platforms
 
 - **Continuously tested:** Windows, Linux
 - **Runtime requirement:** .NET 10 runtime/toolchain for the `dotnet tool`; the npm package bundles native binaries for supported platforms
 - **Package managers:** `dotnet tool` (NuGet) and `npm`
 
-## Output contract (human + agent friendly)
+## Output contract
 
 Use `--format json` for automation. Text output is for interactive usage.
 
@@ -84,6 +107,36 @@ cat article.html | clippit word from-html - --output - > article.docx
 cat spreadsheet.xlsx | clippit excel verify - --format json
 ```
 
+## `install --skills`
+
+Installs bundled Clippit workspace skills.
+
+```text
+clippit install --skills[=agents|claude|all] [--dry-run] [--format json|text] [--quiet]
+```
+
+Targets:
+
+| Target | Install path |
+| --- | --- |
+| `agents` (default) | `.agents/skills/clippit/SKILL.md` |
+| `claude` | `.claude/skills/clippit/SKILL.md` |
+| `all` | both target directories |
+
+Text output lists installed skill paths. JSON output reports the installed targets,
+paths, and CLI version:
+
+```json
+{"installed":[{"target":"agents","path":".agents/skills/clippit/SKILL.md"}],"version":"0.8.0"}
+```
+
+`--dry-run` prints the planned `SKILL.md` paths instead of writing files. In JSON
+mode it returns:
+
+```json
+{"paths":[".agents/skills/clippit/SKILL.md"]}
+```
+
 ## `version`
 
 Prints Clippit CLI and Open XML SDK versions.
@@ -114,4 +167,6 @@ Schemas for manifests/results are in [schemas/README.md](schemas/README.md).
 | `word compare` result | `https://sergey-tihon.github.io/Clippit/schemas/compare-result.v1.json` |
 | `word consolidate` result | `https://sergey-tihon.github.io/Clippit/schemas/consolidate-result.v1.json` |
 | `excel create` result | `https://sergey-tihon.github.io/Clippit/schemas/excel-create-result.v1.json` |
+| `install --skills` result | `https://sergey-tihon.github.io/Clippit/schemas/install-result.v1.json` |
+| `install --skills --dry-run` plan | `https://sergey-tihon.github.io/Clippit/schemas/install-plan.v1.json` |
 | `word to-html`, `word from-html`, `word accept-revisions`, `word simplify-markup`, `excel to-html` result | `https://sergey-tihon.github.io/Clippit/schemas/convert-result.v1.json` |
