@@ -10,8 +10,8 @@
     <ProjectReference Include="..\Clippit.Cli\Clippit.Cli.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="JsonSchema.Net" Version="9.2.2" />
+    <PackageReference Include="JsonSchema.Net" Version="9.3.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
-    <PackageReference Include="TUnit" Version="1.59.0" />
+    <PackageReference Include="TUnit" Version="1.61.15" />
   </ItemGroup>
 </Project>
