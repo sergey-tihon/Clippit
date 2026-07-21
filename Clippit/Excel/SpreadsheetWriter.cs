@@ -630,10 +630,10 @@ namespace Clippit.Excel
             XAttribute numFmtId = null;
             if (cell.FormatCode is not null)
             {
-                if (CellDfn.StandardFormats.ContainsKey(cell.FormatCode))
+                if (CellDfn.StandardFormats.TryGetValue(cell.FormatCode, out var standardFormatId))
                 {
                     applyNumberFormat = new XAttribute(SSNoNamespace.applyNumberFormat, 1);
-                    numFmtId = new XAttribute(SSNoNamespace.numFmtId, CellDfn.StandardFormats[cell.FormatCode]);
+                    numFmtId = new XAttribute(SSNoNamespace.numFmtId, standardFormatId);
                 }
                 else
                 {

@@ -1414,14 +1414,10 @@ namespace Clippit.Word
             }
 
             var inside1Val = (string)inside1.Attribute(W.val);
-            var border1Weight = 1;
-            if (BorderNumber.ContainsKey(inside1Val))
-                border1Weight = BorderNumber[inside1Val];
+            var border1Weight = BorderNumber.GetValueOrDefault(inside1Val, 1);
 
             var sideToReplaceVal = (string)sideToReplace.Attribute(W.val);
-            var sideToReplaceWeight = 1;
-            if (BorderNumber.ContainsKey(sideToReplaceVal))
-                sideToReplaceWeight = BorderNumber[sideToReplaceVal];
+            var sideToReplaceWeight = BorderNumber.GetValueOrDefault(sideToReplaceVal, 1);
 
             if (border1Weight != sideToReplaceWeight)
             {
@@ -1437,10 +1433,11 @@ namespace Clippit.Word
             if ((int)sideToReplace.Attribute(W.sz) > (int)inside1.Attribute(W.sz))
                 return sideToReplace;
 
-            if (BorderTypePriority.ContainsKey(inside1Val) && BorderTypePriority.ContainsKey(sideToReplaceVal))
+            if (
+                BorderTypePriority.TryGetValue(inside1Val, out var inside1Pri)
+                && BorderTypePriority.TryGetValue(sideToReplaceVal, out var inside2Pri)
+            )
             {
-                var inside1Pri = BorderTypePriority[inside1Val];
-                var inside2Pri = BorderTypePriority[sideToReplaceVal];
                 if (inside1Pri > inside2Pri)
                     return inside1;
                 if (inside2Pri > inside1Pri)
