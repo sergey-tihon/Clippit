@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-07-20",
-  "last_run_id": "29758452757",
+  "last_run": "2026-07-21",
+  "last_run_id": "29847071495",
   "backlog_cursor": {
     "issues": 424,
     "prs": 165
@@ -22,8 +22,8 @@
   },
   "open_clippy_prs": [
     {"number": 432, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930-rebase-d103ed54a42dca60", "title": "feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "created 2026-07-14, rebased 2026-07-18, CI green"},
-    {"number": "aw_deps0720", "branch": "clippy/eng-deps-tunit-jsonschema-20260720", "title": "chore(deps): update TUnit 1.59.0→1.61.15, JsonSchema.Net 9.2.2→9.3.0", "note": "created 2026-07-20"},
-    {"number": "aw_blocks0720", "branch": "clippy/improve-core-blocks-modernize-20260720", "title": "refactor(core): modernize PowerToolsBlock and StronglyTypedBlock", "note": "created 2026-07-20"}
+    {"number": "aw_frozen0721", "branch": "clippy/perf-frozen-presentation-order-20260721", "title": "perf(pptx): convert OrderPresentation and OrderSlideMaster to FrozenDictionary", "note": "created 2026-07-21"},
+    {"number": "aw_tryget0721", "branch": "clippy/improve-trygetvalue-lookups-20260721", "title": "refactor: replace ContainsKey+indexer double-lookups with TryGetValue/GetValueOrDefault", "note": "created 2026-07-21"}
   ],
   "prs_to_close": [
     {"number": 165, "reason": "superseded by #432 - commented on PR"}
@@ -37,22 +37,21 @@
     "PR #432: ExcelAssembler - open, awaiting review (rebased 2026-07-18, CI green)",
     "PR #439: merged 2026-07-19 (OPV001-OPV008 tests)",
     "PR #441: merged 2026-07-20 (install --skills command, bumps Clippit to 3.8.0/CLI to 0.8.0)",
+    "PR #442: merged 2026-07-20 (deps: TUnit 1.59.0->1.61.15, JsonSchema.Net 9.2.2->9.3.0)",
+    "PR #443: merged 2026-07-20 (core blocks modernize)",
     "Clippit 3.8.0 is in CHANGELOG - release tag may be warranted after #432 merges",
-    "ci-cache branch already merged into master - no separate PR needed",
-    "All Dependabot deps are current as of 2026-07-20",
-    "No static readonly Dictionaries remaining in main library except public ones and mutable runtime caches"
+    "All Dependabot deps are current as of 2026-07-21"
   ],
   "improvements_submitted": [
-    "PR(aw_blocks0720): refactor(core): modernize PowerToolsBlock+StronglyTypedBlock file-scoped ns + ThrowIfNull (2026-07-20)",
-    "PR(aw_deps0720): chore(deps): TUnit 1.59.0→1.61.15 + JsonSchema.Net 9.2.2→9.3.0 (2026-07-20)",
-    "PR(aw_ci_refactor/ci-cache branch): ci+refactor: NuGet caching + range indexers - merged into master via #441 (2026-07-20)",
-    "PR(aw_opv_tests/439): test(common): OpenXmlPackageValidator tests OPV001-OPV008 (merged 2026-07-19)",
+    "PR(aw_frozen0721): perf(pptx): FrozenDictionary for OrderPresentation+OrderSlideMaster (2026-07-21)",
+    "PR(aw_tryget0721): refactor: TryGetValue/GetValueOrDefault double-lookup cleanup in FormattingAssembler+SpreadsheetWriter (2026-07-21)",
+    "PR(aw_blocks0720/443): refactor(core): modernize PowerToolsBlock+StronglyTypedBlock (merged 2026-07-20)",
+    "PR(aw_deps0720/442): chore(deps): TUnit 1.59.0->1.61.15 + JsonSchema.Net 9.2.2->9.3.0 (merged 2026-07-20)",
     "PR(432): feat(excel) ExcelAssembler squash-rebase supersedes #165, rebased 2026-07-18",
     "PR(aw_frozen3/437): perf: FrozenDictionary Excel/Html/Word (merged 2026-07-17)",
     "PR(aw_mg_tests/436): test(common): MetricsGetter tests MG002-MG014 (merged 2026-07-17)",
     "PR(aw_frozen2/435): perf: FrozenDictionary Word/Html (merged 2026-07-17)",
     "PR(434): perf: FrozenDictionary in PowerPoint/Word (merged 2026-07-15)",
-    "PR(432): feat(excel) ExcelAssembler (2026-07-14)",
     "PR(431): chore(deps) SkiaSharp 4.150.1+TUnit 1.59.0+TestSdk 18.8.1 (merged 2026-07-14)",
     "PR(430): test+refactor: StringExtensions.SplitAndKeep SSK001-010 + fr_FR dead code removal (merged 2026-07-13)"
   ]
