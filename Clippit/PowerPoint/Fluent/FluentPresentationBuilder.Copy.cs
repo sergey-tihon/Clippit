@@ -1158,7 +1158,7 @@ internal sealed partial class FluentPresentationBuilder
     private static void InsertElementInSchemaOrder(
         XElement parent,
         XElement elementToInsert,
-        Dictionary<XName, int> order
+        IReadOnlyDictionary<XName, int> order
     )
     {
         var targetOrder = order.GetValueOrDefault(elementToInsert.Name, 999);

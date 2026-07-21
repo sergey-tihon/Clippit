@@ -55,7 +55,7 @@ namespace Clippit.PowerPoint.Fluent
                 .ToList();
         }
 
-        internal static readonly Dictionary<XName, int> OrderPresentation = new()
+        internal static readonly FrozenDictionary<XName, int> OrderPresentation = new Dictionary<XName, int>
         {
             { P.sldMasterIdLst, 10 },
             { P.notesMasterIdLst, 20 },
@@ -71,9 +71,9 @@ namespace Clippit.PowerPoint.Fluent
             { P.defaultTextStyle, 130 },
             { P.modifyVerifier, 150 },
             { P.extLst, 160 },
-        };
+        }.ToFrozenDictionary();
 
-        internal static readonly Dictionary<XName, int> OrderSlideMaster = new()
+        internal static readonly FrozenDictionary<XName, int> OrderSlideMaster = new Dictionary<XName, int>
         {
             // Common slide data (required)
             { P.cSld, 10 },
@@ -91,7 +91,7 @@ namespace Clippit.PowerPoint.Fluent
             { P.txStyles, 70 },
             // Extension list (optional)
             { P.extLst, 80 },
-        };
+        }.ToFrozenDictionary();
 
         private static readonly FrozenDictionary<XName, XName[]> s_relationshipMarkup = new Dictionary<XName, XName[]>
         {
