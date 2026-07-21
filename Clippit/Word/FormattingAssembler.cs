@@ -1435,12 +1435,12 @@ namespace Clippit.Word
 
             if (
                 BorderTypePriority.TryGetValue(inside1Val, out var inside1Pri)
-                && BorderTypePriority.TryGetValue(sideToReplaceVal, out var inside2Pri)
+                && BorderTypePriority.TryGetValue(sideToReplaceVal, out var sideToReplacePri)
             )
             {
-                if (inside1Pri > inside2Pri)
+                if (inside1Pri > sideToReplacePri)
                     return inside1;
-                if (inside2Pri > inside1Pri)
+                if (sideToReplacePri > inside1Pri)
                     return sideToReplace;
             }
 
