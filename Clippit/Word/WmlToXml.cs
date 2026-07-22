@@ -1106,9 +1106,9 @@ namespace Clippit.Word
                 {
                     if (settings.XmlGenerationLambdas is not null)
                     {
-                        if (settings.XmlGenerationLambdas.TryGetValue(contentType, out var lamda))
+                        if (settings.XmlGenerationLambdas.TryGetValue(contentType, out var lambda))
                         {
-                            var newElement = lamda(contentType, part, element, settings);
+                            var newElement = lambda(contentType, part, element, settings);
 
                             var lang = (string)
                                 element
