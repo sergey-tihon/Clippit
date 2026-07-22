@@ -1074,10 +1074,9 @@ namespace Clippit.Word
 
                 if (contentType is null && element.Name == W.r)
                 {
-                    if (settings.XmlGenerationLambdas.ContainsKey("Run"))
+                    if (settings.XmlGenerationLambdas.TryGetValue("Run", out var runLambda))
                     {
-                        var lamda = settings.XmlGenerationLambdas["Run"];
-                        var newElement = lamda(contentType, part, element, settings);
+                        var newElement = runLambda(contentType, part, element, settings);
                         return newElement;
                     }
                     else
@@ -1090,10 +1089,9 @@ namespace Clippit.Word
 
                 if (element.Name == W.hyperlink)
                 {
-                    if (settings.XmlGenerationLambdas.ContainsKey("Hyperlink"))
+                    if (settings.XmlGenerationLambdas.TryGetValue("Hyperlink", out var hyperlinkLambda))
                     {
-                        var lamda = settings.XmlGenerationLambdas["Hyperlink"];
-                        var newElement = lamda(contentType, part, element, settings);
+                        var newElement = hyperlinkLambda(contentType, part, element, settings);
                         return newElement;
                     }
                     else
@@ -1108,9 +1106,8 @@ namespace Clippit.Word
                 {
                     if (settings.XmlGenerationLambdas is not null)
                     {
-                        if (settings.XmlGenerationLambdas.ContainsKey(contentType))
+                        if (settings.XmlGenerationLambdas.TryGetValue(contentType, out var lamda))
                         {
-                            var lamda = settings.XmlGenerationLambdas[contentType];
                             var newElement = lamda(contentType, part, element, settings);
 
                             var lang = (string)
@@ -1408,14 +1405,14 @@ namespace Clippit.Word
                             continue;
                     }
 
-                    if (settings.ContentTypeCount.ContainsKey(rule.ContentType))
-                        settings.ContentTypeCount[rule.ContentType].Tests =
-                            settings.ContentTypeCount[rule.ContentType].Tests + 1;
+                    if (settings.ContentTypeCount.TryGetValue(rule.ContentType, out var ctm1))
+                        ctm1.Tests++;
                     else
-                        settings.ContentTypeCount.Add(
-                            rule.ContentType,
-                            new WmlToXmlContentTypeMetrics() { Count = 0, Tests = 1 }
-                        );
+                        settings.ContentTypeCount[rule.ContentType] = new WmlToXmlContentTypeMetrics()
+                        {
+                            Count = 0,
+                            Tests = 1,
+                        };
 
                     var stylePass = false;
                     var styleRegexPass = false;
@@ -1474,14 +1471,14 @@ namespace Clippit.Word
 
                     if (stylePass && styleRegexPass && regexPass && matchLambdaPass)
                     {
-                        if (settings.ContentTypeCount.ContainsKey(rule.ContentType))
-                            settings.ContentTypeCount[rule.ContentType].Count =
-                                settings.ContentTypeCount[rule.ContentType].Count + 1;
+                        if (settings.ContentTypeCount.TryGetValue(rule.ContentType, out var ctm2))
+                            ctm2.Count++;
                         else
-                            settings.ContentTypeCount.Add(
-                                rule.ContentType,
-                                new WmlToXmlContentTypeMetrics() { Count = 1, Tests = 1 }
-                            );
+                            settings.ContentTypeCount[rule.ContentType] = new WmlToXmlContentTypeMetrics()
+                            {
+                                Count = 1,
+                                Tests = 1,
+                            };
                         AddContentTypeToBlockContent(settings, part, blc, rule.ContentType);
                         if (rule.ApplyRunContentTypes)
                             ApplyRunContentTypes(
@@ -1573,14 +1570,14 @@ namespace Clippit.Word
                         runStyle = ctai.DefaultCharacterStyleName;
                     foreach (var rule in runContentTypeRuleList)
                     {
-                        if (settings.ContentTypeCount.ContainsKey(rule.ContentType))
-                            settings.ContentTypeCount[rule.ContentType].Tests =
-                                settings.ContentTypeCount[rule.ContentType].Tests + 1;
+                        if (settings.ContentTypeCount.TryGetValue(rule.ContentType, out var ctm3))
+                            ctm3.Tests++;
                         else
-                            settings.ContentTypeCount.Add(
-                                rule.ContentType,
-                                new WmlToXmlContentTypeMetrics() { Count = 0, Tests = 1 }
-                            );
+                            settings.ContentTypeCount[rule.ContentType] = new WmlToXmlContentTypeMetrics()
+                            {
+                                Count = 0,
+                                Tests = 1,
+                            };
 
                         if (rule.StyleName is not null && rule.StyleName != runStyle)
                             continue;
@@ -1595,27 +1592,27 @@ namespace Clippit.Word
                         {
                             if (rule.MatchLambda(rlc, rule, wDoc, settings))
                             {
-                                if (settings.ContentTypeCount.ContainsKey(rule.ContentType))
-                                    settings.ContentTypeCount[rule.ContentType].Count =
-                                        settings.ContentTypeCount[rule.ContentType].Count + 1;
+                                if (settings.ContentTypeCount.TryGetValue(rule.ContentType, out var ctm4))
+                                    ctm4.Count++;
                                 else
-                                    settings.ContentTypeCount.Add(
-                                        rule.ContentType,
-                                        new WmlToXmlContentTypeMetrics() { Count = 1, Tests = 1 }
-                                    );
+                                    settings.ContentTypeCount[rule.ContentType] = new WmlToXmlContentTypeMetrics()
+                                    {
+                                        Count = 1,
+                                        Tests = 1,
+                                    };
                                 AddContentTypeToRunContent(settings, part, rlc, rule.ContentType);
                                 break;
                             }
                             continue;
                         }
-                        if (settings.ContentTypeCount.ContainsKey(rule.ContentType))
-                            settings.ContentTypeCount[rule.ContentType].Count =
-                                settings.ContentTypeCount[rule.ContentType].Count + 1;
+                        if (settings.ContentTypeCount.TryGetValue(rule.ContentType, out var ctm5))
+                            ctm5.Count++;
                         else
-                            settings.ContentTypeCount.Add(
-                                rule.ContentType,
-                                new WmlToXmlContentTypeMetrics() { Count = 1, Tests = 1 }
-                            );
+                            settings.ContentTypeCount[rule.ContentType] = new WmlToXmlContentTypeMetrics()
+                            {
+                                Count = 1,
+                                Tests = 1,
+                            };
                         AddContentTypeToRunContent(settings, part, rlc, rule.ContentType);
                         break;
                     }
