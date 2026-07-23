@@ -5,6 +5,8 @@ namespace Clippit.Word;
 
 public class ListItemTextGetter_sv_SE
 {
+    private const int LevelNumberOffset = 10000;
+
     private static readonly string[] OneThroughNineteen =
     [
         "",
@@ -97,7 +99,7 @@ public class ListItemTextGetter_sv_SE
                 "Converting a negative levelNumber to ordinal text is not supported"
             );
 
-        var sLevel = (levelNumber + 10000).ToString();
+        var sLevel = (levelNumber + LevelNumberOffset).ToString();
         var thousands = sLevel[1] - '0';
         var hundreds = sLevel[2] - '0';
         var tens = sLevel[3] - '0';
@@ -172,7 +174,7 @@ public class ListItemTextGetter_sv_SE
                 nameof(levelNumber),
                 "Converting a zero or negative levelNumber to ordinal text is not supported"
             );
-        if (levelNumber >= 10000)
+        if (levelNumber >= LevelNumberOffset)
             throw new ArgumentOutOfRangeException(
                 nameof(levelNumber),
                 "Convering a levelNumber to ordinal text that is greater then 10000 is not supported"
@@ -181,7 +183,7 @@ public class ListItemTextGetter_sv_SE
         if (levelNumber == 1)
             return "Första";
 
-        var sLevel = (levelNumber + 10000).ToString();
+        var sLevel = (levelNumber + LevelNumberOffset).ToString();
         var thousands = sLevel[1] - '0';
         var hundreds = sLevel[2] - '0';
         var tens = sLevel[3] - '0';

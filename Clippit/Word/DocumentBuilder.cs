@@ -3776,8 +3776,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                             var oldPart = (EmbeddedObjectPart)ipp1.OpenXmlPart;
                             var relType = oldRelatedPart.RelationshipType;
                             var conType = oldRelatedPart.ContentType;
-                            var g = Guid.NewGuid();
-                            var id = $"R{g:N}"[..8];
+                            var id = $"R{Guid.NewGuid():N}";
                             var newPart = newChart.AddExtendedPart(relType, conType, ".bin", id);
                             using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                             using (var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
@@ -3832,8 +3831,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                             var oldPart = (EmbeddedObjectPart)ipp1.OpenXmlPart;
                             var relType = oldRelatedPart.RelationshipType;
                             var conType = oldRelatedPart.ContentType;
-                            var g = Guid.NewGuid();
-                            var id = $"R{g:N}"[..8];
+                            var id = $"R{Guid.NewGuid():N}";
                             var newPart = newChart.AddExtendedPart(relType, conType, ".bin", id);
                             using (var oldObject = oldPart.GetStream(FileMode.Open, FileAccess.Read))
                             using (var newObject = newPart.GetStream(FileMode.Create, FileAccess.ReadWrite))
