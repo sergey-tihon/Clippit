@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-07-22",
-  "last_run_id": "29936537021",
+  "last_run": "2026-07-23",
+  "last_run_id": "30023971965",
   "backlog_cursor": {
     "issues": 424,
     "prs": 165
@@ -21,8 +21,8 @@
     "424": "2026-07-10"
   },
   "open_clippy_prs": [
-    {"number": 432, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930-rebase-d103ed54a42dca60", "title": "feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "created 2026-07-14, rebased 2026-07-18, CI green"},
-    {"number": "aw_pr0722", "branch": "clippy/improve-wmltoxml-strict-translator-20260722", "title": "refactor(wmltoxml): TryGetValue + StrictOoxmlTranslator tests SOT001-SOT016", "note": "created 2026-07-22"}
+    {"number": 432, "branch": "clippy/improve-excel-assembler-20260328-ca55e3040bdd2930-rebase-d103ed54a42dca60", "title": "feat(excel): add ExcelAssembler for template-based xlsx document assembly", "note": "created 2026-07-14, rebased 2026-07-18, CI green as of 2026-07-19; 10 commits behind master but applies cleanly"},
+    {"number": "aw_ri0723", "branch": "clippy/improve-range-indexers-20260723", "title": "refactor: replace Substring with range indexers and char indexers", "note": "created 2026-07-23, all tests pass"}
   ],
   "prs_to_close": [
     {"number": 165, "reason": "superseded by #432 - commented on PR"}
@@ -33,16 +33,18 @@
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "Monthly Activity issue for July 2026 is #370",
     "PR #165 (ExcelAssembler): commented, superseded by #432 - maintainer should close",
-    "PR #432: ExcelAssembler - open, awaiting review (rebased 2026-07-18, CI green)",
+    "PR #432: ExcelAssembler - open, awaiting review; 10+ commits behind master but CI was green 2026-07-19 and rebase is clean",
+    "PR #447: merged 2026-07-22 (TryGetValue WmlToXml + StrictOoxmlTranslator tests)",
     "PR #444: merged 2026-07-21 (TryGetValue FormattingAssembler+SpreadsheetWriter)",
     "PR #445: merged 2026-07-21 (FrozenDictionary OrderPresentation+OrderSlideMaster)",
     "PR #446: merged 2026-07-21 (actions/setup-dotnet 5->6, Dependabot)",
     "Clippit 3.8.0 is in CHANGELOG - release tag may be warranted after #432 merges",
     "All Dependabot deps are current as of 2026-07-22",
-    "Task 2 (Issue Investigation): all open issues already have recent Clippy comments; no new human activity - no action taken"
+    "Task 2/3: All open issues (#103, #77, #67, #28) have recent Clippy comments; no fixable bugs"
   ],
   "improvements_submitted": [
-    "PR(aw_pr0722): refactor(wmltoxml): TryGetValue double-lookup cleanup + StrictOoxmlTranslatorTests SOT001-016 (2026-07-22)",
+    "PR(aw_ri0723): refactor: Substring->range indexers in OxPtHelpers, WmlToHtmlConverter, DocumentAssembler, DocumentBuilder, ListItemRetriever, GetListItemText_tr_TR/fr_FR/sv_SE (2026-07-23)",
+    "PR(447): refactor(wmltoxml): TryGetValue double-lookup cleanup + StrictOoxmlTranslatorTests SOT001-016 (merged 2026-07-22)",
     "PR(445): perf(pptx): FrozenDictionary for OrderPresentation+OrderSlideMaster (merged 2026-07-21)",
     "PR(444): refactor: TryGetValue/GetValueOrDefault double-lookup cleanup in FormattingAssembler+SpreadsheetWriter (merged 2026-07-21)",
     "PR(aw_blocks0720/443): refactor(core): modernize PowerToolsBlock+StronglyTypedBlock (merged 2026-07-20)",
