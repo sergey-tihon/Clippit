@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Globalization;
+
 namespace Clippit.Word;
 
 public class ListItemTextGetter_sv_SE
@@ -99,7 +101,7 @@ public class ListItemTextGetter_sv_SE
                 "Converting a negative levelNumber to ordinal text is not supported"
             );
 
-        var sLevel = (levelNumber + LevelNumberOffset).ToString();
+        var sLevel = (levelNumber + LevelNumberOffset).ToString(CultureInfo.InvariantCulture);
         var thousands = sLevel[1] - '0';
         var hundreds = sLevel[2] - '0';
         var tens = sLevel[3] - '0';
@@ -183,7 +185,7 @@ public class ListItemTextGetter_sv_SE
         if (levelNumber == 1)
             return "Första";
 
-        var sLevel = (levelNumber + LevelNumberOffset).ToString();
+        var sLevel = (levelNumber + LevelNumberOffset).ToString(CultureInfo.InvariantCulture);
         var thousands = sLevel[1] - '0';
         var hundreds = sLevel[2] - '0';
         var tens = sLevel[3] - '0';

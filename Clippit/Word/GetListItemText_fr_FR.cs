@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Globalization;
+
 namespace Clippit.Word;
 
 public class ListItemTextGetter_fr_FR
@@ -104,7 +106,7 @@ public class ListItemTextGetter_fr_FR
 
             var result = "";
 
-            var sLevel = (levelNumber + 10000).ToString();
+            var sLevel = (levelNumber + 10000).ToString(CultureInfo.InvariantCulture);
             var thousands = sLevel[1] - '0';
             var hundreds = sLevel[2] - '0';
             var tens = sLevel[3] - '0';
@@ -208,7 +210,7 @@ public class ListItemTextGetter_fr_FR
             if (levelNumber == 1)
                 return "Premier";
 
-            var sLevel = (levelNumber + 10000).ToString();
+            var sLevel = (levelNumber + 10000).ToString(CultureInfo.InvariantCulture);
             var thousands = sLevel[1] - '0';
             var hundreds = sLevel[2] - '0';
             var tens = sLevel[3] - '0';
