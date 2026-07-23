@@ -1063,9 +1063,9 @@ namespace Clippit.Word
                 .Select(
                     (t, l) =>
                     {
-                        if (t.Substring(0, 1) != "%")
+                        if (t[0] != '%')
                             return t;
-                        if (!int.TryParse(t.Substring(1), out var indentationLevel))
+                        if (!int.TryParse(t[1..], out var indentationLevel))
                             return t;
                         indentationLevel -= 1;
                         if (indentationLevel >= levelNumbers.Length)

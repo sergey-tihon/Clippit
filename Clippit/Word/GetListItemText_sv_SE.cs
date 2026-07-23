@@ -84,10 +84,10 @@ public class ListItemTextGetter_sv_SE
         var result = "";
 
         var sLevel = (levelNumber + 10000).ToString();
-        var thousands = int.Parse(sLevel.Substring(1, 1));
-        var hundreds = int.Parse(sLevel.Substring(2, 1));
-        var tens = int.Parse(sLevel.Substring(3, 1));
-        var ones = int.Parse(sLevel.Substring(4, 1));
+        var thousands = sLevel[1] - '0';
+        var hundreds = sLevel[2] - '0';
+        var tens = sLevel[3] - '0';
+        var ones = sLevel[4] - '0';
 
         //Validation
         if (levelNumber > 19999)
@@ -182,10 +182,10 @@ public class ListItemTextGetter_sv_SE
             return "Första";
 
         var sLevel = (levelNumber + 10000).ToString();
-        var thousands = int.Parse(sLevel.Substring(1, 1));
-        var hundreds = int.Parse(sLevel.Substring(2, 1));
-        var tens = int.Parse(sLevel.Substring(3, 1));
-        var ones = int.Parse(sLevel.Substring(4, 1));
+        var thousands = sLevel[1] - '0';
+        var hundreds = sLevel[2] - '0';
+        var tens = sLevel[3] - '0';
+        var ones = sLevel[4] - '0';
 
         /* exact thousands */
         if (levelNumber == 1000)
