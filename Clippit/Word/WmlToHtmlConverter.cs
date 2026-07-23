@@ -3067,10 +3067,10 @@ namespace Clippit.Word
                 return cached;
             var fillRed = Convert.ToInt32(fill[..2], 16);
             var fillGreen = Convert.ToInt32(fill[2..4], 16);
-            var fillBlue = Convert.ToInt32(fill[4..], 16);
+            var fillBlue = Convert.ToInt32(fill[4..6], 16);
             var colorRed = Convert.ToInt32(color[..2], 16);
             var colorGreen = Convert.ToInt32(color[2..4], 16);
-            var colorBlue = Convert.ToInt32(color[4..], 16);
+            var colorBlue = Convert.ToInt32(color[4..6], 16);
             var finalRed = (int)(fillRed - (fillRed - colorRed) * pct);
             var finalGreen = (int)(fillGreen - (fillGreen - colorGreen) * pct);
             var finalBlue = (int)(fillBlue - (fillBlue - colorBlue) * pct);
