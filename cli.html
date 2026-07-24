@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Clippit CLI | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Clippit CLI | Clippit ">
+      
+      
+      <link rel="icon" href="images/logo-site.png">
+      <link rel="stylesheet" href="public/docfx.min.css">
+      <link rel="stylesheet" href="public/main.css">
+      <meta name="docfx:navrel" content="toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/blob/master/docs/cli.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="index.html">
+            <img id="logo" class="svg" src="images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="clippit-cli">Clippit CLI</h1>
+
+<p>Clippit CLI is a scriptable command-line interface for PowerPoint (<code>pptx</code>), Word (<code>word</code>), and Excel (<code>excel</code>) document workflows. This documentation is split into focused pages by command area.</p>
+<h2 id="cli-pages">CLI pages</h2>
+<table>
+<thead>
+<tr>
+<th>Page</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="cli-pptx.html">PowerPoint CLI (<code>pptx</code>)</a></td>
+<td><code>pptx split</code>, <code>pptx build init</code>, <code>pptx build run</code>, <code>pptx verify</code></td>
+</tr>
+<tr>
+<td><a href="cli-word.html">Word CLI (<code>word</code>)</a></td>
+<td><code>word verify</code>, <code>word build init</code>, <code>word build run</code>, <code>word compare</code>, <code>word consolidate</code>, <code>word assemble</code>, <code>word accept-revisions</code>, <code>word simplify-markup</code>, <code>word to-html</code>, <code>word from-html</code></td>
+</tr>
+<tr>
+<td><a href="cli-excel.html">Excel CLI (<code>excel</code>)</a></td>
+<td><code>excel verify</code>, <code>excel to-html</code>, <code>excel create</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="installation">Installation</h2>
+<p>You can install Clippit CLI in two supported ways.</p>
+<h3 id="1-nuget-dotnet-tool">1. NuGet (<code>dotnet tool</code>)</h3>
+<pre><code class="lang-bash">dotnet tool install -g Clippit.Cli
+clippit --version
+</code></pre>
+<pre><code class="lang-bash">dotnet tool update -g Clippit.Cli
+dotnet tool uninstall -g Clippit.Cli
+</code></pre>
+<h3 id="2-npm">2. npm</h3>
+<pre><code class="lang-bash">npm install -g clippit
+clippit --version
+</code></pre>
+<pre><code class="lang-bash">npm install -g clippit@latest
+npm uninstall -g clippit
+</code></pre>
+<h2 id="workspace-skills">Workspace skills</h2>
+<p>Clippit can install local Agent Skills files for coding assistants that support
+workspace skills.</p>
+<p>Run the installer from the workspace where you want the skill files to live:</p>
+<pre><code class="lang-bash">clippit install --skills          # installs .agents/skills/clippit
+clippit install --skills=claude   # installs .claude/skills/clippit
+clippit install --skills=all      # installs both targets
+</code></pre>
+<p>Running the command again replaces the installed skill files with the current
+bundled versions. Use <code>--dry-run</code> to preview the paths that would be written.</p>
+<pre><code class="lang-bash">clippit install --skills=all --dry-run
+</code></pre>
+<p>For full command options and payload contracts, use these docs,
+<code>clippit &lt;command&gt; --help</code>, and the schemas listed below.</p>
+<h2 id="supported-platforms">Supported platforms</h2>
+<ul>
+<li><strong>Continuously tested:</strong> Windows, Linux</li>
+<li><strong>Runtime requirement:</strong> .NET 10 runtime/toolchain for the <code>dotnet tool</code>; the npm package bundles native binaries for supported platforms</li>
+<li><strong>Package managers:</strong> <code>dotnet tool</code> (NuGet) and <code>npm</code></li>
+</ul>
+<h2 id="output-contract">Output contract</h2>
+<p>Use <code>--format json</code> for automation. Text output is for interactive usage.</p>
+<table>
+<thead>
+<tr>
+<th>Stream</th>
+<th>Condition</th>
+<th>Payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>stdout</td>
+<td>successful JSON command</td>
+<td>command-specific result JSON</td>
+</tr>
+<tr>
+<td>stdout</td>
+<td>verify command with diagnostics (<code>valid: false</code>)</td>
+<td>verify result JSON, exit code <code>4</code></td>
+</tr>
+<tr>
+<td>stdout</td>
+<td>command writes binary/HTML to stdout (<code>--output -</code>)</td>
+<td>raw stream only; summary is suppressed</td>
+</tr>
+<tr>
+<td>stderr</td>
+<td>command execution error</td>
+<td>compact JSON error with stable <code>code</code></td>
+</tr>
+<tr>
+<td>stderr/stdout</td>
+<td>parser/help output</td>
+<td>System.CommandLine text output</td>
+</tr>
+</tbody>
+</table>
+<p>Common exit codes:</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0</code></td>
+<td>Success</td>
+</tr>
+<tr>
+<td><code>1</code></td>
+<td>Internal error</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td>Invalid arguments</td>
+</tr>
+<tr>
+<td><code>3</code></td>
+<td>File not found</td>
+</tr>
+<tr>
+<td><code>4</code></td>
+<td>Invalid format or validation failure</td>
+</tr>
+<tr>
+<td><code>5</code></td>
+<td>Output error</td>
+</tr>
+</tbody>
+</table>
+<h2 id="stdinstdout-rules">Stdin/stdout rules</h2>
+<ul>
+<li>Commands that accept file input support <code>-</code> for stdin.</li>
+<li>For binary/HTML output, use <code>--output -</code> and redirect stdout.</li>
+<li>Only one file input can come from stdin at a time.</li>
+</ul>
+<p>Examples:</p>
+<pre><code class="lang-bash">cat deck.pptx | clippit pptx split - --output slides --format json
+cat deck.json | clippit pptx build run - --output - &gt; final.pptx
+cat document.docx | clippit word verify - --format json
+cat word-build.json | clippit word build run - --output - &gt; merged.docx
+cat article.html | clippit word from-html - --output - &gt; article.docx
+cat spreadsheet.xlsx | clippit excel verify - --format json
+</code></pre>
+<h2 id="install---skills"><code>install --skills</code></h2>
+<p>Installs bundled Clippit workspace skills.</p>
+<pre><code class="lang-text">clippit install --skills[=agents|claude|all] [--dry-run] [--format json|text] [--quiet]
+</code></pre>
+<p>Targets:</p>
+<table>
+<thead>
+<tr>
+<th>Target</th>
+<th>Install path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>agents</code> (default)</td>
+<td><code>.agents/skills/clippit/SKILL.md</code></td>
+</tr>
+<tr>
+<td><code>claude</code></td>
+<td><code>.claude/skills/clippit/SKILL.md</code></td>
+</tr>
+<tr>
+<td><code>all</code></td>
+<td>both target directories</td>
+</tr>
+</tbody>
+</table>
+<p>Text output lists installed skill paths. JSON output reports the installed targets,
+paths, and CLI version:</p>
+<pre><code class="lang-json">{&quot;installed&quot;:[{&quot;target&quot;:&quot;agents&quot;,&quot;path&quot;:&quot;.agents/skills/clippit/SKILL.md&quot;}],&quot;version&quot;:&quot;0.8.0&quot;}
+</code></pre>
+<p><code>--dry-run</code> prints the planned <code>SKILL.md</code> paths instead of writing files. In JSON
+mode it returns:</p>
+<pre><code class="lang-json">{&quot;paths&quot;:[&quot;.agents/skills/clippit/SKILL.md&quot;]}
+</code></pre>
+<h2 id="version"><code>version</code></h2>
+<p>Prints Clippit CLI and Open XML SDK versions.</p>
+<pre><code class="lang-text">clippit version [--format json|text] [--quiet]
+clippit --version
+</code></pre>
+<pre><code class="lang-json">{&quot;version&quot;:&quot;0.1.0&quot;,&quot;openXmlSdkVersion&quot;:&quot;4.0.0&quot;}
+</code></pre>
+<h2 id="json-schemas">JSON schemas</h2>
+<p>Schemas for manifests/results are in <a href="schemas/README.md">schemas/README.md</a>.</p>
+<table>
+<thead>
+<tr>
+<th>Payload</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Deck manifest</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/deck-manifest.v1.json</code></td>
+</tr>
+<tr>
+<td>Word build manifest</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/word-build-manifest.v1.json</code></td>
+</tr>
+<tr>
+<td>Excel workbook definition</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/workbook-definition.v1.json</code></td>
+</tr>
+<tr>
+<td><code>pptx split</code> result</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/split-result.v1.json</code></td>
+</tr>
+<tr>
+<td><code>pptx build run</code> result</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/build-result.v1.json</code></td>
+</tr>
+<tr>
+<td><code>word build run</code> result</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/word-build-result.v1.json</code></td>
+</tr>
+<tr>
+<td><code>pptx verify</code>, <code>word verify</code>, <code>excel verify</code> result</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/verify-result.v1.json</code></td>
+</tr>
+<tr>
+<td><code>word assemble</code> result</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/assemble-result.v1.json</code></td>
+</tr>
+<tr>
+<td><code>word compare</code> result</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/compare-result.v1.json</code></td>
+</tr>
+<tr>
+<td><code>word consolidate</code> result</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/consolidate-result.v1.json</code></td>
+</tr>
+<tr>
+<td><code>excel create</code> result</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/excel-create-result.v1.json</code></td>
+</tr>
+<tr>
+<td><code>install --skills</code> result</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/install-result.v1.json</code></td>
+</tr>
+<tr>
+<td><code>install --skills --dry-run</code> plan</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/install-plan.v1.json</code></td>
+</tr>
+<tr>
+<td><code>word to-html</code>, <code>word from-html</code>, <code>word accept-revisions</code>, <code>word simplify-markup</code>, <code>excel to-html</code> result</td>
+<td><code>https://sergey-tihon.github.io/Clippit/schemas/convert-result.v1.json</code></td>
+</tr>
+</tbody>
+</table>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/cli.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
