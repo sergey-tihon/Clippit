@@ -694,7 +694,7 @@ namespace Clippit.Word
                     .Count(sub => sub.StartsWith("<#"));
                 if (paraContents.StartsWith("<#") && paraContents.EndsWith("#>") && occurrences == 1)
                 {
-                    var xmlText = paraContents.Substring(2, paraContents.Length - 4).Trim();
+                    var xmlText = paraContents[2..^2].Trim();
                     var xml = TransformXmlTextToMetadata(te, xmlText);
                     if (xml.Name == W.p || xml.Name == W.r)
                         return xml;
@@ -713,11 +713,7 @@ namespace Clippit.Word
                         (_, match) =>
                         {
                             var matchString = match.Value.Trim();
-                            var xmlText = matchString
-                                .Substring(2, matchString.Length - 4)
-                                .Trim()
-                                .Replace('“', '"')
-                                .Replace('”', '"');
+                            var xmlText = matchString[2..^2].Trim().Replace('\u201c', '"').Replace('\u201d', '"');
                             try
                             {
                                 xml = XElement.Parse(xmlText);
@@ -795,7 +791,7 @@ namespace Clippit.Word
                     .Count(sub => sub.StartsWith("<#"));
                 if (paraContents.StartsWith("<#") && paraContents.EndsWith("#>") && occurrences == 1)
                 {
-                    var xmlText = paraContents.Substring(2, paraContents.Length - 4).Trim();
+                    var xmlText = paraContents[2..^2].Trim();
                     var xml = TransformXmlTextToMetadata(te, xmlText);
                     if (xml.Name == W.p || xml.Name == W.r)
                         return xml;
@@ -814,11 +810,7 @@ namespace Clippit.Word
                         (_, match) =>
                         {
                             var matchString = match.Value.Trim();
-                            var xmlText = matchString
-                                .Substring(2, matchString.Length - 4)
-                                .Trim()
-                                .Replace('“', '"')
-                                .Replace('”', '"');
+                            var xmlText = matchString[2..^2].Trim().Replace('\u201c', '"').Replace('\u201d', '"');
 
                             try
                             {

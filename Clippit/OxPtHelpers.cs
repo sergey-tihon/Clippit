@@ -57,7 +57,7 @@ namespace Clippit
                         );
 
                     var ColorHex = $"{colorValue:x6}";
-                    runProperties.AppendChild(new Color() { Val = ColorHex.Substring(2) });
+                    runProperties.AppendChild(new Color() { Val = ColorHex[2..] });
                 }
 
                 if (isUnderline)
@@ -73,7 +73,7 @@ namespace Clippit
 
                     var ColorShadeHex = $"{colorShade:x6}";
                     runProperties.AppendChild(
-                        new Shading() { Fill = ColorShadeHex.Substring(2), Val = ShadingPatternValues.Clear }
+                        new Shading() { Fill = ColorShadeHex[2..], Val = ShadingPatternValues.Clear }
                     );
                 }
 

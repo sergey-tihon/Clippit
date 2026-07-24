@@ -170,7 +170,7 @@ public class ListItemTextGetter_tr_TR
             if (t1 >= 1)
                 result += OneThroughNineteen[t1 - 1] + " bin";
             if (t1 >= 1 && t2 == 0)
-                return s_trTRTextInfo.ToUpper(result[0]) + result.Substring(1);
+                return s_trTRTextInfo.ToUpper(result[0]) + result[1..];
             if (t1 >= 1)
                 result += " ";
             var h1 = (levelNumber % 1000) / 100;
@@ -178,7 +178,7 @@ public class ListItemTextGetter_tr_TR
             if (h1 >= 1)
                 result += OneThroughNineteen[h1 - 1] + " yüz";
             if (h1 >= 1 && h2 == 0)
-                return s_trTRTextInfo.ToUpper(result[0]) + result.Substring(1);
+                return s_trTRTextInfo.ToUpper(result[0]) + result[1..];
             if (h1 >= 1)
                 result += " ";
             var z = levelNumber % 100;
@@ -193,7 +193,7 @@ public class ListItemTextGetter_tr_TR
                     result += /*"-" + */
                     OneThroughNineteen[r - 1];
             }
-            return s_trTRTextInfo.ToUpper(result[0]) + result.Substring(1);
+            return s_trTRTextInfo.ToUpper(result[0]) + result[1..];
         }
         #endregion
         if (numFmt == "ordinalText")
@@ -208,7 +208,7 @@ public class ListItemTextGetter_tr_TR
             if (t1 >= 1 && t2 == 0)
             {
                 result += TwoThroughNineteen[t1 - 1] + "bininci";
-                return s_trTRTextInfo.ToUpper(result[0]) + result.Substring(1);
+                return s_trTRTextInfo.ToUpper(result[0]) + result[1..];
             }
             //if (t1 >= 1)
             //    result += " ";
@@ -219,7 +219,7 @@ public class ListItemTextGetter_tr_TR
             if (h1 >= 1 && h2 == 0)
             {
                 result += TwoThroughNineteen[h1 - 1] + "yüzüncü";
-                return s_trTRTextInfo.ToUpper(result[0]) + result.Substring(1);
+                return s_trTRTextInfo.ToUpper(result[0]) + result[1..];
             }
             //if (h1 >= 1)
             //    result += " ";
@@ -237,7 +237,7 @@ public class ListItemTextGetter_tr_TR
                 if (r >= 1)
                     result += OrdinalOneThroughNineteen[r - 1]; //result += "-" + OrdinalOneThroughNineteen[r - 1];
             }
-            return s_trTRTextInfo.ToUpper(result[0]) + result.Substring(1);
+            return s_trTRTextInfo.ToUpper(result[0]) + result[1..];
         }
         if (numFmt == "0001, 0002, 0003, ...")
         {
