@@ -157,14 +157,18 @@ public static class ExcelAssembler
             "s" when int.TryParse(cell.Element(S.v)?.Value, out var idx) => sharedStrings.TryGetValue(idx, out var s)
                 ? s
                 : null,
-            "inlineStr" => cell.Element(S._is)?.Element(S.t)?.Value
-                ?? string.Concat(
-                    cell.Element(S._is)?.Elements(S.r).Select(r => r.Element(S.t)?.Value ?? string.Empty) ?? []
-                ),
+            "inlineStr" => ReadInlineStringValue(cell),
             // "str" is used by SpreadsheetWriter for formula-result string cells.
             "str" => cell.Element(S.v)?.Value,
             _ => null,
         };
+    }
+
+    private static string ReadInlineStringValue(XElement cell)
+    {
+        var inlineString = cell.Element(S._is);
+        return inlineString?.Element(S.t)?.Value
+            ?? string.Concat(inlineString?.Elements(S.r).Select(r => r.Element(S.t)?.Value ?? string.Empty) ?? []);
     }
 
     private static IReadOnlyDictionary<int, string> ReadSharedStrings(WorkbookPart workbookPart)
