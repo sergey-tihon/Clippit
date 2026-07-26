@@ -1115,18 +1115,18 @@ namespace Clippit.Word
                     yield break;
                 if (lvlText[i] == '%' && i <= lvlText.Length - 2)
                 {
-                    yield return lvlText.Substring(i, 2);
+                    yield return lvlText.AsSpan(i, 2).ToString();
                     i += 2;
                     continue;
                 }
                 var percentIndex = lvlText.IndexOf('%', i);
                 if (percentIndex == -1 || percentIndex > lvlText.Length - 2)
                 {
-                    yield return lvlText.Substring(i);
+                    yield return lvlText[i..];
                     yield break;
                 }
-                yield return lvlText.Substring(i, percentIndex - i);
-                yield return lvlText.Substring(percentIndex, 2);
+                yield return lvlText[i..percentIndex];
+                yield return lvlText.AsSpan(percentIndex, 2).ToString();
                 i = percentIndex + 2;
             }
         }
