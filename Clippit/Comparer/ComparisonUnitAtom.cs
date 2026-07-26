@@ -110,15 +110,13 @@ namespace Clippit
             if (ContentElement.Name == W.t || ContentElement.Name == W.delText)
             {
                 sb.Append(
-                    $"Atom {PadLocalName(XNamePad, this)}: {ContentElement.Value} {correlationStatus} SHA1:{SHA1Hash.Substring(0, 8)} "
+                    $"Atom {PadLocalName(XNamePad, this)}: {ContentElement.Value} {correlationStatus} SHA1:{SHA1Hash[..8]} "
                 );
                 AppendAncestorsDump(sb, this);
             }
             else
             {
-                sb.Append(
-                    $"Atom {PadLocalName(XNamePad, this)}:   {correlationStatus} SHA1:{SHA1Hash.Substring(0, 8)} "
-                );
+                sb.Append($"Atom {PadLocalName(XNamePad, this)}:   {correlationStatus} SHA1:{SHA1Hash[..8]} ");
 
                 AppendAncestorsDump(sb, this);
             }
@@ -148,16 +146,14 @@ namespace Clippit
             if (ContentElement.Name == W.t || ContentElement.Name == W.delText)
             {
                 sb.Append(
-                    $"Atom {PadLocalName(xNamePad, this)}: {ContentElement.Value} {correlationStatus} SHA1:{SHA1Hash.Substring(0, 8)} "
+                    $"Atom {PadLocalName(xNamePad, this)}: {ContentElement.Value} {correlationStatus} SHA1:{SHA1Hash[..8]} "
                 );
 
                 AppendAncestorsUnidsDump(sb, this);
             }
             else
             {
-                sb.Append(
-                    $"Atom {PadLocalName(xNamePad, this)}:   {correlationStatus} SHA1:{SHA1Hash.Substring(0, 8)} "
-                );
+                sb.Append($"Atom {PadLocalName(xNamePad, this)}:   {correlationStatus} SHA1:{SHA1Hash[..8]} ");
 
                 AppendAncestorsUnidsDump(sb, this);
             }
@@ -188,7 +184,7 @@ namespace Clippit
             );
 
             var s = zipped
-                .Select(p => p.AncestorElement.Name.LocalName + "[" + p.AncestorUnid.Substring(0, 8) + "]/")
+                .Select(p => p.AncestorElement.Name.LocalName + "[" + p.AncestorUnid[..8] + "]/")
                 .StringConcatenate()
                 .TrimEnd('/');
 
@@ -198,7 +194,7 @@ namespace Clippit
         private static string GetUnid(XElement p)
         {
             var unid = (string)p.Attribute(PtOpenXml.Unid);
-            return unid is null ? "" : "[" + unid.Substring(0, 8) + "]";
+            return unid is null ? "" : "[" + unid[..8] + "]";
         }
     }
 }
