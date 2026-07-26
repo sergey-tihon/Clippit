@@ -2044,8 +2044,7 @@ namespace Clippit.Word
             }
         }
 
-        private static readonly string[] AcceptableNumFormats = new[]
-        {
+        private static readonly FrozenSet<string> AcceptableNumFormats = FrozenSet.Create(
             "decimal",
             "decimalZero",
             "upperRoman",
@@ -2057,8 +2056,8 @@ namespace Clippit.Word
             "ordinalText",
             "bullet",
             "0001, 0002, 0003, ...",
-            "none",
-        };
+            "none"
+        );
 
         public static XElement ParagraphStyleRollup(
             XElement paragraph,

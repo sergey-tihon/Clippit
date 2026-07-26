@@ -426,7 +426,7 @@ namespace Clippit.Excel
                     break;
             if (i == address.Length)
                 throw new FileFormatException("Invalid spreadsheet.  Bad cell address.");
-            return new[] { address.Substring(0, i), address.Substring(i) };
+            return [address[..i], address[i..]];
         }
 
         public static string IndexToColumnAddress(int index)
