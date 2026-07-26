@@ -456,8 +456,9 @@ namespace Clippit.Excel
                 .FirstOrDefault();
             if (element is null)
                 throw new ArgumentException("Range name not found: " + rangeName);
-            var sheetName = element.Value[..element.Value.IndexOf('!')];
-            var range = element.Value[(element.Value.IndexOf('!') + 1)..].Replace("$", "");
+            var exclamIdx = element.Value.IndexOf('!');
+            var sheetName = element.Value[..exclamIdx];
+            var range = element.Value[(exclamIdx + 1)..].Replace("$", "");
             var colonIndex = range.IndexOf(':');
             GetRowColumn(range[..colonIndex], out startRow, out startColumn);
             GetRowColumn(range[(colonIndex + 1)..], out endRow, out endColumn);

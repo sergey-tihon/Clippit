@@ -150,9 +150,9 @@ namespace Clippit.Excel
         {
             color = null;
             var trimmed = formatCode.Trim();
-            if (trimmed.StartsWith("[") && trimmed.Contains("]"))
+            var colorLen = trimmed.StartsWith('[') ? trimmed.IndexOf(']') : -1;
+            if (colorLen > 0)
             {
-                var colorLen = trimmed.IndexOf(']');
                 color = trimmed[1..colorLen];
                 if (ValidColors.Contains(color) || color.StartsWith("Color"))
                 {
