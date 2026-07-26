@@ -135,8 +135,7 @@ namespace Clippit.Excel
             return withTransformedCurrency;
         }
 
-        private static readonly string[] ValidColors = new[]
-        {
+        private static readonly FrozenSet<string> ValidColors = FrozenSet.Create(
             "Black",
             "Blue",
             "Cyan",
@@ -144,22 +143,22 @@ namespace Clippit.Excel
             "Magenta",
             "Red",
             "White",
-            "Yellow",
-        };
+            "Yellow"
+        );
 
         private static string FormatDouble(string formatCode, double dv, out string color)
         {
             color = null;
             var trimmed = formatCode.Trim();
-            if (trimmed.StartsWith("[") && trimmed.Contains("]"))
+            var colorLen = trimmed.StartsWith('[') ? trimmed.IndexOf(']') : -1;
+            if (colorLen > 0)
             {
-                var colorLen = trimmed.IndexOf(']');
-                color = trimmed.Substring(1, colorLen - 1);
+                color = trimmed[1..colorLen];
                 if (ValidColors.Contains(color) || color.StartsWith("Color"))
                 {
                     if (color.StartsWith("Color"))
                     {
-                        var idxStr = color.Substring(5);
+                        var idxStr = color[5..];
                         if (int.TryParse(idxStr, out var colorIdx))
                         {
                             if (colorIdx < SmlDataRetriever.IndexedColors.Length)
@@ -168,7 +167,7 @@ namespace Clippit.Excel
                                 color = null;
                         }
                     }
-                    formatCode = trimmed.Substring(colorLen + 1);
+                    formatCode = trimmed[(colorLen + 1)..];
                 }
                 else
                     color = null;
@@ -193,7 +192,7 @@ namespace Clippit.Excel
                 {
                     var zeroHour = new DateTime(1899, 12, 30, 0, 0, 0);
                     var deltaInHours = (int)((thisDate - zeroHour).TotalHours);
-                    var newCfc = cfc.Substring(3);
+                    var newCfc = cfc[3..];
                     var s = (deltaInHours + thisDate.ToString(newCfc)).Trim();
                     return s;
                 }
