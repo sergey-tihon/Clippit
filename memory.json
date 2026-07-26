@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-07-25",
-  "last_run_id": "30164730812",
+  "last_run": "2026-07-26",
+  "last_run_id": "30209390975",
   "backlog_cursor": {
     "issues": 424,
     "prs": 165
@@ -21,39 +21,41 @@
     "424": "2026-07-10"
   },
   "open_clippy_prs": [
-    {"number": "aw_ea725", "branch": "clippy/improve-excel-assembler-rebase-20260725", "title": "feat(excel): ExcelAssembler rebase onto master", "note": "created 2026-07-25, supersedes #432 and #165; closes #28"},
-    {"number": "aw_fz725", "branch": "clippy/perf-frozen-html-css-20260725", "title": "perf(html): convert CSS classifier string arrays to FrozenSet", "note": "created 2026-07-25"},
-    {"number": "aw_ri725", "branch": "clippy/improve-range-indexers-comparer-20260725", "title": "refactor: replace Substring with range indexers in Comparer and Word", "note": "created 2026-07-25"}
+    {"number": 449, "branch": "clippy/improve-excel-assembler-rebase-20260725", "title": "feat(excel): ExcelAssembler rebase onto master", "note": "created 2026-07-25, supersedes #432 and #165; closes #28"},
+    {"number": 450, "branch": "clippy/perf-frozen-html-css-20260725", "title": "perf(html): convert CSS classifier string arrays to FrozenSet", "note": "created 2026-07-25"},
+    {"number": 451, "branch": "clippy/improve-range-indexers-comparer-20260725", "title": "refactor: replace Substring with range indexers in Comparer and Word", "note": "created 2026-07-25"},
+    {"number": "aw_prf0726", "branch": "clippy/perf-improve-excel-word-20260726", "title": "perf+refactor: FrozenSet lookups and range indexers in Excel/Word", "note": "created 2026-07-26; Tasks 8+5"}
   ],
   "prs_to_close": [
-    {"number": 165, "reason": "superseded by aw_ea725"},
-    {"number": 432, "reason": "superseded by aw_ea725 (fresh rebase)"}
+    {"number": 165, "reason": "superseded by #449"},
+    {"number": 432, "reason": "superseded by #449 (fresh rebase)"}
   ],
   "checked_off_by_maintainer": [],
   "monthly_activity_issue": 370,
   "notes": [
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "Monthly Activity issue for July 2026 is #370",
-    "PR #165 (ExcelAssembler original): superseded by aw_ea725 - maintainer should close",
-    "PR #432 (ExcelAssembler rebase 2026-07-18): superseded by aw_ea725 (rebase 2026-07-25) - maintainer should close",
-    "PR aw_ea725: ExcelAssembler fresh rebase onto master (all 9 tests pass), open awaiting review",
-    "PR aw_fz725: perf FrozenSet for HTML CSS classifiers (237 tests pass), open awaiting review",
-    "PR aw_ri725: Substring->range indexers Comparer+Word (246 tests pass), open awaiting review",
+    "PR #165: superseded by #449 - maintainer should close",
+    "PR #432: superseded by #449 (rebase 2026-07-25) - maintainer should close",
+    "PR #449: ExcelAssembler fresh rebase onto master (all 9 tests pass), open awaiting review",
+    "PR #450: perf FrozenSet for HTML CSS classifiers (237 tests pass), open awaiting review",
+    "PR #451: Substring->range indexers Comparer+Word (246 tests pass), open awaiting review",
+    "PR aw_prf0726: FrozenSet for AcceptableNumFormats+ValidColors + range indexers in Excel/Word (2305 tests pass), open awaiting review",
     "All Dependabot deps are current as of 2026-07-22",
     "Clippit 3.8.0 is in CHANGELOG - release tag warranted after ExcelAssembler merges",
-    "Task 2/3: All open issues (#103, #77, #67, #28) have recent Clippy comments; #28 closed by aw_ea725"
+    "Task 2/3: All open issues (#103, #77, #67, #28) have recent Clippy comments; #28 closed by #449"
   ],
   "improvements_submitted": [
-    "PR(aw_ri725): refactor: Substring->range indexers in Comparer+Word (2026-07-25)",
-    "PR(aw_fz725): perf(html): FrozenSet for CSS classifier string arrays (2026-07-25)",
-    "PR(aw_ea725): feat(excel): ExcelAssembler rebase onto master (2026-07-25)",
+    "PR(aw_prf0726): perf+refactor: FrozenSet lookups and range indexers in Excel/Word (2026-07-26)",
+    "PR(451): refactor: Substring->range indexers Comparer+Word (2026-07-25)",
+    "PR(450): perf(html): FrozenSet for CSS classifier string arrays (2026-07-25)",
+    "PR(449): feat(excel): ExcelAssembler rebase onto master (2026-07-25)",
     "PR(448): refactor: Substring->range indexers OxPtHelpers, WmlToHtmlConverter, DocumentAssembler, etc. (merged 2026-07-23)",
     "PR(447): refactor(wmltoxml): TryGetValue double-lookup cleanup + StrictOoxmlTranslatorTests SOT001-016 (merged 2026-07-22)",
     "PR(445): perf(pptx): FrozenDictionary for OrderPresentation+OrderSlideMaster (merged 2026-07-21)",
     "PR(444): refactor: TryGetValue/GetValueOrDefault double-lookup cleanup in FormattingAssembler+SpreadsheetWriter (merged 2026-07-21)",
-    "PR(aw_blocks0720/443): refactor(core): modernize PowerToolsBlock+StronglyTypedBlock (merged 2026-07-20)",
-    "PR(aw_deps0720/442): chore(deps): TUnit 1.59.0->1.61.15 + JsonSchema.Net 9.2.2->9.3.0 (merged 2026-07-20)",
-    "PR(432): feat(excel) ExcelAssembler squash-rebase supersedes #165, rebased 2026-07-18",
-    "PR(aw_frozen3/437): perf: FrozenDictionary Excel/Html/Word (merged 2026-07-17)"
+    "PR(443): refactor(core): modernize PowerToolsBlock+StronglyTypedBlock (merged 2026-07-20)",
+    "PR(442): chore(deps): TUnit 1.59.0->1.61.15 + JsonSchema.Net 9.2.2->9.3.0 (merged 2026-07-20)",
+    "PR(437): perf: FrozenDictionary Excel/Html/Word (merged 2026-07-17)"
   ]
 }
