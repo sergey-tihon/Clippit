@@ -3303,24 +3303,22 @@ namespace Clippit.Html
             }
         }
 
-        private static readonly string[] BackgroundRepeatValues = new[]
-        {
+        private static readonly FrozenSet<string> BackgroundRepeatValues = FrozenSet.Create(
             "repeat",
             "repeat-x",
             "repeat-y",
-            "no-repeat",
-        };
+            "no-repeat"
+        );
 
-        private static readonly string[] BackgroundAttachmentValues = new[] { "scroll", "fixed" };
+        private static readonly FrozenSet<string> BackgroundAttachmentValues = FrozenSet.Create("scroll", "fixed");
 
-        private static readonly string[] BackgroundPositionValues = new[]
-        {
+        private static readonly FrozenSet<string> BackgroundPositionValues = FrozenSet.Create(
             "left",
             "right",
             "top",
             "bottom",
-            "center",
-        };
+            "center"
+        );
 
         private static CssDataType GetDatatypeFromBackgroundTerm(CssTerm term)
         {
@@ -3348,10 +3346,9 @@ namespace Clippit.Html
             return CssDataType.BackgroundPosition;
         }
 
-        private static readonly string[] ListStylePositionValues = new[] { "inside", "outside" };
+        private static readonly FrozenSet<string> ListStylePositionValues = FrozenSet.Create("inside", "outside");
 
-        private static readonly string[] BorderStyleValues = new[]
-        {
+        private static readonly FrozenSet<string> BorderStyleValues = FrozenSet.Create(
             "none",
             "hidden",
             "dotted",
@@ -3361,8 +3358,8 @@ namespace Clippit.Html
             "groove",
             "ridge",
             "inset",
-            "outset",
-        };
+            "outset"
+        );
 
         private static CssDataType GetDatatypeFromBorderTerm(CssTerm term)
         {
@@ -3375,8 +3372,7 @@ namespace Clippit.Html
             return CssDataType.BorderWidth;
         }
 
-        private static readonly string[] ListStyleTypeValues = new[]
-        {
+        private static readonly FrozenSet<string> ListStyleTypeValues = FrozenSet.Create(
             "disc",
             "circle",
             "square",
@@ -3390,8 +3386,8 @@ namespace Clippit.Html
             "armenian",
             "georgian",
             "lower-alpha",
-            "upper-alpha",
-        };
+            "upper-alpha"
+        );
 
         private static CssDataType GetDatatypeFromListStyleTerm(CssTerm term)
         {
@@ -3402,12 +3398,11 @@ namespace Clippit.Html
             return CssDataType.ListStyleImage;
         }
 
-        private static readonly string[] FontStyleValues = new[] { "italic", "oblique" };
+        private static readonly FrozenSet<string> FontStyleValues = FrozenSet.Create("italic", "oblique");
 
-        private static readonly string[] FontVarientValues = new[] { "small-caps" };
+        private static readonly FrozenSet<string> FontVarientValues = FrozenSet.Create("small-caps");
 
-        private static readonly string[] FontWeightValues = new[]
-        {
+        private static readonly FrozenSet<string> FontWeightValues = FrozenSet.Create(
             "bold",
             "bolder",
             "lighter",
@@ -3419,8 +3414,8 @@ namespace Clippit.Html
             "600",
             "700",
             "800",
-            "900",
-        };
+            "900"
+        );
 
         private static CssDataType GetDatatypeFromFontTerm(CssTerm term)
         {
