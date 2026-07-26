@@ -78,7 +78,9 @@ public static class ExcelAssembler
 
     private static void AssembleInDocument(SpreadsheetDocument doc, XElement data)
     {
-        var workbookPart = doc.WorkbookPart!;
+        var workbookPart =
+            doc.WorkbookPart
+            ?? throw new InvalidOpenXmlDocumentException("The spreadsheet template does not contain a WorkbookPart.");
         var sharedStrings = ReadSharedStrings(workbookPart);
 
         foreach (var worksheetPart in workbookPart.WorksheetParts)
@@ -118,6 +120,7 @@ public static class ExcelAssembler
                 // Rewrite cell value as an inline string, preserving non-value attributes/children.
                 cell.SetAttributeValue(NoNamespace.t, "inlineStr");
                 cell.Elements(S.v).Remove();
+                cell.Elements(S.f).Remove();
                 cell.Elements(S._is).Remove();
 
                 var inlineString = new XElement(S._is, new XElement(S.t, resolved));
@@ -154,7 +157,10 @@ public static class ExcelAssembler
             "s" when int.TryParse(cell.Element(S.v)?.Value, out var idx) => sharedStrings.TryGetValue(idx, out var s)
                 ? s
                 : null,
-            "inlineStr" => cell.Element(S._is)?.Element(S.t)?.Value,
+            "inlineStr" => cell.Element(S._is)?.Element(S.t)?.Value
+                ?? string.Concat(
+                    cell.Element(S._is)?.Elements(S.r).Select(r => r.Element(S.t)?.Value ?? string.Empty) ?? []
+                ),
             // "str" is used by SpreadsheetWriter for formula-result string cells.
             "str" => cell.Element(S.v)?.Value,
             _ => null,

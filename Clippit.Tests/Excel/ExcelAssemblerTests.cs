@@ -49,6 +49,85 @@ public class ExcelAssemblerTests : TestsBase
             .ToArray();
     }
 
+    private static byte[] CreateSharedStringTemplate(string value)
+    {
+        var templateBytes = CreateTemplate((1, 1, value));
+        using var ms = new MemoryStream();
+        ms.Write(templateBytes, 0, templateBytes.Length);
+        ms.Position = 0;
+        using (var doc = SpreadsheetDocument.Open(ms, true))
+        {
+            var workbookPart = doc.WorkbookPart;
+            if (workbookPart is null)
+                throw new InvalidOperationException("WorkbookPart is missing in test template.");
+
+            var wsPart = workbookPart.WorksheetParts.First();
+            var wsXDoc = wsPart.GetXDocument();
+            var cell = wsXDoc.Descendants(S.c).First();
+            cell.SetAttributeValue(NoNamespace.t, "s");
+            cell.Elements(S.v).Remove();
+            cell.Elements(S._is).Remove();
+            cell.Add(new XElement(S.v, "0"));
+            wsPart.PutXDocument();
+
+            var sstPart = workbookPart.SharedStringTablePart ?? workbookPart.AddNewPart<SharedStringTablePart>();
+            sstPart.PutXDocument(
+                new XDocument(
+                    new XElement(
+                        S.sst,
+                        new XAttribute(NoNamespace.count, "1"),
+                        new XAttribute(NoNamespace.uniqueCount, "1"),
+                        new XElement(S.si, new XElement(S.t, value))
+                    )
+                )
+            );
+        }
+        return ms.ToArray();
+    }
+
+    private static byte[] CreateInlineRichStringTemplate(params string[] runTexts)
+    {
+        var templateBytes = CreateTemplate((1, 1, "placeholder"));
+        using var ms = new MemoryStream();
+        ms.Write(templateBytes, 0, templateBytes.Length);
+        ms.Position = 0;
+        using (var doc = SpreadsheetDocument.Open(ms, true))
+        {
+            var wsPart =
+                doc.WorkbookPart?.WorksheetParts.First()
+                ?? throw new InvalidOperationException("WorksheetPart is missing in test template.");
+            var wsXDoc = wsPart.GetXDocument();
+            var cell = wsXDoc.Descendants(S.c).First();
+            cell.SetAttributeValue(NoNamespace.t, "inlineStr");
+            cell.Elements(S.v).Remove();
+            cell.Elements(S._is).Remove();
+            cell.Add(new XElement(S._is, runTexts.Select(text => new XElement(S.r, new XElement(S.t, text)))));
+            wsPart.PutXDocument();
+        }
+        return ms.ToArray();
+    }
+
+    private static byte[] CreateFormulaStringTemplate(string formulaResult)
+    {
+        var templateBytes = CreateTemplate((1, 1, formulaResult));
+        using var ms = new MemoryStream();
+        ms.Write(templateBytes, 0, templateBytes.Length);
+        ms.Position = 0;
+        using (var doc = SpreadsheetDocument.Open(ms, true))
+        {
+            var wsPart =
+                doc.WorkbookPart?.WorksheetParts.First()
+                ?? throw new InvalidOperationException("WorksheetPart is missing in test template.");
+            var wsXDoc = wsPart.GetXDocument();
+            var cell = wsXDoc.Descendants(S.c).First();
+            cell.SetAttributeValue(NoNamespace.t, "str");
+            cell.Elements(S.f).Remove();
+            cell.AddFirst(new XElement(S.f, "\"seed\""));
+            wsPart.PutXDocument();
+        }
+        return ms.ToArray();
+    }
+
     // WorksheetAccessor.GetCellValue doesn't handle t="str" (formula-string cells written by
     // SpreadsheetWriter). This helper also covers that case.
     private static string? GetCellStringValue(SpreadsheetDocument doc, WorksheetPart ws, int column, int row)
@@ -197,5 +276,50 @@ public class ExcelAssemblerTests : TestsBase
         var ws = WorksheetAccessor.GetWorksheet(doc, "Sheet1");
 
         await Assert.That(GetCellStringValue(doc, ws, 3, 1)).IsEqualTo("Alice");
+    }
+
+    [Test]
+    public async Task EA010_SharedStringCellTemplateReplacement()
+    {
+        var templateBytes = CreateSharedStringTemplate("{{Name}}");
+        var data = XElement.Parse("<Root><Name>Dana</Name></Root>");
+
+        var resultBytes = ExcelAssembler.AssembleDocument(templateBytes, data);
+
+        using var doc = SpreadsheetDocument.Open(new MemoryStream(resultBytes), false);
+        var ws = WorksheetAccessor.GetWorksheet(doc, "Sheet1");
+
+        await Assert.That(GetCellStringValue(doc, ws, 1, 1)).IsEqualTo("Dana");
+    }
+
+    [Test]
+    public async Task EA011_InlineRichStringTemplateReplacement()
+    {
+        var templateBytes = CreateInlineRichStringTemplate("Hello, ", "{{Name}}", "!");
+        var data = XElement.Parse("<Root><Name>Eve</Name></Root>");
+
+        var resultBytes = ExcelAssembler.AssembleDocument(templateBytes, data);
+
+        using var doc = SpreadsheetDocument.Open(new MemoryStream(resultBytes), false);
+        var ws = WorksheetAccessor.GetWorksheet(doc, "Sheet1");
+
+        await Assert.That(GetCellStringValue(doc, ws, 1, 1)).IsEqualTo("Hello, Eve!");
+    }
+
+    [Test]
+    public async Task EA012_TemplateFormulaIsRemovedWhenCellIsRewritten()
+    {
+        var templateBytes = CreateFormulaStringTemplate("{{Name}}");
+        var data = XElement.Parse("<Root><Name>Frank</Name></Root>");
+
+        var resultBytes = ExcelAssembler.AssembleDocument(templateBytes, data);
+
+        using var doc = SpreadsheetDocument.Open(new MemoryStream(resultBytes), false);
+        var ws = WorksheetAccessor.GetWorksheet(doc, "Sheet1");
+        var wsXDoc = ws.GetXDocument();
+        var cell = wsXDoc.Descendants(S.c).First(c => c.Attribute(NoNamespace.r)?.Value == "A1");
+
+        await Assert.That(GetCellStringValue(doc, ws, 1, 1)).IsEqualTo("Frank");
+        await Assert.That(cell.Element(S.f)).IsNull();
     }
 }
