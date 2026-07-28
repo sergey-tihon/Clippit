@@ -2948,13 +2948,13 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 
                         // Copy numbering element, if necessary (use matching element with no overrides)
                         XElement newElement;
-                        if (numIdMap.TryGetValue(numId, out var mappedNumId1))
+                        if (numIdMap.TryGetValue(numId, out var mappedNumId))
                         {
                             newElement = newNumbering
                                 .Descendants()
                                 .Elements(W.num)
                                 .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
-                                .Where(p => ((int)p.Attribute(W.numId)) == mappedNumId1)
+                                .Where(p => ((int)p.Attribute(W.numId)) == mappedNumId)
                                 .First();
                         }
                         else
@@ -3110,13 +3110,13 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 
                         // Copy numbering element, if necessary (use matching element with no overrides)
                         XElement newElement;
-                        if (numIdMap.TryGetValue(numId, out var mappedNumId2))
+                        if (numIdMap.TryGetValue(numId, out var mappedNumId))
                         {
                             newElement = newNumbering
                                 .Descendants()
                                 .Elements(W.num)
                                 .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
-                                .Where(p => ((int)p.Attribute(W.numId)) == mappedNumId2)
+                                .Where(p => ((int)p.Attribute(W.numId)) == mappedNumId)
                                 .First();
                         }
                         else
@@ -3272,13 +3272,13 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 
                         // Copy numbering element, if necessary (use matching element with no overrides)
                         XElement newElement;
-                        if (numIdMap.TryGetValue(numId, out var mappedNumId3))
+                        if (numIdMap.TryGetValue(numId, out var mappedNumId))
                         {
                             newElement = newNumbering
                                 .Descendants()
                                 .Elements(W.num)
                                 .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
-                                .Where(p => ((int)p.Attribute(W.numId)) == mappedNumId3)
+                                .Where(p => ((int)p.Attribute(W.numId)) == mappedNumId)
                                 .First();
                         }
                         else
