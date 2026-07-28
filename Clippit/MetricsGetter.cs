@@ -680,16 +680,12 @@ public class MetricsGetter
         {
             formattingMetrics.MultiFontRun++;
 
-            formattingMetrics.AsciiCharCount += fontTypeArray
-                .Where(ft => ft == FormattingAssembler.FontType.Ascii)
-                .Count();
-            formattingMetrics.CSCharCount += fontTypeArray.Where(ft => ft == FormattingAssembler.FontType.CS).Count();
-            formattingMetrics.EastAsiaCharCount += fontTypeArray
-                .Where(ft => ft == FormattingAssembler.FontType.EastAsia)
-                .Count();
-            formattingMetrics.HAnsiCharCount += fontTypeArray
-                .Where(ft => ft == FormattingAssembler.FontType.HAnsi)
-                .Count();
+            formattingMetrics.AsciiCharCount += fontTypeArray.Count(ft => ft == FormattingAssembler.FontType.Ascii);
+            formattingMetrics.CSCharCount += fontTypeArray.Count(ft => ft == FormattingAssembler.FontType.CS);
+            formattingMetrics.EastAsiaCharCount += fontTypeArray.Count(ft =>
+                ft == FormattingAssembler.FontType.EastAsia
+            );
+            formattingMetrics.HAnsiCharCount += fontTypeArray.Count(ft => ft == FormattingAssembler.FontType.HAnsi);
         }
         else
         {
