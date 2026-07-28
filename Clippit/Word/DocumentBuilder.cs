@@ -1917,8 +1917,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     var toId = (string)toStyle.Attribute(W.styleId);
                     if (fromId != toId)
                     {
-                        if (!newIds.ContainsKey(fromId))
-                            newIds.Add(fromId, toId);
+                        newIds.TryAdd(fromId, toId);
                     }
                 }
             }
@@ -2173,8 +2172,7 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                 var newElement = new XElement(element);
                 newElement.SetAttributeValue(W.id, number.ToString());
                 newComments.Root.Add(newElement);
-                if (!commentIdMap.ContainsKey(id))
-                    commentIdMap.Add(id, number);
+                commentIdMap.TryAdd(id, number);
                 number++;
             }
             foreach (
@@ -2186,8 +2184,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
                     .ToList()
             )
             {
-                if (commentIdMap.ContainsKey((int)item.Attribute(W.id)))
-                    item.SetAttributeValue(W.id, commentIdMap[(int)item.Attribute(W.id)].ToString());
+                if (commentIdMap.TryGetValue((int)item.Attribute(W.id), out var newCommentId))
+                    item.SetAttributeValue(W.id, newCommentId.ToString());
             }
             if (
                 sourceDocument.MainDocumentPart.WordprocessingCommentsPart is not null
@@ -2766,8 +2764,8 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
             var relevantElements = newContent
                 .DescendantsAndSelf()
                 .Where(d =>
-                    RelationshipMarkup.ContainsKey(d.Name)
-                    && d.Attributes().Any(a => RelationshipMarkup[d.Name].Contains(a.Name))
+                    RelationshipMarkup.TryGetValue(d.Name, out var relAttrs)
+                    && d.Attributes().Any(a => relAttrs.Contains(a.Name))
                 );
             foreach (var e in relevantElements)
             {
@@ -2950,13 +2948,13 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 
                         // Copy numbering element, if necessary (use matching element with no overrides)
                         XElement newElement;
-                        if (numIdMap.ContainsKey(numId))
+                        if (numIdMap.TryGetValue(numId, out var mappedNumId1))
                         {
                             newElement = newNumbering
                                 .Descendants()
                                 .Elements(W.num)
                                 .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
-                                .Where(p => ((int)p.Attribute(W.numId)) == numIdMap[numId])
+                                .Where(p => ((int)p.Attribute(W.numId)) == mappedNumId1)
                                 .First();
                         }
                         else
@@ -3112,13 +3110,13 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 
                         // Copy numbering element, if necessary (use matching element with no overrides)
                         XElement newElement;
-                        if (numIdMap.ContainsKey(numId))
+                        if (numIdMap.TryGetValue(numId, out var mappedNumId2))
                         {
                             newElement = newNumbering
                                 .Descendants()
                                 .Elements(W.num)
                                 .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
-                                .Where(p => ((int)p.Attribute(W.numId)) == numIdMap[numId])
+                                .Where(p => ((int)p.Attribute(W.numId)) == mappedNumId2)
                                 .First();
                         }
                         else
@@ -3274,13 +3272,13 @@ application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml
 
                         // Copy numbering element, if necessary (use matching element with no overrides)
                         XElement newElement;
-                        if (numIdMap.ContainsKey(numId))
+                        if (numIdMap.TryGetValue(numId, out var mappedNumId3))
                         {
                             newElement = newNumbering
                                 .Descendants()
                                 .Elements(W.num)
                                 .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
-                                .Where(p => ((int)p.Attribute(W.numId)) == numIdMap[numId])
+                                .Where(p => ((int)p.Attribute(W.numId)) == mappedNumId3)
                                 .First();
                         }
                         else
