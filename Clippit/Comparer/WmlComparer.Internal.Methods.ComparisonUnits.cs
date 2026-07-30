@@ -22,15 +22,6 @@ namespace Clippit
             MoveLastSectPrIntoLastParagraph(contentParent);
             var cal = CreateComparisonUnitAtomListInternal(part, contentParent, settings).ToArray();
 
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var item in cal)
-                    sb.Append(item + Environment.NewLine);
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
-            }
-
             return cal;
         }
 
@@ -297,36 +288,7 @@ namespace Clippit
                 )
                 .ToArray();
 
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var item in groupingKey)
-                {
-                    sb.Append(item.Key + Environment.NewLine);
-                    sb.Append("    " + item.ComparisonUnitAtomMember.ToString(0) + Environment.NewLine);
-                }
-
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
-            }
-
             IEnumerable<IGrouping<int?, Atgbw>> groupedByWords = groupingKey.GroupAdjacent(gc => gc.Key).ToArray();
-
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var group in groupedByWords)
-                {
-                    sb.Append("Group ===== " + @group.Key + Environment.NewLine);
-                    foreach (var gc in @group)
-                    {
-                        sb.Append("    " + gc.ComparisonUnitAtomMember.ToString(0) + Environment.NewLine);
-                    }
-                }
-
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
-            }
 
             var withHierarchicalGroupingKey = groupedByWords
                 .Select(g =>
@@ -346,33 +308,7 @@ namespace Clippit
                 })
                 .ToArray();
 
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var group in withHierarchicalGroupingKey)
-                {
-                    sb.Append(
-                        "Grouping Array: "
-                            + @group.HierarchicalGroupingArray.Select(gam => gam + " - ").StringConcatenate()
-                            + Environment.NewLine
-                    );
-                    foreach (var gc in @group.ComparisonUnitWord.Contents)
-                    {
-                        sb.Append("    " + gc.ToString(0) + Environment.NewLine);
-                    }
-                }
-
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
-            }
-
             var cul = GetHierarchicalComparisonUnits(withHierarchicalGroupingKey, 0).ToArray();
-
-            if (False)
-            {
-                var str = ComparisonUnit.ComparisonUnitListToString(cul);
-                TestUtil.NotePad(str);
-            }
 
             return cul;
         }

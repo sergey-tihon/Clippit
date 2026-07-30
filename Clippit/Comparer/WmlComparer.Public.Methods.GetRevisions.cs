@@ -26,15 +26,6 @@ namespace Clippit
             var contentParent = wDoc.MainDocumentPart.GetXDocument().Root?.Element(W.body);
             var atomList = CreateComparisonUnitAtomList(wDoc.MainDocumentPart, contentParent, settings).ToArray();
 
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var item in atomList)
-                    sb.Append(item + Environment.NewLine);
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
-            }
-
             var grouped = atomList
                 .GroupAdjacent(a =>
                 {
@@ -57,18 +48,6 @@ namespace Clippit
                 .ToList();
 
             var revisions = grouped.Where(k => k.Key != "Equal").ToList();
-
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var item in revisions)
-                {
-                    sb.Append(item.Key + Environment.NewLine);
-                }
-
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
-            }
 
             var mainDocPartRevisionList = revisions
                 .Select(rg =>
@@ -142,19 +121,6 @@ namespace Clippit
             foreach (var fn in footnotesEndnotes)
             {
                 var atomList = CreateComparisonUnitAtomList(footnotesEndnotesPart, fn, settings).ToArray();
-
-                if (False)
-                {
-                    var sb = new StringBuilder();
-                    foreach (var item in atomList)
-                    {
-                        sb.Append(item + Environment.NewLine);
-                    }
-
-                    var sbs = sb.ToString();
-                    TestUtil.NotePad(sbs);
-                }
-
                 var grouped = atomList
                     .GroupAdjacent(a =>
                     {
