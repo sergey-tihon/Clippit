@@ -154,7 +154,6 @@ public class SpreadsheetWriterTests : TestsBase
         var fileName = Path.Combine(TempDir, "SW001_TableWithDates.xlsx");
         using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
             wb.WriteTo(stream);
-        using var sDoc = SpreadsheetDocument.Open(fileName, false);
         await Validate(fileName).ConfigureAwait(false);
     }
 
