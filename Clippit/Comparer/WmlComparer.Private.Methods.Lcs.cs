@@ -706,19 +706,6 @@ namespace Clippit
                             };
                             newListOfCorrelatedSequence.Add(unknownCorrelatedSequence2);
                         }
-
-                        if (False)
-                        {
-                            var sb = new StringBuilder();
-                            foreach (var item in newListOfCorrelatedSequence)
-                            {
-                                sb.Append(item).Append(Environment.NewLine);
-                            }
-
-                            var sbs = sb.ToString();
-                            TestUtil.NotePad(sbs);
-                        }
-
                         return newListOfCorrelatedSequence;
                     }
 
