@@ -58,7 +58,7 @@ public class RevisionProcessorTests : TestsBase
     [Arguments("RP/RP049-Deleted-Para-Before-Table.docx")]
     [Arguments("RP/RP050-Deleted-Footnote.docx")]
     [Arguments("RP/RP052-Deleted-Para-Mark.docx")]
-    public async Task RP001(string name)
+    public void RP001(string name)
     {
         var sourceDir = new DirectoryInfo("../../../../TestFiles/");
         var sourceFi = new FileInfo(Path.Combine(sourceDir.FullName, name));
@@ -80,29 +80,27 @@ public class RevisionProcessorTests : TestsBase
 
         var settings = new WmlComparerSettings();
 
-        await Assert.That(baselineAcceptedFi.Exists).IsTrue().WithMessage($"No Accepted baseline document for {name}");
+        if (!baselineAcceptedFi.Exists)
+            Assert.Fail($"No Accepted baseline document for {name}");
         var acceptedResult = WmlComparer.Compare(
             new WmlDocument(baselineAcceptedFi.FullName),
             afterAcceptingWml,
             settings
         );
         var acceptedRevisions = WmlComparer.GetRevisions(acceptedResult, settings);
-        await Assert
-            .That(acceptedRevisions)
-            .IsEmpty()
-            .WithMessage($"Regression: Accepted output differs from baseline for {name}");
+        if (acceptedRevisions.Any())
+            Assert.Fail($"Regression: Accepted output differs from baseline for {name}");
 
-        await Assert.That(baselineRejectedFi.Exists).IsTrue().WithMessage($"No Rejected baseline document for {name}");
+        if (!baselineRejectedFi.Exists)
+            Assert.Fail($"No Rejected baseline document for {name}");
         var rejectedResult = WmlComparer.Compare(
             new WmlDocument(baselineRejectedFi.FullName),
             afterRejectingWml,
             settings
         );
         var rejectedRevisions = WmlComparer.GetRevisions(rejectedResult, settings);
-        await Assert
-            .That(rejectedRevisions)
-            .IsEmpty()
-            .WithMessage($"Regression: Rejected output differs from baseline for {name}");
+        if (rejectedRevisions.Any())
+            Assert.Fail($"Regression: Rejected output differs from baseline for {name}");
     }
 }
 #pragma warning restore CA1707
