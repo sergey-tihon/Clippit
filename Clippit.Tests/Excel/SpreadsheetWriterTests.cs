@@ -1,37 +1,516 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 using Clippit;
 using Clippit.Excel;
 using DocumentFormat.OpenXml.Packaging;
 
-#if !ELIDE_XUNIT_TESTS
-namespace Clippit.Tests.Excel
-{
-    public class SpreadsheetWriterTests : TestsBase
-    {
-        private static WorkbookDfn GetSimpleWorkbookDfn() =>
-            new() { Worksheets = [GetSimpleWorksheetDfn("MyFirstSheet", "NamesAndRates")] };
+namespace Clippit.Tests.Excel;
 
-        private static WorksheetDfn GetSimpleWorksheetDfn(string name, string table) =>
+public class SpreadsheetWriterTests : TestsBase
+{
+    private static WorkbookDfn GetSimpleWorkbookDfn() =>
+        new() { Worksheets = [GetSimpleWorksheetDfn("MyFirstSheet", "NamesAndRates")] };
+
+    private static WorksheetDfn GetSimpleWorksheetDfn(string name, string table) =>
+        new()
+        {
+            Name = name,
+            TableName = table,
+            ColumnHeadings =
+            [
+                new CellDfn { Value = "Name", Bold = true },
+                new CellDfn
+                {
+                    Value = "Age",
+                    Bold = true,
+                    HorizontalCellAlignment = HorizontalCellAlignment.Left,
+                },
+                new CellDfn
+                {
+                    Value = "Rate",
+                    Bold = true,
+                    HorizontalCellAlignment = HorizontalCellAlignment.Left,
+                },
+            ],
+            Rows =
+            [
+                new RowDfn
+                {
+                    Cells =
+                    [
+                        new CellDfn { CellDataType = CellDataType.String, Value = "Eric" },
+                        new CellDfn { CellDataType = CellDataType.Number, Value = 50 },
+                        new CellDfn
+                        {
+                            CellDataType = CellDataType.Number,
+                            Value = (decimal)45.00,
+                            FormatCode = "0.00",
+                        },
+                    ],
+                },
+                new RowDfn
+                {
+                    Cells =
+                    [
+                        new CellDfn { CellDataType = CellDataType.String, Value = "Bob" },
+                        new CellDfn { CellDataType = CellDataType.Number, Value = 42 },
+                        new CellDfn
+                        {
+                            CellDataType = CellDataType.Number,
+                            Value = (decimal)78.00,
+                            FormatCode = "0.00",
+                        },
+                    ],
+                },
+            ],
+        };
+
+    [Test]
+    public async Task SaveWorkbookToFile()
+    {
+        var wb = GetSimpleWorkbookDfn();
+        var fileName = Path.Combine(TempDir, "SW001-Simple.xlsx");
+        await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+            wb.WriteTo(stream);
+        using var sDoc = SpreadsheetDocument.Open(fileName, false);
+        await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
+    }
+
+    [Test]
+    public async Task SaveWorkbookToStream()
+    {
+        var wb = GetSimpleWorkbookDfn();
+        using var stream = new MemoryStream();
+        wb.WriteTo(stream);
+        stream.Position = 0;
+        using var sDoc = SpreadsheetDocument.Open(stream, false);
+        await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
+    }
+
+    [Test]
+    public async Task SaveWorkbookWithTwoSheets()
+    {
+        var wb = new WorkbookDfn
+        {
+            Worksheets =
+            [
+                GetSimpleWorksheetDfn("MyFirstSheet", "NamesAndRates1"),
+                GetSimpleWorksheetDfn("MySecondSheet", "NamesAndRates2"),
+            ],
+        };
+        var fileName = Path.Combine(TempDir, "SW001_TwoSheets.xlsx");
+        await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+            wb.WriteTo(stream);
+        await Validate(fileName).ConfigureAwait(false);
+    }
+
+    [Test]
+    public async Task SaveTablesWithDates()
+    {
+        WorksheetDfn GetSheet(string name, string tableName) =>
             new()
             {
                 Name = name,
-                TableName = table,
+                TableName = tableName,
                 ColumnHeadings =
                 [
-                    new CellDfn { Value = "Name", Bold = true },
                     new CellDfn
                     {
-                        Value = "Age",
+                        CellDataType = CellDataType.String,
                         Bold = true,
-                        HorizontalCellAlignment = HorizontalCellAlignment.Left,
+                        Value = "Date",
                     },
-                    new CellDfn
+                ],
+                Rows =
+                [
+                    new RowDfn { Cells = [null] },
+                    new RowDfn
                     {
-                        Value = "Rate",
-                        Bold = true,
-                        HorizontalCellAlignment = HorizontalCellAlignment.Left,
+                        Cells =
+                        [
+                            new CellDfn
+                            {
+                                CellDataType = CellDataType.Date,
+                                Value = null,
+                                FormatCode = "mm-dd-yy",
+                            },
+                        ],
                     },
+                    new RowDfn
+                    {
+                        Cells =
+                        [
+                            new CellDfn
+                            {
+                                CellDataType = CellDataType.Date,
+                                Value = DateTime.Now,
+                                FormatCode = "mm-dd-yy",
+                            },
+                        ],
+                    },
+                ],
+            };
+        var wb = new WorkbookDfn { Worksheets = [GetSheet("Sheet1", "Table1"), GetSheet("Sheet2", "Table2")] };
+        var fileName = Path.Combine(TempDir, "SW001_TableWithDates.xlsx");
+        using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+            wb.WriteTo(stream);
+        await Validate(fileName).ConfigureAwait(false);
+    }
+
+    [Test]
+    public async Task SaveAllDataTypes()
+    {
+        var wb = new WorkbookDfn
+        {
+            Worksheets =
+            [
+                new WorksheetDfn
+                {
+                    Name = "MyFirstSheet",
+                    ColumnHeadings =
+                    [
+                        new CellDfn { Value = "DataType", Bold = true },
+                        new CellDfn
+                        {
+                            Value = "Value",
+                            Bold = true,
+                            HorizontalCellAlignment = HorizontalCellAlignment.Right,
+                        },
+                    ],
+                    Rows =
+                    [
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn { CellDataType = CellDataType.String, Value = "Boolean" },
+                                new CellDfn { CellDataType = CellDataType.Boolean, Value = true },
+                            ],
+                        },
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn { CellDataType = CellDataType.String, Value = "Boolean" },
+                                new CellDfn { CellDataType = CellDataType.Boolean, Value = false },
+                            ],
+                        },
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn { CellDataType = CellDataType.String, Value = "String" },
+                                new CellDfn
+                                {
+                                    CellDataType = CellDataType.String,
+                                    Value = "A String",
+                                    HorizontalCellAlignment = HorizontalCellAlignment.Right,
+                                },
+                            ],
+                        },
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn { CellDataType = CellDataType.String, Value = "int" },
+                                new CellDfn { CellDataType = CellDataType.Number, Value = 100 },
+                            ],
+                        },
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn { CellDataType = CellDataType.String, Value = "int?" },
+                                new CellDfn { CellDataType = CellDataType.Number, Value = (int?)100 },
+                            ],
+                        },
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn { CellDataType = CellDataType.String, Value = "int? (is null)" },
+                                new CellDfn { CellDataType = CellDataType.Number, Value = null },
+                            ],
+                        },
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn { CellDataType = CellDataType.String, Value = "uint" },
+                                new CellDfn { CellDataType = CellDataType.Number, Value = (uint)101 },
+                            ],
+                        },
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn { CellDataType = CellDataType.String, Value = "long" },
+                                new CellDfn { CellDataType = CellDataType.Number, Value = long.MaxValue },
+                            ],
+                        },
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn { CellDataType = CellDataType.String, Value = "float" },
+                                new CellDfn { CellDataType = CellDataType.Number, Value = (float)123.45 },
+                            ],
+                        },
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn { CellDataType = CellDataType.String, Value = "double" },
+                                new CellDfn { CellDataType = CellDataType.Number, Value = 123.45 },
+                            ],
+                        },
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn { CellDataType = CellDataType.String, Value = "decimal" },
+                                new CellDfn { CellDataType = CellDataType.Number, Value = (decimal)123.45 },
+                            ],
+                        },
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn
+                                {
+                                    CellDataType = CellDataType.Date,
+                                    Value = new DateTime(2012, 1, 8),
+                                    FormatCode = "mm-dd-yy",
+                                },
+                                new CellDfn
+                                {
+                                    CellDataType = CellDataType.Date,
+                                    Value = new DateTime(2012, 1, 9),
+                                    FormatCode = "mm-dd-yy",
+                                    Bold = true,
+                                    HorizontalCellAlignment = HorizontalCellAlignment.Center,
+                                },
+                            ],
+                        },
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn
+                                {
+                                    CellDataType = CellDataType.Date,
+                                    Value = new DateTimeOffset(new DateTime(2012, 1, 8), TimeSpan.Zero),
+                                    FormatCode = "mm-dd-yy",
+                                },
+                                new CellDfn
+                                {
+                                    CellDataType = CellDataType.Date,
+                                    Value = new DateTimeOffset(new DateTime(2012, 1, 9), TimeSpan.Zero),
+                                    FormatCode = "mm-dd-yy",
+                                    Bold = true,
+                                    HorizontalCellAlignment = HorizontalCellAlignment.Center,
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+        var fileName = Path.Combine(TempDir, "SW002-DataTypes.xlsx");
+        using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+            wb.WriteTo(stream);
+        await Validate(fileName).ConfigureAwait(false);
+    }
+
+    // Verifies that table definitions are NOT created when TableName is set but no data rows exist.
+    // XLSX spec requires tables to have at least one data row. Creating a table with only headers
+    // produces a malformed file that fails to open in Excel.
+    [Test]
+    public async Task SaveWorksheetWithTableNameButNoDataRows()
+    {
+        var wb = new WorkbookDfn
+        {
+            Worksheets =
+            [
+                new WorksheetDfn
+                {
+                    Name = "EmptySheet",
+                    TableName = "EmptyTable",
+                    ColumnHeadings =
+                    [
+                        new CellDfn { Value = "Name", Bold = true },
+                        new CellDfn { Value = "Age", Bold = true },
+                    ],
+                    Rows = [],
+                },
+            ],
+        };
+        var fileName = Path.Combine(TempDir, "SW003-EmptyTable.xlsx");
+        await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+            wb.WriteTo(stream);
+
+        using var sDoc = SpreadsheetDocument.Open(fileName, false);
+        var worksheetPart = sDoc.WorkbookPart.WorksheetParts.First();
+        var tableDefParts = worksheetPart.GetPartsOfType<TableDefinitionPart>();
+
+        await Assert.That(tableDefParts).IsEmpty();
+
+        await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
+    }
+
+    // Reproduces the malformed-table scenario: a sheet has fewer ColumnHeadings than
+    // data cells in the widest row, which previously caused tableColumns/@count to
+    // disagree with the actual number of tableColumn elements and Excel to remove the
+    // table on repair.
+    [Test]
+    public async Task SaveWorksheet_WithDataRowsWiderThanHeadings_ProducesValidTable()
+    {
+        var wb = new WorkbookDfn
+        {
+            Worksheets =
+            [
+                new WorksheetDfn
+                {
+                    Name = "WiderRows",
+                    TableName = "WiderTable",
+                    ColumnHeadings =
+                    [
+                        new CellDfn { Value = "A", Bold = true },
+                        new CellDfn { Value = "B", Bold = true },
+                        new CellDfn { Value = "C", Bold = true },
+                    ],
+                    Rows =
+                    [
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn { CellDataType = CellDataType.String, Value = "a" },
+                                new CellDfn { CellDataType = CellDataType.String, Value = "b" },
+                                new CellDfn { CellDataType = CellDataType.String, Value = "c" },
+                                new CellDfn { CellDataType = CellDataType.String, Value = "d" },
+                                new CellDfn { CellDataType = CellDataType.String, Value = "e" },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        var fileName = Path.Combine(TempDir, "SW006-WiderRows.xlsx");
+        await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+            wb.WriteTo(stream);
+
+        using var sDoc = SpreadsheetDocument.Open(fileName, false);
+        var tablePart = sDoc.WorkbookPart.WorksheetParts.First().TableDefinitionParts.First();
+        var tableDoc = tablePart.GetXDocument();
+        var tableColumns = tableDoc.Root.Element(S.tableColumns);
+
+        var declaredCount = (int)tableColumns.Attribute("count");
+        var actualColumns = tableColumns.Elements(S.tableColumn).Count();
+        await Assert.That(declaredCount).IsEqualTo(5);
+        await Assert.That(actualColumns).IsEqualTo(5);
+
+        var names = tableColumns.Elements(S.tableColumn).Select(c => (string)c.Attribute("name")).ToList();
+        await Assert.That(names[0]).IsEqualTo("A");
+        await Assert.That(names[1]).IsEqualTo("B");
+        await Assert.That(names[2]).IsEqualTo("C");
+        await Assert.That(names[3]).IsEqualTo("Column4");
+        await Assert.That(names[4]).IsEqualTo("Column5");
+
+        await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
+    }
+
+    [Test]
+    public async Task AddWorksheetToWorkbook()
+    {
+        var wb = GetSimpleWorkbookDfn();
+        var fileName = Path.Combine(TempDir, "AddWorksheetToWorkbook.xlsx");
+        await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+            wb.WriteTo(stream);
+        using (var sDoc = SpreadsheetDocument.Open(fileName, true))
+            SpreadsheetWriter.AddWorksheet(sDoc, GetSimpleWorksheetDfn("MySecondSheet", "MySecondTable"));
+        await Validate(fileName).ConfigureAwait(false);
+    }
+
+    // Verifies that numFmts count attribute stays in sync when multiple distinct custom
+    // format codes are registered across worksheets (previously the count was not incremented
+    // after the first custom numFmt was added, leaving stale count="1" regardless of how
+    // many custom formats had been registered).
+    [Test]
+    public async Task SW004_MultipleCustomFormatCodes_NumFmtsCountIsCorrect()
+    {
+        var wb = new WorkbookDfn
+        {
+            Worksheets =
+            [
+                new WorksheetDfn
+                {
+                    Name = "StringSheet",
+                    Rows =
+                    [
+                        new RowDfn { Cells = [new CellDfn { CellDataType = CellDataType.String, Value = "Hello" }] },
+                    ],
+                },
+                new WorksheetDfn
+                {
+                    Name = "FormattedSheet",
+                    Rows =
+                    [
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn
+                                {
+                                    CellDataType = CellDataType.Number,
+                                    Value = 1234.5,
+                                    FormatCode = "#,##0.000",
+                                },
+                                new CellDfn
+                                {
+                                    CellDataType = CellDataType.Number,
+                                    Value = 0.75,
+                                    FormatCode = "\"Rate:\" 0.00%",
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        var fileName = Path.Combine(TempDir, "SW004-MultipleCustomFormats.xlsx");
+        await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
+            wb.WriteTo(stream);
+
+        using var sDoc = SpreadsheetDocument.Open(fileName, false);
+        var stylesXDoc = sDoc.WorkbookPart.WorkbookStylesPart.GetXDocument();
+
+        var numFmtsEl = stylesXDoc.Root.Element(S.numFmts);
+        await Assert.That(numFmtsEl).IsNotNull();
+
+        var declaredCount = (int)numFmtsEl.Attribute("count");
+        var actualCount = numFmtsEl.Elements().Count();
+        await Assert.That(declaredCount).IsEqualTo(actualCount);
+
+        await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
+    }
+
+    // Reproduces issue #64: string sheet first, date sheet second must produce a valid workbook.
+    // Also verifies that custom numFmt IDs are >= 164 (ECMA-376 §18.8.30 reserves 0–163 for
+    // built-in formats) and that repeating the same FormatCode does not allocate a duplicate entry.
+    [Test]
+    public async Task SW005_StringSheetFirst_DateSheetSecond_CustomFormatId()
+    {
+        static WorksheetDfn MakeStringSheet(string name) =>
+            new()
+            {
+                Name = name,
+                ColumnHeadings =
+                [
+                    new CellDfn { Value = "col1_string", Bold = true },
+                    new CellDfn { Value = "col2_string", Bold = true },
                 ],
                 Rows =
                 [
@@ -39,726 +518,234 @@ namespace Clippit.Tests.Excel
                     {
                         Cells =
                         [
-                            new CellDfn { CellDataType = CellDataType.String, Value = "Eric" },
-                            new CellDfn { CellDataType = CellDataType.Number, Value = 50 },
-                            new CellDfn
-                            {
-                                CellDataType = CellDataType.Number,
-                                Value = (decimal)45.00,
-                                FormatCode = "0.00",
-                            },
+                            new CellDfn { CellDataType = CellDataType.String, Value = "Hello" },
+                            new CellDfn { CellDataType = CellDataType.String, Value = "world" },
                         ],
                     },
                     new RowDfn
                     {
                         Cells =
                         [
-                            new CellDfn { CellDataType = CellDataType.String, Value = "Bob" },
-                            new CellDfn { CellDataType = CellDataType.Number, Value = 42 },
+                            new CellDfn { CellDataType = CellDataType.String, Value = "Goodbye" },
+                            new CellDfn { CellDataType = CellDataType.String, Value = "another" },
+                        ],
+                    },
+                ],
+            };
+
+        static WorksheetDfn MakeDateSheet(string name) =>
+            new()
+            {
+                Name = name,
+                ColumnHeadings =
+                [
+                    new CellDfn { Value = "col1_date", Bold = true },
+                    new CellDfn { Value = "col2_int", Bold = true },
+                ],
+                Rows =
+                [
+                    new RowDfn
+                    {
+                        Cells =
+                        [
                             new CellDfn
                             {
-                                CellDataType = CellDataType.Number,
-                                Value = (decimal)78.00,
-                                FormatCode = "0.00",
+                                CellDataType = CellDataType.Date,
+                                Value = new DateTime(2023, 4, 19),
+                                FormatCode = "dd-MM-yyyy",
                             },
+                            new CellDfn { CellDataType = CellDataType.Number, Value = -1 },
                         ],
                     },
                 ],
             };
 
-        [Test]
-        public async Task SaveWorkbookToFile()
-        {
-            var wb = GetSimpleWorkbookDfn();
-            var fileName = Path.Combine(TempDir, "SW001-Simple.xlsx");
-            await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
-                wb.WriteTo(stream);
-            using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
-        }
-
-        [Test]
-        public async Task SaveWorkbookToStream()
-        {
-            var wb = GetSimpleWorkbookDfn();
-            using var stream = new MemoryStream();
+        // String-first, date-second (the failing order from issue #64)
+        var wb = new WorkbookDfn { Worksheets = [MakeStringSheet("StringSheet"), MakeDateSheet("DateSheet")] };
+        var fileName = Path.Combine(TempDir, "SW005-StringFirst-DateSecond.xlsx");
+        await using (var stream = File.Open(fileName, FileMode.Create))
             wb.WriteTo(stream);
-            stream.Position = 0;
-            using var sDoc = SpreadsheetDocument.Open(stream, false);
-            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
-        }
 
-        [Test]
-        public async Task SaveWorkbookWithTwoSheets()
-        {
-            var wb = new WorkbookDfn
-            {
-                Worksheets =
-                [
-                    GetSimpleWorksheetDfn("MyFirstSheet", "NamesAndRates1"),
-                    GetSimpleWorksheetDfn("MySecondSheet", "NamesAndRates2"),
-                ],
-            };
-            var fileName = Path.Combine(TempDir, "SW001_TwoSheets.xlsx");
-            await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
-                wb.WriteTo(stream);
-            await Validate(fileName).ConfigureAwait(false);
-        }
+        using var sDoc = SpreadsheetDocument.Open(fileName, false);
+        var stylesXDoc = sDoc.WorkbookPart.WorkbookStylesPart.GetXDocument();
 
-        [Test]
-        public async Task SaveTablesWithDates()
-        {
-            WorksheetDfn GetSheet(string name, string tableName) =>
-                new()
-                {
-                    Name = name,
-                    TableName = tableName,
-                    ColumnHeadings =
-                    [
-                        new CellDfn
-                        {
-                            CellDataType = CellDataType.String,
-                            Bold = true,
-                            Value = "Date",
-                        },
-                    ],
-                    Rows =
-                    [
-                        new RowDfn { Cells = [null] },
-                        new RowDfn
-                        {
-                            Cells =
-                            [
-                                new CellDfn
-                                {
-                                    CellDataType = CellDataType.Date,
-                                    Value = null,
-                                    FormatCode = "mm-dd-yy",
-                                },
-                            ],
-                        },
-                        new RowDfn
-                        {
-                            Cells =
-                            [
-                                new CellDfn
-                                {
-                                    CellDataType = CellDataType.Date,
-                                    Value = DateTime.Now,
-                                    FormatCode = "mm-dd-yy",
-                                },
-                            ],
-                        },
-                    ],
-                };
-            var wb = new WorkbookDfn { Worksheets = [GetSheet("Sheet1", "Table1"), GetSheet("Sheet2", "Table2")] };
-            var fileName = Path.Combine(TempDir, "SW001_TableWithDates.xlsx");
-            using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
-                wb.WriteTo(stream);
-            using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            await Validate(fileName).ConfigureAwait(false);
-        }
+        var numFmtsEl = stylesXDoc.Root.Element(S.numFmts);
+        await Assert.That(numFmtsEl).IsNotNull();
 
-        [Test]
-        public async Task SaveAllDataTypes()
-        {
-            var wb = new WorkbookDfn
-            {
-                Worksheets =
-                [
-                    new WorksheetDfn
-                    {
-                        Name = "MyFirstSheet",
-                        ColumnHeadings =
-                        [
-                            new CellDfn { Value = "DataType", Bold = true },
-                            new CellDfn
-                            {
-                                Value = "Value",
-                                Bold = true,
-                                HorizontalCellAlignment = HorizontalCellAlignment.Right,
-                            },
-                        ],
-                        Rows =
-                        [
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "Boolean" },
-                                    new CellDfn { CellDataType = CellDataType.Boolean, Value = true },
-                                ],
-                            },
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "Boolean" },
-                                    new CellDfn { CellDataType = CellDataType.Boolean, Value = false },
-                                ],
-                            },
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "String" },
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.String,
-                                        Value = "A String",
-                                        HorizontalCellAlignment = HorizontalCellAlignment.Right,
-                                    },
-                                ],
-                            },
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "int" },
-                                    new CellDfn { CellDataType = CellDataType.Number, Value = 100 },
-                                ],
-                            },
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "int?" },
-                                    new CellDfn { CellDataType = CellDataType.Number, Value = (int?)100 },
-                                ],
-                            },
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "int? (is null)" },
-                                    new CellDfn { CellDataType = CellDataType.Number, Value = null },
-                                ],
-                            },
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "uint" },
-                                    new CellDfn { CellDataType = CellDataType.Number, Value = (uint)101 },
-                                ],
-                            },
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "long" },
-                                    new CellDfn { CellDataType = CellDataType.Number, Value = long.MaxValue },
-                                ],
-                            },
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "float" },
-                                    new CellDfn { CellDataType = CellDataType.Number, Value = (float)123.45 },
-                                ],
-                            },
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "double" },
-                                    new CellDfn { CellDataType = CellDataType.Number, Value = 123.45 },
-                                ],
-                            },
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "decimal" },
-                                    new CellDfn { CellDataType = CellDataType.Number, Value = (decimal)123.45 },
-                                ],
-                            },
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.Date,
-                                        Value = new DateTime(2012, 1, 8),
-                                        FormatCode = "mm-dd-yy",
-                                    },
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.Date,
-                                        Value = new DateTime(2012, 1, 9),
-                                        FormatCode = "mm-dd-yy",
-                                        Bold = true,
-                                        HorizontalCellAlignment = HorizontalCellAlignment.Center,
-                                    },
-                                ],
-                            },
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.Date,
-                                        Value = new DateTimeOffset(new DateTime(2012, 1, 8), TimeSpan.Zero),
-                                        FormatCode = "mm-dd-yy",
-                                    },
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.Date,
-                                        Value = new DateTimeOffset(new DateTime(2012, 1, 9), TimeSpan.Zero),
-                                        FormatCode = "mm-dd-yy",
-                                        Bold = true,
-                                        HorizontalCellAlignment = HorizontalCellAlignment.Center,
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            };
-            var fileName = Path.Combine(TempDir, "SW002-DataTypes.xlsx");
-            using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
-                wb.WriteTo(stream);
-            await Validate(fileName).ConfigureAwait(false);
-        }
+        // All custom numFmt IDs must be in the user-defined range (>= 164).
+        var customIds = numFmtsEl.Elements(S.numFmt).Select(e => (int)e.Attribute("numFmtId")).ToList();
+        foreach (var id in customIds)
+            await Assert.That(id).IsGreaterThanOrEqualTo(164);
 
-        // Verifies that table definitions are NOT created when TableName is set but no data rows exist.
-        // XLSX spec requires tables to have at least one data row. Creating a table with only headers
-        // produces a malformed file that fails to open in Excel.
-        [Test]
-        public async Task SaveWorksheetWithTableNameButNoDataRows()
-        {
-            var wb = new WorkbookDfn
-            {
-                Worksheets =
-                [
-                    new WorksheetDfn
-                    {
-                        Name = "EmptySheet",
-                        TableName = "EmptyTable",
-                        ColumnHeadings =
-                        [
-                            new CellDfn { Value = "Name", Bold = true },
-                            new CellDfn { Value = "Age", Bold = true },
-                        ],
-                        Rows = [],
-                    },
-                ],
-            };
-            var fileName = Path.Combine(TempDir, "SW003-EmptyTable.xlsx");
-            await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
-                wb.WriteTo(stream);
+        // The same FormatCode used on both sheets must not produce duplicate numFmt entries.
+        var formatCodes = numFmtsEl.Elements(S.numFmt).Select(e => (string)e.Attribute("formatCode")).ToList();
+        await Assert.That(formatCodes.Distinct().Count()).IsEqualTo(formatCodes.Count);
 
-            using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            var worksheetPart = sDoc.WorkbookPart.WorksheetParts.First();
-            var tableDefParts = worksheetPart.GetPartsOfType<TableDefinitionPart>();
+        // Specifically, there should be exactly one numFmt entry for the custom format code used ("dd-MM-yyyy").
+        const string targetFormatCode = "dd-MM-yyyy";
+        var targetFormatCodeCount = formatCodes.Count(fc => fc == targetFormatCode);
+        await Assert.That(targetFormatCodeCount).IsEqualTo(1);
 
-            await Assert.That(tableDefParts).IsEmpty();
+        // count attribute must match actual element count, and remain 1 for this workbook.
+        var declaredCount = (int)numFmtsEl.Attribute("count");
+        await Assert.That(declaredCount).IsEqualTo(numFmtsEl.Elements().Count());
+        await Assert.That(declaredCount).IsEqualTo(1);
 
-            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
-        }
-
-        // Reproduces the malformed-table scenario: a sheet has fewer ColumnHeadings than
-        // data cells in the widest row, which previously caused tableColumns/@count to
-        // disagree with the actual number of tableColumn elements and Excel to remove the
-        // table on repair.
-        [Test]
-        public async Task SaveWorksheet_WithDataRowsWiderThanHeadings_ProducesValidTable()
-        {
-            var wb = new WorkbookDfn
-            {
-                Worksheets =
-                [
-                    new WorksheetDfn
-                    {
-                        Name = "WiderRows",
-                        TableName = "WiderTable",
-                        ColumnHeadings =
-                        [
-                            new CellDfn { Value = "A", Bold = true },
-                            new CellDfn { Value = "B", Bold = true },
-                            new CellDfn { Value = "C", Bold = true },
-                        ],
-                        Rows =
-                        [
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "a" },
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "b" },
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "c" },
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "d" },
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "e" },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            };
-
-            var fileName = Path.Combine(TempDir, "SW006-WiderRows.xlsx");
-            await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
-                wb.WriteTo(stream);
-
-            using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            var tablePart = sDoc.WorkbookPart.WorksheetParts.First().TableDefinitionParts.First();
-            var tableDoc = tablePart.GetXDocument();
-            var tableColumns = tableDoc.Root.Element(S.tableColumns);
-
-            var declaredCount = (int)tableColumns.Attribute("count");
-            var actualColumns = tableColumns.Elements(S.tableColumn).Count();
-            await Assert.That(declaredCount).IsEqualTo(5);
-            await Assert.That(actualColumns).IsEqualTo(5);
-
-            var names = tableColumns.Elements(S.tableColumn).Select(c => (string)c.Attribute("name")).ToList();
-            await Assert.That(names[0]).IsEqualTo("A");
-            await Assert.That(names[1]).IsEqualTo("B");
-            await Assert.That(names[2]).IsEqualTo("C");
-            await Assert.That(names[3]).IsEqualTo("Column4");
-            await Assert.That(names[4]).IsEqualTo("Column5");
-
-            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
-        }
-
-        [Test]
-        public async Task AddWorksheetToWorkbook()
-        {
-            var wb = GetSimpleWorkbookDfn();
-            var fileName = Path.Combine(TempDir, "AddWorksheetToWorkbook.xlsx");
-            await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
-                wb.WriteTo(stream);
-            using (var sDoc = SpreadsheetDocument.Open(fileName, true))
-                SpreadsheetWriter.AddWorksheet(sDoc, GetSimpleWorksheetDfn("MySecondSheet", "MySecondTable"));
-            await Validate(fileName).ConfigureAwait(false);
-        }
-
-        // Verifies that numFmts count attribute stays in sync when multiple distinct custom
-        // format codes are registered across worksheets (previously the count was not incremented
-        // after the first custom numFmt was added, leaving stale count="1" regardless of how
-        // many custom formats had been registered).
-        [Test]
-        public async Task SW004_MultipleCustomFormatCodes_NumFmtsCountIsCorrect()
-        {
-            var wb = new WorkbookDfn
-            {
-                Worksheets =
-                [
-                    new WorksheetDfn
-                    {
-                        Name = "StringSheet",
-                        Rows =
-                        [
-                            new RowDfn
-                            {
-                                Cells = [new CellDfn { CellDataType = CellDataType.String, Value = "Hello" }],
-                            },
-                        ],
-                    },
-                    new WorksheetDfn
-                    {
-                        Name = "FormattedSheet",
-                        Rows =
-                        [
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.Number,
-                                        Value = 1234.5,
-                                        FormatCode = "#,##0.000",
-                                    },
-                                    new CellDfn
-                                    {
-                                        CellDataType = CellDataType.Number,
-                                        Value = 0.75,
-                                        FormatCode = "\"Rate:\" 0.00%",
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            };
-
-            var fileName = Path.Combine(TempDir, "SW004-MultipleCustomFormats.xlsx");
-            await using (var stream = File.Open(fileName, FileMode.OpenOrCreate))
-                wb.WriteTo(stream);
-
-            using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            var stylesXDoc = sDoc.WorkbookPart.WorkbookStylesPart.GetXDocument();
-
-            var numFmtsEl = stylesXDoc.Root.Element(S.numFmts);
-            await Assert.That(numFmtsEl).IsNotNull();
-
-            var declaredCount = (int)numFmtsEl.Attribute("count");
-            var actualCount = numFmtsEl.Elements().Count();
-            await Assert.That(declaredCount).IsEqualTo(actualCount);
-
-            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
-        }
-
-        // Reproduces issue #64: string sheet first, date sheet second must produce a valid workbook.
-        // Also verifies that custom numFmt IDs are >= 164 (ECMA-376 §18.8.30 reserves 0–163 for
-        // built-in formats) and that repeating the same FormatCode does not allocate a duplicate entry.
-        [Test]
-        public async Task SW005_StringSheetFirst_DateSheetSecond_CustomFormatId()
-        {
-            static WorksheetDfn MakeStringSheet(string name) =>
-                new()
-                {
-                    Name = name,
-                    ColumnHeadings =
-                    [
-                        new CellDfn { Value = "col1_string", Bold = true },
-                        new CellDfn { Value = "col2_string", Bold = true },
-                    ],
-                    Rows =
-                    [
-                        new RowDfn
-                        {
-                            Cells =
-                            [
-                                new CellDfn { CellDataType = CellDataType.String, Value = "Hello" },
-                                new CellDfn { CellDataType = CellDataType.String, Value = "world" },
-                            ],
-                        },
-                        new RowDfn
-                        {
-                            Cells =
-                            [
-                                new CellDfn { CellDataType = CellDataType.String, Value = "Goodbye" },
-                                new CellDfn { CellDataType = CellDataType.String, Value = "another" },
-                            ],
-                        },
-                    ],
-                };
-
-            static WorksheetDfn MakeDateSheet(string name) =>
-                new()
-                {
-                    Name = name,
-                    ColumnHeadings =
-                    [
-                        new CellDfn { Value = "col1_date", Bold = true },
-                        new CellDfn { Value = "col2_int", Bold = true },
-                    ],
-                    Rows =
-                    [
-                        new RowDfn
-                        {
-                            Cells =
-                            [
-                                new CellDfn
-                                {
-                                    CellDataType = CellDataType.Date,
-                                    Value = new DateTime(2023, 4, 19),
-                                    FormatCode = "dd-MM-yyyy",
-                                },
-                                new CellDfn { CellDataType = CellDataType.Number, Value = -1 },
-                            ],
-                        },
-                    ],
-                };
-
-            // String-first, date-second (the failing order from issue #64)
-            var wb = new WorkbookDfn { Worksheets = [MakeStringSheet("StringSheet"), MakeDateSheet("DateSheet")] };
-            var fileName = Path.Combine(TempDir, "SW005-StringFirst-DateSecond.xlsx");
-            await using (var stream = File.Open(fileName, FileMode.Create))
-                wb.WriteTo(stream);
-
-            using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            var stylesXDoc = sDoc.WorkbookPart.WorkbookStylesPart.GetXDocument();
-
-            var numFmtsEl = stylesXDoc.Root.Element(S.numFmts);
-            await Assert.That(numFmtsEl).IsNotNull();
-
-            // All custom numFmt IDs must be in the user-defined range (>= 164).
-            var customIds = numFmtsEl.Elements(S.numFmt).Select(e => (int)e.Attribute("numFmtId")).ToList();
-            foreach (var id in customIds)
-                await Assert.That(id).IsGreaterThanOrEqualTo(164);
-
-            // The same FormatCode used on both sheets must not produce duplicate numFmt entries.
-            var formatCodes = numFmtsEl.Elements(S.numFmt).Select(e => (string)e.Attribute("formatCode")).ToList();
-            await Assert.That(formatCodes.Distinct().Count()).IsEqualTo(formatCodes.Count);
-
-            // Specifically, there should be exactly one numFmt entry for the custom format code used ("dd-MM-yyyy").
-            const string targetFormatCode = "dd-MM-yyyy";
-            var targetFormatCodeCount = formatCodes.Count(fc => fc == targetFormatCode);
-            await Assert.That(targetFormatCodeCount).IsEqualTo(1);
-
-            // count attribute must match actual element count, and remain 1 for this workbook.
-            var declaredCount = (int)numFmtsEl.Attribute("count");
-            await Assert.That(declaredCount).IsEqualTo(numFmtsEl.Elements().Count());
-            await Assert.That(declaredCount).IsEqualTo(1);
-
-            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
-        }
-
-        // Regression test for issue #424: SpreadsheetWriter must emit a <dimension> element
-        // before <sheetData> so Excel does not report a repair-needed error on open.
-        [Test]
-        public async Task SW007_Worksheet_HasDimensionElement()
-        {
-            var wb = new WorkbookDfn
-            {
-                Worksheets =
-                [
-                    new WorksheetDfn
-                    {
-                        Name = "Report",
-                        TableName = "ReportTable",
-                        ColumnHeadings =
-                        [
-                            new CellDfn { Value = "A", Bold = true },
-                            new CellDfn { Value = "B", Bold = true },
-                        ],
-                        Rows =
-                        [
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "x" },
-                                    new CellDfn { CellDataType = CellDataType.Number, Value = 1 },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            };
-
-            using var stream = new MemoryStream();
-            wb.WriteTo(stream);
-            stream.Position = 0;
-            using var sDoc = SpreadsheetDocument.Open(stream, false);
-
-            var worksheetPart = sDoc.WorkbookPart.WorksheetParts.First();
-            var wsXDoc = worksheetPart.GetXDocument();
-            var dimension = wsXDoc.Root?.Element(S.dimension);
-
-            await Assert.That(dimension).IsNotNull();
-            await Assert.That((string)dimension.Attribute("ref")).IsEqualTo("A1:B2");
-
-            // <dimension> must appear before <sheetData> in the worksheet child element order.
-            var children = wsXDoc.Root?.Elements().ToList();
-            var dimensionIndex = children?.FindIndex(e => e.Name == S.dimension) ?? -1;
-            var sheetDataIndex = children?.FindIndex(e => e.Name == S.sheetData) ?? -1;
-            await Assert.That(dimensionIndex).IsLessThan(sheetDataIndex);
-
-            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
-        }
-
-        // Regression test for issue #424: The first table's id attribute must be 1, not 2.
-        // Previously tableCount was computed after AddNewPart<TableDefinitionPart>(), which
-        // already included the new part, causing id to be off by one.
-        [Test]
-        public async Task SW008_FirstTable_HasCorrectId()
-        {
-            var wb = new WorkbookDfn
-            {
-                Worksheets =
-                [
-                    new WorksheetDfn
-                    {
-                        Name = "Report",
-                        TableName = "ReportTable",
-                        ColumnHeadings =
-                        [
-                            new CellDfn { Value = "A", Bold = true },
-                            new CellDfn { Value = "B", Bold = true },
-                        ],
-                        Rows =
-                        [
-                            new RowDfn
-                            {
-                                Cells =
-                                [
-                                    new CellDfn { CellDataType = CellDataType.String, Value = "x" },
-                                    new CellDfn { CellDataType = CellDataType.Number, Value = 1 },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            };
-
-            using var stream = new MemoryStream();
-            wb.WriteTo(stream);
-            stream.Position = 0;
-            using var sDoc = SpreadsheetDocument.Open(stream, false);
-
-            var worksheetPart = sDoc.WorkbookPart.WorksheetParts.First();
-            var tablePart = worksheetPart.TableDefinitionParts.First();
-            var tableXDoc = tablePart.GetXDocument();
-            var tableId = (int?)tableXDoc.Root?.Attribute(SSNoNamespace.id);
-
-            await Assert.That(tableId).IsEqualTo(1);
-
-            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
-        }
-
-        // Verifies that two-sheet workbooks produce table ids 1 and 2 respectively (not 2 and 3).
-        [Test]
-        public async Task SW009_MultipleSheets_TableIdsAreSequential()
-        {
-            var wb = new WorkbookDfn
-            {
-                Worksheets =
-                [
-                    new WorksheetDfn
-                    {
-                        Name = "Sheet1",
-                        TableName = "Table1",
-                        ColumnHeadings = [new CellDfn { Value = "Col", Bold = true }],
-                        Rows =
-                        [
-                            new RowDfn { Cells = [new CellDfn { CellDataType = CellDataType.String, Value = "a" }] },
-                        ],
-                    },
-                    new WorksheetDfn
-                    {
-                        Name = "Sheet2",
-                        TableName = "Table2",
-                        ColumnHeadings = [new CellDfn { Value = "Col", Bold = true }],
-                        Rows =
-                        [
-                            new RowDfn { Cells = [new CellDfn { CellDataType = CellDataType.String, Value = "b" }] },
-                        ],
-                    },
-                ],
-            };
-
-            using var stream = new MemoryStream();
-            wb.WriteTo(stream);
-            stream.Position = 0;
-            using var sDoc = SpreadsheetDocument.Open(stream, false);
-
-            var tableIds = sDoc
-                .WorkbookPart.WorksheetParts.SelectMany(wp => wp.TableDefinitionParts)
-                .Select(tdp => (int?)tdp.GetXDocument().Root?.Attribute(SSNoNamespace.id))
-                .OrderBy(id => id)
-                .ToList();
-
-            await Assert.That(tableIds).IsEquivalentTo(new List<int?> { 1, 2 });
-
-            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
-        }
-
-        private async Task Validate(string fileName)
-        {
-            using var sDoc = SpreadsheetDocument.Open(fileName, false);
-            await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
-        }
-
-        private static readonly List<string> s_spreadsheetExpectedErrors =
-        [
-            "The attribute 't' has invalid value 'd'. The Enumeration constraint failed.",
-        ];
+        await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
     }
+
+    // Regression test for issue #424: SpreadsheetWriter must emit a <dimension> element
+    // before <sheetData> so Excel does not report a repair-needed error on open.
+    [Test]
+    public async Task SW007_Worksheet_HasDimensionElement()
+    {
+        var wb = new WorkbookDfn
+        {
+            Worksheets =
+            [
+                new WorksheetDfn
+                {
+                    Name = "Report",
+                    TableName = "ReportTable",
+                    ColumnHeadings =
+                    [
+                        new CellDfn { Value = "A", Bold = true },
+                        new CellDfn { Value = "B", Bold = true },
+                    ],
+                    Rows =
+                    [
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn { CellDataType = CellDataType.String, Value = "x" },
+                                new CellDfn { CellDataType = CellDataType.Number, Value = 1 },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        using var stream = new MemoryStream();
+        wb.WriteTo(stream);
+        stream.Position = 0;
+        using var sDoc = SpreadsheetDocument.Open(stream, false);
+
+        var worksheetPart = sDoc.WorkbookPart.WorksheetParts.First();
+        var wsXDoc = worksheetPart.GetXDocument();
+        var dimension = wsXDoc.Root?.Element(S.dimension);
+
+        await Assert.That(dimension).IsNotNull();
+        await Assert.That((string)dimension.Attribute("ref")).IsEqualTo("A1:B2");
+
+        // <dimension> must appear before <sheetData> in the worksheet child element order.
+        var children = wsXDoc.Root?.Elements().ToList();
+        var dimensionIndex = children?.FindIndex(e => e.Name == S.dimension) ?? -1;
+        var sheetDataIndex = children?.FindIndex(e => e.Name == S.sheetData) ?? -1;
+        await Assert.That(dimensionIndex).IsLessThan(sheetDataIndex);
+
+        await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
+    }
+
+    // Regression test for issue #424: The first table's id attribute must be 1, not 2.
+    // Previously tableCount was computed after AddNewPart<TableDefinitionPart>(), which
+    // already included the new part, causing id to be off by one.
+    [Test]
+    public async Task SW008_FirstTable_HasCorrectId()
+    {
+        var wb = new WorkbookDfn
+        {
+            Worksheets =
+            [
+                new WorksheetDfn
+                {
+                    Name = "Report",
+                    TableName = "ReportTable",
+                    ColumnHeadings =
+                    [
+                        new CellDfn { Value = "A", Bold = true },
+                        new CellDfn { Value = "B", Bold = true },
+                    ],
+                    Rows =
+                    [
+                        new RowDfn
+                        {
+                            Cells =
+                            [
+                                new CellDfn { CellDataType = CellDataType.String, Value = "x" },
+                                new CellDfn { CellDataType = CellDataType.Number, Value = 1 },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+
+        using var stream = new MemoryStream();
+        wb.WriteTo(stream);
+        stream.Position = 0;
+        using var sDoc = SpreadsheetDocument.Open(stream, false);
+
+        var worksheetPart = sDoc.WorkbookPart.WorksheetParts.First();
+        var tablePart = worksheetPart.TableDefinitionParts.First();
+        var tableXDoc = tablePart.GetXDocument();
+        var tableId = (int?)tableXDoc.Root?.Attribute(SSNoNamespace.id);
+
+        await Assert.That(tableId).IsEqualTo(1);
+
+        await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
+    }
+
+    // Verifies that two-sheet workbooks produce table ids 1 and 2 respectively (not 2 and 3).
+    [Test]
+    public async Task SW009_MultipleSheets_TableIdsAreSequential()
+    {
+        var wb = new WorkbookDfn
+        {
+            Worksheets =
+            [
+                new WorksheetDfn
+                {
+                    Name = "Sheet1",
+                    TableName = "Table1",
+                    ColumnHeadings = [new CellDfn { Value = "Col", Bold = true }],
+                    Rows = [new RowDfn { Cells = [new CellDfn { CellDataType = CellDataType.String, Value = "a" }] }],
+                },
+                new WorksheetDfn
+                {
+                    Name = "Sheet2",
+                    TableName = "Table2",
+                    ColumnHeadings = [new CellDfn { Value = "Col", Bold = true }],
+                    Rows = [new RowDfn { Cells = [new CellDfn { CellDataType = CellDataType.String, Value = "b" }] }],
+                },
+            ],
+        };
+
+        using var stream = new MemoryStream();
+        wb.WriteTo(stream);
+        stream.Position = 0;
+        using var sDoc = SpreadsheetDocument.Open(stream, false);
+
+        var tableIds = sDoc
+            .WorkbookPart.WorksheetParts.SelectMany(wp => wp.TableDefinitionParts)
+            .Select(tdp => (int?)tdp.GetXDocument().Root?.Attribute(SSNoNamespace.id))
+            .OrderBy(id => id)
+            .ToList();
+
+        await Assert.That(tableIds).IsEquivalentTo(new List<int?> { 1, 2 });
+
+        await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
+    }
+
+    private async Task Validate(string fileName)
+    {
+        using var sDoc = SpreadsheetDocument.Open(fileName, false);
+        await Validate(sDoc, s_spreadsheetExpectedErrors).ConfigureAwait(false);
+    }
+
+    private static readonly List<string> s_spreadsheetExpectedErrors =
+    [
+        "The attribute 't' has invalid value 'd'. The Enumeration constraint failed.",
+    ];
 }
-#endif

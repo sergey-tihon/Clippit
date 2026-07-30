@@ -33,23 +33,7 @@ namespace Clippit
                 settings
             );
 
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var item in cal1)
-                    sb.Append(item + Environment.NewLine);
-
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
-            }
-
             var cus1 = GetComparisonUnitList(cal1, settings);
-
-            if (False)
-            {
-                var sbs = ComparisonUnit.ComparisonUnitListToString(cus1);
-                TestUtil.NotePad(sbs);
-            }
 
             var cal2 = CreateComparisonUnitAtomList(
                 wDoc2.MainDocumentPart,
@@ -57,49 +41,9 @@ namespace Clippit
                 settings
             );
 
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var item in cal2)
-                    sb.Append(item + Environment.NewLine);
-
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
-            }
-
             var cus2 = GetComparisonUnitList(cal2, settings);
 
-            if (False)
-            {
-                var sbs = ComparisonUnit.ComparisonUnitListToString(cus2);
-                TestUtil.NotePad(sbs);
-            }
-
-            if (False)
-            {
-                var sb3 = new StringBuilder();
-                sb3.Append("ComparisonUnitList 1 =====" + Environment.NewLine + Environment.NewLine);
-                sb3.Append(ComparisonUnit.ComparisonUnitListToString(cus1));
-                sb3.Append(Environment.NewLine);
-                sb3.Append("ComparisonUnitList 2 =====" + Environment.NewLine + Environment.NewLine);
-                sb3.Append(ComparisonUnit.ComparisonUnitListToString(cus2));
-                var sbs3 = sb3.ToString();
-                TestUtil.NotePad(sbs3);
-            }
-
             var correlatedSequence = Lcs(cus1, cus2, settings);
-
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var item in correlatedSequence)
-                {
-                    sb.Append(item + Environment.NewLine);
-                }
-
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
-            }
 
             // for any deleted or inserted rows, we go into the w:trPr properties, and add the appropriate w:ins or
             // w:del element, and therefore when generating the document, the appropriate row will be marked as deleted
@@ -110,18 +54,6 @@ namespace Clippit
             // ComparisonUnitAtom: Deleted, Inserted, or Equal
             var listOfComparisonUnitAtoms = FlattenToComparisonUnitAtomList(correlatedSequence, settings);
 
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var item in listOfComparisonUnitAtoms)
-                {
-                    sb.Append(item + Environment.NewLine);
-                }
-
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
-            }
-
             // note - we don't want to do the hack until after flattening all of the groups.  At the end of the
             // flattening, we should simply have a list of ComparisonUnitAtoms, appropriately marked as equal,
             // inserted, or deleted.
@@ -130,16 +62,6 @@ namespace Clippit
             // in the case where a row is deleted, not necessary to hack - the deleted row ID will do.
             // in the case where a row is inserted, not necessary to hack - the inserted row ID will do as well.
             AssembleAncestorUnidsInOrderToRebuildXmlTreeProperly(listOfComparisonUnitAtoms);
-
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var item in listOfComparisonUnitAtoms)
-                    sb.Append(item.ToStringAncestorUnids() + Environment.NewLine);
-
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
-            }
 
             // and then finally can generate the document with revisions
             using var ms = new MemoryStream();
@@ -304,15 +226,6 @@ namespace Clippit
 
             while (true)
             {
-                if (False)
-                {
-                    var sb = new StringBuilder();
-                    foreach (var item in csList)
-                        sb.Append(item).Append(Environment.NewLine);
-                    var sbs = sb.ToString();
-                    TestUtil.NotePad(sbs);
-                }
-
                 var unknown = csList.FirstOrDefault(z => z.CorrelationStatus == CorrelationStatus.Unknown);
 
                 if (unknown is not null)
@@ -323,15 +236,6 @@ namespace Clippit
                     // if the unknown is a pair of single cells, then can set table, row, and cell Unids.
                     // if the unknown is a pair of paragraphs, then can set paragraph (and all ancestor) Unids.
                     SetAfterUnids(unknown);
-
-                    if (False)
-                    {
-                        var sb = new StringBuilder();
-                        sb.Append(unknown);
-                        var sbs = sb.ToString();
-                        TestUtil.NotePad(sbs);
-                    }
-
                     var newSequence = ProcessCorrelatedHashes(unknown, settings);
                     if (newSequence is null)
                     {
@@ -494,15 +398,6 @@ namespace Clippit
                 .SelectMany(m => m)
                 .ToList();
 
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var item in listOfComparisonUnitAtoms)
-                    sb.Append(item).Append(Environment.NewLine);
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
-            }
-
             return listOfComparisonUnitAtoms;
         }
 
@@ -545,15 +440,6 @@ namespace Clippit
             List<ComparisonUnitAtom> comparisonUnitAtomList
         )
         {
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var item in comparisonUnitAtomList)
-                    sb.Append(item).Append(Environment.NewLine);
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
-            }
-
             // the following loop sets all ancestor unids in the after document to the unids in the before document for all pPr where the status is equal.
             // this should always be true.
 
@@ -592,15 +478,6 @@ namespace Clippit
                         }
                     }
                 }
-            }
-
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var item in comparisonUnitAtomList)
-                    sb.Append(item).Append(Environment.NewLine);
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
             }
 
             var rComparisonUnitAtomList = ((IEnumerable<ComparisonUnitAtom>)comparisonUnitAtomList).Reverse().ToList();
@@ -670,15 +547,6 @@ namespace Clippit
                     cua.AncestorUnids[0] = deepestAncestorUnid;
             }
 
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var item in comparisonUnitAtomList)
-                    sb.Append(item).Append(Environment.NewLine);
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
-            }
-
             // this is the second loop that processes all text boxes.
             currentAncestorUnids = null;
             var skipUntilNextPpr = false;
@@ -693,15 +561,6 @@ namespace Clippit
 
                 if (cua.ContentElement.Name == W.pPr)
                 {
-                    //if (s_True)
-                    //{
-                    //    var sb = new StringBuilder();
-                    //    foreach (var item in comparisonUnitAtomList)
-                    //        sb.Append(item.ToString()).Append(Environment.NewLine);
-                    //    var sbs = sb.ToString();
-                    //    TestUtil.NotePad(sbs);
-                    //}
-
                     var pPr_inTextBox = cua.AncestorElements.Any(ae => ae.Name == W.txbxContent);
 
                     if (!pPr_inTextBox)
@@ -745,15 +604,6 @@ namespace Clippit
                     });
                 var thisAncestorUnids = currentAncestorUnids.Concat(additionalAncestorUnids).ToArray();
                 cua.AncestorUnids = thisAncestorUnids;
-            }
-
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var item in comparisonUnitAtomList)
-                    sb.Append(item.ToStringAncestorUnids()).Append(Environment.NewLine);
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
             }
         }
 
@@ -1019,16 +869,6 @@ namespace Clippit
                     if (!(fncus1.Length == 0 && fncus2.Length == 0))
                     {
                         var fnCorrelatedSequence = Lcs(fncus1, fncus2, settings);
-
-                        if (False)
-                        {
-                            var sb = new StringBuilder();
-                            foreach (var item in fnCorrelatedSequence)
-                                sb.Append(item).Append(Environment.NewLine);
-                            var sbs = sb.ToString();
-                            TestUtil.NotePad(sbs);
-                        }
-
                         // for any deleted or inserted rows, we go into the w:trPr properties, and add the appropriate w:ins or w:del element, and therefore
                         // when generating the document, the appropriate row will be marked as deleted or inserted.
                         MarkRowsAsDeletedOrInserted(settings, fnCorrelatedSequence);
@@ -1038,16 +878,6 @@ namespace Clippit
                             fnCorrelatedSequence,
                             settings
                         );
-
-                        if (False)
-                        {
-                            var sb = new StringBuilder();
-                            foreach (var item in fnListOfComparisonUnitAtoms)
-                                sb.Append(item + Environment.NewLine);
-                            var sbs = sb.ToString();
-                            TestUtil.NotePad(sbs);
-                        }
-
                         // hack = set the guid ID of the table, row, or cell from the 'before' document to be equal to the 'after' document.
 
                         // note - we don't want to do the hack until after flattening all of the groups.  At the end of the flattening, we should simply
@@ -1155,16 +985,6 @@ namespace Clippit
                             CorrelationStatus = CorrelationStatus.Inserted,
                         },
                     };
-
-                    if (False)
-                    {
-                        var sb = new StringBuilder();
-                        foreach (var item in insertedCorrSequ)
-                            sb.Append(item).Append(Environment.NewLine);
-                        var sbs = sb.ToString();
-                        TestUtil.NotePad(sbs);
-                    }
-
                     MarkRowsAsDeletedOrInserted(settings, insertedCorrSequ);
 
                     var fnListOfComparisonUnitAtoms = FlattenToComparisonUnitAtomList(insertedCorrSequ, settings);
@@ -1267,16 +1087,6 @@ namespace Clippit
                             CorrelationStatus = CorrelationStatus.Deleted,
                         },
                     };
-
-                    if (False)
-                    {
-                        var sb = new StringBuilder();
-                        foreach (var item in deletedCorrSequ)
-                            sb.Append(item).Append(Environment.NewLine);
-                        var sbs = sb.ToString();
-                        TestUtil.NotePad(sbs);
-                    }
-
                     MarkRowsAsDeletedOrInserted(settings, deletedCorrSequ);
 
                     var fnListOfComparisonUnitAtoms = FlattenToComparisonUnitAtomList(deletedCorrSequ, settings);
@@ -2636,27 +2446,6 @@ namespace Clippit
             // if there are no deeper children, then we're done.
             if (!grouped.Any())
                 return null;
-
-            if (False)
-            {
-                var sb = new StringBuilder();
-                foreach (var group in grouped)
-                {
-                    sb.Append($"Group Key: {@group.Key}");
-                    sb.Append(Environment.NewLine);
-                    foreach (var groupChildItem in @group)
-                    {
-                        sb.Append("  ");
-                        sb.Append(groupChildItem.ToString(0));
-                        sb.Append(Environment.NewLine);
-                    }
-
-                    sb.Append(Environment.NewLine);
-                }
-
-                var sbs = sb.ToString();
-                TestUtil.NotePad(sbs);
-            }
 
             var elementList = grouped
                 .Select(g =>

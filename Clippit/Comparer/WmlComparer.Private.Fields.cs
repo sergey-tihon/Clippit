@@ -8,7 +8,6 @@ namespace Clippit
 {
     public static partial class WmlComparer
     {
-        private static bool False => false;
         private static bool SaveIntermediateFilesForDebugging => false;
 
         private static string NewLine => Environment.NewLine;
