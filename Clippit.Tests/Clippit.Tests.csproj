@@ -12,6 +12,6 @@
   <ItemGroup>
     <PackageReference Include="JsonSchema.Net" Version="9.4.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
-    <PackageReference Include="TUnit" Version="1.62.0" />
+    <PackageReference Include="TUnit" Version="1.63.0" />
   </ItemGroup>
 </Project>
