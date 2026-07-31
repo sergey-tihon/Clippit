@@ -21,7 +21,6 @@ public class WmlComparerTests : TestsBase
 {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public static bool s_OpenWord = false;
-    public static bool m_OpenTempDirInExplorer = false;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -248,31 +247,6 @@ public class WmlComparerTests : TestsBase
 
         /************************************************************************************************************************/
 
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Open Windows Explorer
-        if (m_OpenTempDirInExplorer)
-        {
-            while (true)
-            {
-                try
-                {
-                    ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                    var semaphorFi = new FileInfo(Path.Combine(TempDir, "z_ExplorerOpenedSemaphore.txt"));
-                    if (!semaphorFi.Exists)
-                    {
-                        File.WriteAllText(semaphorFi.FullName, "");
-                        TestUtil.Explorer(thisTestTempDir);
-                    }
-                    //////////////////////////////////////////////////
-                    break;
-                }
-                catch (IOException)
-                {
-                    System.Threading.Thread.Sleep(50);
-                }
-            }
-        }
-
         if (validationErrors != "")
             Assert.Fail(validationErrors);
     }
@@ -493,31 +467,6 @@ public class WmlComparerTests : TestsBase
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Open Windows Explorer
-        if (m_OpenTempDirInExplorer)
-        {
-            while (true)
-            {
-                try
-                {
-                    ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                    var semaphorFi = new FileInfo(Path.Combine(TempDir, "z_ExplorerOpenedSemaphore.txt"));
-                    if (!semaphorFi.Exists)
-                    {
-                        await File.WriteAllTextAsync(semaphorFi.FullName, "");
-                        TestUtil.Explorer(thisTestTempDir);
-                    }
-                    //////////////////////////////////////////////////
-                    break;
-                }
-                catch (IOException)
-                {
-                    System.Threading.Thread.Sleep(50);
-                }
-            }
-        }
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         if (validationErrors != "")
             Assert.Fail(validationErrors);
     }
@@ -708,32 +657,6 @@ public class WmlComparerTests : TestsBase
         var comparedWml = WmlComparer.Compare(source1Wml, source2Wml, settings);
         comparedWml.SaveAs(docxWithRevisionsFi.FullName);
 
-#if false
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // create batch file to copy newly generated ContentTypeXml and NarrDoc to the TestFiles directory.
-            while (true)
-            {
-                try
-                {
-                    ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                    var batchFileName = "Copy-Gen-Files-To-TestFiles.bat";
-                    var batchFi = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, batchFileName));
-                    var batch = "";
-                    batch += "copy " + docxWithRevisionsFi.FullName + " " + source1Docx.DirectoryName + Environment.NewLine;
-                    if (batchFi.Exists)
-                        File.AppendAllText(batchFi.FullName, batch);
-                    else
-                        File.WriteAllText(batchFi.FullName, batch);
-                    //////////////////////////////////////////////////
-                    break;
-                }
-                catch (IOException)
-                {
-                    System.Threading.Thread.Sleep(50);
-                }
-            }
-#endif
-
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // validate generated document
         var validationErrors = "";
@@ -774,31 +697,6 @@ public class WmlComparerTests : TestsBase
         }
 
         /************************************************************************************************************************/
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Open Windows Explorer
-        if (m_OpenTempDirInExplorer)
-        {
-            while (true)
-            {
-                try
-                {
-                    ////////// CODE TO REPEAT UNTIL SUCCESS //////////
-                    var semaphorFi = new FileInfo(Path.Combine(TempDir, "z_ExplorerOpenedSemaphore.txt"));
-                    if (!semaphorFi.Exists)
-                    {
-                        File.WriteAllText(semaphorFi.FullName, "");
-                        TestUtil.Explorer(thisTestTempDir);
-                    }
-                    //////////////////////////////////////////////////
-                    break;
-                }
-                catch (IOException)
-                {
-                    System.Threading.Thread.Sleep(50);
-                }
-            }
-        }
 
         if (validationErrors != "")
         {
@@ -856,32 +754,6 @@ public class WmlComparerTests : TestsBase
         if (sanityCheck2.Count != 0)
             Assert.Fail("Sanity Check #2 failed");
     }
-
-#if false
-        [Test]
-        [Arguments("WC/WC037-Textbox-Before.docx", "WC/WC037-Textbox-After1.docx", 2)]
-
-        public async Task WC003_Throws(string name1, string name2, int revisionCount)
-        {
-            FileInfo source1Docx = new FileInfo(Path.Combine(sourceDir.FullName, name1));
-            FileInfo source2Docx = new FileInfo(Path.Combine(sourceDir.FullName, name2));
-
-            var source1CopiedToDestDocx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, source1Docx.Name));
-            var source2CopiedToDestDocx = new FileInfo(Path.Combine(TestUtil.TempDir.FullName, source2Docx.Name));
-            if (!source1CopiedToDestDocx.Exists)
-                File.Copy(source1Docx.FullName, source1CopiedToDestDocx.FullName);
-            if (!source2CopiedToDestDocx.Exists)
-                File.Copy(source2Docx.FullName, source2CopiedToDestDocx.FullName);
-
-            WmlDocument source1Wml = new WmlDocument(source1CopiedToDestDocx.FullName);
-            WmlDocument source2Wml = new WmlDocument(source2CopiedToDestDocx.FullName);
-            WmlComparerSettings settings = new WmlComparerSettings();
-            Assert.Throws<OpenXmlPowerToolsException>(() =>
-                {
-                    WmlDocument comparedWml = WmlComparer.Compare(source1Wml, source2Wml, settings);
-                });
-        }
-#endif
 
     [Test]
     [Arguments("WCS-1000", "WC/WC001-Digits.docx")]
