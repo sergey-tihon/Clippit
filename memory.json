@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-07-30",
-  "last_run_id": "30560260411",
+  "last_run": "2026-07-31",
+  "last_run_id": "30646386090",
   "backlog_cursor": {
     "issues": 424,
     "prs": 165
@@ -21,9 +21,8 @@
     "424": "2026-07-10"
   },
   "open_clippy_prs": [
-    {"number": 449, "branch": "clippy/improve-excel-assembler-rebase-20260725", "title": "feat(excel): ExcelAssembler rebase onto master", "note": "created 2026-07-25, supersedes #432 and #165; closes #28; copilot addressed review comments 2026-07-26"},
-    {"number": "aw_cleanup0730", "branch": "clippy/test-cleanup-legacy-guards-20260730", "title": "test+refactor: remove legacy dead code from tests and WmlComparer", "note": "created 2026-07-30; Tasks 5+9 - remove 29 if(False) blocks, #if !ELIDE_XUNIT_TESTS guards"},
-    {"number": "aw_deps0730", "branch": "clippy/deps-tunit-syscmdline-20260730", "title": "chore(deps): TUnit 1.62.0->1.63.0, System.CommandLine preview.5->preview.6", "note": "created 2026-07-30; Task 4 - dep updates"}
+    {"number": 449, "branch": "clippy/improve-excel-assembler-rebase-20260725", "title": "feat(excel): ExcelAssembler rebase onto master", "note": "created 2026-07-25, supersedes #432 and #165; closes #28"},
+    {"number": "aw_clean0731", "branch": "clippy/remove-testutil-dead-code-20260731", "title": "refactor(tests): remove TestUtil and dead code scaffolding", "note": "created 2026-07-31; Task 5 - remove TestUtil.cs from main library, ~790 lines dead code"}
   ],
   "prs_to_close": [
     {"number": 165, "reason": "superseded by #449"},
@@ -36,20 +35,21 @@
     "Monthly Activity issue for July 2026 is #370",
     "PR #165: superseded by #449 - maintainer should close",
     "PR #432: superseded by #449 (rebase 2026-07-25) - maintainer should close",
-    "PR #449: ExcelAssembler fresh rebase onto master (all 9 tests pass), open awaiting review; Copilot addressed review comments 2026-07-26",
-    "PR aw_deps0729: TUnit 1.61.15->1.62.0, JsonSchema.Net 9.3.0->9.4.0 - MERGED as commit 706637a 2026-07-29",
-    "PR aw_deps0730: TUnit 1.62.0->1.63.0, System.CommandLine preview.5->preview.6, open awaiting review",
-    "PR aw_cleanup0730: test+refactor - remove dead if(False) debug blocks (29 total) + legacy #if !ELIDE_XUNIT_TESTS guards, open awaiting review",
+    "PR #449: ExcelAssembler fresh rebase onto master (all 9 tests pass), open awaiting review",
+    "PR #456: merged 2026-07-30 - test+refactor: remove dead if(False) blocks + legacy #if !ELIDE_XUNIT_TESTS guards",
+    "PR #457: merged 2026-07-30 - chore(deps): TUnit 1.62.0->1.63.0, System.CommandLine preview.5->preview.6",
+    "PR aw_clean0731: refactor(tests): remove TestUtil.cs from main library + ~790 lines dead code (2026-07-31), open awaiting review",
     "Issue #453 created 2026-07-27: CHANGELOG v3.9.0 release prep (push blocked; patch available in run 30284800855)",
-    "Clippit/TestUtil.cs public class with Windows-only developer tools remains in main library; future cleanup opportunity",
-    "Clippit 3.9.0 is ready to release after #449 and CHANGELOG (#453) are handled",
-    "Task 2/3: All open issues (#103, #77, #67) have recent Clippy comments; no new human activity as of 2026-07-30"
+    "Clippit 3.9.0 is ready to release after #449, CHANGELOG (#453) handled",
+    "Task 2/3: All open issues (#103, #77, #67) have recent Clippy comments; no new human activity as of 2026-07-31"
   ],
   "improvements_submitted": [
-    "PR(aw_cleanup0730): test+refactor: remove legacy dead code (if(False) blocks, #if !ELIDE_XUNIT_TESTS) (2026-07-30)",
-    "PR(aw_deps0730): chore(deps): TUnit 1.62.0->1.63.0, System.CommandLine preview.5->preview.6 (2026-07-30)",
-    "PR(aw_deps0729): chore(deps): TUnit 1.61.15->1.62.0, JsonSchema.Net 9.3.0->9.4.0 (MERGED 2026-07-29)",
+    "PR(aw_clean0731): refactor(tests): remove TestUtil.cs from main library, ~790 lines dead code (2026-07-31)",
+    "PR(456): test+refactor: remove legacy dead code (if(False) blocks, #if !ELIDE_XUNIT_TESTS) (merged 2026-07-30)",
+    "PR(457): chore(deps): TUnit 1.62.0->1.63.0, System.CommandLine preview.5->preview.6 (merged 2026-07-30)",
+    "PR(455): chore(deps): TUnit 1.61.15->1.62.0, JsonSchema.Net 9.3.0->9.4.0 (merged 2026-07-29)",
     "PR(449): feat(excel): ExcelAssembler rebase onto master (2026-07-25)",
+    "PR(454): refactor: replace ContainsKey+indexer double-lookups, Where+Count chains (merged 2026-07-28)",
     "PR(452): perf+refactor: FrozenSet lookups and range indexers in Excel/Word (merged 2026-07-26)",
     "PR(451): refactor: Substring->range indexers Comparer+Word (merged 2026-07-26)",
     "PR(450): perf(html): FrozenSet for CSS classifier string arrays (merged 2026-07-26)",
