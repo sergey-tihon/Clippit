@@ -93,7 +93,7 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         ConvertToHtml(sourceDocx, oxPtConvertedDestHtml);
 #if DO_CONVERSION_VIA_WORD
         var wordConvertedDocHtml = new FileInfo(
-            Path.Combine(TestUtil.TempDir.FullName, sourceDocx.Name.Replace(".docx", "-4-Word.html"))
+            Path.Combine(TempDir, sourceDocx.Name.Replace(".docx", "-4-Word.html"))
         );
         ConvertToHtmlUsingWord(sourceDocx, wordConvertedDocHtml);
 #endif

@@ -375,12 +375,8 @@ public class HtmlToWmlConverterTests : TestsBase
         if (doc != null)
             SaveValidateAndFormatMainDocPart(destDocxFi, doc);
 #if DO_CONVERSION_VIA_WORD
-        var newAltChunkBeforeFi = new FileInfo(
-            Path.Combine(TestUtil.TempDir.FullName, name.Replace(".html", "-5-AltChunkBefore.docx"))
-        );
-        var newAltChunkAfterFi = new FileInfo(
-            Path.Combine(TestUtil.TempDir.FullName, name.Replace(".html", "-6-ConvertedViaWord.docx"))
-        );
+        var newAltChunkBeforeFi = new FileInfo(Path.Combine(TempDir, name.Replace(".html", "-5-AltChunkBefore.docx")));
+        var newAltChunkAfterFi = new FileInfo(Path.Combine(TempDir, name.Replace(".html", "-6-ConvertedViaWord.docx")));
         WordAutomationUtilities.DoConversionViaWord(newAltChunkBeforeFi, newAltChunkAfterFi, html);
 #endif
     }
