@@ -1145,8 +1145,6 @@ namespace Clippit.Word
 
             foreach (var attName in new[] { W.oddHBand, W.evenHBand, W.firstRow, W.lastRow })
             {
-                var rowCount = tbl.Elements(W.tr).Count();
-                var lastRow = rowCount - 1;
                 XElement insideV = null;
                 foreach (var row in tbl.Elements(W.tr))
                 {
@@ -1176,9 +1174,10 @@ namespace Clippit.Word
                                         .FirstOrDefault();
                                     if (insideV is not null)
                                     {
-                                        var lastCol = row.Elements(W.tc).Count() - 1;
+                                        var rowCells = row.Elements(W.tc).ToList();
+                                        var lastCol = rowCells.Count - 1;
                                         var colIdx = 0;
-                                        foreach (var cell in row.Elements(W.tc))
+                                        foreach (var cell in rowCells)
                                         {
                                             var tcBorders = cell.Elements(PtOpenXml.pt + "tcPr")
                                                 .Elements(W.tcBorders)
@@ -1209,8 +1208,9 @@ namespace Clippit.Word
             foreach (var attName in new[] { W.oddVBand, W.evenVBand, W.firstColumn, W.lastColumn })
             {
                 var rowIdx = 0;
-                var lastRow = tbl.Elements(W.tr).Count() - 1;
-                foreach (var row in tbl.Elements(W.tr))
+                var rows = tbl.Elements(W.tr).ToList();
+                var lastRow = rows.Count - 1;
+                foreach (var row in rows)
                 {
                     foreach (var cell in row.Elements(W.tc))
                     {
@@ -1266,9 +1266,10 @@ namespace Clippit.Word
             {
                 foreach (var row in tbl.Elements(W.tr))
                 {
-                    var lastCell = row.Elements(W.tc).Count() - 1;
+                    var cells = row.Elements(W.tc).ToList();
+                    var lastCell = cells.Count - 1;
                     var cellIdx = 0;
-                    foreach (var cell in row.Elements(W.tc))
+                    foreach (var cell in cells)
                     {
                         var tcPr = cell.Element(PtOpenXml.pt + "tcPr");
                         if (tcPr is null)
@@ -1303,8 +1304,9 @@ namespace Clippit.Word
             if (tblInsideH is not null)
             {
                 var rowIdx1 = 0;
-                var lastRow1 = tbl.Elements(W.tr).Count() - 1;
-                foreach (var row in tbl.Elements(W.tr))
+                var rows1 = tbl.Elements(W.tr).ToList();
+                var lastRow1 = rows1.Count - 1;
+                foreach (var row in rows1)
                 {
                     if (rowIdx1 == 0)
                     {
