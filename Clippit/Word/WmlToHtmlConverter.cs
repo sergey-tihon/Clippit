@@ -642,22 +642,7 @@ namespace Clippit.Word
             }
             else
             {
-#if false
-                            var bidi = element
-                                .Ancestors(W.p)
-                                .Take(1)
-                                .Elements(W.pPr)
-                                .Elements(W.bidi)
-                                .Where(b => b.Attribute(W.val) is null || b.Attribute(W.val).ToBoolean() == true)
-                                .FirstOrDefault();
-                            var isBidi = bidi is not null;
-                            if (isBidi)
-                                span = new XElement(Xhtml.span, new XEntity("#x200f")); // RLM
-                            else
-                                span = new XElement(Xhtml.span, new XEntity("#x200e")); // LRM
-#else
                 span = new XElement(Xhtml.span, new XEntity("#x00a0"));
-#endif
                 style.Add("margin", FormattableString.Invariant($"0 0 0 {tabWidth:0.00}in"));
                 style.Add("padding", "0 0 0 0");
             }
