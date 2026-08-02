@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 // Portions Copyright (c) Eric White Inc. All rights reserved.
@@ -213,16 +213,6 @@ namespace Clippit.Word
         [RequiresUnreferencedCode("WmlToXml applies user-supplied regex patterns from settings XML at runtime.")]
         public static void ApplyContentTypes(WordprocessingDocument wDoc, WmlToXmlSettings settings)
         {
-#if false
-<Extensions>
-  <Extension ContentType='Introduction'>
-    <RegexExtension>
-      <Regex>.*Infroduction.*</Regex>
-      <Regex>.*Entroduction.*</Regex>
-    </RegexExtension>
-  </Extension>
-</Extensions>
-#endif
             if (string.IsNullOrEmpty(settings.DocumentType))
                 throw new OpenXmlPowerToolsException("DocumentType must be set");
 
@@ -358,19 +348,6 @@ namespace Clippit.Word
             var mainPart = wDoc.MainDocumentPart;
             var mainXDoc = mainPart.GetXDocument();
 
-#if false
-<w:styles xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml" xmlns:w16se="http://schemas.microsoft.com/office/word/2015/wordml/symex" mc:Ignorable="w14 w15 w16se">
-	<w:docDefaults>
-		<w:rPrDefault>
-			<w:rPr>
-				<w:rFonts w:ascii="Georgia" w:eastAsiaTheme="minorHAnsi" w:hAnsi="Georgia" w:cs="Times New Roman"/>
-				<w:lang w:val="en-US" w:eastAsia="en-US" w:bidi="ar-SA"/>
-			</w:rPr>
-		</w:rPrDefault>
-		<w:pPrDefault/>
-	</w:docDefaults>
-#endif
-
             AssignLevelsToContent(mainXDoc, settings);
 
             // Call RetrieveListItem so that all paragraphs are initialized with ListItemInfo
@@ -424,14 +401,6 @@ namespace Clippit.Word
 
         private static XElement HierarchyPerSettings(XElement contentTypeXml, WmlToXmlSettings settings)
         {
-#if false
-<Root>
-  <DocumentType DocumentType="AuthoritativeText">
-    <ContentTypeXml IsRoot="true">
-      <VolumeContainer />
-    </ContentTypeXml>
-#endif
-
             var hierarchyDefinition = settings
                 .ContentTypeHierarchyDefinition.Elements("DocumentType")
                 .FirstOrDefault(e => (string)e.Attribute("DocumentType") == settings.DocumentType);
@@ -633,50 +602,6 @@ namespace Clippit.Word
         // this is where we need to do the same type of run annotation as for complex fields, but for simple fields.
         // I think that we may need to split up the run following the simple field
 
-#if false
-<w:p pt:StyleName="Caption" pt:ContentType="Caption" pt:Level="2">
-  <w:r pt:ContentType="Span">
-    <w:t xml:space="preserve">Table </w:t>
-  </w:r>
-  <w:r>
-    <w:fldChar w:fldCharType="begin" />
-  </w:r>
-  <w:r>
-    <w:instrText xml:space="preserve"> STYLEREF 1 \s </w:instrText>
-  </w:r>
-  <w:r>
-    <w:fldChar w:fldCharType="separate" />
-  </w:r>
-  <w:r pt:ContentType="Span">
-    <w:t>1</w:t>
-  </w:r>
-  <w:r>
-    <w:fldChar w:fldCharType="end" />
-  </w:r>
-  <w:r pt:ContentType="Span">
-    <w:t>.</w:t>
-  </w:r>
-  <w:r>
-    <w:fldChar w:fldCharType="begin" />
-  </w:r>
-  <w:r>
-    <w:instrText xml:space="preserve"> SEQ Table \* ARABIC </w:instrText>
-  </w:r>
-  <w:r>
-    <w:fldChar w:fldCharType="separate" />
-  </w:r>
-  <w:r pt:ContentType="Span">
-    <w:t>1</w:t>
-  </w:r>
-  <w:r>
-    <w:fldChar w:fldCharType="end" />
-  </w:r>
-  <w:r pt:ContentType="Span">
-    <w:t>Type the title here</w:t>
-  </w:r>
-</w:p>
-#endif
-
         private static void AnnotateRunsThatUseFieldsForNumbering(XDocument mainXDoc)
         {
             var cachedAnnotationInformation = mainXDoc.Root.Annotation<Dictionary<int, List<XElement>>>();
@@ -811,92 +736,9 @@ namespace Clippit.Word
                             run.Add(new XAttribute(PtOpenXml.ListItemRun, matchedValue));
                     }
                 }
-
-#if false
-                // old code
-                if (fi.FieldType.ToUpper() == "SEQ")
-                {
-                    // have it
-
-                    var runsForField = mainXDoc
-                        .Root
-                        .Descendants()
-                        .Where(d =>
-                        {
-                            Stack<FieldRetriever.FieldElementTypeInfo> stack = d.Annotation<Stack<FieldRetriever.FieldElementTypeInfo>>();
-                            if (stack is null)
-                                return false;
-                            if (stack.Any(stackItem => stackItem.Id == item.Key && stackItem.FieldElementType == FieldRetriever.FieldElementTypeEnum.Result))
-                                return true;
-                            return false;
-                        })
-                        .Select(d => d.AncestorsAndSelf(W.r).FirstOrDefault())
-                        .Where(z9 => z9 is not null)
-                        .GroupAdjacent(o => o)
-                        .Select(g => g.First())
-                        .Where(r => r.Element(W.t) is not null)
-                        .ToList();
-
-                    if (!runsForField.Any())
-                        continue;
-
-                    var lastRun = runsForField
-                        .Last();
-
-                    var lastRunTextElement = lastRun
-                        .Element(W.t);
-
-                    var lastRunText = lastRunTextElement.Value;
-
-                    var nextRun = lastRun
-                        .ElementsAfterSelf(W.r)
-                        .FirstOrDefault(r => r.Element(W.t) is not null);
-
-                    if (nextRun is not null)
-                    {
-                        var nextRunTextElement = nextRun
-                            .Element(W.t);
-
-                        var nextRunText = nextRunTextElement.Value;
-                        var sepChars = nextRunText
-                            .TakeWhile(ch => ch == '.' || ch == ' ')
-                            .ToList();
-
-                        nextRunText = nextRunText[sepChars.Count..];
-                        nextRunTextElement.Value = nextRunText;
-
-                        lastRunText = lastRunTextElement.Value + sepChars.Select(ch => ch.ToString()).StringConcatenate();
-                        lastRunTextElement.Value = lastRunText;
-                    }
-
-                    lastRun.Add(new XAttribute(PtOpenXml.ListItemRun, lastRunText));
-
-                    foreach (var runbefore in lastRun
-                        .ElementsBeforeSelf(W.r)
-                        .Where(rz => rz.Element(W.t) is not null))
-                    {
-                        runbefore.Add(new XAttribute(PtOpenXml.ListItemRun, lastRunText));
-                    }
-                }
-#endif
             }
         }
 
-#if false
-<w:p pt14:StyleName="Caption">
-  <w:r>
-    <w:t xml:space="preserve">Box </w:t>
-  </w:r>
-  <w:fldSimple w:instr=" SEQ Box \* ARABIC ">
-    <w:r>
-      <w:t>1</w:t>
-    </w:r>
-  </w:fldSimple>
-  <w:r>
-    <w:t>. Type the title here</w:t>
-  </w:r>
-</w:p>
-#endif
         private static object AnnotateRunsThatUseFldSimple(XNode node)
         {
             if (node is XElement element)
@@ -934,18 +776,6 @@ namespace Clippit.Word
                         )
                         .Select(e =>
                         {
-#if false
-<w:r pt14:StyleName="DefaultParagraphFont" pt14:FontName="Calibri" pt14:LanguageType="western" pt14:ListItemRun="3" xmlns:pt14="http://powertools.codeplex.com/2011" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-  <w:rPr>
-    <w:rFonts w:asciiTheme="minorHAnsi" w:hAnsiTheme="minorHAnsi" w:eastAsiaTheme="minorHAnsi" w:cstheme="minorBidi" w:ascii="Calibri" w:hAnsi="Calibri" w:eastAsia="Calibri" w:cs="" />
-    <w:bCs />
-    <w:sz w:val="22" />
-    <w:szCs w:val="22" />
-    <w:lang w:bidi="ar-SA" w:eastAsia="en-US" w:val="en-US" />
-  </w:rPr>
-  <w:t>3.</w:t>
-</w:r>
-#endif
                             var newE = new XElement(e); // clone
                             if (e.Value != "" && e.Attribute(PtOpenXml.ListItemRun) is null)
                                 newE.Add(new XAttribute(PtOpenXml.ListItemRun, listItemNum));
@@ -1164,31 +994,6 @@ namespace Clippit.Word
                 // ignore any other elements
                 return null;
             }
-
-#if false
-            // The following code inserts an XML comment for unicode characters above 256
-
-            // This could be made more efficient - group characters together and create fewer XText nodes.
-            // As it is, it is pretty slow, so should be used only for debugging.
-
-            var xt = node as XText;
-            if (xt is not null)
-            {
-                var newContent = xt.Value.Select(c =>
-                {
-                    var ic = (int)c;
-                    if (ic < 256)
-                        return (object)new XText(c.ToString());
-
-                    return new[] {
-                        (object)new XText(c.ToString()),
-                        new XComment(ic.ToString("X")),
-                    };
-                })
-                .ToList();
-                return newContent;
-            }
-#endif
 
             return node;
         }
@@ -1439,14 +1244,11 @@ namespace Clippit.Word
                             // following removes the subtitle created by a soft break, so that the pattern matches appropriately.
                             clonedBlc = RemoveContentAfterBR(clonedBlc);
 
-#if false
-<p p1:FontName="Georgia" p1:LanguageType="western" p1:AbstractNumId="28" xmlns:p1="http://powertools.codeplex.com/2011" xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-  <r p1:ListItemRun="1.1" p1:FontName="Georgia" p1:LanguageType="western">
-    <t xml:space="preserve">1.1</t>
-  </r>
-#endif
                             // remove list item runs so that they are not matched in the content
-                            clonedBlc.Elements(W.r).Where(r => r.Attribute(PtOpenXml.ListItemRun) is not null).Remove();
+                            clonedBlc
+                                .Elements(W.r)
+                                .Where(r => r.Attribute(PtOpenXml.ListItemRun) is not null)
+                                .Remove();
 
                             for (var i = 0; i < rule.RegexArray.Length; i++)
                             {
@@ -1688,30 +1490,6 @@ namespace Clippit.Word
                         newComments.Add(new XElement(W.comments, NamespaceAttributes));
                         commentNumber = 1;
                     }
-#if false
-  <w:comment w:id="12"
-             w:author="Eric White"
-             w:date="2016-03-20T18:50:00Z"
-             w:initials="EW">
-    <w:p w14:paraId="7E227B98"
-         w14:textId="6FA2BE6B"
-         w:rsidR="00425889"
-         w:rsidRDefault="00425889">
-      <w:pPr>
-        <w:pStyle w:val="CommentText"/>
-      </w:pPr>
-      <w:r>
-        <w:rPr>
-          <w:rStyle w:val="CommentReference"/>
-        </w:rPr>
-        <w:annotationRef/>
-      </w:r>
-      <w:r>
-        <w:t>Nil</w:t>
-      </w:r>
-    </w:p>
-  </w:comment>
-#endif
                     var newElement = new XElement(
                         W.comment,
                         new XAttribute(W.id, commentNumber),
@@ -1727,15 +1505,6 @@ namespace Clippit.Word
                         )
                     );
                     newComments.Root.Add(newElement);
-
-#if false
-      <w:r>
-        <w:rPr>
-          <w:rStyle w:val="CommentReference"/>
-        </w:rPr>
-        <w:commentReference w:id="12"/>
-      </w:r>
-#endif
 
                     var commentRun = new XElement(
                         W.r,
@@ -1978,11 +1747,6 @@ namespace Clippit.Word
         private static void AddIfMissing(XDocument stylesXDoc, string commentStyle)
         {
             var e1 = XElement.Parse(commentStyle);
-#if false
-  <w:style w:type=""character""
-           w:customStyle=""1""
-           w:styleId=""CommentTextChar""
-#endif
             var existingStyle = stylesXDoc
                 .Root.Elements(W.style)
                 .FirstOrDefault(e2 =>

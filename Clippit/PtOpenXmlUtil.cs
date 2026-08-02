@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Concurrent;
@@ -773,36 +773,6 @@ namespace Clippit
                         if (ce.Elements(W.del).Any())
                         {
                             return dontConsolidate;
-#if false
-                                // for w:ins/w:del/w:r/w:delText
-                                if ((ce.Elements(W.del).Elements(W.r).Elements().Count(e => e.Name != W.rPr) != 1) ||
-                                    !ce.Elements().Elements().Elements(W.delText).Any())
-                                    return dontConsolidate;
-
-                                XAttribute dateIns = ce.Attribute(W.date);
-                                XElement del = ce.Element(W.del);
-                                XAttribute dateDel = del.Attribute(W.date);
-
-                                string authorIns = (string) ce.Attribute(W.author) ?? string.Empty;
-                                string dateInsString = dateIns != null
-                                    ? ((DateTime) dateIns).ToString("s")
-                                    : string.Empty;
-                                string authorDel = (string) del.Attribute(W.author) ?? string.Empty;
-                                string dateDelString = dateDel != null
-                                    ? ((DateTime) dateDel).ToString("s")
-                                    : string.Empty;
-
-                                return "Wins" +
-                                       authorIns +
-                                       dateInsString +
-                                       authorDel +
-                                       dateDelString +
-                                       ce.Elements(W.del)
-                                           .Elements(W.r)
-                                           .Elements(W.rPr)
-                                           .Select(rPr => rPr.ToString(SaveOptions.None))
-                                           .StringConcatenate();
-#endif
                         }
 
                         // w:ins/w:r/w:t
@@ -893,16 +863,6 @@ namespace Clippit
 
                     if (g.First().Name == W.ins)
                     {
-#if false
-                        if (g.First().Elements(W.del).Any())
-                            return new XElement(W.ins,
-                                g.First().Attributes(),
-                                new XElement(W.del,
-                                    g.First().Elements(W.del).Attributes(),
-                                    new XElement(W.r,
-                                        g.First().Elements(W.del).Elements(W.r).Elements(W.rPr),
-                                        new XElement(W.delText, xs, textValue))));
-#endif
                         return new XElement(
                             W.ins,
                             g.First().Attributes(),
@@ -1046,107 +1006,6 @@ namespace Clippit
             { W.decimalSymbol, 950 },
             { W.listSeparator, 960 },
         }.ToFrozenDictionary();
-
-#if false
-// from the schema in the standard
-
-writeProtection
-view
-zoom
-removePersonalInformation
-removeDateAndTime
-doNotDisplayPageBoundaries
-displayBackgroundShape
-printPostScriptOverText
-printFractionalCharacterWidth
-printFormsData
-embedTrueTypeFonts
-embedSystemFonts
-saveSubsetFonts
-saveFormsData
-mirrorMargins
-alignBordersAndEdges
-bordersDoNotSurroundHeader
-bordersDoNotSurroundFooter
-gutterAtTop
-hideSpellingErrors
-hideGrammaticalErrors
-activeWritingStyle
-proofState
-formsDesign
-attachedTemplate
-linkStyles
-stylePaneFormatFilter
-stylePaneSortMethod
-documentType
-mailMerge
-revisionView
-trackRevisions
-doNotTrackMoves
-doNotTrackFormatting
-documentProtection
-autoFormatOverride
-styleLockTheme
-styleLockQFSet
-defaultTabStop
-autoHyphenation
-consecutiveHyphenLimit
-hyphenationZone
-doNotHyphenateCaps
-showEnvelope
-summaryLength
-clickAndTypeStyle
-defaultTableStyle
-evenAndOddHeaders
-bookFoldRevPrinting
-bookFoldPrinting
-bookFoldPrintingSheets
-drawingGridHorizontalSpacing
-drawingGridVerticalSpacing
-displayHorizontalDrawingGridEvery
-displayVerticalDrawingGridEvery
-doNotUseMarginsForDrawingGridOrigin
-drawingGridHorizontalOrigin
-drawingGridVerticalOrigin
-doNotShadeFormData
-noPunctuationKerning
-characterSpacingControl
-printTwoOnOne
-strictFirstAndLastChars
-noLineBreaksAfter
-noLineBreaksBefore
-savePreviewPicture
-doNotValidateAgainstSchema
-saveInvalidXml
-ignoreMixedContent
-alwaysShowPlaceholderText
-doNotDemarcateInvalidXml
-saveXmlDataOnly
-useXSLTWhenSaving
-saveThroughXslt
-showXMLTags
-alwaysMergeEmptyNamespace
-updateFields
-footnotePr
-endnotePr
-compat
-docVars
-rsids
-m:mathPr
-attachedSchema
-themeFontLang
-clrSchemeMapping
-doNotIncludeSubdocsInStats
-doNotAutoCompressPictures
-forceUpgrade
-captions
-readModeInkLockDown
-smartTagType
-sl:schemaLibrary
-doNotEmbedSmartTags
-decimalSymbol
-listSeparator
-#endif
 
         private static readonly FrozenDictionary<XName, int> Order_pPr = new Dictionary<XName, int>
         {

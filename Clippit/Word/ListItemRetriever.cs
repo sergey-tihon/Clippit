@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Xml.Linq;
@@ -805,19 +805,6 @@ namespace Clippit.Word
         {
             foreach (var part in wordDoc.ContentParts())
                 InitializeListItemRetrieverForPart(wordDoc, part, settings);
-
-#if false
-            foreach (var part in wordDoc.ContentParts())
-	        {
-                var xDoc = part.GetXDocument();
-                var paras = xDoc
-                    .Descendants(W.p)
-                    .Where(p =>
-                        p.Annotation<ListItemInfo>() is null);
-                if (paras.Any())
-                    Console.WriteLine("Error");
-	        }
-#endif
         }
 
         private static void InitializeListItemRetrieverForPart(

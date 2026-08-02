@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 /***************************************************************************
@@ -2532,90 +2532,6 @@ namespace Clippit.Html
             );
             return anchor;
         }
-#if false
-          <wp:anchor distT="0"
-                     distB="0"
-                     distL="114300"
-                     distR="114300"
-                     simplePos="0"
-                     relativeHeight="251658240"
-                     behindDoc="0"
-                     locked="0"
-                     layoutInCell="1"
-                     allowOverlap="1">
-            <wp:simplePos x="0"
-                          y="0"/>
-            <wp:positionH relativeFrom="column">
-              <wp:posOffset>0</wp:posOffset>
-            </wp:positionH>
-            <wp:positionV relativeFrom="paragraph">
-              <wp:posOffset>0</wp:posOffset>
-            </wp:positionV>
-            <wp:extent cx="1713865"
-                       cy="1656715"/>
-            <wp:effectExtent l="0"
-                             t="0"
-                             r="635"
-                             b="635"/>
-            <wp:wrapSquare wrapText="bothSides"/>
-            <wp:docPr id="1"
-                      name="Picture 1"
-                      descr="img.png"/>
-            <wp:cNvGraphicFramePr>
-              <a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
-                                   noChangeAspect="1"/>
-            </wp:cNvGraphicFramePr>
-            <a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
-              <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
-                <pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
-                  <pic:nvPicPr>
-                    <pic:cNvPr id="0"
-                               name="Picture 1"
-                               descr="img.png"/>
-                    <pic:cNvPicPr>
-                      <a:picLocks noChangeAspect="1"
-                                  noChangeArrowheads="1"/>
-                    </pic:cNvPicPr>
-                  </pic:nvPicPr>
-                  <pic:blipFill>
-                    <a:blip r:embed="rId5">
-                      <a:extLst>
-                        <a:ext uri="{28A0092B-C50C-407E-A947-70E740481C1C}">
-                          <a14:useLocalDpi xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main"
-                                           val="0"/>
-                        </a:ext>
-                      </a:extLst>
-                    </a:blip>
-                    <a:stretch>
-                      <a:fillRect/>
-                    </a:stretch>
-                  </pic:blipFill>
-                  <pic:spPr bwMode="auto">
-                    <a:xfrm>
-                      <a:off x="0"
-                             y="0"/>
-                      <a:ext cx="1713865"
-                             cy="1656715"/>
-                    </a:xfrm>
-                    <a:prstGeom prst="rect">
-                      <a:avLst/>
-                    </a:prstGeom>
-                    <a:noFill/>
-                    <a:ln>
-                      <a:noFill/>
-                    </a:ln>
-                  </pic:spPr>
-                </pic:pic>
-              </a:graphicData>
-            </a:graphic>
-            <wp14:sizeRelH relativeFrom="page">
-              <wp14:pctWidth>0</wp14:pctWidth>
-            </wp14:sizeRelH>
-            <wp14:sizeRelV relativeFrom="page">
-              <wp14:pctHeight>0</wp14:pctHeight>
-            </wp14:sizeRelV>
-          </wp:anchor>
-#endif
 
         private static XElement GetParagraphPropertiesForImage()
         {
@@ -2774,46 +2690,6 @@ namespace Clippit.Html
             return graphic;
         }
 
-#if false
-            <a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
-              <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
-                <pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
-                  <pic:nvPicPr>
-                    <pic:cNvPr id="0" name="Picture 1" descr="img.png"/>
-                    <pic:cNvPicPr>
-                      <a:picLocks noChangeAspect="1" noChangeArrowheads="1"/>
-                    </pic:cNvPicPr>
-                  </pic:nvPicPr>
-                  <pic:blipFill>
-                    <a:blip r:link="rId5">
-                      <a:extLst>
-                        <a:ext uri="{28A0092B-C50C-407E-A947-70E740481C1C}">
-                          <a14:useLocalDpi xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" val="0"/>
-                        </a:ext>
-                      </a:extLst>
-                    </a:blip>
-                    <a:srcRect/>
-                    <a:stretch>
-                      <a:fillRect/>
-                    </a:stretch>
-                  </pic:blipFill>
-                  <pic:spPr bwMode="auto">
-                    <a:xfrm>
-                      <a:off x="0" y="0"/>
-                      <a:ext cx="1781175" cy="1781175"/>
-                    </a:xfrm>
-                    <a:prstGeom prst="rect">
-                      <a:avLst/>
-                    </a:prstGeom>
-                    <a:noFill/>
-                    <a:ln>
-                      <a:noFill/>
-                    </a:ln>
-                  </pic:spPr>
-                </pic:pic>
-              </a:graphicData>
-            </a:graphic>
-#endif
         internal static XElement GetParagraphProperties(
             XElement blockLevelElement,
             string styleName,
@@ -2869,14 +2745,6 @@ namespace Clippit.Html
             Twip leftIndent = 0;
             Twip rightIndent = 0;
             Twip firstLine = 0;
-
-#if false
-            // this code is here for some reason.  What is it?
-            double leftBorderSize = GetBorderSize(paragraph, "left"); // in 1/8 point
-            double rightBorderSize = GetBorderSize(paragraph, "right"); // in 1/8 point
-            leftIndent += (long)((leftBorderSize / 8d) * 20d);
-            rightIndent += (long)((rightBorderSize / 8d) * 20d);
-#endif
 
             if (leftPaddingProperty is not null)
                 leftIndent += (Twip)leftPaddingProperty;
@@ -3442,17 +3310,6 @@ namespace Clippit.Html
             if (element.Name == XhtmlNoNamespace.td || element.Name == XhtmlNoNamespace.th)
             {
                 space = new XAttribute(W.space, "0");
-#if false
-                // 2012-05-14 todo alternative algorithm for margin for cells
-                if (marginProp is not null)
-                {
-                    // space is specified in points, not twips
-                    TPoint points = 0;
-                    if (marginProp.IsNotAuto)
-                        points = (TPoint)marginProp;
-                    space = new XAttribute(W.space, Math.Min(31, (double)points));
-                }
-#endif
             }
             else
             {
@@ -3736,19 +3593,6 @@ namespace Clippit.Html
                 return tcMar;
             return null;
         }
-
-#if false
-            <w:tcMar>
-              <w:top w:w="720"
-                     w:type="dxa" />
-              <w:left w:w="720"
-                      w:type="dxa" />
-              <w:bottom w:w="720"
-                        w:type="dxa" />
-              <w:right w:w="720"
-                       w:type="dxa" />
-            </w:tcMar>
-#endif
 
         private static XElement GetTableCellSpacing(XElement element)
         {
@@ -4813,11 +4657,6 @@ namespace Clippit.Html
             }
 
             wDoc.MainDocumentPart.NumberingDefinitionsPart.PutXDocument();
-#if false
-  <w:num w:numId='1'>
-    <w:abstractNumId w:val='0'/>
-  </w:num>
-#endif
         }
     }
 

@@ -1,4 +1,4 @@
-﻿using System.Xml;
+using System.Xml;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Experimental;
 using DocumentFormat.OpenXml.Features;
@@ -45,15 +45,6 @@ internal sealed partial class FluentPresentationBuilder
         }
     }
 
-#if false
-            // TODO need to handle the following
-
-            { P.custShowLst, 80 },
-            { P.photoAlbum, 90 },
-            { P.custDataLst, 100 },
-            { P.kinsoku, 120 },
-            { P.modifyVerifier, 150 },
-#endif
     // Copy handout master, notes master, presentation properties and view properties, if they exist
     private void CopyPresentationParts(PresentationDocument sourceDocument)
     {
