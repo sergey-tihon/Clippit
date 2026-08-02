@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-08-01",
-  "last_run_id": "30707126394",
+  "last_run": "2026-08-02",
+  "last_run_id": "30755592708",
   "backlog_cursor": {
     "issues": 424,
     "prs": 165
@@ -22,31 +22,30 @@
   },
   "open_clippy_prs": [
     {"number": 449, "branch": "clippy/improve-excel-assembler-rebase-20260725", "title": "feat(excel): ExcelAssembler rebase onto master", "note": "created 2026-07-25, supersedes #432 and #165; closes #28"},
-    {"number": "aw_pr_clean801", "branch": "clippy/remove-if-false-blocks-20260801", "title": "refactor+perf: remove #if false dead code and fix double-enumeration in FormattingAssembler", "note": "created 2026-08-01; Task 5+8 - remove 26 #if false blocks from RevisionProcessor + 2 from Comparer; perf fixes in FormattingAssembler; -858 lines"}
+    {"number": "aw_pr_clean802", "branch": "clippy/remove-if-false-blocks-batch2-20260802", "title": "refactor: remove remaining #if false dead code blocks (batch 2)", "note": "created 2026-08-02; removes 37 #if false blocks across 8 files; -1585 lines"}
   ],
   "prs_to_close": [
     {"number": 165, "reason": "superseded by #449"},
     {"number": 432, "reason": "superseded by #449 (fresh rebase)"}
   ],
   "checked_off_by_maintainer": [],
-  "monthly_activity_issue": 370,
+  "monthly_activity_issue": 460,
   "notes": [
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
-    "Monthly Activity issue for July 2026 is #370 - needs to be closed and August issue created next run",
     "PR #165: superseded by #449 - maintainer should close",
     "PR #432: superseded by #449 (rebase 2026-07-25) - maintainer should close",
     "PR #449: ExcelAssembler fresh rebase onto master (all 9 tests pass), open awaiting review",
-    "PR #458: merged 2026-07-31 - refactor(tests): remove TestUtil.cs from main library + ~790 lines dead code",
-    "PR #456: merged 2026-07-30 - test+refactor: remove dead if(False) blocks + legacy #if !ELIDE_XUNIT_TESTS guards",
-    "PR #457: merged 2026-07-30 - chore(deps): TUnit 1.62.0->1.63.0, System.CommandLine preview.5->preview.6",
-    "PR aw_pr_clean801: refactor+perf: remove #if false dead code (RevisionProcessor 26 blocks) + FormattingAssembler double-enum fixes (2026-08-01), open awaiting review",
+    "PR #459: merged 2026-08-01 - refactor+perf: remove #if false dead code (RevisionProcessor 26 blocks, Consolidate 1, ProduceDocument 1) + FormattingAssembler double-enum fixes",
+    "PR aw_pr_clean802: refactor: remove remaining #if false dead code blocks (batch 2) across 8 files, -1585 lines (2026-08-02), open awaiting review",
     "Issue #453 created 2026-07-27: CHANGELOG v3.9.0 release prep (push blocked; patch available in run 30284800855)",
     "Clippit 3.9.0 is ready to release after #449, CHANGELOG (#453) handled",
-    "Task 2: All open issues (#103, #77, #67) have recent Clippy comments; no new human activity as of 2026-08-01",
-    "Monthly Activity issue #370 is for July 2026 - should be closed and August #aw_aug2026 created on next run"
+    "Monthly Activity issue for August 2026 is #460",
+    "After aw_pr_clean802 merges, NO more #if false blocks remain in Clippit/ - cleanup series complete",
+    "Task 3: No fixable bugs in open issues; all are help-wanted questions already commented on"
   ],
   "improvements_submitted": [
-    "PR(aw_pr_clean801): refactor+perf: remove #if false dead code (RevisionProcessor 26 blocks, Consolidate 1, ProduceDocument 1) + FormattingAssembler perf fixes (2026-08-01)",
+    "PR(aw_pr_clean802): refactor: remove remaining 37 #if false blocks across 8 files (HtmlToWmlCssApplier 4, HtmlToWmlConverterCore 6, WmlToXml 12, DocumentBuilder 9, PtOpenXmlUtil 3, WmlToHtmlConverter 1, ListItemRetriever 1, FluentPresentationBuilder.Copy 1) -1585 lines (2026-08-02)",
+    "PR(aw_pr_clean801/459): refactor+perf: remove #if false dead code (RevisionProcessor 26 blocks, Consolidate 1, ProduceDocument 1) + FormattingAssembler double-enum fixes (merged 2026-08-01)",
     "PR(458): refactor(tests): remove TestUtil.cs from main library + ~790 lines dead code (merged 2026-07-31)",
     "PR(456): test+refactor: remove legacy dead code (if(False) blocks, #if !ELIDE_XUNIT_TESTS) (merged 2026-07-30)",
     "PR(457): chore(deps): TUnit 1.62.0->1.63.0, System.CommandLine preview.5->preview.6 (merged 2026-07-30)",
