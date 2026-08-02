@@ -805,19 +805,6 @@ namespace Clippit.Word
         {
             foreach (var part in wordDoc.ContentParts())
                 InitializeListItemRetrieverForPart(wordDoc, part, settings);
-
-#if false
-            foreach (var part in wordDoc.ContentParts())
-	        {
-                var xDoc = part.GetXDocument();
-                var paras = xDoc
-                    .Descendants(W.p)
-                    .Where(p =>
-                        p.Annotation<ListItemInfo>() is null);
-                if (paras.Any())
-                    Console.WriteLine("Error");
-	        }
-#endif
         }
 
         private static void InitializeListItemRetrieverForPart(
