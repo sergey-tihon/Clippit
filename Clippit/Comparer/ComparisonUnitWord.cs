@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Frozen;
 using System.Text;
 using System.Xml.Linq;
 
@@ -8,54 +9,47 @@ namespace Clippit
 {
     internal class ComparisonUnitWord : ComparisonUnit
     {
-        public static readonly XName[] ElementsWithRelationshipIds =
-        {
-            A.blip,
-            A.hlinkClick,
-            A.relIds,
-            C.chart,
-            C.externalData,
-            C.userShapes,
-            Cx.chart,
-            Cx.externalData,
-            DGM.relIds,
-            O.OLEObject,
-            VML.fill,
-            VML.imagedata,
-            VML.stroke,
-            W.altChunk,
-            W.attachedTemplate,
-            W.control,
-            W.dataSource,
-            W.embedBold,
-            W.embedBoldItalic,
-            W.embedItalic,
-            W.embedRegular,
-            W.footerReference,
-            W.headerReference,
-            W.headerSource,
-            W.hyperlink,
-            W.printerSettings,
-            W.recipientData,
-            W.saveThroughXslt,
-            W.sourceFileName,
-            W.src,
-            W.subDoc,
-            WNE.toolbarData,
-        };
+        public static readonly FrozenSet<XName> ElementsWithRelationshipIds = FrozenSet.ToFrozenSet(
+            new XName[]
+            {
+                A.blip,
+                A.hlinkClick,
+                A.relIds,
+                C.chart,
+                C.externalData,
+                C.userShapes,
+                Cx.chart,
+                Cx.externalData,
+                DGM.relIds,
+                O.OLEObject,
+                VML.fill,
+                VML.imagedata,
+                VML.stroke,
+                W.altChunk,
+                W.attachedTemplate,
+                W.control,
+                W.dataSource,
+                W.embedBold,
+                W.embedBoldItalic,
+                W.embedItalic,
+                W.embedRegular,
+                W.footerReference,
+                W.headerReference,
+                W.headerSource,
+                W.hyperlink,
+                W.printerSettings,
+                W.recipientData,
+                W.saveThroughXslt,
+                W.sourceFileName,
+                W.src,
+                W.subDoc,
+                WNE.toolbarData,
+            }
+        );
 
-        public static readonly XName[] RelationshipAttributeNames =
-        {
-            R.embed,
-            R.link,
-            R.id,
-            R.cs,
-            R.dm,
-            R.lo,
-            R.qs,
-            R.href,
-            R.pict,
-        };
+        public static readonly FrozenSet<XName> RelationshipAttributeNames = FrozenSet.ToFrozenSet(
+            new XName[] { R.embed, R.link, R.id, R.cs, R.dm, R.lo, R.qs, R.href, R.pict }
+        );
 
         public ComparisonUnitWord(IEnumerable<ComparisonUnitAtom> comparisonUnitAtomList)
         {

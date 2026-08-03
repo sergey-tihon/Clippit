@@ -4,6 +4,7 @@
 #define TestForUnsupportedDocuments
 #define MergeStylesWithSameNames
 
+using System.Collections.Frozen;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
@@ -428,9 +429,6 @@ namespace Clippit.Word
         )
         {
             var wmlGlossaryDocument = CoalesceGlossaryDocumentParts(sources, settings);
-
-            if (RelationshipMarkup is null)
-                InitRelationshipMarkup();
 
             // This list is used to eliminate duplicate images
             var images = new Dictionary<ContentDataKey, ImageData>();
@@ -1021,49 +1019,6 @@ namespace Clippit.Word
             var coalescedGlossaryDocument = new WmlDocument("Coalesced.docx", ms.ToArray());
 
             return coalescedGlossaryDocument;
-        }
-
-        private static void InitRelationshipMarkup()
-        {
-            RelationshipMarkup = new Dictionary<XName, XName[]>
-            {
-                //{ button,           new [] { image }},
-                { A.blip, new[] { R.embed, R.link } },
-                { A.hlinkClick, new[] { R.id } },
-                { A.relIds, new[] { R.cs, R.dm, R.lo, R.qs } },
-                //{ a14:imgLayer,     new [] { R.embed }},
-                //{ ax:ocx,           new [] { R.id }},
-                { C.chart, new[] { R.id } },
-                { C.externalData, new[] { R.id } },
-                { C.userShapes, new[] { R.id } },
-                { Cx.chart, new[] { R.id } },
-                { Cx.externalData, new[] { R.id } },
-                { DGM.relIds, new[] { R.cs, R.dm, R.lo, R.qs } },
-                { O.OLEObject, new[] { R.id } },
-                { VML.fill, new[] { R.id } },
-                { VML.imagedata, new[] { R.href, R.id, R.pict } },
-                { VML.stroke, new[] { R.id } },
-                { W.altChunk, new[] { R.id } },
-                { W.attachedTemplate, new[] { R.id } },
-                { W.control, new[] { R.id } },
-                { W.dataSource, new[] { R.id } },
-                { W.embedBold, new[] { R.id } },
-                { W.embedBoldItalic, new[] { R.id } },
-                { W.embedItalic, new[] { R.id } },
-                { W.embedRegular, new[] { R.id } },
-                { W.footerReference, new[] { R.id } },
-                { W.headerReference, new[] { R.id } },
-                { W.headerSource, new[] { R.id } },
-                { W.hyperlink, new[] { R.id } },
-                { W.printerSettings, new[] { R.id } },
-                { W.recipientData, new[] { R.id } }, // Mail merge, not required
-                { W.saveThroughXslt, new[] { R.id } },
-                { W.sourceFileName, new[] { R.id } }, // Framesets, not required
-                { W.src, new[] { R.id } }, // Mail merge, not required
-                { W.subDoc, new[] { R.id } }, // Sub documents, not required
-                //{ w14:contentPart,  new [] { R.id }},
-                { WNE.toolbarData, new[] { R.id } },
-            };
         }
 
         private static void CopySpecifiedCustomXmlParts(
@@ -2342,9 +2297,6 @@ namespace Clippit.Word
         /// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         public static WmlDocument ExtractGlossaryDocument(WmlDocument wmlGlossaryDocument)
         {
-            if (RelationshipMarkup is null)
-                InitRelationshipMarkup();
-
             using var ms = new MemoryStream();
             ms.Write(wmlGlossaryDocument.DocumentByteArray, 0, wmlGlossaryDocument.DocumentByteArray.Length);
             using var wDoc = WordprocessingDocument.Open(ms, false);
@@ -2580,7 +2532,41 @@ namespace Clippit.Word
             }
         }
 
-        private static Dictionary<XName, XName[]> RelationshipMarkup;
+        private static readonly FrozenDictionary<XName, XName[]> RelationshipMarkup = new Dictionary<XName, XName[]>
+        {
+            { A.blip, new[] { R.embed, R.link } },
+            { A.hlinkClick, new[] { R.id } },
+            { A.relIds, new[] { R.cs, R.dm, R.lo, R.qs } },
+            { C.chart, new[] { R.id } },
+            { C.externalData, new[] { R.id } },
+            { C.userShapes, new[] { R.id } },
+            { Cx.chart, new[] { R.id } },
+            { Cx.externalData, new[] { R.id } },
+            { DGM.relIds, new[] { R.cs, R.dm, R.lo, R.qs } },
+            { O.OLEObject, new[] { R.id } },
+            { VML.fill, new[] { R.id } },
+            { VML.imagedata, new[] { R.href, R.id, R.pict } },
+            { VML.stroke, new[] { R.id } },
+            { W.altChunk, new[] { R.id } },
+            { W.attachedTemplate, new[] { R.id } },
+            { W.control, new[] { R.id } },
+            { W.dataSource, new[] { R.id } },
+            { W.embedBold, new[] { R.id } },
+            { W.embedBoldItalic, new[] { R.id } },
+            { W.embedItalic, new[] { R.id } },
+            { W.embedRegular, new[] { R.id } },
+            { W.footerReference, new[] { R.id } },
+            { W.headerReference, new[] { R.id } },
+            { W.headerSource, new[] { R.id } },
+            { W.hyperlink, new[] { R.id } },
+            { W.printerSettings, new[] { R.id } },
+            { W.recipientData, new[] { R.id } }, // Mail merge, not required
+            { W.saveThroughXslt, new[] { R.id } },
+            { W.sourceFileName, new[] { R.id } }, // Framesets, not required
+            { W.src, new[] { R.id } }, // Mail merge, not required
+            { W.subDoc, new[] { R.id } }, // Sub documents, not required
+            { WNE.toolbarData, new[] { R.id } },
+        }.ToFrozenDictionary();
 
         private static void UpdateContent(
             IEnumerable<XElement> newContent,
