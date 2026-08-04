@@ -83,7 +83,7 @@ namespace Clippit
             string contentType = null;
             string boundary = null;
 
-            var lines = src.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            var lines = src.Split(Environment.NewLine);
 
             var priambleKeyWords = new[] { "MIME-VERSION:", "CONTENT-TYPE:" };
 
