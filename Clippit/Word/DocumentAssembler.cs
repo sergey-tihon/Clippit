@@ -287,17 +287,19 @@ namespace Clippit.Word
             part.PutXDocument();
         }
 
-        private static readonly XName[] s_metaToForceToBlock =
-        {
-            PA.Conditional,
-            PA.EndConditional,
-            PA.Repeat,
-            PA.EndRepeat,
-            PA.Table,
-            PA.Image,
-            PA.Document,
-            PA.DocumentTemplate,
-        };
+        private static readonly FrozenSet<XName> s_metaToForceToBlock = FrozenSet.ToFrozenSet(
+            new XName[]
+            {
+                PA.Conditional,
+                PA.EndConditional,
+                PA.Repeat,
+                PA.EndRepeat,
+                PA.Table,
+                PA.Image,
+                PA.Document,
+                PA.DocumentTemplate,
+            }
+        );
 
         private static bool IsMetaToForceToBlock(XName name) =>
             s_metaToForceToBlock.Contains(name) || s_customHandlers.ContainsKey(name);
