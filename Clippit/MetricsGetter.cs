@@ -381,7 +381,7 @@ public class MetricsGetter
                             var sb = new StringBuilder();
                             if (err.Description.Length > 300)
                                 sb.Append(
-                                    PtUtils.MakeValidXml(err.Description.Substring(0, 300) + " ... elided ...")
+                                    PtUtils.MakeValidXml(err.Description[..300] + " ... elided ...")
                                         + Environment.NewLine
                                 );
                             else
@@ -423,7 +423,7 @@ public class MetricsGetter
                             var sb = new StringBuilder();
                             if (err.Description.Length > 300)
                                 sb.Append(
-                                    PtUtils.MakeValidXml(err.Description.Substring(0, 300) + " ... elided ...")
+                                    PtUtils.MakeValidXml(err.Description[..300] + " ... elided ...")
                                         + Environment.NewLine
                                 );
                             else
@@ -465,7 +465,7 @@ public class MetricsGetter
                             var sb = new StringBuilder();
                             if (err.Description.Length > 300)
                                 sb.Append(
-                                    PtUtils.MakeValidXml(err.Description.Substring(0, 300) + " ... elided ...")
+                                    PtUtils.MakeValidXml(err.Description[..300] + " ... elided ...")
                                         + Environment.NewLine
                                 );
                             else

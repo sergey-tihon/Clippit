@@ -403,7 +403,7 @@ namespace Clippit
                     package.GetParts().Select(part => GetContentsAsXml(part))
                 )
             );
-            return doc.ToString().Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            return doc.ToString().Split(Environment.NewLine);
         }
 
         private static XmlDocument GetXmlDocument(XDocument document)
@@ -5309,24 +5309,21 @@ namespace Clippit
         public static readonly XName oddVBand = w + "oddVBand";
         public static readonly XName headers = w + "headers";
 
-        public static readonly XName[] BlockLevelContentContainers =
-        {
+        public static readonly FrozenSet<XName> BlockLevelContentContainers = FrozenSet.Create<XName>(
             body,
             tc,
             txbxContent,
             hdr,
             ftr,
             endnote,
-            footnote,
-        };
+            footnote
+        );
 
-        public static readonly XName[] SubRunLevelContent =
-        {
+        public static readonly FrozenSet<XName> SubRunLevelContent = FrozenSet.Create<XName>(
             br,
             cr,
             dayLong,
             dayShort,
-            drawing,
             drawing,
             monthLong,
             monthShort,
@@ -5340,8 +5337,8 @@ namespace Clippit
             tab,
             yearLong,
             yearShort,
-            MC.AlternateContent,
-        };
+            MC.AlternateContent
+        );
     }
 
     public static class W10
