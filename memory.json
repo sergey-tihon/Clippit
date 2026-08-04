@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-08-03",
-  "last_run_id": "30832330449",
+  "last_run": "2026-08-04",
+  "last_run_id": "30928790914",
   "backlog_cursor": {
     "issues": 424,
     "prs": 165
@@ -22,7 +22,7 @@
   },
   "open_clippy_prs": [
     {"number": 449, "branch": "clippy/improve-excel-assembler-rebase-20260725", "title": "feat(excel): ExcelAssembler rebase onto master", "note": "created 2026-07-25, supersedes #432 and #165; closes #28"},
-    {"number": "aw_pr_perf803", "branch": "clippy/perf-frozenset-xname-lookups-20260803", "title": "perf: convert XName[] lookups to FrozenSet/FrozenDictionary", "note": "created 2026-08-03; 3 files; FrozenSet for ElementsWithRelationshipIds, RelationshipAttributeNames, s_metaToForceToBlock; FrozenDictionary for RelationshipMarkup"}
+    {"number": "aw_pr_perf804", "branch": "clippy/perf-frozenset-subrunlevel-blockcontainers-20260804", "title": "perf+refactor+deps: FrozenSet for W.SubRunLevelContent/BlockLevelContentContainers, range indexers, SkiaSharp 4.151.0", "note": "created 2026-08-04; 5 files; FrozenSet for SubRunLevelContent+BlockLevelContentContainers, fix duplicate drawing, range indexers in MetricsGetter+SmlToHtmlConverter, Split simplification, SkiaSharp 4.151.0"}
   ],
   "prs_to_close": [
     {"number": 165, "reason": "superseded by #449"},
@@ -35,16 +35,17 @@
     "PR #165: superseded by #449 - maintainer should close",
     "PR #432: superseded by #449 (rebase 2026-07-25) - maintainer should close",
     "PR #449: ExcelAssembler fresh rebase onto master (all 9 tests pass), open awaiting review",
-    "PR #461: merged 2026-08-02 - refactor: remove remaining #if false dead code blocks (batch 2) - cleanup series COMPLETE",
-    "PR aw_pr_perf803: perf: FrozenSet/FrozenDictionary for XName lookups in Comparer+Word (2026-08-03), open awaiting review",
+    "PR #462: merged 2026-08-04 - perf: FrozenSet/FrozenDictionary XName[] lookups in ComparisonUnitWord, DocumentAssembler, DocumentBuilder",
+    "PR aw_pr_perf804: perf+refactor+deps: FrozenSet for W.SubRunLevelContent+BlockLevelContentContainers (fix duplicate drawing bug), range indexers MetricsGetter+SmlToHtmlConverter, Split simplification, SkiaSharp 4.151.0 (2026-08-04)",
     "Issue #453 created 2026-07-27: CHANGELOG v3.9.0 release prep (push blocked; patch available in run 30284800855)",
     "Clippit 3.9.0 is ready to release after #449, CHANGELOG (#453) handled",
     "Monthly Activity issue for August 2026 is #460",
     "Task 3: No fixable bugs in open issues; all are help-wanted questions already commented on"
   ],
   "improvements_submitted": [
-    "PR(aw_pr_perf803): perf: FrozenSet/FrozenDictionary for XName lookups (ElementsWithRelationshipIds, RelationshipAttributeNames, s_metaToForceToBlock, RelationshipMarkup) (2026-08-03)",
-    "PR(461): refactor: remove remaining 37 #if false blocks across 8 files (HtmlToWmlCssApplier 4, HtmlToWmlConverterCore 6, WmlToXml 12, DocumentBuilder 9, PtOpenXmlUtil 3, WmlToHtmlConverter 1, ListItemRetriever 1, FluentPresentationBuilder.Copy 1) -1585 lines (merged 2026-08-02)",
+    "PR(aw_pr_perf804): perf+refactor+deps: FrozenSet for W.SubRunLevelContent+BlockLevelContentContainers (fix duplicate drawing), range indexers in MetricsGetter/SmlToHtmlConverter, Split simplification, SkiaSharp 4.150.1->4.151.0 (2026-08-04)",
+    "PR(462): perf: convert XName[] lookups to FrozenSet/FrozenDictionary (ComparisonUnitWord, DocumentAssembler, DocumentBuilder) (merged 2026-08-04)",
+    "PR(461): refactor: remove remaining 37 #if false blocks across 8 files -1585 lines (merged 2026-08-02)",
     "PR(aw_pr_clean801/459): refactor+perf: remove #if false dead code (RevisionProcessor 26 blocks, Consolidate 1, ProduceDocument 1) + FormattingAssembler double-enum fixes (merged 2026-08-01)",
     "PR(458): refactor(tests): remove TestUtil.cs from main library + ~790 lines dead code (merged 2026-07-31)",
     "PR(456): test+refactor: remove legacy dead code (if(False) blocks, #if !ELIDE_XUNIT_TESTS) (merged 2026-07-30)",
