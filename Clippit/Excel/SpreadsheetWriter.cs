@@ -3,6 +3,7 @@
 
 #undef DisplayWorkingSet
 
+using System.Collections.Frozen;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -98,7 +99,7 @@ namespace Clippit.Excel
         /// <summary>
         /// Maps standard Excel number-format strings to their built-in format IDs.
         /// </summary>
-        public static readonly Dictionary<string, int> StandardFormats = new()
+        public static readonly FrozenDictionary<string, int> StandardFormats = new Dictionary<string, int>
         {
             { "0", 1 },
             { "0.00", 2 },
@@ -127,7 +128,7 @@ namespace Clippit.Excel
             { "mmss.0", 47 },
             { "##0.0E+0", 48 },
             { "@", 49 },
-        };
+        }.ToFrozenDictionary();
 
         /// <summary>
         /// The cell value.
