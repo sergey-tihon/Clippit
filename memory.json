@@ -1,6 +1,6 @@
 {
   "last_run": "2026-08-05",
-  "last_run_id": "31024322541",
+  "last_run_id": "31031499483",
   "backlog_cursor": {
     "issues": 424,
     "prs": 449
@@ -21,12 +21,34 @@
     "424": "2026-07-10"
   },
   "open_clippy_prs": [
-    {"number": 449, "branch": "clippy/improve-excel-assembler-rebase-20260725-2cc993590e0f6c6f", "title": "feat(excel): ExcelAssembler rebase onto master", "note": "rebased 2026-08-05 onto master; closes #28; all 12 tests pass"},
-    {"number": "aw_pr_changelog", "branch": "clippy/release-3.9.0-changelog-20260805", "title": "chore: prepare CHANGELOG for v3.9.0 release", "note": "created 2026-08-05; documents 20 changes since v3.8.0"}
+    {
+      "number": 449,
+      "branch": "clippy/improve-excel-assembler-rebase-20260725-2cc993590e0f6c6f",
+      "title": "feat(excel): ExcelAssembler rebase onto master",
+      "note": "rebased 2026-08-05 onto master; closes #28; all 12 tests pass"
+    },
+    {
+      "number": "aw_pr_changelog",
+      "branch": "clippy/release-3.9.0-changelog-20260805",
+      "title": "chore: prepare CHANGELOG for v3.9.0 release",
+      "note": "created 2026-08-05; documents 20 changes since v3.8.0"
+    },
+    {
+      "number": "aw_pr_frozen_fmt",
+      "branch": "clippy/perf-spreadsheetwriter-standardformats-frozen-20260805",
+      "title": "perf: convert CellDfn.StandardFormats to FrozenDictionary",
+      "note": "created 2026-08-05; Task 8; 16 tests pass"
+    }
   ],
   "prs_to_close": [
-    {"number": 165, "reason": "superseded by #449"},
-    {"number": 432, "reason": "superseded by #449 (fresh rebase)"}
+    {
+      "number": 165,
+      "reason": "superseded by #449"
+    },
+    {
+      "number": 432,
+      "reason": "superseded by #449 (fresh rebase)"
+    }
   ],
   "checked_off_by_maintainer": [],
   "monthly_activity_issue": 460,
@@ -38,7 +60,9 @@
     "PR #463: merged 2026-08-04 - perf+refactor+deps: FrozenSet SubRunLevel/BlockLevel, range indexers, SkiaSharp 4.151.0",
     "PR aw_pr_changelog: CHANGELOG for v3.9.0 (created 2026-08-05); after #449 merges, tag v3.9.0 and publish NuGet",
     "Monthly Activity issue for August 2026 is #460",
-    "Task 2: All open issues (67, 77, 103) have Clippy comments; no new human activity; all issues labelled"
+    "Task 2: All open issues (67, 77, 103) have Clippy comments; no new human activity; all issues labelled",
+    "Task 2 (2026-08-05): reviewed #67, #77, #103 - all already have thorough Clippy comments, no new human activity since; no re-engagement needed",
+    "Task 8 (2026-08-05): created PR perf: FrozenDictionary for CellDfn.StandardFormats in SpreadsheetWriter.cs"
   ],
   "improvements_submitted": [
     "PR(aw_pr_changelog): chore: prepare CHANGELOG for v3.9.0 release (2026-08-05)",
@@ -51,6 +75,7 @@
     "PR(457): chore(deps): TUnit 1.62.0->1.63.0, System.CommandLine preview.5->preview.6 (merged 2026-07-30)",
     "PR(455): chore(deps): TUnit 1.61.15->1.62.0, JsonSchema.Net 9.3.0->9.4.0 (merged 2026-07-29)",
     "PR(449): feat(excel): ExcelAssembler fresh rebase onto master (2026-07-25, rebased 2026-08-05)",
-    "PR(454): refactor: replace ContainsKey+indexer double-lookups, Where+Count chains (merged 2026-07-28)"
+    "PR(454): refactor: replace ContainsKey+indexer double-lookups, Where+Count chains (merged 2026-07-28)",
+    "PR(aw_pr_frozen_fmt): perf: convert CellDfn.StandardFormats to FrozenDictionary (2026-08-05)"
   ]
 }
