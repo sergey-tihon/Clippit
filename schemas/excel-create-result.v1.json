@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sergey-tihon.github.io/Clippit/schemas/excel-create-result.v1.json",
+  "title": "ExcelCreateResult",
+  "description": "Stdout payload of `clippit excel create` (JSON mode).",
+  "type": "object",
+  "required": ["input", "output", "outputSize", "worksheetCount"],
+  "additionalProperties": false,
+  "properties": {
+    "input": {
+      "type": "string",
+      "description": "Absolute path to the input JSON file, or \"<stdin>\"."
+    },
+    "output": {
+      "type": "string",
+      "description": "Absolute path to the generated .xlsx file, or \"<stdout>\"."
+    },
+    "outputSize": {
+      "type": "integer",
+      "description": "Size of the generated .xlsx file in bytes.",
+      "minimum": 0
+    },
+    "worksheetCount": {
+      "type": "integer",
+      "description": "Number of worksheets written to the workbook.",
+      "minimum": 1
+    }
+  }
+}
