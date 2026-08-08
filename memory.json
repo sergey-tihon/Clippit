@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-08-07",
-  "last_run_id": "31195296844",
+  "last_run": "2026-08-08",
+  "last_run_id": "31265416540",
   "backlog_cursor": {
     "issues": 424,
     "prs": 449
@@ -25,13 +25,7 @@
       "number": 449,
       "branch": "clippy/improve-excel-assembler-rebase-20260725-2cc993590e0f6c6f",
       "title": "feat(excel): ExcelAssembler rebase onto master",
-      "note": "still open, CI unstable, awaiting review as of 2026-08-07"
-    },
-    {
-      "number": "aw_new_deps",
-      "branch": "clippy/eng-deps-update-20260807",
-      "title": "chore(deps): SkiaSharp 4.151.0->4.151.1, TUnit 1.63.0->1.63.25",
-      "note": "created 2026-08-07; Task 4; all 2307 tests pass"
+      "note": "rebased again 2026-08-08 (15 commits), build clean, all 2317 tests pass, awaiting maintainer review"
     }
   ],
   "prs_to_close": [],
@@ -50,7 +44,10 @@
     "Task 8 (2026-08-05): created PR perf: FrozenDictionary for CellDfn.StandardFormats in SpreadsheetWriter.cs",
     "2026-08-07: PR #466 (StandardFormats FrozenDictionary) merged; issue #464 (CHANGELOG tracking) deleted; PRs #165/#432 closed by maintainer",
     "Task 4 (2026-08-07): dotnet outdated showed SkiaSharp 4.151.0->4.151.1 and TUnit 1.63.0->1.63.25; bundled patch update PR created, all 2307 tests pass",
-    "Task 2 (2026-08-07): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed"
+    "Task 2 (2026-08-07): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed",
+    "Task 6 (2026-08-08): PR #449 was 15 commits behind master; rebased cleanly (no conflicts), build+csharpier+full test suite (2317 tests) all pass; pushed update",
+    "Task 2 (2026-08-08): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed",
+    "Task 10 substituted with Task 6: no blocked/in-progress Task 10 work found in memory; PR 449 rebase was the highest-value action"
   ],
   "improvements_submitted": [
     "PR(aw_pr_changelog): chore: prepare CHANGELOG for v3.9.0 release (2026-08-05)",

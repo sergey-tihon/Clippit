@@ -1,7 +1,7 @@
 # Clippy Memory
 
 ## Last Run
-2026-08-07 16:00 UTC — Run 31195296844 (see memory.json for detailed structured state - this file is legacy/secondary)
+2026-08-08 15:50 UTC — Run 31265416540 (see memory.json for detailed structured state - this file is legacy/secondary)
 
 ## Comments Made
 - #54: ManageMediaCopy CRC32 improvement idea
@@ -21,8 +21,7 @@
 - #401: linked NuGet OIDC PR (now merged #407)
 
 ## Open Clippy PRs
-- #432: feat(excel): ExcelAssembler — closes #28 (squash rebase, clean)
-- #aw_frozen_dicts (TBD number): perf: convert static readonly Dictionary to FrozenDictionary (Task 5, 2026-07-15)
+- #449: feat(excel): ExcelAssembler rebase onto master — rebased again 2026-08-08 (was 15 commits behind), build clean, all 2317 tests pass, awaiting maintainer review
 
 ## Backlog Cursor
 Last issue processed: #401. All issues labelled. All issues have Clippy comments.
