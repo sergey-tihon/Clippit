@@ -205,9 +205,8 @@ namespace Clippit.Excel
                 var s2 = thisDate.ToString(cfc, CultureInfo.InvariantCulture).Trim();
                 return s2;
             }
-            if (ExcelFormatCodeToNetFormatCodeExceptionMap.ContainsKey(formatCode))
+            if (ExcelFormatCodeToNetFormatCodeExceptionMap.TryGetValue(formatCode, out var fc))
             {
-                var fc = ExcelFormatCodeToNetFormatCodeExceptionMap[formatCode];
                 var s = dv.ToString(fc.FormatCode, CultureInfo.InvariantCulture).Trim();
                 return s;
             }

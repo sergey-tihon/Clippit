@@ -379,8 +379,8 @@ namespace Clippit.PowerPoint.Fluent
             var relevantElements = newContent
                 .DescendantsAndSelf()
                 .Where(d =>
-                    s_relationshipMarkup.ContainsKey(d.Name)
-                    && d.Attributes().Any(a => s_relationshipMarkup[d.Name].Contains(a.Name))
+                    s_relationshipMarkup.TryGetValue(d.Name, out var relevantAttrs)
+                    && d.Attributes().Any(a => relevantAttrs.Contains(a.Name))
                 )
                 .ToList();
             foreach (var e in relevantElements)
