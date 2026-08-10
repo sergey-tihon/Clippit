@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-08-09",
-  "last_run_id": "31322150643",
+  "last_run": "2026-08-10",
+  "last_run_id": "31406519801",
   "backlog_cursor": {
     "issues": 424,
     "prs": 449
@@ -48,7 +48,11 @@
     "Task 6 (2026-08-08): PR #449 was 15 commits behind master; rebased cleanly (no conflicts), build+csharpier+full test suite (2317 tests) all pass; pushed update",
     "Task 2 (2026-08-08): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed",
     "Task 10 substituted with Task 6: no blocked/in-progress Task 10 work found in memory; PR 449 rebase was the highest-value action",
-    "Task 4 (2026-08-09): dotnet outdated showed only TUnit 1.63.25->1.64.6 (patch); created PR clippy/eng-tunit-1.64.6-20260809, build+csharpier+2307 tests pass"
+    "Task 4 (2026-08-09): dotnet outdated showed only TUnit 1.63.25->1.64.6 (patch); created PR clippy/eng-tunit-1.64.6-20260809, build+csharpier+2307 tests pass",
+    "Task 4 (2026-08-10): dotnet outdated shows no outdated deps",
+    "Task 2 (2026-08-10): reviewed #67,#77,#103 - no new human activity, no re-engagement needed",
+    "Task 5 (2026-08-10): created PR (branch clippy/improve-double-lookups-20260810) fixing ContainsKey+indexer double lookups in HtmlToWmlCssApplier, FormattingAssembler, SmlCellFormatter, PresentationBuilderTools; build+2307 tests pass",
+    "PR #449 now mergeable_state=dirty (conflicts) - needs rebase in future Task 6 run"
   ],
   "improvements_submitted": [
     "PR(aw_pr_changelog): chore: prepare CHANGELOG for v3.9.0 release (2026-08-05)",
@@ -64,6 +68,7 @@
     "PR(454): refactor: replace ContainsKey+indexer double-lookups, Where+Count chains (merged 2026-07-28)",
     "PR(aw_pr_frozen_fmt): perf: convert CellDfn.StandardFormats to FrozenDictionary (2026-08-05)",
     "PR(aw_new_deps): chore(deps): SkiaSharp 4.151.0->4.151.1, TUnit 1.63.0->1.63.25 (2026-08-07)",
-    "PR(clippy/eng-tunit-1.64.6-20260809): chore(deps): TUnit 1.63.25 -> 1.64.6 (2026-08-09)"
+    "PR(clippy/eng-tunit-1.64.6-20260809): chore(deps): TUnit 1.63.25 -> 1.64.6 (2026-08-09)",
+    "PR(clippy/improve-double-lookups-20260810): refactor: eliminate ContainsKey+indexer double dictionary lookups (2026-08-10)"
   ]
 }

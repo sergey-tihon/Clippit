@@ -1,7 +1,7 @@
 # Clippy Memory
 
 ## Last Run
-2026-08-08 15:50 UTC — Run 31265416540 (see memory.json for detailed structured state - this file is legacy/secondary)
+2026-08-10 16:01 UTC — Run 31406519801 (see memory.json for detailed structured state - this file is legacy/secondary)
 
 ## Comments Made
 - #54: ManageMediaCopy CRC32 improvement idea
@@ -21,7 +21,8 @@
 - #401: linked NuGet OIDC PR (now merged #407)
 
 ## Open Clippy PRs
-- #449: feat(excel): ExcelAssembler rebase onto master — rebased again 2026-08-08 (was 15 commits behind), build clean, all 2317 tests pass, awaiting maintainer review
+- #449: feat(excel): ExcelAssembler rebase onto master — now shows mergeable_state=dirty (conflicts), needs rebase in future Task 6 run
+- #470 (new): refactor: eliminate ContainsKey+indexer double lookups — build clean, 2307 tests pass, awaiting review
 
 ## Backlog Cursor
 Last issue processed: #401. All issues labelled. All issues have Clippy comments.
