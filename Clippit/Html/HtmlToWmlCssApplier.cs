@@ -1553,9 +1553,8 @@ namespace Clippit.Html
                 computedValues = new Dictionary<string, CssExpression>();
                 element.AddAnnotation(computedValues);
             }
-            if (computedValues.ContainsKey(propertyName))
+            if (computedValues.TryGetValue(propertyName, out var r))
             {
-                var r = computedValues[propertyName];
                 return r;
             }
 
@@ -1580,7 +1579,7 @@ namespace Clippit.Html
                 );
                 return computedValue;
             }
-            if (!propList.ContainsKey(pName))
+            if (!propList.TryGetValue(pName, out var prop))
             {
                 var computedValue = GetInheritedOrInitializedValue(
                     computedValues,
@@ -1592,7 +1591,6 @@ namespace Clippit.Html
                 );
                 return computedValue;
             }
-            var prop = propList[pName];
             var propStr = prop.Expression.ToString();
             if (propStr is "inherited" or "auto")
             {
@@ -1841,14 +1839,14 @@ namespace Clippit.Html
             var unit = assignedValue.Terms.First().Unit;
             if (unit == CssUnit.PT)
                 return assignedValue;
-            if (FontSizeMap.ContainsKey(value))
+            if (FontSizeMap.TryGetValue(value, out var mappedFontSize))
                 return new CssExpression
                 {
                     Terms = new List<CssTerm>
                     {
                         new()
                         {
-                            Value = FontSizeMap[value].ToString(CultureInfo.InvariantCulture),
+                            Value = mappedFontSize.ToString(CultureInfo.InvariantCulture),
                             Type = CssTermType.Number,
                             Unit = CssUnit.PT,
                         },
