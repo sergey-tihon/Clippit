@@ -97,7 +97,7 @@ public class ListItemTextGetter_fr_FR
         "",
     ];
 
-    public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
+    public static string GetListItemText(int levelNumber, string numFmt)
     {
         if (numFmt == "cardinalText")
         {

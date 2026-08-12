@@ -8,7 +8,7 @@ namespace Clippit.Word
 {
     public class ListItemRetrieverSettings
     {
-        public static Dictionary<string, Func<string, int, string, string>> DefaultListItemTextImplementations = new()
+        public static Dictionary<string, Func<int, string, string>> DefaultListItemTextImplementations = new()
         {
             { "de-DE", ListItemTextGetter_de_DE.GetListItemText },
             { "es-ES", ListItemTextGetter_es_ES.GetListItemText },
@@ -18,7 +18,7 @@ namespace Clippit.Word
             { "sv-SE", ListItemTextGetter_sv_SE.GetListItemText },
             { "zh-CN", ListItemTextGetter_zh_CN.GetListItemText },
         };
-        public Dictionary<string, Func<string, int, string, string>> ListItemTextImplementations =
+        public Dictionary<string, Func<int, string, string>> ListItemTextImplementations =
             DefaultListItemTextImplementations;
     }
 
@@ -1078,11 +1078,10 @@ namespace Clippit.Word
                         if (languageCultureName is not null && settings is not null)
                         {
                             if (settings.ListItemTextImplementations.TryGetValue(languageCultureName, out var impl))
-                                levelText = impl(languageCultureName, levelNumber, numFmtForLevel);
+                                levelText = impl(levelNumber, numFmtForLevel);
                         }
                         if (levelText is null)
                             levelText = ListItemTextGetter_Default.GetListItemText(
-                                languageCultureName,
                                 levelNumber,
                                 numFmtForLevel
                             );

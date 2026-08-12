@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft. All rights reserved.
+﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Clippit.Word;
@@ -8,7 +8,7 @@ namespace Clippit.Tests.Word;
 /// <summary>
 /// Unit tests for <see cref="ListItemTextGetter_fr_FR.GetListItemText"/>.
 /// </summary>
-public class ListItemTextFrFrTests
+public sealed class ListItemTextFrFrTests
 {
     // ── cardinalText — ones / teens ──────────────────────────────────────────
 
@@ -22,7 +22,7 @@ public class ListItemTextFrFrTests
     [Arguments(19, "Dix-neuf")]
     public async Task LFrFr001_CardinalText_OnesToNineteen_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_fr_FR.GetListItemText("fr-FR", number, "cardinalText");
+        var result = ListItemTextGetter_fr_FR.GetListItemText(number, "cardinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -47,7 +47,7 @@ public class ListItemTextFrFrTests
     [Arguments(99, "Quatre-vingt-dix-neuf")]
     public async Task LFrFr002_CardinalText_TwentyToNinetyNine_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_fr_FR.GetListItemText("fr-FR", number, "cardinalText");
+        var result = ListItemTextGetter_fr_FR.GetListItemText(number, "cardinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -61,7 +61,7 @@ public class ListItemTextFrFrTests
     [Arguments(500, "Cinq cents")]
     public async Task LFrFr003_CardinalText_Hundreds_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_fr_FR.GetListItemText("fr-FR", number, "cardinalText");
+        var result = ListItemTextGetter_fr_FR.GetListItemText(number, "cardinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -75,7 +75,7 @@ public class ListItemTextFrFrTests
     [Arguments(3000, "Trois mille")]
     public async Task LFrFr004_CardinalText_Thousands_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_fr_FR.GetListItemText("fr-FR", number, "cardinalText");
+        var result = ListItemTextGetter_fr_FR.GetListItemText(number, "cardinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -88,7 +88,7 @@ public class ListItemTextFrFrTests
     [Arguments(21, "21e")]
     public async Task LFrFr005_Ordinal_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_fr_FR.GetListItemText("fr-FR", number, "ordinal");
+        var result = ListItemTextGetter_fr_FR.GetListItemText(number, "ordinal");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -97,7 +97,7 @@ public class ListItemTextFrFrTests
     [Test]
     public async Task LFrFr006_OrdinalText_One_ReturnsPremier()
     {
-        var result = ListItemTextGetter_fr_FR.GetListItemText("fr-FR", 1, "ordinalText");
+        var result = ListItemTextGetter_fr_FR.GetListItemText(1, "ordinalText");
         await Assert.That(result).IsEqualTo("Premier");
     }
 
@@ -105,7 +105,7 @@ public class ListItemTextFrFrTests
     [Arguments(1000, "Millième")]
     public async Task LFrFr007_OrdinalText_Thousand_ReturnsMillieme(int number, string expected)
     {
-        var result = ListItemTextGetter_fr_FR.GetListItemText("fr-FR", number, "ordinalText");
+        var result = ListItemTextGetter_fr_FR.GetListItemText(number, "ordinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -121,7 +121,7 @@ public class ListItemTextFrFrTests
     [Arguments(2000, "Deux millième")]
     public async Task LFrFr008_OrdinalText_TypicalValues_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_fr_FR.GetListItemText("fr-FR", number, "ordinalText");
+        var result = ListItemTextGetter_fr_FR.GetListItemText(number, "ordinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 }

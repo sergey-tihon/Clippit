@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft. All rights reserved.
+﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Clippit.Word;
@@ -8,7 +8,7 @@ namespace Clippit.Tests.Word;
 /// <summary>
 /// Unit tests for <see cref="ListItemTextGetter_tr_TR.GetListItemText"/>.
 /// </summary>
-public class ListItemTextTrTrTests
+public sealed class ListItemTextTrTrTests
 {
     // ── cardinalText — out-of-range guard ────────────────────────────────────
 
@@ -19,7 +19,7 @@ public class ListItemTextTrTrTests
     [Arguments(99999, "99999")]
     public async Task LTrTr001_CardinalText_OutOfRange_FallsBackToDecimal(int number, string expected)
     {
-        var result = ListItemTextGetter_tr_TR.GetListItemText("tr-TR", number, "cardinalText");
+        var result = ListItemTextGetter_tr_TR.GetListItemText(number, "cardinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -40,7 +40,7 @@ public class ListItemTextTrTrTests
     [Arguments(2000, "İki bin")]
     public async Task LTrTr002_CardinalText_TypicalValues_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_tr_TR.GetListItemText("tr-TR", number, "cardinalText");
+        var result = ListItemTextGetter_tr_TR.GetListItemText(number, "cardinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -53,7 +53,7 @@ public class ListItemTextTrTrTests
     [Arguments(99999, "99999")]
     public async Task LTrTr003_OrdinalText_OutOfRange_FallsBackToDecimal(int number, string expected)
     {
-        var result = ListItemTextGetter_tr_TR.GetListItemText("tr-TR", number, "ordinalText");
+        var result = ListItemTextGetter_tr_TR.GetListItemText(number, "ordinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -73,7 +73,7 @@ public class ListItemTextTrTrTests
     [Arguments(2000, "İkibininci")]
     public async Task LTrTr004_OrdinalText_TypicalValues_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_tr_TR.GetListItemText("tr-TR", number, "ordinalText");
+        var result = ListItemTextGetter_tr_TR.GetListItemText(number, "ordinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -84,7 +84,7 @@ public class ListItemTextTrTrTests
     [Arguments(42, "42")]
     public async Task LTrTr005_Decimal_ReturnsNumberAsString(int number, string expected)
     {
-        var result = ListItemTextGetter_tr_TR.GetListItemText("tr-TR", number, "decimal");
+        var result = ListItemTextGetter_tr_TR.GetListItemText(number, "decimal");
         await Assert.That(result).IsEqualTo(expected);
     }
 }

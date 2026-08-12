@@ -143,7 +143,7 @@ public class ListItemTextGetter_ru_RU
             _ => OneThroughNineteen[t1 - 1] + "тысячный",
         };
 
-    public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
+    public static string GetListItemText(int levelNumber, string numFmt)
     {
         if (numFmt == "cardinalText")
         {

@@ -8,14 +8,14 @@ namespace Clippit.Tests.Word;
 /// <summary>
 /// Unit tests for <see cref="ListItemTextGetter_sv_SE.GetListItemText"/>.
 /// </summary>
-public class ListItemTextSvSeTests
+public sealed class ListItemTextSvSeTests
 {
     // ── cardinalText — boundary conditions ───────────────────────────────────
 
     [Test]
     public async Task LSvSe001_CardinalText_Zero_ReturnsNoll()
     {
-        var result = ListItemTextGetter_sv_SE.GetListItemText("sv-SE", 0, "cardinalText");
+        var result = ListItemTextGetter_sv_SE.GetListItemText(0, "cardinalText");
         await Assert.That(result).IsEqualTo("Noll");
     }
 
@@ -25,7 +25,7 @@ public class ListItemTextSvSeTests
     public async Task LSvSe002_CardinalText_NegativeNumber_Throws(int number)
     {
         await Assert
-            .That(() => ListItemTextGetter_sv_SE.GetListItemText("sv-SE", number, "cardinalText"))
+            .That(() => ListItemTextGetter_sv_SE.GetListItemText(number, "cardinalText"))
             .Throws<ArgumentOutOfRangeException>();
     }
 
@@ -40,7 +40,7 @@ public class ListItemTextSvSeTests
     [Arguments(19, "Nitton")]
     public async Task LSvSe004_CardinalText_OnesToNineteen_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_sv_SE.GetListItemText("sv-SE", number, "cardinalText");
+        var result = ListItemTextGetter_sv_SE.GetListItemText(number, "cardinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -53,7 +53,7 @@ public class ListItemTextSvSeTests
     [Arguments(99, "Nittionio")]
     public async Task LSvSe005_CardinalText_Tens_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_sv_SE.GetListItemText("sv-SE", number, "cardinalText");
+        var result = ListItemTextGetter_sv_SE.GetListItemText(number, "cardinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -68,7 +68,7 @@ public class ListItemTextSvSeTests
     [Arguments(2000, "Tvåtusen")]
     public async Task LSvSe006_CardinalText_HundredsAndThousands_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_sv_SE.GetListItemText("sv-SE", number, "cardinalText");
+        var result = ListItemTextGetter_sv_SE.GetListItemText(number, "cardinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -78,7 +78,7 @@ public class ListItemTextSvSeTests
     public async Task LSvSe007_OrdinalText_Zero_Throws()
     {
         await Assert
-            .That(() => ListItemTextGetter_sv_SE.GetListItemText("sv-SE", 0, "ordinalText"))
+            .That(() => ListItemTextGetter_sv_SE.GetListItemText(0, "ordinalText"))
             .Throws<ArgumentOutOfRangeException>();
     }
 
@@ -86,7 +86,7 @@ public class ListItemTextSvSeTests
     public async Task LSvSe008_OrdinalText_TooLarge_Throws()
     {
         await Assert
-            .That(() => ListItemTextGetter_sv_SE.GetListItemText("sv-SE", 10000, "ordinalText"))
+            .That(() => ListItemTextGetter_sv_SE.GetListItemText(10000, "ordinalText"))
             .Throws<ArgumentOutOfRangeException>();
     }
 
@@ -95,7 +95,7 @@ public class ListItemTextSvSeTests
     [Test]
     public async Task LSvSe009_OrdinalText_One_ReturnsFörsta()
     {
-        var result = ListItemTextGetter_sv_SE.GetListItemText("sv-SE", 1, "ordinalText");
+        var result = ListItemTextGetter_sv_SE.GetListItemText(1, "ordinalText");
         await Assert.That(result).IsEqualTo("Första");
     }
 
@@ -111,7 +111,7 @@ public class ListItemTextSvSeTests
     [Arguments(2000, "Tvåtusende")]
     public async Task LSvSe010_OrdinalText_TypicalValues_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_sv_SE.GetListItemText("sv-SE", number, "ordinalText");
+        var result = ListItemTextGetter_sv_SE.GetListItemText(number, "ordinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -127,7 +127,7 @@ public class ListItemTextSvSeTests
     [Arguments(23, "23:e")]
     public async Task LSvSe011_Ordinal_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_sv_SE.GetListItemText("sv-SE", number, "ordinal");
+        var result = ListItemTextGetter_sv_SE.GetListItemText(number, "ordinal");
         await Assert.That(result).IsEqualTo(expected);
     }
 }

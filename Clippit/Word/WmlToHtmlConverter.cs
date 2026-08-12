@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft. All rights reserved.
+﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Frozen;
@@ -44,7 +44,7 @@ namespace Clippit.Word
         public string AdditionalCss;
         public bool RestrictToSupportedLanguages;
         public bool RestrictToSupportedNumberingFormats;
-        public Dictionary<string, Func<string, int, string, string>> ListItemImplementations;
+        public Dictionary<string, Func<int, string, string>> ListItemImplementations;
         public Func<ImageInfo, XElement> ImageHandler;
 
         public WmlToHtmlConverterSettings()
@@ -83,7 +83,7 @@ namespace Clippit.Word
         public string AdditionalCss = "";
         public bool RestrictToSupportedLanguages = false;
         public bool RestrictToSupportedNumberingFormats = false;
-        public Dictionary<string, Func<string, int, string, string>> ListItemImplementations =
+        public Dictionary<string, Func<int, string, string>> ListItemImplementations =
             ListItemRetrieverSettings.DefaultListItemTextImplementations;
         public Func<ImageInfo, XElement> ImageHandler;
     }

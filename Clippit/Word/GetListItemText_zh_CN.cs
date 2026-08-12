@@ -5,7 +5,7 @@ namespace Clippit.Word;
 
 public class ListItemTextGetter_zh_CN
 {
-    public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
+    public static string GetListItemText(int levelNumber, string numFmt)
     {
         string[] ccTDigitCharacters = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
         var tenCharacter = "十";
@@ -66,7 +66,7 @@ public class ListItemTextGetter_zh_CN
                 ]
                     + thousandCharacter
                     + andCharacter
-                    + GetListItemText("zh_CN", thousandsRemainder, numFmt),
+                    + GetListItemText(thousandsRemainder, numFmt),
                 >= 1000 and <= 9999 when thousandsRemainder >= 10 && thousandsRemainder <= 99 => ccTDigitCharacters[
                     thousands
                 ]

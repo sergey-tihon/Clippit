@@ -77,7 +77,7 @@ internal class ListItemTextGetter_Default
         "ninetieth",
     ];
 
-    public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
+    public static string GetListItemText(int levelNumber, string numFmt)
     {
         switch (numFmt)
         {

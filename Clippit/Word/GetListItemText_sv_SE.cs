@@ -72,18 +72,18 @@ public class ListItemTextGetter_sv_SE
         "nittonde",
     ];
 
-    public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
+    public static string GetListItemText(int levelNumber, string numFmt)
     {
         return numFmt switch
         {
-            "cardinalText" => NumberAsCardinalText(languageCultureName, levelNumber, numFmt),
-            "ordinalText" => NumberAsOrdinalText(languageCultureName, levelNumber, numFmt),
-            "ordinal" => NumberAsOrdinal(languageCultureName, levelNumber, numFmt),
+            "cardinalText" => NumberAsCardinalText(levelNumber, numFmt),
+            "ordinalText" => NumberAsOrdinalText(levelNumber, numFmt),
+            "ordinal" => NumberAsOrdinal(levelNumber, numFmt),
             _ => null,
         };
     }
 
-    private static string NumberAsCardinalText(string languageCultureName, int levelNumber, string numFmt)
+    private static string NumberAsCardinalText(int levelNumber, string numFmt)
     {
         var result = "";
 
@@ -167,7 +167,7 @@ public class ListItemTextGetter_sv_SE
         }
     }
 
-    private static string NumberAsOrdinalText(string languageCultureName, int levelNumber, string numFmt)
+    private static string NumberAsOrdinalText(int levelNumber, string numFmt)
     {
         var result = "";
 
@@ -248,7 +248,7 @@ public class ListItemTextGetter_sv_SE
         }
     }
 
-    private static string NumberAsOrdinal(string languageCultureName, int levelNumber, string numFmt)
+    private static string NumberAsOrdinal(int levelNumber, string numFmt)
     {
         var levelAsString = levelNumber.ToString();
 
