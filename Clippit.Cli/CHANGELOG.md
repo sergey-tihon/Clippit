@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.9.0] - 2026-08-12
+
+- Updated the `System.CommandLine` dependency from preview.5 to preview.7 (#457).
+
 ## [0.8.0] - 2026-07-19
 
 - Added `install --skills` command to install bundled Clippit workspace skills into

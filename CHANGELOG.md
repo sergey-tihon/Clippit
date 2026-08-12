@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.9.0] - August 12, 2026
+
+- perf: optimize immutable lookups, dictionary access, enumeration, and string slicing across Excel, HTML, PowerPoint, and Word (#444, #445, #448, #450, #451, #452, #454, #459, #462, #463, #466, #470)
+- refactor: modernize core types and remove dead code/debug scaffolding from production and tests (#443, #456, #458, #459, #461)
+- test(common): add `StrictOoxmlTranslator` coverage (#447)
+- chore(deps): update SkiaSharp 4.150.1 → 4.151.1, TUnit 1.59.0 → 1.64.13, JsonSchema.Net 9.2.2 → 9.4.0, and System.CommandLine preview.5 → preview.7 (#442, #455, #457, #463, #467, #469)
+- chore(ci): bump `actions/setup-dotnet` from 5 to 6 (#446)
+
 ## [3.8.0] - July 19, 2026
 
 - feat(cli): add `clippit install --skills` command to install bundled Clippit workspace skills for OpenCode, Pi, and Claude Code assistants
