@@ -986,10 +986,10 @@ namespace Clippit
             if (LastBucket is not null)
             {
                 var d = now - LastTime;
-                if (Buckets.ContainsKey(LastBucket))
+                if (Buckets.TryGetValue(LastBucket, out var bucketInfo))
                 {
-                    Buckets[LastBucket].Count = Buckets[LastBucket].Count + 1;
-                    Buckets[LastBucket].Time += d;
+                    bucketInfo.Count++;
+                    bucketInfo.Time += d;
                 }
                 else
                 {
