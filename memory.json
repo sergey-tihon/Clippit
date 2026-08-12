@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-08-11",
-  "last_run_id": "31510008083",
+  "last_run": "2026-08-12",
+  "last_run_id": "31615241491",
   "backlog_cursor": {
     "issues": 424,
     "prs": 449
@@ -54,7 +54,10 @@
     "Task 5 (2026-08-10): created PR (branch clippy/improve-double-lookups-20260810) fixing ContainsKey+indexer double lookups in HtmlToWmlCssApplier, FormattingAssembler, SmlCellFormatter, PresentationBuilderTools; build+2307 tests pass",
     "PR #449 now mergeable_state=dirty (conflicts) - needs rebase in future Task 6 run",
     "Task 10/3 (2026-08-11): substituted with rebasing PR #449 (was mergeable_state=dirty); rebased cleanly onto master (90cfe11), build+csharpier+2317 tests pass, pushed via push_to_pull_request_branch",
-    "Task 2 (2026-08-11): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed"
+    "Task 2 (2026-08-11): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed",
+    "Task 4 (2026-08-12): dotnet outdated shows no outdated dependencies",
+    "Task 2 (2026-08-12): reviewed #67,#77,#103 - no new human activity, no re-engagement needed",
+    "Task 8 (2026-08-12): created draft PR (branch clippy/perf-ptbuckettimer-double-lookup-20260812) fixing double dictionary lookup in PtBucketTimer.Bucket, build+2307 tests pass"
   ],
   "improvements_submitted": [
     "PR(aw_pr_changelog): chore: prepare CHANGELOG for v3.9.0 release (2026-08-05)",
@@ -71,6 +74,7 @@
     "PR(aw_pr_frozen_fmt): perf: convert CellDfn.StandardFormats to FrozenDictionary (2026-08-05)",
     "PR(aw_new_deps): chore(deps): SkiaSharp 4.151.0->4.151.1, TUnit 1.63.0->1.63.25 (2026-08-07)",
     "PR(clippy/eng-tunit-1.64.6-20260809): chore(deps): TUnit 1.63.25 -> 1.64.6 (2026-08-09)",
-    "PR(clippy/improve-double-lookups-20260810): refactor: eliminate ContainsKey+indexer double dictionary lookups (2026-08-10)"
+    "PR(clippy/improve-double-lookups-20260810): refactor: eliminate ContainsKey+indexer double dictionary lookups (2026-08-10)",
+    "PR(clippy/perf-ptbuckettimer-double-lookup-20260812): perf: eliminate double dictionary lookup in PtBucketTimer.Bucket (2026-08-12)"
   ]
 }

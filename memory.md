@@ -1,7 +1,7 @@
 # Clippy Memory
 
 ## Last Run
-2026-08-11 16:01 UTC — Run 31510008083 (see memory.json for detailed structured state - this file is legacy/secondary)
+2026-08-12 16:01 UTC — Run 31615241491 (see memory.json for detailed structured state - this file is legacy/secondary)
 
 ## Comments Made
 - #54: ManageMediaCopy CRC32 improvement idea
@@ -23,11 +23,13 @@
 ## Open Clippy PRs
 - #449: feat(excel): ExcelAssembler — rebased 2026-08-11 onto master (90cfe11), conflicts resolved, build+2317 tests pass, awaiting review
 - #470 (new): refactor: eliminate ContainsKey+indexer double lookups — build clean, 2307 tests pass, awaiting review
+- (new draft) perf: eliminate double dictionary lookup in PtBucketTimer.Bucket (branch clippy/perf-ptbuckettimer-double-lookup-20260812), build+2307 tests pass, awaiting review
 
 ## Backlog Cursor
 Last issue processed: #401. All issues labelled. All issues have Clippy comments.
 
 ## Notes
+- dotnet outdated (2026-08-12): no outdated dependencies
 - v3.7.0 released (CLI v0.7.0)
 - PR #430 merged (StringExtensions tests + fr_FR dead code removal)
 - PR #431 merged (deps: SkiaSharp 4.150.1, TUnit 1.59.0, Test.Sdk 18.8.1)
