@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Globalization;
+using Clippit.Word.Enums;
 
 namespace Clippit.Word;
 
@@ -104,29 +105,29 @@ public class ListItemTextGetter_tr_TR
 
     private static readonly TextInfo s_trTRTextInfo = CultureInfo.GetCultureInfo("tr-TR").TextInfo;
 
-    public static string GetListItemText(int levelNumber, string numFmt)
+    public static string GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
         #region
-        if (numFmt == "decimal")
+        if (numFmt == NumberingFormatType.Decimal)
         {
             return levelNumber.ToString();
         }
-        if (numFmt == "decimalZero")
+        if (numFmt == NumberingFormatType.DecimalZero)
         {
             if (levelNumber <= 9)
                 return "0" + levelNumber;
             else
                 return levelNumber.ToString();
         }
-        if (numFmt == "upperRoman")
+        if (numFmt == NumberingFormatType.UpperRoman)
         {
             return RomanNumeralUtil.ToUpperRoman(levelNumber);
         }
-        if (numFmt == "lowerRoman")
+        if (numFmt == NumberingFormatType.LowerRoman)
         {
             return RomanNumeralUtil.ToLowerRoman(levelNumber);
         }
-        if (numFmt == "upperLetter")
+        if (numFmt == NumberingFormatType.UpperLetter)
         {
             var a = "ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZ";
             //string a = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -135,7 +136,7 @@ public class ListItemTextGetter_tr_TR
             var x = a[n];
             return "".PadRight(c + 1, x);
         }
-        if (numFmt == "lowerLetter")
+        if (numFmt == NumberingFormatType.LowerLetter)
         {
             var a = "abcçdefgğhıijklmnoöprsştuüvyz";
             var c = (levelNumber - 1) / 29;
@@ -143,7 +144,7 @@ public class ListItemTextGetter_tr_TR
             var x = a[n];
             return "".PadRight(c + 1, x);
         }
-        if (numFmt == "ordinal")
+        if (numFmt == NumberingFormatType.Ordinal)
         {
             var suffix =
                 /*if (levelNumber % 100 == 11 || levelNumber % 100 == 12 ||
@@ -160,7 +161,7 @@ public class ListItemTextGetter_tr_TR
                 ".";
             return levelNumber + suffix;
         }
-        if (numFmt == "cardinalText")
+        if (numFmt == NumberingFormatType.CardinalText)
         {
             if (levelNumber <= 0 || levelNumber > 19999)
                 return levelNumber.ToString();
@@ -196,7 +197,7 @@ public class ListItemTextGetter_tr_TR
             return s_trTRTextInfo.ToUpper(result[0]) + result[1..];
         }
         #endregion
-        if (numFmt == "ordinalText")
+        if (numFmt == NumberingFormatType.OrdinalText)
         {
             if (levelNumber <= 0 || levelNumber > 19999)
                 return levelNumber.ToString();
@@ -239,11 +240,11 @@ public class ListItemTextGetter_tr_TR
             }
             return s_trTRTextInfo.ToUpper(result[0]) + result[1..];
         }
-        if (numFmt == "0001, 0002, 0003, ...")
+        if (numFmt == NumberingFormatType.DecimalPadded4)
         {
             return $"{levelNumber:0000}";
         }
-        if (numFmt == "bullet")
+        if (numFmt == NumberingFormatType.Bullet)
             return "";
         return levelNumber.ToString();
     }

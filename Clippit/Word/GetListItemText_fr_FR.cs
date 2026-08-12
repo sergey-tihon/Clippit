@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Globalization;
+using Clippit.Word.Enums;
 
 namespace Clippit.Word;
 
@@ -97,9 +98,9 @@ public class ListItemTextGetter_fr_FR
         "",
     ];
 
-    public static string GetListItemText(int levelNumber, string numFmt)
+    public static string GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
-        if (numFmt == "cardinalText")
+        if (numFmt == NumberingFormatType.CardinalText)
         {
             if (levelNumber <= 0)
                 return levelNumber.ToString();
@@ -191,7 +192,7 @@ public class ListItemTextGetter_fr_FR
             result += OneThroughNineteen[tens * 10 + ones];
             return result[0..1].ToUpper() + result[1..];
         }
-        if (numFmt == "ordinal")
+        if (numFmt == NumberingFormatType.Ordinal)
         {
             string suffix;
             if (levelNumber == 1)
@@ -200,7 +201,7 @@ public class ListItemTextGetter_fr_FR
                 suffix = "e";
             return levelNumber + suffix;
         }
-        if (numFmt == "ordinalText")
+        if (numFmt == NumberingFormatType.OrdinalText)
         {
             var result = "";
 

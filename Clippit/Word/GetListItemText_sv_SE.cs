@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Globalization;
+using Clippit.Word.Enums;
 
 namespace Clippit.Word;
 
@@ -72,18 +73,18 @@ public class ListItemTextGetter_sv_SE
         "nittonde",
     ];
 
-    public static string GetListItemText(int levelNumber, string numFmt)
+    public static string GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
         return numFmt switch
         {
-            "cardinalText" => NumberAsCardinalText(levelNumber, numFmt),
-            "ordinalText" => NumberAsOrdinalText(levelNumber, numFmt),
-            "ordinal" => NumberAsOrdinal(levelNumber, numFmt),
+            NumberingFormatType.CardinalText => NumberAsCardinalText(levelNumber),
+            NumberingFormatType.OrdinalText => NumberAsOrdinalText(levelNumber),
+            NumberingFormatType.Ordinal => NumberAsOrdinal(levelNumber),
             _ => null,
         };
     }
 
-    private static string NumberAsCardinalText(int levelNumber, string numFmt)
+    private static string NumberAsCardinalText(int levelNumber)
     {
         var result = "";
 
@@ -167,7 +168,7 @@ public class ListItemTextGetter_sv_SE
         }
     }
 
-    private static string NumberAsOrdinalText(int levelNumber, string numFmt)
+    private static string NumberAsOrdinalText(int levelNumber)
     {
         var result = "";
 
@@ -248,7 +249,7 @@ public class ListItemTextGetter_sv_SE
         }
     }
 
-    private static string NumberAsOrdinal(int levelNumber, string numFmt)
+    private static string NumberAsOrdinal(int levelNumber)
     {
         var levelAsString = levelNumber.ToString();
 

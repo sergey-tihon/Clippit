@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Clippit.Word.Enums;
+
 namespace Clippit.Word;
 
 internal class ListItemTextGetter_Default
@@ -77,23 +79,23 @@ internal class ListItemTextGetter_Default
         "ninetieth",
     ];
 
-    public static string GetListItemText(int levelNumber, string numFmt)
+    public static string GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
         switch (numFmt)
         {
-            case "none":
+            case NumberingFormatType.None:
                 return "";
-            case "decimal":
+            case NumberingFormatType.Decimal:
                 return levelNumber.ToString();
-            case "decimalZero" when levelNumber <= 9:
+            case NumberingFormatType.DecimalZero when levelNumber <= 9:
                 return "0" + levelNumber;
-            case "decimalZero":
+            case NumberingFormatType.DecimalZero:
                 return levelNumber.ToString();
-            case "upperRoman":
+            case NumberingFormatType.UpperRoman:
                 return RomanNumeralUtil.ToUpperRoman(levelNumber);
-            case "lowerRoman":
+            case NumberingFormatType.LowerRoman:
                 return RomanNumeralUtil.ToLowerRoman(levelNumber);
-            case "upperLetter":
+            case NumberingFormatType.UpperLetter:
             {
                 var levelNumber2 = levelNumber % 780;
                 if (levelNumber2 == 0)
@@ -104,7 +106,7 @@ internal class ListItemTextGetter_Default
                 var x = a[n];
                 return "".PadRight(c + 1, x);
             }
-            case "lowerLetter":
+            case NumberingFormatType.LowerLetter:
             {
                 var levelNumber3 = levelNumber % 780;
                 if (levelNumber3 == 0)
@@ -115,7 +117,7 @@ internal class ListItemTextGetter_Default
                 var x = a[n];
                 return "".PadRight(c + 1, x);
             }
-            case "ordinal":
+            case NumberingFormatType.Ordinal:
             {
                 string suffix;
                 if (levelNumber % 100 == 11 || levelNumber % 100 == 12 || levelNumber % 100 == 13)
@@ -130,7 +132,7 @@ internal class ListItemTextGetter_Default
                     };
                 return levelNumber + suffix;
             }
-            case "cardinalText":
+            case NumberingFormatType.CardinalText:
             {
                 if (levelNumber <= 0 || levelNumber > 19999)
                     return levelNumber.ToString();
@@ -164,7 +166,7 @@ internal class ListItemTextGetter_Default
                 }
                 return char.ToUpperInvariant(result[0]) + result[1..];
             }
-            case "ordinalText":
+            case NumberingFormatType.OrdinalText:
             {
                 if (levelNumber <= 0 || levelNumber > 19999)
                     return levelNumber.ToString();
@@ -207,19 +209,19 @@ internal class ListItemTextGetter_Default
                 }
                 return char.ToUpperInvariant(result[0]) + result[1..];
             }
-            case "01, 02, 03, ...":
+            case NumberingFormatType.DecimalPadded2:
                 return $"{levelNumber:00}";
-            case "001, 002, 003, ...":
+            case NumberingFormatType.DecimalPadded3:
                 return $"{levelNumber:000}";
-            case "0001, 0002, 0003, ...":
+            case NumberingFormatType.DecimalPadded4:
                 return $"{levelNumber:0000}";
-            case "00001, 00002, 00003, ...":
+            case NumberingFormatType.DecimalPadded5:
                 return $"{levelNumber:00000}";
-            case "bullet":
+            case NumberingFormatType.Bullet:
                 return "";
-            case "decimalEnclosedCircle" when levelNumber >= 1 && levelNumber <= 20:
+            case NumberingFormatType.DecimalEnclosedCircle when levelNumber >= 1 && levelNumber <= 20:
                 return ((char)(9311 + levelNumber)).ToString();
-            case "decimalEnclosedCircle":
+            case NumberingFormatType.DecimalEnclosedCircle:
                 return levelNumber.ToString();
             default:
                 return levelNumber.ToString();

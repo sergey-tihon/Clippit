@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Clippit.Word.Enums;
+
 namespace Clippit.Word;
 
 public class ListItemTextGetter_ru_RU
@@ -143,9 +145,9 @@ public class ListItemTextGetter_ru_RU
             _ => OneThroughNineteen[t1 - 1] + "тысячный",
         };
 
-    public static string GetListItemText(int levelNumber, string numFmt)
+    public static string GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
-        if (numFmt == "cardinalText")
+        if (numFmt == NumberingFormatType.CardinalText)
         {
             if (levelNumber <= 0 || levelNumber > 19999)
                 return levelNumber.ToString();
@@ -180,7 +182,7 @@ public class ListItemTextGetter_ru_RU
             }
             return result[0..1].ToUpper() + result[1..];
         }
-        if (numFmt == "ordinalText")
+        if (numFmt == NumberingFormatType.OrdinalText)
         {
             if (levelNumber <= 0 || levelNumber > 19999)
                 return levelNumber.ToString();

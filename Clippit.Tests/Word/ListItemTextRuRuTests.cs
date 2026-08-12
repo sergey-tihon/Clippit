@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Clippit.Word;
+using Clippit.Word.Enums;
 
 namespace Clippit.Tests.Word;
 
@@ -15,7 +16,7 @@ public sealed class ListItemTextRuRuTests
     [Arguments(99999, "99999")]
     public async Task LRU000_OutOfRange_FallsBackToDecimal_CardinalText(int number, string expected)
     {
-        var result = ListItemTextGetter_ru_RU.GetListItemText(number, "cardinalText");
+        var result = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.CardinalText);
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -25,7 +26,7 @@ public sealed class ListItemTextRuRuTests
     [Arguments(20000, "20000")]
     public async Task LRU000b_OutOfRange_FallsBackToDecimal_OrdinalText(int number, string expected)
     {
-        var result = ListItemTextGetter_ru_RU.GetListItemText(number, "ordinalText");
+        var result = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.OrdinalText);
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -35,7 +36,7 @@ public sealed class ListItemTextRuRuTests
     [Arguments(20000)]
     public async Task LRU000c_OutOfRange_UnsupportedNumFmt_ReturnsNull(int number)
     {
-        var result = ListItemTextGetter_ru_RU.GetListItemText(number, "unsupportedFormat");
+        var result = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.None);
         await Assert.That(result).IsNull();
     }
 
@@ -49,7 +50,7 @@ public sealed class ListItemTextRuRuTests
     [Arguments(19, "Девятнадцать")]
     public async Task LRU001_CardinalText_OneThroughNineteen(int number, string expected)
     {
-        var result = ListItemTextGetter_ru_RU.GetListItemText(number, "cardinalText");
+        var result = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.CardinalText);
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -63,7 +64,7 @@ public sealed class ListItemTextRuRuTests
     [Arguments(99, "Девяносто девять")]
     public async Task LRU002_CardinalText_TwentyThroughNinetyNine(int number, string expected)
     {
-        var result = ListItemTextGetter_ru_RU.GetListItemText(number, "cardinalText");
+        var result = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.CardinalText);
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -80,7 +81,7 @@ public sealed class ListItemTextRuRuTests
     [Arguments(900, "Девятьсот")]
     public async Task LRU003_CardinalText_ExactHundreds(int number, string expected)
     {
-        var result = ListItemTextGetter_ru_RU.GetListItemText(number, "cardinalText");
+        var result = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.CardinalText);
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -92,7 +93,7 @@ public sealed class ListItemTextRuRuTests
     [Arguments(999, "Девятьсот девяносто девять")]
     public async Task LRU004_CardinalText_CompoundHundreds(int number, string expected)
     {
-        var result = ListItemTextGetter_ru_RU.GetListItemText(number, "cardinalText");
+        var result = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.CardinalText);
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -106,7 +107,7 @@ public sealed class ListItemTextRuRuTests
     [Arguments(9000, "Девять тысяч")]
     public async Task LRU005_CardinalText_ExactThousands(int number, string expected)
     {
-        var result = ListItemTextGetter_ru_RU.GetListItemText(number, "cardinalText");
+        var result = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.CardinalText);
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -118,7 +119,7 @@ public sealed class ListItemTextRuRuTests
     [Arguments(5050, "Пять тысяч пятьдесят")]
     public async Task LRU006_CardinalText_CompoundThousands(int number, string expected)
     {
-        var result = ListItemTextGetter_ru_RU.GetListItemText(number, "cardinalText");
+        var result = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.CardinalText);
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -132,7 +133,7 @@ public sealed class ListItemTextRuRuTests
     [Arguments(19, "Девятнадцатый")]
     public async Task LRU007_OrdinalText_OneThroughNineteen(int number, string expected)
     {
-        var result = ListItemTextGetter_ru_RU.GetListItemText(number, "ordinalText");
+        var result = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.OrdinalText);
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -145,7 +146,7 @@ public sealed class ListItemTextRuRuTests
     [Arguments(90, "Девяностый")]
     public async Task LRU008_OrdinalText_ExactTens(int number, string expected)
     {
-        var result = ListItemTextGetter_ru_RU.GetListItemText(number, "ordinalText");
+        var result = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.OrdinalText);
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -156,7 +157,7 @@ public sealed class ListItemTextRuRuTests
     [Arguments(99, "Девяносто девятый")]
     public async Task LRU009_OrdinalText_CompoundTens(int number, string expected)
     {
-        var result = ListItemTextGetter_ru_RU.GetListItemText(number, "ordinalText");
+        var result = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.OrdinalText);
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -169,7 +170,7 @@ public sealed class ListItemTextRuRuTests
     [Arguments(900, "Девятисотый")]
     public async Task LRU010_OrdinalText_ExactHundreds(int number, string expected)
     {
-        var result = ListItemTextGetter_ru_RU.GetListItemText(number, "ordinalText");
+        var result = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.OrdinalText);
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -180,7 +181,7 @@ public sealed class ListItemTextRuRuTests
     [Arguments(999, "Девятьсот девяносто девятый")]
     public async Task LRU011_OrdinalText_CompoundHundreds(int number, string expected)
     {
-        var result = ListItemTextGetter_ru_RU.GetListItemText(number, "ordinalText");
+        var result = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.OrdinalText);
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -196,7 +197,7 @@ public sealed class ListItemTextRuRuTests
     [Arguments(19000, "Девятнадцатитысячный")]
     public async Task LRU012_OrdinalText_ExactThousands(int number, string expected)
     {
-        var result = ListItemTextGetter_ru_RU.GetListItemText(number, "ordinalText");
+        var result = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.OrdinalText);
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -207,16 +208,16 @@ public sealed class ListItemTextRuRuTests
     [Arguments(2050, "Две тысячи пятидесятый")]
     public async Task LRU013_OrdinalText_CompoundThousands(int number, string expected)
     {
-        var result = ListItemTextGetter_ru_RU.GetListItemText(number, "ordinalText");
+        var result = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.OrdinalText);
         await Assert.That(result).IsEqualTo(expected);
     }
 
     // unsupported numFmt returns null
     [Test]
-    [Arguments("decimal")]
-    [Arguments("upperRoman")]
-    [Arguments("ordinal")]
-    public async Task LRU014_UnsupportedNumFmt_ReturnsNull(string numFmt)
+    [Arguments(NumberingFormatType.Decimal)]
+    [Arguments(NumberingFormatType.UpperRoman)]
+    [Arguments(NumberingFormatType.Ordinal)]
+    public async Task LRU014_UnsupportedNumFmt_ReturnsNull(NumberingFormatType numFmt)
     {
         var result = ListItemTextGetter_ru_RU.GetListItemText(1, numFmt);
         await Assert.That(result).IsNull();
@@ -236,8 +237,8 @@ public sealed class ListItemTextRuRuTests
     {
         string[] englishWords = ["thousand", "hundred", "hundredth", "thousandth"];
 
-        var cardinal = ListItemTextGetter_ru_RU.GetListItemText(number, "cardinalText");
-        var ordinal = ListItemTextGetter_ru_RU.GetListItemText(number, "ordinalText");
+        var cardinal = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.CardinalText);
+        var ordinal = ListItemTextGetter_ru_RU.GetListItemText(number, NumberingFormatType.OrdinalText);
 
         foreach (var word in englishWords)
         {

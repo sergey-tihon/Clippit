@@ -2,13 +2,14 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Xml.Linq;
+using Clippit.Word.Enums;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Word
 {
     public class ListItemRetrieverSettings
     {
-        public static Dictionary<string, Func<int, string, string>> DefaultListItemTextImplementations = new()
+        public static Dictionary<string, Func<int, NumberingFormatType, string>> DefaultListItemTextImplementations = new()
         {
             { "de-DE", ListItemTextGetter_de_DE.GetListItemText },
             { "es-ES", ListItemTextGetter_es_ES.GetListItemText },
@@ -18,7 +19,7 @@ namespace Clippit.Word
             { "sv-SE", ListItemTextGetter_sv_SE.GetListItemText },
             { "zh-CN", ListItemTextGetter_zh_CN.GetListItemText },
         };
-        public Dictionary<string, Func<int, string, string>> ListItemTextImplementations =
+        public Dictionary<string, Func<int, NumberingFormatType, string>> ListItemTextImplementations =
             DefaultListItemTextImplementations;
     }
 
@@ -1040,8 +1041,7 @@ namespace Clippit.Word
             string lvlText,
             XDocument styles,
             string languageCultureName,
-            ListItemRetrieverSettings settings
-        )
+            ListItemRetrieverSettings settings)
         {
             var formatTokens = GetFormatTokens(lvlText).ToArray();
             var lvl = lii.Lvl(ilvl);
@@ -1060,31 +1060,39 @@ namespace Clippit.Word
                         var levelNumber = levelNumbers[indentationLevel];
                         string levelText = null;
                         var rlvl = lii.Lvl(indentationLevel);
-                        var numFmtForLevel = (string)rlvl.Elements(W.numFmt).Attributes(W.val).FirstOrDefault();
-                        if (numFmtForLevel is null)
+
+                        var numFmtString = (string)rlvl.Elements(W.numFmt).Attributes(W.val).FirstOrDefault();
+                        if (numFmtString is null)
                         {
                             var numFmtElement = rlvl.Elements(MC.AlternateContent)
                                 .Elements(MC.Choice)
                                 .Elements(W.numFmt)
                                 .FirstOrDefault();
                             if (numFmtElement is not null && (string)numFmtElement.Attribute(W.val) == "custom")
-                                numFmtForLevel = (string)numFmtElement.Attribute(W.format);
+                                numFmtString = (string)numFmtElement.Attribute(W.format);
                         }
-                        if (numFmtForLevel != "none")
+
+                        // Convert XML string token to strictly typed enum representation
+                        var numFmtForLevel = NumberingFormatTypeExtensions.ParseOpenXmlFormat(numFmtString);
+
+                        // Legal style overrides: forced to Decimal unless it is DecimalZero
+                        if (numFmtForLevel != NumberingFormatType.None)
                         {
-                            if (isLgl && numFmtForLevel != "decimalZero")
-                                numFmtForLevel = "decimal";
+                            if (isLgl && numFmtForLevel != NumberingFormatType.DecimalZero)
+                                numFmtForLevel = NumberingFormatType.Decimal;
                         }
+
+                        // Delegate lookups still require string passing for backward compatibility with settings dictionary
                         if (languageCultureName is not null && settings is not null)
                         {
                             if (settings.ListItemTextImplementations.TryGetValue(languageCultureName, out var impl))
                                 levelText = impl(levelNumber, numFmtForLevel);
                         }
-                        if (levelText is null)
-                            levelText = ListItemTextGetter_Default.GetListItemText(
-                                levelNumber,
-                                numFmtForLevel
-                            );
+
+                        levelText ??= ListItemTextGetter_Default.GetListItemText(
+                            levelNumber,
+                            numFmtForLevel);
+
                         return levelText;
                     }
                 )
