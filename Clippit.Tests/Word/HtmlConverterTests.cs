@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft. All rights reserved.
+﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 #define COPY_FILES_FOR_DEBUGGING
 // DO_CONVERSION_VIA_WORD is defined in the project Clippit.Tests.OA.csproj, but not in the Clippit.Tests.csproj
@@ -11,12 +11,8 @@ using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Clippit.Tests.Word;
 
-public class HtmlConverterTests() : Clippit.Tests.TestsBase
+public sealed class HtmlConverterTests() : Clippit.Tests.TestsBase
 {
-    public static bool s_CopySourceFiles = true;
-    public static bool s_CopyFormattingAssembledDocx = true;
-    public static bool s_ConvertUsingWord = true;
-
     // PowerShell oneliner that generates InlineData for all files in a directory
     // dir | % { '[InlineData("' + $_.Name + '")]' } | clip
     [Test]

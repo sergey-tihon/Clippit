@@ -3,6 +3,7 @@
 
 using System.Xml.Linq;
 using Clippit.Word.Enums;
+using Clippit.Word.Extensions;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Word
@@ -710,7 +711,6 @@ namespace Clippit.Word
             if (styleDefinitionsPart is null)
                 return null;
 
-            var numXDoc = numberingDefinitionsPart.GetXDocument();
             var stylesXDoc = styleDefinitionsPart.GetXDocument();
 
             var lvl = listItemInfo.Lvl(GetParagraphLevel(paragraph));
@@ -719,9 +719,8 @@ namespace Clippit.Word
             if (lvlText is null)
                 return null;
 
-            var levelNumbersAnnotation = paragraph.Annotation<LevelNumbers>();
-            if (levelNumbersAnnotation is null)
-                throw new OpenXmlPowerToolsException("Internal error");
+            var levelNumbersAnnotation = paragraph.Annotation<LevelNumbers>()
+                ?? throw new OpenXmlPowerToolsException("Internal error");
 
             var levelNumbers = levelNumbersAnnotation.LevelNumbersArray;
             var languageIdentifier = GetLanguageIdentifier(paragraph, stylesXDoc);
@@ -730,7 +729,6 @@ namespace Clippit.Word
                 levelNumbers,
                 GetParagraphLevel(paragraph),
                 lvlText,
-                stylesXDoc,
                 languageIdentifier,
                 settings
             );
@@ -1039,7 +1037,6 @@ namespace Clippit.Word
             int[] levelNumbers,
             int ilvl,
             string lvlText,
-            XDocument styles,
             string languageCultureName,
             ListItemRetrieverSettings settings)
         {
@@ -1058,22 +1055,22 @@ namespace Clippit.Word
                         if (indentationLevel >= levelNumbers.Length)
                             indentationLevel = levelNumbers.Length - 1;
                         var levelNumber = levelNumbers[indentationLevel];
-                        string levelText = null;
+                        string? levelText = null;
                         var rlvl = lii.Lvl(indentationLevel);
 
-                        var numFmtString = (string)rlvl.Elements(W.numFmt).Attributes(W.val).FirstOrDefault();
+                        var numFmtString = (string?)rlvl.Elements(W.numFmt).Attributes(W.val).FirstOrDefault();
                         if (numFmtString is null)
                         {
                             var numFmtElement = rlvl.Elements(MC.AlternateContent)
                                 .Elements(MC.Choice)
                                 .Elements(W.numFmt)
                                 .FirstOrDefault();
-                            if (numFmtElement is not null && (string)numFmtElement.Attribute(W.val) == "custom")
-                                numFmtString = (string)numFmtElement.Attribute(W.format);
+                            if (numFmtElement is not null && (string?)numFmtElement.Attribute(W.val) == "custom")
+                                numFmtString = (string?)numFmtElement.Attribute(W.format);
                         }
 
                         // Convert XML string token to strictly typed enum representation
-                        var numFmtForLevel = NumberingFormatTypeExtensions.ParseOpenXmlFormat(numFmtString);
+                        var numFmtForLevel = numFmtString.ParseOpenXmlFormat();
 
                         // Legal style overrides: forced to Decimal unless it is DecimalZero
                         if (numFmtForLevel != NumberingFormatType.None)

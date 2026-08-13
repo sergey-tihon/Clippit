@@ -1,11 +1,25 @@
-﻿namespace Clippit.Word.Enums;
+﻿using Clippit.Word.Enums;
 
+namespace Clippit.Word.Extensions;
+
+/// <summary>
+/// Provides extension methods for the <see cref="NumberingFormatType"/> enumeration.
+/// </summary>
 public static class NumberingFormatTypeExtensions
 {
-    public static NumberingFormatType ParseOpenXmlFormat(string formatStr)
+    /// <summary>
+    /// Parses a string representation of an OpenXML numbering format into its corresponding <see cref="NumberingFormatType"/> value.
+    /// </summary>
+    /// <param name="formatStr">The OpenXML format string to parse. Can be <see langword="null"/>.</param>
+    /// <returns>
+    /// The matching <see cref="NumberingFormatType"/> value; otherwise, <see cref="NumberingFormatType.Unspecified"/> 
+    /// if the string is <see langword="null"/>, empty, or unrecognized.
+    /// </returns>
+    public static NumberingFormatType ParseOpenXmlFormat(this string? formatStr)
     {
         return formatStr switch
         {
+            "none" => NumberingFormatType.None,
             "decimal" => NumberingFormatType.Decimal,
             "upperRoman" => NumberingFormatType.UpperRoman,
             "lowerRoman" => NumberingFormatType.LowerRoman,
@@ -24,7 +38,7 @@ public static class NumberingFormatTypeExtensions
             "001, 002, 003, ..." => NumberingFormatType.DecimalPadded3,
             "0001, 0002, 0003, ..." => NumberingFormatType.DecimalPadded4,
             "00001, 00002, 00003, ..." => NumberingFormatType.DecimalPadded5,
-            _ => NumberingFormatType.None
+            _ => NumberingFormatType.Unspecified
         };
     }
 }

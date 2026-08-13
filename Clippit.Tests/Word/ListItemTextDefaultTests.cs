@@ -254,9 +254,11 @@ public sealed class ListItemTextDefaultTests
     // ── unknown / default ────────────────────────────────────────────────────
 
     [Test]
-    public async Task LDef014_UnknownFormat_FallsBackToDecimal()
+    [Arguments((NumberingFormatType)999)]
+    [Arguments(NumberingFormatType.Unspecified)]
+    public async Task LDef014_UnknownFormat_FallsBackToDecimal(NumberingFormatType undefinedFormat)
     {
-        var result = ListItemTextGetter_Default.GetListItemText(42, NumberingFormatType.None);
+        var result = ListItemTextGetter_Default.GetListItemText(42, undefinedFormat);
         await Assert.That(result).IsEqualTo("42");
     }
 }

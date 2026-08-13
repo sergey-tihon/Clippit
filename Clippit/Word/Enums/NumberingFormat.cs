@@ -2,38 +2,124 @@
 
 namespace Clippit.Word.Enums;
 
+/// <summary>
+/// Specifies the formatting type applied to a numbering sequence.
+/// </summary>
+/// <remarks>These values correspond to the OpenXML <c>w:numFmt</c> specification.</remarks>
 [SuppressMessage("Naming", "CA1720:Identifier contains type name", Justification = "Matches OpenXML w:numFmt spec")]
 public enum NumberingFormatType
 {
-    None = 0,
-    Decimal = 1,
-    UpperRoman = 2,
-    LowerRoman = 3,
-    UpperLetter = 4,
-    LowerLetter = 5,
-    Bullet = 6,
-    Ordinal = 7,
-    CardinalText = 8,
-    OrdinalText = 9,
-    DecimalZero = 10,
-    DecimalEnclosedCircle = 11,
-    IdeographTraditional = 12,
-    ChineseCounting = 13,
-    ChineseCountingThousand = 14,
     /// <summary>
-    /// "01, 02, 03, ..."
+    /// The numbering format is unspecified, unrecognized, or missing.
     /// </summary>
-    DecimalPadded2 = 15,
+    Unspecified = 0,
+
     /// <summary>
-    /// "001, 002, 003, ..."
+    /// Explicitly specifies that no numbering format is applied.
     /// </summary>
-    DecimalPadded3 = 16,
+    None = 1,
+
     /// <summary>
-    /// "0001, 0002, 0003, ..."
+    /// Decimal numbers.
     /// </summary>
-    DecimalPadded4 = 17,
+    /// <example>1, 2, 3, ...</example>
+    Decimal = 2,
+
     /// <summary>
-    /// "00001, 00002, 00003, ..."
+    /// Uppercase Roman numerals.
     /// </summary>
-    DecimalPadded5 = 18
+    /// <example>I, II, III, ...</example>
+    UpperRoman = 3,
+
+    /// <summary>
+    /// Lowercase Roman numerals.
+    /// </summary>
+    /// <example>i, ii, iii, ...</example>
+    LowerRoman = 4,
+
+    /// <summary>
+    /// Uppercase Latin letters.
+    /// </summary>
+    /// <example>A, B, C, ...</example>
+    UpperLetter = 5,
+
+    /// <summary>
+    /// Lowercase Latin letters.
+    /// </summary>
+    /// <example>a, b, c, ...</example>
+    LowerLetter = 6,
+
+    /// <summary>
+    /// Bullet characters.
+    /// </summary>
+    Bullet = 7,
+
+    /// <summary>
+    /// Ordinal numbers.
+    /// </summary>
+    /// <example>1st, 2nd, 3rd, ...</example>
+    Ordinal = 8,
+
+    /// <summary>
+    /// Cardinal text numbers.
+    /// </summary>
+    /// <example>One, Two, Three, ...</example>
+    CardinalText = 9,
+
+    /// <summary>
+    /// Ordinal text numbers.
+    /// </summary>
+    /// <example>First, Second, Third, ...</example>
+    OrdinalText = 10,
+
+    /// <summary>
+    /// Decimal numbers.
+    /// </summary>
+    /// <example>1, 2, 3, ...</example>
+    DecimalZero = 11,
+
+    /// <summary>
+    /// Decimal numbers enclosed in a circle.
+    /// </summary>
+    /// <example>①, ②, ③, ...</example>
+    DecimalEnclosedCircle = 12,
+
+    /// <summary>
+    /// Traditional ideograph numbering.
+    /// </summary>
+    IdeographTraditional = 13,
+
+    /// <summary>
+    /// Chinese counting numbers.
+    /// </summary>
+    ChineseCounting = 14,
+
+    /// <summary>
+    /// Chinese counting thousand numbers.
+    /// </summary>
+    ChineseCountingThousand = 15,
+
+    /// <summary>
+    /// Decimal numbers padded with leading zeros to a minimum length of two characters.
+    /// </summary>
+    /// <example>01, 02, 03, ...</example>
+    DecimalPadded2 = 16,
+
+    /// <summary>
+    /// Decimal numbers padded with leading zeros to a minimum length of three characters.
+    /// </summary>
+    /// <example>001, 002, 003, ...</example>
+    DecimalPadded3 = 17,
+
+    /// <summary>
+    /// Decimal numbers padded with leading zeros to a minimum length of four characters.
+    /// </summary>
+    /// <example>0001, 0002, 0003, ...</example>
+    DecimalPadded4 = 18,
+
+    /// <summary>
+    /// Decimal numbers padded with leading zeros to a minimum length of five characters.
+    /// </summary>
+    /// <example>00001, 00002, 00003, ...</example>
+    DecimalPadded5 = 19
 }
