@@ -52,20 +52,23 @@ public sealed class NumberingFormatTypeExtensionsTests
     }
 
     [Test]
-    [Arguments("Decimal")]
-    [Arguments("ORDINAL")]
-    [Arguments("UPPERROMAN")]
-    [Arguments("LowerRoman")]
-    [Arguments("BULLET")]
-    [Arguments("ordinaltext")]
-    [Arguments("DecimalZero")]
-    [Arguments("ChineseCountingThousand")]
-    public async Task ParseOpenXmlFormat_IsCaseSensitive_ReturnsUnspecifiedWhenCaseMismatched(string input)
+    [Arguments("Decimal", NumberingFormatType.Decimal)]
+    [Arguments("ORDINAL", NumberingFormatType.Ordinal)]
+    [Arguments("UPPERROMAN", NumberingFormatType.UpperRoman)]
+    [Arguments("LowerRoman", NumberingFormatType.LowerRoman)]
+    [Arguments("BULLET", NumberingFormatType.Bullet)]
+    [Arguments("ordinaltext", NumberingFormatType.OrdinalText)]
+    [Arguments("DecimalZero", NumberingFormatType.DecimalZero)]
+    [Arguments("ChineseCountingThousand", NumberingFormatType.ChineseCountingThousand)]
+    public async Task ParseOpenXmlFormat_IsCaseInsensitive_ReturnsCorrectFormatType(
+        string input,
+        NumberingFormatType expected
+    )
     {
         // Act
         var result = input.ParseOpenXmlFormat();
 
         // Assert
-        await Assert.That(result).IsEqualTo(NumberingFormatType.Unspecified);
+        await Assert.That(result).IsEqualTo(expected);
     }
 }

@@ -8,6 +8,33 @@ namespace Clippit.Word.Extensions;
 public static class NumberingFormatTypeExtensions
 {
     /// <summary>
+    /// A case-insensitive mapping lookup dictionary to resolve OpenXML string format tokens
+    /// to their strongly-typed <see cref="NumberingFormatType"/> equivalents.
+    /// </summary>
+    private static readonly Dictionary<string, NumberingFormatType> s_formatMap = new(StringComparer.OrdinalIgnoreCase)
+    {
+        { "none", NumberingFormatType.None },
+        { "decimal", NumberingFormatType.Decimal },
+        { "upperRoman", NumberingFormatType.UpperRoman },
+        { "lowerRoman", NumberingFormatType.LowerRoman },
+        { "upperLetter", NumberingFormatType.UpperLetter },
+        { "lowerLetter", NumberingFormatType.LowerLetter },
+        { "bullet", NumberingFormatType.Bullet },
+        { "ordinal", NumberingFormatType.Ordinal },
+        { "cardinalText", NumberingFormatType.CardinalText },
+        { "ordinalText", NumberingFormatType.OrdinalText },
+        { "decimalZero", NumberingFormatType.DecimalZero },
+        { "decimalEnclosedCircle", NumberingFormatType.DecimalEnclosedCircle },
+        { "ideographTraditional", NumberingFormatType.IdeographTraditional },
+        { "chineseCounting", NumberingFormatType.ChineseCounting },
+        { "chineseCountingThousand", NumberingFormatType.ChineseCountingThousand },
+        { "01, 02, 03, ...", NumberingFormatType.DecimalPadded2 },
+        { "001, 002, 003, ...", NumberingFormatType.DecimalPadded3 },
+        { "0001, 0002, 0003, ...", NumberingFormatType.DecimalPadded4 },
+        { "00001, 00002, 00003, ...", NumberingFormatType.DecimalPadded5 },
+    };
+
+    /// <summary>
     /// Parses a string representation of an OpenXML numbering format into its corresponding <see cref="NumberingFormatType"/> value.
     /// </summary>
     /// <param name="formatStr">The OpenXML format string to parse. Can be <see langword="null"/>.</param>
@@ -17,28 +44,11 @@ public static class NumberingFormatTypeExtensions
     /// </returns>
     public static NumberingFormatType ParseOpenXmlFormat(this string? formatStr)
     {
-        return formatStr switch
+        if (formatStr is null)
         {
-            "none" => NumberingFormatType.None,
-            "decimal" => NumberingFormatType.Decimal,
-            "upperRoman" => NumberingFormatType.UpperRoman,
-            "lowerRoman" => NumberingFormatType.LowerRoman,
-            "upperLetter" => NumberingFormatType.UpperLetter,
-            "lowerLetter" => NumberingFormatType.LowerLetter,
-            "bullet" => NumberingFormatType.Bullet,
-            "ordinal" => NumberingFormatType.Ordinal,
-            "cardinalText" => NumberingFormatType.CardinalText,
-            "ordinalText" => NumberingFormatType.OrdinalText,
-            "decimalZero" => NumberingFormatType.DecimalZero,
-            "decimalEnclosedCircle" => NumberingFormatType.DecimalEnclosedCircle,
-            "ideographTraditional" => NumberingFormatType.IdeographTraditional,
-            "chineseCounting" => NumberingFormatType.ChineseCounting,
-            "chineseCountingThousand" => NumberingFormatType.ChineseCountingThousand,
-            "01, 02, 03, ..." => NumberingFormatType.DecimalPadded2,
-            "001, 002, 003, ..." => NumberingFormatType.DecimalPadded3,
-            "0001, 0002, 0003, ..." => NumberingFormatType.DecimalPadded4,
-            "00001, 00002, 00003, ..." => NumberingFormatType.DecimalPadded5,
-            _ => NumberingFormatType.Unspecified,
-        };
+            return NumberingFormatType.Unspecified;
+        }
+
+        return s_formatMap.TryGetValue(formatStr, out var formatType) ? formatType : NumberingFormatType.Unspecified;
     }
 }
