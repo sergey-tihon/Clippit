@@ -1081,7 +1081,7 @@ namespace Clippit.Word
                                 numFmtForLevel = NumberingFormatType.Decimal;
                         }
 
-                        // Delegate lookups still require string passing for backward compatibility with settings dictionary
+                        // Delegate lookup uses languageCultureName as the key; implementation receives the level number and the parsed NumberingFormatType.
                         if (languageCultureName is not null && settings is not null)
                         {
                             if (settings.ListItemTextImplementations.TryGetValue(languageCultureName, out var impl))
