@@ -1,7 +1,7 @@
 # Clippy Memory
 
 ## Last Run
-2026-08-12 16:01 UTC — Run 31615241491 (see memory.json for detailed structured state - this file is legacy/secondary)
+2026-08-13 16:01 UTC — Run 31718318521 (see memory.json for detailed structured state - this file is legacy/secondary)
 
 ## Comments Made
 - #54: ManageMediaCopy CRC32 improvement idea
@@ -21,9 +21,10 @@
 - #401: linked NuGet OIDC PR (now merged #407)
 
 ## Open Clippy PRs
-- #449: feat(excel): ExcelAssembler — rebased 2026-08-11 onto master (90cfe11), conflicts resolved, build+2317 tests pass, awaiting review
-- #470 (new): refactor: eliminate ContainsKey+indexer double lookups — build clean, 2307 tests pass, awaiting review
-- (new draft) perf: eliminate double dictionary lookup in PtBucketTimer.Bucket (branch clippy/perf-ptbuckettimer-double-lookup-20260812), build+2307 tests pass, awaiting review
+- #449: feat(excel): ExcelAssembler — rebased 2026-08-11 onto master (90cfe11), conflicts resolved, build+2317 tests pass, awaiting review (mergeable_state=dirty as of 2026-08-13, needs future rebase)
+- #470: refactor: eliminate ContainsKey+indexer double lookups — merged
+- #472: perf: eliminate double dictionary lookup in PtBucketTimer.Bucket — merged
+- (new draft) test: add unit tests for ColorParser (branch clippy/test-colorparser-20260813), build+csharpier+2313 tests pass, awaiting review
 
 ## Backlog Cursor
 Last issue processed: #401. All issues labelled. All issues have Clippy comments.
