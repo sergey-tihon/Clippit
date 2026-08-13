@@ -98,7 +98,7 @@ public class ListItemTextGetter_fr_FR
         "",
     ];
 
-    public static string GetListItemText(int levelNumber, NumberingFormatType numFmt)
+    public static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
         if (numFmt == NumberingFormatType.CardinalText)
         {

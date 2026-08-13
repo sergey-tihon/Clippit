@@ -214,7 +214,11 @@ public sealed class ListItemTextDefaultTests
     [Arguments(5, NumberingFormatType.DecimalPadded3, "005")]
     [Arguments(5, NumberingFormatType.DecimalPadded4, "0005")]
     [Arguments(5, NumberingFormatType.DecimalPadded5, "00005")]
-    public async Task LDef011_ZeroPaddedFormats_PadToCorrectWidth(int number, NumberingFormatType numFmt, string expected)
+    public async Task LDef011_ZeroPaddedFormats_PadToCorrectWidth(
+        int number,
+        NumberingFormatType numFmt,
+        string expected
+    )
     {
         var result = ListItemTextGetter_Default.GetListItemText(number, numFmt);
         await Assert.That(result).IsEqualTo(expected);

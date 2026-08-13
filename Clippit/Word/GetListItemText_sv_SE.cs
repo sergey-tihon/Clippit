@@ -73,7 +73,7 @@ public class ListItemTextGetter_sv_SE
         "nittonde",
     ];
 
-    public static string GetListItemText(int levelNumber, NumberingFormatType numFmt)
+    public static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
         return numFmt switch
         {

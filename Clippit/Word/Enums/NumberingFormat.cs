@@ -73,9 +73,9 @@ public enum NumberingFormatType
     OrdinalText = 10,
 
     /// <summary>
-    /// Decimal numbers.
+    /// Decimal numbers with a leading zero for single-digit values.
     /// </summary>
-    /// <example>1, 2, 3, ...</example>
+    /// <example>01, 02, 03, ...</example>
     DecimalZero = 11,
 
     /// <summary>
@@ -121,5 +121,5 @@ public enum NumberingFormatType
     /// Decimal numbers padded with leading zeros to a minimum length of five characters.
     /// </summary>
     /// <example>00001, 00002, 00003, ...</example>
-    DecimalPadded5 = 19
+    DecimalPadded5 = 19,
 }

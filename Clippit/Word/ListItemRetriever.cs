@@ -10,17 +10,18 @@ namespace Clippit.Word
 {
     public class ListItemRetrieverSettings
     {
-        public static Dictionary<string, Func<int, NumberingFormatType, string>> DefaultListItemTextImplementations = new()
-        {
-            { "de-DE", ListItemTextGetter_de_DE.GetListItemText },
-            { "es-ES", ListItemTextGetter_es_ES.GetListItemText },
-            { "fr-FR", ListItemTextGetter_fr_FR.GetListItemText },
-            { "tr-TR", ListItemTextGetter_tr_TR.GetListItemText },
-            { "ru-RU", ListItemTextGetter_ru_RU.GetListItemText },
-            { "sv-SE", ListItemTextGetter_sv_SE.GetListItemText },
-            { "zh-CN", ListItemTextGetter_zh_CN.GetListItemText },
-        };
-        public Dictionary<string, Func<int, NumberingFormatType, string>> ListItemTextImplementations =
+        public static Dictionary<string, Func<int, NumberingFormatType, string?>> DefaultListItemTextImplementations =
+            new()
+            {
+                { "de-DE", ListItemTextGetter_de_DE.GetListItemText },
+                { "es-ES", ListItemTextGetter_es_ES.GetListItemText },
+                { "fr-FR", ListItemTextGetter_fr_FR.GetListItemText },
+                { "tr-TR", ListItemTextGetter_tr_TR.GetListItemText },
+                { "ru-RU", ListItemTextGetter_ru_RU.GetListItemText },
+                { "sv-SE", ListItemTextGetter_sv_SE.GetListItemText },
+                { "zh-CN", ListItemTextGetter_zh_CN.GetListItemText },
+            };
+        public Dictionary<string, Func<int, NumberingFormatType, string?>> ListItemTextImplementations =
             DefaultListItemTextImplementations;
     }
 
@@ -719,8 +720,8 @@ namespace Clippit.Word
             if (lvlText is null)
                 return null;
 
-            var levelNumbersAnnotation = paragraph.Annotation<LevelNumbers>()
-                ?? throw new OpenXmlPowerToolsException("Internal error");
+            var levelNumbersAnnotation =
+                paragraph.Annotation<LevelNumbers>() ?? throw new OpenXmlPowerToolsException("Internal error");
 
             var levelNumbers = levelNumbersAnnotation.LevelNumbersArray;
             var languageIdentifier = GetLanguageIdentifier(paragraph, stylesXDoc);
@@ -1038,7 +1039,8 @@ namespace Clippit.Word
             int ilvl,
             string lvlText,
             string languageCultureName,
-            ListItemRetrieverSettings settings)
+            ListItemRetrieverSettings settings
+        )
         {
             var formatTokens = GetFormatTokens(lvlText).ToArray();
             var lvl = lii.Lvl(ilvl);
@@ -1086,11 +1088,9 @@ namespace Clippit.Word
                                 levelText = impl(levelNumber, numFmtForLevel);
                         }
 
-                        levelText ??= ListItemTextGetter_Default.GetListItemText(
-                            levelNumber,
-                            numFmtForLevel);
+                        levelText ??= ListItemTextGetter_Default.GetListItemText(levelNumber, numFmtForLevel);
 
-                        return levelText;
+                        return levelText ?? string.Empty;
                     }
                 )
                 .StringConcatenate();

@@ -145,7 +145,7 @@ public class ListItemTextGetter_ru_RU
             _ => OneThroughNineteen[t1 - 1] + "тысячный",
         };
 
-    public static string GetListItemText(int levelNumber, NumberingFormatType numFmt)
+    public static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
         if (numFmt == NumberingFormatType.CardinalText)
         {

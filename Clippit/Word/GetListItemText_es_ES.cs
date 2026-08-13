@@ -179,7 +179,7 @@ public class ListItemTextGetter_es_ES
         return result;
     }
 
-    public static string GetListItemText(int levelNumber, NumberingFormatType numFmt)
+    public static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
         if (numFmt == NumberingFormatType.CardinalText)
         {

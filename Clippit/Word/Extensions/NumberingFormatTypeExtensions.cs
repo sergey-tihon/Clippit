@@ -12,7 +12,7 @@ public static class NumberingFormatTypeExtensions
     /// </summary>
     /// <param name="formatStr">The OpenXML format string to parse. Can be <see langword="null"/>.</param>
     /// <returns>
-    /// The matching <see cref="NumberingFormatType"/> value; otherwise, <see cref="NumberingFormatType.Unspecified"/> 
+    /// The matching <see cref="NumberingFormatType"/> value; otherwise, <see cref="NumberingFormatType.Unspecified"/>
     /// if the string is <see langword="null"/>, empty, or unrecognized.
     /// </returns>
     public static NumberingFormatType ParseOpenXmlFormat(this string? formatStr)
@@ -38,7 +38,7 @@ public static class NumberingFormatTypeExtensions
             "001, 002, 003, ..." => NumberingFormatType.DecimalPadded3,
             "0001, 0002, 0003, ..." => NumberingFormatType.DecimalPadded4,
             "00001, 00002, 00003, ..." => NumberingFormatType.DecimalPadded5,
-            _ => NumberingFormatType.Unspecified
+            _ => NumberingFormatType.Unspecified,
         };
     }
 }

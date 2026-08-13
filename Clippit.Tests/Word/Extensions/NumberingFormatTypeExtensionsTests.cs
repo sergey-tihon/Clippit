@@ -25,7 +25,10 @@ public sealed class NumberingFormatTypeExtensionsTests
     [Arguments("001, 002, 003, ...", NumberingFormatType.DecimalPadded3)]
     [Arguments("0001, 0002, 0003, ...", NumberingFormatType.DecimalPadded4)]
     [Arguments("00001, 00002, 00003, ...", NumberingFormatType.DecimalPadded5)]
-    public async Task ParseOpenXmlFormat_WithValidString_ReturnsExpectedFormatType(string input, NumberingFormatType expected)
+    public async Task ParseOpenXmlFormat_WithValidString_ReturnsExpectedFormatType(
+        string input,
+        NumberingFormatType expected
+    )
     {
         // Act
         var result = input.ParseOpenXmlFormat();

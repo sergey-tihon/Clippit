@@ -105,7 +105,7 @@ public class ListItemTextGetter_tr_TR
 
     private static readonly TextInfo s_trTRTextInfo = CultureInfo.GetCultureInfo("tr-TR").TextInfo;
 
-    public static string GetListItemText(int levelNumber, NumberingFormatType numFmt)
+    public static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
         #region
         if (numFmt == NumberingFormatType.Decimal)

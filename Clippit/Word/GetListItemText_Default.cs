@@ -79,7 +79,7 @@ internal class ListItemTextGetter_Default
         "ninetieth",
     ];
 
-    public static string GetListItemText(int levelNumber, NumberingFormatType numFmt)
+    public static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
         switch (numFmt)
         {
