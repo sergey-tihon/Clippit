@@ -37,7 +37,9 @@ public class ColorParserTests
     [Test]
     public async Task CP003_TryFromName_NullName_DoesNotThrowAndReturnsFalse()
     {
-        var result = ColorParser.TryFromName(null!, out var color);
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+        var result = ColorParser.TryFromName(null, out var color);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
         await Assert.That(result).IsFalse();
         await Assert.That(color).IsEqualTo(default(Color));
