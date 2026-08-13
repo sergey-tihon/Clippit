@@ -1,7 +1,7 @@
 # Clippy Memory
 
 ## Last Run
-2026-08-13 16:01 UTC — Run 31718318521 (see memory.json for detailed structured state - this file is legacy/secondary)
+2026-08-13 20:51 UTC — Run 31742767027 (see memory.json for detailed structured state - this file is legacy/secondary)
 
 ## Comments Made
 - #54: ManageMediaCopy CRC32 improvement idea
@@ -24,7 +24,11 @@
 - #449: feat(excel): ExcelAssembler — rebased 2026-08-11 onto master (90cfe11), conflicts resolved, build+2317 tests pass, awaiting review (mergeable_state=dirty as of 2026-08-13, needs future rebase)
 - #470: refactor: eliminate ContainsKey+indexer double lookups — merged
 - #472: perf: eliminate double dictionary lookup in PtBucketTimer.Bucket — merged
-- (new draft) test: add unit tests for ColorParser (branch clippy/test-colorparser-20260813), build+csharpier+2313 tests pass, awaiting review
+- (draft) test: add unit tests for ColorParser (branch clippy/test-colorparser-20260813), build+csharpier+2313 tests pass, awaiting review
+- (draft) perf: eliminate double dictionary/SortedList lookups in WorksheetAccessor and FieldRetriever (branch clippy/perf-double-lookups-worksheetaccessor-fieldretriever-20260813), build+csharpier+2307 tests pass, awaiting review
+
+## Other Open PRs
+- #474: alexeysp11's numbering format enum refactor (breaking change, not a Clippy PR), CI in progress as of 2026-08-13
 
 ## Backlog Cursor
 Last issue processed: #401. All issues labelled. All issues have Clippy comments.
