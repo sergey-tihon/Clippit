@@ -13,25 +13,29 @@ namespace Clippit.Excel
 
         public void SetCellValue(int row, int column, object value)
         {
-            if (!rowList.ContainsKey(row))
-                rowList.Add(row, new MemoryRow(row));
-            var mr = rowList[row];
+            if (!rowList.TryGetValue(row, out var mr))
+            {
+                mr = new MemoryRow(row);
+                rowList.Add(row, mr);
+            }
             mr.SetCell(new MemoryCell(column, value));
         }
 
         public void SetCellValue(int row, int column, object value, int styleIndex)
         {
-            if (!rowList.ContainsKey(row))
-                rowList.Add(row, new MemoryRow(row));
-            var mr = rowList[row];
+            if (!rowList.TryGetValue(row, out var mr))
+            {
+                mr = new MemoryRow(row);
+                rowList.Add(row, mr);
+            }
             mr.SetCell(new MemoryCell(column, value, styleIndex));
         }
 
         public object GetCellValue(int row, int column)
         {
-            if (!rowList.ContainsKey(row))
+            if (!rowList.TryGetValue(row, out var mr))
                 return null;
-            var cell = rowList[row].GetCell(column);
+            var cell = mr.GetCell(column);
             if (cell is null)
                 return null;
             return cell.GetValue();
@@ -52,16 +56,12 @@ namespace Clippit.Excel
 
         public MemoryCell GetCell(int column)
         {
-            if (!cellList.ContainsKey(column))
-                return null;
-            return cellList[column];
+            return cellList.TryGetValue(column, out var cell) ? cell : null;
         }
 
         public void SetCell(MemoryCell cell)
         {
-            if (cellList.ContainsKey(cell.GetColumn()))
-                cellList.Remove(cell.GetColumn());
-            cellList.Add(cell.GetColumn(), cell);
+            cellList[cell.GetColumn()] = cell;
         }
 
         public XElement GetElements()
