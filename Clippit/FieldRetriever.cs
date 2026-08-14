@@ -15,9 +15,8 @@ public class FieldRetriever
             throw new OpenXmlPowerToolsException("Internal error");
 
         // it is possible that a field code contains no instr text
-        if (!cachedAnnotationInformation.ContainsKey(id))
+        if (!cachedAnnotationInformation.TryGetValue(id, out var relevantElements))
             return "";
-        var relevantElements = cachedAnnotationInformation[id];
 
         var groupedSubFields = relevantElements
             .GroupAdjacent(e =>
