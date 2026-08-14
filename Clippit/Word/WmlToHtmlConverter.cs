@@ -45,7 +45,7 @@ namespace Clippit.Word
         public string AdditionalCss;
         public bool RestrictToSupportedLanguages;
         public bool RestrictToSupportedNumberingFormats;
-        public Dictionary<string, Func<int, NumberingFormatType, string>> ListItemImplementations;
+        public Dictionary<string, Func<int, NumberingFormatType, string?>> ListItemImplementations;
         public Func<ImageInfo, XElement> ImageHandler;
 
         public WmlToHtmlConverterSettings()
@@ -84,7 +84,7 @@ namespace Clippit.Word
         public string AdditionalCss = "";
         public bool RestrictToSupportedLanguages = false;
         public bool RestrictToSupportedNumberingFormats = false;
-        public Dictionary<string, Func<int, NumberingFormatType, string>> ListItemImplementations =
+        public Dictionary<string, Func<int, NumberingFormatType, string?>> ListItemImplementations =
             ListItemRetrieverSettings.DefaultListItemTextImplementations;
         public Func<ImageInfo, XElement> ImageHandler;
     }
