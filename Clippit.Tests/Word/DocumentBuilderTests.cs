@@ -7,7 +7,7 @@ using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Tests.Word;
 
-public sealed class DocumentBuilderTests : TestsBase
+public class DocumentBuilderTests : TestsBase
 {
     private readonly DirectoryInfo _sourceDir = new("../../../../TestFiles/");
 
@@ -349,7 +349,7 @@ public sealed class DocumentBuilderTests : TestsBase
         Validate(outFi);
     }
 
-    private sealed class DocumentInfo
+    private class DocumentInfo
     {
         public int DocumentNumber;
         public int Start;

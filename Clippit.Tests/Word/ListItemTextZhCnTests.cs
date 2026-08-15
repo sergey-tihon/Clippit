@@ -1,15 +1,14 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Clippit.Word;
-using Clippit.Word.Enums;
 
 namespace Clippit.Tests.Word;
 
 /// <summary>
 /// Unit tests for <see cref="ListItemTextGetter_zh_CN.GetListItemText"/>.
 /// </summary>
-public sealed class ListItemTextZhCnTests
+public class ListItemTextZhCnTests
 {
     // ── chineseCounting — ones ────────────────────────────────────────────────
 
@@ -19,7 +18,7 @@ public sealed class ListItemTextZhCnTests
     [Arguments(9, "九")]
     public async Task LZhCn001_ChineseCounting_Ones_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_zh_CN.GetListItemText(number, NumberingFormatType.ChineseCounting);
+        var result = ListItemTextGetter_zh_CN.GetListItemText("zh-CN", number, "chineseCounting");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -34,7 +33,7 @@ public sealed class ListItemTextZhCnTests
     [Arguments(99, "九十九")]
     public async Task LZhCn002_ChineseCounting_Tens_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_zh_CN.GetListItemText(number, NumberingFormatType.ChineseCounting);
+        var result = ListItemTextGetter_zh_CN.GetListItemText("zh-CN", number, "chineseCounting");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -48,7 +47,7 @@ public sealed class ListItemTextZhCnTests
     [Arguments(1234, "一二三四")]
     public async Task LZhCn003_ChineseCounting_HundredsAndThousands_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_zh_CN.GetListItemText(number, NumberingFormatType.ChineseCounting);
+        var result = ListItemTextGetter_zh_CN.GetListItemText("zh-CN", number, "chineseCounting");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -62,7 +61,7 @@ public sealed class ListItemTextZhCnTests
     [Arguments(19, "十九")]
     public async Task LZhCn004_ChineseCountingThousand_OnesToNineteen_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_zh_CN.GetListItemText(number, NumberingFormatType.ChineseCountingThousand);
+        var result = ListItemTextGetter_zh_CN.GetListItemText("zh-CN", number, "chineseCountingThousand");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -74,7 +73,7 @@ public sealed class ListItemTextZhCnTests
     [Arguments(99, "九十九")]
     public async Task LZhCn005_ChineseCountingThousand_Tens_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_zh_CN.GetListItemText(number, NumberingFormatType.ChineseCountingThousand);
+        var result = ListItemTextGetter_zh_CN.GetListItemText("zh-CN", number, "chineseCountingThousand");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -88,7 +87,7 @@ public sealed class ListItemTextZhCnTests
     [Arguments(200, "二百")]
     public async Task LZhCn006_ChineseCountingThousand_Hundreds_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_zh_CN.GetListItemText(number, NumberingFormatType.ChineseCountingThousand);
+        var result = ListItemTextGetter_zh_CN.GetListItemText("zh-CN", number, "chineseCountingThousand");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -104,7 +103,7 @@ public sealed class ListItemTextZhCnTests
     [Arguments(2000, "二千")]
     public async Task LZhCn007_ChineseCountingThousand_Thousands_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_zh_CN.GetListItemText(number, NumberingFormatType.ChineseCountingThousand);
+        var result = ListItemTextGetter_zh_CN.GetListItemText("zh-CN", number, "chineseCountingThousand");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -123,7 +122,7 @@ public sealed class ListItemTextZhCnTests
     [Arguments(10, "癸")]
     public async Task LZhCn008_IdeographTraditional_OneToTen_ReturnsExpected(int number, string expected)
     {
-        var result = ListItemTextGetter_zh_CN.GetListItemText(number, NumberingFormatType.IdeographTraditional);
+        var result = ListItemTextGetter_zh_CN.GetListItemText("zh-CN", number, "ideographTraditional");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -132,7 +131,7 @@ public sealed class ListItemTextZhCnTests
     [Arguments(100)]
     public async Task LZhCn009_IdeographTraditional_OutOfRange_FallsBackToDecimal(int number)
     {
-        var result = ListItemTextGetter_zh_CN.GetListItemText(number, NumberingFormatType.IdeographTraditional);
+        var result = ListItemTextGetter_zh_CN.GetListItemText("zh-CN", number, "ideographTraditional");
         await Assert.That(result).IsEqualTo(number.ToString());
     }
 }

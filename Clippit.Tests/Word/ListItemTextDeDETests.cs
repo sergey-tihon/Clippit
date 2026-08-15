@@ -1,12 +1,11 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Clippit.Word;
-using Clippit.Word.Enums;
 
 namespace Clippit.Tests.Word;
 
-public sealed class ListItemTextDeDETests
+public class ListItemTextDeDETests
 {
     // ── Out-of-range guards ───────────────────────────────────────────────────
 
@@ -16,7 +15,7 @@ public sealed class ListItemTextDeDETests
     [Arguments(20000, "20000")]
     public async Task LDE000_OutOfRange_FallsBackToDecimal_CardinalText(int number, string expected)
     {
-        var result = ListItemTextGetter_de_DE.GetListItemText(number, NumberingFormatType.CardinalText);
+        var result = ListItemTextGetter_de_DE.GetListItemText("de-DE", number, "cardinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -26,7 +25,7 @@ public sealed class ListItemTextDeDETests
     [Arguments(20000, "20000")]
     public async Task LDE000b_OutOfRange_FallsBackToDecimal_OrdinalText(int number, string expected)
     {
-        var result = ListItemTextGetter_de_DE.GetListItemText(number, NumberingFormatType.OrdinalText);
+        var result = ListItemTextGetter_de_DE.GetListItemText("de-DE", number, "ordinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -36,7 +35,7 @@ public sealed class ListItemTextDeDETests
     [Arguments(20000)]
     public async Task LDE000c_UnsupportedFormat_ReturnsNull(int number)
     {
-        var result = ListItemTextGetter_de_DE.GetListItemText(number, NumberingFormatType.None);
+        var result = ListItemTextGetter_de_DE.GetListItemText("de-DE", number, "unsupportedFormat");
         await Assert.That(result).IsNull();
     }
 
@@ -52,7 +51,7 @@ public sealed class ListItemTextDeDETests
     [Arguments(19, "Neunzehn")]
     public async Task LDE001_CardinalText_OneThroughNineteen(int number, string expected)
     {
-        var result = ListItemTextGetter_de_DE.GetListItemText(number, NumberingFormatType.CardinalText);
+        var result = ListItemTextGetter_de_DE.GetListItemText("de-DE", number, "cardinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -67,7 +66,7 @@ public sealed class ListItemTextDeDETests
     [Arguments(99, "Neunundneunzig")]
     public async Task LDE002_CardinalText_TwentyThroughNinetyNine(int number, string expected)
     {
-        var result = ListItemTextGetter_de_DE.GetListItemText(number, NumberingFormatType.CardinalText);
+        var result = ListItemTextGetter_de_DE.GetListItemText("de-DE", number, "cardinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -81,7 +80,7 @@ public sealed class ListItemTextDeDETests
     [Arguments(999, "Neunhundertneunundneunzig")]
     public async Task LDE003_CardinalText_Hundreds(int number, string expected)
     {
-        var result = ListItemTextGetter_de_DE.GetListItemText(number, NumberingFormatType.CardinalText);
+        var result = ListItemTextGetter_de_DE.GetListItemText("de-DE", number, "cardinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -94,7 +93,7 @@ public sealed class ListItemTextDeDETests
     [Arguments(19999, "Neunzehntausendneunhundertneunundneunzig")]
     public async Task LDE004_CardinalText_Thousands(int number, string expected)
     {
-        var result = ListItemTextGetter_de_DE.GetListItemText(number, NumberingFormatType.CardinalText);
+        var result = ListItemTextGetter_de_DE.GetListItemText("de-DE", number, "cardinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -110,7 +109,7 @@ public sealed class ListItemTextDeDETests
     [Arguments(19, "Neunzehnte")]
     public async Task LDE010_OrdinalText_OneThroughNineteen(int number, string expected)
     {
-        var result = ListItemTextGetter_de_DE.GetListItemText(number, NumberingFormatType.OrdinalText);
+        var result = ListItemTextGetter_de_DE.GetListItemText("de-DE", number, "ordinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -124,7 +123,7 @@ public sealed class ListItemTextDeDETests
     [Arguments(99, "Neunundneunzigste")]
     public async Task LDE011_OrdinalText_TwentyThroughNinetyNine(int number, string expected)
     {
-        var result = ListItemTextGetter_de_DE.GetListItemText(number, NumberingFormatType.OrdinalText);
+        var result = ListItemTextGetter_de_DE.GetListItemText("de-DE", number, "ordinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -138,7 +137,7 @@ public sealed class ListItemTextDeDETests
     [Arguments(121, "Hunderteinundzwanzigste")]
     public async Task LDE012_OrdinalText_Hundreds(int number, string expected)
     {
-        var result = ListItemTextGetter_de_DE.GetListItemText(number, NumberingFormatType.OrdinalText);
+        var result = ListItemTextGetter_de_DE.GetListItemText("de-DE", number, "ordinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -150,7 +149,7 @@ public sealed class ListItemTextDeDETests
     [Arguments(1100, "Tausendhundertste")]
     public async Task LDE013_OrdinalText_Thousands(int number, string expected)
     {
-        var result = ListItemTextGetter_de_DE.GetListItemText(number, NumberingFormatType.OrdinalText);
+        var result = ListItemTextGetter_de_DE.GetListItemText("de-DE", number, "ordinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 }

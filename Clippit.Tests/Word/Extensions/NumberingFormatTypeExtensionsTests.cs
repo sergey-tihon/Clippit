@@ -1,9 +1,10 @@
-﻿using Clippit.Word.Enums;
+﻿using Clippit.Word;
+using Clippit.Word.Enums;
 using Clippit.Word.Extensions;
 
 namespace Clippit.Tests.Word.Extensions;
 
-public sealed class NumberingFormatTypeExtensionsTests
+internal sealed class NumberingFormatTypeExtensionsTests
 {
     [Test]
     [Arguments("none", NumberingFormatType.None)]
@@ -49,6 +50,16 @@ public sealed class NumberingFormatTypeExtensionsTests
 
         // Assert
         await Assert.That(result).IsEqualTo(NumberingFormatType.Unspecified);
+    }
+
+    [Test]
+    public async Task LegacyListItemTextDelegate_StillAcceptsRawFormat()
+    {
+        var implementation = ListItemRetrieverSettings.DefaultListItemTextImplementations["de-DE"];
+
+        var result = implementation("de-DE", 1, "cardinalText");
+
+        await Assert.That(result).IsEqualTo("Ein");
     }
 
     [Test]

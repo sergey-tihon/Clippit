@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Clippit.Word.Enums;
+using Clippit.Word.Extensions;
 
 namespace Clippit.Word;
 
@@ -79,7 +80,10 @@ internal class ListItemTextGetter_Default
         "ninetieth",
     ];
 
-    public static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
+    public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt) =>
+        GetListItemText(levelNumber, numFmt.ParseOpenXmlFormat())!;
+
+    internal static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
         switch (numFmt)
         {

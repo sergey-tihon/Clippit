@@ -3,6 +3,7 @@
 
 using System.Globalization;
 using Clippit.Word.Enums;
+using Clippit.Word.Extensions;
 
 namespace Clippit.Word;
 
@@ -105,7 +106,10 @@ public class ListItemTextGetter_tr_TR
 
     private static readonly TextInfo s_trTRTextInfo = CultureInfo.GetCultureInfo("tr-TR").TextInfo;
 
-    public static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
+    public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt) =>
+        GetListItemText(levelNumber, numFmt.ParseOpenXmlFormat())!;
+
+    private static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
         #region
         if (numFmt == NumberingFormatType.Decimal)

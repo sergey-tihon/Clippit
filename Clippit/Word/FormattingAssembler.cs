@@ -267,7 +267,13 @@ namespace Clippit.Word
                             var listItemLvlRunProps = listItemLvl.Elements(W.rPr).FirstOrDefault();
                             listItemRunProps = MergeStyleElement(listItemLvlRunProps, mergedRunProps);
 
-                            if ((string)listItemLvl.Elements(W.numFmt).Attributes(W.val).FirstOrDefault() == "bullet")
+                            if (
+                                string.Equals(
+                                    (string)listItemLvl.Elements(W.numFmt).Attributes(W.val).FirstOrDefault(),
+                                    "bullet",
+                                    StringComparison.OrdinalIgnoreCase
+                                )
+                            )
                             {
                                 listItemRunProps.Elements(W.rtl).Remove();
                             }
@@ -1971,11 +1977,18 @@ namespace Clippit.Word
                             .Elements(MC.Choice)
                             .Elements(W.numFmt)
                             .FirstOrDefault();
-                        if (numFmtElement is not null && (string)numFmtElement.Attribute(W.val) == "custom")
+                        if (
+                            numFmtElement is not null
+                            && string.Equals(
+                                (string)numFmtElement.Attribute(W.val),
+                                "custom",
+                                StringComparison.OrdinalIgnoreCase
+                            )
+                        )
                             numFmtForLevel = (string)numFmtElement.Attribute(W.format);
                     }
                     var isLgl = lif.Lvl(ListItemRetriever.GetParagraphLevel(para)).Elements(W.isLgl).Any();
-                    if (isLgl && numFmtForLevel != "decimalZero")
+                    if (isLgl && !string.Equals(numFmtForLevel, "decimalZero", StringComparison.OrdinalIgnoreCase))
                         numFmtForLevel = "decimal";
                     if (!AcceptableNumFormats.Contains(numFmtForLevel))
                         throw new UnsupportedNumberingFormatException(
@@ -2047,6 +2060,7 @@ namespace Clippit.Word
         }
 
         private static readonly FrozenSet<string> AcceptableNumFormats = FrozenSet.Create(
+            StringComparer.OrdinalIgnoreCase,
             "decimal",
             "decimalZero",
             "upperRoman",

@@ -4,9 +4,9 @@ using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Tests.Word.Samples
 {
-    public sealed class ListItemRetrieverSamples() : Clippit.Tests.TestsBase
+    public class ListItemRetrieverSamples() : Clippit.Tests.TestsBase
     {
-        private sealed class XmlStackItem
+        private class XmlStackItem
         {
             public XElement Element { get; init; }
             public int[] LevelNumbers { get; init; }

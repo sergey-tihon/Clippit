@@ -3,6 +3,7 @@
 
 using System.Globalization;
 using Clippit.Word.Enums;
+using Clippit.Word.Extensions;
 
 namespace Clippit.Word;
 
@@ -73,7 +74,10 @@ public class ListItemTextGetter_sv_SE
         "nittonde",
     ];
 
-    public static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
+    public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt) =>
+        GetListItemText(levelNumber, numFmt.ParseOpenXmlFormat())!;
+
+    private static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
         return numFmt switch
         {

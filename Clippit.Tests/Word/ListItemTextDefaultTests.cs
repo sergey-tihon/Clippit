@@ -1,8 +1,7 @@
-﻿// Copyright (c) Microsoft. All rights reserved.
+// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Clippit.Word;
-using Clippit.Word.Enums;
 
 namespace Clippit.Tests.Word;
 
@@ -11,14 +10,14 @@ namespace Clippit.Tests.Word;
 /// This is the primary list-numbering implementation for all non-locale-specific formats.
 /// The class is internal and exposed via InternalsVisibleTo("Clippit.Tests").
 /// </summary>
-public sealed class ListItemTextDefaultTests
+public class ListItemTextDefaultTests
 {
     // ── none ────────────────────────────────────────────────────────────────
 
     [Test]
     public async Task LDef001_None_ReturnsEmpty()
     {
-        var result = ListItemTextGetter_Default.GetListItemText(5, NumberingFormatType.None);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", 5, "none");
         await Assert.That(result).IsEqualTo("");
     }
 
@@ -31,7 +30,7 @@ public sealed class ListItemTextDefaultTests
     [Arguments(100, "100")]
     public async Task LDef002_Decimal_ReturnsNumberAsString(int number, string expected)
     {
-        var result = ListItemTextGetter_Default.GetListItemText(number, NumberingFormatType.Decimal);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", number, "decimal");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -45,7 +44,7 @@ public sealed class ListItemTextDefaultTests
     [Arguments(100, "100")]
     public async Task LDef003_DecimalZero_PadsSingleDigitsWithLeadingZero(int number, string expected)
     {
-        var result = ListItemTextGetter_Default.GetListItemText(number, NumberingFormatType.DecimalZero);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", number, "decimalZero");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -59,7 +58,7 @@ public sealed class ListItemTextDefaultTests
     [Arguments(1999, "MCMXCIX")]
     public async Task LDef004_UpperRoman_ReturnsUppercaseRomanNumerals(int number, string expected)
     {
-        var result = ListItemTextGetter_Default.GetListItemText(number, NumberingFormatType.UpperRoman);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", number, "upperRoman");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -73,7 +72,7 @@ public sealed class ListItemTextDefaultTests
     [Arguments(1999, "mcmxcix")]
     public async Task LDef005_LowerRoman_ReturnsLowercaseRomanNumerals(int number, string expected)
     {
-        var result = ListItemTextGetter_Default.GetListItemText(number, NumberingFormatType.LowerRoman);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", number, "lowerRoman");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -87,7 +86,7 @@ public sealed class ListItemTextDefaultTests
     [Arguments(53, "AAA")]
     public async Task LDef006_UpperLetter_SequenceAtoZThenDoubled(int number, string expected)
     {
-        var result = ListItemTextGetter_Default.GetListItemText(number, NumberingFormatType.UpperLetter);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", number, "upperLetter");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -95,7 +94,7 @@ public sealed class ListItemTextDefaultTests
     public async Task LDef006b_UpperLetter_WrapAroundAt780_Restarts()
     {
         // After 780 the sequence wraps: 781 → "A" again
-        var result = ListItemTextGetter_Default.GetListItemText(781, NumberingFormatType.UpperLetter);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", 781, "upperLetter");
         await Assert.That(result).IsEqualTo("A");
     }
 
@@ -109,7 +108,7 @@ public sealed class ListItemTextDefaultTests
     [Arguments(53, "aaa")]
     public async Task LDef007_LowerLetter_SequenceAtoZThenDoubled(int number, string expected)
     {
-        var result = ListItemTextGetter_Default.GetListItemText(number, NumberingFormatType.LowerLetter);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", number, "lowerLetter");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -131,7 +130,7 @@ public sealed class ListItemTextDefaultTests
     [Arguments(121, "121st")]
     public async Task LDef008_Ordinal_AppliesCorrectSuffix(int number, string expected)
     {
-        var result = ListItemTextGetter_Default.GetListItemText(number, NumberingFormatType.Ordinal);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", number, "ordinal");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -156,7 +155,7 @@ public sealed class ListItemTextDefaultTests
     [Arguments(2019, "Two thousand nineteen")]
     public async Task LDef009_CardinalText_EnglishWords(int number, string expected)
     {
-        var result = ListItemTextGetter_Default.GetListItemText(number, NumberingFormatType.CardinalText);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", number, "cardinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -168,7 +167,7 @@ public sealed class ListItemTextDefaultTests
     public async Task LDef009b_CardinalText_OutOfRange_FallsBackToDecimal(int number, string expected)
     {
         // levelNumber == 0 and levelNumber >= 20000 previously caused IndexOutOfRangeException
-        var result = ListItemTextGetter_Default.GetListItemText(number, NumberingFormatType.CardinalText);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", number, "cardinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -190,7 +189,7 @@ public sealed class ListItemTextDefaultTests
     [Arguments(2000, "Two thousandth")]
     public async Task LDef010_OrdinalText_EnglishOrdinalWords(int number, string expected)
     {
-        var result = ListItemTextGetter_Default.GetListItemText(number, NumberingFormatType.OrdinalText);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", number, "ordinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -202,25 +201,21 @@ public sealed class ListItemTextDefaultTests
     public async Task LDef010b_OrdinalText_OutOfRange_FallsBackToDecimal(int number, string expected)
     {
         // levelNumber == 0 and levelNumber >= 20000 previously caused IndexOutOfRangeException
-        var result = ListItemTextGetter_Default.GetListItemText(number, NumberingFormatType.OrdinalText);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", number, "ordinalText");
         await Assert.That(result).IsEqualTo(expected);
     }
 
     // ── zero-padded custom formats ───────────────────────────────────────────
 
     [Test]
-    [Arguments(5, NumberingFormatType.DecimalPadded2, "05")]
-    [Arguments(12, NumberingFormatType.DecimalPadded2, "12")]
-    [Arguments(5, NumberingFormatType.DecimalPadded3, "005")]
-    [Arguments(5, NumberingFormatType.DecimalPadded4, "0005")]
-    [Arguments(5, NumberingFormatType.DecimalPadded5, "00005")]
-    public async Task LDef011_ZeroPaddedFormats_PadToCorrectWidth(
-        int number,
-        NumberingFormatType numFmt,
-        string expected
-    )
+    [Arguments(5, "01, 02, 03, ...", "05")]
+    [Arguments(12, "01, 02, 03, ...", "12")]
+    [Arguments(5, "001, 002, 003, ...", "005")]
+    [Arguments(5, "0001, 0002, 0003, ...", "0005")]
+    [Arguments(5, "00001, 00002, 00003, ...", "00005")]
+    public async Task LDef011_ZeroPaddedFormats_PadToCorrectWidth(int number, string numFmt, string expected)
     {
-        var result = ListItemTextGetter_Default.GetListItemText(number, numFmt);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", number, numFmt);
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -231,7 +226,7 @@ public sealed class ListItemTextDefaultTests
     [Test]
     public async Task LDef012_Bullet_ReturnsEmpty()
     {
-        var result = ListItemTextGetter_Default.GetListItemText(1, NumberingFormatType.Bullet);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", 1, "bullet");
         await Assert.That(result).IsEqualTo("");
     }
 
@@ -243,7 +238,7 @@ public sealed class ListItemTextDefaultTests
     [Arguments(20, "\u2473")] // ⑳
     public async Task LDef013_DecimalEnclosedCircle_ReturnsCircledDigitForRange1To20(int number, string expected)
     {
-        var result = ListItemTextGetter_Default.GetListItemText(number, NumberingFormatType.DecimalEnclosedCircle);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", number, "decimalEnclosedCircle");
         await Assert.That(result).IsEqualTo(expected);
     }
 
@@ -251,18 +246,16 @@ public sealed class ListItemTextDefaultTests
     public async Task LDef013b_DecimalEnclosedCircle_OutOfRange_FallsBackToDecimal()
     {
         // Numbers outside 1–20 fall back to plain decimal
-        var result = ListItemTextGetter_Default.GetListItemText(21, NumberingFormatType.DecimalEnclosedCircle);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", 21, "decimalEnclosedCircle");
         await Assert.That(result).IsEqualTo("21");
     }
 
     // ── unknown / default ────────────────────────────────────────────────────
 
     [Test]
-    [Arguments((NumberingFormatType)999)]
-    [Arguments(NumberingFormatType.Unspecified)]
-    public async Task LDef014_UnknownFormat_FallsBackToDecimal(NumberingFormatType undefinedFormat)
+    public async Task LDef014_UnknownFormat_FallsBackToDecimal()
     {
-        var result = ListItemTextGetter_Default.GetListItemText(42, undefinedFormat);
+        var result = ListItemTextGetter_Default.GetListItemText("en-US", 42, "unknownFormat");
         await Assert.That(result).IsEqualTo("42");
     }
 }

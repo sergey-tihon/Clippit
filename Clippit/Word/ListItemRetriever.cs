@@ -10,18 +10,17 @@ namespace Clippit.Word
 {
     public class ListItemRetrieverSettings
     {
-        public static Dictionary<string, Func<int, NumberingFormatType, string?>> DefaultListItemTextImplementations =
-            new()
-            {
-                { "de-DE", ListItemTextGetter_de_DE.GetListItemText },
-                { "es-ES", ListItemTextGetter_es_ES.GetListItemText },
-                { "fr-FR", ListItemTextGetter_fr_FR.GetListItemText },
-                { "tr-TR", ListItemTextGetter_tr_TR.GetListItemText },
-                { "ru-RU", ListItemTextGetter_ru_RU.GetListItemText },
-                { "sv-SE", ListItemTextGetter_sv_SE.GetListItemText },
-                { "zh-CN", ListItemTextGetter_zh_CN.GetListItemText },
-            };
-        public Dictionary<string, Func<int, NumberingFormatType, string?>> ListItemTextImplementations =
+        public static Dictionary<string, Func<string, int, string, string>> DefaultListItemTextImplementations = new()
+        {
+            { "de-DE", ListItemTextGetter_de_DE.GetListItemText },
+            { "es-ES", ListItemTextGetter_es_ES.GetListItemText },
+            { "fr-FR", ListItemTextGetter_fr_FR.GetListItemText },
+            { "tr-TR", ListItemTextGetter_tr_TR.GetListItemText },
+            { "ru-RU", ListItemTextGetter_ru_RU.GetListItemText },
+            { "sv-SE", ListItemTextGetter_sv_SE.GetListItemText },
+            { "zh-CN", ListItemTextGetter_zh_CN.GetListItemText },
+        };
+        public Dictionary<string, Func<string, int, string, string>> ListItemTextImplementations =
             DefaultListItemTextImplementations;
     }
 
@@ -1067,25 +1066,31 @@ namespace Clippit.Word
                                 .Elements(MC.Choice)
                                 .Elements(W.numFmt)
                                 .FirstOrDefault();
-                            if (numFmtElement is not null && (string?)numFmtElement.Attribute(W.val) == "custom")
+                            if (
+                                numFmtElement is not null
+                                && string.Equals(
+                                    (string?)numFmtElement.Attribute(W.val),
+                                    "custom",
+                                    StringComparison.OrdinalIgnoreCase
+                                )
+                            )
                                 numFmtString = (string?)numFmtElement.Attribute(W.format);
                         }
 
-                        // Convert XML string token to strictly typed enum representation
                         var numFmtForLevel = numFmtString.ParseOpenXmlFormat();
-
-                        // Legal style overrides: forced to Decimal unless it is DecimalZero
                         if (numFmtForLevel != NumberingFormatType.None)
                         {
                             if (isLgl && numFmtForLevel != NumberingFormatType.DecimalZero)
+                            {
                                 numFmtForLevel = NumberingFormatType.Decimal;
+                                numFmtString = "decimal";
+                            }
                         }
 
-                        // Delegate lookup uses languageCultureName as the key; implementation receives the level number and the parsed NumberingFormatType.
                         if (languageCultureName is not null && settings is not null)
                         {
                             if (settings.ListItemTextImplementations.TryGetValue(languageCultureName, out var impl))
-                                levelText = impl(levelNumber, numFmtForLevel);
+                                levelText = impl(languageCultureName, levelNumber, numFmtString!);
                         }
 
                         levelText ??= ListItemTextGetter_Default.GetListItemText(levelNumber, numFmtForLevel);
