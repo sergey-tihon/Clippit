@@ -2180,25 +2180,25 @@ namespace Clippit.Html
                 propList = new Dictionary<string, Property>();
                 element.AddAnnotation(propList);
             }
-            if (!propList.ContainsKey(property.Name))
-                propList.Add(property.Name, property);
-            else
+            if (!propList.TryGetValue(property.Name, out var current))
             {
-                var current = propList[property.Name];
-                if (((IComparable<Property>)property).CompareTo(current) == 1)
-                    propList[property.Name] = property;
+                propList.Add(property.Name, property);
+            }
+            else if (((IComparable<Property>)property).CompareTo(current) == 1)
+            {
+                propList[property.Name] = property;
             }
         }
 
         private static void AddPropertyToDictionary(Dictionary<string, Property> propList, Property property)
         {
-            if (!propList.ContainsKey(property.Name))
-                propList.Add(property.Name, property);
-            else
+            if (!propList.TryGetValue(property.Name, out var current))
             {
-                var current = propList[property.Name];
-                if (((IComparable<Property>)property).CompareTo(current) == 1)
-                    propList[property.Name] = property;
+                propList.Add(property.Name, property);
+            }
+            else if (((IComparable<Property>)property).CompareTo(current) == 1)
+            {
+                propList[property.Name] = property;
             }
         }
 
