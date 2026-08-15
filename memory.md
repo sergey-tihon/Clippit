@@ -49,3 +49,10 @@ Last issue processed: #401. All issues labelled. All issues have Clippy comments
 ## Future Ideas
 - Remaining non-frozen static dicts in Html/ (HtmlToWmlCssApplier ColorMap, FontSizeMap, BorderStyleMap)
 - PresentationBuilder stream leaks from #386 part 4 (overlaps #25/#15)
+
+## Run 2026-08-15 16:31 UTC (31895318701)
+- Selected tasks: 5 (Coding Improvements), 9 (Testing Improvements → substituted), 10 (Take Repo Forward → substituted)
+- Task 5: Found remaining ContainsKey+indexer double-lookup pattern in HtmlToWmlCssApplier.cs (AddPropertyToElement, AddPropertyToDictionary) — hot path called per CSS property per element. Fixed with TryGetValue. Build+csharpier+2313 tests pass. Created draft PR (branch clippy/perf-htmlcssapplier-double-lookup-20260815).
+- Task 9/10 substituted with Task 5 work since the perf/coding-improvement candidate found was higher value than speculative test additions or forward-looking exploration this run.
+- Confirmed via memory review that Html/ FrozenDictionary maps (ColorMap, FontSizeMap, BorderStyleMap) were already converted in earlier runs — updated stale "Future Ideas" note.
+- Updated Monthly Activity issue #460 with new run entry and refreshed suggested actions (removed merged PR entries #470/#472/#473/#475 references, added new draft PR).
