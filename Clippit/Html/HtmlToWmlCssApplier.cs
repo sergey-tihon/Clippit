@@ -2181,17 +2181,25 @@ namespace Clippit.Html
                 element.AddAnnotation(propList);
             }
             if (!propList.TryGetValue(property.Name, out var current))
+            {
                 propList.Add(property.Name, property);
+            }
             else if (((IComparable<Property>)property).CompareTo(current) == 1)
+            {
                 propList[property.Name] = property;
+            }
         }
 
         private static void AddPropertyToDictionary(Dictionary<string, Property> propList, Property property)
         {
             if (!propList.TryGetValue(property.Name, out var current))
+            {
                 propList.Add(property.Name, property);
+            }
             else if (((IComparable<Property>)property).CompareTo(current) == 1)
+            {
                 propList[property.Name] = property;
+            }
         }
 
         private static string[] ClassesOf(XElement element)
