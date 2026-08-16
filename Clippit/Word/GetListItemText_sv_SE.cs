@@ -1,7 +1,10 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using Clippit.Word.Enums;
+using Clippit.Word.Extensions;
 
 namespace Clippit.Word;
 
@@ -72,18 +75,22 @@ public class ListItemTextGetter_sv_SE
         "nittonde",
     ];
 
-    public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
+    [return: MaybeNull]
+    public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt) =>
+        GetListItemText(levelNumber, numFmt.ParseOpenXmlFormat());
+
+    private static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
         return numFmt switch
         {
-            "cardinalText" => NumberAsCardinalText(languageCultureName, levelNumber, numFmt),
-            "ordinalText" => NumberAsOrdinalText(languageCultureName, levelNumber, numFmt),
-            "ordinal" => NumberAsOrdinal(languageCultureName, levelNumber, numFmt),
+            NumberingFormatType.CardinalText => NumberAsCardinalText(levelNumber),
+            NumberingFormatType.OrdinalText => NumberAsOrdinalText(levelNumber),
+            NumberingFormatType.Ordinal => NumberAsOrdinal(levelNumber),
             _ => null,
         };
     }
 
-    private static string NumberAsCardinalText(string languageCultureName, int levelNumber, string numFmt)
+    private static string NumberAsCardinalText(int levelNumber)
     {
         var result = "";
 
@@ -167,7 +174,7 @@ public class ListItemTextGetter_sv_SE
         }
     }
 
-    private static string NumberAsOrdinalText(string languageCultureName, int levelNumber, string numFmt)
+    private static string NumberAsOrdinalText(int levelNumber)
     {
         var result = "";
 
@@ -248,7 +255,7 @@ public class ListItemTextGetter_sv_SE
         }
     }
 
-    private static string NumberAsOrdinal(string languageCultureName, int levelNumber, string numFmt)
+    private static string NumberAsOrdinal(int levelNumber)
     {
         var levelAsString = levelNumber.ToString();
 

@@ -1,11 +1,19 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
+using Clippit.Word.Enums;
+using Clippit.Word.Extensions;
+
 namespace Clippit.Word;
 
 public class ListItemTextGetter_zh_CN
 {
-    public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
+    [return: MaybeNull]
+    public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt) =>
+        GetListItemText(levelNumber, numFmt.ParseOpenXmlFormat());
+
+    private static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
         string[] ccTDigitCharacters = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
         var tenCharacter = "十";
@@ -22,7 +30,7 @@ public class ListItemTextGetter_zh_CN
         var tens = (levelNumber % 100) / 10;
         var ones = levelNumber % 10;
 
-        if (numFmt == "chineseCounting")
+        if (numFmt == NumberingFormatType.ChineseCounting)
         {
             return levelNumber switch
             {
@@ -39,7 +47,7 @@ public class ListItemTextGetter_zh_CN
                 _ => levelNumber.ToString(),
             };
         }
-        if (numFmt == "chineseCountingThousand")
+        if (numFmt == NumberingFormatType.ChineseCountingThousand)
         {
             return levelNumber switch
             {
@@ -66,7 +74,7 @@ public class ListItemTextGetter_zh_CN
                 ]
                     + thousandCharacter
                     + andCharacter
-                    + GetListItemText("zh_CN", thousandsRemainder, numFmt),
+                    + GetListItemText(thousandsRemainder, numFmt),
                 >= 1000 and <= 9999 when thousandsRemainder >= 10 && thousandsRemainder <= 99 => ccTDigitCharacters[
                     thousands
                 ]
@@ -97,7 +105,7 @@ public class ListItemTextGetter_zh_CN
                 _ => levelNumber.ToString(),
             };
         }
-        if (numFmt == "ideographTraditional")
+        if (numFmt == NumberingFormatType.IdeographTraditional)
         {
             string[] iDigitCharacters = [" ", "甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
             if (levelNumber >= 1 && levelNumber <= 10)

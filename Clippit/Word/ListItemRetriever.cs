@@ -2,6 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Xml.Linq;
+using Clippit.Word.Enums;
+using Clippit.Word.Extensions;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Word
@@ -709,7 +711,6 @@ namespace Clippit.Word
             if (styleDefinitionsPart is null)
                 return null;
 
-            var numXDoc = numberingDefinitionsPart.GetXDocument();
             var stylesXDoc = styleDefinitionsPart.GetXDocument();
 
             var lvl = listItemInfo.Lvl(GetParagraphLevel(paragraph));
@@ -718,9 +719,8 @@ namespace Clippit.Word
             if (lvlText is null)
                 return null;
 
-            var levelNumbersAnnotation = paragraph.Annotation<LevelNumbers>();
-            if (levelNumbersAnnotation is null)
-                throw new OpenXmlPowerToolsException("Internal error");
+            var levelNumbersAnnotation =
+                paragraph.Annotation<LevelNumbers>() ?? throw new OpenXmlPowerToolsException("Internal error");
 
             var levelNumbers = levelNumbersAnnotation.LevelNumbersArray;
             var languageIdentifier = GetLanguageIdentifier(paragraph, stylesXDoc);
@@ -729,7 +729,6 @@ namespace Clippit.Word
                 levelNumbers,
                 GetParagraphLevel(paragraph),
                 lvlText,
-                stylesXDoc,
                 languageIdentifier,
                 settings
             );
@@ -1038,7 +1037,6 @@ namespace Clippit.Word
             int[] levelNumbers,
             int ilvl,
             string lvlText,
-            XDocument styles,
             string languageCultureName,
             ListItemRetrieverSettings settings
         )
@@ -1058,35 +1056,46 @@ namespace Clippit.Word
                         if (indentationLevel >= levelNumbers.Length)
                             indentationLevel = levelNumbers.Length - 1;
                         var levelNumber = levelNumbers[indentationLevel];
-                        string levelText = null;
+                        string? levelText = null;
                         var rlvl = lii.Lvl(indentationLevel);
-                        var numFmtForLevel = (string)rlvl.Elements(W.numFmt).Attributes(W.val).FirstOrDefault();
-                        if (numFmtForLevel is null)
+
+                        var numFmtString = (string)rlvl.Elements(W.numFmt).Attributes(W.val).FirstOrDefault();
+                        if (numFmtString is null)
                         {
                             var numFmtElement = rlvl.Elements(MC.AlternateContent)
                                 .Elements(MC.Choice)
                                 .Elements(W.numFmt)
                                 .FirstOrDefault();
-                            if (numFmtElement is not null && (string)numFmtElement.Attribute(W.val) == "custom")
-                                numFmtForLevel = (string)numFmtElement.Attribute(W.format);
+                            if (
+                                numFmtElement is not null
+                                && string.Equals(
+                                    (string?)numFmtElement.Attribute(W.val),
+                                    "custom",
+                                    StringComparison.OrdinalIgnoreCase
+                                )
+                            )
+                                numFmtString = (string)numFmtElement.Attribute(W.format);
                         }
-                        if (numFmtForLevel != "none")
+
+                        var numFmtForLevel = numFmtString.ParseOpenXmlFormat();
+                        if (numFmtForLevel != NumberingFormatType.None)
                         {
-                            if (isLgl && numFmtForLevel != "decimalZero")
-                                numFmtForLevel = "decimal";
+                            if (isLgl && numFmtForLevel != NumberingFormatType.DecimalZero)
+                            {
+                                numFmtForLevel = NumberingFormatType.Decimal;
+                                numFmtString = "decimal";
+                            }
                         }
+
                         if (languageCultureName is not null && settings is not null)
                         {
                             if (settings.ListItemTextImplementations.TryGetValue(languageCultureName, out var impl))
-                                levelText = impl(languageCultureName, levelNumber, numFmtForLevel);
+                                levelText = impl(languageCultureName, levelNumber, numFmtString);
                         }
-                        if (levelText is null)
-                            levelText = ListItemTextGetter_Default.GetListItemText(
-                                languageCultureName,
-                                levelNumber,
-                                numFmtForLevel
-                            );
-                        return levelText;
+
+                        levelText ??= ListItemTextGetter_Default.GetListItemText(levelNumber, numFmtForLevel);
+
+                        return levelText ?? string.Empty;
                     }
                 )
                 .StringConcatenate();

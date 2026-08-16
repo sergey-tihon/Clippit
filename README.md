@@ -61,7 +61,7 @@ See the [tutorials](https://sergey-tihon.github.io/Clippit/tutorials/) for API s
 Questions and ideas → [GitHub Discussions](https://github.com/sergey-tihon/Clippit/discussions)
 Bugs and feature requests → [GitHub Issues](https://github.com/sergey-tihon/Clippit/issues)
 
-To build locally:
+Before submitting a Pull Request, please run the local build script to validate your changes, ensure all tests pass, and automatically verify code formatting (which is strictly enforced by CI pipelines):
 
 ```bash
 ./build.sh   # Unix

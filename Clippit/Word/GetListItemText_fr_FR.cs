@@ -1,7 +1,10 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using Clippit.Word.Enums;
+using Clippit.Word.Extensions;
 
 namespace Clippit.Word;
 
@@ -97,9 +100,13 @@ public class ListItemTextGetter_fr_FR
         "",
     ];
 
-    public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt)
+    [return: MaybeNull]
+    public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt) =>
+        GetListItemText(levelNumber, numFmt.ParseOpenXmlFormat());
+
+    private static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
-        if (numFmt == "cardinalText")
+        if (numFmt == NumberingFormatType.CardinalText)
         {
             if (levelNumber <= 0)
                 return levelNumber.ToString();
@@ -191,7 +198,7 @@ public class ListItemTextGetter_fr_FR
             result += OneThroughNineteen[tens * 10 + ones];
             return result[0..1].ToUpper() + result[1..];
         }
-        if (numFmt == "ordinal")
+        if (numFmt == NumberingFormatType.Ordinal)
         {
             string suffix;
             if (levelNumber == 1)
@@ -200,7 +207,7 @@ public class ListItemTextGetter_fr_FR
                 suffix = "e";
             return levelNumber + suffix;
         }
-        if (numFmt == "ordinalText")
+        if (numFmt == NumberingFormatType.OrdinalText)
         {
             var result = "";
 
