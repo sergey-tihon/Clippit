@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
 using Clippit.Word.Enums;
 using Clippit.Word.Extensions;
 
@@ -80,8 +81,9 @@ internal class ListItemTextGetter_Default
         "ninetieth",
     ];
 
+    [return: MaybeNull]
     public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt) =>
-        GetListItemText(levelNumber, numFmt.ParseOpenXmlFormat())!;
+        GetListItemText(levelNumber, numFmt.ParseOpenXmlFormat());
 
     internal static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
 using Clippit.Word.Enums;
 using Clippit.Word.Extensions;
 
@@ -180,8 +181,9 @@ public class ListItemTextGetter_es_ES
         return result;
     }
 
+    [return: MaybeNull]
     public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt) =>
-        GetListItemText(levelNumber, numFmt.ParseOpenXmlFormat())!;
+        GetListItemText(levelNumber, numFmt.ParseOpenXmlFormat());
 
     private static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {

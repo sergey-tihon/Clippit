@@ -1059,7 +1059,7 @@ namespace Clippit.Word
                         string? levelText = null;
                         var rlvl = lii.Lvl(indentationLevel);
 
-                        var numFmtString = (string?)rlvl.Elements(W.numFmt).Attributes(W.val).FirstOrDefault();
+                        var numFmtString = (string)rlvl.Elements(W.numFmt).Attributes(W.val).FirstOrDefault();
                         if (numFmtString is null)
                         {
                             var numFmtElement = rlvl.Elements(MC.AlternateContent)
@@ -1074,7 +1074,7 @@ namespace Clippit.Word
                                     StringComparison.OrdinalIgnoreCase
                                 )
                             )
-                                numFmtString = (string?)numFmtElement.Attribute(W.format);
+                                numFmtString = (string)numFmtElement.Attribute(W.format);
                         }
 
                         var numFmtForLevel = numFmtString.ParseOpenXmlFormat();
@@ -1090,7 +1090,7 @@ namespace Clippit.Word
                         if (languageCultureName is not null && settings is not null)
                         {
                             if (settings.ListItemTextImplementations.TryGetValue(languageCultureName, out var impl))
-                                levelText = impl(languageCultureName, levelNumber, numFmtString!);
+                                levelText = impl(languageCultureName, levelNumber, numFmtString);
                         }
 
                         levelText ??= ListItemTextGetter_Default.GetListItemText(levelNumber, numFmtForLevel);

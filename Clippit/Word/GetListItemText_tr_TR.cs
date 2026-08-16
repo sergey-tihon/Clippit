@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Clippit.Word.Enums;
 using Clippit.Word.Extensions;
@@ -106,8 +107,9 @@ public class ListItemTextGetter_tr_TR
 
     private static readonly TextInfo s_trTRTextInfo = CultureInfo.GetCultureInfo("tr-TR").TextInfo;
 
+    [return: MaybeNull]
     public static string GetListItemText(string languageCultureName, int levelNumber, string numFmt) =>
-        GetListItemText(levelNumber, numFmt.ParseOpenXmlFormat())!;
+        GetListItemText(levelNumber, numFmt.ParseOpenXmlFormat());
 
     private static string? GetListItemText(int levelNumber, NumberingFormatType numFmt)
     {
