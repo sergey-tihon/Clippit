@@ -893,14 +893,12 @@ namespace Clippit.Word
                 if (tag.Element.Name == W.moveFromRangeEnd)
                 {
                     var id = tag.Element.Attribute(W.id).Value;
-                    if (potentialDeletedElements.ContainsKey(id))
+                    if (potentialDeletedElements.TryGetValue(id, out var potentialDeletedElement))
                     {
                         startElementTagsInMoveFromRange.AddRange(
-                            potentialDeletedElements[id].PotentialStartElementTagsInRange
+                            potentialDeletedElement.PotentialStartElementTagsInRange
                         );
-                        endElementTagsInMoveFromRange.AddRange(
-                            potentialDeletedElements[id].PotentialEndElementTagsInRange
-                        );
+                        endElementTagsInMoveFromRange.AddRange(potentialDeletedElement.PotentialEndElementTagsInRange);
                         potentialDeletedElements.Remove(id);
                     }
                     continue;
@@ -1813,14 +1811,12 @@ namespace Clippit.Word
                 if (tag.Element.Name == W.customXmlDelRangeEnd)
                 {
                     var id = tag.Element.Attribute(W.id).Value;
-                    if (potentialDeletedElements.ContainsKey(id))
+                    if (potentialDeletedElements.TryGetValue(id, out var potentialDeletedElement))
                     {
                         startElementTagsInDeleteRange.AddRange(
-                            potentialDeletedElements[id].PotentialStartElementTagsInRange
+                            potentialDeletedElement.PotentialStartElementTagsInRange
                         );
-                        endElementTagsInDeleteRange.AddRange(
-                            potentialDeletedElements[id].PotentialEndElementTagsInRange
-                        );
+                        endElementTagsInDeleteRange.AddRange(potentialDeletedElement.PotentialEndElementTagsInRange);
                         potentialDeletedElements.Remove(id);
                     }
                     continue;
@@ -1834,14 +1830,12 @@ namespace Clippit.Word
                 if (tag.Element.Name == W.customXmlMoveFromRangeEnd)
                 {
                     var id = tag.Element.Attribute(W.id).Value;
-                    if (potentialMoveFromElements.ContainsKey(id))
+                    if (potentialMoveFromElements.TryGetValue(id, out var potentialMoveFromElement))
                     {
                         startElementTagsInMoveFromRange.AddRange(
-                            potentialMoveFromElements[id].PotentialStartElementTagsInRange
+                            potentialMoveFromElement.PotentialStartElementTagsInRange
                         );
-                        endElementTagsInMoveFromRange.AddRange(
-                            potentialMoveFromElements[id].PotentialEndElementTagsInRange
-                        );
+                        endElementTagsInMoveFromRange.AddRange(potentialMoveFromElement.PotentialEndElementTagsInRange);
                         potentialMoveFromElements.Remove(id);
                     }
                     continue;
