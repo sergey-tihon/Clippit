@@ -56,3 +56,11 @@ Last issue processed: #401. All issues labelled. All issues have Clippy comments
 - Task 9/10 substituted with Task 5 work since the perf/coding-improvement candidate found was higher value than speculative test additions or forward-looking exploration this run.
 - Confirmed via memory review that Html/ FrozenDictionary maps (ColorMap, FontSizeMap, BorderStyleMap) were already converted in earlier runs — updated stale "Future Ideas" note.
 - Updated Monthly Activity issue #460 with new run entry and refreshed suggested actions (removed merged PR entries #470/#472/#473/#475 references, added new draft PR).
+
+## Run 2026-08-20 15:52 UTC (32388481883)
+- Selected tasks: 5 (Coding Improvements), 1 (Labelling → substituted, no unlabelled issues), 4 (Engineering Investments)
+- Task 4: dotnet outdated found TUnit 1.64.13->1.65.38, Microsoft.NET.Test.Sdk 18.8.1->18.9.0. Created draft PR (branch clippy/eng-deps-tunit-testsdk-20260820). Build+csharpier+2345 tests(2343 pass/2 skip) pass.
+- Task 1 substituted with Task 2 review: no unlabelled issues exist; reviewed #67, #77, #103 for new human activity — none found since last Clippy comments, no re-engagement needed.
+- Task 5: found and fixed remaining ContainsKey+indexer double-lookup pattern in Clippit/Word/RevisionProcessor.cs (3 occurrences: moveFromRangeEnd, customXmlDelRangeEnd, customXmlMoveFromRangeEnd) and Clippit/Comparer/WmlComparer.Private.Methods.Hashing.cs (1 occurrence, source/target Unid correlation). Created draft PR (branch clippy/improve-doublelookup-revisionprocessor-hashing-20260820). Build+csharpier+2345 tests(2343 pass/2 skip) pass.
+- Confirmed PR #477 (HtmlToWmlCssApplier double-lookup fix from run 31895318701) was merged onto master (commit 85164d3).
+- Updated Monthly Activity issue #460 with new run entry and refreshed suggested actions (added the two new PRs, kept comment-check items for #67/#77/#103).

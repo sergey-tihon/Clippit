@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-08-15",
-  "last_run_id": "31895318701",
+  "last_run": "2026-08-20",
+  "last_run_id": "32388481883",
   "backlog_cursor": {
     "issues": 401,
     "prs": 165
@@ -37,9 +37,15 @@
     },
     {
       "number": null,
-      "branch": "clippy/perf-htmlcssapplier-double-lookup-20260815",
-      "title": "[Clippy] perf: eliminate double dictionary lookups in HtmlToWmlCssApplier",
-      "note": "created 2026-08-15, build+csharpier+2313 tests pass, awaiting review"
+      "branch": "clippy/eng-deps-tunit-testsdk-20260820",
+      "title": "[Clippy] chore(deps): TUnit 1.65.38, Test.Sdk 18.9.0",
+      "note": "created 2026-08-20, build+csharpier+2345 tests(2343 pass) pass, awaiting review"
+    },
+    {
+      "number": null,
+      "branch": "clippy/improve-doublelookup-revisionprocessor-hashing-20260820",
+      "title": "[Clippy] refactor: eliminate double lookups in RevisionProcessor/WmlComparer",
+      "note": "created 2026-08-20, build+csharpier+2345 tests(2343 pass) pass, awaiting review"
     }
   ],
   "checked_off_by_maintainer": [],
@@ -48,16 +54,19 @@
   "notes": [
     "dotnet outdated: no outdated dependencies as of 2026-08-12",
     "PR #470 (ContainsKey+indexer dedup), #472 (PtBucketTimer), #473 (ColorParser tests), #475 (WorksheetAccessor/FieldRetriever) all merged",
-    "PR #474 open: alexeysp11's numbering format enum refactor (external, breaking change, not Clippy)",
     "PR #449 (ExcelAssembler) still open, mergeable_state=dirty, needs another rebase",
     "Future idea 'FrozenDictionary conversion for Html/ maps' resolved: ColorMap/FontSizeMap/BorderStyleMap already FrozenDictionary; found+fixed remaining ContainsKey+indexer double-lookup in AddPropertyToElement/AddPropertyToDictionary (HtmlToWmlCssApplier.cs) instead",
     "Monthly Activity issue for August 2026 is #460",
-    "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade"
+    "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
+    "PR #477 (HtmlToWmlCssApplier double-lookup) merged onto master",
+    "dotnet outdated (2026-08-20): TUnit 1.65.38, Microsoft.NET.Test.Sdk 18.9.0 available - addressed via new PR"
   ],
   "improvements_submitted": [
     "PR#342-#356, #359, #361-#362, #369, #371, #391, #393-#398, #405, #406, #407: various - most merged",
     "PR(TBD): fix(word) UnicodeMapper.RunToString xml:space (closes #386 sub-fix 3) - created 2026-07-05",
     "PR(TBD): feat(cli) word simplify-markup command (closes #377) - created 2026-07-05",
-    "PR(TBD): perf: eliminate double dictionary lookups in HtmlToWmlCssApplier (TryGetValue) - created 2026-08-15"
+    "PR(TBD): perf: eliminate double dictionary lookups in HtmlToWmlCssApplier (TryGetValue) - created 2026-08-15",
+    "PR(clippy/eng-deps-tunit-testsdk-20260820): chore(deps) TUnit/Test.Sdk bump - created 2026-08-20",
+    "PR(clippy/improve-doublelookup-revisionprocessor-hashing-20260820): refactor double-lookup cleanup - created 2026-08-20"
   ]
 }
