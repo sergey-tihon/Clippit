@@ -56,9 +56,8 @@ namespace Clippit
                     var thisUnid = (string)blockLevelContent.Attribute(PtOpenXml.Unid);
                     if (thisUnid is not null)
                     {
-                        if (sourceUnidDict.ContainsKey(thisUnid))
+                        if (sourceUnidDict.TryGetValue(thisUnid, out var correlatedBlockLevelContent))
                         {
-                            var correlatedBlockLevelContent = sourceUnidDict[thisUnid];
                             correlatedBlockLevelContent.Add(new XAttribute(PtOpenXml.CorrelatedSHA1Hash, sha1Hash));
                         }
                     }
