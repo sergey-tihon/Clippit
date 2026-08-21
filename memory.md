@@ -57,6 +57,14 @@ Last issue processed: #401. All issues labelled. All issues have Clippy comments
 - Confirmed via memory review that Html/ FrozenDictionary maps (ColorMap, FontSizeMap, BorderStyleMap) were already converted in earlier runs — updated stale "Future Ideas" note.
 - Updated Monthly Activity issue #460 with new run entry and refreshed suggested actions (removed merged PR entries #470/#472/#473/#475 references, added new draft PR).
 
+## Run 2026-08-21 15:52 UTC (32499715020)
+- Selected tasks: 2 (Issue Investigation and Comment), 4 (Engineering Investments), 3 (Issue Investigation and Fix)
+- Task 4/3/6 combined: PR #449 (ExcelAssembler) had merge conflicts against current master (confirmed via `git merge --no-commit`: conflicts in actions-lock.json, clippy.lock.yml, Clippit.Cli.csproj, Clippit.Tests.csproj, FormattingAssembler.cs). Rebased branch clippy/improve-excel-assembler-rebase-20260725-2cc993590e0f6c6f onto master (fe779ac) - rebase applied cleanly with no manual conflict resolution needed (all prior master commits were already incorporated from earlier rebases). Build (0 errors), csharpier check, and full test suite (2357 tests, 2355 passed, 2 skipped) all pass. Pushed update via push_to_pull_request_branch.
+- Task 4: dotnet outdated (2026-08-21) shows no outdated dependencies.
+- Task 3: No new bug/help-wanted/good-first-issue labelled issues found beyond existing #67/#77/#103 (all Q&A, already answered, not "fixable" bugs). No fixable issues this run.
+- Task 2: reviewed #67, #77, #103 - no new human activity since last Clippy comments, no re-engagement needed.
+- Updated Monthly Activity issue #460 with new run entry.
+
 ## Run 2026-08-20 15:52 UTC (32388481883)
 - Selected tasks: 5 (Coding Improvements), 1 (Labelling → substituted, no unlabelled issues), 4 (Engineering Investments)
 - Task 4: dotnet outdated found TUnit 1.64.13->1.65.38, Microsoft.NET.Test.Sdk 18.8.1->18.9.0. Created draft PR (branch clippy/eng-deps-tunit-testsdk-20260820). Build+csharpier+2345 tests(2343 pass/2 skip) pass.
