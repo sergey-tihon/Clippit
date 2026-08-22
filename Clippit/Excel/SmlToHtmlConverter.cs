@@ -733,9 +733,9 @@ namespace Clippit.Excel
 
         private static void CreateFontCssProperty(string font, Dictionary<string, string> style)
         {
-            if (FontFallback.ContainsKey(font))
+            if (FontFallback.TryGetValue(font, out var fallbackFormat))
             {
-                style.AddIfMissing("font-family", string.Format(FontFallback[font], font));
+                style.AddIfMissing("font-family", string.Format(fallbackFormat, font));
                 return;
             }
             style.AddIfMissing("font-family", font);
