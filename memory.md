@@ -72,3 +72,11 @@ Last issue processed: #401. All issues labelled. All issues have Clippy comments
 - Task 5: found and fixed remaining ContainsKey+indexer double-lookup pattern in Clippit/Word/RevisionProcessor.cs (3 occurrences: moveFromRangeEnd, customXmlDelRangeEnd, customXmlMoveFromRangeEnd) and Clippit/Comparer/WmlComparer.Private.Methods.Hashing.cs (1 occurrence, source/target Unid correlation). Created draft PR (branch clippy/improve-doublelookup-revisionprocessor-hashing-20260820). Build+csharpier+2345 tests(2343 pass/2 skip) pass.
 - Confirmed PR #477 (HtmlToWmlCssApplier double-lookup fix from run 31895318701) was merged onto master (commit 85164d3).
 - Updated Monthly Activity issue #460 with new run entry and refreshed suggested actions (added the two new PRs, kept comment-check items for #67/#77/#103).
+
+## Run 2026-08-22 15:46 UTC (32582616455)
+- Selected tasks: 9 (Testing Improvements), 5 (Coding Improvements), 3 (Issue Investigation and Fix)
+- Confirmed PR #482 (RevisionProcessor/Hashing double-lookup) and #481 (TUnit/Test.Sdk deps) merged since last run.
+- Task 9/5 combined: reviewed PtUtil.cs coverage gaps vs PtUtilsTests.cs; added tests for AddElementIfMissing, DescendantsTrimmedBeforeSelfReverseDocumentOrder, GetXElement/GetXmlNode/GetXDocument/GetXmlDocument roundtrips, FileUtils.GetFilesRecursive, FileUtils.ThreadSafeCreateDirectory. Also found+fixed a remaining ContainsKey+indexer double-lookup in SmlToHtmlConverter.CreateFontCssProperty. Build+csharpier+2352 tests(2350 pass/2 skip) pass. Created draft PR clippy/test-and-improve-ptutils-smltohtml-20260822.
+- Task 3: no fixable bug/help-wanted/good-first-issue issues found beyond existing Q&A issues (#67/#77/#103, all already answered).
+- Task 2: reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed.
+- PR #449 (ExcelAssembler) still open, awaiting maintainer review.
