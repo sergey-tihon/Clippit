@@ -627,16 +627,13 @@ namespace Clippit.Excel
                     string classNameToUse;
                     var firstOne = grp.First();
                     var styles = firstOne.Styles;
-                    if (styles.ContainsKey("PtStyleName"))
+                    if (styles.TryGetValue("PtStyleName", out var ptStyleName))
                     {
-                        classNameToUse = htmlConverterSettings.CssClassPrefix + styles["PtStyleName"];
+                        classNameToUse = htmlConverterSettings.CssClassPrefix + ptStyleName;
                         if (usedCssClassNames.Contains(classNameToUse))
                         {
                             classNameToUse =
-                                htmlConverterSettings.CssClassPrefix
-                                + styles["PtStyleName"]
-                                + "-"
-                                + classCounter.ToString()[1..];
+                                htmlConverterSettings.CssClassPrefix + ptStyleName + "-" + classCounter.ToString()[1..];
                             classCounter++;
                         }
                     }
