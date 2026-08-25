@@ -3256,6 +3256,8 @@ namespace Clippit
         public static readonly XName fitToPage = "fitToPage";
         public static readonly XName fld = "fld";
         public static readonly XName flip = "flip";
+        public static readonly XName flipH = "flipH";
+        public static readonly XName flipV = "flipV";
         public static readonly XName fmla = "fmla";
         public static readonly XName fmtid = "fmtid";
         public static readonly XName folHlink = "folHlink";
