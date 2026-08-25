@@ -88,3 +88,10 @@ Last issue processed: #401. All issues labelled. All issues have Clippy comments
 - Task 3: no fixable bug/help-wanted/good-first-issue issues found beyond existing Q&A issues (#67/#77/#103, all already answered).
 - Task 2: reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed.
 - PR #449 (ExcelAssembler) still open, awaiting maintainer review.
+
+## Run 2026-08-25 15:56 UTC (32868709719)
+- Selected tasks: 2 (Issue Investigation and Comment), 5 (Coding Improvements), 6 (Maintain Clippy PRs)
+- Task 6: PR #449 (ExcelAssembler) was behind master again. Rebased onto master (6380b15) - clean rebase, no conflicts. Build (0 errors), csharpier check pass, full suite 2364 tests (2362 pass/2 skip) pass. Pushed via push_to_pull_request_branch.
+- Task 5: found and fixed remaining ContainsKey+indexer double-lookup pattern in Clippit/Excel/SmlToHtmlConverter.cs (WriteStyleSheet, PtStyleName lookup used 3x for same key) — replaced with TryGetValue. Build+csharpier+2364 tests pass. Created draft PR (branch clippy/improve-smltohtml-doublelookup-20260825).
+- Task 2: reviewed #67, #77, #103 - no new human activity since last Clippy comments, no re-engagement needed.
+- Updated Monthly Activity issue #460 with new run entry and refreshed suggested actions (added new draft PR entry).
