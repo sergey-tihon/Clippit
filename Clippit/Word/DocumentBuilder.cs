@@ -766,9 +766,10 @@ namespace Clippit.Word
                     else
                     {
                         // if the id is the same as the existing ID, then nothing to do
-                        if (styleNameMap[styleName] == styleId)
+                        var existingStyleId = styleNameMap[styleName];
+                        if (existingStyleId == styleId)
                             continue;
-                        correctionList.Add(styleId, styleNameMap[styleName]);
+                        correctionList.Add(styleId, existingStyleId);
                     }
                 }
                 if (correctionList.Any())
