@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-08-26",
-  "last_run_id": "32986769210",
+  "last_run": "2026-08-27",
+  "last_run_id": "33107342352",
   "backlog_cursor": {
     "issues": 424,
     "prs": 449
@@ -75,7 +75,9 @@
     "Task 3 (2026-08-23): no fixable bug/help-wanted/good-first-issue issues found this run",
     "Task 6/10 (2026-08-26): PR #449 was dirty (behind master); rebased cleanly onto caba0be, build+csharpier+2364 tests(2362 pass/2 skip) pass, pushed via push_to_pull_request_branch",
     "Task 2 (2026-08-26): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed",
-    "Task 3 (2026-08-26): no fixable bug/help-wanted/good-first-issue issues found this run; substituted with Task 6 rebase (Task 10 fallback)"
+    "Task 3 (2026-08-26): no fixable bug/help-wanted/good-first-issue issues found this run; substituted with Task 6 rebase (Task 10 fallback)",
+    "Task 5 (2026-08-27): fixed remaining ContainsKey+indexer double-lookup in DocumentBuilder.cs CopyStylesAndFonts (styleNameMap[styleName]); build+csharpier+2352 tests pass; draft PR clippy/improve-doublelookup-documentbuilder-20260827",
+    "Task 2 (2026-08-27): reviewed 67,77,103 - no new human activity, no re-engagement needed"
   ],
   "improvements_submitted": [
     "PR(aw_pr_changelog): chore: prepare CHANGELOG for v3.9.0 release (2026-08-05)",
@@ -96,6 +98,7 @@
     "PR(clippy/perf-ptbuckettimer-double-lookup-20260812): perf: eliminate double dictionary lookup in PtBucketTimer.Bucket (2026-08-12)",
     "PR(clippy/test-colorparser-20260813): test: add unit tests for ColorParser (2026-08-13)",
     "PR(clippy/perf-double-lookups-worksheetaccessor-fieldretriever-20260813): perf: eliminate double dictionary/SortedList lookups in WorksheetAccessor and FieldRetriever (2026-08-13)",
-    "PR(clippy/test-and-improve-ptutils-smltohtml-20260822): test: PtUtils/PtExtensions coverage + perf: fix double lookup in SmlToHtmlConverter (2026-08-22)"
+    "PR(clippy/test-and-improve-ptutils-smltohtml-20260822): test: PtUtils/PtExtensions coverage + perf: fix double lookup in SmlToHtmlConverter (2026-08-22)",
+    "PR(clippy/improve-doublelookup-documentbuilder-20260827): refactor: eliminate double dictionary lookup in DocumentBuilder style ID correction (2026-08-27)"
   ]
 }
