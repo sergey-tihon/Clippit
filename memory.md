@@ -107,3 +107,12 @@ Last issue processed: #401. All issues labelled. All issues have Clippy comments
 - Issue #490 checked: gh-aw Protected Files notice for PR #449 — only workflow/lockfile diffs (.github/aw/actions-lock.json, clippy.lock.yml, clippy.md) from earlier rebases against master, no CHANGELOG/README changes. No action needed (informational, not a task item); left for maintainer awareness.
 - Task 5 (substituted for 9/10): searched remaining ContainsKey+indexer double-lookup patterns across Clippit/. Found and fixed one in Clippit/Word/DocumentBuilder.cs (CopyStylesAndFonts: styleNameMap[styleName] indexed twice for comparison + correctionList.Add). Build (0 errors) + csharpier + full suite (2352 tests, 2350 pass/2 skip) all pass. Created draft PR (branch clippy/improve-doublelookup-documentbuilder-20260827).
 - PR #449 (ExcelAssembler) still open, awaiting maintainer review; last rebased 2026-08-26 onto caba0be.
+
+## Run 2026-08-28 19:37 UTC (33204538276)
+- Selected tasks: 5 (Coding Improvements), 4 (Engineering Investments), 3 (Issue Investigation and Fix)
+- Task 4: dotnet outdated found TUnit 1.65.38 -> 1.65.68. Created draft PR (branch clippy/eng-deps-tunit-20260828). Build+csharpier+2352 tests(2350 pass/2 skip) pass.
+- Task 5: searched for remaining ContainsKey+indexer double-lookup patterns across Clippit/ — none remain (all previously found instances already fixed in prior PRs). Substituted with rebasing PR #449.
+- Task 6 (substituted): PR #449 (ExcelAssembler) was behind master. Rebased cleanly onto master (5548b1b1), no conflicts. Build (0 errors), csharpier check pass, full suite 2364 tests (2362 pass/2 skip) pass. Pushed via push_to_pull_request_branch.
+- Task 3: no new fixable bug/help-wanted/good-first-issue issues found beyond existing Q&A issues (#67/#77/#103).
+- Confirmed PRs #489 (SmlToHtmlConverter CSS) and #491 (DocumentBuilder style ID) merged since last run.
+- Updated Monthly Activity issue #460 with new run entry and refreshed suggested actions.
