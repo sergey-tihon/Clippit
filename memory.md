@@ -116,3 +116,12 @@ Last issue processed: #401. All issues labelled. All issues have Clippy comments
 - Task 3: no new fixable bug/help-wanted/good-first-issue issues found beyond existing Q&A issues (#67/#77/#103).
 - Confirmed PRs #489 (SmlToHtmlConverter CSS) and #491 (DocumentBuilder style ID) merged since last run.
 - Updated Monthly Activity issue #460 with new run entry and refreshed suggested actions.
+
+## Run 2026-08-29 15:42 UTC (33260910953)
+- Selected tasks: 2 (Issue Investigation and Comment), 3 (Issue Investigation and Fix), 5 (Coding Improvements)
+- Task 6 (substituted, PR maintenance): PR #449 (ExcelAssembler) was behind master (merge-base 469bc56, master c747ebf). Rebased cleanly onto master (no conflicts). Build (0 errors) + csharpier + full suite 2364 tests (2362 pass/2 skip) all pass. Pushed via push_to_pull_request_branch using local branch renamed to match PR branch `clippy/improve-excel-assembler-rebase-20260725-2cc993590e0f6c6f`.
+- Task 2: reviewed #67, #77, #103 - no new human activity since last Clippy comments, no re-engagement needed.
+- Task 3: no new fixable bug/help-wanted/good-first-issue issues found.
+- Task 5 substituted: folded into rebase work.
+- **IMPORTANT BUG TO FIX NEXT RUN**: attempted to update Monthly Activity issue #460 via `printf '{...}' | safeoutputs update_issue .` but shell quoting mangled the JSON (nested single quotes in body text broke printf escaping), resulting in argumentBytes=2 (empty/near-empty payload) being sent successfully — this likely WIPED or corrupted issue #460's body since the tool reported success. update_issue has a 1-per-run limit so a retry this run was blocked ("E002: update_issue limit reached"). **Next run: check issue #460's body first thing — if it's empty/wrong, immediately fix it with a properly-escaped call using a heredoc file (like `/tmp/gh-aw/agent/issue460.json` via `safeoutputs update_issue . < file.json`), NOT printf with inline JSON containing apostrophes/emoji.**
+- Lesson learned: always write safeoutputs JSON payloads to a temp file via heredoc (cat > file << 'EOF') and pipe with `< file`, never printf with inline complex strings.
