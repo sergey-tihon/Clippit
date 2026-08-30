@@ -8,8 +8,9 @@ using Clippit.Word.Assembler;
 namespace Clippit.Tests.Word;
 
 /// <summary>
-/// Unit tests for the internal Assembler helpers: XPathExtensions and ErrorHandler.
-/// The main library exposes these to this project via InternalsVisibleTo.
+/// Unit tests for the internal Assembler helpers: XPathExtensions, XElementExtensions,
+/// UriExtensions, and ErrorHandler. The main library exposes these to this project via
+/// InternalsVisibleTo.
 /// </summary>
 public class AssemblerInternalsTests
 {
@@ -221,5 +222,143 @@ public class AssemblerInternalsTests
         var resultEl = result as XElement;
         await Assert.That(resultEl).IsNotNull();
         await Assert.That(resultEl!.Name).IsEqualTo(W.r);
+    }
+
+    // ── XElementExtensions.IsPlainText ─────────────────────────────────────
+
+    [Test]
+    public async Task IsPlainText_ElementWithOnlyTextContent_ReturnsTrue()
+    {
+        var element = new XElement(W.t, "plain text");
+
+        await Assert.That(element.IsPlainText()).IsTrue();
+    }
+
+    [Test]
+    public async Task IsPlainText_ElementWithChildElements_ReturnsFalse()
+    {
+        var element = new XElement(W.p, new XElement(W.r, new XElement(W.t, "hello")));
+
+        await Assert.That(element.IsPlainText()).IsFalse();
+    }
+
+    // ── XElementExtensions.MergeRunProperties ──────────────────────────────
+
+    [Test]
+    public async Task MergeRunProperties_ParagraphWithoutExistingRunProps_AddsParaRunProperties()
+    {
+        var element = new XElement(W.p, new XElement(W.pPr));
+        var paraRunProperties = new XElement(W.rPr, new XElement(W.b));
+
+        element.MergeRunProperties(paraRunProperties, null);
+
+        var pPr = element.Element(W.pPr)!;
+        await Assert.That(pPr.Element(W.rPr)).IsNotNull();
+        await Assert.That(pPr.Element(W.rPr)!.Element(W.b)).IsNotNull();
+    }
+
+    [Test]
+    public async Task MergeRunProperties_ParagraphWithExistingRunProps_MergesMissingProperties()
+    {
+        var element = new XElement(W.p, new XElement(W.pPr, new XElement(W.rPr, new XElement(W.i))));
+        var paraRunProperties = new XElement(W.rPr, new XElement(W.b));
+
+        element.MergeRunProperties(paraRunProperties, null);
+
+        var runProps = element.Element(W.pPr)!.Element(W.rPr)!;
+        // existing property preserved
+        await Assert.That(runProps.Element(W.i)).IsNotNull();
+        // missing property merged in from paraRunProperties
+        await Assert.That(runProps.Element(W.b)).IsNotNull();
+    }
+
+    [Test]
+    public async Task MergeRunProperties_RunWithoutExistingRunProps_AddsRunRunProperties()
+    {
+        var run = new XElement(W.r, new XElement(W.t, "hello"));
+        var element = new XElement(W.p, run);
+        var runRunProperties = new XElement(W.rPr, new XElement(W.b));
+
+        element.MergeRunProperties(null, runRunProperties);
+
+        await Assert.That(run.Element(W.rPr)).IsNotNull();
+        await Assert.That(run.Element(W.rPr)!.Element(W.b)).IsNotNull();
+    }
+
+    [Test]
+    public async Task MergeRunProperties_RunStyleProperty_IsAddedFirst()
+    {
+        var run = new XElement(W.r, new XElement(W.rPr, new XElement(W.b)), new XElement(W.t, "hello"));
+        var element = new XElement(W.p, run);
+        var runRunProperties = new XElement(W.rPr, new XElement(W.rStyle));
+
+        element.MergeRunProperties(null, runRunProperties);
+
+        var runProps = run.Element(W.rPr)!;
+        await Assert.That(runProps.Elements().First().Name).IsEqualTo(W.rStyle);
+    }
+
+    [Test]
+    public async Task MergeRunProperties_NullPropertiesProvided_DoesNotThrow()
+    {
+        var element = new XElement(W.p, new XElement(W.r, new XElement(W.t, "hello")));
+
+        element.MergeRunProperties(null, null);
+
+        await Assert.That(element.Element(W.r)!.Element(W.rPr)).IsNull();
+    }
+
+    // ── UriExtensions.GetUri ────────────────────────────────────────────────
+
+    [Test]
+    public async Task GetUri_AbsoluteHttpString_ReturnsUri()
+    {
+        var uri = "https://example.com/path".GetUri();
+
+        await Assert.That(uri.Scheme).IsEqualTo("https");
+        await Assert.That(uri.Host).IsEqualTo("example.com");
+    }
+
+    [Test]
+    public async Task GetUri_FileUriString_ReturnsFileUri()
+    {
+        var uri = "file:///tmp/some/file.txt".GetUri();
+
+        await Assert.That(uri.Scheme).IsEqualTo("file");
+        await Assert.That(uri.AbsolutePath).IsEqualTo("/tmp/some/file.txt");
+    }
+
+    // ── XPathExtensions.TryEvalueStringToByteArray ──────────────────────────
+
+    [Test]
+    public async Task TryEvalueStringToByteArray_ExistingFilePath_ReturnsTrueAndContents()
+    {
+        var tempFile = Path.GetTempFileName();
+        try
+        {
+            var expectedBytes = "hello world"u8.ToArray();
+            await File.WriteAllBytesAsync(tempFile, expectedBytes);
+            var element = new XElement("root");
+
+            var success = element.TryEvalueStringToByteArray(tempFile, out var bytes);
+
+            await Assert.That(success).IsTrue();
+            await Assert.That(bytes).IsEquivalentTo(expectedBytes);
+        }
+        finally
+        {
+            File.Delete(tempFile);
+        }
+    }
+
+    [Test]
+    public async Task TryEvalueStringToByteArray_NonExistentPathOrXPath_ReturnsFalse()
+    {
+        var element = new XElement("root");
+
+        var success = element.TryEvalueStringToByteArray("/no/such/path/does-not-exist.bin", out var bytes);
+
+        await Assert.That(success).IsFalse();
+        await Assert.That(bytes).IsEmpty();
     }
 }
