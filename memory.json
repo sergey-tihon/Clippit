@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-08-27",
-  "last_run_id": "33107342352",
+  "last_run": "2026-08-30",
+  "last_run_id": "33320328645",
   "backlog_cursor": {
     "issues": 424,
     "prs": 449
@@ -25,7 +25,13 @@
       "number": 449,
       "branch": "clippy/improve-excel-assembler-rebase-20260725-2cc993590e0f6c6f",
       "title": "feat(excel): ExcelAssembler rebase onto master",
-      "note": "rebased 2026-08-26 onto caba0be, build+csharpier+2364 tests(2362 pass/2 skip) pass, awaiting maintainer review"
+      "note": "rebased 2026-08-30 onto c747ebf, build+csharpier+2364 tests(2362 pass/2 skip) pass, awaiting maintainer review"
+    },
+    {
+      "number": null,
+      "branch": "clippy/test-assembler-xelement-uri-extensions-20260830",
+      "title": "test: add coverage for XElementExtensions, UriExtensions, TryEvalueStringToByteArray",
+      "note": "draft, build+csharpier+2375 tests(2373 pass/2 skip) pass, awaiting review"
     }
   ],
   "prs_to_close": [],
@@ -77,7 +83,10 @@
     "Task 2 (2026-08-26): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed",
     "Task 3 (2026-08-26): no fixable bug/help-wanted/good-first-issue issues found this run; substituted with Task 6 rebase (Task 10 fallback)",
     "Task 5 (2026-08-27): fixed remaining ContainsKey+indexer double-lookup in DocumentBuilder.cs CopyStylesAndFonts (styleNameMap[styleName]); build+csharpier+2352 tests pass; draft PR clippy/improve-doublelookup-documentbuilder-20260827",
-    "Task 2 (2026-08-27): reviewed 67,77,103 - no new human activity, no re-engagement needed"
+    "Task 2 (2026-08-27): reviewed 67,77,103 - no new human activity, no re-engagement needed",
+    "Task 9 (2026-08-30): added 11 unit tests for XElementExtensions/UriExtensions/TryEvalueStringToByteArray in AssemblerInternalsTests.cs; draft PR clippy/test-assembler-xelement-uri-extensions-20260830",
+    "Task 6 (2026-08-30): PR #449 rebased onto master c747ebf (31 commits behind), clean rebase, build+csharpier+2364 tests pass, pushed",
+    "Confirmed issue #460 body was intact (not corrupted) despite last run concern; update_issue heredoc-file approach works correctly"
   ],
   "improvements_submitted": [
     "PR(aw_pr_changelog): chore: prepare CHANGELOG for v3.9.0 release (2026-08-05)",
