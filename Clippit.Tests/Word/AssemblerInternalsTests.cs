@@ -9,8 +9,8 @@ namespace Clippit.Tests.Word;
 
 /// <summary>
 /// Unit tests for the internal Assembler helpers: XPathExtensions, XElementExtensions,
-/// UriExtensions, and ErrorHandler. The main library exposes these to this project via
-/// InternalsVisibleTo.
+/// UriExtensions, ErrorHandler, and FileDataExtensions. The main library exposes these
+/// to this project via InternalsVisibleTo.
 /// </summary>
 public class AssemblerInternalsTests
 {
@@ -360,5 +360,30 @@ public class AssemblerInternalsTests
 
         await Assert.That(success).IsFalse();
         await Assert.That(bytes).IsEmpty();
+    }
+
+    // ── FileDataExtensions.GetBase64EncodedDocumentElement ──────────────────
+
+    [Test]
+    public async Task GetBase64EncodedDocumentElement_WrapsBase64DataInSdtContent()
+    {
+        var bytes = "Hello, Clippit!"u8.ToArray();
+
+        var sdt = bytes.GetBase64EncodedDocumentElement();
+
+        await Assert.That(sdt.Name).IsEqualTo(W.sdt);
+        var sdtContent = sdt.Element(W.sdtContent);
+        await Assert.That(sdtContent).IsNotNull();
+        var text = sdtContent!.Element(W.p)?.Element(W.r)?.Element(W.t)?.Value;
+        await Assert.That(text).IsEqualTo($"<Document Data=\"{Convert.ToBase64String(bytes)}\" />");
+    }
+
+    [Test]
+    public async Task GetBase64EncodedDocumentElement_EmptyByteArray_ProducesEmptyDataAttribute()
+    {
+        var sdt = Array.Empty<byte>().GetBase64EncodedDocumentElement();
+
+        var text = sdt.Element(W.sdtContent)?.Element(W.p)?.Element(W.r)?.Element(W.t)?.Value;
+        await Assert.That(text).IsEqualTo("<Document Data=\"\" />");
     }
 }
