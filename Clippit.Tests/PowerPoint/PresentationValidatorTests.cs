@@ -142,6 +142,86 @@ public sealed class PresentationValidatorTests
         await Assert.That(result.Diagnostics.Any(d => d.Kind == OpenXmlValidationDiagnosticKinds.Package)).IsTrue();
     }
 
+    [Test]
+    public async Task PV010_SectionSlideReferencedByRelationshipId_ReturnsPptxSectionDiagnostic()
+    {
+        using var stream = CreateExpandableStream(Path.Combine(s_testFiles.FullName, "PB001-Input1.pptx"));
+        AddSectionWithSlideReference(stream, useRelationshipId: true);
+        stream.Position = 0;
+
+        var result = PresentationValidator.Validate(stream);
+
+        await Assert.That(result.Valid).IsFalse();
+        await Assert
+            .That(
+                result.Diagnostics.Any(d =>
+                    d.Kind == PresentationValidationDiagnosticKinds.Section && d.RelationshipId is not null
+                )
+            )
+            .IsTrue();
+    }
+
+    [Test]
+    public async Task PV011_SectionSlideMissingNumericId_ReturnsPptxSectionDiagnostic()
+    {
+        using var stream = CreateExpandableStream(Path.Combine(s_testFiles.FullName, "PB001-Input1.pptx"));
+        AddSectionWithSlideReference(stream, omitNumericId: true);
+        stream.Position = 0;
+
+        var result = PresentationValidator.Validate(stream);
+
+        await Assert.That(result.Valid).IsFalse();
+        await Assert
+            .That(
+                result.Diagnostics.Any(d =>
+                    d.Kind == PresentationValidationDiagnosticKinds.Section
+                    && d.Attribute == "id"
+                    && d.Description.Contains("without numeric id", StringComparison.Ordinal)
+                )
+            )
+            .IsTrue();
+    }
+
+    [Test]
+    public async Task PV012_SectionSlideNonNumericId_ReturnsPptxSectionDiagnostic()
+    {
+        using var stream = CreateExpandableStream(Path.Combine(s_testFiles.FullName, "PB001-Input1.pptx"));
+        AddSectionWithSlideReference(stream, numericId: "not-a-number");
+        stream.Position = 0;
+
+        var result = PresentationValidator.Validate(stream);
+
+        await Assert.That(result.Valid).IsFalse();
+        await Assert
+            .That(
+                result.Diagnostics.Any(d =>
+                    d.Kind == PresentationValidationDiagnosticKinds.Section
+                    && d.Description.Contains("non-numeric slide id", StringComparison.Ordinal)
+                )
+            )
+            .IsTrue();
+    }
+
+    [Test]
+    public async Task PV013_SectionSlideIdNotInSldIdLst_ReturnsPptxSectionDiagnostic()
+    {
+        using var stream = CreateExpandableStream(Path.Combine(s_testFiles.FullName, "PB001-Input1.pptx"));
+        AddSectionWithSlideReference(stream, numericId: "999999");
+        stream.Position = 0;
+
+        var result = PresentationValidator.Validate(stream);
+
+        await Assert.That(result.Valid).IsFalse();
+        await Assert
+            .That(
+                result.Diagnostics.Any(d =>
+                    d.Kind == PresentationValidationDiagnosticKinds.Section
+                    && d.Description.Contains("not present in p:sldIdLst", StringComparison.Ordinal)
+                )
+            )
+            .IsTrue();
+    }
+
     private static MemoryStream CreateExpandableStream(string path)
     {
         var stream = new MemoryStream();
@@ -228,6 +308,57 @@ public sealed class PresentationValidatorTests
                         useBracelessSectionId ? Guid.NewGuid().ToString("D") : Guid.NewGuid().ToString("B")
                     ),
                     new XElement(p14 + "sldIdLst", new XElement(p14 + "sldId", new XAttribute(r + "id", relId)))
+                )
+            )
+        );
+
+        presentationEntry.Delete();
+        var newEntry = zip.CreateEntry("ppt/presentation.xml");
+        using var writer = new StreamWriter(newEntry.Open());
+        using var xmlWriter = System.Xml.XmlWriter.Create(writer);
+        xDoc.WriteTo(xmlWriter);
+    }
+
+    /// <summary>
+    /// Adds a well-formed section with a single slide reference whose id attributes can be
+    /// individually tweaked to exercise each PresentationSectionValidator error branch.
+    /// </summary>
+    private static void AddSectionWithSlideReference(
+        Stream pptxStream,
+        bool useRelationshipId = false,
+        bool omitNumericId = false,
+        string? numericId = null
+    )
+    {
+        XNamespace p = "http://schemas.openxmlformats.org/presentationml/2006/main";
+        XNamespace p14 = "http://schemas.microsoft.com/office/powerpoint/2010/main";
+        XNamespace r = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+
+        using var zip = new ZipArchive(pptxStream, ZipArchiveMode.Update, leaveOpen: true);
+        var presentationEntry = zip.GetEntry("ppt/presentation.xml")!;
+
+        XDocument xDoc;
+        using (var stream = presentationEntry.Open())
+            xDoc = XDocument.Load(stream);
+
+        var firstSlide = xDoc.Root!.Element(p + "sldIdLst")!.Elements(p + "sldId").First();
+        var relId = (string)firstSlide.Attribute(r + "id")!;
+        var firstSlideId = (string)firstSlide.Attribute(NoNamespace.id)!;
+
+        var sldIdElement = new XElement(p14 + "sldId");
+        if (useRelationshipId)
+            sldIdElement.SetAttributeValue(r + "id", relId);
+        if (!omitNumericId)
+            sldIdElement.SetAttributeValue(NoNamespace.id, numericId ?? firstSlideId);
+
+        xDoc.Root.Add(
+            new XElement(
+                p14 + "sectionLst",
+                new XElement(
+                    p14 + "section",
+                    new XAttribute(NoNamespace.name, "Section1"),
+                    new XAttribute(NoNamespace.id, Guid.NewGuid().ToString("B")),
+                    new XElement(p14 + "sldIdLst", sldIdElement)
                 )
             )
         );
