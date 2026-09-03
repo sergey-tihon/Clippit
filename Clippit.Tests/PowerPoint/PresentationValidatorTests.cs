@@ -155,7 +155,9 @@ public sealed class PresentationValidatorTests
         await Assert
             .That(
                 result.Diagnostics.Any(d =>
-                    d.Kind == PresentationValidationDiagnosticKinds.Section && d.RelationshipId is not null
+                    d.Kind == PresentationValidationDiagnosticKinds.Section
+                    && d.Element == "sldId"
+                    && d.Description.Contains("references slide by relationship id", StringComparison.Ordinal)
                 )
             )
             .IsTrue();
@@ -330,9 +332,9 @@ public sealed class PresentationValidatorTests
         string? numericId = null
     )
     {
-        XNamespace p = "http://schemas.openxmlformats.org/presentationml/2006/main";
-        XNamespace p14 = "http://schemas.microsoft.com/office/powerpoint/2010/main";
-        XNamespace r = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+        var p = XNamespace.Get("http://schemas.openxmlformats.org/presentationml/2006/main");
+        var p14 = XNamespace.Get("http://schemas.microsoft.com/office/powerpoint/2010/main");
+        var r = XNamespace.Get("http://schemas.openxmlformats.org/officeDocument/2006/relationships");
 
         using var zip = new ZipArchive(pptxStream, ZipArchiveMode.Update, leaveOpen: true);
         var presentationEntry = zip.GetEntry("ppt/presentation.xml")!;
