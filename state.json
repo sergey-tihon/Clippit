@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-08-20",
-  "last_run_id": "32388481883",
+  "last_run": "2026-09-03",
+  "last_run_id": "33774215450",
   "backlog_cursor": {
     "issues": 401,
     "prs": 165
@@ -31,26 +31,26 @@
   "open_clippy_prs": [
     {
       "number": 449,
-      "branch": "clippy/improve-excel-assembler-rebase-20260725",
+      "branch": "clippy/improve-excel-assembler-rebase-20260725-2cc993590e0f6c6f",
       "title": "[Clippy] feat(excel): ExcelAssembler",
-      "note": "mergeable_state=dirty, needs rebase"
+      "note": "rebased 2026-09-03 onto master c5cf701, build+csharpier+2383 tests pass, awaiting review"
     },
     {
       "number": null,
-      "branch": "clippy/eng-deps-tunit-testsdk-20260820",
-      "title": "[Clippy] chore(deps): TUnit 1.65.38, Test.Sdk 18.9.0",
-      "note": "created 2026-08-20, build+csharpier+2345 tests(2343 pass) pass, awaiting review"
+      "branch": "clippy/test-stricttranslatingxmlreader-20260902",
+      "title": "[Clippy] test: StrictTranslatingXmlReader coverage",
+      "note": "draft, build+csharpier+2371 tests pass"
     },
     {
       "number": null,
-      "branch": "clippy/improve-doublelookup-revisionprocessor-hashing-20260820",
-      "title": "[Clippy] refactor: eliminate double lookups in RevisionProcessor/WmlComparer",
-      "note": "created 2026-08-20, build+csharpier+2345 tests(2343 pass) pass, awaiting review"
+      "branch": "clippy/test-presentationsectionvalidator-20260903",
+      "title": "[Clippy] test: PresentationSectionValidator coverage",
+      "note": "draft, created 2026-09-03, build+csharpier+2375 tests pass"
     }
   ],
   "checked_off_by_maintainer": [],
-  "m_issue": 370,
-  "m_month": "2026-07",
+  "m_issue": 501,
+  "m_month": "2026-09",
   "notes": [
     "dotnet outdated: no outdated dependencies as of 2026-08-12",
     "PR #470 (ContainsKey+indexer dedup), #472 (PtBucketTimer), #473 (ColorParser tests), #475 (WorksheetAccessor/FieldRetriever) all merged",
@@ -59,7 +59,8 @@
     "Monthly Activity issue for August 2026 is #460",
     "SixLabors.ImageSharp.Drawing 3.0.0 requires paid commercial license - do NOT upgrade",
     "PR #477 (HtmlToWmlCssApplier double-lookup) merged onto master",
-    "dotnet outdated (2026-08-20): TUnit 1.65.38, Microsoft.NET.Test.Sdk 18.9.0 available - addressed via new PR"
+    "dotnet outdated (2026-08-20): TUnit 1.65.38, Microsoft.NET.Test.Sdk 18.9.0 available - addressed via new PR",
+    "PR #449 rebased again 2026-09-03 onto c5cf701 (was behind); test suite now 2383 tests total on master branch"
   ],
   "improvements_submitted": [
     "PR#342-#356, #359, #361-#362, #369, #371, #391, #393-#398, #405, #406, #407: various - most merged",
