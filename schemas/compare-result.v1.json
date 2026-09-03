@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sergey-tihon.github.io/Clippit/schemas/compare-result.v1.json",
+  "title": "Clippit word compare result",
+  "description": "Result payload of `clippit word compare` written to stdout in JSON mode.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source",
+    "revised",
+    "output",
+    "outputSize",
+    "revisions",
+    "authorForRevisions",
+    "dateTimeForRevisions",
+    "caseInsensitive"
+  ],
+  "properties": {
+    "source": {
+      "type": "string",
+      "description": "Absolute path of the source .docx file, or '<stdin>' when read from stdin."
+    },
+    "revised": {
+      "type": "string",
+      "description": "Absolute path of the revised .docx file, or '<stdin>' when read from stdin."
+    },
+    "output": {
+      "type": "string",
+      "description": "Absolute path of the compared output file, or '<stdout>' when written to stdout."
+    },
+    "outputSize": {
+      "type": "integer",
+      "description": "Size of the compared output .docx file in bytes."
+    },
+    "revisions": {
+      "type": "integer",
+      "description": "Number of revisions extracted from the compared result."
+    },
+    "authorForRevisions": {
+      "type": "string",
+      "description": "Author metadata used for generated revisions."
+    },
+    "dateTimeForRevisions": {
+      "type": "string",
+      "description": "Date/time metadata used for generated revisions."
+    },
+    "caseInsensitive": {
+      "type": "boolean",
+      "description": "Whether case-insensitive compare mode was enabled."
+    }
+  }
+}
