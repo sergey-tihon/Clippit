@@ -160,3 +160,11 @@ Last issue processed: #401. All issues labelled. All issues have Clippy comments
 ## Run 2026-09-05
 - Task 4: dotnet outdated -> TUnit 1.65.68->1.66.10 (patch), created PR clippy/eng-tunit-1.66.10-20260905, all tests pass
 - Task 5/8: reviewed remaining ContainsKey patterns repo-wide, none were actual double-lookup bugs; no action
+
+## Run 2026-09-06 15:43 UTC (34043086438)
+- Selected tasks: 6 (Maintain Clippy PRs), 5 (Coding Improvements), 3 (Issue Investigation and Fix)
+- Task 6: PR #449 (ExcelAssembler) was 41 commits behind master (merge-base 469bc56). Rebased cleanly onto master (4d2a014), no conflicts (only 3 unique commits remained: feat/fix/refactor of ExcelAssembler itself). Build (0 errors) + csharpier check + full suite 2387 tests (2385 pass/2 skip) all pass. Pushed successfully via push_to_pull_request_branch (the earlier protected-files block noted in issue #505 did not recur this run).
+- Task 5: reviewed remaining ContainsKey usages across Clippit/ (PtOpenXmlUtil, DocumentBuilder x2, WmlToHtmlConverter, DocumentAssembler x2, UnicodeMapper, HtmlToWmlCssApplier, SmlToHtmlConverter) - all are guard-only checks (early-return / skip-if-present), not double-lookup bugs; no clearly beneficial low-risk improvement found. No new PR created.
+- Task 3: no new fixable bug/help-wanted/good-first-issue issues found beyond existing Q&A issues (#67/#77/#103, all already answered, no new human activity).
+- Task 2 (implicit): reviewed #67, #77, #103 - no new human activity since last Clippy comments, no re-engagement needed.
+- Updated Monthly Activity issue #501 with new run entry and refreshed suggested actions (updated PR #449 status to reflect successful rebase push, noted #505 may be stale/resolved).
