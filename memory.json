@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-09-09",
-  "last_run_id": "34372118868",
+  "last_run": "2026-09-10",
+  "last_run_id": "34497395946",
   "backlog_cursor": {
     "issues": 424,
     "prs": 449
@@ -22,15 +22,15 @@
   },
   "open_clippy_prs": [
     {
-      "number": 449,
-      "branch": "clippy/improve-excel-assembler-rebase-20260725-2cc993590e0f6c6f",
-      "title": "feat(excel): ExcelAssembler rebase onto master",
-      "note": "rebased 2026-09-08 onto 6668cfc, build+csharpier+2387 tests(2385 pass/2 skip) pass, pushed successfully, awaiting maintainer review"
-    },
-    {
       "number": null,
       "branch": "clippy/test-ptopenxmlutil-getboolprop-getfontsize-20260909",
       "title": "test: add unit tests for XmlUtil.GetXmlSpaceAttribute and WordprocessingMLUtil.GetBoolProp/GetFontSize",
+      "note": "draft, build+csharpier+2398 tests(2396 pass/2 skip) pass, awaiting review"
+    },
+    {
+      "number": null,
+      "branch": "clippy/eng-test-sdk-18.10.0-20260910",
+      "title": "chore(deps): bump Microsoft.NET.Test.Sdk 18.9.0 -> 18.10.0",
       "note": "draft, build+csharpier+2398 tests(2396 pass/2 skip) pass, awaiting review"
     }
   ],
@@ -99,7 +99,11 @@
     "2026-09-09: confirmed PR #498 (FileDataExtensions coverage) already merged 2026-08-31 - removed stale reference; confirmed issues #505/#507 (gh-aw Protected Files notices) were deleted (410) - removed from suggested actions",
     "Task 9 (2026-09-09): added 23 unit tests for PtOpenXmlUtil.XmlUtil.GetXmlSpaceAttribute and WordprocessingMLUtil.GetBoolProp/GetFontSize (previously untested pure helpers, only exercised indirectly); build+csharpier+2398 tests pass; draft PR clippy/test-ptopenxmlutil-getboolprop-getfontsize-20260909",
     "Task 2 (2026-09-09): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed",
-    "Task 5 substituted with Task 9 (2026-09-09): testing work (GetBoolProp/GetFontSize coverage) was the highest-value low-risk improvement found this run"
+    "Task 5 substituted with Task 9 (2026-09-09): testing work (GetBoolProp/GetFontSize coverage) was the highest-value low-risk improvement found this run",
+    "2026-09-10: PR #449 (ExcelAssembler) was closed by maintainer along with issue #28 on 2026-09-09 - no longer tracked; ExcelAssembler feature is not in master",
+    "Task 4 (2026-09-10): dotnet outdated showed Microsoft.NET.Test.Sdk 18.9.0->18.10.0 (minor); created PR clippy/eng-test-sdk-18.10.0-20260910, build+csharpier+2398 tests pass",
+    "Task 2 (2026-09-10): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed",
+    "Task 10 substituted with Task 4 (2026-09-10): main in-progress item (PR #449) was closed by maintainer; no other blocked/in-progress work found, so picked up dependency update task"
   ],
   "improvements_submitted": [
     "PR(aw_pr_changelog): chore: prepare CHANGELOG for v3.9.0 release (2026-08-05)",
