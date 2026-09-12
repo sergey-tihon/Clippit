@@ -127,7 +127,9 @@ public class AddDocxTextHelperTests : TestsBase
     }
 
     [Test]
-    public async Task ADT006_AppendParagraphToDocument_InvalidForeColor_Throws()
+    [Arguments("NotARealColor", null)]
+    [Arguments(null, "NotARealColor")]
+    public async Task ADT006_AppendParagraphToDocument_InvalidColor_Throws(string? foreColor, string? backColor)
     {
         var original = new WmlDocument(DocxPath);
         await Assert
@@ -138,8 +140,8 @@ public class AddDocxTextHelperTests : TestsBase
                     isBold: false,
                     isItalic: false,
                     isUnderline: false,
-                    foreColor: "NotARealColor",
-                    backColor: null,
+                    foreColor: foreColor,
+                    backColor: backColor,
                     styleName: null
                 )
             )
