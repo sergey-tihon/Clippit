@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Excel CLI (excel) | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Excel CLI (excel) | Clippit ">
+      
+      
+      <link rel="icon" href="images/logo-site.png">
+      <link rel="stylesheet" href="public/docfx.min.css">
+      <link rel="stylesheet" href="public/main.css">
+      <meta name="docfx:navrel" content="toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/blob/master/docs/cli-excel.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="index.html">
+            <img id="logo" class="svg" src="images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="excel-cli-excel">Excel CLI (<code>excel</code>)</h1>
+
+<p>Use this page for Excel (<code>.xlsx</code>) command reference.</p>
+<ul>
+<li>Back to <a href="cli.html">CLI start page</a></li>
+<li>Shared verify diagnostics schema: <a href="schemas/README.md">schemas/README.md</a></li>
+</ul>
+<h2 id="commands-at-a-glance">Commands at a glance</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>clippit excel verify</code></td>
+<td>Validate package/schema/relationships</td>
+</tr>
+<tr>
+<td><code>clippit excel to-html</code></td>
+<td>Convert workbook range/sheet/table to HTML/CSS</td>
+</tr>
+<tr>
+<td><code>clippit excel create</code></td>
+<td>Generate an XLSX workbook from a JSON definition</td>
+</tr>
+</tbody>
+</table>
+<p>All commands support <code>--format json|text</code> and <code>--quiet</code>.</p>
+<h2 id="excel-verify"><code>excel verify</code></h2>
+<p>Validate readability and Open XML structure of a spreadsheet.</p>
+<pre><code class="lang-text">clippit excel verify &lt;input.xlsx|-&gt; [--office-version &lt;version&gt;] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--office-version</code></td>
+<td>Open XML schema version (default: <code>Microsoft365</code>).</td>
+</tr>
+</tbody>
+</table>
+<p>Readable-but-invalid spreadsheets return verify JSON and exit code <code>4</code>.</p>
+<pre><code class="lang-bash">clippit excel verify spreadsheet.xlsx --format json
+</code></pre>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/spreadsheet.xlsx&quot;,&quot;officeVersion&quot;:&quot;Microsoft365&quot;,&quot;valid&quot;:true,&quot;diagnostics&quot;:[]}
+</code></pre>
+<h2 id="excel-to-html"><code>excel to-html</code></h2>
+<p>Convert a worksheet, range, or defined table to HTML/CSS.</p>
+<pre><code class="lang-text">clippit excel to-html &lt;input.xlsx|-&gt; [--output &lt;file.html|-&gt;] [--sheet &lt;name&gt;] [--range &lt;A1:D10&gt;] [--table &lt;name&gt;] [--page-title &lt;text&gt;] [--additional-css &lt;css&gt;] [--css-prefix &lt;prefix&gt;] [--no-fabricate-css] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Output HTML path (default: <code>&lt;input&gt;.html</code>). Use <code>-</code> for stdout.</td>
+</tr>
+<tr>
+<td><code>--sheet</code></td>
+<td>Sheet name. Defaults to first sheet if <code>--range</code> and <code>--table</code> are omitted.</td>
+</tr>
+<tr>
+<td><code>--range</code></td>
+<td>Cell/range coordinates (for example <code>A1:D10</code>). Requires <code>--sheet</code>.</td>
+</tr>
+<tr>
+<td><code>--table</code></td>
+<td>Defined Excel table name. Cannot be combined with <code>--sheet</code> or <code>--range</code>.</td>
+</tr>
+<tr>
+<td><code>--page-title</code></td>
+<td>HTML <code>&lt;title&gt;</code> text.</td>
+</tr>
+<tr>
+<td><code>--additional-css</code></td>
+<td>Extra CSS injected into generated <code>&lt;style&gt;</code>.</td>
+</tr>
+<tr>
+<td><code>--css-prefix</code></td>
+<td>Prefix for generated CSS classes (default: <code>pt-</code>).</td>
+</tr>
+<tr>
+<td><code>--no-fabricate-css</code></td>
+<td>Use inline styles instead of generated CSS classes.</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-bash">clippit excel to-html spreadsheet.xlsx --sheet &quot;Q3 Data&quot; --range &quot;B2:F15&quot; --output sheet.html --format json
+</code></pre>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/spreadsheet.xlsx&quot;,&quot;output&quot;:&quot;/work/sheet.html&quot;,&quot;outputSize&quot;:18231}
+</code></pre>
+<h2 id="excel-create"><code>excel create</code></h2>
+<p>Generate an <code>.xlsx</code> workbook from a JSON workbook definition.</p>
+<pre><code class="lang-text">clippit excel create &lt;input.json|-&gt; [--output &lt;file.xlsx|-&gt;] [--force] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Output XLSX path (default: <code>&lt;input&gt;.xlsx</code>). Use <code>-</code> for stdout.</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Overwrite existing output file.</td>
+</tr>
+</tbody>
+</table>
+<p>The input JSON must contain at least one worksheet. See the workbook definition schema in <a href="schemas/README.md">schemas/README.md</a>.</p>
+<pre><code class="lang-bash">clippit excel create workbook.json --output report.xlsx --format json
+</code></pre>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/workbook.json&quot;,&quot;output&quot;:&quot;/work/report.xlsx&quot;,&quot;outputSize&quot;:24576,&quot;worksheetCount&quot;:2}
+</code></pre>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/cli-excel.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
