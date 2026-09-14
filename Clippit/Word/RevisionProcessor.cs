@@ -796,7 +796,7 @@ namespace Clippit.Word
         {
             if (node is not XElement element)
                 return node;
-            if (element.Name == W.tc && !element.Elements().Where(e => e.Name != W.tcPr).Any())
+            if (element.Name == W.tc && !element.Elements().Any(e => e.Name != W.tcPr))
                 return new XElement(W.tc, element.Attributes(), element.Elements(), new XElement(W.p));
 
             return new XElement(
@@ -1987,8 +1987,7 @@ namespace Clippit.Word
                                 CollectionType = DeletedCellCollectionType.DeletedCell,
                                 Disambiguator = new[] { e }
                                     .Concat(e.SiblingsBeforeSelfReverseDocumentOrder())
-                                    .Where(z => z.Name == W.tc && !z.Descendants(W.cellDel).Any())
-                                    .FirstOrDefault(),
+                                    .FirstOrDefault(z => z.Name == W.tc && !z.Descendants(W.cellDel).Any()),
                             };
                             return a;
                         }
