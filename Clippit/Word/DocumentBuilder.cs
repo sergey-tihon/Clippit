@@ -413,7 +413,7 @@ namespace Clippit.Word
                     {
                         mainXDoc.Root.Element(W.body).Add(lastElement.Descendants(W.sectPr).First());
                         lastElement.Descendants(W.sectPr).Remove();
-                        if (!lastElement.Elements().Where(e => e.Name != W.pPr).Any())
+                        if (!lastElement.Elements().Any(e => e.Name != W.pPr))
                             lastElement.Remove();
                         document.MainDocumentPart.PutXDocument();
                     }
@@ -4039,7 +4039,7 @@ namespace Clippit.Word
             foreach (var start in newContent.Elements(startElement))
             {
                 var id = start.Attribute(matchAttr).Value;
-                if (!newContent.Elements(matchTo).Where(n => n.Attribute(matchAttr).Value == id).Any())
+                if (!newContent.Elements(matchTo).Any(n => n.Attribute(matchAttr).Value == id))
                     deleteList.Add(start.Attribute(idAttr).Value);
             }
             foreach (var item in deleteList)
