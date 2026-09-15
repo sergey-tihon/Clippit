@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Images Support | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Images Support | Clippit ">
+      
+      
+      <link rel="icon" href="../../images/logo-site.png">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/blob/master/docs/tutorials/word/DocumentAssembler_ImagesSupport.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Tutorial.Word.DocumentAssembler.ImagesSupport">
+<h1 id="images-support">Images Support</h1>
+
+<p>Namespace: <code>Clippit.Word</code></p>
+<p>Key highlights from <a href="https://github.com/sergey-tihon/Clippit/pull/31#issuecomment-874335292">#31</a>.</p>
+<h2 id="introduction">Introduction</h2>
+<p>The Image content control works by being placed directly before an image placeholder in your Word document.  The image placeholder must be inline.</p>
+<p>Images content can be provided in your XML data using a path to a file on disk, or by using the <a href="https://en.wikipedia.org/wiki/Data_URI_scheme">data URI scheme</a>.  Example of both approaches are shown below:</p>
+<pre><code class="lang-xml">&lt;Logo&gt;../../md-logo.png&lt;/Logo&gt;
+</code></pre>
+<pre><code class="lang-xml">&lt;Image&gt;data:image/jpg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcetc…&lt;/Image&gt;
+</code></pre>
+<p>Document Assembler will either infer the MIME type based on the extension of the filename, or take use the MIME type passed in when using the data URI scheme.</p>
+<p>Examples below show the Image content control in action and are taken from the Document Assembler Test Files:</p>
+<h2 id="image-select">Image Select</h2>
+<p><img src="../../images/word/documentassembler/image1.jpg" alt="image1"></p>
+<h2 id="image-select-within-a-repeat">Image Select within a Repeat</h2>
+<p>Note that when using a Repeat XPATH is aware of the Context it is in and should operate on the &quot;current&quot; Node.</p>
+<p><img src="../../images/word/documentassembler/image2.png" alt="image2"></p>
+<h2 id="image-select-within-a-table">Image Select within a Table</h2>
+<p>Works in a very similar way to Repeat.</p>
+<p><img src="../../images/word/documentassembler/image3.png" alt="image3"></p>
+<h2 id="xml-data-used-in-above-examples">XML Data used in above Examples</h2>
+<pre><code class="lang-xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;Customer&gt;
+  &lt;CustomerID&gt;1&lt;/CustomerID&gt;
+  &lt;Name&gt;Cheryl&lt;/Name&gt;
+  &lt;HighValueCustomer&gt;True&lt;/HighValueCustomer&gt;
+  &lt;CustomerLogo&gt;../../../../TestFiles/img.png&lt;/CustomerLogo&gt;
+  &lt;Header&gt;../../../../TestFiles/T0936_files/image001.png&lt;/Header&gt;
+  &lt;Orders&gt;
+    &lt;Order&gt;
+      &lt;ProductDescription&gt;Unicycle&lt;/ProductDescription&gt;
+      &lt;Quantity&gt;3&lt;/Quantity&gt;
+      &lt;OrderDate&gt;9/5/2001&lt;/OrderDate&gt;
+	  &lt;Thumbnail&gt;../../../../TestFiles/img2.png&lt;/Thumbnail&gt;
+    &lt;/Order&gt;
+    &lt;Order&gt;
+      &lt;ProductDescription&gt;Tricycle&lt;/ProductDescription&gt;
+      &lt;Quantity&gt;3&lt;/Quantity&gt;
+      &lt;OrderDate&gt;8/6/2000&lt;/OrderDate&gt;
+	  &lt;Thumbnail&gt;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMcAAACTCAYA...&lt;/Thumbnail&gt;	  
+    &lt;/Order&gt;
+  &lt;/Orders&gt;
+  &lt;TotalQuantity&gt;6&lt;/TotalQuantity&gt;
+  &lt;Description&gt;&lt;![CDATA[This
+is a multiline
+description that
+contains details about
+Cheryl.]]&gt;&lt;/Description&gt;
+&lt;/Customer&gt;
+</code></pre>
+<h2 id="further-reading">Further Reading</h2>
+<p>If you are interested in using the Image functionality in DocumentAssembler then your best bet is to look at <code>DocumentAssemblerTests.cs</code> and particularly the data files which can be found in the repository under <code>TestFiles/DA</code>.</p>
+<p>Changes merged in: <a href="https://github.com/sergey-tihon/Clippit/pull/31">#31</a></p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/tutorials/word/DocumentAssembler_ImagesSupport.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
