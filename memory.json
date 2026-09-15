@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-09-14",
-  "last_run_id": "34864087210",
+  "last_run": "2026-09-15",
+  "last_run_id": "34990316574",
   "backlog_cursor": {
     "issues": 424,
     "prs": 449
@@ -29,8 +29,8 @@
     },
     {
       "number": null,
-      "branch": "clippy/perf-where-any-firstordefault-20260914",
-      "title": "[Clippy] perf: eliminate Where().Any()/Where().FirstOrDefault() intermediate iterators",
+      "branch": "clippy/eng-deps-test-sdk-tunit-20260915",
+      "title": "[Clippy] chore(deps): bump Microsoft.NET.Test.Sdk 18.10.1, TUnit 1.67.0",
       "note": "draft, build+csharpier+2408 tests(2406 pass/2 skip) pass"
     }
   ],
@@ -113,7 +113,11 @@
     "Task 5 substituted with Task 9 (2026-09-13): testing work (OpenXmlPowerToolsDocument coverage) was highest-value low-risk improvement found this run",
     "Confirmed PR #515 (AddDocxTextHelper tests) merged onto master 2026-09-13",
     "Task 10/8 (2026-09-14): reviewed for Where().Any()/Where().FirstOrDefault() double-iteration patterns across Clippit/; found+fixed 4 occurrences (DocumentBuilder.cs x2, RevisionProcessor.cs x2) converting to single-pass .Any(pred)/.FirstOrDefault(pred); build+csharpier+2408 tests(2406 pass/2 skip) pass; created draft PR clippy/perf-where-any-firstordefault-20260914",
-    "Task 2 (2026-09-14): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed"
+    "Task 2 (2026-09-14): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed",
+    "Task 2 (2026-09-15): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed",
+    "Task 1 (2026-09-15): all open issues already labelled; no unlabelled items",
+    "Task 4 (2026-09-15): dotnet outdated showed Microsoft.NET.Test.Sdk 18.10.0->18.10.1 and TUnit 1.66.27->1.67.0 (test-only, patch/minor); created PR clippy/eng-deps-test-sdk-tunit-20260915, build+csharpier+2408 tests(2406 pass/2 skip) pass",
+    "2026-09-15: Monthly Activity issue #501 cleaned up - removed stale checklist items for PR #449 (closed by maintainer 2026-09-09) and issues #505/#507 (both deleted, HTTP 410)"
   ],
   "improvements_submitted": [
     "PR(aw_pr_changelog): chore: prepare CHANGELOG for v3.9.0 release (2026-08-05)",
