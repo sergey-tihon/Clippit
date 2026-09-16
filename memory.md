@@ -202,3 +202,12 @@ Last issue processed: #401. All issues labelled. All issues have Clippy comments
 - Task 1: all open issues already labelled, no action needed
 - Task 4: dotnet outdated found Microsoft.NET.Test.Sdk 18.10.0->18.10.1 (patch) and TUnit 1.66.27->1.67.0 (minor), test-only deps; created draft PR clippy/eng-deps-test-sdk-tunit-20260915; build+csharpier+2408 tests (2406 pass/2 skip) pass
 - Task 11: cleaned up Monthly Activity issue #501 - removed stale checklist items (PR #449 closed by maintainer, issues #505/#507 deleted/410)
+
+## Last Run
+2026-09-16 15:45 UTC — Run 35117147113 (see memory.json for detailed structured state)
+- Tasks selected: 2 (Issue Comment), 4 (Engineering Investments), 5 (Coding Improvements)
+- Task 2: reviewed #67,#77,#103 - no new human activity, no re-engagement
+- Task 4: created draft PR clippy/eng-tunit-1.68.4-20260916 (TUnit 1.67.0->1.68.4, test-only minor bump), build+2408 tests pass
+- Task 5: created draft PR clippy/improve-where-firstordefault-any-20260916 (7 Where().FirstOrDefault()/Any()/LastOrDefault() -> single-predicate overloads in OxPtHelpers.cs, WmlToXml.cs, RevisionProcessor.cs), build+2408 tests pass
+- Confirmed PRs #517, #518 merged onto master since last run
+- Rewrote Monthly Activity issue #501 body cleanly - it still had stale references to closed PR #449 and deleted issues #505/#507 despite a prior note claiming cleanup
