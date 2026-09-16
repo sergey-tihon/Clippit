@@ -382,8 +382,7 @@ namespace Clippit.Word
                 return node;
             var parent = element
                 .Ancestors()
-                .Where(a => a.Name != W.sdtContent && a.Name != W.sdt && a.Name != W.smartTag)
-                .FirstOrDefault();
+                .FirstOrDefault(a => a.Name != W.sdtContent && a.Name != W.sdt && a.Name != W.smartTag);
 
             ////////////////////////////////////////////////////////////////////////////////////
             // Deleted run
@@ -1334,12 +1333,14 @@ namespace Clippit.Word
                     commonAncestor.Name == W.p
                     && commonAncestor
                         .Elements()
-                        .Where(e => e.Name != W.pPr && e.Name != W.commentRangeStart && e.Name != W.commentRangeEnd)
-                        .FirstOrDefault() == firstRunChild
+                        .FirstOrDefault(e =>
+                            e.Name != W.pPr && e.Name != W.commentRangeStart && e.Name != W.commentRangeEnd
+                        ) == firstRunChild
                     && commonAncestor
                         .Elements()
-                        .Where(e => e.Name != W.pPr && e.Name != W.commentRangeStart && e.Name != W.commentRangeEnd)
-                        .LastOrDefault() == lastRunChild
+                        .LastOrDefault(e =>
+                            e.Name != W.pPr && e.Name != W.commentRangeStart && e.Name != W.commentRangeEnd
+                        ) == lastRunChild
                 )
                 {
                     // replace commonAncestor with content control containing commonAncestor
@@ -1457,8 +1458,7 @@ namespace Clippit.Word
                             .ThisBlockContentElement.Elements(W.pPr)
                             .Elements(W.rPr)
                             .Elements()
-                            .Where(e => e.Name == W.del || e.Name == W.moveFrom)
-                            .Any();
+                            .Any(e => e.Name == W.del || e.Name == W.moveFrom);
 
                         if (paragraphMarkIsDeletedOrMovedFrom)
                         {
@@ -2176,8 +2176,7 @@ namespace Clippit.Word
                 // example, comment elements have no descendant elements.
                 var paragraph = content
                     .DescendantsAndSelf()
-                    .Where(e => e.Name == W.p || e.Name == W.tc || e.Name == W.txbxContent)
-                    .FirstOrDefault();
+                    .FirstOrDefault(e => e.Name == W.p || e.Name == W.tc || e.Name == W.txbxContent);
                 if (paragraph is not null && (paragraph.Name == W.tc || paragraph.Name == W.txbxContent))
                     paragraph = null;
                 var pi = new BlockContentInfo()
