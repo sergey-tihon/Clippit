@@ -1,15 +1,15 @@
 {
-  "last_run": "2026-09-16",
-  "last_run_id": "35117147113",
+  "last_run": "2026-09-17",
+  "last_run_id": "35242046486",
   "backlog_cursor": {
     "issues": 424,
     "prs": 449
   },
   "comments_made": {
     "54": "2026-07-12",
-    "67": "2026-08-11",
-    "77": "2026-08-11",
-    "103": "2026-08-11",
+    "67": "2026-09-17",
+    "77": "2026-09-17",
+    "103": "2026-09-17",
     "279": "2026-05-20",
     "286": "2026-05-20",
     "290": "2026-05-27",
@@ -22,22 +22,10 @@
   },
   "open_clippy_prs": [
     {
-      "number": 516,
-      "branch": "clippy/test-openxmlpowertoolsdocument-coverage-20260913",
-      "title": "[Clippy] test: add coverage for OpenXmlPowerToolsDocument APIs",
-      "note": "open PR #516, awaiting review"
-    },
-    {
       "number": null,
-      "branch": "clippy/eng-tunit-1.68.4-20260916",
-      "title": "[Clippy] chore(deps): bump TUnit 1.68.4",
-      "note": "draft, build+csharpier+2408 tests(2406 pass/2 skip) pass"
-    },
-    {
-      "number": null,
-      "branch": "clippy/improve-where-firstordefault-any-20260916",
-      "title": "[Clippy] refactor: eliminate Where().FirstOrDefault()/Any()/LastOrDefault() intermediate iterators",
-      "note": "draft, build+csharpier+2408 tests(2406 pass/2 skip) pass"
+      "branch": "clippy/eng-ci-dotnet-nuget-cache-20260917",
+      "title": "[Clippy] chore(ci): enable NuGet package caching in setup-dotnet across workflows",
+      "note": "draft, build+csharpier+2414 tests(2414 pass/2 skip) pass"
     }
   ],
   "prs_to_close": [],
@@ -128,7 +116,10 @@
     "Task 2 (2026-09-16): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed",
     "Task 4 (2026-09-16): dotnet outdated showed TUnit 1.67.0->1.68.4 (minor, test-only); created draft PR clippy/eng-tunit-1.68.4-20260916, build+csharpier+2408 tests pass",
     "Task 5 (2026-09-16): found+fixed 7 more Where(pred).FirstOrDefault()/Any()/LastOrDefault() double-iteration patterns in OxPtHelpers.cs (1), WmlToXml.cs (2), RevisionProcessor.cs (4); created draft PR clippy/improve-where-firstordefault-any-20260916, build+csharpier+2408 tests pass",
-    "2026-09-16: Monthly Activity issue #501 rewritten cleanly (previous cleanup of stale PR #449/issue #505/#507 references had not actually persisted); removed all stale entries, now tracks only #516 and the 2 new draft PRs"
+    "2026-09-16: Monthly Activity issue #501 rewritten cleanly (previous cleanup of stale PR #449/issue #505/#507 references had not actually persisted); removed all stale entries, now tracks only #516 and the 2 new draft PRs",
+    "Confirmed PRs #516 (OpenXmlPowerToolsDocument tests), #517-#520 (perf Where()/Any() refactors, TUnit 1.68.4, Test.Sdk/TUnit bump) all merged onto master by 2026-09-17",
+    "Task 8/4 (2026-09-17): dotnet outdated showed no outdated deps; found CI gap - no NuGet caching in any of the 3 workflows (main.yml/publish.yml/publish-cli.yml); added cache:true + cache-dependency-path to all setup-dotnet steps; build+csharpier+2414 tests(2414 pass/2 skip) pass; created draft PR clippy/eng-ci-dotnet-nuget-cache-20260917",
+    "Task 2 (2026-09-17): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed"
   ],
   "improvements_submitted": [
     "PR(aw_pr_changelog): chore: prepare CHANGELOG for v3.9.0 release (2026-08-05)",
@@ -154,6 +145,7 @@
     "PR(clippy/test-stricttranslatingxmlreader-20260902): test: add unit test coverage for StrictTranslatingXmlReader (2026-09-02)",
     "PR(clippy/test-ptopenxmlutil-getboolprop-getfontsize-20260909): test: unit tests for XmlUtil.GetXmlSpaceAttribute, WordprocessingMLUtil.GetBoolProp/GetFontSize (2026-09-09)",
     "PR(clippy/test-adddocxtexthelper-20260912): test: unit tests for AddDocxTextHelper.AppendParagraphToDocument (2026-09-12)",
-    "PR(clippy/perf-where-any-firstordefault-20260914): perf: eliminate Where().Any()/Where().FirstOrDefault() intermediate iterators (2026-09-14)"
+    "PR(clippy/perf-where-any-firstordefault-20260914): perf: eliminate Where().Any()/Where().FirstOrDefault() intermediate iterators (2026-09-14)",
+    "PR(clippy/eng-ci-dotnet-nuget-cache-20260917): chore(ci): enable NuGet package caching in setup-dotnet across workflows (2026-09-17)"
   ]
 }
