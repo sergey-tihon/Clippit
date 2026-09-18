@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sergey-tihon.github.io/Clippit/schemas/split-result.v1.json",
+  "title": "Clippit pptx split result",
+  "description": "Result payload of `clippit pptx split` written to stdout on success (JSON mode).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["input", "outputDir", "slides", "count"],
+  "properties": {
+    "input": {
+      "type": "string",
+      "description": "Absolute path of the source .pptx file, or '<stdin>' when read from stdin."
+    },
+    "outputDir": {
+      "type": "string",
+      "description": "Absolute path of the directory containing the produced single-slide files."
+    },
+    "manifest": {
+      "type": "string",
+      "description": "Absolute path of the generated deck manifest (only present when --manifest was passed). The manifest can be fed back to `clippit pptx build run` to reassemble the deck; source PPTX sections are preserved when present."
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of slide files written. Equal to slides.length."
+    },
+    "slides": {
+      "type": "array",
+      "description": "One entry per produced slide file, in the requested order.",
+      "items": { "$ref": "#/$defs/slideEntry" }
+    }
+  },
+  "$defs": {
+    "slideEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "file"],
+      "properties": {
+        "index": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "1-based index of this slide in the source presentation."
+        },
+        "file": {
+          "type": "string",
+          "description": "Absolute path of the produced single-slide .pptx file."
+        },
+        "title": {
+          "type": ["string", "null"],
+          "description": "Slide title text extracted from the slide, when present."
+        }
+      }
+    }
+  }
+}

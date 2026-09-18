@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Compare Documents | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Compare Documents | Clippit ">
+      
+      
+      <link rel="icon" href="../../images/logo-site.png">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/blob/master/docs/tutorials/word/WmlComparer.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Tutorial.Word.WmlComparer">
+<h1 id="compare-documents">Compare Documents</h1>
+
+<p>Namespace: <code>Clippit</code></p>
+<p>Compare two Word documents and produce a result document with tracked revisions showing the differences.
+Consolidate multiple revised documents against an original, or extract a list of revisions from a comparison result.</p>
+<pre><code class="lang-csharp">public static class WmlComparer {
+    public static WmlDocument Compare(
+        WmlDocument source1, WmlDocument source2, WmlComparerSettings settings)
+    {...}
+
+    public static WmlDocument Consolidate(
+        WmlDocument original,
+        List&lt;WmlRevisedDocumentInfo&gt; revisedDocumentInfoList,
+        WmlComparerSettings settings)
+    {...}
+
+    public static List&lt;WmlComparerRevision&gt; GetRevisions(
+        WmlDocument source, WmlComparerSettings settings)
+    {...}
+}
+</code></pre>
+<h3 id="compare">Compare</h3>
+<p>Compares two Word documents and returns a new document containing tracked revisions (insertions and deletions)
+that represent the differences between <code>source1</code> and <code>source2</code>. The comparison operates at the word level
+by default, using <code>WordSeparators</code> from <code>WmlComparerSettings</code> to split text into tokens.</p>
+<h3 id="consolidate">Consolidate</h3>
+<p>Merges multiple revised versions of a document against a common original. Each revised document is provided
+with a revisor name and color via <code>WmlRevisedDocumentInfo</code>. The result contains tracked revisions from all
+revisors. By default, revisions are wrapped in a comparison table (controlled by <code>WmlComparerConsolidateSettings.ConsolidateWithTable</code>).</p>
+<h3 id="getrevisions">GetRevisions</h3>
+<p>Extracts a flat list of <code>WmlComparerRevision</code> objects from a document that contains tracked revisions
+(typically the output of <code>Compare</code> or <code>Consolidate</code>). Each revision includes the revision type
+(<code>Inserted</code> or <code>Deleted</code>), text content, author, and date.</p>
+<h3 id="wmlcomparersettings">WmlComparerSettings</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WordSeparators</code></td>
+<td><code>char[]</code></td>
+<td><code>[' ', '-', ')', '(', ';', ',']</code></td>
+</tr>
+<tr>
+<td><code>AuthorForRevisions</code></td>
+<td><code>string</code></td>
+<td><code>&quot;Open-Xml-PowerTools&quot;</code></td>
+</tr>
+<tr>
+<td><code>DateTimeForRevisions</code></td>
+<td><code>string</code></td>
+<td><code>DateTime.Now.ToString(&quot;o&quot;)</code></td>
+</tr>
+<tr>
+<td><code>DetailThreshold</code></td>
+<td><code>double</code></td>
+<td><code>0.15</code></td>
+</tr>
+<tr>
+<td><code>CaseInsensitive</code></td>
+<td><code>bool</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>CultureInfo</code></td>
+<td><code>CultureInfo</code></td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td><code>LogCallback</code></td>
+<td><code>Action&lt;string&gt;</code></td>
+<td><code>null</code></td>
+</tr>
+<tr>
+<td><code>StartingIdForFootnotesEndnotes</code></td>
+<td><code>int</code></td>
+<td><code>1</code></td>
+</tr>
+<tr>
+<td><code>DebugTempFileDi</code></td>
+<td><code>DirectoryInfo</code></td>
+<td><code>null</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="compare-sample">Compare Sample</h3>
+<pre><code class="lang-csharp">var source1 = new WmlDocument(&quot;Original.docx&quot;);
+var source2 = new WmlDocument(&quot;Revised.docx&quot;);
+
+var settings = new WmlComparerSettings
+{
+    AuthorForRevisions = &quot;Comparison Tool&quot;,
+    DetailThreshold = 0.15
+};
+
+var comparedDoc = WmlComparer.Compare(source1, source2, settings);
+comparedDoc.SaveAs(&quot;Comparison.docx&quot;);
+</code></pre>
+<h3 id="consolidate-sample">Consolidate Sample</h3>
+<pre><code class="lang-csharp">var original = new WmlDocument(&quot;Original.docx&quot;);
+
+var revisedDocs = new List&lt;WmlRevisedDocumentInfo&gt;
+{
+    new()
+    {
+        RevisedDocument = new WmlDocument(&quot;Revised_Alice.docx&quot;),
+        Revisor = &quot;Alice&quot;,
+        Color = Color.LightBlue
+    },
+    new()
+    {
+        RevisedDocument = new WmlDocument(&quot;Revised_Bob.docx&quot;),
+        Revisor = &quot;Bob&quot;,
+        Color = Color.LightGreen
+    }
+};
+
+var settings = new WmlComparerSettings();
+
+var consolidated = WmlComparer.Consolidate(original, revisedDocs, settings);
+consolidated.SaveAs(&quot;Consolidated.docx&quot;);
+</code></pre>
+<h3 id="getrevisions-sample">GetRevisions Sample</h3>
+<pre><code class="lang-csharp">var comparedDoc = WmlComparer.Compare(source1, source2, settings);
+
+var revisions = WmlComparer.GetRevisions(comparedDoc, settings);
+foreach (var rev in revisions)
+{
+    Console.WriteLine($&quot;{rev.RevisionType}: \&quot;{rev.Text}\&quot; by {rev.Author} on {rev.Date}&quot;);
+}
+</code></pre>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/tutorials/word/WmlComparer.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
