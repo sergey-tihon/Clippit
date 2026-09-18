@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-09-17",
-  "last_run_id": "35242046486",
+  "last_run": "2026-09-18",
+  "last_run_id": "35364088745",
   "backlog_cursor": {
     "issues": 424,
     "prs": 449
@@ -25,6 +25,12 @@
       "number": null,
       "branch": "clippy/eng-ci-dotnet-nuget-cache-20260917",
       "title": "[Clippy] chore(ci): enable NuGet package caching in setup-dotnet across workflows",
+      "note": "draft, build+csharpier+2414 tests(2414 pass/2 skip) pass"
+    },
+    {
+      "number": null,
+      "branch": "clippy/perf-frozenset-trackedrevisions-ptnamestokeep-20260918",
+      "title": "[Clippy] perf: convert TrackedRevisionsElements/PtNamesToKeep to FrozenSet",
       "note": "draft, build+csharpier+2414 tests(2414 pass/2 skip) pass"
     }
   ],
@@ -119,7 +125,9 @@
     "2026-09-16: Monthly Activity issue #501 rewritten cleanly (previous cleanup of stale PR #449/issue #505/#507 references had not actually persisted); removed all stale entries, now tracks only #516 and the 2 new draft PRs",
     "Confirmed PRs #516 (OpenXmlPowerToolsDocument tests), #517-#520 (perf Where()/Any() refactors, TUnit 1.68.4, Test.Sdk/TUnit bump) all merged onto master by 2026-09-17",
     "Task 8/4 (2026-09-17): dotnet outdated showed no outdated deps; found CI gap - no NuGet caching in any of the 3 workflows (main.yml/publish.yml/publish-cli.yml); added cache:true + cache-dependency-path to all setup-dotnet steps; build+csharpier+2414 tests(2414 pass/2 skip) pass; created draft PR clippy/eng-ci-dotnet-nuget-cache-20260917",
-    "Task 2 (2026-09-17): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed"
+    "Task 2 (2026-09-17): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed",
+    "Task 8/2/3 (2026-09-18): reviewed #67,#77,#103 - no new human activity, no re-engagement needed (Task 2 n/a); no fixable bug/help-wanted/good-first-issue issues found (Task 3 n/a); found TrackedRevisionsElements (RevisionProcessor.cs, 26-elem XName[]) and PtNamesToKeep (FormattingAssembler.cs, 6-elem XName[]) used only via .Contains() - converted both to FrozenSet<XName> matching existing pattern (BlockLevelContentContainers/SpecialCaseChildProperties); build+csharpier+2414 tests(2414 pass/2 skip) pass; created draft PR clippy/perf-frozenset-trackedrevisions-ptnamestokeep-20260918",
+    "2026-09-18: Monthly Activity issue #501 body had accumulated many duplicated sections (repeated headers/run-history blocks) from prior runs - rewrote entirely from scratch per format enforcement rule"
   ],
   "improvements_submitted": [
     "PR(aw_pr_changelog): chore: prepare CHANGELOG for v3.9.0 release (2026-08-05)",
@@ -146,6 +154,7 @@
     "PR(clippy/test-ptopenxmlutil-getboolprop-getfontsize-20260909): test: unit tests for XmlUtil.GetXmlSpaceAttribute, WordprocessingMLUtil.GetBoolProp/GetFontSize (2026-09-09)",
     "PR(clippy/test-adddocxtexthelper-20260912): test: unit tests for AddDocxTextHelper.AppendParagraphToDocument (2026-09-12)",
     "PR(clippy/perf-where-any-firstordefault-20260914): perf: eliminate Where().Any()/Where().FirstOrDefault() intermediate iterators (2026-09-14)",
-    "PR(clippy/eng-ci-dotnet-nuget-cache-20260917): chore(ci): enable NuGet package caching in setup-dotnet across workflows (2026-09-17)"
+    "PR(clippy/eng-ci-dotnet-nuget-cache-20260917): chore(ci): enable NuGet package caching in setup-dotnet across workflows (2026-09-17)",
+    "PR(clippy/perf-frozenset-trackedrevisions-ptnamestokeep-20260918): perf: convert TrackedRevisionsElements/PtNamesToKeep to FrozenSet (2026-09-18)"
   ]
 }
