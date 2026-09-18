@@ -441,15 +441,14 @@ namespace Clippit.Word
             }
         }
 
-        public static XName[] PtNamesToKeep = new[]
-        {
+        public static readonly FrozenSet<XName> PtNamesToKeep = FrozenSet.Create<XName>(
             PtOpenXml.FontName,
             PtOpenXml.AbstractNumId,
             PtOpenXml.StyleName,
             PtOpenXml.LanguageType,
             PtOpenXml.ListItemRun,
-            PtOpenXml.Unid,
-        };
+            PtOpenXml.Unid
+        );
 
         public static void NormalizePropsForPart(XDocument pxd, FormattingAssemblerSettings settings)
         {
