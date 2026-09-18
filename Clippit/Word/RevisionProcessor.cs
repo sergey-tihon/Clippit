@@ -2079,8 +2079,7 @@ namespace Clippit.Word
             );
         }
 
-        public static XName[] TrackedRevisionsElements = new[]
-        {
+        public static readonly FrozenSet<XName> TrackedRevisionsElements = FrozenSet.Create<XName>(
             W.cellDel,
             W.cellIns,
             W.cellMerge,
@@ -2106,8 +2105,8 @@ namespace Clippit.Word
             W.tblPrChange,
             W.tblPrExChange,
             W.tcPrChange,
-            W.trPrChange,
-        };
+            W.trPrChange
+        );
 
         public static bool PartHasTrackedRevisions(OpenXmlPart part)
         {
