@@ -1,6 +1,15 @@
 # Clippy Memory
 
 ## Last Run
+2026-09-19 15:42 UTC — Run 35452566842 (see memory.json for detailed structured state)
+- Tasks selected: 2 (Issue Comment), 4 (Engineering Investments), 5 (Coding Improvements)
+- Issues #67/#77/#103: no new human activity since last Clippy comments - Task 2 not applicable; no unlabelled issues - Task 1 fallback also n/a
+- Task 4: dotnet outdated found SkiaSharp 4.152.0->4.152.1 (+ Linux native assets pkg), TUnit 1.68.4->1.68.17 (both patch) - created draft PR clippy/eng-deps-skiasharp-tunit-20260919; build+csharpier+2414 tests pass
+- Task 5: found MhtParser.Parse (PtUtil.cs) had two StartsWith("boundary")/StartsWith("charset") calls missing StringComparison.OrdinalIgnoreCase, inconsistent with every other StartsWith in the same method - fixed both + added regression test PU002_MixedCaseBoundaryAndCharSetAreParsed; created draft PR clippy/improve-mhtparser-stringcomparison-20260919; build+csharpier+2415 tests pass
+- Discovered PR #449 (ExcelAssembler) is CLOSED not merged (previously tracked as open); issues #505/#507 (gh-aw Protected Files notices) were DELETED (410) upstream - removed all three stale entries from Monthly Activity issue #501
+- Rewrote Monthly Activity issue #501 to remove stale/deleted references and add this run's new PRs
+
+## Previous Run
 2026-09-18 15:45 UTC — Run 35364088745 (see memory.json for detailed structured state - this file is legacy/secondary)
 - Tasks selected: 8 (Performance Improvements), 2 (Issue Comment), 3 (Issue Fix)
 - Issues #67/#77/#103: no new human activity since last Clippy comments - Task 2 not applicable; no fixable bug/help-wanted/good-first-issue issues - Task 3 not applicable

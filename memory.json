@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-09-18",
-  "last_run_id": "35364088745",
+  "last_run": "2026-09-19",
+  "last_run_id": "35452566842",
   "backlog_cursor": {
     "issues": 424,
     "prs": 449
@@ -23,15 +23,21 @@
   "open_clippy_prs": [
     {
       "number": null,
-      "branch": "clippy/eng-ci-dotnet-nuget-cache-20260917",
-      "title": "[Clippy] chore(ci): enable NuGet package caching in setup-dotnet across workflows",
-      "note": "draft, build+csharpier+2414 tests(2414 pass/2 skip) pass"
+      "branch": "clippy/eng-deps-skiasharp-tunit-20260919",
+      "title": "[Clippy] chore(deps): bump SkiaSharp 4.152.0->4.152.1, TUnit 1.68.4->1.68.17",
+      "note": "draft, created 2026-09-19, build+csharpier+2414 tests pass"
+    },
+    {
+      "number": null,
+      "branch": "clippy/improve-mhtparser-stringcomparison-20260919",
+      "title": "[Clippy] fix(word): use OrdinalIgnoreCase for boundary/charset StartsWith in MhtParser",
+      "note": "draft, created 2026-09-19, build+csharpier+2415 tests pass (added PU002 regression test)"
     },
     {
       "number": null,
       "branch": "clippy/perf-frozenset-trackedrevisions-ptnamestokeep-20260918",
       "title": "[Clippy] perf: convert TrackedRevisionsElements/PtNamesToKeep to FrozenSet",
-      "note": "draft, build+csharpier+2414 tests(2414 pass/2 skip) pass"
+      "note": "draft, created 2026-09-18, build+csharpier+2414 tests pass"
     }
   ],
   "prs_to_close": [],
@@ -127,7 +133,10 @@
     "Task 8/4 (2026-09-17): dotnet outdated showed no outdated deps; found CI gap - no NuGet caching in any of the 3 workflows (main.yml/publish.yml/publish-cli.yml); added cache:true + cache-dependency-path to all setup-dotnet steps; build+csharpier+2414 tests(2414 pass/2 skip) pass; created draft PR clippy/eng-ci-dotnet-nuget-cache-20260917",
     "Task 2 (2026-09-17): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed",
     "Task 8/2/3 (2026-09-18): reviewed #67,#77,#103 - no new human activity, no re-engagement needed (Task 2 n/a); no fixable bug/help-wanted/good-first-issue issues found (Task 3 n/a); found TrackedRevisionsElements (RevisionProcessor.cs, 26-elem XName[]) and PtNamesToKeep (FormattingAssembler.cs, 6-elem XName[]) used only via .Contains() - converted both to FrozenSet<XName> matching existing pattern (BlockLevelContentContainers/SpecialCaseChildProperties); build+csharpier+2414 tests(2414 pass/2 skip) pass; created draft PR clippy/perf-frozenset-trackedrevisions-ptnamestokeep-20260918",
-    "2026-09-18: Monthly Activity issue #501 body had accumulated many duplicated sections (repeated headers/run-history blocks) from prior runs - rewrote entirely from scratch per format enforcement rule"
+    "2026-09-18: Monthly Activity issue #501 body had accumulated many duplicated sections (repeated headers/run-history blocks) from prior runs - rewrote entirely from scratch per format enforcement rule",
+    "2026-09-19: PR #449 (ExcelAssembler) confirmed CLOSED (not merged) - removed from tracking/suggested actions. Issues #505 and #507 (gh-aw Protected Files notices) confirmed DELETED (410) - removed from suggested actions. Rewrote Monthly Activity issue #501 removing all stale entries.",
+    "2026-09-19: dotnet outdated found SkiaSharp 4.152.0->4.152.1, TUnit 1.68.4->1.68.17 (both patch bumps) - created bundled deps PR",
+    "2026-09-19: Task 2 not applicable - issues #67/#77/#103 have no new human activity since last Clippy comments; Task 1 fallback also not applicable (no unlabelled issues); substituted Task 9 (testing) which folded into Task 5 improvement work"
   ],
   "improvements_submitted": [
     "PR(aw_pr_changelog): chore: prepare CHANGELOG for v3.9.0 release (2026-08-05)",
@@ -155,6 +164,8 @@
     "PR(clippy/test-adddocxtexthelper-20260912): test: unit tests for AddDocxTextHelper.AppendParagraphToDocument (2026-09-12)",
     "PR(clippy/perf-where-any-firstordefault-20260914): perf: eliminate Where().Any()/Where().FirstOrDefault() intermediate iterators (2026-09-14)",
     "PR(clippy/eng-ci-dotnet-nuget-cache-20260917): chore(ci): enable NuGet package caching in setup-dotnet across workflows (2026-09-17)",
-    "PR(clippy/perf-frozenset-trackedrevisions-ptnamestokeep-20260918): perf: convert TrackedRevisionsElements/PtNamesToKeep to FrozenSet (2026-09-18)"
+    "PR(clippy/perf-frozenset-trackedrevisions-ptnamestokeep-20260918): perf: convert TrackedRevisionsElements/PtNamesToKeep to FrozenSet (2026-09-18)",
+    "PR(clippy/improve-mhtparser-stringcomparison-20260919): fix: MhtParser boundary/charset StartsWith missing OrdinalIgnoreCase (inconsistent with rest of method) + regression test PU002 - created 2026-09-19",
+    "PR(clippy/eng-deps-skiasharp-tunit-20260919): chore(deps): SkiaSharp/TUnit patch bumps - created 2026-09-19"
   ]
 }
