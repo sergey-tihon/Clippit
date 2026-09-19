@@ -19,4 +19,31 @@ public class PtUtilTests
         await Assert.That(p.Parts).IsNotEmpty();
         await Assert.That(p.Parts).DoesNotContain(part => part.ContentType == null || part.ContentLocation == null);
     }
+
+    [Test]
+    public async Task PU002_MixedCaseBoundaryAndCharSetAreParsed()
+    {
+        var newLine = Environment.NewLine;
+        var src = string.Join(
+            newLine,
+            "MIME-Version: 1.0",
+            "Content-Type: multipart/related; Boundary=\"----=_NextPart_Test\"",
+            "",
+            "------=_NextPart_Test",
+            "Content-Location: file:///C:/Test.htm",
+            "Content-Transfer-Encoding: quoted-printable",
+            "Content-Type: text/html; Charset=\"utf-8\"",
+            "",
+            "<html></html>",
+            "------=_NextPart_Test--",
+            ""
+        );
+
+        var p = MhtParser.Parse(src);
+
+        await Assert.That(p.ContentType).IsEqualTo("multipart/related");
+        var part = p.Parts.Single();
+        await Assert.That(part.ContentType).IsEqualTo("text/html");
+        await Assert.That(part.CharSet).IsEqualTo("utf-8");
+    }
 }
