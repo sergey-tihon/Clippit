@@ -44,13 +44,16 @@ public class WmlComparerUtilTests
     [Test]
     public async Task WU004_HexStringFromBytes_NullArray_Throws()
     {
-        await Assert.That(() => WmlComparerUtil.HexStringFromBytes((byte[])null!)).Throws<ArgumentNullException>();
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+        await Assert.That(() => WmlComparerUtil.HexStringFromBytes((byte[])null)).Throws<ArgumentNullException>();
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
     }
 
     [Test]
     [Arguments("")]
     [Arguments("a")]
     [Arguments("hello world")]
+    [Arguments("Привет 👋")]
     public async Task WU005_SHA1HashStringForUTF8String_ShortInput_MatchesExpectedHash(string input)
     {
         var expected = ComputeExpectedSha1Hex(Encoding.UTF8.GetBytes(input));
@@ -86,7 +89,9 @@ public class WmlComparerUtilTests
     [Test]
     public async Task WU008_SHA1HashStringForByteArray_NullArray_Throws()
     {
-        await Assert.That(() => WmlComparerUtil.SHA1HashStringForByteArray(null!)).Throws<ArgumentNullException>();
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+        await Assert.That(() => WmlComparerUtil.SHA1HashStringForByteArray(null)).Throws<ArgumentNullException>();
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
     }
 
     [Test]
