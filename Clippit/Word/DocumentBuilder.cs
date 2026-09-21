@@ -736,7 +736,7 @@ namespace Clippit.Word
                     var styleName = pair.Key;
                     var styleId = pair.Value;
                     // if the styleNameMap does not contain an entry for this name
-                    if (!styleNameMap.ContainsKey(styleName))
+                    if (!styleNameMap.TryGetValue(styleName, out var existingStyleId))
                     {
                         // if the id is already used
                         if (styleIds.Contains(styleId))
@@ -766,7 +766,6 @@ namespace Clippit.Word
                     else
                     {
                         // if the id is the same as the existing ID, then nothing to do
-                        var existingStyleId = styleNameMap[styleName];
                         if (existingStyleId == styleId)
                             continue;
                         correctionList.Add(styleId, existingStyleId);
