@@ -2581,8 +2581,7 @@ namespace Clippit.Word
             return newMergedElement;
         }
 
-        private static readonly XName[] TogglePropertyNames = new[]
-        {
+        private static readonly FrozenSet<XName> TogglePropertyNames = FrozenSet.Create<XName>(
             W.b,
             W.bCs,
             W.caps,
@@ -2594,10 +2593,10 @@ namespace Clippit.Word
             W.shadow,
             W.smallCaps,
             W.strike,
-            W.vanish,
-        };
+            W.vanish
+        );
 
-        private static XName[] PropertyNames = new[] { W.cs, W.rtl, W.u, W.color, W.highlight, W.shd };
+        private static readonly XName[] PropertyNames = [W.cs, W.rtl, W.u, W.color, W.highlight, W.shd];
 
         public class CharStyleAttributes
         {
@@ -2692,24 +2691,6 @@ namespace Clippit.Word
             {
                 return rPr.Element(propertyName);
             }
-
-            private static readonly XName[] TogglePropertyNames = new[]
-            {
-                W.b,
-                W.bCs,
-                W.caps,
-                W.emboss,
-                W.i,
-                W.iCs,
-                W.imprint,
-                W.outline,
-                W.shadow,
-                W.smallCaps,
-                W.strike,
-                W.vanish,
-            };
-
-            private static readonly XName[] PropertyNames = new[] { W.cs, W.rtl, W.u, W.color, W.highlight, W.shd };
         }
 
         private static readonly FrozenSet<char> WeakAndNeutralDirectionalCharacters = new HashSet<char>

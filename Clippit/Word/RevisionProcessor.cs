@@ -2040,8 +2040,7 @@ namespace Clippit.Word
             );
         }
 
-        private static readonly XName[] BlockLevelElements = new[]
-        {
+        private static readonly FrozenSet<XName> BlockLevelElements = FrozenSet.Create<XName>(
             W.p,
             W.tbl,
             W.sdt,
@@ -2049,8 +2048,8 @@ namespace Clippit.Word
             W.ins,
             M.oMath,
             M.oMathPara,
-            W.moveTo,
-        };
+            W.moveTo
+        );
 
         private static object RemoveRowsLeftEmptyByMoveFrom(XNode node)
         {
