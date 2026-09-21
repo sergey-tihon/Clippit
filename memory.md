@@ -1,6 +1,15 @@
 # Clippy Memory
 
 ## Last Run
+2026-09-21 15:43 UTC — Run 35620722528 (see memory.json for detailed structured state)
+- Tasks selected: 3 (Issue Fix), 5 (Coding Improvements), 8 (Performance Improvements)
+- Confirmed previous draft PR clippy/test-wmlcomparerutil-20260920 merged onto master as #525; no open Clippy PRs at run start; dotnet outdated shows no outdated deps
+- Issues #67/#77/#103: no new human activity since last Clippy comments - Task 2 not applicable
+- Task 3: no fixable bug/help-wanted/good-first-issue issues found beyond existing thoroughly-answered question threads - substituted with Task 5/8 work
+- Task 5/8: FormattingAssembler.CharStyleAttributes had duplicate nested TogglePropertyNames/PropertyNames arrays shadowing identical outer-class fields (dead code) - removed; converted FormattingAssembler.TogglePropertyNames and RevisionProcessor.BlockLevelElements (Contains()-only usage) to FrozenSet<XName>; fixed ContainsKey+indexer double lookup on styleNameMap in DocumentBuilder.WriteStylesXml; build+csharpier+2434 tests pass (2432 pass/2 skip); created draft PR clippy/improve-frozenset-duplicate-cleanup-20260921
+- Rewrote Monthly Activity issue #501 Run History/Suggested Actions to reflect this run
+
+## Previous Run
 2026-09-20 15:43 UTC — Run 35520367180 (see memory.json for detailed structured state)
 - Tasks selected: 9 (Testing Improvements), 8 (Performance Improvements), 2 (Issue Comment)
 - Confirmed all 3 previously-tracked draft PRs (SkiaSharp/TUnit deps #524, MhtParser OrdinalIgnoreCase fix #523, FrozenSet perf #522) merged onto master; no open PRs at run start
