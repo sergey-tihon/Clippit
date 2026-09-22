@@ -23,9 +23,9 @@
   "open_clippy_prs": [
     {
       "number": null,
-      "branch": "clippy/improve-frozenset-duplicate-cleanup-20260921",
-      "title": "perf/refactor: FrozenSet lookups, remove duplicate arrays, fix double-lookup",
-      "note": "draft, created 2026-09-21, build+csharpier+2434 tests pass (2432 pass/2 skip)"
+      "branch": "clippy/perf-where-firstordefault-lastordefault-20260922",
+      "title": "perf: eliminate Where().FirstOrDefault()/LastOrDefault() intermediate iterators",
+      "note": "draft, created 2026-09-22, build+csharpier+2434 tests pass (2432 pass/2 skip)"
     }
   ],
   "prs_to_close": [],
@@ -91,7 +91,11 @@
     "Task 5/8 (2026-09-21): FormattingAssembler.CharStyleAttributes had duplicate nested TogglePropertyNames/PropertyNames arrays shadowing identical outer-class fields (dead code) - removed; converted FormattingAssembler.TogglePropertyNames and RevisionProcessor.BlockLevelElements (Contains()-only usage) to FrozenSet<XName>; fixed ContainsKey+indexer double lookup on styleNameMap in DocumentBuilder.WriteStylesXml; build+csharpier+2434 tests pass; created draft PR clippy/improve-frozenset-duplicate-cleanup-20260921",
     "Task 3 (2026-09-21): no fixable bug/help-wanted/good-first-issue issues found beyond existing thoroughly-answered #67/#77/#103 question threads; substituted with Task 5/8 work",
     "Task 2 (2026-09-21): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed",
-    "2026-09-21: confirmed previous draft PR clippy/test-wmlcomparerutil-20260920 merged onto master as #525; no open Clippy PRs at run start; dotnet outdated shows no outdated deps"
+    "2026-09-21: confirmed previous draft PR clippy/test-wmlcomparerutil-20260920 merged onto master as #525; no open Clippy PRs at run start; dotnet outdated shows no outdated deps",
+    "2026-09-22: confirmed PR #526 (FrozenSet/duplicate cleanup) merged onto master; no open PRs at run start; dotnet outdated shows no outdated deps",
+    "Task 1 (2026-09-22): all 4 open issues already labelled; no unlabelled items",
+    "Task 2 (2026-09-22): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed",
+    "Task 8 (2026-09-22): swept remaining .Where(pred).FirstOrDefault()/.LastOrDefault() double-iteration patterns repo-wide (56 occurrences across WorksheetAccessor.cs, HtmlToWmlConverterCore.cs, DocumentBuilder.cs, FormattingAssembler.cs, ListItemRetriever.cs, RevisionProcessor.cs) - converted to single-pass FirstOrDefault(pred)/LastOrDefault(pred); build+csharpier+2434 tests(2432 pass/2 skip) pass; created draft PR clippy/perf-where-firstordefault-lastordefault-20260922"
   ],
   "improvements_submitted": [
     "PR(aw_pr_changelog): chore: prepare CHANGELOG for v3.9.0 release (2026-08-05)",
@@ -122,6 +126,7 @@
     "PR(clippy/perf-frozenset-trackedrevisions-ptnamestokeep-20260918): perf: convert TrackedRevisionsElements/PtNamesToKeep to FrozenSet (2026-09-18)",
     "PR(clippy/improve-mhtparser-stringcomparison-20260919): fix: MhtParser boundary/charset StartsWith missing OrdinalIgnoreCase (inconsistent with rest of method) + regression test PU002 - created 2026-09-19",
     "PR(clippy/eng-deps-skiasharp-tunit-20260919): chore(deps): SkiaSharp/TUnit patch bumps - created 2026-09-19",
-    "PR(clippy/test-wmlcomparerutil-20260920): test: add unit tests for WmlComparerUtil (hex encoding, SHA1 hashing, local-name mapping) - created 2026-09-20"
+    "PR(clippy/test-wmlcomparerutil-20260920): test: add unit tests for WmlComparerUtil (hex encoding, SHA1 hashing, local-name mapping) - created 2026-09-20",
+    "PR(clippy/perf-where-firstordefault-lastordefault-20260922): perf: eliminate remaining Where().FirstOrDefault()/LastOrDefault() intermediate iterators (56 occurrences) - created 2026-09-22"
   ]
 }
