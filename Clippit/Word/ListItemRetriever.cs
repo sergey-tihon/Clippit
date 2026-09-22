@@ -572,10 +572,7 @@ namespace Clippit.Word
                     }
 
                     // make sure that the numId is valid
-                    var num = numXDoc
-                        .Root.Elements(W.num)
-                        .Where(e => (int)e.Attribute(W.numId) == numId)
-                        .FirstOrDefault();
+                    var num = numXDoc.Root.Elements(W.num).FirstOrDefault(e => (int)e.Attribute(W.numId) == numId);
 
                     if (num is null)
                     {

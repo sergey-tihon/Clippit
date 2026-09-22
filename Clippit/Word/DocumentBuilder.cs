@@ -1034,10 +1034,9 @@ namespace Clippit.Word
             {
                 var propertyPart = customXmlPart
                     .Parts.Select(p => p.OpenXmlPart)
-                    .Where(p =>
+                    .FirstOrDefault(p =>
                         p.ContentType == "application/vnd.openxmlformats-officedocument.customXmlProperties+xml"
-                    )
-                    .FirstOrDefault();
+                    );
                 if (propertyPart is not null)
                 {
                     var propertyPartDoc = propertyPart.GetXDocument();
@@ -1645,8 +1644,7 @@ namespace Clippit.Word
                                 var element = oldNumbering
                                     .Descendants()
                                     .Elements(W.num)
-                                    .Where(p => ((string)p.Attribute(W.numId)) == numId)
-                                    .FirstOrDefault();
+                                    .FirstOrDefault(p => ((string)p.Attribute(W.numId)) == numId);
 
                                 // Copy abstract numbering element, if necessary (use matching NSID)
                                 var abstractNumId = string.Empty;
@@ -1657,8 +1655,7 @@ namespace Clippit.Word
                                     var abstractElement = oldNumbering
                                         .Descendants()
                                         .Elements(W.abstractNum)
-                                        .Where(p => ((string)p.Attribute(W.abstractNumId)) == abstractNumId)
-                                        .FirstOrDefault();
+                                        .FirstOrDefault(p => ((string)p.Attribute(W.abstractNumId)) == abstractNumId);
                                     var abstractNSID = string.Empty;
                                     if (abstractElement is not null)
                                     {
@@ -1999,13 +1996,12 @@ namespace Clippit.Word
                 var element = oldComments
                     .Descendants()
                     .Elements(W.comment)
-                    .Where(p =>
+                    .FirstOrDefault(p =>
                     {
                         if (!int.TryParse((string)p.Attribute(W.id), out var thisId))
                             throw new DocumentBuilderException("Invalid document - invalid comment id");
                         return thisId == id;
-                    })
-                    .FirstOrDefault();
+                    });
                 if (element is null)
                     throw new DocumentBuilderException(
                         "Invalid document - comment reference without associated comment in comments part"
@@ -2511,10 +2507,9 @@ namespace Clippit.Word
             {
                 var propertyPart = customXmlPart
                     .Parts.Select(p => p.OpenXmlPart)
-                    .Where(p =>
+                    .FirstOrDefault(p =>
                         p.ContentType == "application/vnd.openxmlformats-officedocument.customXmlProperties+xml"
-                    )
-                    .FirstOrDefault();
+                    );
                 if (propertyPart is not null)
                 {
                     var propertyPartDoc = propertyPart.GetXDocument();
@@ -2708,8 +2703,7 @@ namespace Clippit.Word
                     {
                         var element = oldNumbering
                             .Descendants(W.num)
-                            .Where(p => ((int)p.Attribute(W.numId)) == numId)
-                            .FirstOrDefault();
+                            .FirstOrDefault(p => ((int)p.Attribute(W.numId)) == numId);
                         if (element is null)
                             continue;
 
@@ -2731,14 +2725,13 @@ namespace Clippit.Word
                             .Descendants()
                             .Elements(W.abstractNum)
                             .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
-                            .Where(p =>
+                            .FirstOrDefault(p =>
                             {
                                 var thisNsidElement = p.Element(W.nsid);
                                 if (thisNsidElement is null)
                                     return false;
                                 return (string)thisNsidElement.Attribute(W.val) == abstractNSID;
-                            })
-                            .FirstOrDefault();
+                            });
                         if (newAbstractElement is null)
                         {
                             newAbstractElement = new XElement(abstractElement);
@@ -2871,8 +2864,7 @@ namespace Clippit.Word
                     {
                         var element = oldNumbering
                             .Descendants(W.num)
-                            .Where(p => ((int)p.Attribute(W.numId)) == numId)
-                            .FirstOrDefault();
+                            .FirstOrDefault(p => ((int)p.Attribute(W.numId)) == numId);
                         if (element is null)
                             continue;
 
@@ -2893,14 +2885,13 @@ namespace Clippit.Word
                             .Descendants()
                             .Elements(W.abstractNum)
                             .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
-                            .Where(p =>
+                            .FirstOrDefault(p =>
                             {
                                 var thisNsidElement = p.Element(W.nsid);
                                 if (thisNsidElement is null)
                                     return false;
                                 return (string)thisNsidElement.Attribute(W.val) == abstractNSID;
-                            })
-                            .FirstOrDefault();
+                            });
                         if (newAbstractElement is null)
                         {
                             newAbstractElement = new XElement(abstractElement);
@@ -3033,8 +3024,7 @@ namespace Clippit.Word
                     {
                         var element = oldNumbering
                             .Descendants(W.num)
-                            .Where(p => ((int)p.Attribute(W.numId)) == numId)
-                            .FirstOrDefault();
+                            .FirstOrDefault(p => ((int)p.Attribute(W.numId)) == numId);
                         if (element is null)
                             continue;
 
@@ -3055,14 +3045,13 @@ namespace Clippit.Word
                             .Descendants()
                             .Elements(W.abstractNum)
                             .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
-                            .Where(p =>
+                            .FirstOrDefault(p =>
                             {
                                 var thisNsidElement = p.Element(W.nsid);
                                 if (thisNsidElement is null)
                                     return false;
                                 return (string)thisNsidElement.Attribute(W.val) == abstractNSID;
-                            })
-                            .FirstOrDefault();
+                            });
                         if (newAbstractElement is null)
                         {
                             newAbstractElement = new XElement(abstractElement);
@@ -3863,8 +3852,7 @@ namespace Clippit.Word
                 var element = oldFootnotes
                     .Descendants()
                     .Elements(W.footnote)
-                    .Where(p => ((string)p.Attribute(W.id)) == id)
-                    .FirstOrDefault();
+                    .FirstOrDefault(p => ((string)p.Attribute(W.id)) == id);
                 if (element is not null)
                 {
                     var newElement = new XElement(element);
@@ -3919,8 +3907,7 @@ namespace Clippit.Word
                 var element = oldEndnotes
                     .Descendants()
                     .Elements(W.endnote)
-                    .Where(p => ((string)p.Attribute(W.id)) == id)
-                    .FirstOrDefault();
+                    .FirstOrDefault(p => ((string)p.Attribute(W.id)) == id);
                 if (element is not null)
                 {
                     var newElement = new XElement(element);
@@ -3996,8 +3983,7 @@ namespace Clippit.Word
                 {
                     var end = sourceDocument
                         .Descendants(endElement)
-                        .Where(o => o.Attribute(idAttribute).Value == rangeId)
-                        .FirstOrDefault();
+                        .FirstOrDefault(o => o.Attribute(idAttribute).Value == rangeId);
                     if (end is not null)
                     {
                         AddAtEnd(newContent, new XElement(end));
@@ -4016,8 +4002,7 @@ namespace Clippit.Word
                 {
                     var start = sourceDocument
                         .Descendants(startElement)
-                        .Where(o => o.Attribute(idAttribute).Value == rangeId)
-                        .FirstOrDefault();
+                        .FirstOrDefault(o => o.Attribute(idAttribute).Value == rangeId);
                     if (start is not null)
                         AddAtBeginning(newContent, new XElement(start));
                 }
@@ -4085,8 +4070,7 @@ namespace Clippit.Word
                 var element = oldFootnotes
                     .Descendants()
                     .Elements(W.footnote)
-                    .Where(p => ((string)p.Attribute(W.id)) == id)
-                    .FirstOrDefault();
+                    .FirstOrDefault(p => ((string)p.Attribute(W.id)) == id);
                 if (element is not null)
                 {
                     var newElement = new XElement(element);
