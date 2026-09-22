@@ -843,8 +843,7 @@ namespace Clippit.Word
                                 {
                                     var o = style
                                         .Elements(W.tblStylePr)
-                                        .Where(tsp => (string)tsp.Attribute(W.type) == ot)
-                                        .FirstOrDefault();
+                                        .FirstOrDefault(tsp => (string)tsp.Attribute(W.type) == ot);
                                     if (o is not null)
                                     {
                                         var ottrPr = o.Element(W.trPr);
@@ -878,8 +877,7 @@ namespace Clippit.Word
                                 {
                                     var o = style
                                         .Elements(W.tblStylePr)
-                                        .Where(tsp => (string)tsp.Attribute(W.type) == ot)
-                                        .FirstOrDefault();
+                                        .FirstOrDefault(tsp => (string)tsp.Attribute(W.type) == ot);
                                     if (o is not null)
                                     {
                                         foreach (var cell in row.Elements(W.tc))
@@ -1818,10 +1816,9 @@ namespace Clippit.Word
             {
                 var style = sXDoc
                     .Root.Elements(W.style)
-                    .Where(s =>
+                    .FirstOrDefault(s =>
                         (string)s.Attribute(W.type) == "table" && (string)s.Attribute(W.styleId) == currentStyle
-                    )
-                    .FirstOrDefault();
+                    );
                 if (style is null)
                     yield break;
                 yield return style;
@@ -1935,8 +1932,7 @@ namespace Clippit.Word
                         {
                             var o = style
                                 .Elements(W.tblStylePr)
-                                .Where(tsp => (string)tsp.Attribute(W.type) == ot)
-                                .FirstOrDefault();
+                                .FirstOrDefault(tsp => (string)tsp.Attribute(W.type) == ot);
                             if (o is not null)
                             {
                                 var otpPr = o.Element(W.pPr);
@@ -2238,8 +2234,7 @@ namespace Clippit.Word
                         {
                             var o = style
                                 .Elements(W.tblStylePr)
-                                .Where(tsp => (string)tsp.Attribute(W.type) == ot)
-                                .FirstOrDefault();
+                                .FirstOrDefault(tsp => (string)tsp.Attribute(W.type) == ot);
                             if (o is not null)
                             {
                                 var otrPr = o.Element(W.rPr);

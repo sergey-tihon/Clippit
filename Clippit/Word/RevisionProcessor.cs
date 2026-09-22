@@ -969,8 +969,7 @@ namespace Clippit.Word
                                 return MoveFromCollectionType.ParagraphEndTagInMoveFromRange;
                         }
                         XElement previousContentElement = c.ContentElementsBeforeSelf()
-                            .Where(e => e.GetParagraphInfo().ThisBlockContentElement is not null)
-                            .FirstOrDefault();
+                            .FirstOrDefault(e => e.GetParagraphInfo().ThisBlockContentElement is not null);
                         if (previousContentElement is not null)
                         {
                             BlockContentInfo pi2 = previousContentElement.GetParagraphInfo();

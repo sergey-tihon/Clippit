@@ -143,8 +143,9 @@ namespace Clippit.Excel
                     workbook
                         .Root.Element(S.sheets)
                         .Elements(S.sheet)
-                        .Where(s => s.Attribute(NoNamespace.name).Value.ToLower().Equals(worksheetName.ToLower()))
-                        .FirstOrDefault()
+                        .FirstOrDefault(s =>
+                            s.Attribute(NoNamespace.name).Value.ToLower().Equals(worksheetName.ToLower())
+                        )
                         .Attribute(R.id)
                         .Value
                 );
@@ -320,8 +321,7 @@ namespace Clippit.Excel
             var rowElement = worksheetXDocument
                 .Root.Element(S.sheetData)
                 .Elements(S.row)
-                .Where(t => t.Attribute(NoNamespace.r).Value == row.ToString())
-                .FirstOrDefault();
+                .FirstOrDefault(t => t.Attribute(NoNamespace.r).Value == row.ToString());
 
             if (rowElement is null)
             {
@@ -360,8 +360,7 @@ namespace Clippit.Excel
                 //look if cell already exist at that row
                 var currentCell = rowElement
                     .Elements(S.c)
-                    .Where(t => t.Attribute(NoNamespace.r).Value == cellReference)
-                    .FirstOrDefault();
+                    .FirstOrDefault(t => t.Attribute(NoNamespace.r).Value == cellReference);
 
                 if (currentCell is null)
                 { //cell element does not exist at row indicated as parameter
@@ -452,8 +451,7 @@ namespace Clippit.Excel
             var element = book
                 .Root.Element(S.definedNames)
                 .Elements(S.definedName)
-                .Where(t => t.Attribute(NoNamespace.name).Value == rangeName)
-                .FirstOrDefault();
+                .FirstOrDefault(t => t.Attribute(NoNamespace.name).Value == rangeName);
             if (element is null)
                 throw new ArgumentException("Range name not found: " + rangeName);
             var exclamIdx = element.Value.IndexOf('!');
@@ -482,8 +480,7 @@ namespace Clippit.Excel
             var element = book
                 .Root.Element(S.definedNames)
                 .Elements(S.definedName)
-                .Where(t => t.Attribute(NoNamespace.name).Value == rangeName)
-                .FirstOrDefault();
+                .FirstOrDefault(t => t.Attribute(NoNamespace.name).Value == rangeName);
             if (element is null)
             {
                 element = new XElement(S.definedName, new XAttribute(NoNamespace.name, rangeName));
@@ -501,8 +498,7 @@ namespace Clippit.Excel
             var element = book
                 .Root.Element(S.definedNames)
                 .Elements(S.definedName)
-                .Where(t => t.Attribute(NoNamespace.name).Value == rangeName)
-                .FirstOrDefault();
+                .FirstOrDefault(t => t.Attribute(NoNamespace.name).Value == rangeName);
             if (element is not null)
             {
                 var original = element.Value;
@@ -1477,8 +1473,7 @@ namespace Clippit.Excel
             var xfId = styles
                 .Root.Element(S.cellStyles)
                 .Elements(S.cellStyle)
-                .Where(t => t.Attribute(NoNamespace.name).Value == styleName)
-                .FirstOrDefault()
+                .FirstOrDefault(t => t.Attribute(NoNamespace.name).Value == styleName)
                 .Attribute(NoNamespace.xfId)
                 .Value;
             var cellXfs = styles.Root.Element(S.cellXfs);
@@ -2271,8 +2266,7 @@ namespace Clippit.Excel
             var rowElement = worksheet
                 .Root.Element(ns + "sheetData")
                 .Elements(ns + "row")
-                .Where(t => t.Attribute(rowName).Value == row.ToString())
-                .FirstOrDefault();
+                .FirstOrDefault(t => t.Attribute(rowName).Value == row.ToString());
 
             if (rowElement is null)
             {
@@ -2315,8 +2309,7 @@ namespace Clippit.Excel
                 //look if cell already exist at that row
                 var currentCellXElement = rowElement
                     .Elements(ns + "c")
-                    .Where(t => t.Attribute("r").Value == cellReference)
-                    .FirstOrDefault();
+                    .FirstOrDefault(t => t.Attribute("r").Value == cellReference);
 
                 if (currentCellXElement is null)
                 { //cell element does not exist at row indicated as parameter
