@@ -2724,9 +2724,10 @@ namespace Clippit.Word
                         var newAbstractElement = newNumbering
                             .Descendants()
                             .Elements(W.abstractNum)
-                            .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
                             .FirstOrDefault(p =>
                             {
+                                if (p.Annotation<FromPreviousSourceSemaphore>() is not null)
+                                    return false;
                                 var thisNsidElement = p.Element(W.nsid);
                                 if (thisNsidElement is null)
                                     return false;
@@ -2884,9 +2885,10 @@ namespace Clippit.Word
                         var newAbstractElement = newNumbering
                             .Descendants()
                             .Elements(W.abstractNum)
-                            .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
                             .FirstOrDefault(p =>
                             {
+                                if (p.Annotation<FromPreviousSourceSemaphore>() is not null)
+                                    return false;
                                 var thisNsidElement = p.Element(W.nsid);
                                 if (thisNsidElement is null)
                                     return false;
@@ -3044,9 +3046,10 @@ namespace Clippit.Word
                         var newAbstractElement = newNumbering
                             .Descendants()
                             .Elements(W.abstractNum)
-                            .Where(e => e.Annotation<FromPreviousSourceSemaphore>() is null)
                             .FirstOrDefault(p =>
                             {
+                                if (p.Annotation<FromPreviousSourceSemaphore>() is not null)
+                                    return false;
                                 var thisNsidElement = p.Element(W.nsid);
                                 if (thisNsidElement is null)
                                     return false;
