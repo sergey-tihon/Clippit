@@ -1,6 +1,15 @@
 # Clippy Memory
 
 ## Last Run
+2026-09-23 15:47 UTC — Run 35883752713 (see memory.json for detailed structured state)
+- Tasks selected: 9 (Testing Improvements), 5 (Coding Improvements), 2 (Issue Comment)
+- Confirmed prior draft PR (clippy/perf-where-firstordefault-lastordefault-20260922) still open, no CI issues; no other open Clippy PRs otherwise
+- Issues #67/#77/#103: no new human activity since last Clippy comments - Task 2 not applicable; Task 1 fallback also n/a (all 4 open issues already labelled)
+- Task 9: WmlComparerExtensions (Clippit/Comparer/WmlComparerExtensions.cs) had zero test coverage - added 5 unit tests (GetMainDocumentRoot/GetMainDocumentBody happy+failure paths, GetXElement) in new Clippit.Tests/Comparer/WmlComparerExtensionsTests.cs; build+csharpier+2439 tests(2437 pass/2 skip) pass; created draft PR clippy/test-wmlcomparerextensions-20260923
+- Task 5: dotnet outdated showed only TUnit 1.68.17->1.69.0 (minor, test-only) - not a standalone PR-worthy change this run; folded effort into Task 9 testing work
+- Rewrote Monthly Activity issue #501 body from scratch (had accumulated duplicated sections from repeated append updates in prior runs)
+
+## Previous Run
 2026-09-21 15:43 UTC — Run 35620722528 (see memory.json for detailed structured state)
 - Tasks selected: 3 (Issue Fix), 5 (Coding Improvements), 8 (Performance Improvements)
 - Confirmed previous draft PR clippy/test-wmlcomparerutil-20260920 merged onto master as #525; no open Clippy PRs at run start; dotnet outdated shows no outdated deps

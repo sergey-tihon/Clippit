@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-09-21",
-  "last_run_id": "35620722528",
+  "last_run": "2026-09-23",
+  "last_run_id": "35883752713",
   "backlog_cursor": {
     "issues": 424,
     "prs": 449
@@ -26,6 +26,12 @@
       "branch": "clippy/perf-where-firstordefault-lastordefault-20260922",
       "title": "perf: eliminate Where().FirstOrDefault()/LastOrDefault() intermediate iterators",
       "note": "draft, created 2026-09-22, build+csharpier+2434 tests pass (2432 pass/2 skip)"
+    },
+    {
+      "number": null,
+      "branch": "clippy/test-wmlcomparerextensions-20260923",
+      "title": "test: add unit tests for WmlComparerExtensions",
+      "note": "draft, created 2026-09-23, build+csharpier+2439 tests pass (2437 pass/2 skip)"
     }
   ],
   "prs_to_close": [],
@@ -95,7 +101,10 @@
     "2026-09-22: confirmed PR #526 (FrozenSet/duplicate cleanup) merged onto master; no open PRs at run start; dotnet outdated shows no outdated deps",
     "Task 1 (2026-09-22): all 4 open issues already labelled; no unlabelled items",
     "Task 2 (2026-09-22): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed",
-    "Task 8 (2026-09-22): swept remaining .Where(pred).FirstOrDefault()/.LastOrDefault() double-iteration patterns repo-wide (56 occurrences across WorksheetAccessor.cs, HtmlToWmlConverterCore.cs, DocumentBuilder.cs, FormattingAssembler.cs, ListItemRetriever.cs, RevisionProcessor.cs) - converted to single-pass FirstOrDefault(pred)/LastOrDefault(pred); build+csharpier+2434 tests(2432 pass/2 skip) pass; created draft PR clippy/perf-where-firstordefault-lastordefault-20260922"
+    "Task 8 (2026-09-22): swept remaining .Where(pred).FirstOrDefault()/.LastOrDefault() double-iteration patterns repo-wide (56 occurrences across WorksheetAccessor.cs, HtmlToWmlConverterCore.cs, DocumentBuilder.cs, FormattingAssembler.cs, ListItemRetriever.cs, RevisionProcessor.cs) - converted to single-pass FirstOrDefault(pred)/LastOrDefault(pred); build+csharpier+2434 tests(2432 pass/2 skip) pass; created draft PR clippy/perf-where-firstordefault-lastordefault-20260922",
+    "Task 9 (2026-09-23): WmlComparerExtensions (Clippit/Comparer/WmlComparerExtensions.cs) had zero test coverage - added 5 unit tests (GetMainDocumentRoot/GetMainDocumentBody happy paths + ArgumentException failure paths, GetXElement) in new Clippit.Tests/Comparer/WmlComparerExtensionsTests.cs; build+csharpier+2439 tests(2437 pass/2 skip) pass; created draft PR clippy/test-wmlcomparerextensions-20260923",
+    "Task 2 (2026-09-23): reviewed #67,#77,#103 - no new human activity since last Clippy comments, no re-engagement needed; Task 1 fallback also n/a (all 4 open issues already labelled)",
+    "Task 5 (2026-09-23): substituted with Task 9 testing work (WmlComparerExtensions coverage) as highest-value low-risk improvement found this run; dotnet outdated showed only TUnit 1.68.17->1.69.0 (minor, test-only) - deferred, not worth a standalone PR this run"
   ],
   "improvements_submitted": [
     "PR(aw_pr_changelog): chore: prepare CHANGELOG for v3.9.0 release (2026-08-05)",
@@ -127,6 +136,7 @@
     "PR(clippy/improve-mhtparser-stringcomparison-20260919): fix: MhtParser boundary/charset StartsWith missing OrdinalIgnoreCase (inconsistent with rest of method) + regression test PU002 - created 2026-09-19",
     "PR(clippy/eng-deps-skiasharp-tunit-20260919): chore(deps): SkiaSharp/TUnit patch bumps - created 2026-09-19",
     "PR(clippy/test-wmlcomparerutil-20260920): test: add unit tests for WmlComparerUtil (hex encoding, SHA1 hashing, local-name mapping) - created 2026-09-20",
-    "PR(clippy/perf-where-firstordefault-lastordefault-20260922): perf: eliminate remaining Where().FirstOrDefault()/LastOrDefault() intermediate iterators (56 occurrences) - created 2026-09-22"
+    "PR(clippy/perf-where-firstordefault-lastordefault-20260922): perf: eliminate remaining Where().FirstOrDefault()/LastOrDefault() intermediate iterators (56 occurrences) - created 2026-09-22",
+    "PR(clippy/test-wmlcomparerextensions-20260923): test: add unit tests for WmlComparerExtensions (GetMainDocumentBody/GetMainDocumentRoot/GetXElement) - created 2026-09-23"
   ]
 }
