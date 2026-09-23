@@ -66,7 +66,17 @@ public class WmlComparerExtensionsTests : TestsBase
     }
 
     [Test]
-    public async Task WE005_GetXElement_OnMainDocumentPart_ReturnsRoot()
+    public async Task WE005_GetXElement_EmptyPart_Throws()
+    {
+        using var stream = new MemoryStream();
+        using var wordDocument = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document);
+        var part = wordDocument.AddMainDocumentPart();
+
+        await Assert.That(() => part.GetXElement()).Throws<ArgumentException>();
+    }
+
+    [Test]
+    public async Task WE006_GetXElement_OnMainDocumentPart_ReturnsRoot()
     {
         using var stream = new MemoryStream();
         CreateEmptyWordprocessingDocument(stream);
