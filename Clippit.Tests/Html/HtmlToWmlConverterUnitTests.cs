@@ -13,7 +13,9 @@ public class HtmlToWmlConverterUnitTests
     [Test]
     public async Task CleanUpCss_NullInput_ReturnsEmptyString()
     {
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         var result = HtmlToWmlConverter.CleanUpCss(null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         await Assert.That(result).IsEqualTo("");
     }
 
