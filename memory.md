@@ -1,6 +1,17 @@
 # Clippy Memory
 
 ## Last Run
+2026-09-24 16:04 UTC — Run 36022357929 (see memory.json for detailed structured state)
+- Tasks selected: 2 (Issue Comment), 4 (Engineering Investments), 3 (Issue Fix)
+- Confirmed both prior draft PRs (clippy/perf-where-firstordefault-lastordefault-20260922 #528, clippy/test-wmlcomparerextensions-20260923 #529) merged onto master since last run
+- Issues #67/#77/#103: no new human activity since last Clippy comments - Task 2 not applicable
+- Task 3: no fixable bug/help-wanted/good-first-issue issues found (only Q&A-style help-wanted threads) - substituted with Task 9 testing work
+- Task 4: dotnet outdated showed only TUnit 1.68.17->1.69.0 (minor, test-only) - created draft PR clippy/eng-tunit-1.69.0-20260924; build+csharpier+2440 tests pass (2438 pass/2 skip)
+- Task 5 fallback exploration: no new low-risk coding improvements found - ContainsKey double-lookups, Where().FirstOrDefault()/Any() chains, FrozenSet conversions, dead code all already swept in prior runs
+- Task 9: HtmlToWmlConverter.cs CleanUpCss/Emu/TPoint/Twip (previously zero direct test coverage, pure helpers only exercised indirectly via integration tests) - added 15 unit tests in new Clippit.Tests/Html/HtmlToWmlConverterUnitTests.cs; build+csharpier+2461 tests(2459 pass/2 skip) pass; created draft PR clippy/test-htmltowmlconverter-cleanupcss-emu-20260924
+- Rewrote Monthly Activity issue #501 Run History/Suggested Actions to reflect this run
+
+## Previous Run
 2026-09-23 15:47 UTC — Run 35883752713 (see memory.json for detailed structured state)
 - Tasks selected: 9 (Testing Improvements), 5 (Coding Improvements), 2 (Issue Comment)
 - Confirmed prior draft PR (clippy/perf-where-firstordefault-lastordefault-20260922) still open, no CI issues; no other open Clippy PRs otherwise
