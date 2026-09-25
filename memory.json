@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-09-24",
-  "last_run_id": "36022357929",
+  "last_run": "2026-09-25",
+  "last_run_id": "36156071876",
   "backlog_cursor": {
     "issues": 424,
     "prs": 449
@@ -23,15 +23,9 @@
   "open_clippy_prs": [
     {
       "number": null,
-      "branch": "clippy/eng-tunit-1.69.0-20260924",
-      "title": "chore(deps): bump TUnit 1.68.17 -> 1.69.0",
-      "note": "draft, created 2026-09-24, build+csharpier+2440 tests pass (2438 pass/2 skip)"
-    },
-    {
-      "number": null,
-      "branch": "clippy/test-htmltowmlconverter-cleanupcss-emu-20260924",
-      "title": "test(html): unit tests for HtmlToWmlConverter.CleanUpCss and Emu/TPoint/Twip",
-      "note": "draft, created 2026-09-24, build+csharpier+2461 tests pass (2459 pass/2 skip)"
+      "branch": "clippy/perf-documentassembler-occurrence-count-20260925",
+      "title": "perf: eliminate O(n^2) substring allocation in DocumentAssembler directive counting",
+      "note": "draft, created 2026-09-25, build+csharpier+2462 tests pass (2460 pass/2 skip)"
     }
   ],
   "prs_to_close": [],
@@ -109,7 +103,9 @@
     "Task 3 (2026-09-24): no fixable bug/help-wanted/good-first-issue issues found (only Q&A-style help-wanted threads exist); substituted with Task 9 testing work",
     "Task 5 fallback (2026-09-24): delegated exploration found no new low-risk coding improvements - ContainsKey double-lookups, Where().FirstOrDefault()/Any() chains, FrozenSet conversions, dead code all already swept in prior runs; codebase currently clean in these categories",
     "Task 4 (2026-09-24): dotnet outdated showed only TUnit 1.68.17->1.69.0 (minor, test-only) - created draft PR clippy/eng-tunit-1.69.0-20260924",
-    "Task 9 (2026-09-24): HtmlToWmlConverter.cs CleanUpCss/Emu/TPoint/Twip had zero direct test coverage (pure helpers only exercised indirectly via full HTML-to-WML integration tests) - added 15 unit tests in new Clippit.Tests/Html/HtmlToWmlConverterUnitTests.cs; created draft PR clippy/test-htmltowmlconverter-cleanupcss-emu-20260924"
+    "Task 9 (2026-09-24): HtmlToWmlConverter.cs CleanUpCss/Emu/TPoint/Twip had zero direct test coverage (pure helpers only exercised indirectly via full HTML-to-WML integration tests) - added 15 unit tests in new Clippit.Tests/Html/HtmlToWmlConverterUnitTests.cs; created draft PR clippy/test-htmltowmlconverter-cleanupcss-emu-20260924",
+    "Task 8 (2026-09-25): DocumentAssembler.TransformToMetadata TransformToMetadata occurrence-counting of \"<#\" used paraContents.Select((_, i) => paraContents.Substring(i)).Count(sub => sub.StartsWith(\"<#\")) - O(n^2) substring allocation on every A.r/W.p element (hottest path in templating engine). Fixed with single-pass IndexOf-based CountTemplateDirectiveStarts helper (both A.r and W.p branches); added regression test DA_Content_MultipleDirectivesInSingleRun_BothReplaced; build+csharpier+2462 tests pass (2460 pass/2 skip); created draft PR clippy/perf-documentassembler-occurrence-count-20260925",
+    "Task 9/10 candidates identified for future runs (not yet implemented): Clippit/Word/Assembler/XPathExtensions.cs (EvaluateXPath/EvaluateXPathToString/TryEvalueStringToByteArray, only exercised indirectly via DocumentAssembler integration tests) and Clippit/PowerPoint/Fluent/FluentPresentationBuilder.Deduplication.cs (media/master/layout cache dedup logic, only exercised indirectly via full presentation-build tests)"
   ],
   "improvements_submitted": [
     "PR(aw_pr_changelog): chore: prepare CHANGELOG for v3.9.0 release (2026-08-05)",
@@ -144,6 +140,7 @@
     "PR(clippy/perf-where-firstordefault-lastordefault-20260922): perf: eliminate remaining Where().FirstOrDefault()/LastOrDefault() intermediate iterators (56 occurrences) - created 2026-09-22",
     "PR(clippy/test-wmlcomparerextensions-20260923): test: add unit tests for WmlComparerExtensions (GetMainDocumentBody/GetMainDocumentRoot/GetXElement) - created 2026-09-23",
     "PR(clippy/eng-tunit-1.69.0-20260924): chore(deps): TUnit 1.68.17 -> 1.69.0 - created 2026-09-24",
-    "PR(clippy/test-htmltowmlconverter-cleanupcss-emu-20260924): test: HtmlToWmlConverter.CleanUpCss + Emu/TPoint/Twip coverage - created 2026-09-24"
+    "PR(clippy/test-htmltowmlconverter-cleanupcss-emu-20260924): test: HtmlToWmlConverter.CleanUpCss + Emu/TPoint/Twip coverage - created 2026-09-24",
+    "PR(clippy/perf-documentassembler-occurrence-count-20260925): perf: eliminate O(n^2) substring allocation in DocumentAssembler <# directive occurrence counting - created 2026-09-25"
   ]
 }

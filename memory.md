@@ -1,6 +1,15 @@
 # Clippy Memory
 
 ## Last Run
+2026-09-25 15:56 UTC — Run 36156071876 (see memory.json for detailed structured state)
+- Tasks selected: 8 (Performance Improvements), 9 (Testing Improvements), 10 (Take Repository Forward)
+- Confirmed both prior draft PRs (clippy/eng-tunit-1.69.0-20260924 #530, clippy/test-htmltowmlconverter-cleanupcss-emu-20260924 #531) merged onto master since last run
+- Issues #67/#77/#103: no new human activity since last Clippy comments - Task 2 not applicable; all 4 open issues already labelled - Task 1 fallback also n/a
+- Task 8: delegated exploration found a genuine new O(n^2) hot-path bug in DocumentAssembler.cs TransformToMetadata - occurrence-counting of "<#" directive markers used paraContents.Select((_, i) => paraContents.Substring(i)).Count(sub => sub.StartsWith("<#")) which allocates O(n) substrings per call and runs on EVERY A.r/W.p element during template assembly (the hottest path in the templating engine). Fixed both occurrences (A.r and W.p branches) with a new CountTemplateDirectiveStarts helper using a single-pass IndexOf scan, zero allocations, identical behavior. Added regression test DA_Content_MultipleDirectivesInSingleRun_BothReplaced covering the occurrences!=1 multi-directive regex-replacement branch. build+csharpier+2462 tests pass (2460 pass/2 skip); created draft PR clippy/perf-documentassembler-occurrence-count-20260925
+- Task 9/10 substituted: exploration for future testing candidates found XPathExtensions.cs (Clippit/Word/Assembler/) and FluentPresentationBuilder.Deduplication.cs (Clippit/PowerPoint/Fluent/) as next zero-direct-coverage candidates (only exercised indirectly via integration tests) - noted for a future run, not implemented this run since Task 8 finding was the highest-value work
+- Rewrote Monthly Activity issue #501 Run History/Suggested Actions to reflect this run
+
+## Previous Run
 2026-09-24 16:04 UTC — Run 36022357929 (see memory.json for detailed structured state)
 - Tasks selected: 2 (Issue Comment), 4 (Engineering Investments), 3 (Issue Fix)
 - Confirmed both prior draft PRs (clippy/perf-where-firstordefault-lastordefault-20260922 #528, clippy/test-wmlcomparerextensions-20260923 #529) merged onto master since last run
