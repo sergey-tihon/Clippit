@@ -1,6 +1,17 @@
 # Clippy Memory
 
 ## Last Run
+2026-09-26 15:44 UTC — Run 36252881955 (see memory.json for detailed structured state)
+- Tasks selected: 2 (Issue Comment), 10 (Take Repository Forward), 5 (Coding Improvements)
+- Issues #67/#77/#103: no new human activity since last Clippy comments - Task 2 not applicable; all 4 open issues already labelled - Task 1 fallback also n/a
+- Cleaned up stale tracked-PR state: PR #449 (ExcelAssembler) is CLOSED (not open); clippy/test-stricttranslatingxmlreader-20260902 merged as #500; clippy/test-presentationsectionvalidator-20260903 merged as #504. All three removed from memory/Monthly Activity issue.
+- Task 5: delegated exploration found 5 ContentType.EndsWith("xml")/EndsWith("+xml") checks (PtOpenXmlUtil.cs x2, WmlComparer.Private.Methods.Util.cs, WmlComparer.Private.Methods.Hashing.cs, FluentPresentationBuilder.cs) missing StringComparison.OrdinalIgnoreCase, inconsistent with already-fixed sibling checks in MetricsGetter.cs/RelationshipValidator.cs. Fixed all 5; build+csharpier+2462 tests pass (2460 pass/2 skip); created draft PR clippy/improve-endswith-stringcomparison-20260926
+- Task 10: investigated prior run's noted future-testing candidates - discovered XPathExtensions.cs already has direct coverage (AssemblerInternalsTests.cs), contradicting the 2026-09-25 memory note (stale). Instead found GetMetricsHelper/ValidationHelper/HtmlConverterHelper in Clippit/OxPtHelpers.cs had zero direct test coverage (only AddDocxTextHelper/ImageHelper in same file were covered). Added 12 unit tests for GetMetricsHelper.GetDocxMetrics + ValidationHelper.IsValid/GetOpenXmlValidationErrors; build+csharpier+2474 tests pass (2472 pass/2 skip); created draft PR clippy/test-oxpthelpers-getmetrics-validation-20260926
+- FluentPresentationBuilder.Deduplication.cs remains a genuine future testing candidate (only exercised indirectly via full presentation-build integration tests) - not implemented this run
+- HtmlConverterHelper (OxPtHelpers.cs) also has zero test coverage but requires file I/O + output directory setup - candidate for a future run
+- Rewrote Monthly Activity issue #501 Run History/Suggested Actions to reflect this run and remove stale entries
+
+## Previous Run
 2026-09-25 15:56 UTC — Run 36156071876 (see memory.json for detailed structured state)
 - Tasks selected: 8 (Performance Improvements), 9 (Testing Improvements), 10 (Take Repository Forward)
 - Confirmed both prior draft PRs (clippy/eng-tunit-1.69.0-20260924 #530, clippy/test-htmltowmlconverter-cleanupcss-emu-20260924 #531) merged onto master since last run
