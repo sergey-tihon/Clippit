@@ -76,7 +76,7 @@ internal sealed partial class FluentPresentationBuilder : IFluentPresentationBui
         {
             if (part.Annotation<XDocument>() is { } xd)
             {
-                if (part.ContentType.EndsWith("+xml"))
+                if (part.ContentType.EndsWith("+xml", StringComparison.OrdinalIgnoreCase))
                     xd.Descendants().Attributes("smtClean").Remove();
                 part.PutXDocument();
             }

@@ -257,7 +257,7 @@ namespace Clippit
                                         if (anno is not null)
                                             return new XAttribute(a.Name, anno.Hash);
 
-                                        if (!oxp.ContentType.EndsWith("xml"))
+                                        if (!oxp.ContentType.EndsWith("xml", StringComparison.OrdinalIgnoreCase))
                                         {
                                             using var str = oxp.GetStream();
                                             byte[] ba;

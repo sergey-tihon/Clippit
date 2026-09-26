@@ -84,7 +84,7 @@ namespace Clippit
                     );
                     att.Value = newRel.Id;
 
-                    if (newPart.ContentType.EndsWith("xml"))
+                    if (newPart.ContentType.EndsWith("xml", StringComparison.OrdinalIgnoreCase))
                     {
                         XDocument newPartXDoc;
                         using (var stream = newPart.GetStream(FileMode.Open, FileAccess.Read))

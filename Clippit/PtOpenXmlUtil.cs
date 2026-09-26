@@ -313,7 +313,7 @@ namespace Clippit
         {
             XNamespace pkg = "http://schemas.microsoft.com/office/2006/xmlPackage";
 
-            if (part.ContentType.EndsWith("xml"))
+            if (part.ContentType.EndsWith("xml", StringComparison.OrdinalIgnoreCase))
             {
                 using var str = part.GetStream();
                 using var streamReader = new StreamReader(str);
@@ -464,7 +464,7 @@ namespace Clippit
             {
                 var name = (string)xmlPart.Attribute(pkg + "name");
                 var contentType = (string)xmlPart.Attribute(pkg + "contentType");
-                if (contentType.EndsWith("xml"))
+                if (contentType.EndsWith("xml", StringComparison.OrdinalIgnoreCase))
                 {
                     var u = new Uri(name, UriKind.Relative);
                     var part = package.CreatePart(u, contentType, CompressionOption.SuperFast);
