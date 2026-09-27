@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-09-26",
-  "last_run_id": "36252881955",
+  "last_run": "2026-09-27",
+  "last_run_id": "36330521754",
   "backlog_cursor": {
     "issues": 424,
     "prs": 449
@@ -23,15 +23,9 @@
   "open_clippy_prs": [
     {
       "number": null,
-      "branch": "clippy/improve-endswith-stringcomparison-20260926",
-      "title": "[Clippy] fix: use OrdinalIgnoreCase for ContentType.EndsWith(\"xml\") checks",
-      "note": "draft, created 2026-09-26, build+csharpier+2462 tests(2460 pass/2 skip) pass"
-    },
-    {
-      "number": null,
-      "branch": "clippy/test-oxpthelpers-getmetrics-validation-20260926",
-      "title": "[Clippy] test: add unit tests for GetMetricsHelper and ValidationHelper",
-      "note": "draft, created 2026-09-26, build+csharpier+2474 tests(2472 pass/2 skip) pass"
+      "branch": "clippy/test-htmlconverterhelper-convert-20260927",
+      "title": "[Clippy] test: add unit tests for HtmlConverterHelper.ConvertToHtml",
+      "note": "draft, created 2026-09-27, build+csharpier+2477 tests(2475 pass/2 skip) pass"
     }
   ],
   "prs_to_close": [],
@@ -113,7 +107,10 @@
     "Task 8 (2026-09-25): DocumentAssembler.TransformToMetadata TransformToMetadata occurrence-counting of \"<#\" used paraContents.Select((_, i) => paraContents.Substring(i)).Count(sub => sub.StartsWith(\"<#\")) - O(n^2) substring allocation on every A.r/W.p element (hottest path in templating engine). Fixed with single-pass IndexOf-based CountTemplateDirectiveStarts helper (both A.r and W.p branches); added regression test DA_Content_MultipleDirectivesInSingleRun_BothReplaced; build+csharpier+2462 tests pass (2460 pass/2 skip); created draft PR clippy/perf-documentassembler-occurrence-count-20260925",
     "Task 9/10 candidates identified for future runs (not yet implemented): Clippit/Word/Assembler/XPathExtensions.cs (EvaluateXPath/EvaluateXPathToString/TryEvalueStringToByteArray, only exercised indirectly via DocumentAssembler integration tests) and Clippit/PowerPoint/Fluent/FluentPresentationBuilder.Deduplication.cs (media/master/layout cache dedup logic, only exercised indirectly via full presentation-build tests)",
     "2026-09-26: confirmed PR #449 (ExcelAssembler) closed (not merged, not open); clippy/test-stricttranslatingxmlreader-20260902 merged as #500; clippy/test-presentationsectionvalidator-20260903 merged as #504 - removed all three stale entries from memory and Monthly Activity issue",
-    "2026-09-26: XPathExtensions.cs already has direct test coverage via Clippit.Tests/Word/AssemblerInternalsTests.cs (contradicts stale 2026-09-25 note claiming zero coverage) - removed from future testing candidates"
+    "2026-09-26: XPathExtensions.cs already has direct test coverage via Clippit.Tests/Word/AssemblerInternalsTests.cs (contradicts stale 2026-09-25 note claiming zero coverage) - removed from future testing candidates",
+    "Task 2/3 (2026-09-27): reviewed #67,#77,#103 comments directly via issue_read get_comments - no new human activity since last Clippy comments (Task 2 n/a); no fixable bug/help-wanted/good-first-issue issues found (Task 3 n/a)",
+    "Task 9 (2026-09-27): HtmlConverterHelper.ConvertToHtml (Clippit/OxPtHelpers.cs) was the last remaining zero-coverage public helper in that file (after GetMetricsHelper/ValidationHelper covered in #534) - added 3 unit tests (explicit output dir, fallback to CWD when no output dir given, throws OpenXmlPowerToolsException for non-existent output dir); build+csharpier+2477 tests(2475 pass/2 skip) pass; created draft PR clippy/test-htmlconverterhelper-convert-20260927",
+    "2026-09-27: confirmed PRs #533 (EndsWith OrdinalIgnoreCase fix) and #534 (GetMetricsHelper/ValidationHelper tests) merged onto master; no other open Clippy PRs at run start; dotnet outdated not re-checked this run (Task 4 not selected)"
   ],
   "improvements_submitted": [
     "PR(aw_pr_changelog): chore: prepare CHANGELOG for v3.9.0 release (2026-08-05)",
@@ -151,6 +148,7 @@
     "PR(clippy/test-htmltowmlconverter-cleanupcss-emu-20260924): test: HtmlToWmlConverter.CleanUpCss + Emu/TPoint/Twip coverage - created 2026-09-24",
     "PR(clippy/perf-documentassembler-occurrence-count-20260925): perf: eliminate O(n^2) substring allocation in DocumentAssembler <# directive occurrence counting - created 2026-09-25",
     "PR(clippy/improve-endswith-stringcomparison-20260926): fix: use OrdinalIgnoreCase for ContentType.EndsWith(\"xml\")/EndsWith(\"+xml\") checks in PtOpenXmlUtil.cs, WmlComparer, FluentPresentationBuilder (5 call sites) - created 2026-09-26",
-    "PR(clippy/test-oxpthelpers-getmetrics-validation-20260926): test: GetMetricsHelper.GetDocxMetrics + ValidationHelper.IsValid/GetOpenXmlValidationErrors coverage (Clippit/OxPtHelpers.cs) - created 2026-09-26"
+    "PR(clippy/test-oxpthelpers-getmetrics-validation-20260926): test: GetMetricsHelper.GetDocxMetrics + ValidationHelper.IsValid/GetOpenXmlValidationErrors coverage (Clippit/OxPtHelpers.cs) - created 2026-09-26",
+    "PR(clippy/test-htmlconverterhelper-convert-20260927): test: HtmlConverterHelper.ConvertToHtml coverage (explicit output dir, CWD fallback, missing-dir exception) - created 2026-09-27"
   ]
 }

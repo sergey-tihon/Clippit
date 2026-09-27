@@ -1,6 +1,14 @@
 # Clippy Memory
 
 ## Last Run
+2026-09-27 15:44 UTC — Run 36330521754 (see memory.json for detailed structured state)
+- Tasks selected: 2 (Issue Comment), 9 (Testing Improvements), 3 (Issue Fix)
+- Confirmed prior draft PRs (`clippy/improve-endswith-stringcomparison-20260926` #533, `clippy/test-oxpthelpers-getmetrics-validation-20260926` #534) both merged onto master; no other open Clippy PRs at run start
+- Issues #67/#77/#103: fetched comments directly via issue_read get_comments - no new human comments since last Clippy replies - Task 2 not applicable; no fixable bug/help-wanted/good-first-issue issues found - Task 3 not applicable
+- Task 9: HtmlConverterHelper.ConvertToHtml (Clippit/OxPtHelpers.cs) was the last remaining zero-coverage public helper in that file - added 3 unit tests (explicit output directory, fallback to current working directory when none given, OpenXmlPowerToolsException for missing output directory); build+csharpier+2477 tests(2475 pass/2 skip) pass; created draft PR clippy/test-htmlconverterhelper-convert-20260927
+- Rewrote Monthly Activity issue #501 Run History/Suggested Actions from scratch (had again accumulated duplicated append-style sections)
+
+## Previous Run
 2026-09-26 15:44 UTC — Run 36252881955 (see memory.json for detailed structured state)
 - Tasks selected: 2 (Issue Comment), 10 (Take Repository Forward), 5 (Coding Improvements)
 - Issues #67/#77/#103: no new human activity since last Clippy comments - Task 2 not applicable; all 4 open issues already labelled - Task 1 fallback also n/a
