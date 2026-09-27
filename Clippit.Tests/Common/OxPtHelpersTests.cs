@@ -4,8 +4,9 @@
 namespace Clippit.Tests.Common;
 
 /// <summary>
-/// Unit tests for <see cref="GetMetricsHelper"/> and <see cref="ValidationHelper"/>, the
-/// file-path-based wrappers around <see cref="MetricsGetter"/> and <see cref="OpenXmlValidator"/>
+/// Unit tests for <see cref="GetMetricsHelper"/>, <see cref="ValidationHelper"/>, and
+/// <see cref="HtmlConverterHelper"/>, the file-path-based wrappers around
+/// <see cref="MetricsGetter"/>, <see cref="OpenXmlValidator"/>, and <see cref="Word.WmlToHtmlConverter"/>
 /// used by the legacy CLI helpers in OxPtHelpers.cs.
 /// </summary>
 public class OxPtHelpersTests : TestsBase
@@ -129,5 +130,56 @@ public class OxPtHelpersTests : TestsBase
         var errors = ValidationHelper.GetOpenXmlValidationErrors(txtPath, "Office2013");
 
         await Assert.That(errors).IsEmpty();
+    }
+
+    // ── HtmlConverterHelper.ConvertToHtml ─────────────────────────────────────
+
+    [Test]
+    public async Task OPH030_ConvertToHtml_ValidDocument_WritesHtmlFileToOutputDirectory()
+    {
+        var outputDir = Path.Combine(TempDir, "OPH030");
+        Directory.CreateDirectory(outputDir);
+
+        HtmlConverterHelper.ConvertToHtml(DocxPath, outputDir);
+
+        var expectedHtmlPath = Path.Combine(outputDir, "Blank-wml.html");
+        await Assert.That(File.Exists(expectedHtmlPath)).IsTrue();
+        var html = await File.ReadAllTextAsync(expectedHtmlPath);
+        await Assert.That(html).Contains("<html");
+    }
+
+    [Test]
+    public async Task OPH031_ConvertToHtml_NoOutputDirectory_WritesHtmlToCurrentDirectory()
+    {
+        // When outputDirectory is null/empty, ConvertToHtml writes the .html file using only
+        // the source file's name (not its directory), so the output lands relative to the
+        // current working directory.
+        var sourceDir = Path.Combine(TempDir, "OPH031");
+        Directory.CreateDirectory(sourceDir);
+        var sourcePath = Path.Combine(sourceDir, "OPH031.docx");
+        File.Copy(DocxPath, sourcePath);
+        var expectedHtmlPath = Path.Combine(Directory.GetCurrentDirectory(), "OPH031.html");
+        File.Delete(expectedHtmlPath);
+
+        try
+        {
+            HtmlConverterHelper.ConvertToHtml(sourcePath, outputDirectory: null);
+
+            await Assert.That(File.Exists(expectedHtmlPath)).IsTrue();
+        }
+        finally
+        {
+            File.Delete(expectedHtmlPath);
+        }
+    }
+
+    [Test]
+    public async Task OPH032_ConvertToHtml_NonExistentOutputDirectory_Throws()
+    {
+        var missingDir = Path.Combine(TempDir, "OPH032-missing");
+
+        await Assert
+            .That(() => HtmlConverterHelper.ConvertToHtml(DocxPath, missingDir))
+            .Throws<OpenXmlPowerToolsException>();
     }
 }
