@@ -74,3 +74,12 @@
 - Task 5: found MhtParser.Parse (PtUtil.cs) had two StartsWith("boundary")/StartsWith("charset") calls missing StringComparison.OrdinalIgnoreCase, inconsistent with every other StartsWith in the same method - fixed both + added regression test PU002_MixedCaseBoundaryAndCharSetAreParsed; created draft PR clippy/improve-mhtparser-stringcomparison-20260919; build+csharpier+2415 tests pass
 - Discovered PR #449 (ExcelAssembler) is CLOSED not merged (previously tracked as open); issues #505/#507 (gh-aw Protected Files notices) were DELETED (410) upstream - removed all three stale entries from Monthly Activity issue #501
 - Rewrote Monthly Activity issue #501 to remove stale/deleted references and add this run's new PRs
+
+## Previous Run
+2026-09-28 15:48 UTC — Run 36446159681 (see memory.json for detailed structured state)
+- Tasks selected: 4 (Engineering Investments), 3 (Issue Fix), 8 (Performance Improvements)
+- Confirmed no open Clippy PRs at run start (#533, #534, #535 all merged onto master since last run)
+- Issues #67/#77/#103: no new human activity since last Clippy comments - Task 2 not applicable; no fixable bug/help-wanted/good-first-issue issues found - Task 3 not applicable, substituted with Task 8
+- Task 4: dotnet outdated showed only TUnit 1.69.0->1.70.1 (patch, test-only) - created draft PR clippy/eng-tunit-1.70.1-20260928, build+csharpier+2477 tests(2475 pass/2 skip) pass
+- Task 8: delegated exploration found WmlComparer.Private.Methods.ProduceDocument.cs correlation-threshold heuristic had 4 call sites doing ComparisonUnit.DescendantContentAtoms().Count() (full O(subtree) tree walk + List allocation) when the class already exposes a memoized DescendantContentAtomsCount property already used a few lines above in the same method - switched all 4 to the cached property; build+csharpier+2477 tests pass, WmlComparer test suite (277 tests) verified separately; created draft PR clippy/perf-wmlcomparer-descendantcontentatomscount-20260928
+- Rewrote Monthly Activity issue #501 from scratch - body had reverted to a stale 2026-09-23 snapshot (listing two already-merged PRs) despite intervening cleanup runs, confirming the recurring persistence issue noted in prior run notes
