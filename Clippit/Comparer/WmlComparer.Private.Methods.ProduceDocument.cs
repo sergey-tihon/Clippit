@@ -2924,8 +2924,8 @@ namespace Clippit
                     var doCorrelation = false;
                     if (currentLongestCommonSequenceLength == 1)
                     {
-                        var numberOfAtoms1 = unknown.ComparisonUnitArray1[currentI1].DescendantContentAtoms().Count();
-                        var numberOfAtoms2 = unknown.ComparisonUnitArray2[currentI2].DescendantContentAtoms().Count();
+                        var numberOfAtoms1 = unknown.ComparisonUnitArray1[currentI1].DescendantContentAtomsCount;
+                        var numberOfAtoms2 = unknown.ComparisonUnitArray2[currentI2].DescendantContentAtomsCount;
                         if (numberOfAtoms1 > 16 && numberOfAtoms2 > 16)
                         {
                             doCorrelation = true;
@@ -2936,13 +2936,13 @@ namespace Clippit
                         var numberOfAtoms1 = unknown
                             .ComparisonUnitArray1.Skip(currentI1)
                             .Take(currentLongestCommonSequenceLength)
-                            .Select(z => z.DescendantContentAtoms().Count())
+                            .Select(z => z.DescendantContentAtomsCount)
                             .Sum();
 
                         var numberOfAtoms2 = unknown
                             .ComparisonUnitArray2.Skip(currentI2)
                             .Take(currentLongestCommonSequenceLength)
-                            .Select(z => z.DescendantContentAtoms().Count())
+                            .Select(z => z.DescendantContentAtomsCount)
                             .Sum();
 
                         if (numberOfAtoms1 > 32 && numberOfAtoms2 > 32)
