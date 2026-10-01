@@ -1,6 +1,6 @@
 {
-  "last_run": "2026-09-28",
-  "last_run_id": "36446159681",
+  "last_run": "2026-10-01",
+  "last_run_id": "36886800124",
   "backlog_cursor": {
     "issues": 424,
     "prs": 449
@@ -20,20 +20,7 @@
     "401": "2026-07-04",
     "424": "2026-07-10"
   },
-  "open_clippy_prs": [
-    {
-      "number": null,
-      "branch": "clippy/eng-tunit-1.70.1-20260928",
-      "title": "[Clippy] chore(deps): bump TUnit 1.69.0 -> 1.70.1",
-      "note": "draft, created 2026-09-28, build+csharpier+2477 tests(2475 pass/2 skip) pass"
-    },
-    {
-      "number": null,
-      "branch": "clippy/perf-wmlcomparer-descendantcontentatomscount-20260928",
-      "title": "[Clippy] perf(comparer): reuse cached DescendantContentAtomsCount in correlation heuristic",
-      "note": "draft, created 2026-09-28, build+csharpier+2477 tests pass, WmlComparer suite (277 tests) verified separately"
-    }
-  ],
+  "open_clippy_prs": [],
   "prs_to_close": [],
   "checked_off_by_maintainer": [],
   "monthly_activity_issue": 501,
@@ -119,7 +106,8 @@
     "2026-09-27: confirmed PRs #533 (EndsWith OrdinalIgnoreCase fix) and #534 (GetMetricsHelper/ValidationHelper tests) merged onto master; no other open Clippy PRs at run start; dotnet outdated not re-checked this run (Task 4 not selected)",
     "2026-09-28: confirmed PRs #533/#534/#535 all merged onto master; no open Clippy PRs at run start. dotnet outdated showed only TUnit 1.69.0->1.70.1 (patch, test-only).",
     "Task 8 (2026-09-28): WmlComparer.Private.Methods.ProduceDocument.cs correlation-threshold heuristic had 4 call sites doing ComparisonUnit.DescendantContentAtoms().Count() (O(subtree) walk + List allocation) instead of the existing memoized DescendantContentAtomsCount property (already used elsewhere in same method) - fixed all 4; build+csharpier+2477 tests pass; created draft PR clippy/perf-wmlcomparer-descendantcontentatomscount-20260928",
-    "2026-09-28: Monthly Activity issue #501 body had reverted to a stale 2026-09-23 snapshot (listing 2 already-merged PRs) despite several intervening cleanup runs since - rewrote from scratch again; this stale-reversion issue has now recurred multiple times (2026-09-16, 2026-09-20, 2026-09-28) and may warrant investigation into how update_issue persistence works across runs"
+    "2026-09-28: Monthly Activity issue #501 body had reverted to a stale 2026-09-23 snapshot (listing 2 already-merged PRs) despite several intervening cleanup runs since - rewrote from scratch again; this stale-reversion issue has now recurred multiple times (2026-09-16, 2026-09-20, 2026-09-28) and may warrant investigation into how update_issue persistence works across runs",
+    "2026-10-01: PRs #536/#537 merged; rolled monthly issue (closed #501, created October). Tasks 2/3/8 n/a or nothing found."
   ],
   "improvements_submitted": [
     "PR(aw_pr_changelog): chore: prepare CHANGELOG for v3.9.0 release (2026-08-05)",
