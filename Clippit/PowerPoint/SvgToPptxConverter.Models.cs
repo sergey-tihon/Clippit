@@ -12,8 +12,8 @@ namespace Clippit.PowerPoint;
 public static partial class SvgToPptxConverter
 {
     private sealed record SvgDocument(
-        double ScaleX,
-        double ScaleY,
+        double CanvasWidth,
+        double CanvasHeight,
         IReadOnlyList<RenderElement> Elements,
         IReadOnlyDictionary<string, string> Aliases
     );
@@ -83,6 +83,7 @@ public static partial class SvgToPptxConverter
         string Fill,
         string Stroke,
         double StrokeWidth,
+        double FillOpacity,
         string Color,
         string FontFamily,
         double FontSize,
@@ -96,7 +97,22 @@ public static partial class SvgToPptxConverter
     )
     {
         public static Style Default =>
-            new("none", "none", 1, "000000", "Aptos", 18, "normal", "normal", "start", "inline", "visible", null, null);
+            new(
+                "none",
+                "none",
+                1,
+                1,
+                "000000",
+                "Aptos",
+                18,
+                "normal",
+                "normal",
+                "start",
+                "inline",
+                "visible",
+                null,
+                null
+            );
 
         public Style Merge(XElement element)
         {
@@ -109,6 +125,7 @@ public static partial class SvgToPptxConverter
                     ("fill", Fill),
                     ("stroke", Stroke),
                     ("stroke-width", StrokeWidth.ToString(CultureInfo.InvariantCulture)),
+                    ("fill-opacity", FillOpacity.ToString(CultureInfo.InvariantCulture)),
                     ("color", Color),
                     ("font-family", FontFamily),
                     ("font-size", FontSize.ToString(CultureInfo.InvariantCulture)),
@@ -136,6 +153,7 @@ public static partial class SvgToPptxConverter
                 Fill = values["fill"],
                 Stroke = values["stroke"],
                 StrokeWidth = ParseDouble(values["stroke-width"], StrokeWidth),
+                FillOpacity = Math.Clamp(ParseDouble(values["fill-opacity"], FillOpacity), 0, 1),
                 Color = values["color"],
                 FontFamily = values["font-family"],
                 FontSize = ParseDouble(values["font-size"], FontSize),

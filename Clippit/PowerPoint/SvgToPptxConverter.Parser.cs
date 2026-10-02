@@ -19,8 +19,8 @@ public static partial class SvgToPptxConverter
         private readonly Dictionary<string, string> _aliases = new(StringComparer.Ordinal);
         private int _elementCount;
         private readonly string? _name;
-        private double _scaleX;
-        private double _scaleY;
+        private double _canvasWidth;
+        private double _canvasHeight;
         private double _viewMinX;
         private double _viewMinY;
 
@@ -47,7 +47,7 @@ public static partial class SvgToPptxConverter
         public static SvgDocument Parse(string content, string? name, SvgToPptxConverterSettings settings) =>
             new SvgParser(content, name, settings).CreateDocument();
 
-        private SvgDocument CreateDocument() => new(_scaleX, _scaleY, _elements, _aliases);
+        private SvgDocument CreateDocument() => new(_canvasWidth, _canvasHeight, _elements, _aliases);
 
         private void ParseRoot(XElement root)
         {
@@ -66,23 +66,29 @@ public static partial class SvgToPptxConverter
                 throw Error("SVG must contain a finite, positive four-value viewBox.");
             _viewMinX = viewBox[0];
             _viewMinY = viewBox[1];
-            _scaleX = 1280d / viewBox[2];
-            _scaleY = 720d / viewBox[3];
-            Visit(root, new Matrix(_scaleX, 0, 0, _scaleY, -_viewMinX * _scaleX, -_viewMinY * _scaleY), Style.Default);
+            // Elements keep their viewBox coordinates; the slide writer maps the canvas onto the slide,
+            // so the diagram's proportions never depend on the slide's aspect ratio.
+            _canvasWidth = viewBox[2];
+            _canvasHeight = viewBox[3];
+            Visit(root, new Matrix(1, 0, 0, 1, -_viewMinX, -_viewMinY), Style.Default);
         }
 
         private void Visit(XElement element, Matrix parentTransform, Style parentStyle)
         {
-            if (
-                element.Name.LocalName
-                is "defs"
-                    or "style"
-                    or "marker"
-                    or "clipPath"
-                    or "mask"
-                    or "filter"
-                    or "foreignObject"
-            )
+            // A switch is an exclusive choice: draw.io wraps HTML labels in one and appends a
+            // last "Text is not SVG" banner in another. Render the label branch and never the
+            // fallbacks, which are not diagram content.
+            if (element.Name.LocalName == "switch")
+            {
+                var branch =
+                    element.Elements().FirstOrDefault(c => c.Name.LocalName is "foreignObject" or "text")
+                    ?? element.Elements().FirstOrDefault();
+                if (branch is not null)
+                    Visit(branch, parentTransform, parentStyle);
+                return;
+            }
+
+            if (element.Name.LocalName is "defs" or "style" or "marker" or "clipPath" or "mask" or "filter")
                 return;
 
             if (++_elementCount > _settings.MaximumElements)
@@ -99,6 +105,7 @@ public static partial class SvgToPptxConverter
                 "line" => CreateLine(element, transform, style),
                 "path" => CreatePath(element, transform, style),
                 "text" => CreateText(element, transform, style),
+                "foreignObject" => CreateForeignObjectText(element, transform, style),
                 _ => null,
             };
             if (created is not null)
@@ -424,7 +431,9 @@ public static partial class SvgToPptxConverter
             if (string.IsNullOrWhiteSpace(text))
                 return null;
             var point = t.Apply(Number(e, "x"), Number(e, "y"));
-            var textScale = Math.Sqrt(t.A * t.A + t.B * t.B);
+            // Glyph height follows the vertical scale so labels keep fitting their geometry when the
+            // viewBox aspect ratio differs from the slide.
+            var textScale = Math.Sqrt(t.C * t.C + t.D * t.D);
             var fontSize = style.FontSize * textScale;
             var width = Math.Max(fontSize * text.Length * 0.55, fontSize);
             var height = fontSize * 1.35;
@@ -449,6 +458,70 @@ public static partial class SvgToPptxConverter
                 Text = text,
             };
         }
+
+        /// <summary>
+        /// Renders an HTML label. Exporters such as draw.io keep the text and its anchor in inline CSS
+        /// rather than in geometry attributes, so the outer box is used only as a fallback.
+        /// </summary>
+        private RenderElement? CreateForeignObjectText(XElement e, Matrix transform, Style style)
+        {
+            var leaf = e.Descendants()
+                .FirstOrDefault(d => d.Name.LocalName == "div" && !d.Descendants().Any(c => c.Name.LocalName == "div"));
+            var text = (leaf ?? e).Value.Trim();
+            if (string.IsNullOrWhiteSpace(text))
+                return null;
+
+            var css = string.Join(
+                ";",
+                e.DescendantsAndSelf().Select(d => (string?)d.Attribute("style") ?? string.Empty)
+            );
+            var divStyle = Style.Default.Merge(leaf ?? e);
+            var anchor = CssValue(css, "text-align") switch
+            {
+                "center" => "middle",
+                "right" => "end",
+                "left" => "start",
+                _ => style.TextAnchor,
+            };
+            // margin-left is the horizontal anchor, padding-top sits on the text top; text boxes are
+            // positioned by their bottom edge, hence one line height of padding.
+            var x = CssLength(css, "margin-left") ?? Number(e, "x") + Number(e, "width") / 2;
+            var y =
+                CssLength(css, "padding-top") + divStyle.FontSize * 1.35
+                ?? Number(e, "y") + Number(e, "height") / 2 + divStyle.FontSize * 0.675;
+            return CreateText(
+                new XElement(S + "text", new XAttribute("x", x), new XAttribute("y", y), text),
+                transform,
+                divStyle with
+                {
+                    TextAnchor = anchor,
+                }
+            );
+        }
+
+        private static string? CssValue(string css, string property)
+        {
+            // The outermost declaration wins: exporters repeat a property on nested boxes and the
+            // innermost one describes the label itself.
+            var match = System
+                .Text.RegularExpressions.Regex.Matches(
+                    css,
+                    System.Text.RegularExpressions.Regex.Escape(property) + @"\s*:\s*([^;]+)",
+                    System.Text.RegularExpressions.RegexOptions.IgnoreCase
+                )
+                .LastOrDefault();
+            return match is null ? null : match.Groups[1].Value.Trim();
+        }
+
+        private static double? CssLength(string css, string property) =>
+            double.TryParse(
+                CssValue(css, property)?.TrimEnd('p', 'x'),
+                NumberStyles.Float,
+                CultureInfo.InvariantCulture,
+                out var value
+            )
+                ? value
+                : null;
 
         private RenderElement Shape(XElement e, Matrix transform, Style style, Box box, string geometry)
         {

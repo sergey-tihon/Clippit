@@ -14,8 +14,9 @@ public static partial class SvgToPptxConverter
     private sealed class SlideWriter
     {
         private readonly SvgDocument _document;
-        private readonly long _slideWidth;
-        private readonly long _slideHeight;
+        private readonly double _scale;
+        private readonly double _offsetX;
+        private readonly double _offsetY;
         private readonly Dictionary<string, uint> _sourceIds = new(StringComparer.Ordinal);
         private readonly Dictionary<RenderElement, XElement> _connectorXml = new();
         private uint _nextId;
@@ -23,8 +24,11 @@ public static partial class SvgToPptxConverter
         public SlideWriter(SvgDocument document, uint nextId, long slideWidth, long slideHeight)
         {
             _document = document;
-            _slideWidth = slideWidth;
-            _slideHeight = slideHeight;
+            // One EMU scale for both axes keeps shapes undistorted; a canvas whose aspect ratio differs
+            // from the slide is centered instead of stretched.
+            _scale = Math.Min(slideWidth / document.CanvasWidth, slideHeight / document.CanvasHeight);
+            _offsetX = (slideWidth - document.CanvasWidth * _scale) / 2;
+            _offsetY = (slideHeight - document.CanvasHeight * _scale) / 2;
             _nextId = nextId;
         }
 
@@ -246,8 +250,8 @@ public static partial class SvgToPptxConverter
                 ),
                 new XElement(
                     Drawing.ext,
-                    new XAttribute(NoNamespace.cx, EmuX(e.Width)),
-                    new XAttribute(NoNamespace.cy, EmuY(e.Height))
+                    new XAttribute(NoNamespace.cx, Emu(e.Width)),
+                    new XAttribute(NoNamespace.cy, Emu(e.Height))
                 )
             );
 
@@ -270,8 +274,8 @@ public static partial class SvgToPptxConverter
                 ),
                 new XElement(
                     Drawing.ext,
-                    new XAttribute(NoNamespace.cx, EmuX(width)),
-                    new XAttribute(NoNamespace.cy, EmuY(height))
+                    new XAttribute(NoNamespace.cx, Emu(width)),
+                    new XAttribute(NoNamespace.cy, Emu(height))
                 )
             );
         }
@@ -279,13 +283,13 @@ public static partial class SvgToPptxConverter
         private static XElement Fill(Style style) =>
             style.Fill is null or "none"
                 ? new XElement(Drawing.noFill)
-                : new XElement(Drawing.solidFill, Color(style.Fill));
+                : new XElement(Drawing.solidFill, Color(style.Fill, style.FillOpacity));
 
         private XElement CreateLine(Style style, string? markerStart = null, string? markerEnd = null)
         {
             var line = new XElement(
                 Drawing.ln,
-                new XAttribute(NoNamespace.w, Math.Max(1, EmuX(style.StrokeWidth))),
+                new XAttribute(NoNamespace.w, Math.Max(1, Emu(style.StrokeWidth))),
                 style.Stroke is null or "none"
                     ? new XElement(Drawing.noFill)
                     : new XElement(Drawing.solidFill, Color(style.Stroke)),
@@ -303,7 +307,7 @@ public static partial class SvgToPptxConverter
             return arrow;
         }
 
-        private static XElement CreateTextBody(RenderElement e) =>
+        private XElement CreateTextBody(RenderElement e) =>
             new XElement(
                 Presentation.txBody,
                 new XElement(
@@ -332,7 +336,7 @@ public static partial class SvgToPptxConverter
                 )
             );
 
-        private static XElement RunProperties(Style style) =>
+        private XElement RunProperties(Style style) =>
             new XElement(
                 Drawing.rPr,
                 new XAttribute(NoNamespace.lang, "en-US"),
@@ -345,14 +349,27 @@ public static partial class SvgToPptxConverter
 
         private static XElement ColorFill(string color) => new XElement(Drawing.solidFill, Color(color));
 
-        private static XElement Color(string color) =>
-            new XElement(Drawing.srgbClr, new XAttribute(NoNamespace.val, SvgColorParser.Normalize(color)));
+        private static XElement Color(string color, double opacity = 1)
+        {
+            var element = new XElement(
+                Drawing.srgbClr,
+                new XAttribute(NoNamespace.val, SvgColorParser.Normalize(color))
+            );
+            if (opacity < 1)
+                element.Add(
+                    new XElement(Drawing.alpha, new XAttribute(NoNamespace.val, (int)Math.Round(opacity * 100_000)))
+                );
+            return element;
+        }
 
-        private long EmuX(double value) => (long)Math.Round(value * _slideWidth / 1280d);
+        private long EmuX(double value) => (long)Math.Round(_offsetX + value * _scale);
 
-        private long EmuY(double value) => (long)Math.Round(value * _slideHeight / 720d);
+        private long EmuY(double value) => (long)Math.Round(_offsetY + value * _scale);
 
-        private static int Points(double value) => Math.Max(1, (int)Math.Round(value * 100 * 0.75));
+        private long Emu(double value) => (long)Math.Round(value * _scale);
+
+        // Font sizes are hundredths of a point and DrawingML requires at least 100 (1pt).
+        private int Points(double value) => Math.Max(100, (int)Math.Round(value * _scale / 127d));
 
         private static int AnchorIndex(string anchor) =>
             anchor.ToLowerInvariant() switch

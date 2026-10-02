@@ -151,7 +151,13 @@ public class SvgToPptxConverterTests : TestsBase
         await Validate(output);
         var slideXml = output.PresentationPart!.SlideParts.Single().GetXDocument();
         var generatedTransform = slideXml.Descendants(Drawing + "xfrm").Last();
-        await Assert.That((long)generatedTransform.Element(Drawing + "ext")!.Attribute("cx")!).IsEqualTo(10_000_000);
+        // The template is wider than the diagram, so the diagram is fitted, centered and never stretched.
+        var scale = Math.Min(10_000_000d / 1280d, 5_000_000d / 720d);
+        var expectedWidth = (long)Math.Round(1280 * scale);
+        await Assert.That((long)generatedTransform.Element(Drawing + "ext")!.Attribute("cx")!).IsEqualTo(expectedWidth);
+        await Assert.That((long)generatedTransform.Element(Drawing + "ext")!.Attribute("cy")!).IsEqualTo(5_000_000);
+        var offsetX = (long)generatedTransform.Element(Drawing + "off")!.Attribute("x")!;
+        await Assert.That(Math.Abs(offsetX - (10_000_000 - expectedWidth) / 2)).IsLessThanOrEqualTo(1);
         await Assert.That(slideXml.Descendants(Drawing + "t").Select(element => element.Value)).Contains("Template");
     }
 
@@ -193,5 +199,79 @@ public class SvgToPptxConverterTests : TestsBase
 
         var document = SvgToPptxConverter.Convert(svg);
         await Assert.That(document.DocumentByteArray).IsNotEmpty();
+    }
+
+    [Test]
+    public async Task SVG009_DrawioHtmlLabelsBecomeTextAndTheNotSvgBannerIsIgnored()
+    {
+        const string svg = """
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xhtml="http://www.w3.org/1999/xhtml" viewBox="0 0 982 1204">
+              <g transform="translate(0.5,0.5)">
+                <rect x="329.67" y="28" width="50" height="50" fill="#e8f1fb" stroke="#1f6feb" />
+              </g>
+              <g>
+                <g>
+                  <switch>
+                    <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%">
+                      <xhtml:div style="display: flex; padding-top: 58px; margin-left: 354.67px;">
+                        <xhtml:div style="box-sizing: border-box; font-size: 0; text-align: center; color: #232F3E;">
+                          <xhtml:div style="display: inline-block; font-size: 10px; font-family: Helvetica; color: light-dark(#232F3E, #bdc7d4);">Market user</xhtml:div>
+                        </xhtml:div>
+                      </xhtml:div>
+                    </foreignObject>
+                  </switch>
+                </g>
+              </g>
+              <switch>
+                <g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" />
+                <a transform="translate(0,-5)" xlink:href="https://www.drawio.com/doc/faq/svg-export-text-problems" xmlns:xlink="http://www.w3.org/1999/xlink">
+                  <text text-anchor="middle" font-size="10px" x="50%" y="100%">Text is not SVG - cannot display</text>
+                </a>
+              </switch>
+            </svg>
+            """;
+
+        var document = SvgToPptxConverter.Convert(svg);
+        var output = Path.Combine(TempDir, "SVG009-drawio.pptx");
+        document.SaveAs(output);
+
+        using var presentation = PresentationDocument.Open(output, false);
+        await Validate(presentation);
+        var texts = presentation
+            .PresentationPart!.SlideParts.Single()
+            .GetXDocument()
+            .Descendants(Drawing + "t")
+            .Select(t => (string?)t)
+            .ToArray();
+        await Assert.That(texts).IsEquivalentTo(["Market user"]);
+    }
+
+    [Test]
+    public async Task SVG010_DiagramIsFittedIntoTheDefaultSlideWithoutChangingItsSize()
+    {
+        const string svg =
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1000 2000\"><rect x=\"0\" y=\"0\" width=\"1000\" height=\"2000\" fill=\"#eeeeee\" /></svg>";
+
+        var document = SvgToPptxConverter.Convert(svg);
+        var output = Path.Combine(TempDir, "SVG010-fit.pptx");
+        document.SaveAs(output);
+
+        using var presentation = PresentationDocument.Open(output, false);
+        await Validate(presentation);
+        var presentationXml = presentation.PresentationPart!.GetXDocument();
+        var slideSize = presentationXml.Root!.Element(Presentation + "sldSz")!;
+        await Assert.That((long)slideSize.Attribute("cx")!).IsEqualTo(12_192_000);
+        await Assert.That((long)slideSize.Attribute("cy")!).IsEqualTo(6_858_000);
+
+        // 1000x2000 fits by height: 3429 EMU per unit, centered horizontally, never stretched.
+        var transform = presentation
+            .PresentationPart.SlideParts.Single()
+            .GetXDocument()
+            .Descendants(Drawing + "xfrm")
+            .Last();
+        await Assert.That((long)transform.Element(Drawing + "ext")!.Attribute("cx")!).IsEqualTo(3_429_000);
+        await Assert.That((long)transform.Element(Drawing + "ext")!.Attribute("cy")!).IsEqualTo(6_858_000);
+        await Assert.That((long)transform.Element(Drawing + "off")!.Attribute("x")!).IsEqualTo(4_381_500);
+        await Assert.That((long)transform.Element(Drawing + "off")!.Attribute("y")!).IsEqualTo(0);
     }
 }
