@@ -87,7 +87,7 @@ tools:
     max-file-size: 65536
     max-patch-size: 65536
     # Allows the one-time removal of five legacy memory files plus notes.json.
-    # The validation script below still enforces exactly one persisted file.
+    # The agent migrates legacy files; the read-only validator enforces one persisted file.
     max-file-count: 6
     format-json: true
     allowed-extensions: [".json"]
@@ -98,9 +98,6 @@ tools:
         const path = require("node:path");
         const fail = message => { throw new Error(`notes.json: ${message}`); };
         const notesPath = path.join(memoryRoot, "notes.json");
-        for (const legacyFile of ["memory.json", "state.json"]) {
-          fs.rmSync(path.join(memoryRoot, legacyFile), { force: true });
-        }
         const memoryEntries = fs.readdirSync(memoryRoot, { withFileTypes: true });
         if (memoryEntries.length !== 1 || !memoryEntries[0].isFile() || memoryEntries[0].name !== "notes.json") {
           fail("must be the only file in repo memory");
@@ -355,6 +352,28 @@ source: githubnext/agentics/workflows/repo-assist.md@5d11aa2a05ce2c943c085acb7b1
 ---
 
 # Clippy
+
+## Memory Initialization (All Runs)
+
+Before command-mode handling, task selection, or any `noop`, initialize repo memory at `/tmp/gh-aw/repo-memory/default`. This is mandatory even when no repository work is needed: the run cannot succeed without a valid `notes.json`.
+
+If `notes.json` is missing, create it using this schema version 1 baseline:
+
+```json
+{
+  "version": 1,
+  "cursors": { "labelling_after": null, "investigation_after": null },
+  "issues": [],
+  "fixes": [],
+  "checks": [],
+  "completed_actions": [],
+  "priorities": []
+}
+```
+
+Before removing legacy memory files, read them and migrate any still-relevant cursors, issue/fix records, maintainer-completed actions, and follow-up work into the schema fields above. Verify migrated records against current repository state and obey the validator's field and size limits. Preserve existing valid `notes.json` content. Write and check `notes.json` before deleting superseded legacy files (including `memory.json`, `state.json`, and legacy Markdown files), leaving exactly one file in repo memory.
+
+Memory initialization and migration are changes worth persisting even on a no-op run. Do not defer them to the end-of-run update rule. The custom validator is read-only; it cannot create `notes.json` or clean up legacy files for you.
 
 ## Command Mode
 
