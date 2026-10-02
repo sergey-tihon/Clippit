@@ -271,8 +271,7 @@ namespace Clippit.Html
             )
             {
                 var parentOlUl = item.Ancestors()
-                    .Where(a => a.Name == XhtmlNoNamespace.ol || a.Name == XhtmlNoNamespace.ul)
-                    .LastOrDefault();
+                    .LastOrDefault(a => a.Name == XhtmlNoNamespace.ol || a.Name == XhtmlNoNamespace.ul);
                 int numIdToUse;
                 if (parentOlUl is not null)
                     numIdToUse = parentOlUl.Annotation<NumberedItemAnnotation>().numId;
@@ -4194,10 +4193,9 @@ namespace Clippit.Html
                 fontXDoc,
                 fontXDoc
                     .Root.Elements(W.style)
-                    .Where(e =>
+                    .FirstOrDefault(e =>
                         (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "Heading1"
-                    )
-                    .FirstOrDefault(),
+                    ),
                 @"<w:font w:name='Verdana' xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
   <w:panose1 w:val='020B0604030504040204'/>
   <w:charset w:val='00'/>
@@ -4697,16 +4695,14 @@ namespace Clippit.Html
                 //string item = "ms-rteStyle-Byline";
                 foreach (var ruleSet in authorCssDoc.RuleSets)
                 {
-                    var selector = ruleSet
-                        .Selectors.Where(sel =>
-                        {
-                            var found =
-                                sel.SimpleSelectors.Count == 1
-                                && sel.SimpleSelectors.First().Class == item
-                                && sel.SimpleSelectors.First().ElementName is "" or null;
-                            return found;
-                        })
-                        .FirstOrDefault();
+                    var selector = ruleSet.Selectors.FirstOrDefault(sel =>
+                    {
+                        var found =
+                            sel.SimpleSelectors.Count == 1
+                            && sel.SimpleSelectors.First().Class == item
+                            && sel.SimpleSelectors.First().ElementName is "" or null;
+                        return found;
+                    });
                     var color = ruleSet.Declarations.FirstOrDefault(d => d.Name == "color");
                     if (selector is not null)
                     {
@@ -4750,11 +4746,10 @@ namespace Clippit.Html
                         if (
                             styleXDoc
                                 .Root.Elements(W.style)
-                                .Where(e =>
+                                .FirstOrDefault(e =>
                                     (string)e.Attribute(W.type) == "paragraph"
                                     && ((string)e.Attribute(W.styleId)).ToLower() == styleName
                                 )
-                                .FirstOrDefault()
                             is null
                         )
                             styleXDoc.Root.Add(newStyle);
@@ -4767,10 +4762,9 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "Heading1"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='paragraph'
         w:styleId='Heading1'
         xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
@@ -4808,10 +4802,9 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "Heading2"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='paragraph'
          w:styleId='Heading2'
          xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
@@ -4849,10 +4842,9 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "Heading3"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='paragraph'
          w:styleId='Heading3'
          xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
@@ -4888,10 +4880,9 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "Heading4"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='paragraph'
          w:styleId='Heading4'
          xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
@@ -4929,10 +4920,9 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "Heading5"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='paragraph'
          w:styleId='Heading5'
          xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
@@ -4967,10 +4957,9 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "Heading6"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='paragraph'
          w:styleId='Heading6'
          xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
@@ -5007,10 +4996,9 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "Heading7"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='paragraph'
          w:styleId='Heading7'
          xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
@@ -5047,10 +5035,9 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "Heading8"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='paragraph'
          w:styleId='Heading8'
          xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
@@ -5087,10 +5074,9 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "paragraph" && (string)e.Attribute(W.styleId) == "Heading9"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='paragraph'
          w:styleId='Heading9'
          xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
@@ -5129,11 +5115,10 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "character"
                             && (string)e.Attribute(W.styleId) == "Heading1Char"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='character'
          w:customStyle='1'
          w:styleId='Heading1Char'
@@ -5163,11 +5148,10 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "character"
                             && (string)e.Attribute(W.styleId) == "Heading2Char"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='character'
          w:customStyle='1'
          w:styleId='Heading2Char'
@@ -5196,11 +5180,10 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "character"
                             && (string)e.Attribute(W.styleId) == "Heading3Char"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='character'
          w:customStyle='1'
          w:styleId='Heading3Char'
@@ -5227,11 +5210,10 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "character"
                             && (string)e.Attribute(W.styleId) == "Heading4Char"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='character'
          w:customStyle='1'
          w:styleId='Heading4Char'
@@ -5260,11 +5242,10 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "character"
                             && (string)e.Attribute(W.styleId) == "Heading5Char"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='character'
          w:customStyle='1'
          w:styleId='Heading5Char'
@@ -5290,11 +5271,10 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "character"
                             && (string)e.Attribute(W.styleId) == "Heading6Char"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='character'
          w:customStyle='1'
          w:styleId='Heading6Char'
@@ -5322,11 +5302,10 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "character"
                             && (string)e.Attribute(W.styleId) == "Heading7Char"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='character'
          w:customStyle='1'
          w:styleId='Heading7Char'
@@ -5354,11 +5333,10 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "character"
                             && (string)e.Attribute(W.styleId) == "Heading8Char"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='character'
          w:customStyle='1'
          w:styleId='Heading8Char'
@@ -5386,11 +5364,10 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "character"
                             && (string)e.Attribute(W.styleId) == "Heading9Char"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='character'
          w:customStyle='1'
          w:styleId='Heading9Char'
@@ -5420,10 +5397,9 @@ namespace Clippit.Html
                     styleXDoc,
                     styleXDoc
                         .Root.Elements(W.style)
-                        .Where(e =>
+                        .FirstOrDefault(e =>
                             (string)e.Attribute(W.type) == "character" && (string)e.Attribute(W.styleId) == "Hyperlink"
-                        )
-                        .FirstOrDefault(),
+                        ),
                     @"<w:style w:type='character'
          w:styleId='Hyperlink'
          xmlns:w='http://schemas.openxmlformats.org/wordprocessingml/2006/main'>
@@ -5455,7 +5431,7 @@ namespace Clippit.Html
 
             var minorFont = html.Descendants(XhtmlNoNamespace.body).FirstOrDefault().GetProp("font-family");
             var majorFontElement = html.Descendants()
-                .Where(e =>
+                .FirstOrDefault(e =>
                     e.Name == XhtmlNoNamespace.h1
                     || e.Name == XhtmlNoNamespace.h2
                     || e.Name == XhtmlNoNamespace.h3
@@ -5465,8 +5441,7 @@ namespace Clippit.Html
                     || e.Name == XhtmlNoNamespace.h7
                     || e.Name == XhtmlNoNamespace.h8
                     || e.Name == XhtmlNoNamespace.h9
-                )
-                .FirstOrDefault();
+                );
             CssExpression majorFont = null;
             if (majorFontElement is not null)
                 majorFont = majorFontElement.GetProp("font-family");

@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.9.1] - September 21, 2026
+
+- perf: eliminate redundant dictionary, sorted-list, and LINQ iterator lookups across Excel, HTML, PowerPoint, and Word (#472, #475, #477, #482, #484, #489, #491, #517, #520)
+- perf: convert tracked revision and retained-name collections to `FrozenSet` for faster lookups (#522)
+- refactor(word): replace raw numbering-format strings with a strongly typed enum and extensions (#474)
+- fix(word): use ordinal case-insensitive matching for MHT boundary and charset detection (#523)
+- test: expand coverage for XML translation, Open XML documents, Word helpers, PowerPoint validation, comparer utilities, and common helpers (#473, #496, #498, #500, #504, #511, #515, #516, #525)
+- chore(deps): update SkiaSharp 4.151.1 → 4.152.1, TUnit 1.64.13 → 1.68.17, Microsoft.NET.Test.Sdk 18.8.1 → 18.10.1, and System.CommandLine preview.7 → 3.0.0-rc.1 (#481, #512, #518, #519, #524)
+
 ## [3.9.0] - August 12, 2026
 
 - perf: optimize immutable lookups, dictionary access, enumeration, and string slicing across Excel, HTML, PowerPoint, and Word (#444, #445, #448, #450, #451, #452, #454, #459, #462, #463, #466, #470)

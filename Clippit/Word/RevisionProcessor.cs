@@ -382,8 +382,7 @@ namespace Clippit.Word
                 return node;
             var parent = element
                 .Ancestors()
-                .Where(a => a.Name != W.sdtContent && a.Name != W.sdt && a.Name != W.smartTag)
-                .FirstOrDefault();
+                .FirstOrDefault(a => a.Name != W.sdtContent && a.Name != W.sdt && a.Name != W.smartTag);
 
             ////////////////////////////////////////////////////////////////////////////////////
             // Deleted run
@@ -796,7 +795,7 @@ namespace Clippit.Word
         {
             if (node is not XElement element)
                 return node;
-            if (element.Name == W.tc && !element.Elements().Where(e => e.Name != W.tcPr).Any())
+            if (element.Name == W.tc && !element.Elements().Any(e => e.Name != W.tcPr))
                 return new XElement(W.tc, element.Attributes(), element.Elements(), new XElement(W.p));
 
             return new XElement(
@@ -970,8 +969,7 @@ namespace Clippit.Word
                                 return MoveFromCollectionType.ParagraphEndTagInMoveFromRange;
                         }
                         XElement previousContentElement = c.ContentElementsBeforeSelf()
-                            .Where(e => e.GetParagraphInfo().ThisBlockContentElement is not null)
-                            .FirstOrDefault();
+                            .FirstOrDefault(e => e.GetParagraphInfo().ThisBlockContentElement is not null);
                         if (previousContentElement is not null)
                         {
                             BlockContentInfo pi2 = previousContentElement.GetParagraphInfo();
@@ -1334,12 +1332,14 @@ namespace Clippit.Word
                     commonAncestor.Name == W.p
                     && commonAncestor
                         .Elements()
-                        .Where(e => e.Name != W.pPr && e.Name != W.commentRangeStart && e.Name != W.commentRangeEnd)
-                        .FirstOrDefault() == firstRunChild
+                        .FirstOrDefault(e =>
+                            e.Name != W.pPr && e.Name != W.commentRangeStart && e.Name != W.commentRangeEnd
+                        ) == firstRunChild
                     && commonAncestor
                         .Elements()
-                        .Where(e => e.Name != W.pPr && e.Name != W.commentRangeStart && e.Name != W.commentRangeEnd)
-                        .LastOrDefault() == lastRunChild
+                        .LastOrDefault(e =>
+                            e.Name != W.pPr && e.Name != W.commentRangeStart && e.Name != W.commentRangeEnd
+                        ) == lastRunChild
                 )
                 {
                     // replace commonAncestor with content control containing commonAncestor
@@ -1457,8 +1457,7 @@ namespace Clippit.Word
                             .ThisBlockContentElement.Elements(W.pPr)
                             .Elements(W.rPr)
                             .Elements()
-                            .Where(e => e.Name == W.del || e.Name == W.moveFrom)
-                            .Any();
+                            .Any(e => e.Name == W.del || e.Name == W.moveFrom);
 
                         if (paragraphMarkIsDeletedOrMovedFrom)
                         {
@@ -1987,8 +1986,7 @@ namespace Clippit.Word
                                 CollectionType = DeletedCellCollectionType.DeletedCell,
                                 Disambiguator = new[] { e }
                                     .Concat(e.SiblingsBeforeSelfReverseDocumentOrder())
-                                    .Where(z => z.Name == W.tc && !z.Descendants(W.cellDel).Any())
-                                    .FirstOrDefault(),
+                                    .FirstOrDefault(z => z.Name == W.tc && !z.Descendants(W.cellDel).Any()),
                             };
                             return a;
                         }
@@ -2041,8 +2039,7 @@ namespace Clippit.Word
             );
         }
 
-        private static readonly XName[] BlockLevelElements = new[]
-        {
+        private static readonly FrozenSet<XName> BlockLevelElements = FrozenSet.Create<XName>(
             W.p,
             W.tbl,
             W.sdt,
@@ -2050,8 +2047,8 @@ namespace Clippit.Word
             W.ins,
             M.oMath,
             M.oMathPara,
-            W.moveTo,
-        };
+            W.moveTo
+        );
 
         private static object RemoveRowsLeftEmptyByMoveFrom(XNode node)
         {
@@ -2080,8 +2077,7 @@ namespace Clippit.Word
             );
         }
 
-        public static XName[] TrackedRevisionsElements = new[]
-        {
+        public static readonly FrozenSet<XName> TrackedRevisionsElements = FrozenSet.Create<XName>(
             W.cellDel,
             W.cellIns,
             W.cellMerge,
@@ -2107,8 +2103,8 @@ namespace Clippit.Word
             W.tblPrChange,
             W.tblPrExChange,
             W.tcPrChange,
-            W.trPrChange,
-        };
+            W.trPrChange
+        );
 
         public static bool PartHasTrackedRevisions(OpenXmlPart part)
         {
@@ -2177,8 +2173,7 @@ namespace Clippit.Word
                 // example, comment elements have no descendant elements.
                 var paragraph = content
                     .DescendantsAndSelf()
-                    .Where(e => e.Name == W.p || e.Name == W.tc || e.Name == W.txbxContent)
-                    .FirstOrDefault();
+                    .FirstOrDefault(e => e.Name == W.p || e.Name == W.tc || e.Name == W.txbxContent);
                 if (paragraph is not null && (paragraph.Name == W.tc || paragraph.Name == W.txbxContent))
                     paragraph = null;
                 var pi = new BlockContentInfo()

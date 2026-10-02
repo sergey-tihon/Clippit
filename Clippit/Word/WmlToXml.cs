@@ -1511,9 +1511,7 @@ namespace Clippit.Word
                         new XElement(W.rPr, new XElement(W.rStyle, new XAttribute(W.val, "CommentReference"))),
                         new XElement(W.commentReference, new XAttribute(W.id, commentNumber))
                     );
-                    var firstRunInParagraph = blc.DescendantsTrimmed(W.txbxContent)
-                        .Where(r => r.Name == W.r)
-                        .FirstOrDefault();
+                    var firstRunInParagraph = blc.DescendantsTrimmed(W.txbxContent).FirstOrDefault(r => r.Name == W.r);
                     if (firstRunInParagraph is not null)
                     {
                         // for now, only do the work of inserting a comment if it is easy.  For content types for tables, rows and cells, not inserting a comment.
@@ -1662,9 +1660,7 @@ namespace Clippit.Word
                         new XElement(W.rPr, new XElement(W.rStyle, new XAttribute(W.val, "CommentReference"))),
                         new XElement(W.commentReference, new XAttribute(W.id, commentNumber))
                     );
-                    var firstRunInParagraph = rlc.DescendantsTrimmed(W.txbxContent)
-                        .Where(r => r.Name == W.r)
-                        .FirstOrDefault();
+                    var firstRunInParagraph = rlc.DescendantsTrimmed(W.txbxContent).FirstOrDefault(r => r.Name == W.r);
 
                     // for now, only do the work of inserting a comment if it is easy.  For content types for tables, rows and cells, not inserting a comment.
                     if (rlc.Parent.Name == W.p)

@@ -104,7 +104,7 @@ namespace Clippit
                     var spl = contentTypeLine.Split(';').Select(z => z.Trim()).ToArray();
                     foreach (var s in spl)
                     {
-                        if (s.StartsWith("boundary"))
+                        if (s.StartsWith("boundary", StringComparison.OrdinalIgnoreCase))
                         {
                             var begText = "boundary=\"";
                             var begLen = begText.Length;
@@ -176,7 +176,7 @@ namespace Clippit
                         var spl = partContentType.Split(';').Select(s => s.Trim()).ToArray();
                         foreach (var s in spl)
                         {
-                            if (s.StartsWith("charset"))
+                            if (s.StartsWith("charset", StringComparison.OrdinalIgnoreCase))
                             {
                                 var begText = "charset=\"";
                                 var begLen = begText.Length;

@@ -544,6 +544,40 @@ public class DocumentAssemblerTests : TestsBase
     }
 
     [Test]
+    public async Task DA_Content_MultipleDirectivesInSingleRun_BothReplaced()
+    {
+        // A single run containing two "<# ... #>" directives must not match the single-directive
+        // fast path (which requires exactly one occurrence); both directives should still be
+        // replaced via the regex-based multi-directive path.
+        var bodyXml = new XElement(
+            W.body,
+            new XElement(
+                W.p,
+                new XElement(
+                    W.r,
+                    new XElement(W.t, @"<# <Content Select=""./First"" /> #> and <# <Content Select=""./Second"" /> #>")
+                )
+            ),
+            new XElement(W.sectPr)
+        );
+
+        var wmlTemplate = BuildTemplate("content-multiple-directives-template.docx", bodyXml);
+        var xmlData = XElement.Parse("<Data><First>alpha</First><Second>beta</Second></Data>");
+
+        var result = DocumentAssembler.AssembleDocument(wmlTemplate, xmlData, out var hasError);
+
+        await Assert.That(hasError).IsFalse();
+
+        using var resultStream = new MemoryStream(result.DocumentByteArray);
+        using var resultDoc = WordprocessingDocument.Open(resultStream, false);
+        await Validate(resultDoc, s_expectedErrors);
+
+        var text = ExtractText(resultDoc);
+        await Assert.That(text).Contains("alpha");
+        await Assert.That(text).Contains("beta");
+    }
+
+    [Test]
     public async Task DA_Content_LeadingAndTrailingWhitespace_Preserved()
     {
         var bodyXml = new XElement(

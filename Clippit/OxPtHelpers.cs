@@ -310,8 +310,7 @@ AAsACwDBAgAAbCwAAAAA";
                         //Get the specified style from Default.dotx template for paragraph
                         var templateStyle = defaultDotx
                             .MainDocumentPart.StyleDefinitionsPart.Styles.Elements<Style>()
-                            .Where(s => s.StyleId == styleName && s.Type == StyleValues.Paragraph)
-                            .FirstOrDefault();
+                            .FirstOrDefault(s => s.StyleId == styleName && s.Type == StyleValues.Paragraph);
 
                         //Check if the style is proper style. Ex, Heading1, Heading2
                         if (templateStyle is null)

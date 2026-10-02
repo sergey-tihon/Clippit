@@ -1,10 +1,13 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.IO.Compression;
+using System.Text;
 using Clippit.Excel;
 using Clippit.PowerPoint;
 using Clippit.Word;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Clippit.Tests.Common;
 
@@ -18,6 +21,7 @@ public class OpenXmlPowerToolsDocumentTests : TestsBase
     private static readonly string DocxPath = Path.Combine(TestFilesDir, "Blank-wml.docx");
     private static readonly string XlsxPath = Path.Combine(TestFilesDir, "SH001-Table.xlsx");
     private static readonly string PptxPath = Path.Combine(TestFilesDir, "PB001-Input1.pptx");
+    private const string StrictNamespaceMarker = "http://purl.oclc.org/ooxml/";
 
     // ── OpenXmlPowerToolsDocument.GetDocumentType ───────────────────────────
 
@@ -261,5 +265,199 @@ public class OpenXmlPowerToolsDocumentTests : TestsBase
         var txtPath = Path.Combine(TempDir, "OXD040-not-openxml.txt");
         File.WriteAllText(txtPath, "This is not an Open XML document.");
         await Assert.That(() => OpenXmlPowerToolsDocument.FromFileName(txtPath)).Throws<PowerToolsDocumentException>();
+    }
+
+    // ── byte[] constructor ───────────────────────────────────────────────────
+
+    [Test]
+    public async Task OXD041_ByteArrayConstructor_CopiesBytesAndKeepsFileName()
+    {
+        var sourceBytes = File.ReadAllBytes(DocxPath);
+        var doc = new WmlDocument("custom-name.docx", sourceBytes);
+        await Assert.That(doc.DocumentByteArray).IsEquivalentTo(sourceBytes);
+        await Assert.That(doc.FileName).IsEqualTo("custom-name.docx");
+
+        // Verify the byte array is an independent copy, not a shared reference
+        sourceBytes[0] = unchecked((byte)~sourceBytes[0]);
+        await Assert.That(doc.DocumentByteArray[0]).IsNotEqualTo(sourceBytes[0]);
+    }
+
+    // ── Save ──────────────────────────────────────────────────────────────
+
+    [Test]
+    public async Task OXD042_Save_WithFileName_OverwritesOriginalFile()
+    {
+        var srcPath = Path.Combine(TempDir, "OXD042-source.docx");
+        File.Copy(DocxPath, srcPath, overwrite: true);
+        var doc = new WmlDocument(srcPath);
+        doc.DocumentByteArray[0] ^= 0xFF;
+        doc.Save();
+        var savedBytes = File.ReadAllBytes(srcPath);
+        await Assert.That(savedBytes).IsEquivalentTo(doc.DocumentByteArray);
+    }
+
+    [Test]
+    public async Task OXD043_Save_WithoutFileName_ThrowsInvalidOperationException()
+    {
+        var doc = new WmlDocument(null, File.ReadAllBytes(DocxPath));
+        await Assert.That(() => doc.Save()).Throws<InvalidOperationException>();
+    }
+
+    // ── convertToTransitional constructors ───────────────────────────────────
+
+    [Test]
+    public async Task OXD044_FileNameConstructor_ConvertToTransitionalTrue_ProducesValidWmlDocument()
+    {
+        var strictPath = Path.Combine(TempDir, "OXD044-strict.docx");
+        var strictBytes = CreateStrictWordDocumentBytes();
+        File.WriteAllBytes(strictPath, strictBytes);
+
+        await Assert.That(GetXmlPartsContaining(strictBytes, StrictNamespaceMarker)).IsNotEmpty();
+
+        var doc = new WmlDocument(strictPath, convertToTransitional: true);
+        await Assert.That(doc.GetDocumentType()).IsEqualTo(typeof(WordprocessingDocument));
+        await Assert.That(GetXmlPartsContaining(doc.DocumentByteArray, StrictNamespaceMarker)).IsEmpty();
+        await Assert.That(doc.FileName).IsEqualTo(strictPath);
+    }
+
+    [Test]
+    public async Task OXD045_ByteArrayConstructor_ConvertToTransitionalTrue_ProducesValidWmlDocument()
+    {
+        var strictBytes = CreateStrictWordDocumentBytes();
+        await Assert.That(GetXmlPartsContaining(strictBytes, StrictNamespaceMarker)).IsNotEmpty();
+
+        var doc = new WmlDocument(null, strictBytes, convertToTransitional: true);
+        await Assert.That(doc.GetDocumentType()).IsEqualTo(typeof(WordprocessingDocument));
+        await Assert.That(GetXmlPartsContaining(doc.DocumentByteArray, StrictNamespaceMarker)).IsEmpty();
+    }
+
+    [Test]
+    public async Task OXD046_CopyConstructor_ConvertToTransitionalFalse_CopiesByteArray()
+    {
+        var original = new WmlDocument(DocxPath);
+        var copy = new WmlDocument(original, convertToTransitional: false);
+        await Assert.That(copy.DocumentByteArray).IsEquivalentTo(original.DocumentByteArray);
+        await Assert.That(copy.FileName).IsEqualTo(original.FileName);
+
+        copy.DocumentByteArray[0] ^= 0xFF;
+        await Assert.That(copy.DocumentByteArray[0]).IsNotEqualTo(original.DocumentByteArray[0]);
+    }
+
+    // ── SavePartAs ────────────────────────────────────────────────────────────
+
+    [Test]
+    public async Task OXD047_SavePartAs_WritesPartContentToFile()
+    {
+        var doc = new WmlDocument(DocxPath);
+        using var memDoc = new OpenXmlMemoryStreamDocument(doc);
+        using var wDoc = memDoc.GetWordprocessingDocument();
+        var destPath = Path.Combine(TempDir, "OXD047-part.xml");
+        OpenXmlPowerToolsDocument.SavePartAs(wDoc.MainDocumentPart, destPath);
+        byte[] expectedBytes;
+        using (var partStream = wDoc.MainDocumentPart.GetStream(FileMode.Open, FileAccess.Read))
+        using (var ms = new MemoryStream())
+        {
+            partStream.CopyTo(ms);
+            expectedBytes = ms.ToArray();
+        }
+
+        var actualBytes = File.ReadAllBytes(destPath);
+        await Assert.That(actualBytes).IsEquivalentTo(expectedBytes);
+    }
+
+    // ── OpenXmlMemoryStreamDocument.CreatePackage / GetPackage ───────────────
+
+    [Test]
+    public async Task OXD048_CreatePackage_ReturnsEmptyPackage()
+    {
+        using var memDoc = OpenXmlMemoryStreamDocument.CreatePackage();
+        var package = memDoc.GetPackage();
+        await Assert.That(package).IsNotNull();
+        await Assert.That(package.GetParts()).IsEmpty();
+    }
+
+    private static byte[] CreateStrictWordDocumentBytes()
+    {
+        using var stream = new MemoryStream();
+        using (
+            var doc = WordprocessingDocument.Create(stream, DocumentFormat.OpenXml.WordprocessingDocumentType.Document)
+        )
+        {
+            doc.AddMainDocumentPart();
+            doc.MainDocumentPart!.Document = new Document(new Body(new Paragraph(new Run(new Text("Strict")))));
+        }
+
+        return RewriteWordDocumentToStrict(stream.ToArray());
+    }
+
+    private static byte[] RewriteWordDocumentToStrict(byte[] transitionalBytes)
+    {
+        using var source = new MemoryStream(transitionalBytes);
+        using var destination = new MemoryStream();
+        using (var sourceArchive = new ZipArchive(source, ZipArchiveMode.Read, leaveOpen: true))
+        using (var destinationArchive = new ZipArchive(destination, ZipArchiveMode.Create, leaveOpen: true))
+        {
+            foreach (var entry in sourceArchive.Entries)
+            {
+                var newEntry = destinationArchive.CreateEntry(entry.FullName, CompressionLevel.NoCompression);
+                using var input = entry.Open();
+                using var output = newEntry.Open();
+
+                if (
+                    entry.FullName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)
+                    || entry.FullName.EndsWith(".rels", StringComparison.OrdinalIgnoreCase)
+                )
+                {
+                    using var reader = new StreamReader(input, Encoding.UTF8);
+                    using var writer = new StreamWriter(
+                        output,
+                        new UTF8Encoding(encoderShouldEmitUTF8Identifier: false)
+                    );
+                    writer.Write(ToStrictMarkup(reader.ReadToEnd()));
+                    continue;
+                }
+
+                input.CopyTo(output);
+            }
+        }
+
+        return destination.ToArray();
+    }
+
+    private static string ToStrictMarkup(string xml) =>
+        xml.Replace(
+                "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument",
+                "http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument",
+                StringComparison.Ordinal
+            )
+            .Replace(
+                "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
+                "http://purl.oclc.org/ooxml/officeDocument/relationships",
+                StringComparison.Ordinal
+            )
+            .Replace(
+                "http://schemas.openxmlformats.org/officeDocument/2006/math",
+                "http://purl.oclc.org/ooxml/officeDocument/math",
+                StringComparison.Ordinal
+            )
+            .Replace(
+                "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
+                "http://purl.oclc.org/ooxml/wordprocessingml/main",
+                StringComparison.Ordinal
+            );
+
+    private static List<string> GetXmlPartsContaining(byte[] packageBytes, string marker)
+    {
+        using var ms = new MemoryStream(packageBytes);
+        using var zip = new ZipArchive(ms, ZipArchiveMode.Read);
+        return zip
+            .Entries.Where(e => e.FullName.EndsWith(".xml") || e.FullName.EndsWith(".rels"))
+            .Where(e =>
+            {
+                using var reader = new StreamReader(e.Open(), Encoding.UTF8);
+                return reader.ReadToEnd().Contains(marker, StringComparison.Ordinal);
+            })
+            .Select(e => e.FullName)
+            .ToList();
     }
 }

@@ -460,4 +460,104 @@ public class PtExtensionsTests
         var lines = result.Split('\n').Select(l => l.Trim()).Where(l => l.Length > 0).ToArray();
         await Assert.That(lines.Length).IsGreaterThan(1);
     }
+
+    // ── DescendantsTrimmedBeforeSelfReverseDocumentOrder ───────────────────
+
+    [Test]
+    public async Task DescendantsTrimmedBeforeSelfReverseDocumentOrder_SkipsTrimmedSubtrees()
+    {
+        var root = XElement.Parse("<root><a><trim><b/></trim></a><c/></root>");
+        var c = root.Element("c");
+        var result = c!.DescendantsTrimmedBeforeSelfReverseDocumentOrder("trim").Select(e => e.Name.LocalName).ToList();
+        // "b" is inside the trimmed "trim" element, so it should not appear
+        await Assert.That(result).IsEquivalentTo(["trim", "a"]);
+    }
+
+    // ── PtUtils.AddElementIfMissing ─────────────────────────────────────────
+
+    [Test]
+    public async Task AddElementIfMissing_ExistingElementProvided_DoesNotAddNewElement()
+    {
+        var doc = XDocument.Parse("<root><child/></root>");
+        PtUtils.AddElementIfMissing(doc, doc.Root!.Element("child"), "<child/>");
+        await Assert.That(doc.Root!.Elements("child").Count()).IsEqualTo(1);
+    }
+
+    [Test]
+    public async Task AddElementIfMissing_NoExistingElement_AddsNewElement()
+    {
+        var doc = XDocument.Parse("<root/>");
+        PtUtils.AddElementIfMissing(doc, null, "<child attr=\"value\"/>");
+        var child = doc.Root!.Element("child");
+        await Assert.That(child).IsNotNull();
+        await Assert.That(child!.Attribute("attr")!.Value).IsEqualTo("value");
+    }
+
+    // ── PtExtensions XmlNode/XDocument roundtrip conversions ────────────────
+
+    [Test]
+    public async Task GetXElement_And_GetXmlNode_RoundTrip()
+    {
+        var original = XElement.Parse("<root attr=\"1\"><child>text</child></root>");
+        var xmlNode = original.GetXmlNode();
+        var roundTripped = xmlNode.GetXElement();
+
+        await Assert.That(roundTripped.Name.LocalName).IsEqualTo("root");
+        await Assert.That(roundTripped.Attribute("attr")!.Value).IsEqualTo("1");
+        await Assert.That(roundTripped.Element("child")!.Value).IsEqualTo("text");
+    }
+
+    [Test]
+    public async Task GetXDocument_And_GetXmlDocument_RoundTrip()
+    {
+        var original = XDocument.Parse("<root><child>text</child></root>");
+        var xmlDocument = original.GetXmlDocument();
+        var roundTripped = xmlDocument.GetXDocument();
+
+        await Assert.That(roundTripped.Root!.Name.LocalName).IsEqualTo("root");
+        await Assert.That(roundTripped.Root!.Element("child")!.Value).IsEqualTo("text");
+    }
+
+    // ── PtUtils file/directory helpers ──────────────────────────────────────
+
+    [Test]
+    public async Task GetFilesRecursive_ReturnsFilesFromNestedDirectories()
+    {
+        var tempDir = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "PtUtilsTests_" + Guid.NewGuid()));
+        tempDir.Create();
+        try
+        {
+            var nested = tempDir.CreateSubdirectory("nested");
+            File.WriteAllText(Path.Combine(tempDir.FullName, "top.txt"), "");
+            File.WriteAllText(Path.Combine(nested.FullName, "inner.txt"), "");
+
+            var files = FileUtils.GetFilesRecursive(tempDir, "*.txt");
+
+            await Assert.That(files.Count).IsEqualTo(2);
+            await Assert.That(files.Any(f => f.EndsWith("top.txt"))).IsTrue();
+            await Assert.That(files.Any(f => f.EndsWith("inner.txt"))).IsTrue();
+        }
+        finally
+        {
+            tempDir.Delete(true);
+        }
+    }
+
+    [Test]
+    public async Task ThreadSafeCreateDirectory_CreatesDirectoryWhenMissing()
+    {
+        var dir = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "PtUtilsTests_" + Guid.NewGuid()));
+        try
+        {
+            await Assert.That(dir.Exists).IsFalse();
+            FileUtils.ThreadSafeCreateDirectory(dir);
+            dir.Refresh();
+            await Assert.That(dir.Exists).IsTrue();
+        }
+        finally
+        {
+            if (dir.Exists)
+                dir.Delete(true);
+        }
+    }
 }

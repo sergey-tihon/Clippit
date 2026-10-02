@@ -603,6 +603,19 @@ namespace Clippit.Word
             }
         }
 
+        // Counts non-overlapping occurrences of "<#" without allocating a substring per position.
+        private static int CountTemplateDirectiveStarts(string text)
+        {
+            var count = 0;
+            var index = 0;
+            while ((index = text.IndexOf("<#", index, StringComparison.Ordinal)) >= 0)
+            {
+                count++;
+                index += 2;
+            }
+            return count;
+        }
+
         [GeneratedRegex("<#.*?#>")]
         private static partial Regex TemplateDirectiveRegex();
 
@@ -691,9 +704,7 @@ namespace Clippit.Word
                     .Select(t => (string)t)
                     .StringConcatenate()
                     .Trim();
-                var occurrences = paraContents
-                    .Select((_, i) => paraContents.Substring(i))
-                    .Count(sub => sub.StartsWith("<#"));
+                var occurrences = CountTemplateDirectiveStarts(paraContents);
                 if (paraContents.StartsWith("<#") && paraContents.EndsWith("#>") && occurrences == 1)
                 {
                     var xmlText = paraContents[2..^2].Trim();
@@ -788,9 +799,7 @@ namespace Clippit.Word
                     .Select(t => (string)t)
                     .StringConcatenate()
                     .Trim();
-                var occurrences = paraContents
-                    .Select((_, i) => paraContents.Substring(i))
-                    .Count(sub => sub.StartsWith("<#"));
+                var occurrences = CountTemplateDirectiveStarts(paraContents);
                 if (paraContents.StartsWith("<#") && paraContents.EndsWith("#>") && occurrences == 1)
                 {
                     var xmlText = paraContents[2..^2].Trim();
