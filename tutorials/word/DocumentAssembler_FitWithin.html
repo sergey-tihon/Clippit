@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>FitWithin Image Sizing Mode | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="FitWithin Image Sizing Mode | Clippit ">
+      
+      
+      <link rel="icon" href="../../images/logo-site.png">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/blob/master/docs/tutorials/word/DocumentAssembler_FitWithin.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Tutorial.Word.DocumentAssembler.FitWithin">
+<h1 id="fitwithin-image-sizing-mode">FitWithin Image Sizing Mode</h1>
+
+<p>Namespace: <code>Clippit.Word</code></p>
+<h2 id="introduction">Introduction</h2>
+<p>The <code>Image</code> directive in <code>DocumentAssembler</code> supports a <code>FitWithin</code> attribute that controls how images are sized relative to their placeholder in the document template.</p>
+<p>By default, <code>DocumentAssembler</code> always scales an image to fill the placeholder dimensions (maintaining aspect ratio). The <code>FitWithin=&quot;true&quot;</code> attribute changes this behaviour to a more intuitive &quot;fit, don't upscale&quot; mode:</p>
+<ul>
+<li><strong>Small images</strong> (natural size fits within the placeholder): rendered at their original pixel dimensions — no upscaling occurs.</li>
+<li><strong>Large images</strong> (exceed the placeholder in either dimension): scaled down proportionally so they fit within the bounds.</li>
+</ul>
+<p>This is useful when document templates receive images of varying sizes and upscaling small images would look blurry or pixelated.</p>
+<h2 id="usage">Usage</h2>
+<h3 id="content-control-style">Content Control Style</h3>
+<p>In a Word document template, use a content control (structured document tag) with the <code>FitWithin</code> attribute on the <code>Image</code> directive:</p>
+<pre><code class="lang-xml">&lt;Image Select=&quot;./Photo&quot; FitWithin=&quot;true&quot; /&gt;
+</code></pre>
+<h2 id="accepted-values">Accepted Values</h2>
+<p>The <code>FitWithin</code> attribute accepts XSD <code>xs:boolean</code> values (case-insensitive):</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>true</code></td>
+<td>Fit-within mode enabled (no upscaling)</td>
+</tr>
+<tr>
+<td><code>1</code></td>
+<td>Fit-within mode enabled (no upscaling)</td>
+</tr>
+<tr>
+<td><code>false</code></td>
+<td>Default sizing (always scale to fill)</td>
+</tr>
+<tr>
+<td><code>0</code></td>
+<td>Default sizing (always scale to fill)</td>
+</tr>
+</tbody>
+</table>
+<p>Omitting the attribute entirely is equivalent to <code>FitWithin=&quot;false&quot;</code>.</p>
+<h2 id="example">Example</h2>
+<p>Given a template with a 200×200 px placeholder:</p>
+<h3 id="small-image-5050-px">Small Image (50×50 px)</h3>
+<pre><code class="lang-xml">&lt;Image Select=&quot;./Photo&quot; FitWithin=&quot;true&quot; /&gt;
+</code></pre>
+<p><strong>Result:</strong> The image is kept at 50×50 px. It is not stretched to fill the 200×200 placeholder.</p>
+<h3 id="large-image-400200-px">Large Image (400×200 px)</h3>
+<p><strong>Result:</strong> The image is scaled down proportionally. With a 200×200 placeholder, the scale factor is <code>min(200/400, 200/200) = 0.5</code>, giving a final size of 200×100 px.</p>
+<h2 id="comparison-of-sizing-modes">Comparison of Sizing Modes</h2>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Attribute</th>
+<th>Small image</th>
+<th>Large image</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Default</td>
+<td><em>(none)</em></td>
+<td>Upscaled to fill placeholder</td>
+<td>Scaled to fill placeholder</td>
+</tr>
+<tr>
+<td>Keep original size</td>
+<td><code>preferRelativeResize=&quot;0&quot;</code> on template drawing</td>
+<td>Kept at original size</td>
+<td>May overflow placeholder</td>
+</tr>
+<tr>
+<td>Fit within</td>
+<td><code>FitWithin=&quot;true&quot;</code></td>
+<td>Kept at original size</td>
+<td>Scaled down to fit</td>
+</tr>
+</tbody>
+</table>
+<h2 id="priority">Priority</h2>
+<p>When <code>FitWithin=&quot;true&quot;</code> is specified, it takes priority over the other sizing modes (<code>keepSourceImageAspect</code> and <code>keepOriginalImageSize</code>) that are derived from the template drawing's XML attributes.</p>
+<h2 id="further-reading">Further Reading</h2>
+<ul>
+<li>For template testing and examples, see <code>DocumentAssemblerTests.cs</code> in the test project, particularly the <code>DA291_Image_FitWithin_*</code> and <code>DA292_Image_FitWithin_*</code> test methods.</li>
+<li>The <code>Image</code> directive reference describes all supported attributes.</li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/tutorials/word/DocumentAssembler_FitWithin.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

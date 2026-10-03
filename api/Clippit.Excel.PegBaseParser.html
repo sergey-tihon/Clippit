@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class PegBaseParser | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class PegBaseParser | Clippit ">
+      
+      
+      <link rel="icon" href="../images/logo-site.png">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Clippit_Excel_PegBaseParser.md&amp;value=---%0Auid%3A%20Clippit.Excel.PegBaseParser%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Clippit.Excel.PegBaseParser">
+
+
+
+  <h1 id="Clippit_Excel_PegBaseParser" data-uid="Clippit.Excel.PegBaseParser" class="text-break">
+Class PegBaseParser  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L525"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Clippit.html">Clippit</a>.<a class="xref" href="Clippit.Excel.html">Excel</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Clippit.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class PegBaseParser</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">PegBaseParser</span></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Clippit.Excel.PegByteParser.html">PegByteParser</a></div>
+      <div><a class="xref" href="Clippit.Excel.PegCharParser.html">PegCharParser</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Clippit_Excel_PegBaseParser__ctor_" data-uid="Clippit.Excel.PegBaseParser.#ctor*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser__ctor_System_IO_TextWriter_" data-uid="Clippit.Excel.PegBaseParser.#ctor(System.IO.TextWriter)">
+  PegBaseParser(TextWriter)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L577"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PegBaseParser(TextWriter errOut)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>errOut</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.textwriter">TextWriter</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Clippit_Excel_PegBaseParser__errOut" data-uid="Clippit.Excel.PegBaseParser._errOut">
+  _errOut
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L536"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected TextWriter _errOut</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.textwriter">TextWriter</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Clippit_Excel_PegBaseParser__maxPos" data-uid="Clippit.Excel.PegBaseParser._maxPos">
+  _maxPos
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L538"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected int _maxPos</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Clippit_Excel_PegBaseParser__nodeCreator" data-uid="Clippit.Excel.PegBaseParser._nodeCreator">
+  _nodeCreator
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L537"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected PegBaseParser.Creator _nodeCreator</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Creator.html">Creator</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Clippit_Excel_PegBaseParser__pos" data-uid="Clippit.Excel.PegBaseParser._pos">
+  _pos
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L534"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected int _pos</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Clippit_Excel_PegBaseParser__srcLen" data-uid="Clippit.Excel.PegBaseParser._srcLen">
+  _srcLen
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L533"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected int _srcLen</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Clippit_Excel_PegBaseParser_And_" data-uid="Clippit.Excel.PegBaseParser.And*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_And_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.And(Clippit.Excel.PegBaseParser.Matcher)">
+  And(Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L788"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool And(PegBaseParser.Matcher pegSequence)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pegSequence</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_Any_" data-uid="Clippit.Excel.PegBaseParser.Any*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_Any" data-uid="Clippit.Excel.PegBaseParser.Any">
+  Any()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L898"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Any()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_Construct_" data-uid="Clippit.Excel.PegBaseParser.Construct*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_Construct_System_IO_TextWriter_" data-uid="Clippit.Excel.PegBaseParser.Construct(System.IO.TextWriter)">
+  Construct(TextWriter)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L586"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Construct(TextWriter fOut)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>fOut</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.textwriter">TextWriter</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_DefaultNodeCreator_" data-uid="Clippit.Excel.PegBaseParser.DefaultNodeCreator*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_DefaultNodeCreator_Clippit_Excel_ECreatorPhase_Clippit_Excel_PegNode_System_Int32_" data-uid="Clippit.Excel.PegBaseParser.DefaultNodeCreator(Clippit.Excel.ECreatorPhase,Clippit.Excel.PegNode,System.Int32)">
+  DefaultNodeCreator(ECreatorPhase, PegNode, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L566"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected PegNode DefaultNodeCreator(ECreatorPhase phase, PegNode parentOrCreated, int id)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>phase</code> <a class="xref" href="Clippit.Excel.ECreatorPhase.html">ECreatorPhase</a></dt>
+    <dd></dd>
+    <dt><code>parentOrCreated</code> <a class="xref" href="Clippit.Excel.PegNode.html">PegNode</a></dt>
+    <dd></dd>
+    <dt><code>id</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Clippit.Excel.PegNode.html">PegNode</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_ForRepeat_" data-uid="Clippit.Excel.PegBaseParser.ForRepeat*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_ForRepeat_System_Int32_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.ForRepeat(System.Int32,Clippit.Excel.PegBaseParser.Matcher)">
+  ForRepeat(int, Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L860"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool ForRepeat(int count, PegBaseParser.Matcher toRepeat)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>count</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toRepeat</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_ForRepeat_" data-uid="Clippit.Excel.PegBaseParser.ForRepeat*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_ForRepeat_System_Int32_System_Int32_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.ForRepeat(System.Int32,System.Int32,Clippit.Excel.PegBaseParser.Matcher)">
+  ForRepeat(int, int, Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L878"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool ForRepeat(int lower, int upper, PegBaseParser.Matcher toRepeat)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>lower</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>upper</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toRepeat</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_GetMaximumPosition_" data-uid="Clippit.Excel.PegBaseParser.GetMaximumPosition*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_GetMaximumPosition" data-uid="Clippit.Excel.PegBaseParser.GetMaximumPosition">
+  GetMaximumPosition()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L561"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int GetMaximumPosition()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_GetProperties_" data-uid="Clippit.Excel.PegBaseParser.GetProperties*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_GetProperties_Clippit_Excel_EncodingClass__Clippit_Excel_UnicodeDetection__" data-uid="Clippit.Excel.PegBaseParser.GetProperties(Clippit.Excel.EncodingClass@,Clippit.Excel.UnicodeDetection@)">
+  GetProperties(out EncodingClass, out UnicodeDetection)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L555"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual void GetProperties(out EncodingClass encoding, out UnicodeDetection detection)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>encoding</code> <a class="xref" href="Clippit.Excel.EncodingClass.html">EncodingClass</a></dt>
+    <dd></dd>
+    <dt><code>detection</code> <a class="xref" href="Clippit.Excel.UnicodeDetection.html">UnicodeDetection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_GetRoot_" data-uid="Clippit.Excel.PegBaseParser.GetRoot*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_GetRoot" data-uid="Clippit.Excel.PegBaseParser.GetRoot">
+  GetRoot()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L606"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PegNode GetRoot()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="Clippit.Excel.PegNode.html">PegNode</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_GetRuleNameFromId_" data-uid="Clippit.Excel.PegBaseParser.GetRuleNameFromId*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_GetRuleNameFromId_System_Int32_" data-uid="Clippit.Excel.PegBaseParser.GetRuleNameFromId(System.Int32)">
+  GetRuleNameFromId(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L542"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual string GetRuleNameFromId(int id)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>id</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_Not_" data-uid="Clippit.Excel.PegBaseParser.Not*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_Not_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.Not(Clippit.Excel.PegBaseParser.Matcher)">
+  Not(Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L813"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Not(PegBaseParser.Matcher toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_OptRepeat_" data-uid="Clippit.Excel.PegBaseParser.OptRepeat*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_OptRepeat_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.OptRepeat(Clippit.Excel.PegBaseParser.Matcher)">
+  OptRepeat(Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L839"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OptRepeat(PegBaseParser.Matcher toRepeat)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>toRepeat</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_Option_" data-uid="Clippit.Excel.PegBaseParser.Option*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_Option_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.Option(Clippit.Excel.PegBaseParser.Matcher)">
+  Option(Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L852"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Option(PegBaseParser.Matcher toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_Peek_" data-uid="Clippit.Excel.PegBaseParser.Peek*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_Peek_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.Peek(Clippit.Excel.PegBaseParser.Matcher)">
+  Peek(Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L802"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Peek(PegBaseParser.Matcher toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_PlusRepeat_" data-uid="Clippit.Excel.PegBaseParser.PlusRepeat*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_PlusRepeat_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.PlusRepeat(Clippit.Excel.PegBaseParser.Matcher)">
+  PlusRepeat(Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L824"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool PlusRepeat(PegBaseParser.Matcher toRepeat)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>toRepeat</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_ResetTree_" data-uid="Clippit.Excel.PegBaseParser.ResetTree*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_ResetTree" data-uid="Clippit.Excel.PegBaseParser.ResetTree">
+  ResetTree()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L611"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ResetTree()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_Rewind_" data-uid="Clippit.Excel.PegBaseParser.Rewind*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_Rewind" data-uid="Clippit.Excel.PegBaseParser.Rewind">
+  Rewind()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L594"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Rewind()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_SetErrorDestination_" data-uid="Clippit.Excel.PegBaseParser.SetErrorDestination*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_SetErrorDestination_System_IO_TextWriter_" data-uid="Clippit.Excel.PegBaseParser.SetErrorDestination(System.IO.TextWriter)">
+  SetErrorDestination(TextWriter)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L599"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetErrorDestination(TextWriter errOut)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>errOut</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.textwriter">TextWriter</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_SetNodeCreator_" data-uid="Clippit.Excel.PegBaseParser.SetNodeCreator*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_SetNodeCreator_Clippit_Excel_PegBaseParser_Creator_" data-uid="Clippit.Excel.PegBaseParser.SetNodeCreator(Clippit.Excel.PegBaseParser.Creator)">
+  SetNodeCreator(Creator)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L781"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetNodeCreator(PegBaseParser.Creator nodeCreator)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nodeCreator</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Creator.html">Creator</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_TreeAST_" data-uid="Clippit.Excel.PegBaseParser.TreeAST*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_TreeAST_Clippit_Excel_PegBaseParser_Creator_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.TreeAST(Clippit.Excel.PegBaseParser.Creator,Clippit.Excel.PegBaseParser.Matcher)">
+  TreeAST(Creator, Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L771"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TreeAST(PegBaseParser.Creator nodeCreator, PegBaseParser.Matcher toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nodeCreator</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Creator.html">Creator</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_TreeAST_" data-uid="Clippit.Excel.PegBaseParser.TreeAST*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_TreeAST_Clippit_Excel_PegBaseParser_Creator_System_Int32_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.TreeAST(Clippit.Excel.PegBaseParser.Creator,System.Int32,Clippit.Excel.PegBaseParser.Matcher)">
+  TreeAST(Creator, int, Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L721"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TreeAST(PegBaseParser.Creator nodeCreator, int nRuleId, PegBaseParser.Matcher toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nodeCreator</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Creator.html">Creator</a></dt>
+    <dd></dd>
+    <dt><code>nRuleId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_TreeAST_" data-uid="Clippit.Excel.PegBaseParser.TreeAST*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_TreeAST_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.TreeAST(Clippit.Excel.PegBaseParser.Matcher)">
+  TreeAST(Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L766"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TreeAST(PegBaseParser.Matcher toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_TreeAST_" data-uid="Clippit.Excel.PegBaseParser.TreeAST*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_TreeAST_System_Int32_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.TreeAST(System.Int32,Clippit.Excel.PegBaseParser.Matcher)">
+  TreeAST(int, Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L716"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TreeAST(int nRuleId, PegBaseParser.Matcher toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nRuleId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_TreeChars_" data-uid="Clippit.Excel.PegBaseParser.TreeChars*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_TreeChars_Clippit_Excel_PegBaseParser_Creator_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.TreeChars(Clippit.Excel.PegBaseParser.Creator,Clippit.Excel.PegBaseParser.Matcher)">
+  TreeChars(Creator, Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L662"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TreeChars(PegBaseParser.Creator nodeCreator, PegBaseParser.Matcher toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nodeCreator</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Creator.html">Creator</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_TreeChars_" data-uid="Clippit.Excel.PegBaseParser.TreeChars*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_TreeChars_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.TreeChars(Clippit.Excel.PegBaseParser.Matcher)">
+  TreeChars(Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L657"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TreeChars(PegBaseParser.Matcher toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_TreeCharsWithId_" data-uid="Clippit.Excel.PegBaseParser.TreeCharsWithId*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_TreeCharsWithId_Clippit_Excel_PegBaseParser_Creator_System_Int32_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.TreeCharsWithId(Clippit.Excel.PegBaseParser.Creator,System.Int32,Clippit.Excel.PegBaseParser.Matcher)">
+  TreeCharsWithId(Creator, int, Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L672"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TreeCharsWithId(PegBaseParser.Creator nodeCreator, int nId, PegBaseParser.Matcher toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nodeCreator</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Creator.html">Creator</a></dt>
+    <dd></dd>
+    <dt><code>nId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_TreeCharsWithId_" data-uid="Clippit.Excel.PegBaseParser.TreeCharsWithId*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_TreeCharsWithId_System_Int32_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.TreeCharsWithId(System.Int32,Clippit.Excel.PegBaseParser.Matcher)">
+  TreeCharsWithId(int, Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L667"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TreeCharsWithId(int nId, PegBaseParser.Matcher toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_TreeNT_" data-uid="Clippit.Excel.PegBaseParser.TreeNT*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_TreeNT_Clippit_Excel_PegBaseParser_Creator_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.TreeNT(Clippit.Excel.PegBaseParser.Creator,Clippit.Excel.PegBaseParser.Matcher)">
+  TreeNT(Creator, Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L761"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TreeNT(PegBaseParser.Creator nodeCreator, PegBaseParser.Matcher toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nodeCreator</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Creator.html">Creator</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_TreeNT_" data-uid="Clippit.Excel.PegBaseParser.TreeNT*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_TreeNT_Clippit_Excel_PegBaseParser_Creator_System_Int32_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.TreeNT(Clippit.Excel.PegBaseParser.Creator,System.Int32,Clippit.Excel.PegBaseParser.Matcher)">
+  TreeNT(Creator, int, Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L693"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TreeNT(PegBaseParser.Creator nodeCreator, int nRuleId, PegBaseParser.Matcher toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nodeCreator</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Creator.html">Creator</a></dt>
+    <dd></dd>
+    <dt><code>nRuleId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_TreeNT_" data-uid="Clippit.Excel.PegBaseParser.TreeNT*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_TreeNT_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.TreeNT(Clippit.Excel.PegBaseParser.Matcher)">
+  TreeNT(Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L756"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TreeNT(PegBaseParser.Matcher toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_TreeNT_" data-uid="Clippit.Excel.PegBaseParser.TreeNT*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_TreeNT_System_Int32_Clippit_Excel_PegBaseParser_Matcher_" data-uid="Clippit.Excel.PegBaseParser.TreeNT(System.Int32,Clippit.Excel.PegBaseParser.Matcher)">
+  TreeNT(int, Matcher)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L688"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TreeNT(int nRuleId, PegBaseParser.Matcher toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>nRuleId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegBaseParser_TreeNodeToString_" data-uid="Clippit.Excel.PegBaseParser.TreeNodeToString*"></a>
+
+  <h3 id="Clippit_Excel_PegBaseParser_TreeNodeToString_Clippit_Excel_PegNode_" data-uid="Clippit.Excel.PegBaseParser.TreeNodeToString(Clippit.Excel.PegNode)">
+  TreeNodeToString(PegNode)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L776"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual string TreeNodeToString(PegNode node)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>node</code> <a class="xref" href="Clippit.Excel.PegNode.html">PegNode</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L525" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

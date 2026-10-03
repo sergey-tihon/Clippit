@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sergey-tihon.github.io/Clippit/schemas/install-plan.v1.json",
+  "title": "InstallPlanResult",
+  "description": "Stdout payload of `clippit install --skills --dry-run` (JSON mode).",
+  "type": "object",
+  "required": ["paths"],
+  "additionalProperties": false,
+  "properties": {
+    "paths": {
+      "type": "array",
+      "description": "Workspace-relative paths to the SKILL.md files that would be installed.",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
