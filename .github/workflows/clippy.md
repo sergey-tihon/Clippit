@@ -99,8 +99,9 @@ tools:
         const fail = message => { throw new Error(`notes.json: ${message}`); };
         const notesPath = path.join(memoryRoot, "notes.json");
         const legacyMemoryFiles = new Set(["memory.json", "memory.md", "state.json"]);
-        const memoryEntries = fs.readdirSync(memoryRoot, { withFileTypes: true });
-        if (memoryEntries.some(entry => !entry.isFile() || (entry.name !== "notes.json" && !legacyMemoryFiles.has(entry.name)))) {
+        // The memory dir is a git clone — only consider files so .git/ is ignored.
+        const memoryEntries = fs.readdirSync(memoryRoot, { withFileTypes: true }).filter(entry => entry.isFile());
+        if (memoryEntries.some(entry => entry.name !== "notes.json" && !legacyMemoryFiles.has(entry.name))) {
           fail("contains unsupported files");
         }
         if (!fs.existsSync(notesPath)) fail("missing (create an initial notes.json that matches schema version 1)");
