@@ -1,0 +1,175 @@
+{
+  "version": 1,
+  "cursors": {
+    "labelling_after": 424,
+    "investigation_after": 424
+  },
+  "issues": [
+    {
+      "number": 28,
+      "state": "commented",
+      "updated_at": "2026-03-28",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 54,
+      "state": "commented",
+      "updated_at": "2026-07-12",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 66,
+      "state": "commented",
+      "updated_at": "2026-03-26",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 67,
+      "state": "commented",
+      "updated_at": "2026-09-17",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 77,
+      "state": "commented",
+      "updated_at": "2026-09-17",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 103,
+      "state": "commented",
+      "updated_at": "2026-09-17",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 279,
+      "state": "commented",
+      "updated_at": "2026-05-20",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 286,
+      "state": "commented",
+      "updated_at": "2026-05-20",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 290,
+      "state": "commented",
+      "updated_at": "2026-05-27",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 373,
+      "state": "commented",
+      "updated_at": "2026-07-07",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 374,
+      "state": "commented",
+      "updated_at": "2026-07-03",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 376,
+      "state": "commented",
+      "updated_at": "2026-07-03",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 377,
+      "state": "commented",
+      "updated_at": "2026-07-03",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 378,
+      "state": "commented",
+      "updated_at": "2026-07-08",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 380,
+      "state": "commented",
+      "updated_at": "2026-07-03",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 381,
+      "state": "commented",
+      "updated_at": "2026-07-03",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 382,
+      "state": "commented",
+      "updated_at": "2026-07-03",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 383,
+      "state": "commented",
+      "updated_at": "2026-07-03",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 384,
+      "state": "commented",
+      "updated_at": "2026-07-03",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 385,
+      "state": "commented",
+      "updated_at": "2026-07-03",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 386,
+      "state": "commented",
+      "updated_at": "2026-07-03",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 387,
+      "state": "commented",
+      "updated_at": "2026-07-03",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 388,
+      "state": "commented",
+      "updated_at": "2026-07-03",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 389,
+      "state": "commented",
+      "updated_at": "2026-07-03",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 390,
+      "state": "commented",
+      "updated_at": "2026-07-03",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 401,
+      "state": "commented",
+      "updated_at": "2026-07-04",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    },
+    {
+      "number": 424,
+      "state": "commented",
+      "updated_at": "2026-07-10",
+      "note": "Commented by Clippy (migrated from legacy memory)."
+    }
+  ],
+  "fixes": [],
+  "checks": [],
+  "completed_actions": [],
+  "priorities": []
+}
