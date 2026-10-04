@@ -86,8 +86,7 @@ tools:
   repo-memory:
     max-file-size: 65536
     max-patch-size: 65536
-    # Allows the one-time removal of legacy memory files plus notes.json.
-    # The validator removes known legacy files after notes.json passes schema validation.
+    # Validation must be side-effect free: the push job rejects validators that modify files.
     max-file-count: 6
     format-json: true
     allowed-extensions: [".json"]
@@ -174,9 +173,6 @@ tools:
           if (!validText(entry.note, 300)) fail(`invalid priority note at index ${index}`);
         }
         unique(data.priorities, entry => `${entry.task}:${entry.item}`, "priority task/item pairs");
-        for (const entry of memoryEntries) {
-          if (entry.name !== "notes.json") fs.unlinkSync(path.join(memoryRoot, entry.name));
-        }
         console.log("clippy notes.json conforms to schema");
 
 safe-outputs:
@@ -378,7 +374,7 @@ If `notes.json` is missing, create it using this schema version 1 baseline:
 
 Before removing legacy memory files, read them and migrate any still-relevant cursors, issue/fix records, maintainer-completed actions, and follow-up work into the schema fields above. Verify migrated records against current repository state and obey the validator's field and size limits. Preserve existing valid `notes.json` content. Write and check `notes.json` before deleting superseded legacy files (including `memory.json`, `state.json`, and legacy Markdown files), leaving exactly one file in repo memory.
 
-Memory initialization and migration are changes worth persisting even on a no-op run. Do not defer them to the end-of-run update rule. The custom validator removes known legacy files only after `notes.json` passes schema validation, but it cannot create `notes.json` or migrate their contents for you.
+Memory initialization and migration are changes worth persisting even on a no-op run. Do not defer them to the end-of-run update rule. The validator only checks the final state — you must create `notes.json`, migrate legacy contents, and delete the superseded legacy files yourself.
 
 ## Command Mode
 
