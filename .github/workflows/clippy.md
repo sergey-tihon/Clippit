@@ -409,6 +409,35 @@ The schema stores only:
 - `completed_actions`: Monthly Activity actions checked off by a maintainer, so they are not proposed again
 - `priorities`: a short queue of concrete follow-up work
 
+Every record must contain **exactly** these fields, including nullable fields:
+
+```json
+{
+  "issues": { "number": 123, "state": "commented", "updated_at": "2026-10-06", "note": "Asked for reproduction steps" },
+  "fixes": { "issue": 123, "pr": null, "branch": null, "status": "blocked", "updated_at": "2026-10-06", "note": "Awaiting reproduction" },
+  "checks": { "area": "dependencies", "checked_at": "2026-10-06", "result": "No outdated dependencies", "follow_up": null },
+  "completed_actions": { "key": "review-dependencies", "completed_at": "2026-10-06" },
+  "priorities": { "task": 2, "item": "issue-123", "note": "Investigate when reproduction arrives" }
+}
+```
+
+These are record shapes, not a replacement for the top-level arrays. Use the actual date for each record. In `checks`, use `checked_at`, **not** `date`, and always include `follow_up` (use `null` when no follow-up is needed). Upsert by `area` without discarding checks for other areas. Read `tools.repo-memory.validation.script` in `.github/workflows/clippy.md` for allowed states, areas, uniqueness constraints, and size limits.
+
+After initialization or any memory update, and before finishing **any** run (including command-mode and `noop` runs), execute the same side-effect-free validator used by Actions from the repository root:
+
+```bash
+node <<'NODE'
+const fs = require("node:fs");
+const workflow = fs.readFileSync(".github/workflows/clippy.lock.yml", "utf8");
+const encoded = workflow.match(/^\s+VALIDATION_SCRIPT_B64: (\S+)$/m);
+if (!encoded) throw new Error("Repo-memory validator not found in compiled workflow");
+const script = Buffer.from(encoded[1], "base64").toString("utf8");
+new Function("require", "memoryRoot", script)(require, "/tmp/gh-aw/repo-memory/default");
+NODE
+```
+
+If validation fails, correct the records and rerun it until it succeeds. Do not finish or call `noop` with invalid memory, weaken the validator, or discard unrelated memory to make validation pass.
+
 Keep notes terse and current. Replace superseded entries, remove resolved issue records and closed fix records once they are no longer needed for duplicate prevention, and never store run-by-run narration, exhaustive label histories, stale PR inventories, copied GitHub content, or facts that can be cheaply queried again. Stay within the schema's array and text limits; do not create another memory file.
 
 **Important**: Memory may not be 100% accurate. Issues may have been created, closed, or commented on; PRs may have been created, merged, commented on, or closed since the last run. Always verify memory against current repository state — reviewing recent activity since your last run is wise before acting on stale assumptions.
