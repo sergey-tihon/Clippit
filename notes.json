@@ -169,7 +169,14 @@
     }
   ],
   "fixes": [],
-  "checks": [],
+  "checks": [
+    {
+      "area": "dependencies",
+      "checked_at": "2026-10-07",
+      "result": "Only TUnit outdated; bump PR opened",
+      "follow_up": null
+    }
+  ],
   "completed_actions": [],
   "priorities": []
 }
