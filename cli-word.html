@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Word CLI (word) | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Word CLI (word) | Clippit ">
+      
+      
+      <link rel="icon" href="images/logo-site.png">
+      <link rel="stylesheet" href="public/docfx.min.css">
+      <link rel="stylesheet" href="public/main.css">
+      <meta name="docfx:navrel" content="toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/blob/master/docs/cli-word.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="index.html">
+            <img id="logo" class="svg" src="images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="word-cli-word">Word CLI (<code>word</code>)</h1>
+
+<p>Use this page for Word (<code>.docx</code>) command reference.</p>
+<ul>
+<li>Back to <a href="cli.html">CLI start page</a></li>
+<li>Shared verify diagnostics schema: <a href="schemas/README.md">schemas/README.md</a></li>
+</ul>
+<h2 id="commands-at-a-glance">Commands at a glance</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>clippit word verify</code></td>
+<td>Validate package/schema/relationships</td>
+</tr>
+<tr>
+<td><code>clippit word build init</code></td>
+<td>Scaffold a Word build manifest</td>
+</tr>
+<tr>
+<td><code>clippit word build run</code></td>
+<td>Merge DOCX sources from a manifest</td>
+</tr>
+<tr>
+<td><code>clippit word compare</code></td>
+<td>Compare two docs and emit tracked revisions</td>
+</tr>
+<tr>
+<td><code>clippit word consolidate</code></td>
+<td>Merge multiple revisions into one tracked-changes DOCX</td>
+</tr>
+<tr>
+<td><code>clippit word assemble</code></td>
+<td>Fill a template with XML data</td>
+</tr>
+<tr>
+<td><code>clippit word accept-revisions</code></td>
+<td>Accept all revisions in a document</td>
+</tr>
+<tr>
+<td><code>clippit word simplify-markup</code></td>
+<td>Remove non-content markup from a DOCX</td>
+</tr>
+<tr>
+<td><code>clippit word to-html</code></td>
+<td>Convert DOCX to HTML/CSS</td>
+</tr>
+<tr>
+<td><code>clippit word from-html</code></td>
+<td>Convert HTML/CSS to DOCX</td>
+</tr>
+</tbody>
+</table>
+<p>All commands support <code>--format json|text</code> and <code>--quiet</code>.</p>
+<h2 id="word-verify"><code>word verify</code></h2>
+<pre><code class="lang-text">clippit word verify &lt;input.docx|-&gt; [--office-version &lt;version&gt;] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--office-version</code></td>
+<td>Open XML schema version (default: <code>Microsoft365</code>).</td>
+</tr>
+</tbody>
+</table>
+<p>Readable-but-invalid documents return verify JSON and exit code <code>4</code>.</p>
+<pre><code class="lang-bash">clippit word verify document.docx --format json
+</code></pre>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/document.docx&quot;,&quot;officeVersion&quot;:&quot;Microsoft365&quot;,&quot;valid&quot;:true,&quot;diagnostics&quot;:[]}
+</code></pre>
+<h2 id="word-build-init"><code>word build init</code></h2>
+<p>Scaffold a <code>clippit-word-build.json</code> manifest with example section/file entries.</p>
+<pre><code class="lang-text">clippit word build init [--output &lt;manifest.json|-&gt;] [--force] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Manifest output path (default: <code>clippit-word-build.json</code>). Use <code>-</code> for stdout.</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Overwrite an existing manifest file.</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-bash">clippit word build init --output word-build.json
+</code></pre>
+<h2 id="word-build-run"><code>word build run</code></h2>
+<p>Merge <code>.docx</code> sources listed in a manifest via <code>DocumentBuilder</code>.</p>
+<pre><code class="lang-text">clippit word build run &lt;manifest.json|-&gt; [--output &lt;file.docx|-&gt;] [--force] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Output DOCX path (default: manifest <code>output</code>). Use <code>-</code> for stdout.</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Overwrite an existing output file.</td>
+</tr>
+</tbody>
+</table>
+<p>Entries may use string shorthand (<code>&quot;[Section]&quot;</code>, <code>&quot;chapter1.docx&quot;</code>) or object form for
+options like <code>start</code>, <code>count</code>, <code>keepSections</code>, and
+<code>discardHeadersAndFootersInKeptSections</code>.</p>
+<pre><code class="lang-bash">clippit word build run word-build.json --output merged.docx --format json
+</code></pre>
+<pre><code class="lang-json">{&quot;output&quot;:&quot;/work/merged.docx&quot;,&quot;outputSize&quot;:59321,&quot;entryCount&quot;:2,&quot;entries&quot;:[{&quot;section&quot;:&quot;Part 1&quot;},{&quot;file&quot;:&quot;chapter1.docx&quot;,&quot;elements&quot;:12}]}
+</code></pre>
+<h2 id="word-compare"><code>word compare</code></h2>
+<p>Compare two <code>.docx</code> files and write a tracked-revisions result document.</p>
+<pre><code class="lang-text">clippit word compare &lt;source.docx|-&gt; &lt;revised.docx|-&gt; [--output &lt;file.docx|-&gt;] [--author &lt;text&gt;] [--date-time &lt;text&gt;] [--case-insensitive] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Output compared doc path (default: <code>&lt;source&gt;-compared.docx</code>). Use <code>-</code> for stdout.</td>
+</tr>
+<tr>
+<td><code>--author</code></td>
+<td>Author for generated revisions.</td>
+</tr>
+<tr>
+<td><code>--date-time</code></td>
+<td>Date/time for generated revisions.</td>
+</tr>
+<tr>
+<td><code>--case-insensitive</code></td>
+<td>Ignore case when comparing words.</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-bash">clippit word compare before.docx after.docx --output compared.docx --format json
+</code></pre>
+<pre><code class="lang-json">{&quot;source&quot;:&quot;/work/before.docx&quot;,&quot;revised&quot;:&quot;/work/after.docx&quot;,&quot;output&quot;:&quot;/work/compared.docx&quot;,&quot;outputSize&quot;:59321,&quot;revisions&quot;:8,&quot;authorForRevisions&quot;:&quot;Jane Doe&quot;,&quot;dateTimeForRevisions&quot;:&quot;2026-01-01T00:00:00Z&quot;,&quot;caseInsensitive&quot;:false}
+</code></pre>
+<h2 id="word-consolidate"><code>word consolidate</code></h2>
+<p>Combine an original document plus one or more revisions into a tracked-changes <code>.docx</code>.</p>
+<pre><code class="lang-text">clippit word consolidate &lt;original.docx|-&gt; &lt;revision1.docx&gt; [revision2.docx ...] [--output &lt;file.docx|-&gt;] [--force] [--revisor &lt;text&gt;]... [--color &lt;#RRGGBB&gt;]... [--author &lt;text&gt;] [--date-time &lt;text&gt;] [--case-insensitive] [--no-table-consolidation] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Output path (default: <code>&lt;original&gt;-consolidated.docx</code>). Use <code>-</code> for stdout.</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Overwrite existing output file.</td>
+</tr>
+<tr>
+<td><code>--revisor</code></td>
+<td>Reviewer name for the corresponding revision. May be repeated; defaults to the revision file name.</td>
+</tr>
+<tr>
+<td><code>--color</code></td>
+<td>Hex color (<code>#RRGGBB</code>) for the corresponding revision. May be repeated; defaults to a rotating palette.</td>
+</tr>
+<tr>
+<td><code>--author</code></td>
+<td>Author value used for generated tracked revisions.</td>
+</tr>
+<tr>
+<td><code>--date-time</code></td>
+<td>Date/time value used for generated tracked revisions.</td>
+</tr>
+<tr>
+<td><code>--case-insensitive</code></td>
+<td>Ignore case when comparing words.</td>
+</tr>
+<tr>
+<td><code>--no-table-consolidation</code></td>
+<td>Disable table-based consolidation layout.</td>
+</tr>
+</tbody>
+</table>
+<p>Revision files must be filesystem paths. Use stdin only for the original input.</p>
+<pre><code class="lang-bash">clippit word consolidate original.docx alice.docx bob.docx --output consolidated.docx --format json
+</code></pre>
+<pre><code class="lang-json">{&quot;original&quot;:&quot;/work/original.docx&quot;,&quot;revisions&quot;:[{&quot;file&quot;:&quot;/work/alice.docx&quot;,&quot;revisor&quot;:&quot;Alice&quot;,&quot;color&quot;:&quot;#FF0000&quot;},{&quot;file&quot;:&quot;/work/bob.docx&quot;,&quot;revisor&quot;:&quot;Bob&quot;,&quot;color&quot;:&quot;#0000FF&quot;}],&quot;output&quot;:&quot;/work/consolidated.docx&quot;,&quot;outputSize&quot;:68124}
+</code></pre>
+<h2 id="word-assemble"><code>word assemble</code></h2>
+<p>Assemble a <code>.docx</code> from template + XML data.</p>
+<pre><code class="lang-text">clippit word assemble &lt;template.docx|-&gt; &lt;data.xml|-&gt; [--output &lt;file.docx|-&gt;] [--force] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Output assembled doc path (default: <code>&lt;template&gt;-assembled.docx</code>). Use <code>-</code> for stdout.</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Overwrite existing output file.</td>
+</tr>
+</tbody>
+</table>
+<p>Only one input can use stdin at a time. Output must not overwrite template or input XML.</p>
+<pre><code class="lang-bash">clippit word assemble template.docx data.xml --output assembled.docx --format json
+</code></pre>
+<pre><code class="lang-json">{&quot;template&quot;:&quot;/work/template.docx&quot;,&quot;data&quot;:&quot;/work/data.xml&quot;,&quot;output&quot;:&quot;/work/template-assembled.docx&quot;,&quot;outputSize&quot;:42130,&quot;templateError&quot;:false}
+</code></pre>
+<h2 id="word-accept-revisions"><code>word accept-revisions</code></h2>
+<p>Accept all tracked revisions and write a cleaned <code>.docx</code>.</p>
+<pre><code class="lang-text">clippit word accept-revisions &lt;input.docx|-&gt; [--output &lt;file.docx|-&gt;] [--force] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Output path (default: <code>&lt;input&gt;-accepted.docx</code>). Use <code>-</code> for stdout.</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Overwrite existing output file.</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-bash">clippit word accept-revisions draft.docx --output clean.docx --format json
+</code></pre>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/draft.docx&quot;,&quot;output&quot;:&quot;/work/draft-accepted.docx&quot;,&quot;outputSize&quot;:42130}
+</code></pre>
+<h2 id="word-simplify-markup"><code>word simplify-markup</code></h2>
+<p>Remove non-content markup from a <code>.docx</code> file.</p>
+<pre><code class="lang-text">clippit word simplify-markup &lt;input.docx|-&gt; [--output &lt;file.docx|-&gt;] [--force] [--all] [--accept-revisions] [--remove-rsid-info] [--remove-markup-for-document-comparison] [--remove-comments] [--remove-bookmarks] [--remove-content-controls] [--remove-end-and-footnotes] [--remove-field-codes] [--remove-go-back-bookmark] [--remove-hyperlinks] [--remove-last-rendered-page-break] [--remove-permissions] [--remove-proof] [--remove-smart-tags] [--remove-soft-hyphens] [--remove-web-hidden] [--replace-tabs-with-spaces] [--normalize-xml] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Output path (default: <code>&lt;input&gt;-simplified.docx</code>). Use <code>-</code> for stdout.</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Overwrite existing output file.</td>
+</tr>
+<tr>
+<td><code>--all</code></td>
+<td>Enable all cleanup flags.</td>
+</tr>
+<tr>
+<td><code>--accept-revisions</code></td>
+<td>Accept all tracked revisions before simplification.</td>
+</tr>
+<tr>
+<td><code>--remove-rsid-info</code></td>
+<td>Remove RSID attributes from settings and content.</td>
+</tr>
+<tr>
+<td><code>--remove-markup-for-document-comparison</code></td>
+<td>Remove comparison-specific markup and document properties.</td>
+</tr>
+<tr>
+<td><code>--remove-comments</code></td>
+<td>Remove comments and comment-extended markup.</td>
+</tr>
+<tr>
+<td><code>--remove-bookmarks</code></td>
+<td>Remove bookmarks, including <code>_GoBack</code>.</td>
+</tr>
+<tr>
+<td><code>--remove-content-controls</code></td>
+<td>Remove structured document tags while keeping their content.</td>
+</tr>
+<tr>
+<td><code>--remove-end-and-footnotes</code></td>
+<td>Remove endnotes and footnotes.</td>
+</tr>
+<tr>
+<td><code>--remove-field-codes</code></td>
+<td>Remove field codes and keep the last cached result text.</td>
+</tr>
+<tr>
+<td><code>--remove-go-back-bookmark</code></td>
+<td>Remove only the <code>_GoBack</code> bookmark.</td>
+</tr>
+<tr>
+<td><code>--remove-hyperlinks</code></td>
+<td>Remove hyperlink relationships and markup.</td>
+</tr>
+<tr>
+<td><code>--remove-last-rendered-page-break</code></td>
+<td>Remove <code>lastRenderedPageBreak</code> elements.</td>
+</tr>
+<tr>
+<td><code>--remove-permissions</code></td>
+<td>Remove permission and editable-region markup.</td>
+</tr>
+<tr>
+<td><code>--remove-proof</code></td>
+<td>Remove proofing errors.</td>
+</tr>
+<tr>
+<td><code>--remove-smart-tags</code></td>
+<td>Remove smart-tag wrappers.</td>
+</tr>
+<tr>
+<td><code>--remove-soft-hyphens</code></td>
+<td>Remove soft hyphen characters.</td>
+</tr>
+<tr>
+<td><code>--remove-web-hidden</code></td>
+<td>Remove web-hidden text.</td>
+</tr>
+<tr>
+<td><code>--replace-tabs-with-spaces</code></td>
+<td>Replace tab characters with spaces.</td>
+</tr>
+<tr>
+<td><code>--normalize-xml</code></td>
+<td>Apply the library's XML normalization step.</td>
+</tr>
+</tbody>
+</table>
+<p>At least one simplification flag must be provided, or use <code>--all</code>.</p>
+<pre><code class="lang-bash">clippit word simplify-markup noisy.docx --all --output clean.docx --format json
+</code></pre>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/noisy.docx&quot;,&quot;output&quot;:&quot;/work/clean.docx&quot;,&quot;outputSize&quot;:42130}
+</code></pre>
+<h2 id="word-to-html"><code>word to-html</code></h2>
+<p>Convert <code>.docx</code> to HTML/CSS.</p>
+<pre><code class="lang-text">clippit word to-html &lt;input.docx|-&gt; [--output &lt;file.html|-&gt;] [--page-title &lt;text&gt;] [--additional-css &lt;css&gt;] [--css-prefix &lt;prefix&gt;] [--inline-images] [--no-fabricate-css] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Output HTML path (default: <code>&lt;input&gt;.html</code>). Use <code>-</code> for stdout.</td>
+</tr>
+<tr>
+<td><code>--page-title</code></td>
+<td>HTML <code>&lt;title&gt;</code> text.</td>
+</tr>
+<tr>
+<td><code>--additional-css</code></td>
+<td>Extra CSS injected into generated <code>&lt;style&gt;</code>.</td>
+</tr>
+<tr>
+<td><code>--css-prefix</code></td>
+<td>Prefix for generated CSS classes (default: <code>pt-</code>).</td>
+</tr>
+<tr>
+<td><code>--inline-images</code></td>
+<td>Embed images as base64 data URIs.</td>
+</tr>
+<tr>
+<td><code>--no-fabricate-css</code></td>
+<td>Use inline styles instead of generated CSS classes.</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-bash">clippit word to-html report.docx --inline-images --output report.html --format json
+</code></pre>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/report.docx&quot;,&quot;output&quot;:&quot;/work/report.html&quot;,&quot;outputSize&quot;:28473}
+</code></pre>
+<h2 id="word-from-html"><code>word from-html</code></h2>
+<p>Convert HTML/CSS to <code>.docx</code>.</p>
+<pre><code class="lang-text">clippit word from-html &lt;input.html|-&gt; [--output &lt;file.docx|-&gt;] [--css &lt;file&gt;] [--default-css &lt;file&gt;] [--user-css &lt;css&gt;] [--base-uri &lt;uri&gt;] [--major-font &lt;name&gt;] [--minor-font &lt;name&gt;] [--font-size &lt;pt&gt;] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Output DOCX path (default: <code>&lt;input&gt;.docx</code>). Use <code>-</code> for stdout.</td>
+</tr>
+<tr>
+<td><code>--css</code>, <code>-c</code></td>
+<td>External author CSS file.</td>
+</tr>
+<tr>
+<td><code>--default-css</code></td>
+<td>Override built-in default CSS with a file.</td>
+</tr>
+<tr>
+<td><code>--user-css</code></td>
+<td>Additional CSS rules.</td>
+</tr>
+<tr>
+<td><code>--base-uri</code></td>
+<td>Base URI for resolving relative image <code>src</code> paths.</td>
+</tr>
+<tr>
+<td><code>--major-font</code></td>
+<td>Theme major/heading font (default: <code>Calibri Light</code>).</td>
+</tr>
+<tr>
+<td><code>--minor-font</code></td>
+<td>Theme minor/body font (default: <code>Times New Roman</code>).</td>
+</tr>
+<tr>
+<td><code>--font-size</code></td>
+<td>Default font size in points (default: <code>12</code>).</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-bash">clippit word from-html article.html --css styles.css --output article.docx --format json
+</code></pre>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/article.html&quot;,&quot;output&quot;:&quot;/work/article.docx&quot;,&quot;outputSize&quot;:45021}
+</code></pre>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/cli-word.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

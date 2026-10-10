@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sergey-tihon.github.io/Clippit/schemas/assemble-result.v1.json",
+  "title": "Clippit word assemble result",
+  "description": "Result payload of `clippit word assemble` written to stdout in JSON mode.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "template",
+    "data",
+    "output",
+    "outputSize",
+    "templateError"
+  ],
+  "properties": {
+    "template": {
+      "type": "string",
+      "description": "Absolute path of the template .docx file, or '<stdin>' when read from stdin."
+    },
+    "data": {
+      "type": "string",
+      "description": "Absolute path of the XML data file, or '<stdin>' when read from stdin."
+    },
+    "output": {
+      "type": "string",
+      "description": "Absolute path of the assembled output file, or '<stdout>' when written to stdout."
+    },
+    "outputSize": {
+      "type": "integer",
+      "description": "Size of the assembled output .docx file in bytes."
+    },
+    "templateError": {
+      "type": "boolean",
+      "description": "true when the assembler detected template markup errors but still emitted a document."
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sergey-tihon.github.io/Clippit/schemas/workbook-definition.v1.json",
+  "title": "WorkbookDefinition",
+  "description": "Input document consumed by `clippit excel create`.",
+  "type": "object",
+  "required": ["worksheets"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Optional JSON Schema reference for editor validation."
+    },
+    "worksheets": {
+      "type": "array",
+      "description": "One or more worksheets to include in the workbook.",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/worksheet" }
+    }
+  },
+  "$defs": {
+    "worksheet": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Sheet name. Must be ≤31 characters, must not start with ' (apostrophe), and must not contain * [ ] / \\ : ?",
+          "minLength": 1,
+          "maxLength": 31,
+          "pattern": "^(?!')[^*\\[\\]/\\\\:?]+$"
+        },
+        "tableName": {
+          "type": "string",
+          "description": "Optional Excel table name. A table is created when columnHeadings is non-empty and rows is non-empty."
+        },
+        "columnHeadings": {
+          "type": "array",
+          "description": "Optional header row cells, formatted bold by default.",
+          "items": { "$ref": "#/$defs/cell" }
+        },
+        "rows": {
+          "type": "array",
+          "description": "Data rows.",
+          "items": { "$ref": "#/$defs/row" }
+        }
+      }
+    },
+    "row": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cells": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/cell" }
+        }
+      }
+    },
+    "cell": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "description": "Cell value. String, number, boolean, or null.",
+          "type": ["string", "number", "boolean", "null"]
+        },
+        "cellDataType": {
+          "type": "string",
+          "description": "Explicit data type hint.",
+          "enum": ["Boolean", "Date", "Number", "String"]
+        },
+        "formatCode": {
+          "type": "string",
+          "description": "Excel number-format string (e.g. \"#,##0.00\", \"yyyy-mm-dd\")."
+        },
+        "horizontalCellAlignment": {
+          "type": "string",
+          "description": "Horizontal alignment of the cell content.",
+          "enum": ["Left", "Center", "Right"]
+        },
+        "bold": {
+          "type": "boolean",
+          "description": "Bold text."
+        },
+        "italic": {
+          "type": "boolean",
+          "description": "Italic text."
+        }
+      }
+    }
+  }
+}
