@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+using System.Xml.Linq;
 using Clippit.Word;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Tests.Word;
 
@@ -101,6 +104,122 @@ public class RevisionProcessorTests : TestsBase
         var rejectedRevisions = WmlComparer.GetRevisions(rejectedResult, settings);
         if (rejectedRevisions.Any())
             Assert.Fail($"Regression: Rejected output differs from baseline for {name}");
+    }
+
+    // With sectionChanged the section break also carries a w:sectPrChange; it then has no header or footer
+    // references, whose fate under a w:sectPrChange RP055 covers.
+    [Test]
+    [Arguments(false, false, "center", "rIdHeader1 rIdFooter1 pgSz pgMar@1440 | rIdHeader2 rIdFooter2 pgSz pgMar@1440")]
+    [Arguments(true, false, null, "rIdHeader1 rIdFooter1 pgSz pgMar@1440 | rIdHeader2 rIdFooter2 pgSz pgMar@1440")]
+    [Arguments(false, true, "center", "pgSz pgMar@720 | rIdHeader2 rIdFooter2 pgSz pgMar@1440")]
+    [Arguments(true, true, null, "pgSz pgMar@1440 | rIdHeader2 rIdFooter2 pgSz pgMar@1440")]
+    public async Task RP058_ParagraphPropertiesChangeKeepsSectionBreak(
+        bool reject,
+        bool sectionChanged,
+        string? expectedJustification,
+        string expectedSections
+    )
+    {
+        const string margins =
+            """w:right="1440" w:bottom="1440" w:left="1440" w:header="708" w:footer="708" w:gutter="0" """;
+        var sectionBreak = sectionChanged
+            ? $"""
+                <w:sectPr>
+                  <w:pgSz w:w="11906" w:h="16838"/>
+                  <w:pgMar w:top="720" {margins}/>
+                  <w:sectPrChange w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z">
+                    <w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1440" {margins}/></w:sectPr>
+                  </w:sectPrChange>
+                </w:sectPr>
+                """
+            : $"""
+                <w:sectPr>
+                  <w:headerReference w:type="default" r:id="rIdHeader1"/>
+                  <w:footerReference w:type="default" r:id="rIdFooter1"/>
+                  <w:pgSz w:w="11906" w:h="16838"/>
+                  <w:pgMar w:top="1440" {margins}/>
+                </w:sectPr>
+                """;
+        var source = CreateDocument(
+            $"""
+            <w:p>
+              <w:pPr>
+                <w:jc w:val="center"/>
+                {sectionBreak}
+                <w:pPrChange w:id="2" w:author="Author" w:date="2026-10-15T00:00:00Z"><w:pPr/></w:pPrChange>
+              </w:pPr>
+              <w:r><w:t>First section</w:t></w:r>
+            </w:p>
+            <w:p><w:r><w:t>Second section</w:t></w:r></w:p>
+            <w:sectPr>
+              <w:headerReference w:type="default" r:id="rIdHeader2"/>
+              <w:footerReference w:type="default" r:id="rIdFooter2"/>
+              <w:pgSz w:w="11906" w:h="16838"/>
+              <w:pgMar w:top="1440" {margins}/>
+            </w:sectPr>
+            """,
+            mainPart =>
+            {
+                foreach (var n in new[] { 1, 2 })
+                {
+                    mainPart
+                        .AddNewPart<HeaderPart>($"rIdHeader{n}")
+                        .PutXDocument(
+                            XDocument.Parse(
+                                $"<w:hdr {s_namespaces}><w:p><w:r><w:t>Header {n}</w:t></w:r></w:p></w:hdr>"
+                            )
+                        );
+                    mainPart
+                        .AddNewPart<FooterPart>($"rIdFooter{n}")
+                        .PutXDocument(
+                            XDocument.Parse(
+                                $"<w:ftr {s_namespaces}><w:p><w:r><w:t>Footer {n}</w:t></w:r></w:p></w:ftr>"
+                            )
+                        );
+                }
+            }
+        );
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc);
+        await Assert.That(RevisionProcessor.HasTrackedRevisions(doc)).IsFalse();
+        var body = doc.MainDocumentPart!.GetXDocument().Root!.Element(W.body)!;
+        var justification = (string?)
+            body.Elements(W.p).First().Elements(W.pPr).Elements(W.jc).Attributes(W.val).FirstOrDefault();
+        await Assert.That(justification).IsEqualTo(expectedJustification);
+        var sections = body.Descendants(W.sectPr).Select(DescribeSection);
+        await Assert.That(string.Join(" | ", sections)).IsEqualTo(expectedSections);
+    }
+
+    private static string DescribeSection(XElement sectPr) =>
+        string.Join(
+            " ",
+            sectPr
+                .Elements()
+                .Select(e =>
+                    e.Name == W.pgMar
+                        ? $"pgMar@{(string?)e.Attribute(W.top)}"
+                        : (string?)e.Attribute(R.id) ?? e.Name.LocalName
+                )
+        );
+
+    private static readonly string s_namespaces = $"xmlns:w=\"{W.w.NamespaceName}\" xmlns:r=\"{R.r.NamespaceName}\"";
+
+    private static WmlDocument CreateDocument(string bodyXml, Action<MainDocumentPart>? addParts = null)
+    {
+        using var stream = new MemoryStream();
+        using (var doc = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
+        {
+            var mainPart = doc.AddMainDocumentPart();
+            mainPart.PutXDocument(
+                XDocument.Parse($"<w:document {s_namespaces}><w:body>{bodyXml}</w:body></w:document>")
+            );
+            addParts?.Invoke(mainPart);
+        }
+        return new WmlDocument("RevisionProcessorTest.docx", stream.ToArray());
     }
 }
 #pragma warning restore CA1707
