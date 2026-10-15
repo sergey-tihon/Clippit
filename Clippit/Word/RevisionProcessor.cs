@@ -380,9 +380,12 @@ namespace Clippit.Word
         {
             if (node is not XElement element)
                 return node;
+            // Run-level revisions may be wrapped in these containers; they belong to the enclosing paragraph.
             var parent = element
                 .Ancestors()
-                .FirstOrDefault(a => a.Name != W.sdtContent && a.Name != W.sdt && a.Name != W.smartTag);
+                .FirstOrDefault(a =>
+                    a.Name != W.sdtContent && a.Name != W.sdt && a.Name != W.smartTag && a.Name != W.hyperlink
+                );
 
             ////////////////////////////////////////////////////////////////////////////////////
             // Deleted run
