@@ -26,30 +26,47 @@ namespace Clippit.Word
 
         public static void RejectRevisions(WordprocessingDocument doc)
         {
-            RejectRevisionsForPart(doc.MainDocumentPart);
-            foreach (var part in doc.MainDocumentPart.HeaderParts)
+            foreach (var part in StoryParts(doc.MainDocumentPart))
+            {
                 RejectRevisionsForPart(part);
-            foreach (var part in doc.MainDocumentPart.FooterParts)
-                RejectRevisionsForPart(part);
-            if (doc.MainDocumentPart.EndnotesPart is not null)
-                RejectRevisionsForPart(doc.MainDocumentPart.EndnotesPart);
-            if (doc.MainDocumentPart.FootnotesPart is not null)
-                RejectRevisionsForPart(doc.MainDocumentPart.FootnotesPart);
+            }
             if (doc.MainDocumentPart.StyleDefinitionsPart is not null)
                 RejectRevisionsForStylesDefinitionPart(doc.MainDocumentPart.StyleDefinitionsPart);
 
             ReverseRevisions(doc);
-            AcceptRevisionsForPart(doc.MainDocumentPart);
-            foreach (var part in doc.MainDocumentPart.HeaderParts)
+            foreach (var part in StoryParts(doc.MainDocumentPart))
+            {
                 AcceptRevisionsForPart(part);
-            foreach (var part in doc.MainDocumentPart.FooterParts)
-                AcceptRevisionsForPart(part);
-            if (doc.MainDocumentPart.EndnotesPart is not null)
-                AcceptRevisionsForPart(doc.MainDocumentPart.EndnotesPart);
-            if (doc.MainDocumentPart.FootnotesPart is not null)
-                AcceptRevisionsForPart(doc.MainDocumentPart.FootnotesPart);
+            }
             if (doc.MainDocumentPart.StyleDefinitionsPart is not null)
                 AcceptRevisionsForStylesDefinitionPart(doc.MainDocumentPart.StyleDefinitionsPart);
+        }
+
+        // The parts that hold document text: the main document and the header, footer, endnote, footnote and
+        // comment stories.
+        private static IEnumerable<OpenXmlPart> StoryParts(MainDocumentPart mainPart)
+        {
+            yield return mainPart;
+            foreach (var part in mainPart.HeaderParts)
+            {
+                yield return part;
+            }
+            foreach (var part in mainPart.FooterParts)
+            {
+                yield return part;
+            }
+            if (mainPart.EndnotesPart is not null)
+            {
+                yield return mainPart.EndnotesPart;
+            }
+            if (mainPart.FootnotesPart is not null)
+            {
+                yield return mainPart.FootnotesPart;
+            }
+            if (mainPart.WordprocessingCommentsPart is not null)
+            {
+                yield return mainPart.WordprocessingCommentsPart;
+            }
         }
 
         // Reject revisions for those revisions that can't be rejected by inverting the sense of the revision, and then accepting.
@@ -193,15 +210,10 @@ namespace Clippit.Word
 
         private static void ReverseRevisions(WordprocessingDocument doc)
         {
-            ReverseRevisionsForPart(doc.MainDocumentPart);
-            foreach (var part in doc.MainDocumentPart.HeaderParts)
+            foreach (var part in StoryParts(doc.MainDocumentPart))
+            {
                 ReverseRevisionsForPart(part);
-            foreach (var part in doc.MainDocumentPart.FooterParts)
-                ReverseRevisionsForPart(part);
-            if (doc.MainDocumentPart.EndnotesPart is not null)
-                ReverseRevisionsForPart(doc.MainDocumentPart.EndnotesPart);
-            if (doc.MainDocumentPart.FootnotesPart is not null)
-                ReverseRevisionsForPart(doc.MainDocumentPart.FootnotesPart);
+            }
         }
 
         private static void ReverseRevisionsForPart(OpenXmlPart part)
@@ -629,15 +641,10 @@ namespace Clippit.Word
 
         public static void AcceptRevisions(WordprocessingDocument doc)
         {
-            AcceptRevisionsForPart(doc.MainDocumentPart);
-            foreach (var part in doc.MainDocumentPart.HeaderParts)
+            foreach (var part in StoryParts(doc.MainDocumentPart))
+            {
                 AcceptRevisionsForPart(part);
-            foreach (var part in doc.MainDocumentPart.FooterParts)
-                AcceptRevisionsForPart(part);
-            if (doc.MainDocumentPart.EndnotesPart is not null)
-                AcceptRevisionsForPart(doc.MainDocumentPart.EndnotesPart);
-            if (doc.MainDocumentPart.FootnotesPart is not null)
-                AcceptRevisionsForPart(doc.MainDocumentPart.FootnotesPart);
+            }
             if (doc.MainDocumentPart.StyleDefinitionsPart is not null)
                 AcceptRevisionsForStylesDefinitionPart(doc.MainDocumentPart.StyleDefinitionsPart);
         }
@@ -2120,21 +2127,7 @@ namespace Clippit.Word
 
         public static bool HasTrackedRevisions(WordprocessingDocument doc)
         {
-            if (PartHasTrackedRevisions(doc.MainDocumentPart))
-                return true;
-            foreach (var part in doc.MainDocumentPart.HeaderParts)
-                if (PartHasTrackedRevisions(part))
-                    return true;
-            foreach (var part in doc.MainDocumentPart.FooterParts)
-                if (PartHasTrackedRevisions(part))
-                    return true;
-            if (doc.MainDocumentPart.EndnotesPart is not null)
-                if (PartHasTrackedRevisions(doc.MainDocumentPart.EndnotesPart))
-                    return true;
-            if (doc.MainDocumentPart.FootnotesPart is not null)
-                if (PartHasTrackedRevisions(doc.MainDocumentPart.FootnotesPart))
-                    return true;
-            return false;
+            return StoryParts(doc.MainDocumentPart).Any(PartHasTrackedRevisions);
         }
     }
 

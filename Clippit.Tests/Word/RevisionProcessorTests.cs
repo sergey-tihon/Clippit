@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+using System.Xml.Linq;
 using Clippit.Word;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Tests.Word;
 
@@ -102,5 +105,115 @@ public class RevisionProcessorTests : TestsBase
         if (rejectedRevisions.Any())
             Assert.Fail($"Regression: Rejected output differs from baseline for {name}");
     }
+
+    [Test]
+    [Arguments("header", false, "Alpha delta gamma")]
+    [Arguments("header", true, "Alpha beta| gamma")]
+    [Arguments("footer", false, "Alpha delta gamma")]
+    [Arguments("footer", true, "Alpha beta| gamma")]
+    [Arguments("footnote", false, "Alpha delta gamma")]
+    [Arguments("footnote", true, "Alpha beta| gamma")]
+    [Arguments("endnote", false, "Alpha delta gamma")]
+    [Arguments("endnote", true, "Alpha beta| gamma")]
+    [Arguments("comment", false, "Alpha delta gamma")]
+    [Arguments("comment", true, "Alpha beta| gamma")]
+    public async Task RP057_RevisionsInEveryStory(string story, bool reject, string expectedParagraphs)
+    {
+        const string storyId = "rIdStory";
+        const string revisedParagraphs = """
+            <w:p>
+              <w:pPr><w:rPr><w:del w:id="11" w:author="Author" w:date="2026-10-15T00:00:00Z"/></w:rPr></w:pPr>
+              <w:r><w:t xml:space="preserve">Alpha </w:t></w:r>
+              <w:del w:id="12" w:author="Author" w:date="2026-10-15T00:00:00Z">
+                <w:r><w:delText>beta</w:delText></w:r>
+              </w:del>
+              <w:ins w:id="13" w:author="Author" w:date="2026-10-15T00:00:00Z">
+                <w:r><w:t>delta</w:t></w:r>
+              </w:ins>
+            </w:p>
+            <w:p><w:r><w:t xml:space="preserve"> gamma</w:t></w:r></w:p>
+            """;
+        var (bodyXml, storyXml) = story switch
+        {
+            "header" => (
+                $"""<w:p/><w:sectPr><w:headerReference w:type="default" r:id="{storyId}"/></w:sectPr>""",
+                $"<w:hdr {s_namespaces}>{revisedParagraphs}</w:hdr>"
+            ),
+            "footer" => (
+                $"""<w:p/><w:sectPr><w:footerReference w:type="default" r:id="{storyId}"/></w:sectPr>""",
+                $"<w:ftr {s_namespaces}>{revisedParagraphs}</w:ftr>"
+            ),
+            "footnote" => (
+                """<w:p><w:r><w:footnoteReference w:id="1"/></w:r></w:p>""",
+                $"""<w:footnotes {s_namespaces}><w:footnote w:id="1">{revisedParagraphs}</w:footnote></w:footnotes>"""
+            ),
+            "endnote" => (
+                """<w:p><w:r><w:endnoteReference w:id="1"/></w:r></w:p>""",
+                $"""<w:endnotes {s_namespaces}><w:endnote w:id="1">{revisedParagraphs}</w:endnote></w:endnotes>"""
+            ),
+            "comment" => (
+                """
+                <w:p>
+                  <w:commentRangeStart w:id="0"/>
+                  <w:r><w:t>Commented</w:t></w:r>
+                  <w:commentRangeEnd w:id="0"/>
+                  <w:r><w:commentReference w:id="0"/></w:r>
+                </w:p>
+                """,
+                $"""
+                <w:comments {s_namespaces}>
+                  <w:comment w:id="0" w:author="Author" w:date="2026-10-15T00:00:00Z" w:initials="A">
+                    {revisedParagraphs}
+                  </w:comment>
+                </w:comments>
+                """
+            ),
+            _ => throw new ArgumentOutOfRangeException(nameof(story)),
+        };
+        var source = CreateDocument(
+            bodyXml,
+            mainPart =>
+            {
+                OpenXmlPart storyPart = story switch
+                {
+                    "header" => mainPart.AddNewPart<HeaderPart>(storyId),
+                    "footer" => mainPart.AddNewPart<FooterPart>(storyId),
+                    "footnote" => mainPart.AddNewPart<FootnotesPart>(storyId),
+                    "endnote" => mainPart.AddNewPart<EndnotesPart>(storyId),
+                    _ => mainPart.AddNewPart<WordprocessingCommentsPart>(storyId),
+                };
+                storyPart.PutXDocument(XDocument.Parse(storyXml));
+            }
+        );
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc);
+        var processedStory = doc.MainDocumentPart!.GetPartById(storyId);
+        var paragraphs = processedStory.GetXDocument().Descendants(W.p).Select(TextOf);
+        await Assert.That(string.Join("|", paragraphs)).IsEqualTo(expectedParagraphs);
+        await Assert.That(RevisionProcessor.PartHasTrackedRevisions(processedStory)).IsFalse();
+        await Assert.That(RevisionProcessor.HasTrackedRevisions(doc)).IsFalse();
+    }
+
+    private static readonly string s_namespaces = $"xmlns:w=\"{W.w.NamespaceName}\" xmlns:r=\"{R.r.NamespaceName}\"";
+
+    private static WmlDocument CreateDocument(string bodyXml, Action<MainDocumentPart>? addParts = null)
+    {
+        using var stream = new MemoryStream();
+        using (var doc = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
+        {
+            var mainPart = doc.AddMainDocumentPart();
+            mainPart.PutXDocument(
+                XDocument.Parse($"<w:document {s_namespaces}><w:body>{bodyXml}</w:body></w:document>")
+            );
+            addParts?.Invoke(mainPart);
+        }
+        return new WmlDocument("RevisionProcessorTest.docx", stream.ToArray());
+    }
+
+    private static string TextOf(XElement element) => string.Concat(element.Descendants(W.t).Select(t => t.Value));
 }
 #pragma warning restore CA1707
