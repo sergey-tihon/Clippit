@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+using System.Xml.Linq;
 using Clippit.Word;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Tests.Word;
 
@@ -102,5 +105,52 @@ public class RevisionProcessorTests : TestsBase
         if (rejectedRevisions.Any())
             Assert.Fail($"Regression: Rejected output differs from baseline for {name}");
     }
+
+    [Test]
+    [Arguments(false, "Alpha delta gamma")]
+    [Arguments(true, "Alpha beta gamma")]
+    public async Task RP054_RevisionsInsideSimpleField(bool reject, string expectedText)
+    {
+        var source = CreateDocument(
+            """
+            <w:p>
+              <w:fldSimple w:instr=" AUTHOR ">
+                <w:r><w:t xml:space="preserve">Alpha </w:t></w:r>
+                <w:del w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z">
+                  <w:r><w:delText>beta</w:delText></w:r>
+                </w:del>
+                <w:ins w:id="2" w:author="Author" w:date="2026-10-15T00:00:00Z">
+                  <w:r><w:t>delta</w:t></w:r>
+                </w:ins>
+                <w:r><w:t xml:space="preserve"> gamma</w:t></w:r>
+              </w:fldSimple>
+            </w:p>
+            """
+        );
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc);
+        await Assert.That(RevisionProcessor.HasTrackedRevisions(doc)).IsFalse();
+        var field = doc.MainDocumentPart!.GetXDocument().Descendants(W.fldSimple).Single();
+        await Assert.That(TextOf(field)).IsEqualTo(expectedText);
+    }
+
+    private static WmlDocument CreateDocument(string bodyXml)
+    {
+        using var stream = new MemoryStream();
+        using (var doc = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
+        {
+            var mainPart = doc.AddMainDocumentPart();
+            mainPart.PutXDocument(
+                XDocument.Parse($"<w:document xmlns:w=\"{W.w.NamespaceName}\"><w:body>{bodyXml}</w:body></w:document>")
+            );
+        }
+        return new WmlDocument("RevisionProcessorTest.docx", stream.ToArray());
+    }
+
+    private static string TextOf(XElement element) => string.Concat(element.Descendants(W.t).Select(t => t.Value));
 }
 #pragma warning restore CA1707
