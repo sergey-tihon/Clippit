@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+using System.Xml.Linq;
 using Clippit.Word;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Tests.Word;
 
@@ -102,5 +105,90 @@ public class RevisionProcessorTests : TestsBase
         if (rejectedRevisions.Any())
             Assert.Fail($"Regression: Rejected output differs from baseline for {name}");
     }
+
+    [Test]
+    [Arguments("dir", false, "Alpha delta gamma")]
+    [Arguments("dir", true, "Alpha beta gamma")]
+    [Arguments("bdo", false, "Alpha delta gamma")]
+    [Arguments("bdo", true, "Alpha beta gamma")]
+    public async Task RP059_RevisionsInsideBidirectionalContainer(string container, bool reject, string expectedText)
+    {
+        var source = CreateDocument(
+            $"""
+            <w:p>
+              <w:{container} w:val="rtl">
+                <w:r><w:t xml:space="preserve">Alpha </w:t></w:r>
+                <w:del w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z">
+                  <w:r><w:delText>beta</w:delText></w:r>
+                </w:del>
+                <w:ins w:id="2" w:author="Author" w:date="2026-10-15T00:00:00Z">
+                  <w:r><w:t>delta</w:t></w:r>
+                </w:ins>
+                <w:r><w:t xml:space="preserve"> gamma</w:t></w:r>
+              </w:{container}>
+            </w:p>
+            """
+        );
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc, BidirectionalContainerErrors(container));
+        await Assert.That(RevisionProcessor.HasTrackedRevisions(doc)).IsFalse();
+        var wrapper = doc.MainDocumentPart!.GetXDocument().Descendants(W.w + container).Single();
+        await Assert.That(TextOf(wrapper)).IsEqualTo(expectedText);
+    }
+
+    [Test]
+    [Arguments("dir", false, "AlphaNext")]
+    [Arguments("dir", true, "Alpha|Next")]
+    [Arguments("bdo", false, "AlphaNext")]
+    [Arguments("bdo", true, "Alpha|Next")]
+    public async Task RP060_DeletedParagraphMarkAfterBidirectionalContainer(
+        string container,
+        bool reject,
+        string expectedParagraphs
+    )
+    {
+        var source = CreateDocument(
+            $"""
+            <w:p>
+              <w:pPr><w:rPr><w:del w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z"/></w:rPr></w:pPr>
+              <w:{container} w:val="rtl"><w:r><w:t>Alpha</w:t></w:r></w:{container}>
+            </w:p>
+            <w:p><w:r><w:t>Next</w:t></w:r></w:p>
+            """
+        );
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc, BidirectionalContainerErrors(container));
+        await Assert.That(RevisionProcessor.HasTrackedRevisions(doc)).IsFalse();
+        var paragraphs = doc.MainDocumentPart!.GetXDocument().Descendants(W.p).Select(TextOf);
+        await Assert.That(string.Join("|", paragraphs)).IsEqualTo(expectedParagraphs);
+    }
+
+    // The Open XML SDK's validator does not know w:dir and w:bdo (ISO/IEC 29500 run containers that Word reads and
+    // writes), so it reports them as unexpected children of w:p.
+    private static List<string> BidirectionalContainerErrors(string container) =>
+        [$"unexpected child element '{W.w.NamespaceName}:{container}'"];
+
+    private static WmlDocument CreateDocument(string bodyXml)
+    {
+        using var stream = new MemoryStream();
+        using (var doc = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
+        {
+            var mainPart = doc.AddMainDocumentPart();
+            mainPart.PutXDocument(
+                XDocument.Parse($"<w:document xmlns:w=\"{W.w.NamespaceName}\"><w:body>{bodyXml}</w:body></w:document>")
+            );
+        }
+        return new WmlDocument("RevisionProcessorTest.docx", stream.ToArray());
+    }
+
+    private static string TextOf(XElement element) => string.Concat(element.Descendants(W.t).Select(t => t.Value));
 }
 #pragma warning restore CA1707
