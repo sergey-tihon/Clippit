@@ -2011,9 +2011,9 @@ namespace Clippit.Word
                         var currentTcPr = g.First().Elements(W.tcPr).FirstOrDefault();
                         var newTcPr = new XElement(
                             W.tcPr,
-                            currentTcPr is not null ? currentTcPr.Attributes() : null,
+                            currentTcPr?.Attributes(),
                             new XElement(W.gridSpan, new XAttribute(W.val, newGridSpan)),
-                            currentTcPr.Elements().Where(e => e.Name != W.gridSpan)
+                            currentTcPr?.Elements().Where(e => e.Name != W.gridSpan)
                         );
                         var orderedTcPr = new XElement(
                             W.tcPr,

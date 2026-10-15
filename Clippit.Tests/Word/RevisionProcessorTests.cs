@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+using System.Xml.Linq;
 using Clippit.Word;
+using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Tests.Word;
 
@@ -102,5 +105,78 @@ public class RevisionProcessorTests : TestsBase
         if (rejectedRevisions.Any())
             Assert.Fail($"Regression: Rejected output differs from baseline for {name}");
     }
+
+    [Test]
+    [Arguments(false, "A1 | B1 / (span=2) A2")]
+    [Arguments(true, "A1 | B1 / A2 | B2")]
+    public async Task RP062_DeletedCellAfterCellWithoutProperties(bool reject, string expectedRows)
+    {
+        var source = CreateDocument(
+            """
+            <w:tbl>
+              <w:tblPr><w:tblW w:w="0" w:type="auto"/></w:tblPr>
+              <w:tblGrid><w:gridCol w:w="2000"/><w:gridCol w:w="2000"/></w:tblGrid>
+              <w:tr>
+                <w:tc><w:p><w:r><w:t>A1</w:t></w:r></w:p></w:tc>
+                <w:tc><w:p><w:r><w:t>B1</w:t></w:r></w:p></w:tc>
+              </w:tr>
+              <w:tr>
+                <w:tc><w:p><w:r><w:t>A2</w:t></w:r></w:p></w:tc>
+                <w:tc>
+                  <w:tcPr>
+                    <w:tcW w:w="0" w:type="auto"/>
+                    <w:cellDel w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z"/>
+                  </w:tcPr>
+                  <w:p><w:r><w:t>B2</w:t></w:r></w:p>
+                </w:tc>
+              </w:tr>
+            </w:tbl>
+            <w:p/>
+            """
+        );
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc);
+        await Assert.That(RevisionProcessor.HasTrackedRevisions(doc)).IsFalse();
+        var table = doc.MainDocumentPart!.GetXDocument().Descendants(W.tbl).Single();
+        await Assert.That(DescribeRows(table)).IsEqualTo(expectedRows);
+    }
+
+    private static string DescribeRows(XElement table) =>
+        string.Join(
+            " / ",
+            table
+                .Elements(W.tr)
+                .Select(tr =>
+                    string.Join(
+                        " | ",
+                        tr.Elements(W.tc)
+                            .Select(tc =>
+                                (string?)tc.Elements(W.tcPr).Elements(W.gridSpan).Attributes(W.val).FirstOrDefault()
+                                    is { } span
+                                    ? $"(span={span}) {TextOf(tc)}"
+                                    : TextOf(tc)
+                            )
+                    )
+                )
+        );
+
+    private static WmlDocument CreateDocument(string bodyXml)
+    {
+        using var stream = new MemoryStream();
+        using (var doc = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
+        {
+            var mainPart = doc.AddMainDocumentPart();
+            mainPart.PutXDocument(
+                XDocument.Parse($"<w:document xmlns:w=\"{W.w.NamespaceName}\"><w:body>{bodyXml}</w:body></w:document>")
+            );
+        }
+        return new WmlDocument("RevisionProcessorTest.docx", stream.ToArray());
+    }
+
+    private static string TextOf(XElement element) => string.Concat(element.Descendants(W.t).Select(t => t.Value));
 }
 #pragma warning restore CA1707
