@@ -860,6 +860,10 @@ namespace Clippit.Word
                 return node;
             if (element.Name == W.moveTo)
                 return element.Nodes().Select(n => AcceptMoveFromMoveToTransform(n));
+            // A moved-from paragraph mark (w:pPr/w:rPr/w:moveFrom) is accepted like a deleted one: keep it, as
+            // w:del, for AcceptDeletedAndMoveFromParagraphMarks to join the paragraph with the next.
+            if (element.Name == W.moveFrom && element.Parent?.Name == W.rPr)
+                return new XElement(W.del, element.Attributes());
             if (element.Name == W.moveFrom)
                 return null;
             return new XElement(
