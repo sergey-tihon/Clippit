@@ -159,8 +159,21 @@ namespace Clippit.Word
                 if (element.Name == W.cellDel || element.Name == W.cellMerge)
                     return null;
 
+                // Inserted cell. Word gives its columns to the cell before it, so it is rejected as a deleted cell,
+                // which the accept pass removes while widening that cell (AcceptDeletedCellsTransform). Where the
+                // cell before carries a w:tcPrChange (as when a cell was split), Word does not widen it and its
+                // recorded properties are restored instead, so the inserted cell is only removed.
                 if (element.Name == W.tc && element.Elements(W.tcPr).Elements(W.cellIns).Any())
-                    return null;
+                {
+                    var cellBefore = element
+                        .ElementsBeforeSelf(W.tc)
+                        .LastOrDefault(tc => !tc.Elements(W.tcPr).Elements(W.cellIns).Any());
+                    if (cellBefore is not null && cellBefore.Elements(W.tcPr).Elements(W.tcPrChange).Any())
+                        return null;
+                }
+
+                if (element.Name == W.cellIns)
+                    return new XElement(W.cellDel, element.Attributes());
 
                 return new XElement(
                     element.Name,
@@ -2544,7 +2557,8 @@ namespace Clippit.Word
 ///   Semantics:
 ///     Remove these elements.
 ///   Reject:
-///     If a w:tc contains w:tcPr/w:cellIns, then remove the cell
+///     Replace w:cellIns with w:cellDel; AcceptDeletedCellsTransform then removes the cell and widens the
+///     cell before it.
 ///
 /// cellMerge
 ///   Method: AcceptAllOtherRevisionsTransform
