@@ -1258,9 +1258,26 @@ namespace Clippit.Word
             }
         }
 
-        private static bool IsBlockLevelCustomXml(XElement element) =>
-            element.Name == W.customXml
-            && element.Descendants().Any(descendant => descendant.Name == W.p || descendant.Name == W.tbl);
+        private static bool IsBlockLevelCustomXml(XElement element)
+        {
+            if (element.Name != W.customXml)
+                return false;
+
+            foreach (var descendant in element.Descendants())
+            {
+                if (descendant.Name == W.p || descendant.Name == W.tbl)
+                    return true;
+                if (
+                    descendant.Name == W.tr
+                    || descendant.Name == W.tc
+                    || descendant.Name == W.r
+                    || descendant.Name == W.txbxContent
+                )
+                    return false;
+            }
+
+            return false;
+        }
 
         private static IEnumerable<BlockContentInfo> IterateBlockContentElementsWithSiblingMarkup(XElement container)
         {

@@ -452,6 +452,83 @@ public class RevisionProcessorTests : TestsBase
     }
 
     [Test]
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task RP067_TableRowCustomXmlSurvivesRevisionProcessing(bool reject)
+    {
+        var source = CreateDocument(
+            """
+            <w:tbl>
+              <w:tblPr><w:tblW w:w="0" w:type="auto"/></w:tblPr>
+              <w:tblGrid><w:gridCol w:w="2000"/></w:tblGrid>
+              <w:tr>
+                <w:customXml w:uri="urn:clippit:row" w:element="rowPayload">
+                  <w:tc><w:tcPr><w:tcW w:w="2000" w:type="dxa"/></w:tcPr><w:p><w:r><w:t>Cell text</w:t></w:r></w:p></w:tc>
+                </w:customXml>
+              </w:tr>
+            </w:tbl>
+            <w:p/>
+            """
+        );
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc, [$"The '{W.w.NamespaceName}:uri' attribute is not declared."]);
+        var row = doc.MainDocumentPart!.GetXDocument().Descendants(W.tr).Single();
+        var customXml = row.Element(W.customXml)!;
+        await Assert.That((string?)customXml.Attribute(W.uri)).IsEqualTo("urn:clippit:row");
+        await Assert.That((string?)customXml.Attribute(W.element)).IsEqualTo("rowPayload");
+        await Assert.That(customXml.Elements(W.tc)).HasCount(1);
+        await Assert.That(TextOf(customXml.Element(W.tc)!)).IsEqualTo("Cell text");
+    }
+
+    [Test]
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task RP068_InlineCustomXmlTextBoxSurvivesRevisionProcessing(bool reject)
+    {
+        XNamespace wp = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
+        XNamespace a = "http://schemas.openxmlformats.org/drawingml/2006/main";
+        XNamespace wps = "http://schemas.microsoft.com/office/word/2010/wordprocessingShape";
+        const string text = "Text box inside inline custom XML";
+        var textBoxParagraph = HtmlConverterTests.BuildTextBoxParagraph(
+            W.w,
+            wp,
+            a,
+            wps,
+            new XElement(wp + "wrapNone"),
+            text,
+            "42"
+        );
+        var customXml = new XElement(
+            W.customXml,
+            new XAttribute(W.uri, "urn:clippit:inline"),
+            new XAttribute(W.element, "inlinePayload"),
+            textBoxParagraph.Element(W.r)
+        );
+        var source = CreateDocument(new XElement(W.p, customXml).ToString(SaveOptions.DisableFormatting));
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc, [$"The '{W.w.NamespaceName}:uri' attribute is not declared."]);
+        var paragraph = doc.MainDocumentPart!.GetXDocument().Descendants(W.body).Elements(W.p).Single();
+        var processedCustomXml = paragraph.Element(W.customXml)!;
+        await Assert.That((string?)processedCustomXml.Attribute(W.element)).IsEqualTo("inlinePayload");
+        await Assert.That(processedCustomXml.Element(W.r)!.Element(W.drawing)).IsNotNull();
+        var textBoxText = processedCustomXml
+            .Descendants(W.txbxContent)
+            .Elements(W.p)
+            .Elements(W.r)
+            .Elements(W.t)
+            .Single();
+        await Assert.That(textBoxText.Value).IsEqualTo(text);
+    }
+
+    [Test]
     [Arguments(false, "A1 | B1 / (span=2) A2")]
     [Arguments(true, "A1 | B1 / A2 | B2")]
     public async Task RP062_DeletedCellAfterCellWithoutProperties(bool reject, string expectedRows)
