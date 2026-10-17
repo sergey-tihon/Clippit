@@ -1579,6 +1579,7 @@ namespace Clippit.Word
                             {
                                 var newParagraph = new XElement(
                                     W.p,
+                                    g.Last().BlockLevelContent.ThisBlockContentElement.Attributes(),
                                     g.Last().BlockLevelContent.ThisBlockContentElement.Elements(W.pPr),
                                     g.Select(z =>
                                         CollapseParagraphTransform(z.BlockLevelContent.ThisBlockContentElement)

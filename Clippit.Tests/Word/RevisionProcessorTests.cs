@@ -199,6 +199,77 @@ public class RevisionProcessorTests : TestsBase
     }
 
     [Test]
+    public async Task RP063_AcceptCommentMergeKeepsExtendedParaId()
+    {
+        const string parentParaId = "22222222";
+        const string replyParaId = "33333333";
+        var source = CreateDocument(
+            """
+            <w:p>
+              <w:commentRangeStart w:id="0"/>
+              <w:r><w:t>Commented</w:t></w:r>
+              <w:commentRangeEnd w:id="0"/>
+              <w:r><w:commentReference w:id="0"/></w:r>
+            </w:p>
+            """,
+            mainPart =>
+            {
+                mainPart
+                    .AddNewPart<WordprocessingCommentsPart>("rIdComments")
+                    .PutXDocument(
+                        XDocument.Parse(
+                            $"""
+                            <w:comments xmlns:w="{W.w.NamespaceName}" xmlns:w14="{W14.w14.NamespaceName}">
+                              <w:comment w:id="0" w:author="Author" w:date="2026-10-15T00:00:00Z" w:initials="A">
+                                <w:p w14:paraId="11111111">
+                                  <w:pPr><w:rPr><w:del w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z"/></w:rPr></w:pPr>
+                                  <w:r><w:t>Parent first paragraph</w:t></w:r>
+                                </w:p>
+                                <w:p w14:paraId="{parentParaId}"><w:r><w:t>Parent final paragraph</w:t></w:r></w:p>
+                              </w:comment>
+                              <w:comment w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z" w:initials="A">
+                                <w:p w14:paraId="{replyParaId}"><w:r><w:t>Reply</w:t></w:r></w:p>
+                              </w:comment>
+                            </w:comments>
+                            """
+                        )
+                    );
+                mainPart
+                    .AddNewPart<WordprocessingCommentsExPart>("rIdCommentsEx")
+                    .PutXDocument(
+                        XDocument.Parse(
+                            $"""
+                            <w15:commentsEx xmlns:w15="{W15.w15.NamespaceName}">
+                              <w15:commentEx w15:paraId="{parentParaId}" w15:done="1"/>
+                              <w15:commentEx w15:paraId="{replyParaId}" w15:paraIdParent="{parentParaId}" w15:done="0"/>
+                            </w15:commentsEx>
+                            """
+                        )
+                    );
+            }
+        );
+
+        var processed = RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc, [$"The '{W14.w14.NamespaceName}:paraId' attribute is not declared."]);
+        await Assert.That(RevisionProcessor.HasTrackedRevisions(doc)).IsFalse();
+
+        var comments = doc.MainDocumentPart!.WordprocessingCommentsPart!.GetXDocument();
+        var parentComment = comments.Descendants(W.comment).Single(c => (string?)c.Attribute(W.id) == "0");
+        await Assert.That(parentComment.Elements(W.p)).HasCount(1);
+        var mergedParagraph = parentComment.Element(W.p)!;
+        await Assert.That((string?)mergedParagraph.Attribute(W14.paraId)).IsEqualTo(parentParaId);
+
+        var commentEx = doc
+            .MainDocumentPart.WordprocessingCommentsExPart!.GetXDocument()
+            .Descendants(W15.w15 + "commentEx");
+        var reply = commentEx.Single(c => (string?)c.Attribute(W15.w15 + "paraId") == replyParaId);
+        await Assert.That((string?)reply.Attribute(W15.w15 + "paraIdParent")).IsEqualTo(parentParaId);
+    }
+
+    [Test]
     [Arguments(false, "A1 | B1 / (span=2) A2")]
     [Arguments(true, "A1 | B1 / A2 | B2")]
     public async Task RP062_DeletedCellAfterCellWithoutProperties(bool reject, string expectedRows)
