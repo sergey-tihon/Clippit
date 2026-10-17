@@ -288,6 +288,51 @@ public class RevisionProcessorTests : TestsBase
     }
 
     [Test]
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task RP064_CommentBookmarksSurviveRevisionProcessing(bool reject)
+    {
+        var source = CreateDocument(
+            """
+            <w:p>
+              <w:commentRangeStart w:id="0"/>
+              <w:r><w:t>Commented</w:t></w:r>
+              <w:commentRangeEnd w:id="0"/>
+              <w:r><w:commentReference w:id="0"/></w:r>
+            </w:p>
+            """,
+            mainPart =>
+                mainPart
+                    .AddNewPart<WordprocessingCommentsPart>("rIdComments")
+                    .PutXDocument(
+                        XDocument.Parse(
+                            $"""
+                            <w:comments xmlns:w="{W.w.NamespaceName}">
+                              <w:comment w:id="0" w:author="Author" w:date="2026-10-15T00:00:00Z" w:initials="A">
+                                <w:bookmarkStart w:id="1" w:name="CommentBookmark"/>
+                                <w:p><w:r><w:t>Comment text</w:t></w:r></w:p>
+                                <w:bookmarkEnd w:id="1"/>
+                              </w:comment>
+                            </w:comments>
+                            """
+                        )
+                    )
+        );
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc);
+        var comment = doc.MainDocumentPart!.WordprocessingCommentsPart!.GetXDocument().Descendants(W.comment).Single();
+        await Assert
+            .That(string.Join("|", comment.Elements().Select(element => element.Name.LocalName)))
+            .IsEqualTo("bookmarkStart|p|bookmarkEnd");
+        await Assert.That((string?)comment.Element(W.bookmarkStart)!.Attribute(W.name)).IsEqualTo("CommentBookmark");
+        await Assert.That((string?)comment.Element(W.bookmarkEnd)!.Attribute(W.id)).IsEqualTo("1");
+    }
+
+    [Test]
     [Arguments(false, "A1 | B1 / (span=2) A2")]
     [Arguments(true, "A1 | B1 / A2 | B2")]
     public async Task RP062_DeletedCellAfterCellWithoutProperties(bool reject, string expectedRows)

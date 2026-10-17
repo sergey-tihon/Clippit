@@ -1258,6 +1258,27 @@ namespace Clippit.Word
             }
         }
 
+        private static IEnumerable<BlockContentInfo> IterateCommentBlockContentElements(XElement comment)
+        {
+            var blockContentElements = IterateBlockContentElements(comment).ToArray();
+            foreach (var child in comment.Elements())
+            {
+                var childBlockContentElements = blockContentElements.Where(info =>
+                    info.ThisBlockContentElement == child || info.ThisBlockContentElement.Ancestors().Contains(child)
+                );
+                var hasBlockContent = false;
+                foreach (var blockContent in childBlockContentElements)
+                {
+                    hasBlockContent = true;
+                    yield return blockContent;
+                }
+                if (!hasBlockContent)
+                {
+                    yield return new BlockContentInfo { ThisBlockContentElement = child };
+                }
+            }
+        }
+
         public static class PT
         {
             public static XNamespace pt = "http://www.codeplex.com/PowerTools/2009/RevisionAccepter";
@@ -1491,12 +1512,17 @@ namespace Clippit.Word
 
                 var currentKey = 0;
                 var deletedParagraphGroupingInfo = new List<GroupingInfo>();
+                var blockContentElements = (
+                    element.Name == W.comment
+                        ? IterateCommentBlockContentElements(element)
+                        : IterateBlockContentElements(element)
+                ).ToList();
 
                 var state = 0; // 0 = in non deleted paragraphs
                 // 1 = in deleted paragraph
                 // 2 - paragraph following deleted paragraphs
 
-                foreach (var c in IterateBlockContentElements(element))
+                foreach (var c in blockContentElements)
                 {
                     if (c.ThisBlockContentElement.Name == W.p)
                     {
@@ -1591,8 +1617,10 @@ namespace Clippit.Word
                     }
                 }
 
-                var zipped = IterateBlockContentElements(element)
-                    .Zip(deletedParagraphGroupingInfo, (blc, gi) => new { BlockLevelContent = blc, GroupingInfo = gi });
+                var zipped = blockContentElements.Zip(
+                    deletedParagraphGroupingInfo,
+                    (blc, gi) => new { BlockLevelContent = blc, GroupingInfo = gi }
+                );
 
                 var groupedParagraphs = zipped.GroupAdjacent(z => z.GroupingInfo.GroupingKey);
 
@@ -1606,10 +1634,13 @@ namespace Clippit.Word
                         {
                             if (g.First().GroupingInfo.GroupingType == GroupingType.DeletedRange)
                             {
+                                var finalParagraph = g.Last(z =>
+                                    z.BlockLevelContent.ThisBlockContentElement.Name == W.p
+                                );
                                 var newParagraph = new XElement(
                                     W.p,
-                                    g.Last().BlockLevelContent.ThisBlockContentElement.Attributes(),
-                                    g.Last().BlockLevelContent.ThisBlockContentElement.Elements(W.pPr),
+                                    finalParagraph.BlockLevelContent.ThisBlockContentElement.Attributes(),
+                                    finalParagraph.BlockLevelContent.ThisBlockContentElement.Elements(W.pPr),
                                     g.Select(z =>
                                         CollapseParagraphTransform(z.BlockLevelContent.ThisBlockContentElement)
                                     )
@@ -1621,15 +1652,16 @@ namespace Clippit.Word
                                 var paraId = (string?)newParagraph.Attribute(W14.paraId);
                                 if (
                                     allIsDeleted
-                                    && g.Last()
+                                    && finalParagraph
                                         .BlockLevelContent.ThisBlockContentElement.Elements(W.pPr)
                                         .Elements(W.rPr)
                                         .Elements(W.del)
                                         .Any()
                                     && (
-                                        g.Last().BlockLevelContent.NextBlockContentElement is null
-                                        || g.Last().BlockLevelContent.NextBlockContentElement.Name == W.tbl
+                                        finalParagraph.BlockLevelContent.NextBlockContentElement is null
+                                        || finalParagraph.BlockLevelContent.NextBlockContentElement.Name == W.tbl
                                     )
+                                    && !g.Any(z => z.BlockLevelContent.ThisBlockContentElement.Name != W.p)
                                     && (paraId is null || !commentParaIds.Contains(paraId))
                                 )
                                     return null;
