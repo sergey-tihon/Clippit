@@ -198,6 +198,232 @@ public class RevisionProcessorTests : TestsBase
         await Assert.That(RevisionProcessor.HasTrackedRevisions(doc)).IsFalse();
     }
 
+    [Test]
+    [Arguments(false, "A1 | B1 / (span=2) A2")]
+    [Arguments(true, "A1 | B1 / A2 | B2")]
+    public async Task RP062_DeletedCellAfterCellWithoutProperties(bool reject, string expectedRows)
+    {
+        var source = CreateDocument(
+            """
+            <w:tbl>
+              <w:tblPr><w:tblW w:w="0" w:type="auto"/></w:tblPr>
+              <w:tblGrid><w:gridCol w:w="2000"/><w:gridCol w:w="2000"/></w:tblGrid>
+              <w:tr>
+                <w:tc><w:p><w:r><w:t>A1</w:t></w:r></w:p></w:tc>
+                <w:tc><w:p><w:r><w:t>B1</w:t></w:r></w:p></w:tc>
+              </w:tr>
+              <w:tr>
+                <w:tc><w:p><w:r><w:t>A2</w:t></w:r></w:p></w:tc>
+                <w:tc>
+                  <w:tcPr>
+                    <w:tcW w:w="0" w:type="auto"/>
+                    <w:cellDel w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z"/>
+                  </w:tcPr>
+                  <w:p><w:r><w:t>B2</w:t></w:r></w:p>
+                </w:tc>
+              </w:tr>
+            </w:tbl>
+            <w:p/>
+            """
+        );
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc);
+        await Assert.That(RevisionProcessor.HasTrackedRevisions(doc)).IsFalse();
+        var table = doc.MainDocumentPart!.GetXDocument().Descendants(W.tbl).Single();
+        await Assert.That(DescribeRows(table)).IsEqualTo(expectedRows);
+    }
+
+    private static string DescribeRows(XElement table) =>
+        string.Join(
+            " / ",
+            table
+                .Elements(W.tr)
+                .Select(tr =>
+                    string.Join(
+                        " | ",
+                        tr.Elements(W.tc)
+                            .Select(tc =>
+                                (string?)tc.Elements(W.tcPr).Elements(W.gridSpan).Attributes(W.val).FirstOrDefault()
+                                    is { } span
+                                    ? $"(span={span}) {TextOf(tc)}"
+                                    : TextOf(tc)
+                            )
+                    )
+                )
+        );
+
+    private static string TextOf(XElement element) => string.Concat(element.Descendants(W.t).Select(t => t.Value));
+
+    // With sectionChanged the section break also carries a w:sectPrChange; it then has no header or footer
+    // references, whose fate under a w:sectPrChange RP055 covers.
+    [Test]
+    [Arguments(false, false, "center", "rIdHeader1 rIdFooter1 pgSz pgMar@1440 | rIdHeader2 rIdFooter2 pgSz pgMar@1440")]
+    [Arguments(true, false, null, "rIdHeader1 rIdFooter1 pgSz pgMar@1440 | rIdHeader2 rIdFooter2 pgSz pgMar@1440")]
+    [Arguments(false, true, "center", "pgSz pgMar@720 | rIdHeader2 rIdFooter2 pgSz pgMar@1440")]
+    [Arguments(true, true, null, "pgSz pgMar@1440 | rIdHeader2 rIdFooter2 pgSz pgMar@1440")]
+    public async Task RP058_ParagraphPropertiesChangeKeepsSectionBreak(
+        bool reject,
+        bool sectionChanged,
+        string? expectedJustification,
+        string expectedSections
+    )
+    {
+        const string margins =
+            """w:right="1440" w:bottom="1440" w:left="1440" w:header="708" w:footer="708" w:gutter="0" """;
+        var sectionBreak = sectionChanged
+            ? $"""
+                <w:sectPr>
+                  <w:pgSz w:w="11906" w:h="16838"/>
+                  <w:pgMar w:top="720" {margins}/>
+                  <w:sectPrChange w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z">
+                    <w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1440" {margins}/></w:sectPr>
+                  </w:sectPrChange>
+                </w:sectPr>
+                """
+            : $"""
+                <w:sectPr>
+                  <w:headerReference w:type="default" r:id="rIdHeader1"/>
+                  <w:footerReference w:type="default" r:id="rIdFooter1"/>
+                  <w:pgSz w:w="11906" w:h="16838"/>
+                  <w:pgMar w:top="1440" {margins}/>
+                </w:sectPr>
+                """;
+        var source = CreateDocument(
+            $"""
+            <w:p>
+              <w:pPr>
+                <w:jc w:val="center"/>
+                {sectionBreak}
+                <w:pPrChange w:id="2" w:author="Author" w:date="2026-10-15T00:00:00Z"><w:pPr/></w:pPrChange>
+              </w:pPr>
+              <w:r><w:t>First section</w:t></w:r>
+            </w:p>
+            <w:p><w:r><w:t>Second section</w:t></w:r></w:p>
+            <w:sectPr>
+              <w:headerReference w:type="default" r:id="rIdHeader2"/>
+              <w:footerReference w:type="default" r:id="rIdFooter2"/>
+              <w:pgSz w:w="11906" w:h="16838"/>
+              <w:pgMar w:top="1440" {margins}/>
+            </w:sectPr>
+            """,
+            mainPart =>
+            {
+                foreach (var n in new[] { 1, 2 })
+                {
+                    mainPart
+                        .AddNewPart<HeaderPart>($"rIdHeader{n}")
+                        .PutXDocument(
+                            XDocument.Parse(
+                                $"<w:hdr {s_namespaces}><w:p><w:r><w:t>Header {n}</w:t></w:r></w:p></w:hdr>"
+                            )
+                        );
+                    mainPart
+                        .AddNewPart<FooterPart>($"rIdFooter{n}")
+                        .PutXDocument(
+                            XDocument.Parse(
+                                $"<w:ftr {s_namespaces}><w:p><w:r><w:t>Footer {n}</w:t></w:r></w:p></w:ftr>"
+                            )
+                        );
+                }
+            }
+        );
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc);
+        await Assert.That(RevisionProcessor.HasTrackedRevisions(doc)).IsFalse();
+        var body = doc.MainDocumentPart!.GetXDocument().Root!.Element(W.body)!;
+        var justification = (string?)
+            body.Elements(W.p).First().Elements(W.pPr).Elements(W.jc).Attributes(W.val).FirstOrDefault();
+        await Assert.That(justification).IsEqualTo(expectedJustification);
+        var sections = body.Descendants(W.sectPr).Select(DescribeSection);
+        await Assert.That(string.Join(" | ", sections)).IsEqualTo(expectedSections);
+    }
+
+    [Test]
+    [Arguments(false, 720)]
+    [Arguments(true, 1440)]
+    public async Task RP055_SectionPropertiesChangeKeepsHeadersAndFooters(bool reject, int expectedTopMargin)
+    {
+        var source = CreateDocument(
+            $"""
+            <w:p>
+              <w:pPr>{TrackedSectionProperties(1)}</w:pPr>
+              <w:r><w:t>First section</w:t></w:r>
+            </w:p>
+            <w:p><w:r><w:t>Second section</w:t></w:r></w:p>
+            {TrackedSectionProperties(2)}
+            """,
+            mainPart =>
+            {
+                foreach (var n in new[] { 1, 2 })
+                {
+                    mainPart
+                        .AddNewPart<HeaderPart>($"rIdHeader{n}")
+                        .PutXDocument(
+                            XDocument.Parse(
+                                $"<w:hdr {s_namespaces}><w:p><w:r><w:t>Header {n}</w:t></w:r></w:p></w:hdr>"
+                            )
+                        );
+                    mainPart
+                        .AddNewPart<FooterPart>($"rIdFooter{n}")
+                        .PutXDocument(
+                            XDocument.Parse(
+                                $"<w:ftr {s_namespaces}><w:p><w:r><w:t>Footer {n}</w:t></w:r></w:p></w:ftr>"
+                            )
+                        );
+                }
+            }
+        );
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc);
+        await Assert.That(RevisionProcessor.HasTrackedRevisions(doc)).IsFalse();
+        var sections = doc.MainDocumentPart!.GetXDocument().Descendants(W.sectPr).Select(DescribeSection);
+        await Assert
+            .That(string.Join(" | ", sections))
+            .IsEqualTo(
+                $"rIdHeader1 rIdFooter1 pgSz pgMar@{expectedTopMargin} | rIdHeader2 rIdFooter2 pgSz pgMar@{expectedTopMargin}"
+            );
+    }
+
+    private static string TrackedSectionProperties(int n) =>
+        $"""
+            <w:sectPr>
+              <w:headerReference w:type="default" r:id="rIdHeader{n}"/>
+              <w:footerReference w:type="default" r:id="rIdFooter{n}"/>
+              <w:pgSz w:w="11906" w:h="16838"/>
+              <w:pgMar w:top="720" w:right="1440" w:bottom="1440" w:left="1440" w:header="708" w:footer="708" w:gutter="0"/>
+              <w:sectPrChange w:id="{n}" w:author="Author" w:date="2026-10-15T00:00:00Z">
+                <w:sectPr>
+                  <w:pgSz w:w="11906" w:h="16838"/>
+                  <w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="708" w:footer="708" w:gutter="0"/>
+                </w:sectPr>
+              </w:sectPrChange>
+            </w:sectPr>
+            """;
+
+    private static string DescribeSection(XElement sectPr) =>
+        string.Join(
+            " ",
+            sectPr
+                .Elements()
+                .Select(e =>
+                    e.Name == W.pgMar
+                        ? $"pgMar@{(string?)e.Attribute(W.top)}"
+                        : (string?)e.Attribute(R.id) ?? e.Name.LocalName
+                )
+        );
+
     private static readonly string s_namespaces = $"xmlns:w=\"{W.w.NamespaceName}\" xmlns:r=\"{R.r.NamespaceName}\"";
 
     private static WmlDocument CreateDocument(string bodyXml, Action<MainDocumentPart>? addParts = null)
@@ -213,7 +439,5 @@ public class RevisionProcessorTests : TestsBase
         }
         return new WmlDocument("RevisionProcessorTest.docx", stream.ToArray());
     }
-
-    private static string TextOf(XElement element) => string.Concat(element.Descendants(W.t).Select(t => t.Value));
 }
 #pragma warning restore CA1707
