@@ -172,7 +172,7 @@
   "checks": [
     {
       "area": "dependencies",
-      "checked_at": "2026-10-12",
+      "checked_at": "2026-10-17",
       "result": "Only TUnit 1.73.19 outdated; recent TUnit bump PRs closed unmerged-churn, skipped",
       "follow_up": null
     },
