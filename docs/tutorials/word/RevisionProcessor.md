@@ -34,7 +34,7 @@ public class RevisionProcessor {
 ```
 
 `RevisionProcessor` handles both accepting and rejecting tracked revisions across
-all document parts (main document, headers, footers, footnotes, endnotes, and styles).
+all document parts (main document, headers, footers, footnotes, endnotes, comments, and styles).
 
 #### Key Features
 
