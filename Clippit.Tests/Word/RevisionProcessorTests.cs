@@ -8,7 +8,7 @@ using DocumentFormat.OpenXml.Packaging;
 namespace Clippit.Tests.Word;
 
 #pragma warning disable CA1707 // Test names follow the repository's prefix_code_descriptive_name convention.
-public class RevisionProcessorTests : TestsBase
+public partial class RevisionProcessorTests : TestsBase
 {
     [Test]
     [Arguments("RP/RP002-Deleted-Text.docx")]
