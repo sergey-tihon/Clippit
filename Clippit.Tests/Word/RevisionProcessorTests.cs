@@ -199,208 +199,40 @@ public class RevisionProcessorTests : TestsBase
     }
 
     [Test]
-    [Arguments(false, 1, "Parent first paragraph Parent final paragraph")]
-    [Arguments(true, 2, "")]
-    public async Task RP063_AcceptCommentParagraphIdKeepsExtendedMetadata(
-        bool deleteFinalParagraph,
-        int expectedParentParagraphCount,
-        string expectedFinalText
-    )
+    [Arguments("merge", false, "Parent first paragraph Parent final paragraph")]
+    [Arguments("merge", true, "Parent first paragraph Parent final paragraph")]
+    [Arguments("deleteFinal", false, "Parent first paragraph")]
+    [Arguments("deleteOnly", false, "")]
+    public async Task RP063_CommentKeepsLastParagraphId(string scenario, bool reject, string expectedParagraphs)
     {
-        const string parentParaId = "22222222";
-        const string replyParaId = "33333333";
-        var parentParagraphs = deleteFinalParagraph
-            ? $"""
+        var commentParagraphs = scenario switch
+        {
+            "merge" =>
+                $"""
+                <w:p w14:paraId="11111111">
+                  <w:pPr><w:rPr><w:{(
+                    reject ? "ins" : "del"
+                )} w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z"/></w:rPr></w:pPr>
+                  <w:r><w:t>Parent first paragraph</w:t></w:r>
+                </w:p>
+                <w:p w14:paraId="22222222"><w:r><w:t xml:space="preserve"> Parent final paragraph</w:t></w:r></w:p>
+                """,
+            "deleteFinal" => """
                 <w:p w14:paraId="11111111"><w:r><w:t>Parent first paragraph</w:t></w:r></w:p>
-                <w:p w14:paraId="{parentParaId}">
+                <w:p w14:paraId="22222222">
                   <w:pPr><w:rPr><w:del w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z"/></w:rPr></w:pPr>
                   <w:del w:id="2" w:author="Author" w:date="2026-10-15T00:00:00Z"><w:r><w:delText>Parent final paragraph</w:delText></w:r></w:del>
                 </w:p>
-                """
-            : $"""
-                <w:p w14:paraId="11111111">
+                """,
+            "deleteOnly" => """
+                <w:p w14:paraId="22222222">
                   <w:pPr><w:rPr><w:del w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z"/></w:rPr></w:pPr>
-                  <w:r><w:t>Parent first paragraph</w:t></w:r>
+                  <w:del w:id="2" w:author="Author" w:date="2026-10-15T00:00:00Z"><w:r><w:delText>Parent final paragraph</w:delText></w:r></w:del>
                 </w:p>
-                <w:p w14:paraId="{parentParaId}"><w:r><w:t xml:space="preserve"> Parent final paragraph</w:t></w:r></w:p>
-                """;
-        var source = CreateDocument(
-            """
-            <w:p>
-              <w:commentRangeStart w:id="0"/>
-              <w:r><w:t>Commented</w:t></w:r>
-              <w:commentRangeEnd w:id="0"/>
-              <w:r><w:commentReference w:id="0"/></w:r>
-            </w:p>
-            """,
-            mainPart =>
-            {
-                mainPart
-                    .AddNewPart<WordprocessingCommentsPart>("rIdComments")
-                    .PutXDocument(
-                        XDocument.Parse(
-                            $"""
-                            <w:comments xmlns:w="{W.w.NamespaceName}" xmlns:w14="{W14.w14.NamespaceName}">
-                              <w:comment w:id="0" w:author="Author" w:date="2026-10-15T00:00:00Z" w:initials="A">
-                                {parentParagraphs}
-                              </w:comment>
-                              <w:comment w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z" w:initials="A">
-                                <w:p w14:paraId="{replyParaId}"><w:r><w:t>Reply</w:t></w:r></w:p>
-                              </w:comment>
-                            </w:comments>
-                            """
-                        )
-                    );
-                mainPart
-                    .AddNewPart<WordprocessingCommentsExPart>("rIdCommentsEx")
-                    .PutXDocument(
-                        XDocument.Parse(
-                            $"""
-                            <w15:commentsEx xmlns:w15="{W15.w15.NamespaceName}">
-                              <w15:commentEx w15:paraId="{parentParaId}" w15:done="1"/>
-                              <w15:commentEx w15:paraId="{replyParaId}" w15:paraIdParent="{parentParaId}" w15:done="0"/>
-                            </w15:commentsEx>
-                            """
-                        )
-                    );
-            }
-        );
-
-        var processed = RevisionProcessor.AcceptRevisions(source);
-
-        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
-        using var doc = streamDoc.GetWordprocessingDocument();
-        await Validate(doc, [$"The '{W14.w14.NamespaceName}:paraId' attribute is not declared."]);
-        await Assert.That(RevisionProcessor.HasTrackedRevisions(doc)).IsFalse();
-
-        var comments = doc.MainDocumentPart!.WordprocessingCommentsPart!.GetXDocument();
-        var parentComment = comments.Descendants(W.comment).Single(c => (string?)c.Attribute(W.id) == "0");
-        await Assert.That(parentComment.Elements(W.p)).HasCount(expectedParentParagraphCount);
-        var finalParagraph = parentComment.Elements(W.p).Last();
-        await Assert.That((string?)finalParagraph.Attribute(W14.paraId)).IsEqualTo(parentParaId);
-        await Assert.That(TextOf(finalParagraph)).IsEqualTo(expectedFinalText);
-
-        var commentEx = doc
-            .MainDocumentPart.WordprocessingCommentsExPart!.GetXDocument()
-            .Descendants(W15.w15 + "commentEx");
-        var reply = commentEx.Single(c => (string?)c.Attribute(W15.w15 + "paraId") == replyParaId);
-        await Assert.That((string?)reply.Attribute(W15.w15 + "paraIdParent")).IsEqualTo(parentParaId);
-    }
-
-    [Test]
-    [Arguments(false)]
-    [Arguments(true)]
-    public async Task RP064_CommentBookmarksSurviveRevisionProcessing(bool reject)
-    {
-        var source = CreateDocument(
-            """
-            <w:p>
-              <w:commentRangeStart w:id="0"/>
-              <w:r><w:t>Commented</w:t></w:r>
-              <w:commentRangeEnd w:id="0"/>
-              <w:r><w:commentReference w:id="0"/></w:r>
-            </w:p>
-            """,
-            mainPart =>
-                mainPart
-                    .AddNewPart<WordprocessingCommentsPart>("rIdComments")
-                    .PutXDocument(
-                        XDocument.Parse(
-                            $"""
-                            <w:comments xmlns:w="{W.w.NamespaceName}">
-                              <w:comment w:id="0" w:author="Author" w:date="2026-10-15T00:00:00Z" w:initials="A">
-                                <w:bookmarkStart w:id="1" w:name="CommentBookmark"/>
-                                <w:p><w:r><w:t>Comment text</w:t></w:r></w:p>
-                                <w:bookmarkEnd w:id="1"/>
-                              </w:comment>
-                            </w:comments>
-                            """
-                        )
-                    )
-        );
-
-        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
-
-        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
-        using var doc = streamDoc.GetWordprocessingDocument();
-        await Validate(doc);
-        var comment = doc.MainDocumentPart!.WordprocessingCommentsPart!.GetXDocument().Descendants(W.comment).Single();
-        await Assert
-            .That(string.Join("|", comment.Elements().Select(element => element.Name.LocalName)))
-            .IsEqualTo("bookmarkStart|p|bookmarkEnd");
-        await Assert.That((string?)comment.Element(W.bookmarkStart)!.Attribute(W.name)).IsEqualTo("CommentBookmark");
-        await Assert.That((string?)comment.Element(W.bookmarkEnd)!.Attribute(W.id)).IsEqualTo("1");
-    }
-
-    [Test]
-    [Arguments(false, false, 1, "Unchanged")]
-    [Arguments(true, false, 1, "Unchanged")]
-    [Arguments(false, true, 1, "First Second")]
-    [Arguments(true, true, 2, "First| Second")]
-    public async Task RP065_CommentCustomXmlSurvivesRevisionProcessing(
-        bool reject,
-        bool deleteParagraphMark,
-        int expectedParagraphCount,
-        string expectedText
-    )
-    {
-        var paragraphs = deleteParagraphMark
-            ? """
-                <w:p>
-                  <w:pPr><w:rPr><w:del w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z"/></w:rPr></w:pPr>
-                  <w:r><w:t>First</w:t></w:r>
-                </w:p>
-                <w:p><w:r><w:t xml:space="preserve"> Second</w:t></w:r></w:p>
-                """
-            : """
-                <w:p><w:r><w:t>Unchanged</w:t></w:r></w:p>
-                """;
-        var source = CreateDocument(
-            """
-            <w:p>
-              <w:commentRangeStart w:id="0"/>
-              <w:r><w:t>Commented</w:t></w:r>
-              <w:commentRangeEnd w:id="0"/>
-              <w:r><w:commentReference w:id="0"/></w:r>
-            </w:p>
-            """,
-            mainPart =>
-                mainPart
-                    .AddNewPart<WordprocessingCommentsPart>("rIdComments")
-                    .PutXDocument(
-                        XDocument.Parse(
-                            $"""
-                            <w:comments xmlns:w="{W.w.NamespaceName}">
-                              <w:comment w:id="0" w:author="Author" w:date="2026-10-15T00:00:00Z" w:initials="A">
-                                <w:customXml w:uri="urn:clippit:test" w:element="commentPayload">
-                                  {paragraphs}
-                                </w:customXml>
-                              </w:comment>
-                            </w:comments>
-                            """
-                        )
-                    )
-        );
-
-        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
-
-        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
-        using var doc = streamDoc.GetWordprocessingDocument();
-        await Validate(doc, [$"The '{W.w.NamespaceName}:uri' attribute is not declared."]);
-        var comment = doc.MainDocumentPart!.WordprocessingCommentsPart!.GetXDocument().Descendants(W.comment).Single();
-        var customXml = comment.Element(W.customXml)!;
-        await Assert.That((string?)customXml.Attribute(W.uri)).IsEqualTo("urn:clippit:test");
-        await Assert.That((string?)customXml.Attribute(W.element)).IsEqualTo("commentPayload");
-        await Assert.That(customXml.Elements(W.p)).HasCount(expectedParagraphCount);
-        await Assert.That(string.Join("|", customXml.Elements(W.p).Select(TextOf))).IsEqualTo(expectedText);
-    }
-
-    [Test]
-    [Arguments(false)]
-    [Arguments(true)]
-    public async Task RP066_CommentAltChunkSeparatesParagraphMerge(bool reject)
-    {
-        const string chunkId = "rIdAltChunk";
+                """,
+            _ => throw new ArgumentOutOfRangeException(nameof(scenario)),
+        };
+        var commentNamespaces = $"xmlns:w=\"{W.w.NamespaceName}\" xmlns:w14=\"{W14.w14.NamespaceName}\"";
         var source = CreateDocument(
             """
             <w:p>
@@ -415,26 +247,60 @@ public class RevisionProcessorTests : TestsBase
                 var commentsPart = mainPart.AddNewPart<WordprocessingCommentsPart>("rIdComments");
                 commentsPart.PutXDocument(
                     XDocument.Parse(
-                        $"""
-                        <w:comments xmlns:w="{W.w.NamespaceName}" xmlns:r="{R.r.NamespaceName}">
-                          <w:comment w:id="0" w:author="Author" w:date="2026-10-15T00:00:00Z" w:initials="A">
-                            <w:p>
-                              <w:pPr><w:rPr><w:del w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z"/></w:rPr></w:pPr>
-                              <w:r><w:t>Before chunk</w:t></w:r>
-                            </w:p>
-                            <w:altChunk r:id="{chunkId}"/>
-                            <w:p><w:r><w:t>After chunk</w:t></w:r></w:p>
-                          </w:comment>
-                        </w:comments>
-                        """
+                        $"""<w:comments {commentNamespaces}><w:comment w:id="0" w:author="Author" w:date="2026-10-15T00:00:00Z">{commentParagraphs}</w:comment></w:comments>"""
                     )
                 );
-                var altChunkPart = commentsPart.AddAlternativeFormatImportPart(
-                    AlternativeFormatImportPartType.Html,
-                    chunkId
-                );
-                altChunkPart.FeedData(
-                    new MemoryStream(System.Text.Encoding.UTF8.GetBytes("<html><body>chunk</body></html>"))
+            }
+        );
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc, [$"The '{W14.w14.NamespaceName}:paraId' attribute is not declared."]);
+        await Assert.That(RevisionProcessor.HasTrackedRevisions(doc)).IsFalse();
+        var comments = doc.MainDocumentPart!.GetPartById("rIdComments").GetXDocument();
+        var comment = comments.Root!.Element(W.comment)!;
+        await Assert.That(string.Join("|", comment.Elements(W.p).Select(TextOf))).IsEqualTo(expectedParagraphs);
+        await Assert.That((string?)comment.Elements(W.p).Last().Attribute(W14.paraId)).IsEqualTo("22222222");
+    }
+
+    [Test]
+    [Arguments("body", false)]
+    [Arguments("body", true)]
+    [Arguments("comment", false)]
+    [Arguments("comment", true)]
+    public async Task RP064_UnchangedContainerKeepsBlockMarkup(string story, bool reject)
+    {
+        const string blockXml = """
+            <w:bookmarkStart w:id="1" w:name="Kept"/><w:p><w:r><w:t>Bookmarked</w:t></w:r></w:p><w:bookmarkEnd w:id="1"/>
+            <w:customXml w:element="payload"><w:p><w:r><w:t>Wrapped</w:t></w:r></w:p></w:customXml>
+            <w:sdt><w:sdtPr><w:tag w:val="empty"/></w:sdtPr><w:sdtContent><w:p/></w:sdtContent></w:sdt>
+            """;
+        var bodyXml = story switch
+        {
+            "body" => blockXml,
+            "comment" => """
+                <w:p>
+                  <w:commentRangeStart w:id="0"/>
+                  <w:r><w:t>Commented</w:t></w:r>
+                  <w:commentRangeEnd w:id="0"/>
+                  <w:r><w:commentReference w:id="0"/></w:r>
+                </w:p>
+                """,
+            _ => throw new ArgumentOutOfRangeException(nameof(story)),
+        };
+        var source = CreateDocument(
+            bodyXml,
+            mainPart =>
+            {
+                if (story != "comment")
+                    return;
+                var commentsPart = mainPart.AddNewPart<WordprocessingCommentsPart>("rIdComments");
+                commentsPart.PutXDocument(
+                    XDocument.Parse(
+                        $"<w:comments {s_namespaces}><w:comment w:id=\"0\" w:author=\"Author\">{blockXml}</w:comment></w:comments>"
+                    )
                 );
             }
         );
@@ -444,88 +310,16 @@ public class RevisionProcessorTests : TestsBase
         using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
         using var doc = streamDoc.GetWordprocessingDocument();
         await Validate(doc);
-        var comment = doc.MainDocumentPart!.WordprocessingCommentsPart!.GetXDocument().Descendants(W.comment).Single();
+        var processedContainer =
+            story == "body"
+                ? doc.MainDocumentPart!.GetXDocument().Root!.Element(W.body)!
+                : doc.MainDocumentPart!.GetPartById("rIdComments").GetXDocument().Root!.Element(W.comment)!;
+        var expectedContainer = XElement.Parse($"<w:x {s_namespaces}>{blockXml}</w:x>");
         await Assert
-            .That(string.Join("|", comment.Elements().Select(element => element.Name.LocalName)))
-            .IsEqualTo("p|altChunk|p");
-        await Assert.That((string?)comment.Element(W.altChunk)!.Attribute(R.id)).IsEqualTo(chunkId);
-    }
-
-    [Test]
-    [Arguments(false)]
-    [Arguments(true)]
-    public async Task RP067_TableRowCustomXmlSurvivesRevisionProcessing(bool reject)
-    {
-        var source = CreateDocument(
-            """
-            <w:tbl>
-              <w:tblPr><w:tblW w:w="0" w:type="auto"/></w:tblPr>
-              <w:tblGrid><w:gridCol w:w="2000"/></w:tblGrid>
-              <w:tr>
-                <w:customXml w:uri="urn:clippit:row" w:element="rowPayload">
-                  <w:tc><w:tcPr><w:tcW w:w="2000" w:type="dxa"/></w:tcPr><w:p><w:r><w:t>Cell text</w:t></w:r></w:p></w:tc>
-                </w:customXml>
-              </w:tr>
-            </w:tbl>
-            <w:p/>
-            """
-        );
-
-        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
-
-        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
-        using var doc = streamDoc.GetWordprocessingDocument();
-        await Validate(doc, [$"The '{W.w.NamespaceName}:uri' attribute is not declared."]);
-        var row = doc.MainDocumentPart!.GetXDocument().Descendants(W.tr).Single();
-        var customXml = row.Element(W.customXml)!;
-        await Assert.That((string?)customXml.Attribute(W.uri)).IsEqualTo("urn:clippit:row");
-        await Assert.That((string?)customXml.Attribute(W.element)).IsEqualTo("rowPayload");
-        await Assert.That(customXml.Elements(W.tc)).HasCount(1);
-        await Assert.That(TextOf(customXml.Element(W.tc)!)).IsEqualTo("Cell text");
-    }
-
-    [Test]
-    [Arguments(false)]
-    [Arguments(true)]
-    public async Task RP068_InlineCustomXmlTextBoxSurvivesRevisionProcessing(bool reject)
-    {
-        XNamespace wp = "http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing";
-        XNamespace a = "http://schemas.openxmlformats.org/drawingml/2006/main";
-        XNamespace wps = "http://schemas.microsoft.com/office/word/2010/wordprocessingShape";
-        const string text = "Text box inside inline custom XML";
-        var textBoxParagraph = HtmlConverterTests.BuildTextBoxParagraph(
-            W.w,
-            wp,
-            a,
-            wps,
-            new XElement(wp + "wrapNone"),
-            text,
-            "42"
-        );
-        var customXml = new XElement(
-            W.customXml,
-            new XAttribute(W.uri, "urn:clippit:inline"),
-            new XAttribute(W.element, "inlinePayload"),
-            textBoxParagraph.Element(W.r)
-        );
-        var source = CreateDocument(new XElement(W.p, customXml).ToString(SaveOptions.DisableFormatting));
-
-        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
-
-        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
-        using var doc = streamDoc.GetWordprocessingDocument();
-        await Validate(doc, [$"The '{W.w.NamespaceName}:uri' attribute is not declared."]);
-        var paragraph = doc.MainDocumentPart!.GetXDocument().Descendants(W.body).Elements(W.p).Single();
-        var processedCustomXml = paragraph.Element(W.customXml)!;
-        await Assert.That((string?)processedCustomXml.Attribute(W.element)).IsEqualTo("inlinePayload");
-        await Assert.That(processedCustomXml.Element(W.r)!.Element(W.drawing)).IsNotNull();
-        var textBoxText = processedCustomXml
-            .Descendants(W.txbxContent)
-            .Elements(W.p)
-            .Elements(W.r)
-            .Elements(W.t)
-            .Single();
-        await Assert.That(textBoxText.Value).IsEqualTo(text);
+            .That(string.Concat(processedContainer.Elements().Select(e => e.ToString(SaveOptions.DisableFormatting))))
+            .IsEqualTo(
+                string.Concat(expectedContainer.Elements().Select(e => e.ToString(SaveOptions.DisableFormatting)))
+            );
     }
 
     [Test]

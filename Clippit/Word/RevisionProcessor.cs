@@ -683,8 +683,9 @@ namespace Clippit.Word
 
         public static void AcceptRevisionsForPart(OpenXmlPart part)
         {
-            var commentParaIds = GetCommentParaIdsReferencedByExtendedComments(part);
-            var documentElement = part.GetXDocument().Root;
+            var originalRoot = part.GetXDocument().Root;
+            var commentLastParaIds = originalRoot.Name == W.comments ? GetCommentLastParagraphIds(originalRoot) : null;
+            var documentElement = originalRoot;
             documentElement = (XElement)RemoveRsidTransform(documentElement);
             documentElement = (XElement)FixUpDeletedOrInsertedFieldCodesTransform(documentElement);
             var containsMoveFromMoveTo = documentElement.Descendants(W.moveFrom).Any();
@@ -693,13 +694,15 @@ namespace Clippit.Word
             // AcceptParagraphEndTagsInMoveFromTransform needs rewritten similar to AcceptDeletedAndMoveFromParagraphMarks
             documentElement = (XElement)AcceptParagraphEndTagsInMoveFromTransform(documentElement);
             documentElement = AcceptDeletedAndMovedFromContentControls(documentElement);
-            documentElement = AcceptDeletedAndMoveFromParagraphMarks(documentElement, commentParaIds);
+            documentElement = AcceptDeletedAndMoveFromParagraphMarks(documentElement);
             if (containsMoveFromMoveTo)
                 documentElement = (XElement)RemoveRowsLeftEmptyByMoveFrom(documentElement);
             documentElement = (XElement)AcceptAllOtherRevisionsTransform(documentElement);
             documentElement = (XElement)AcceptDeletedCellsTransform(documentElement);
             documentElement = (XElement)MergeAdjacentTablesTransform(documentElement);
             documentElement = (XElement)AddEmptyParagraphToAnyEmptyCells(documentElement);
+            if (commentLastParaIds is not null)
+                RestoreCommentLastParagraphIds(documentElement, commentLastParaIds);
             documentElement
                 .Descendants()
                 .Attributes()
@@ -710,26 +713,27 @@ namespace Clippit.Word
             part.PutXDocument(newXDoc);
         }
 
-        private static HashSet<string> GetCommentParaIdsReferencedByExtendedComments(OpenXmlPart part)
+        // commentsExtended, commentsIds and commentsExtensible identify a comment by the w14:paraId of its last
+        // paragraph, so accepting a merge or removal there must leave that ID on the new last paragraph.
+        private static List<string?> GetCommentLastParagraphIds(XElement comments) =>
+            comments
+                .Elements(W.comment)
+                .Select(c => (string?)c.Descendants(W.p).LastOrDefault()?.Attribute(W14.paraId))
+                .ToList();
+
+        private static void RestoreCommentLastParagraphIds(XElement comments, List<string?> lastParagraphIds)
         {
-            if (part is not WordprocessingCommentsPart)
-                return [];
-
-            if (part.OpenXmlPackage is not WordprocessingDocument document)
-                return [];
-
-            var commentsExPart = document.MainDocumentPart?.WordprocessingCommentsExPart;
-            if (commentsExPart is null)
-                return [];
-
-            return commentsExPart
-                .GetXDocument()
-                .Descendants(W15.w15 + "commentEx")
-                .SelectMany(commentEx =>
-                    commentEx.Attributes(W15.w15 + "paraId").Concat(commentEx.Attributes(W15.w15 + "paraIdParent"))
-                )
-                .Select(attribute => attribute.Value)
-                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            foreach (var (comment, paraId) in comments.Elements(W.comment).Zip(lastParagraphIds))
+            {
+                var lastParagraph = comment.Descendants(W.p).LastOrDefault();
+                if (lastParagraph is null)
+                {
+                    lastParagraph = new XElement(W.p);
+                    comment.Add(lastParagraph);
+                }
+                if (paraId is not null)
+                    lastParagraph.SetAttributeValue(W14.paraId, paraId);
+            }
         }
 
         // Note that AcceptRevisionsForElement is an incomplete implementation.  It is not possible to accept all varieties of revisions
@@ -1258,54 +1262,6 @@ namespace Clippit.Word
             }
         }
 
-        private static bool IsBlockLevelCustomXml(XElement element)
-        {
-            if (element.Name != W.customXml)
-                return false;
-
-            foreach (var descendant in element.Descendants())
-            {
-                if (descendant.Name == W.p || descendant.Name == W.tbl)
-                    return true;
-                if (
-                    descendant.Name == W.tr
-                    || descendant.Name == W.tc
-                    || descendant.Name == W.r
-                    || descendant.Name == W.txbxContent
-                )
-                    return false;
-            }
-
-            return false;
-        }
-
-        private static IEnumerable<BlockContentInfo> IterateBlockContentElementsWithSiblingMarkup(XElement container)
-        {
-            var blockContentElements = IterateBlockContentElements(container).ToArray();
-            foreach (var child in container.Elements())
-            {
-                if (IsBlockLevelCustomXml(child))
-                {
-                    yield return new BlockContentInfo { ThisBlockContentElement = child };
-                    continue;
-                }
-
-                var childBlockContentElements = blockContentElements.Where(info =>
-                    info.ThisBlockContentElement == child || info.ThisBlockContentElement.Ancestors().Contains(child)
-                );
-                var hasBlockContent = false;
-                foreach (var blockContent in childBlockContentElements)
-                {
-                    hasBlockContent = true;
-                    yield return blockContent;
-                }
-                if (!hasBlockContent)
-                {
-                    yield return new BlockContentInfo { ThisBlockContentElement = child };
-                }
-            }
-        }
-
         public static class PT
         {
             public static XNamespace pt = "http://www.codeplex.com/PowerTools/2009/RevisionAccepter";
@@ -1500,14 +1456,11 @@ namespace Clippit.Word
             { W.bookmarkEnd, 50 },
         }.ToFrozenDictionary();
 
-        private static XElement AcceptDeletedAndMoveFromParagraphMarks(
-            XElement element,
-            IReadOnlySet<string> commentParaIds
-        )
+        private static XElement AcceptDeletedAndMoveFromParagraphMarks(XElement element)
         {
             AnnotateRunElementsWithId(element);
             AnnotateContentControlsWithRunIds(element);
-            var newElement = (XElement)AcceptDeletedAndMoveFromParagraphMarksTransform(element, commentParaIds);
+            var newElement = (XElement)AcceptDeletedAndMoveFromParagraphMarksTransform(element);
             var withBlockLevelContentControls = AddBlockLevelContentControls(newElement, element);
             return withBlockLevelContentControls;
         }
@@ -1524,59 +1477,92 @@ namespace Clippit.Word
             public int GroupingKey;
         };
 
-        private static object AcceptDeletedAndMoveFromParagraphMarksTransform(
-            XNode node,
-            IReadOnlySet<string> commentParaIds
-        )
+        private static object AcceptDeletedAndMoveFromParagraphMarksTransform(XNode node)
         {
             if (node is not XElement element)
                 return node;
-            var isBlockLevelCustomXml = IsBlockLevelCustomXml(element);
-            if (W.BlockLevelContentContainers.Contains(element.Name) || isBlockLevelCustomXml)
+            if (W.BlockLevelContentContainers.Contains(element.Name))
             {
-                XElement bodySectPr = null;
-                if (element.Name == W.body)
-                    bodySectPr = element.Element(W.sectPr);
-
-                var currentKey = 0;
-                var deletedParagraphGroupingInfo = new List<GroupingInfo>();
-                var blockContentElements = (
-                    element.Name == W.comment || isBlockLevelCustomXml
-                        ? IterateBlockContentElementsWithSiblingMarkup(element)
-                        : IterateBlockContentElements(element)
-                ).ToList();
-
-                var state = 0; // 0 = in non deleted paragraphs
-                // 1 = in deleted paragraph
-                // 2 - paragraph following deleted paragraphs
-
-                foreach (var c in blockContentElements)
+                var blockContent = IterateBlockContentElements(element).ToList();
+                // Only a deleted or moved-from paragraph mark needs the container rebuilt; rebuilding keeps only paragraphs
+                // and tables, so leave other containers to the identity clone below with their wrappers and markers intact.
+                if (
+                    blockContent.Any(c =>
+                        c.ThisBlockContentElement.Name == W.p
+                        && ParagraphMarkIsDeletedOrMovedFrom(c.ThisBlockContentElement)
+                    )
+                )
                 {
-                    if (c.ThisBlockContentElement.Name == W.p)
-                    {
-                        var paragraphMarkIsDeletedOrMovedFrom = c
-                            .ThisBlockContentElement.Elements(W.pPr)
-                            .Elements(W.rPr)
-                            .Elements()
-                            .Any(e => e.Name == W.del || e.Name == W.moveFrom);
+                    XElement bodySectPr = null;
+                    if (element.Name == W.body)
+                        bodySectPr = element.Element(W.sectPr);
 
-                        if (paragraphMarkIsDeletedOrMovedFrom)
+                    var currentKey = 0;
+                    var deletedParagraphGroupingInfo = new List<GroupingInfo>();
+
+                    var state = 0; // 0 = in non deleted paragraphs
+                    // 1 = in deleted paragraph
+                    // 2 - paragraph following deleted paragraphs
+
+                    foreach (var c in blockContent)
+                    {
+                        if (c.ThisBlockContentElement.Name == W.p)
                         {
+                            var paragraphMarkIsDeletedOrMovedFrom = ParagraphMarkIsDeletedOrMovedFrom(
+                                c.ThisBlockContentElement
+                            );
+
+                            if (paragraphMarkIsDeletedOrMovedFrom)
+                            {
+                                if (state == 0)
+                                {
+                                    state = 1;
+                                    currentKey += 1;
+                                    deletedParagraphGroupingInfo.Add(
+                                        new GroupingInfo()
+                                        {
+                                            GroupingType = GroupingType.DeletedRange,
+                                            GroupingKey = currentKey,
+                                        }
+                                    );
+                                    continue;
+                                }
+                                else if (state == 1)
+                                {
+                                    deletedParagraphGroupingInfo.Add(
+                                        new GroupingInfo()
+                                        {
+                                            GroupingType = GroupingType.DeletedRange,
+                                            GroupingKey = currentKey,
+                                        }
+                                    );
+                                    continue;
+                                }
+                                else if (state == 2)
+                                {
+                                    state = 1;
+                                    currentKey += 1;
+                                    deletedParagraphGroupingInfo.Add(
+                                        new GroupingInfo()
+                                        {
+                                            GroupingType = GroupingType.DeletedRange,
+                                            GroupingKey = currentKey,
+                                        }
+                                    );
+                                    continue;
+                                }
+                            }
+
                             if (state == 0)
                             {
-                                state = 1;
                                 currentKey += 1;
                                 deletedParagraphGroupingInfo.Add(
-                                    new GroupingInfo()
-                                    {
-                                        GroupingType = GroupingType.DeletedRange,
-                                        GroupingKey = currentKey,
-                                    }
+                                    new GroupingInfo() { GroupingType = GroupingType.Other, GroupingKey = currentKey }
                                 );
-                                continue;
                             }
                             else if (state == 1)
                             {
+                                state = 2;
                                 deletedParagraphGroupingInfo.Add(
                                     new GroupingInfo()
                                     {
@@ -1584,160 +1570,112 @@ namespace Clippit.Word
                                         GroupingKey = currentKey,
                                     }
                                 );
-                                continue;
                             }
                             else if (state == 2)
                             {
-                                state = 1;
+                                state = 0;
                                 currentKey += 1;
                                 deletedParagraphGroupingInfo.Add(
-                                    new GroupingInfo()
-                                    {
-                                        GroupingType = GroupingType.DeletedRange,
-                                        GroupingKey = currentKey,
-                                    }
+                                    new GroupingInfo() { GroupingType = GroupingType.Other, GroupingKey = currentKey }
                                 );
-                                continue;
                             }
                         }
-
-                        if (state == 0)
+                        else if (
+                            c.ThisBlockContentElement.Name == W.tbl
+                            || c.ThisBlockContentElement.Name.Namespace == M.m
+                        )
                         {
                             currentKey += 1;
                             deletedParagraphGroupingInfo.Add(
                                 new GroupingInfo() { GroupingType = GroupingType.Other, GroupingKey = currentKey }
                             );
-                        }
-                        else if (state == 1)
-                        {
-                            state = 2;
-                            deletedParagraphGroupingInfo.Add(
-                                new GroupingInfo()
-                                {
-                                    GroupingType = GroupingType.DeletedRange,
-                                    GroupingKey = currentKey,
-                                }
-                            );
-                        }
-                        else if (state == 2)
-                        {
                             state = 0;
-                            currentKey += 1;
+                        }
+                        else
+                        {
+                            // otherwise keep the same state, put in the same group, and continue
                             deletedParagraphGroupingInfo.Add(
                                 new GroupingInfo() { GroupingType = GroupingType.Other, GroupingKey = currentKey }
                             );
                         }
                     }
-                    else if (
-                        c.ThisBlockContentElement.Name == W.tbl
-                        || c.ThisBlockContentElement.Name == W.altChunk
-                        || c.ThisBlockContentElement.Name.Namespace == M.m
-                        || IsBlockLevelCustomXml(c.ThisBlockContentElement)
-                    )
-                    {
-                        currentKey += 1;
-                        deletedParagraphGroupingInfo.Add(
-                            new GroupingInfo() { GroupingType = GroupingType.Other, GroupingKey = currentKey }
-                        );
-                        state = 0;
-                    }
-                    else
-                    {
-                        // otherwise keep the same state, put in the same group, and continue
-                        deletedParagraphGroupingInfo.Add(
-                            new GroupingInfo() { GroupingType = GroupingType.Other, GroupingKey = currentKey }
-                        );
-                    }
-                }
 
-                var zipped = blockContentElements.Zip(
-                    deletedParagraphGroupingInfo,
-                    (blc, gi) => new { BlockLevelContent = blc, GroupingInfo = gi }
-                );
+                    var zipped = blockContent.Zip(
+                        deletedParagraphGroupingInfo,
+                        (blc, gi) => new { BlockLevelContent = blc, GroupingInfo = gi }
+                    );
 
-                var groupedParagraphs = zipped.GroupAdjacent(z => z.GroupingInfo.GroupingKey);
+                    var groupedParagraphs = zipped.GroupAdjacent(z => z.GroupingInfo.GroupingKey);
 
-                // Create a new block level content container.
-                var newBlockLevelContentContainer = new XElement(
-                    element.Name,
-                    element.Attributes(),
-                    element.Elements().Where(e => e.Name == W.tcPr),
-                    groupedParagraphs.Select(
-                        (g, i) =>
-                        {
-                            if (g.First().GroupingInfo.GroupingType == GroupingType.DeletedRange)
+                    // Create a new block level content container.
+                    var newBlockLevelContentContainer = new XElement(
+                        element.Name,
+                        element.Attributes(),
+                        element.Elements().Where(e => e.Name == W.tcPr),
+                        groupedParagraphs.Select(
+                            (g, i) =>
                             {
-                                var finalParagraph = g.Last(z =>
-                                    z.BlockLevelContent.ThisBlockContentElement.Name == W.p
-                                );
-                                var newParagraph = new XElement(
-                                    W.p,
-                                    finalParagraph.BlockLevelContent.ThisBlockContentElement.Attributes(),
-                                    finalParagraph.BlockLevelContent.ThisBlockContentElement.Elements(W.pPr),
-                                    g.Select(z =>
-                                        CollapseParagraphTransform(z.BlockLevelContent.ThisBlockContentElement)
-                                    )
-                                );
-
-                                // if this contains the last paragraph in the document, and if there is no content,
-                                // and if the paragraph mark is deleted, then nuke the paragraph.
-                                var allIsDeleted = AllParaContentIsDeleted(newParagraph);
-                                var paraId = (string?)newParagraph.Attribute(W14.paraId);
-                                if (
-                                    allIsDeleted
-                                    && finalParagraph
-                                        .BlockLevelContent.ThisBlockContentElement.Elements(W.pPr)
-                                        .Elements(W.rPr)
-                                        .Elements(W.del)
-                                        .Any()
-                                    && (
-                                        finalParagraph.BlockLevelContent.NextBlockContentElement is null
-                                        || finalParagraph.BlockLevelContent.NextBlockContentElement.Name == W.tbl
-                                    )
-                                    && !g.Any(z => z.BlockLevelContent.ThisBlockContentElement.Name != W.p)
-                                    && (paraId is null || !commentParaIds.Contains(paraId))
-                                )
-                                    return null;
-
-                                return (object)newParagraph;
-                            }
-                            else
-                            {
-                                return g.Select(z =>
+                                if (g.First().GroupingInfo.GroupingType == GroupingType.DeletedRange)
                                 {
-                                    var contentElement = z.BlockLevelContent.ThisBlockContentElement;
-                                    if (IsBlockLevelCustomXml(contentElement))
-                                        return AcceptDeletedAndMoveFromParagraphMarksTransform(
-                                            contentElement,
-                                            commentParaIds
-                                        );
-
-                                    return new XElement(
-                                        contentElement.Name,
-                                        contentElement.Attributes(),
-                                        contentElement
-                                            .Nodes()
-                                            .Select(n =>
-                                                AcceptDeletedAndMoveFromParagraphMarksTransform(n, commentParaIds)
-                                            )
+                                    var newParagraph = new XElement(
+                                        W.p,
+                                        g.Last().BlockLevelContent.ThisBlockContentElement.Elements(W.pPr),
+                                        g.Select(z =>
+                                            CollapseParagraphTransform(z.BlockLevelContent.ThisBlockContentElement)
+                                        )
                                     );
-                                });
-                            }
-                        }
-                    ),
-                    bodySectPr
-                );
 
-                return newBlockLevelContentContainer;
+                                    // if this contains the last paragraph in the document, and if there is no content,
+                                    // and if the paragraph mark is deleted, then nuke the paragraph.
+                                    var allIsDeleted = AllParaContentIsDeleted(newParagraph);
+                                    if (
+                                        allIsDeleted
+                                        && g.Last()
+                                            .BlockLevelContent.ThisBlockContentElement.Elements(W.pPr)
+                                            .Elements(W.rPr)
+                                            .Elements(W.del)
+                                            .Any()
+                                        && (
+                                            g.Last().BlockLevelContent.NextBlockContentElement is null
+                                            || g.Last().BlockLevelContent.NextBlockContentElement.Name == W.tbl
+                                        )
+                                    )
+                                        return null;
+
+                                    return (object)newParagraph;
+                                }
+                                else
+                                {
+                                    return g.Select(z =>
+                                    {
+                                        var newEle = new XElement(
+                                            z.BlockLevelContent.ThisBlockContentElement.Name,
+                                            z.BlockLevelContent.ThisBlockContentElement.Attributes(),
+                                            z.BlockLevelContent.ThisBlockContentElement.Nodes()
+                                                .Select(n => AcceptDeletedAndMoveFromParagraphMarksTransform(n))
+                                        );
+                                        return newEle;
+                                    });
+                                }
+                            }
+                        ),
+                        bodySectPr
+                    );
+
+                    return newBlockLevelContentContainer;
+                }
             }
 
             // Otherwise, identity clone.
             return new XElement(
                 element.Name,
                 element.Attributes(),
-                element.Nodes().Select(n => AcceptDeletedAndMoveFromParagraphMarksTransform(n, commentParaIds))
+                element.Nodes().Select(n => AcceptDeletedAndMoveFromParagraphMarksTransform(n))
             );
         }
+
+        private static bool ParagraphMarkIsDeletedOrMovedFrom(XElement paragraph) =>
+            paragraph.Elements(W.pPr).Elements(W.rPr).Elements().Any(e => e.Name == W.del || e.Name == W.moveFrom);
 
         // Determine if the paragraph contains any content that is not deleted.
         private static bool AllParaContentIsDeleted(XElement p)

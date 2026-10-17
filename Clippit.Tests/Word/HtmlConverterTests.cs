@@ -1024,7 +1024,7 @@ public class HtmlConverterTests() : Clippit.Tests.TestsBase
         await Assert.That(cells.Count(td => td.Attribute("rowspan") is not null)).IsEqualTo(1);
     }
 
-    internal static XElement BuildTextBoxParagraph(
+    private static XElement BuildTextBoxParagraph(
         XNamespace w,
         XNamespace wp,
         XNamespace a,
