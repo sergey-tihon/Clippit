@@ -98,9 +98,17 @@ namespace Clippit.Word
 
                 ////////////////////////////////////////////////////////////////////////////////////
                 // Change w:sectPr
+                // The recorded section properties (CT_SectPrBase) cannot hold header and footer
+                // references, which are not part of the revision, so keep the current ones.
                 if (element.Name == W.sectPr && element.Element(W.sectPrChange) is not null)
                 {
-                    var newSectPr = element.Element(W.sectPrChange).Element(W.sectPr);
+                    var oldSectPr = element.Element(W.sectPrChange).Element(W.sectPr) ?? new XElement(W.sectPr);
+                    var newSectPr = new XElement(
+                        W.sectPr,
+                        oldSectPr.Attributes(),
+                        element.Elements().Where(e => e.Name == W.headerReference || e.Name == W.footerReference),
+                        oldSectPr.Elements().Where(e => e.Name != W.headerReference && e.Name != W.footerReference)
+                    );
                     return RejectRevisionsForPartTransform(newSectPr);
                 }
 
