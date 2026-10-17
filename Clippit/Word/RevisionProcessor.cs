@@ -72,11 +72,14 @@ namespace Clippit.Word
 
                 ////////////////////////////////////////////////////////////////////////////////////////
                 // Paragraph properties change
+                // The recorded properties (CT_PPrBase) cannot hold the paragraph mark's run properties
+                // or a section break, which are tracked separately, so keep the current ones.
                 if (element.Name == W.pPr && element.Element(W.pPrChange) is not null)
                 {
                     var pPr = element.Element(W.pPrChange).Element(W.pPr) ?? new XElement(W.pPr);
                     var new_pPr = new XElement(pPr); // clone it
                     new_pPr.Add(RejectRevisionsForPartTransform(element.Element(W.rPr)));
+                    new_pPr.Add(element.Element(W.sectPr));
                     return RejectRevisionsForPartTransform(new_pPr);
                 }
 
