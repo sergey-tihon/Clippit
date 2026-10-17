@@ -199,10 +199,31 @@ public class RevisionProcessorTests : TestsBase
     }
 
     [Test]
-    public async Task RP063_AcceptCommentMergeKeepsExtendedParaId()
+    [Arguments(false, 1, "Parent first paragraph Parent final paragraph")]
+    [Arguments(true, 2, "")]
+    public async Task RP063_AcceptCommentParagraphIdKeepsExtendedMetadata(
+        bool deleteFinalParagraph,
+        int expectedParentParagraphCount,
+        string expectedFinalText
+    )
     {
         const string parentParaId = "22222222";
         const string replyParaId = "33333333";
+        var parentParagraphs = deleteFinalParagraph
+            ? $"""
+                <w:p w14:paraId="11111111"><w:r><w:t>Parent first paragraph</w:t></w:r></w:p>
+                <w:p w14:paraId="{parentParaId}">
+                  <w:pPr><w:rPr><w:del w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z"/></w:rPr></w:pPr>
+                  <w:del w:id="2" w:author="Author" w:date="2026-10-15T00:00:00Z"><w:r><w:delText>Parent final paragraph</w:delText></w:r></w:del>
+                </w:p>
+                """
+            : $"""
+                <w:p w14:paraId="11111111">
+                  <w:pPr><w:rPr><w:del w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z"/></w:rPr></w:pPr>
+                  <w:r><w:t>Parent first paragraph</w:t></w:r>
+                </w:p>
+                <w:p w14:paraId="{parentParaId}"><w:r><w:t xml:space="preserve"> Parent final paragraph</w:t></w:r></w:p>
+                """;
         var source = CreateDocument(
             """
             <w:p>
@@ -221,11 +242,7 @@ public class RevisionProcessorTests : TestsBase
                             $"""
                             <w:comments xmlns:w="{W.w.NamespaceName}" xmlns:w14="{W14.w14.NamespaceName}">
                               <w:comment w:id="0" w:author="Author" w:date="2026-10-15T00:00:00Z" w:initials="A">
-                                <w:p w14:paraId="11111111">
-                                  <w:pPr><w:rPr><w:del w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z"/></w:rPr></w:pPr>
-                                  <w:r><w:t>Parent first paragraph</w:t></w:r>
-                                </w:p>
-                                <w:p w14:paraId="{parentParaId}"><w:r><w:t>Parent final paragraph</w:t></w:r></w:p>
+                                {parentParagraphs}
                               </w:comment>
                               <w:comment w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z" w:initials="A">
                                 <w:p w14:paraId="{replyParaId}"><w:r><w:t>Reply</w:t></w:r></w:p>
@@ -258,9 +275,10 @@ public class RevisionProcessorTests : TestsBase
 
         var comments = doc.MainDocumentPart!.WordprocessingCommentsPart!.GetXDocument();
         var parentComment = comments.Descendants(W.comment).Single(c => (string?)c.Attribute(W.id) == "0");
-        await Assert.That(parentComment.Elements(W.p)).HasCount(1);
-        var mergedParagraph = parentComment.Element(W.p)!;
-        await Assert.That((string?)mergedParagraph.Attribute(W14.paraId)).IsEqualTo(parentParaId);
+        await Assert.That(parentComment.Elements(W.p)).HasCount(expectedParentParagraphCount);
+        var finalParagraph = parentComment.Elements(W.p).Last();
+        await Assert.That((string?)finalParagraph.Attribute(W14.paraId)).IsEqualTo(parentParaId);
+        await Assert.That(TextOf(finalParagraph)).IsEqualTo(expectedFinalText);
 
         var commentEx = doc
             .MainDocumentPart.WordprocessingCommentsExPart!.GetXDocument()

@@ -683,6 +683,7 @@ namespace Clippit.Word
 
         public static void AcceptRevisionsForPart(OpenXmlPart part)
         {
+            var commentParaIds = GetCommentParaIdsReferencedByExtendedComments(part);
             var documentElement = part.GetXDocument().Root;
             documentElement = (XElement)RemoveRsidTransform(documentElement);
             documentElement = (XElement)FixUpDeletedOrInsertedFieldCodesTransform(documentElement);
@@ -692,7 +693,7 @@ namespace Clippit.Word
             // AcceptParagraphEndTagsInMoveFromTransform needs rewritten similar to AcceptDeletedAndMoveFromParagraphMarks
             documentElement = (XElement)AcceptParagraphEndTagsInMoveFromTransform(documentElement);
             documentElement = AcceptDeletedAndMovedFromContentControls(documentElement);
-            documentElement = AcceptDeletedAndMoveFromParagraphMarks(documentElement);
+            documentElement = AcceptDeletedAndMoveFromParagraphMarks(documentElement, commentParaIds);
             if (containsMoveFromMoveTo)
                 documentElement = (XElement)RemoveRowsLeftEmptyByMoveFrom(documentElement);
             documentElement = (XElement)AcceptAllOtherRevisionsTransform(documentElement);
@@ -707,6 +708,28 @@ namespace Clippit.Word
             documentElement.Descendants(W.numPr).Where(np => !np.HasElements).Remove();
             var newXDoc = new XDocument(documentElement);
             part.PutXDocument(newXDoc);
+        }
+
+        private static HashSet<string> GetCommentParaIdsReferencedByExtendedComments(OpenXmlPart part)
+        {
+            if (part is not WordprocessingCommentsPart)
+                return [];
+
+            if (part.OpenXmlPackage is not WordprocessingDocument document)
+                return [];
+
+            var commentsExPart = document.MainDocumentPart?.WordprocessingCommentsExPart;
+            if (commentsExPart is null)
+                return [];
+
+            return commentsExPart
+                .GetXDocument()
+                .Descendants(W15.w15 + "commentEx")
+                .SelectMany(commentEx =>
+                    commentEx.Attributes(W15.w15 + "paraId").Concat(commentEx.Attributes(W15.w15 + "paraIdParent"))
+                )
+                .Select(attribute => attribute.Value)
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
         }
 
         // Note that AcceptRevisionsForElement is an incomplete implementation.  It is not possible to accept all varieties of revisions
@@ -1429,11 +1452,14 @@ namespace Clippit.Word
             { W.bookmarkEnd, 50 },
         }.ToFrozenDictionary();
 
-        private static XElement AcceptDeletedAndMoveFromParagraphMarks(XElement element)
+        private static XElement AcceptDeletedAndMoveFromParagraphMarks(
+            XElement element,
+            IReadOnlySet<string> commentParaIds
+        )
         {
             AnnotateRunElementsWithId(element);
             AnnotateContentControlsWithRunIds(element);
-            var newElement = (XElement)AcceptDeletedAndMoveFromParagraphMarksTransform(element);
+            var newElement = (XElement)AcceptDeletedAndMoveFromParagraphMarksTransform(element, commentParaIds);
             var withBlockLevelContentControls = AddBlockLevelContentControls(newElement, element);
             return withBlockLevelContentControls;
         }
@@ -1450,7 +1476,10 @@ namespace Clippit.Word
             public int GroupingKey;
         };
 
-        private static object AcceptDeletedAndMoveFromParagraphMarksTransform(XNode node)
+        private static object AcceptDeletedAndMoveFromParagraphMarksTransform(
+            XNode node,
+            IReadOnlySet<string> commentParaIds
+        )
         {
             if (node is not XElement element)
                 return node;
@@ -1589,6 +1618,7 @@ namespace Clippit.Word
                                 // if this contains the last paragraph in the document, and if there is no content,
                                 // and if the paragraph mark is deleted, then nuke the paragraph.
                                 var allIsDeleted = AllParaContentIsDeleted(newParagraph);
+                                var paraId = (string?)newParagraph.Attribute(W14.paraId);
                                 if (
                                     allIsDeleted
                                     && g.Last()
@@ -1600,6 +1630,7 @@ namespace Clippit.Word
                                         g.Last().BlockLevelContent.NextBlockContentElement is null
                                         || g.Last().BlockLevelContent.NextBlockContentElement.Name == W.tbl
                                     )
+                                    && (paraId is null || !commentParaIds.Contains(paraId))
                                 )
                                     return null;
 
@@ -1613,7 +1644,9 @@ namespace Clippit.Word
                                         z.BlockLevelContent.ThisBlockContentElement.Name,
                                         z.BlockLevelContent.ThisBlockContentElement.Attributes(),
                                         z.BlockLevelContent.ThisBlockContentElement.Nodes()
-                                            .Select(n => AcceptDeletedAndMoveFromParagraphMarksTransform(n))
+                                            .Select(n =>
+                                                AcceptDeletedAndMoveFromParagraphMarksTransform(n, commentParaIds)
+                                            )
                                     );
                                     return newEle;
                                 });
@@ -1630,7 +1663,7 @@ namespace Clippit.Word
             return new XElement(
                 element.Name,
                 element.Attributes(),
-                element.Nodes().Select(n => AcceptDeletedAndMoveFromParagraphMarksTransform(n))
+                element.Nodes().Select(n => AcceptDeletedAndMoveFromParagraphMarksTransform(n, commentParaIds))
             );
         }
 
