@@ -333,6 +333,125 @@ public class RevisionProcessorTests : TestsBase
     }
 
     [Test]
+    [Arguments(false, false, 1, "Unchanged")]
+    [Arguments(true, false, 1, "Unchanged")]
+    [Arguments(false, true, 1, "First Second")]
+    [Arguments(true, true, 2, "First| Second")]
+    public async Task RP065_CommentCustomXmlSurvivesRevisionProcessing(
+        bool reject,
+        bool deleteParagraphMark,
+        int expectedParagraphCount,
+        string expectedText
+    )
+    {
+        var paragraphs = deleteParagraphMark
+            ? """
+                <w:p>
+                  <w:pPr><w:rPr><w:del w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z"/></w:rPr></w:pPr>
+                  <w:r><w:t>First</w:t></w:r>
+                </w:p>
+                <w:p><w:r><w:t xml:space="preserve"> Second</w:t></w:r></w:p>
+                """
+            : """
+                <w:p><w:r><w:t>Unchanged</w:t></w:r></w:p>
+                """;
+        var source = CreateDocument(
+            """
+            <w:p>
+              <w:commentRangeStart w:id="0"/>
+              <w:r><w:t>Commented</w:t></w:r>
+              <w:commentRangeEnd w:id="0"/>
+              <w:r><w:commentReference w:id="0"/></w:r>
+            </w:p>
+            """,
+            mainPart =>
+                mainPart
+                    .AddNewPart<WordprocessingCommentsPart>("rIdComments")
+                    .PutXDocument(
+                        XDocument.Parse(
+                            $"""
+                            <w:comments xmlns:w="{W.w.NamespaceName}">
+                              <w:comment w:id="0" w:author="Author" w:date="2026-10-15T00:00:00Z" w:initials="A">
+                                <w:customXml w:uri="urn:clippit:test" w:element="commentPayload">
+                                  {paragraphs}
+                                </w:customXml>
+                              </w:comment>
+                            </w:comments>
+                            """
+                        )
+                    )
+        );
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc, [$"The '{W.w.NamespaceName}:uri' attribute is not declared."]);
+        var comment = doc.MainDocumentPart!.WordprocessingCommentsPart!.GetXDocument().Descendants(W.comment).Single();
+        var customXml = comment.Element(W.customXml)!;
+        await Assert.That((string?)customXml.Attribute(W.uri)).IsEqualTo("urn:clippit:test");
+        await Assert.That((string?)customXml.Attribute(W.element)).IsEqualTo("commentPayload");
+        await Assert.That(customXml.Elements(W.p)).HasCount(expectedParagraphCount);
+        await Assert.That(string.Join("|", customXml.Elements(W.p).Select(TextOf))).IsEqualTo(expectedText);
+    }
+
+    [Test]
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task RP066_CommentAltChunkSeparatesParagraphMerge(bool reject)
+    {
+        const string chunkId = "rIdAltChunk";
+        var source = CreateDocument(
+            """
+            <w:p>
+              <w:commentRangeStart w:id="0"/>
+              <w:r><w:t>Commented</w:t></w:r>
+              <w:commentRangeEnd w:id="0"/>
+              <w:r><w:commentReference w:id="0"/></w:r>
+            </w:p>
+            """,
+            mainPart =>
+            {
+                var commentsPart = mainPart.AddNewPart<WordprocessingCommentsPart>("rIdComments");
+                commentsPart.PutXDocument(
+                    XDocument.Parse(
+                        $"""
+                        <w:comments xmlns:w="{W.w.NamespaceName}" xmlns:r="{R.r.NamespaceName}">
+                          <w:comment w:id="0" w:author="Author" w:date="2026-10-15T00:00:00Z" w:initials="A">
+                            <w:p>
+                              <w:pPr><w:rPr><w:del w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z"/></w:rPr></w:pPr>
+                              <w:r><w:t>Before chunk</w:t></w:r>
+                            </w:p>
+                            <w:altChunk r:id="{chunkId}"/>
+                            <w:p><w:r><w:t>After chunk</w:t></w:r></w:p>
+                          </w:comment>
+                        </w:comments>
+                        """
+                    )
+                );
+                var altChunkPart = commentsPart.AddAlternativeFormatImportPart(
+                    AlternativeFormatImportPartType.Html,
+                    chunkId
+                );
+                altChunkPart.FeedData(
+                    new MemoryStream(System.Text.Encoding.UTF8.GetBytes("<html><body>chunk</body></html>"))
+                );
+            }
+        );
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc);
+        var comment = doc.MainDocumentPart!.WordprocessingCommentsPart!.GetXDocument().Descendants(W.comment).Single();
+        await Assert
+            .That(string.Join("|", comment.Elements().Select(element => element.Name.LocalName)))
+            .IsEqualTo("p|altChunk|p");
+        await Assert.That((string?)comment.Element(W.altChunk)!.Attribute(R.id)).IsEqualTo(chunkId);
+    }
+
+    [Test]
     [Arguments(false, "A1 | B1 / (span=2) A2")]
     [Arguments(true, "A1 | B1 / A2 | B2")]
     public async Task RP062_DeletedCellAfterCellWithoutProperties(bool reject, string expectedRows)

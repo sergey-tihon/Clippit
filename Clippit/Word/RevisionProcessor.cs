@@ -1258,11 +1258,21 @@ namespace Clippit.Word
             }
         }
 
-        private static IEnumerable<BlockContentInfo> IterateCommentBlockContentElements(XElement comment)
+        private static bool IsBlockLevelCustomXml(XElement element) =>
+            element.Name == W.customXml
+            && element.Descendants().Any(descendant => descendant.Name == W.p || descendant.Name == W.tbl);
+
+        private static IEnumerable<BlockContentInfo> IterateBlockContentElementsWithSiblingMarkup(XElement container)
         {
-            var blockContentElements = IterateBlockContentElements(comment).ToArray();
-            foreach (var child in comment.Elements())
+            var blockContentElements = IterateBlockContentElements(container).ToArray();
+            foreach (var child in container.Elements())
             {
+                if (IsBlockLevelCustomXml(child))
+                {
+                    yield return new BlockContentInfo { ThisBlockContentElement = child };
+                    continue;
+                }
+
                 var childBlockContentElements = blockContentElements.Where(info =>
                     info.ThisBlockContentElement == child || info.ThisBlockContentElement.Ancestors().Contains(child)
                 );
@@ -1504,7 +1514,8 @@ namespace Clippit.Word
         {
             if (node is not XElement element)
                 return node;
-            if (W.BlockLevelContentContainers.Contains(element.Name))
+            var isBlockLevelCustomXml = IsBlockLevelCustomXml(element);
+            if (W.BlockLevelContentContainers.Contains(element.Name) || isBlockLevelCustomXml)
             {
                 XElement bodySectPr = null;
                 if (element.Name == W.body)
@@ -1513,8 +1524,8 @@ namespace Clippit.Word
                 var currentKey = 0;
                 var deletedParagraphGroupingInfo = new List<GroupingInfo>();
                 var blockContentElements = (
-                    element.Name == W.comment
-                        ? IterateCommentBlockContentElements(element)
+                    element.Name == W.comment || isBlockLevelCustomXml
+                        ? IterateBlockContentElementsWithSiblingMarkup(element)
                         : IterateBlockContentElements(element)
                 ).ToList();
 
@@ -1600,7 +1611,12 @@ namespace Clippit.Word
                             );
                         }
                     }
-                    else if (c.ThisBlockContentElement.Name == W.tbl || c.ThisBlockContentElement.Name.Namespace == M.m)
+                    else if (
+                        c.ThisBlockContentElement.Name == W.tbl
+                        || c.ThisBlockContentElement.Name == W.altChunk
+                        || c.ThisBlockContentElement.Name.Namespace == M.m
+                        || IsBlockLevelCustomXml(c.ThisBlockContentElement)
+                    )
                     {
                         currentKey += 1;
                         deletedParagraphGroupingInfo.Add(
@@ -1672,15 +1688,22 @@ namespace Clippit.Word
                             {
                                 return g.Select(z =>
                                 {
-                                    var newEle = new XElement(
-                                        z.BlockLevelContent.ThisBlockContentElement.Name,
-                                        z.BlockLevelContent.ThisBlockContentElement.Attributes(),
-                                        z.BlockLevelContent.ThisBlockContentElement.Nodes()
+                                    var contentElement = z.BlockLevelContent.ThisBlockContentElement;
+                                    if (IsBlockLevelCustomXml(contentElement))
+                                        return AcceptDeletedAndMoveFromParagraphMarksTransform(
+                                            contentElement,
+                                            commentParaIds
+                                        );
+
+                                    return new XElement(
+                                        contentElement.Name,
+                                        contentElement.Attributes(),
+                                        contentElement
+                                            .Nodes()
                                             .Select(n =>
                                                 AcceptDeletedAndMoveFromParagraphMarksTransform(n, commentParaIds)
                                             )
                                     );
-                                    return newEle;
                                 });
                             }
                         }
