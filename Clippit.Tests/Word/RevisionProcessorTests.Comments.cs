@@ -248,5 +248,45 @@ public partial class RevisionProcessorTests
                 string.Concat(expectedContainer.Elements().Select(e => e.ToString(SaveOptions.DisableFormatting)))
             );
     }
+
+    [Test]
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task RP065_AltChunkOrderIsPreservedWhenMergingCommentParagraphs(bool reject)
+    {
+        var mark = reject ? "ins" : "del";
+        var commentXml =
+            $"<w:p><w:pPr><w:rPr><w:{mark} w:id=\"1\" w:author=\"Author\" w:date=\"2026-10-15T00:00:00Z\"/></w:rPr></w:pPr><w:r><w:t>Before</w:t></w:r></w:p>"
+            + "<w:altChunk r:id=\"rIdChunk\"/>"
+            + "<w:p><w:r><w:t>After</w:t></w:r></w:p>";
+        var source = CreateDocument(
+            "<w:p/>",
+            mainPart =>
+            {
+                var commentsPart = mainPart.AddNewPart<WordprocessingCommentsPart>("rIdComments");
+                var altChunkPart = commentsPart.AddAlternativeFormatImportPart(
+                    AlternativeFormatImportPartType.TextPlain,
+                    "rIdChunk"
+                );
+                using var altChunkStream = altChunkPart.GetStream(FileMode.Create);
+                using var altChunkWriter = new StreamWriter(altChunkStream);
+                altChunkWriter.Write("chunk");
+                commentsPart.PutXDocument(
+                    XDocument.Parse(
+                        $"<w:comments {s_namespaces}><w:comment w:id=\"0\" w:author=\"Author\">{commentXml}</w:comment></w:comments>"
+                    )
+                );
+            }
+        );
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc);
+        var comment = doc.MainDocumentPart!.WordprocessingCommentsPart!.GetXDocument().Root!.Element(W.comment)!;
+        await Assert.That(string.Join("|", comment.Elements().Select(e => e.Name.LocalName))).IsEqualTo("p|altChunk|p");
+        await Assert.That(string.Join("|", comment.Elements(W.p).Select(TextOf))).IsEqualTo("Before|After");
+    }
 }
 #pragma warning restore CA1707

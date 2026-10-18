@@ -1185,7 +1185,7 @@ namespace Clippit.Word
             var firstContentElement = contentContainer
                 .Elements()
                 .DescendantsAndSelf()
-                .FirstOrDefault(e => e.Name == W.p || e.Name == W.tbl);
+                .FirstOrDefault(e => e.Name == W.p || e.Name == W.tbl || e.Name == W.altChunk);
             if (firstContentElement is null)
                 return;
 
@@ -1209,7 +1209,7 @@ namespace Clippit.Word
                     nextContentElement = current
                         .ElementsAfterSelf()
                         .DescendantsAndSelf()
-                        .FirstOrDefault(e => e.Name == W.p || e.Name == W.tbl);
+                        .FirstOrDefault(e => e.Name == W.p || e.Name == W.tbl || e.Name == W.altChunk);
                     if (nextContentElement is not null)
                     {
                         currentContentInfo.NextBlockContentElement = nextContentElement;
@@ -1568,6 +1568,7 @@ namespace Clippit.Word
                         }
                         else if (
                             c.ThisBlockContentElement.Name == W.tbl
+                            || c.ThisBlockContentElement.Name == W.altChunk
                             || c.ThisBlockContentElement.Name.Namespace == M.m
                         )
                         {
