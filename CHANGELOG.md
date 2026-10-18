@@ -1,8 +1,5 @@
 # Changelog
 
-## [Unreleased]
-
-
 ## [3.9.1] - September 21, 2026
 
 - perf: eliminate redundant dictionary, sorted-list, and LINQ iterator lookups across Excel, HTML, PowerPoint, and Word (#472, #475, #477, #482, #484, #489, #491, #517, #520)
