@@ -26,11 +26,6 @@ namespace Clippit.Word
 
         public static void RejectRevisions(WordprocessingDocument doc)
         {
-            var commentsPart = doc.MainDocumentPart.WordprocessingCommentsPart;
-            var commentLastParaIds = commentsPart is null
-                ? null
-                : GetCommentLastParagraphIds(commentsPart.GetXDocument().Root);
-
             foreach (var part in StoryParts(doc.MainDocumentPart))
             {
                 RejectRevisionsForPart(part);
@@ -41,7 +36,7 @@ namespace Clippit.Word
             ReverseRevisions(doc);
             foreach (var part in StoryParts(doc.MainDocumentPart))
             {
-                AcceptRevisionsForPart(part, part == commentsPart ? commentLastParaIds : null);
+                AcceptRevisionsForPart(part);
             }
             if (doc.MainDocumentPart.StyleDefinitionsPart is not null)
                 AcceptRevisionsForStylesDefinitionPart(doc.MainDocumentPart.StyleDefinitionsPart);
@@ -698,16 +693,7 @@ namespace Clippit.Word
 
         public static void AcceptRevisionsForPart(OpenXmlPart part)
         {
-            AcceptRevisionsForPart(part, null);
-        }
-
-        private static void AcceptRevisionsForPart(OpenXmlPart part, List<string?> preservedCommentLastParaIds)
-        {
-            var originalRoot = part.GetXDocument().Root;
-            var commentLastParaIds =
-                preservedCommentLastParaIds
-                ?? (originalRoot.Name == W.comments ? GetCommentLastParagraphIds(originalRoot) : null);
-            var documentElement = originalRoot;
+            var documentElement = part.GetXDocument().Root;
             documentElement = (XElement)RemoveRsidTransform(documentElement);
             documentElement = (XElement)FixUpDeletedOrInsertedFieldCodesTransform(documentElement);
             var containsMoveFromMoveTo = documentElement.Descendants(W.moveFrom).Any();
@@ -723,8 +709,6 @@ namespace Clippit.Word
             documentElement = (XElement)AcceptDeletedCellsTransform(documentElement);
             documentElement = (XElement)MergeAdjacentTablesTransform(documentElement);
             documentElement = (XElement)AddEmptyParagraphToAnyEmptyCells(documentElement);
-            if (commentLastParaIds is not null)
-                RestoreCommentLastParagraphIds(documentElement, commentLastParaIds);
             documentElement
                 .Descendants()
                 .Attributes()
@@ -733,29 +717,6 @@ namespace Clippit.Word
             documentElement.Descendants(W.numPr).Where(np => !np.HasElements).Remove();
             var newXDoc = new XDocument(documentElement);
             part.PutXDocument(newXDoc);
-        }
-
-        // commentsExtended, commentsIds and commentsExtensible identify a comment by the w14:paraId of its last
-        // paragraph, so accepting a merge or removal there must leave that ID on the new last paragraph.
-        private static List<string?> GetCommentLastParagraphIds(XElement comments) =>
-            comments
-                .Elements(W.comment)
-                .Select(c => (string?)c.Descendants(W.p).LastOrDefault()?.Attribute(W14.paraId))
-                .ToList();
-
-        private static void RestoreCommentLastParagraphIds(XElement comments, List<string?> lastParagraphIds)
-        {
-            foreach (var (comment, paraId) in comments.Elements(W.comment).Zip(lastParagraphIds))
-            {
-                var lastParagraph = comment.Descendants(W.p).LastOrDefault();
-                if (lastParagraph is null)
-                {
-                    lastParagraph = new XElement(W.p);
-                    comment.Add(lastParagraph);
-                }
-                if (paraId is not null)
-                    lastParagraph.SetAttributeValue(W14.paraId, paraId);
-            }
         }
 
         // Note that AcceptRevisionsForElement is an incomplete implementation.  It is not possible to accept all varieties of revisions
@@ -1214,18 +1175,6 @@ namespace Clippit.Word
         /// paragraph following.  When assembling the new paragraph, use a transform that collapses
         /// the paragraph nodes when adding content, thereby preserving custom XML and content
         /// controls.
-        private static IEnumerable<XElement> DescendantsOutsideCustomXml(XElement element)
-        {
-            yield return element;
-            foreach (var child in element.Elements())
-            {
-                if (child.Name == W.customXml)
-                    continue;
-                foreach (var descendant in DescendantsOutsideCustomXml(child))
-                    yield return descendant;
-            }
-        }
-
         private static void AnnotateBlockContentElements(XElement contentContainer)
         {
             // For convenience, there is a ParagraphInfo annotation on the contentContainer.
@@ -1235,7 +1184,7 @@ namespace Clippit.Word
                 return;
             var firstContentElement = contentContainer
                 .Elements()
-                .SelectMany(DescendantsOutsideCustomXml)
+                .DescendantsAndSelf()
                 .FirstOrDefault(e => e.Name == W.p || e.Name == W.tbl);
             if (firstContentElement is null)
                 return;
@@ -1259,7 +1208,7 @@ namespace Clippit.Word
                 {
                     nextContentElement = current
                         .ElementsAfterSelf()
-                        .SelectMany(DescendantsOutsideCustomXml)
+                        .DescendantsAndSelf()
                         .FirstOrDefault(e => e.Name == W.p || e.Name == W.tbl);
                     if (nextContentElement is not null)
                     {
@@ -1522,8 +1471,7 @@ namespace Clippit.Word
             if (W.BlockLevelContentContainers.Contains(element.Name))
             {
                 var blockContent = IterateBlockContentElements(element).ToList();
-                // Only a deleted or moved-from paragraph mark needs the container rebuilt; rebuilding keeps only paragraphs
-                // and tables, so leave other containers to the identity clone below with their wrappers and markers intact.
+                // Only a deleted or moved-from paragraph mark needs the container rebuilt; every other container is cloned as is.
                 if (
                     blockContent.Any(c =>
                         c.ThisBlockContentElement.Name == W.p
@@ -1638,6 +1586,55 @@ namespace Clippit.Word
                         }
                     }
 
+                    var groupingByContent = new Dictionary<XElement, GroupingInfo>();
+                    for (var i = 0; i < blockContent.Count; i++)
+                    {
+                        groupingByContent.Add(blockContent[i].ThisBlockContentElement, deletedParagraphGroupingInfo[i]);
+                    }
+
+                    // Direct children that hold no paragraph or table of this container (bookmarks, permissions, comment ranges,
+                    // altChunk, empty customXml) are not block content; each one stays in front of the content element after it.
+                    var markersByAnchor = new Dictionary<XElement, List<XElement>>();
+                    var trailingMarkers = new List<XElement>();
+                    // Block-level customXml whose paragraphs and tables do not join a deleted paragraph mark is emitted whole.
+                    var intactCustomXmlByFirstContent = new Dictionary<XElement, XElement>();
+                    var contentInIntactCustomXml = new HashSet<XElement>();
+                    foreach (var child in element.Elements())
+                    {
+                        if (child.Name == W.tcPr || child.Name == W.sectPr || groupingByContent.ContainsKey(child))
+                        {
+                            continue;
+                        }
+                        var childContent = child.Descendants().Where(groupingByContent.ContainsKey).ToList();
+                        if (childContent.Count == 0)
+                        {
+                            var anchor = child
+                                .ElementsAfterSelf()
+                                .DescendantsAndSelf()
+                                .FirstOrDefault(groupingByContent.ContainsKey);
+                            if (anchor is null)
+                            {
+                                trailingMarkers.Add(child);
+                            }
+                            else if (markersByAnchor.TryGetValue(anchor, out var anchored))
+                            {
+                                anchored.Add(child);
+                            }
+                            else
+                            {
+                                markersByAnchor.Add(anchor, [child]);
+                            }
+                        }
+                        else if (
+                            child.Name == W.customXml
+                            && childContent.All(c => groupingByContent[c].GroupingType == GroupingType.Other)
+                        )
+                        {
+                            intactCustomXmlByFirstContent.Add(childContent[0], child);
+                            contentInIntactCustomXml.UnionWith(childContent);
+                        }
+                    }
+
                     var zipped = blockContent.Zip(
                         deletedParagraphGroupingInfo,
                         (blc, gi) => new { BlockLevelContent = blc, GroupingInfo = gi }
@@ -1655,12 +1652,37 @@ namespace Clippit.Word
                             {
                                 if (g.First().GroupingInfo.GroupingType == GroupingType.DeletedRange)
                                 {
+                                    var groupMarkers = new List<XElement>();
+                                    var blockMarkers = new List<XElement>();
+                                    var paragraphContent = new List<object>();
+                                    var index = 0;
+                                    foreach (var z in g)
+                                    {
+                                        var paragraph = z.BlockLevelContent.ThisBlockContentElement;
+                                        if (markersByAnchor.TryGetValue(paragraph, out var anchored))
+                                        {
+                                            foreach (var marker in anchored)
+                                            {
+                                                groupMarkers.Add(marker);
+                                                // Range markup (IsRunContent == false) is legal inside w:p; anything else stays block-level.
+                                                if (index > 0 && IsRunContent(marker.Name) == false)
+                                                {
+                                                    paragraphContent.Add(marker);
+                                                }
+                                                else
+                                                {
+                                                    blockMarkers.Add(marker);
+                                                }
+                                            }
+                                        }
+                                        paragraphContent.Add(CollapseParagraphTransform(paragraph));
+                                        index++;
+                                    }
                                     var newParagraph = new XElement(
                                         W.p,
+                                        g.Last().BlockLevelContent.ThisBlockContentElement.Attributes(),
                                         g.Last().BlockLevelContent.ThisBlockContentElement.Elements(W.pPr),
-                                        g.Select(z =>
-                                            CollapseParagraphTransform(z.BlockLevelContent.ThisBlockContentElement)
-                                        )
+                                        paragraphContent
                                     );
 
                                     // if this contains the last paragraph in the document, and if there is no content,
@@ -1678,52 +1700,52 @@ namespace Clippit.Word
                                             || g.Last().BlockLevelContent.NextBlockContentElement.Name == W.tbl
                                         )
                                     )
-                                        return null;
+                                        return groupMarkers
+                                            .Select(m => AcceptDeletedAndMoveFromParagraphMarksTransform(m))
+                                            .ToList();
 
-                                    return (object)newParagraph;
+                                    return blockMarkers
+                                        .Select(m => AcceptDeletedAndMoveFromParagraphMarksTransform(m))
+                                        .Append<object>(newParagraph)
+                                        .ToList();
                                 }
                                 else
                                 {
-                                    return g.Select(z =>
+                                    return g.SelectMany(z =>
                                     {
-                                        var newEle = new XElement(
-                                            z.BlockLevelContent.ThisBlockContentElement.Name,
-                                            z.BlockLevelContent.ThisBlockContentElement.Attributes(),
-                                            z.BlockLevelContent.ThisBlockContentElement.Nodes()
-                                                .Select(n => AcceptDeletedAndMoveFromParagraphMarksTransform(n))
+                                        var content = z.BlockLevelContent.ThisBlockContentElement;
+                                        var output = new List<object>();
+                                        if (markersByAnchor.TryGetValue(content, out var anchored))
+                                        {
+                                            output.AddRange(
+                                                anchored.Select(m => AcceptDeletedAndMoveFromParagraphMarksTransform(m))
+                                            );
+                                        }
+                                        if (contentInIntactCustomXml.Contains(content))
+                                        {
+                                            if (intactCustomXmlByFirstContent.TryGetValue(content, out var customXml))
+                                            {
+                                                output.Add(AcceptDeletedAndMoveFromParagraphMarksTransform(customXml));
+                                            }
+                                            return output;
+                                        }
+                                        output.Add(
+                                            new XElement(
+                                                content.Name,
+                                                content.Attributes(),
+                                                content
+                                                    .Nodes()
+                                                    .Select(n => AcceptDeletedAndMoveFromParagraphMarksTransform(n))
+                                            )
                                         );
-                                        return newEle;
+                                        return output;
                                     });
                                 }
                             }
                         ),
+                        trailingMarkers.Select(m => AcceptDeletedAndMoveFromParagraphMarksTransform(m)),
                         bodySectPr
                     );
-
-                    // Keep direct block-level markers and other siblings that are not represented by
-                    // IterateBlockContentElements. They must survive when the container is rebuilt for a
-                    // deleted paragraph mark (bookmarks and altChunk are common examples).
-                    var directUnrepresentedElements = element
-                        .Elements()
-                        .Where(e => e.Name != W.tcPr && e.Name != W.sectPr && e.Name != W.p && e.Name != W.tbl)
-                        .ToList();
-                    foreach (var originalChild in directUnrepresentedElements)
-                    {
-                        var blockElementsBefore = originalChild
-                            .ElementsBeforeSelf()
-                            .Count(e => e.Name == W.p || e.Name == W.tbl);
-                        var rebuiltChildren = newBlockLevelContentContainer.Elements().ToList();
-                        var insertAt = Math.Min(
-                            newBlockLevelContentContainer.Elements(W.tcPr).Count() + blockElementsBefore,
-                            rebuiltChildren.Count
-                        );
-                        var nextChild = rebuiltChildren.ElementAtOrDefault(insertAt);
-                        var transformedChild = AcceptDeletedAndMoveFromParagraphMarksTransform(originalChild);
-                        if (nextChild is null)
-                            newBlockLevelContentContainer.Add(transformedChild);
-                        else
-                            nextChild.AddBeforeSelf(transformedChild);
-                    }
 
                     return newBlockLevelContentContainer;
                 }

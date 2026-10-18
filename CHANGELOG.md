@@ -2,7 +2,6 @@
 
 ## [Unreleased]
 
-- fix(word): process tracked revisions in comments while preserving comment metadata and unchanged block-level markup
 
 ## [3.9.1] - September 21, 2026
 
