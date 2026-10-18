@@ -145,6 +145,38 @@ public partial class RevisionProcessorTests : TestsBase
         await Assert.That(DescribeRows(table)).IsEqualTo(expectedRows);
     }
 
+    [Test]
+    [Arguments(false, "Alpha delta gamma")]
+    [Arguments(true, "Alpha beta gamma")]
+    public async Task RP063_RevisionsInsideCustomXmlContainer(bool reject, string expectedText)
+    {
+        var source = CreateDocument(
+            """
+            <w:p>
+              <w:customXml w:element="root">
+                <w:r><w:t xml:space="preserve">Alpha </w:t></w:r>
+                <w:del w:id="1" w:author="Author" w:date="2026-10-15T00:00:00Z">
+                  <w:r><w:delText>beta</w:delText></w:r>
+                </w:del>
+                <w:ins w:id="2" w:author="Author" w:date="2026-10-15T00:00:00Z">
+                  <w:r><w:t>delta</w:t></w:r>
+                </w:ins>
+                <w:r><w:t xml:space="preserve"> gamma</w:t></w:r>
+              </w:customXml>
+            </w:p>
+            """
+        );
+
+        var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
+
+        using var streamDoc = new OpenXmlMemoryStreamDocument(processed);
+        using var doc = streamDoc.GetWordprocessingDocument();
+        await Validate(doc);
+        await Assert.That(RevisionProcessor.HasTrackedRevisions(doc)).IsFalse();
+        var wrapper = doc.MainDocumentPart!.GetXDocument().Descendants(W.customXml).Single();
+        await Assert.That(TextOf(wrapper)).IsEqualTo(expectedText);
+    }
+
     private static string DescribeRows(XElement table) =>
         string.Join(
             " / ",

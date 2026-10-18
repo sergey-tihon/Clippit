@@ -400,6 +400,7 @@ namespace Clippit.Word
                     && a.Name != W.smartTag
                     && a.Name != W.hyperlink
                     && a.Name != W.fldSimple
+                    && a.Name != W.customXml
                     && a.Name != W.dir
                     && a.Name != W.bdo
                 );
