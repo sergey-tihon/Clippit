@@ -1466,9 +1466,17 @@ namespace Clippit.Word
 
         private static object AcceptDeletedAndMoveFromParagraphMarksTransform(XNode node)
         {
+            return AcceptDeletedAndMoveFromParagraphMarksTransform(node, null);
+        }
+
+        private static object AcceptDeletedAndMoveFromParagraphMarksTransform(
+            XNode node,
+            XName? forcedBlockLevelContainer
+        )
+        {
             if (node is not XElement element)
                 return node;
-            if (W.BlockLevelContentContainers.Contains(element.Name))
+            if (W.BlockLevelContentContainers.Contains(element.Name) || element.Name == forcedBlockLevelContainer)
             {
                 var blockContent = IterateBlockContentElements(element).ToList();
                 // Only a deleted or moved-from paragraph mark needs the container rebuilt; every other container is cloned as is.
@@ -1600,6 +1608,11 @@ namespace Clippit.Word
                     // Block-level customXml whose paragraphs and tables do not join a deleted paragraph mark is emitted whole.
                     var intactCustomXmlByFirstContent = new Dictionary<XElement, XElement>();
                     var contentInIntactCustomXml = new HashSet<XElement>();
+                    var mergedCustomXmlByGroupingKey = new Dictionary<int, XElement>();
+                    var contentByGroupingKey = blockContent
+                        .Zip(deletedParagraphGroupingInfo, (blc, gi) => new { BlockContent = blc, GroupingInfo = gi })
+                        .GroupBy(z => z.GroupingInfo.GroupingKey)
+                        .ToDictionary(g => g.Key, g => g.Select(z => z.BlockContent.ThisBlockContentElement).ToList());
                     foreach (var child in element.Elements())
                     {
                         if (child.Name == W.tcPr || child.Name == W.sectPr || groupingByContent.ContainsKey(child))
@@ -1626,13 +1639,29 @@ namespace Clippit.Word
                                 markersByAnchor.Add(anchor, [child]);
                             }
                         }
-                        else if (
-                            child.Name == W.customXml
-                            && childContent.All(c => groupingByContent[c].GroupingType == GroupingType.Other)
-                        )
+                        else if (child.Name == W.customXml)
                         {
-                            intactCustomXmlByFirstContent.Add(childContent[0], child);
-                            contentInIntactCustomXml.UnionWith(childContent);
+                            var childGrouping = childContent.Select(c => groupingByContent[c]).ToList();
+                            if (childGrouping.All(g => g.GroupingType == GroupingType.Other))
+                            {
+                                intactCustomXmlByFirstContent.Add(childContent[0], child);
+                                contentInIntactCustomXml.UnionWith(childContent);
+                            }
+                            else if (
+                                childGrouping.All(g => g.GroupingType == GroupingType.DeletedRange)
+                                && childGrouping.Select(g => g.GroupingKey).Distinct().Count() == 1
+                            )
+                            {
+                                var groupingKey = childGrouping[0].GroupingKey;
+                                if (
+                                    contentByGroupingKey.TryGetValue(groupingKey, out var groupedContent)
+                                    && groupedContent.Count == childContent.Count
+                                    && groupedContent.All(childContent.Contains)
+                                )
+                                {
+                                    mergedCustomXmlByGroupingKey.Add(groupingKey, child);
+                                }
+                            }
                         }
                     }
 
@@ -1651,6 +1680,19 @@ namespace Clippit.Word
                         groupedParagraphs.Select(
                             (g, i) =>
                             {
+                                if (
+                                    g.First().GroupingInfo.GroupingType == GroupingType.DeletedRange
+                                    && mergedCustomXmlByGroupingKey.TryGetValue(
+                                        g.First().GroupingInfo.GroupingKey,
+                                        out var mergedCustomXml
+                                    )
+                                )
+                                {
+                                    return AcceptDeletedAndMoveFromParagraphMarksTransform(
+                                        mergedCustomXml,
+                                        W.customXml
+                                    );
+                                }
                                 if (g.First().GroupingInfo.GroupingType == GroupingType.DeletedRange)
                                 {
                                     var groupMarkers = new List<XElement>();

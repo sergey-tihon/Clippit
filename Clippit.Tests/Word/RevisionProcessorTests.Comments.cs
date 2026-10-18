@@ -171,6 +171,10 @@ public partial class RevisionProcessorTests
     [Arguments("comment", "markerInsideMerge", true)]
     [Arguments("comment", "mergeIntoCustomXml", false)]
     [Arguments("comment", "mergeIntoCustomXml", true)]
+    [Arguments("body", "mergeWithinCustomXml", false)]
+    [Arguments("body", "mergeWithinCustomXml", true)]
+    [Arguments("comment", "mergeWithinCustomXml", false)]
+    [Arguments("comment", "mergeWithinCustomXml", true)]
     public async Task RP064_RebuiltContainerKeepsBlockMarkup(string story, string scenario, bool reject)
     {
         const string bookmarkStart = "<w:bookmarkStart w:id=\"1\" w:name=\"Kept\"/>";
@@ -192,6 +196,8 @@ public partial class RevisionProcessorTests
             "markerInsideMerge" => $"{Pm("B")}{bookmarkStart}{P("C")}{bookmarkEnd}",
             "mergeIntoCustomXml" =>
                 $"{Pm("First")}<w:customXml w:element=\"c\">{P("Second")}</w:customXml>{P("Third")}",
+            "mergeWithinCustomXml" =>
+                $"<w:customXml w:element=\"c\"><w:customXmlPr/><w:bookmarkStart w:id=\"1\" w:name=\"Inside\"/>{Pm("First")}<w:bookmarkEnd w:id=\"1\"/>{P("Second")}</w:customXml>",
             _ => throw new ArgumentOutOfRangeException(nameof(scenario)),
         };
         var expectedXml = scenario switch
@@ -202,6 +208,8 @@ public partial class RevisionProcessorTests
             "markerInsideMerge" =>
                 $"<w:p><w:r><w:t>B</w:t></w:r>{bookmarkStart}<w:r><w:t>C</w:t></w:r></w:p>{bookmarkEnd}",
             "mergeIntoCustomXml" => $"<w:p><w:r><w:t>First</w:t></w:r><w:r><w:t>Second</w:t></w:r></w:p>{P("Third")}",
+            "mergeWithinCustomXml" =>
+                $"<w:customXml w:element=\"c\"><w:customXmlPr/><w:bookmarkStart w:id=\"1\" w:name=\"Inside\"/><w:p><w:r><w:t>First</w:t></w:r><w:bookmarkEnd w:id=\"1\"/><w:r><w:t>Second</w:t></w:r></w:p></w:customXml>",
             _ => throw new ArgumentOutOfRangeException(nameof(scenario)),
         };
         var bodyXml = story switch
