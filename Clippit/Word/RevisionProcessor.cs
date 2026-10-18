@@ -26,6 +26,11 @@ namespace Clippit.Word
 
         public static void RejectRevisions(WordprocessingDocument doc)
         {
+            var commentsPart = doc.MainDocumentPart.WordprocessingCommentsPart;
+            var commentLastParaIds = commentsPart is null
+                ? null
+                : GetCommentLastParagraphIds(commentsPart.GetXDocument().Root);
+
             foreach (var part in StoryParts(doc.MainDocumentPart))
             {
                 RejectRevisionsForPart(part);
@@ -36,7 +41,7 @@ namespace Clippit.Word
             ReverseRevisions(doc);
             foreach (var part in StoryParts(doc.MainDocumentPart))
             {
-                AcceptRevisionsForPart(part);
+                AcceptRevisionsForPart(part, part == commentsPart ? commentLastParaIds : null);
             }
             if (doc.MainDocumentPart.StyleDefinitionsPart is not null)
                 AcceptRevisionsForStylesDefinitionPart(doc.MainDocumentPart.StyleDefinitionsPart);
@@ -683,8 +688,15 @@ namespace Clippit.Word
 
         public static void AcceptRevisionsForPart(OpenXmlPart part)
         {
+            AcceptRevisionsForPart(part, null);
+        }
+
+        private static void AcceptRevisionsForPart(OpenXmlPart part, List<string?> preservedCommentLastParaIds)
+        {
             var originalRoot = part.GetXDocument().Root;
-            var commentLastParaIds = originalRoot.Name == W.comments ? GetCommentLastParagraphIds(originalRoot) : null;
+            var commentLastParaIds =
+                preservedCommentLastParaIds
+                ?? (originalRoot.Name == W.comments ? GetCommentLastParagraphIds(originalRoot) : null);
             var documentElement = originalRoot;
             documentElement = (XElement)RemoveRsidTransform(documentElement);
             documentElement = (XElement)FixUpDeletedOrInsertedFieldCodesTransform(documentElement);
@@ -1188,6 +1200,18 @@ namespace Clippit.Word
         /// paragraph following.  When assembling the new paragraph, use a transform that collapses
         /// the paragraph nodes when adding content, thereby preserving custom XML and content
         /// controls.
+        private static IEnumerable<XElement> DescendantsOutsideCustomXml(XElement element)
+        {
+            yield return element;
+            foreach (var child in element.Elements())
+            {
+                if (child.Name == W.customXml)
+                    continue;
+                foreach (var descendant in DescendantsOutsideCustomXml(child))
+                    yield return descendant;
+            }
+        }
+
         private static void AnnotateBlockContentElements(XElement contentContainer)
         {
             // For convenience, there is a ParagraphInfo annotation on the contentContainer.
@@ -1197,7 +1221,7 @@ namespace Clippit.Word
                 return;
             var firstContentElement = contentContainer
                 .Elements()
-                .DescendantsAndSelf()
+                .SelectMany(DescendantsOutsideCustomXml)
                 .FirstOrDefault(e => e.Name == W.p || e.Name == W.tbl);
             if (firstContentElement is null)
                 return;
@@ -1221,7 +1245,7 @@ namespace Clippit.Word
                 {
                     nextContentElement = current
                         .ElementsAfterSelf()
-                        .DescendantsAndSelf()
+                        .SelectMany(DescendantsOutsideCustomXml)
                         .FirstOrDefault(e => e.Name == W.p || e.Name == W.tbl);
                     if (nextContentElement is not null)
                     {
@@ -1661,6 +1685,31 @@ namespace Clippit.Word
                         ),
                         bodySectPr
                     );
+
+                    // Keep direct block-level markers and other siblings that are not represented by
+                    // IterateBlockContentElements. They must survive when the container is rebuilt for a
+                    // deleted paragraph mark (bookmarks and altChunk are common examples).
+                    var directUnrepresentedElements = element
+                        .Elements()
+                        .Where(e => e.Name != W.tcPr && e.Name != W.sectPr && e.Name != W.p && e.Name != W.tbl)
+                        .ToList();
+                    foreach (var originalChild in directUnrepresentedElements)
+                    {
+                        var blockElementsBefore = originalChild
+                            .ElementsBeforeSelf()
+                            .Count(e => e.Name == W.p || e.Name == W.tbl);
+                        var rebuiltChildren = newBlockLevelContentContainer.Elements().ToList();
+                        var insertAt = Math.Min(
+                            newBlockLevelContentContainer.Elements(W.tcPr).Count() + blockElementsBefore,
+                            rebuiltChildren.Count
+                        );
+                        var nextChild = rebuiltChildren.ElementAtOrDefault(insertAt);
+                        var transformedChild = AcceptDeletedAndMoveFromParagraphMarksTransform(originalChild);
+                        if (nextChild is null)
+                            newBlockLevelContentContainer.Add(transformedChild);
+                        else
+                            nextChild.AddBeforeSelf(transformedChild);
+                    }
 
                     return newBlockLevelContentContainer;
                 }

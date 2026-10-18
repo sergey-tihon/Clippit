@@ -5317,7 +5317,8 @@ namespace Clippit
             ftr,
             endnote,
             footnote,
-            comment
+            comment,
+            customXml
         );
 
         public static readonly FrozenSet<XName> SubRunLevelContent = FrozenSet.Create<XName>(
