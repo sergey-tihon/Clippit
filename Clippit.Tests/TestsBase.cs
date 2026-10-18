@@ -47,6 +47,12 @@ namespace Clippit.Tests
             await Validate(package, []);
         }
 
+        protected async Task Validate(OpenXmlPackage package, FileFormatVersions version)
+        {
+            await Assert.That(new OpenXmlValidator(version).Validate(package).ToList()).IsEmpty();
+            await ValidateRelationships(package);
+        }
+
         protected async Task Validate(OpenXmlPackage package, List<string> expectedErrors)
         {
             var errors = _validator

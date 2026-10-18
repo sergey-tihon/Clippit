@@ -4562,6 +4562,7 @@ namespace Clippit
         public static readonly XName bar = w + "bar";
         public static readonly XName basedOn = w + "basedOn";
         public static readonly XName bCs = w + "bCs";
+        public static readonly XName bdo = w + "bdo";
         public static readonly XName bdr = w + "bdr";
         public static readonly XName before = w + "before";
         public static readonly XName beforeAutospacing = w + "beforeAutospacing";
@@ -5316,7 +5317,8 @@ namespace Clippit
             hdr,
             ftr,
             endnote,
-            footnote
+            footnote,
+            comment
         );
 
         public static readonly FrozenSet<XName> SubRunLevelContent = FrozenSet.Create<XName>(
