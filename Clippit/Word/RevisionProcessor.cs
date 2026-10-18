@@ -234,6 +234,11 @@ namespace Clippit.Word
                 if (element.Name == W.tcPr && element.Element(W.tcPrChange) is not null)
                 {
                     var newTcPr = element.Element(W.tcPrChange).Element(W.tcPr);
+                    // Restoring formatting must not erase an insertion that still needs to be rejected.
+                    if (element.Element(W.cellIns) is { } cellIns)
+                    {
+                        newTcPr = new XElement(W.tcPr, newTcPr?.Attributes(), newTcPr?.Elements(), cellIns);
+                    }
                     return RejectRevisionsForPartTransform(newTcPr);
                 }
 
@@ -2291,15 +2296,18 @@ namespace Clippit.Word
                     .GroupAdjacent(e =>
                     {
                         var cellAfter = e.ElementsAfterSelf(W.tc).FirstOrDefault();
-                        var cellAfterIsDeleted = cellAfter is not null && cellAfter.Descendants(W.cellDel).Any();
-                        if (e.Name == W.tc && (cellAfterIsDeleted || e.Descendants(W.cellDel).Any()))
+                        var cellAfterIsDeleted =
+                            cellAfter is not null && cellAfter.Elements(W.tcPr).Elements(W.cellDel).Any();
+                        if (e.Name == W.tc && (cellAfterIsDeleted || e.Elements(W.tcPr).Elements(W.cellDel).Any()))
                         {
                             var a = new
                             {
                                 CollectionType = DeletedCellCollectionType.DeletedCell,
                                 Disambiguator = new[] { e }
                                     .Concat(e.SiblingsBeforeSelfReverseDocumentOrder())
-                                    .FirstOrDefault(z => z.Name == W.tc && !z.Descendants(W.cellDel).Any()),
+                                    .FirstOrDefault(z =>
+                                        z.Name == W.tc && !z.Elements(W.tcPr).Elements(W.cellDel).Any()
+                                    ),
                             };
                             return a;
                         }
@@ -2313,14 +2321,14 @@ namespace Clippit.Word
                     {
                         if (
                             g.Key.CollectionType == DeletedCellCollectionType.DeletedCell
-                            && g.First().Descendants(W.cellDel).Any()
+                            && g.First().Elements(W.tcPr).Elements(W.cellDel).Any()
                         )
                             return null;
                         if (g.Key.CollectionType == DeletedCellCollectionType.Other)
-                            return g;
-                        var gridSpanElement = g.First().Elements(W.tcPr).Elements(W.gridSpan).FirstOrDefault();
-                        var gridSpan = gridSpanElement is not null ? (int)gridSpanElement.Attribute(W.val) : 1;
-                        var newGridSpan = gridSpan + g.Count() - 1;
+                            return g.Select(e => AcceptDeletedCellsTransform(e));
+                        var newGridSpan = g.Sum(tc =>
+                            (int?)tc.Element(W.tcPr)?.Element(W.gridSpan)?.Attribute(W.val) ?? 1
+                        );
                         var currentTcPr = g.First().Elements(W.tcPr).FirstOrDefault();
                         var newTcPr = new XElement(
                             W.tcPr,
@@ -2337,7 +2345,15 @@ namespace Clippit.Word
                                     return Order_tcPr.GetValueOrDefault(e.Name, 999);
                                 })
                         );
-                        var newTc = new XElement(W.tc, orderedTcPr, g.First().Elements().Where(e => e.Name != W.tcPr));
+                        var newTc = new XElement(
+                            W.tc,
+                            g.First().Attributes(),
+                            orderedTcPr,
+                            g.First()
+                                .Elements()
+                                .Where(e => e.Name != W.tcPr)
+                                .Select(e => AcceptDeletedCellsTransform(e))
+                        );
                         return (object)newTc;
                     })
                 );
