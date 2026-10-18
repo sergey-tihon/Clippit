@@ -175,6 +175,18 @@ public partial class RevisionProcessorTests
     [Arguments("body", "mergeWithinCustomXml", true)]
     [Arguments("comment", "mergeWithinCustomXml", false)]
     [Arguments("comment", "mergeWithinCustomXml", true)]
+    [Arguments("body", "mergeWithinCustomXmlThenParagraph", false)]
+    [Arguments("body", "mergeWithinCustomXmlThenParagraph", true)]
+    [Arguments("comment", "mergeWithinCustomXmlThenParagraph", false)]
+    [Arguments("comment", "mergeWithinCustomXmlThenParagraph", true)]
+    [Arguments("comment", "mergeWithinCustomXmlWithUnchangedParagraph", false)]
+    [Arguments("comment", "mergeWithinCustomXmlWithUnchangedParagraph", true)]
+    [Arguments("comment", "twoMergesWithinCustomXml", false)]
+    [Arguments("comment", "twoMergesWithinCustomXml", true)]
+    [Arguments("comment", "markerBeforeMergedCustomXml", false)]
+    [Arguments("comment", "markerBeforeMergedCustomXml", true)]
+    [Arguments("comment", "emptyControlWithMergeElsewhere", false)]
+    [Arguments("comment", "emptyControlWithMergeElsewhere", true)]
     public async Task RP064_RebuiltContainerKeepsBlockMarkup(string story, string scenario, bool reject)
     {
         const string bookmarkStart = "<w:bookmarkStart w:id=\"1\" w:name=\"Kept\"/>";
@@ -185,8 +197,13 @@ public partial class RevisionProcessorTests
             <w:sdt><w:sdtPr><w:tag w:val="empty"/></w:sdtPr><w:sdtContent><w:p/></w:sdtContent></w:sdt>
             """;
         string P(string text) => $"<w:p><w:r><w:t>{text}</w:t></w:r></w:p>";
-        string Pm(string text) =>
-            $"<w:p><w:pPr><w:rPr><w:{(reject ? "ins" : "del")} w:id=\"9\" w:author=\"Author\" w:date=\"2026-10-15T00:00:00Z\"/></w:rPr></w:pPr><w:r><w:t>{text}</w:t></w:r></w:p>";
+        string Pm(string text, int id = 9) =>
+            $"<w:p><w:pPr><w:rPr><w:{(reject ? "ins" : "del")} w:id=\"{id}\" w:author=\"Author\" w:date=\"2026-10-15T00:00:00Z\"/></w:rPr></w:pPr><w:r><w:t>{text}</w:t></w:r></w:p>";
+        string CustomXml(string content) => $"<w:customXml w:element=\"c\"><w:customXmlPr/>{content}</w:customXml>";
+        string MergedP(string first, string second) =>
+            $"<w:p><w:r><w:t>{first}</w:t></w:r><w:r><w:t>{second}</w:t></w:r></w:p>";
+        const string emptyControl =
+            "<w:sdt><w:sdtPr><w:tag w:val=\"empty\"/></w:sdtPr><w:sdtContent><w:p/></w:sdtContent></w:sdt>";
 
         var blockXml = scenario switch
         {
@@ -198,6 +215,13 @@ public partial class RevisionProcessorTests
                 $"{Pm("First")}<w:customXml w:element=\"c\">{P("Second")}</w:customXml>{P("Third")}",
             "mergeWithinCustomXml" =>
                 $"<w:customXml w:element=\"c\"><w:customXmlPr/><w:bookmarkStart w:id=\"1\" w:name=\"Inside\"/>{Pm("First")}<w:bookmarkEnd w:id=\"1\"/>{P("Second")}</w:customXml>",
+            "mergeWithinCustomXmlThenParagraph" => CustomXml(Pm("First") + P("Second")) + P("Third"),
+            "mergeWithinCustomXmlWithUnchangedParagraph" => CustomXml(
+                bookmarkStart + Pm("First") + bookmarkEnd + P("Second") + P("Third")
+            ),
+            "twoMergesWithinCustomXml" => CustomXml(Pm("First") + P("Second") + Pm("Third", 10) + P("Fourth")),
+            "markerBeforeMergedCustomXml" => bookmarkStart + CustomXml(Pm("First") + P("Second")) + bookmarkEnd,
+            "emptyControlWithMergeElsewhere" => emptyControl + Pm("First") + P("Second"),
             _ => throw new ArgumentOutOfRangeException(nameof(scenario)),
         };
         var expectedXml = scenario switch
@@ -210,6 +234,17 @@ public partial class RevisionProcessorTests
             "mergeIntoCustomXml" => $"<w:p><w:r><w:t>First</w:t></w:r><w:r><w:t>Second</w:t></w:r></w:p>{P("Third")}",
             "mergeWithinCustomXml" =>
                 $"<w:customXml w:element=\"c\"><w:customXmlPr/><w:bookmarkStart w:id=\"1\" w:name=\"Inside\"/><w:p><w:r><w:t>First</w:t></w:r><w:bookmarkEnd w:id=\"1\"/><w:r><w:t>Second</w:t></w:r></w:p></w:customXml>",
+            "mergeWithinCustomXmlThenParagraph" => CustomXml(MergedP("First", "Second")) + P("Third"),
+            "mergeWithinCustomXmlWithUnchangedParagraph" => CustomXml(
+                bookmarkStart
+                    + "<w:p><w:r><w:t>First</w:t></w:r>"
+                    + bookmarkEnd
+                    + "<w:r><w:t>Second</w:t></w:r></w:p>"
+                    + P("Third")
+            ),
+            "twoMergesWithinCustomXml" => CustomXml(MergedP("First", "Second") + MergedP("Third", "Fourth")),
+            "markerBeforeMergedCustomXml" => bookmarkStart + CustomXml(MergedP("First", "Second")) + bookmarkEnd,
+            "emptyControlWithMergeElsewhere" => emptyControl + MergedP("First", "Second"),
             _ => throw new ArgumentOutOfRangeException(nameof(scenario)),
         };
         var bodyXml = story switch

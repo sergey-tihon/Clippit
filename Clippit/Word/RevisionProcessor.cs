@@ -26,6 +26,7 @@ namespace Clippit.Word
 
         public static void RejectRevisions(WordprocessingDocument doc)
         {
+            var commentParagraphIds = CaptureCommentParagraphIds(doc.MainDocumentPart);
             foreach (var part in StoryParts(doc.MainDocumentPart))
             {
                 RejectRevisionsForPart(part);
@@ -40,6 +41,7 @@ namespace Clippit.Word
             }
             if (doc.MainDocumentPart.StyleDefinitionsPart is not null)
                 AcceptRevisionsForStylesDefinitionPart(doc.MainDocumentPart.StyleDefinitionsPart);
+            RestoreCommentParagraphIds(doc.MainDocumentPart, commentParagraphIds);
         }
 
         // The parts that hold document text: the main document and the header, footer, endnote, footnote and
@@ -66,6 +68,96 @@ namespace Clippit.Word
             if (mainPart.WordprocessingCommentsPart is not null)
             {
                 yield return mainPart.WordprocessingCommentsPart;
+            }
+        }
+
+        // Extension metadata identifies a comment by its last paragraph, even when that paragraph is revised away.
+        private static Dictionary<string, string>? CaptureCommentParagraphIds(MainDocumentPart mainPart)
+        {
+            if (mainPart.WordprocessingCommentsPart is null)
+            {
+                return null;
+            }
+
+            var extendedPart = mainPart.WordprocessingCommentsExPart;
+            var idsPart = mainPart.WordprocessingCommentsIdsPart;
+            if (extendedPart is null && idsPart is null)
+            {
+                return null;
+            }
+
+            XNamespace cid = "http://schemas.microsoft.com/office/word/2016/wordml/cid";
+            var referencedIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            if (extendedPart is not null)
+            {
+                foreach (var attribute in extendedPart.GetXDocument().Descendants().Attributes())
+                {
+                    if (attribute.Name == W15.w15 + "paraId" || attribute.Name == W15.w15 + "paraIdParent")
+                    {
+                        referencedIds.Add(attribute.Value);
+                    }
+                }
+            }
+            if (idsPart is not null)
+            {
+                foreach (var attribute in idsPart.GetXDocument().Descendants().Attributes(cid + "paraId"))
+                {
+                    referencedIds.Add(attribute.Value);
+                }
+            }
+            if (referencedIds.Count == 0)
+            {
+                return null;
+            }
+
+            var commentParagraphIds = new Dictionary<string, string>();
+            foreach (var comment in mainPart.WordprocessingCommentsPart.GetXDocument().Root.Elements(W.comment))
+            {
+                var paragraphId = (string?)comment.Descendants(W.p).LastOrDefault()?.Attribute(W14.paraId);
+                var commentId = (string?)comment.Attribute(W.id);
+                if (commentId is not null && paragraphId is not null && referencedIds.Contains(paragraphId))
+                {
+                    commentParagraphIds.Add(commentId, paragraphId);
+                }
+            }
+            return commentParagraphIds;
+        }
+
+        private static void RestoreCommentParagraphIds(
+            MainDocumentPart mainPart,
+            Dictionary<string, string>? commentParagraphIds
+        )
+        {
+            if (commentParagraphIds is null || commentParagraphIds.Count == 0)
+            {
+                return;
+            }
+
+            var commentsPart = mainPart.WordprocessingCommentsPart;
+            var changed = false;
+            foreach (var comment in commentsPart.GetXDocument().Root.Elements(W.comment))
+            {
+                var commentId = (string?)comment.Attribute(W.id);
+                if (commentId is null || !commentParagraphIds.TryGetValue(commentId, out var paragraphId))
+                {
+                    continue;
+                }
+
+                var paragraph = comment.Descendants(W.p).LastOrDefault();
+                if (paragraph is null)
+                {
+                    paragraph = new XElement(W.p);
+                    comment.Add(paragraph);
+                }
+                if ((string?)paragraph.Attribute(W14.paraId) != paragraphId)
+                {
+                    paragraph.SetAttributeValue(W14.paraId, paragraphId);
+                    changed = true;
+                }
+            }
+            if (changed)
+            {
+                commentsPart.PutXDocument();
             }
         }
 
@@ -662,12 +754,14 @@ namespace Clippit.Word
 
         public static void AcceptRevisions(WordprocessingDocument doc)
         {
+            var commentParagraphIds = CaptureCommentParagraphIds(doc.MainDocumentPart);
             foreach (var part in StoryParts(doc.MainDocumentPart))
             {
                 AcceptRevisionsForPart(part);
             }
             if (doc.MainDocumentPart.StyleDefinitionsPart is not null)
                 AcceptRevisionsForStylesDefinitionPart(doc.MainDocumentPart.StyleDefinitionsPart);
+            RestoreCommentParagraphIds(doc.MainDocumentPart, commentParagraphIds);
         }
 
         private static void AcceptRevisionsForStylesDefinitionPart(StyleDefinitionsPart stylesDefinitionsPart)
@@ -1601,14 +1695,12 @@ namespace Clippit.Word
                         groupingByContent.Add(blockContent[i].ThisBlockContentElement, deletedParagraphGroupingInfo[i]);
                     }
 
-                    // Direct children that hold no paragraph or table of this container (bookmarks, permissions, comment ranges,
-                    // altChunk, empty customXml) are not block content; each one stays in front of the content element after it.
+                    // Keep non-content siblings anchored in document order and preserve wrappers
+                    // whenever no paragraph merge crosses their boundary.
                     var markersByAnchor = new Dictionary<XElement, List<XElement>>();
                     var trailingMarkers = new List<XElement>();
-                    // Block-level customXml whose paragraphs and tables do not join a deleted paragraph mark is emitted whole.
-                    var intactCustomXmlByFirstContent = new Dictionary<XElement, XElement>();
-                    var contentInIntactCustomXml = new HashSet<XElement>();
-                    var mergedCustomXmlByGroupingKey = new Dictionary<int, XElement>();
+                    var preservedContainersByFirstContent = new Dictionary<XElement, XElement>();
+                    var contentInPreservedContainers = new HashSet<XElement>();
                     var contentByGroupingKey = blockContent
                         .Zip(deletedParagraphGroupingInfo, (blc, gi) => new { BlockContent = blc, GroupingInfo = gi })
                         .GroupBy(z => z.GroupingInfo.GroupingKey)
@@ -1639,28 +1731,18 @@ namespace Clippit.Word
                                 markersByAnchor.Add(anchor, [child]);
                             }
                         }
-                        else if (child.Name == W.customXml)
+                        else if (child.Name == W.customXml || child.Name == W.sdt)
                         {
-                            var childGrouping = childContent.Select(c => groupingByContent[c]).ToList();
-                            if (childGrouping.All(g => g.GroupingType == GroupingType.Other))
-                            {
-                                intactCustomXmlByFirstContent.Add(childContent[0], child);
-                                contentInIntactCustomXml.UnionWith(childContent);
-                            }
-                            else if (
-                                childGrouping.All(g => g.GroupingType == GroupingType.DeletedRange)
-                                && childGrouping.Select(g => g.GroupingKey).Distinct().Count() == 1
+                            var childContentSet = childContent.ToHashSet();
+                            if (
+                                childContent
+                                    .Select(c => groupingByContent[c].GroupingKey)
+                                    .Distinct()
+                                    .All(key => contentByGroupingKey[key].All(childContentSet.Contains))
                             )
                             {
-                                var groupingKey = childGrouping[0].GroupingKey;
-                                if (
-                                    contentByGroupingKey.TryGetValue(groupingKey, out var groupedContent)
-                                    && groupedContent.Count == childContent.Count
-                                    && groupedContent.All(childContent.Contains)
-                                )
-                                {
-                                    mergedCustomXmlByGroupingKey.Add(groupingKey, child);
-                                }
+                                preservedContainersByFirstContent.Add(childContent[0], child);
+                                contentInPreservedContainers.UnionWith(childContent);
                             }
                         }
                     }
@@ -1680,18 +1762,24 @@ namespace Clippit.Word
                         groupedParagraphs.Select(
                             (g, i) =>
                             {
+                                var firstContent = g.First().BlockLevelContent.ThisBlockContentElement;
                                 if (
                                     g.First().GroupingInfo.GroupingType == GroupingType.DeletedRange
-                                    && mergedCustomXmlByGroupingKey.TryGetValue(
-                                        g.First().GroupingInfo.GroupingKey,
-                                        out var mergedCustomXml
-                                    )
+                                    && contentInPreservedContainers.Contains(firstContent)
                                 )
                                 {
-                                    return AcceptDeletedAndMoveFromParagraphMarksTransform(
-                                        mergedCustomXml,
-                                        W.customXml
-                                    );
+                                    var output = new List<object>();
+                                    if (markersByAnchor.TryGetValue(firstContent, out var anchored))
+                                    {
+                                        output.AddRange(
+                                            anchored.Select(m => AcceptDeletedAndMoveFromParagraphMarksTransform(m))
+                                        );
+                                    }
+                                    if (preservedContainersByFirstContent.TryGetValue(firstContent, out var container))
+                                    {
+                                        output.Add(AcceptParagraphMarksInPreservedContainer(container));
+                                    }
+                                    return output;
                                 }
                                 if (g.First().GroupingInfo.GroupingType == GroupingType.DeletedRange)
                                 {
@@ -1764,11 +1852,16 @@ namespace Clippit.Word
                                                 anchored.Select(m => AcceptDeletedAndMoveFromParagraphMarksTransform(m))
                                             );
                                         }
-                                        if (contentInIntactCustomXml.Contains(content))
+                                        if (contentInPreservedContainers.Contains(content))
                                         {
-                                            if (intactCustomXmlByFirstContent.TryGetValue(content, out var customXml))
+                                            if (
+                                                preservedContainersByFirstContent.TryGetValue(
+                                                    content,
+                                                    out var container
+                                                )
+                                            )
                                             {
-                                                output.Add(AcceptDeletedAndMoveFromParagraphMarksTransform(customXml));
+                                                output.Add(AcceptParagraphMarksInPreservedContainer(container));
                                             }
                                             return output;
                                         }
@@ -1800,6 +1893,23 @@ namespace Clippit.Word
                 element.Attributes(),
                 element.Nodes().Select(n => AcceptDeletedAndMoveFromParagraphMarksTransform(n))
             );
+        }
+
+        private static object AcceptParagraphMarksInPreservedContainer(XElement container)
+        {
+            // Outer-container annotations link past this wrapper. Clone before enumerating its own blocks.
+            var clone = new XElement(container);
+            if (clone.Name == W.customXml)
+            {
+                return AcceptDeletedAndMoveFromParagraphMarksTransform(clone, W.customXml);
+            }
+
+            var content = clone.Element(W.sdtContent);
+            if (content is not null)
+            {
+                content.ReplaceWith(AcceptDeletedAndMoveFromParagraphMarksTransform(content, W.sdtContent));
+            }
+            return clone;
         }
 
         private static bool ParagraphMarkIsDeletedOrMovedFrom(XElement paragraph) =>
