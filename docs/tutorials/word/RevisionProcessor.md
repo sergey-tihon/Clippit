@@ -43,6 +43,15 @@ all document parts (main document, headers, footers, footnotes, endnotes, commen
 - **Part-level control** -- accept revisions for individual parts or XML elements
 - **Detection** -- check whether a document or part contains tracked revisions
 
+When rejecting an inserted table cell, its grid columns are transferred to the preceding cell,
+including multi-column spans. If that preceding cell has tracked property changes (`w:tcPrChange`),
+its recorded properties are restored instead, without adding the inserted cell's columns.
+Cell revisions in nested tables are processed independently and preserve enclosing cell content.
+An inserted cell is still removed when its own properties also have tracked changes.
+Cell-level content controls (`w:sdt`) and custom XML wrappers (`w:customXml`) are preserved while
+their revised cells are removed and grid columns are transferred across wrapper boundaries.
+The preceding-cell property-change exception also applies across these wrappers.
+
 You can call the static API on `RevisionProcessor`:
 
 ```csharp

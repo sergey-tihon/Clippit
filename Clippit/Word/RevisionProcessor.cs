@@ -234,6 +234,11 @@ namespace Clippit.Word
                 if (element.Name == W.tcPr && element.Element(W.tcPrChange) is not null)
                 {
                     var newTcPr = element.Element(W.tcPrChange).Element(W.tcPr);
+                    // Restoring formatting must not erase an insertion that still needs to be rejected.
+                    if (element.Element(W.cellIns) is { } cellIns)
+                    {
+                        newTcPr = new XElement(W.tcPr, newTcPr?.Attributes(), newTcPr?.Elements(), cellIns);
+                    }
                     return RejectRevisionsForPartTransform(newTcPr);
                 }
 
@@ -268,8 +273,24 @@ namespace Clippit.Word
                 if (element.Name == W.cellDel || element.Name == W.cellMerge)
                     return null;
 
+                // Inserted cell. Word gives its columns to the cell before it, so it is rejected as a deleted cell,
+                // which the accept pass removes while widening that cell (AcceptDeletedCellsTransform). Where the
+                // cell before carries a w:tcPrChange (as when a cell was split), Word does not widen it and its
+                // recorded properties are restored instead, so the inserted cell is only removed.
                 if (element.Name == W.tc && element.Elements(W.tcPr).Elements(W.cellIns).Any())
-                    return null;
+                {
+                    var row = element.Ancestors(W.tr).FirstOrDefault();
+                    var cellBefore = row is null
+                        ? null
+                        : TableRowCells(row)
+                            .TakeWhile(tc => tc != element)
+                            .LastOrDefault(tc => !tc.Elements(W.tcPr).Elements(W.cellIns).Any());
+                    if (cellBefore is not null && cellBefore.Elements(W.tcPr).Elements(W.tcPrChange).Any())
+                        return null;
+                }
+
+                if (element.Name == W.cellIns)
+                    return new XElement(W.cellDel, element.Attributes());
 
                 return new XElement(
                     element.Name,
@@ -2258,85 +2279,120 @@ namespace Clippit.Word
                 );
         }
 
-        private enum DeletedCellCollectionType
+        // Only traverse cell-level wrappers, never the nested rows inside a cell.
+        private static IEnumerable<XElement> TableRowCells(XElement container)
         {
-            DeletedCell,
-            Other,
-        };
+            foreach (var child in container.Elements())
+            {
+                if (child.Name == W.tc)
+                {
+                    yield return child;
+                }
+                else if (child.Name == W.sdt || child.Name == W.sdtContent || child.Name == W.customXml)
+                {
+                    foreach (var cell in TableRowCells(child))
+                    {
+                        yield return cell;
+                    }
+                }
+            }
+        }
 
-        // For each table row, group deleted cells plus the cell before any deleted cell.
-        // Produce a new cell that has gridSpan set appropriately for group, and clone everything
-        // else.
+        private static void WidenTableCell(XElement? cell, int columns)
+        {
+            if (cell is null || columns == 0)
+            {
+                return;
+            }
+
+            var properties = cell.Element(W.tcPr);
+            var span = properties?.Element(W.gridSpan);
+            if (span is not null)
+            {
+                span.SetAttributeValue(W.val, (int)span.Attribute(W.val) + columns);
+                return;
+            }
+
+            span = new XElement(W.gridSpan, new XAttribute(W.val, 1 + columns));
+            if (properties is null)
+            {
+                cell.AddFirst(new XElement(W.tcPr, span));
+                return;
+            }
+
+            var propertyAfter = properties
+                .Elements()
+                .FirstOrDefault(p => Order_tcPr.GetValueOrDefault(p.Name, 999) > Order_tcPr[W.gridSpan]);
+            if (propertyAfter is null)
+            {
+                properties.Add(span);
+            }
+            else
+            {
+                propertyAfter.AddBeforeSelf(span);
+            }
+        }
+
+        // Remove deleted cells in logical row order, preserving their wrappers and widening the preceding cell.
         private static object AcceptDeletedCellsTransform(XNode node)
         {
             if (node is not XElement element)
                 return node;
+
             if (element.Name == W.tr)
             {
-                var groupedCells = element
-                    .Elements()
-                    .GroupAdjacent(e =>
-                    {
-                        var cellAfter = e.ElementsAfterSelf(W.tc).FirstOrDefault();
-                        var cellAfterIsDeleted = cellAfter is not null && cellAfter.Descendants(W.cellDel).Any();
-                        if (e.Name == W.tc && (cellAfterIsDeleted || e.Descendants(W.cellDel).Any()))
-                        {
-                            var a = new
-                            {
-                                CollectionType = DeletedCellCollectionType.DeletedCell,
-                                Disambiguator = new[] { e }
-                                    .Concat(e.SiblingsBeforeSelfReverseDocumentOrder())
-                                    .FirstOrDefault(z => z.Name == W.tc && !z.Descendants(W.cellDel).Any()),
-                            };
-                            return a;
-                        }
-                        var a2 = new { CollectionType = DeletedCellCollectionType.Other, Disambiguator = e };
-                        return a2;
-                    });
-                var tr = new XElement(
-                    W.tr,
-                    element.Attributes(),
-                    groupedCells.Select(g =>
-                    {
-                        if (
-                            g.Key.CollectionType == DeletedCellCollectionType.DeletedCell
-                            && g.First().Descendants(W.cellDel).Any()
-                        )
-                            return null;
-                        if (g.Key.CollectionType == DeletedCellCollectionType.Other)
-                            return g;
-                        var gridSpanElement = g.First().Elements(W.tcPr).Elements(W.gridSpan).FirstOrDefault();
-                        var gridSpan = gridSpanElement is not null ? (int)gridSpanElement.Attribute(W.val) : 1;
-                        var newGridSpan = gridSpan + g.Count() - 1;
-                        var currentTcPr = g.First().Elements(W.tcPr).FirstOrDefault();
-                        var newTcPr = new XElement(
-                            W.tcPr,
-                            currentTcPr?.Attributes(),
-                            new XElement(W.gridSpan, new XAttribute(W.val, newGridSpan)),
-                            currentTcPr?.Elements().Where(e => e.Name != W.gridSpan)
-                        );
-                        var orderedTcPr = new XElement(
-                            W.tcPr,
-                            newTcPr
-                                .Elements()
-                                .OrderBy(e =>
-                                {
-                                    return Order_tcPr.GetValueOrDefault(e.Name, 999);
-                                })
-                        );
-                        var newTc = new XElement(W.tc, orderedTcPr, g.First().Elements().Where(e => e.Name != W.tcPr));
-                        return (object)newTc;
-                    })
-                );
-                return tr;
+                XElement? cellBefore = null;
+                var removedColumns = 0;
+                var row = AcceptDeletedCellsInRow(element, ref cellBefore, ref removedColumns);
+                WidenTableCell(cellBefore, removedColumns);
+                return row;
             }
 
-            // Identity clone
             return new XElement(
                 element.Name,
                 element.Attributes(),
                 element.Nodes().Select(n => AcceptDeletedCellsTransform(n))
             );
+        }
+
+        private static XElement AcceptDeletedCellsInRow(
+            XElement container,
+            ref XElement? cellBefore,
+            ref int removedColumns
+        )
+        {
+            var clone = new XElement(container.Name, container.Attributes());
+            foreach (var node in container.Nodes())
+            {
+                if (node is XElement child)
+                {
+                    if (child.Name == W.tc)
+                    {
+                        if (child.Elements(W.tcPr).Elements(W.cellDel).Any())
+                        {
+                            if (cellBefore is not null)
+                            {
+                                removedColumns +=
+                                    (int?)child.Element(W.tcPr)?.Element(W.gridSpan)?.Attribute(W.val) ?? 1;
+                            }
+                            continue;
+                        }
+
+                        WidenTableCell(cellBefore, removedColumns);
+                        removedColumns = 0;
+                        cellBefore = (XElement)AcceptDeletedCellsTransform(child);
+                        clone.Add(cellBefore);
+                        continue;
+                    }
+                    if (child.Name == W.sdt || child.Name == W.sdtContent || child.Name == W.customXml)
+                    {
+                        clone.Add(AcceptDeletedCellsInRow(child, ref cellBefore, ref removedColumns));
+                        continue;
+                    }
+                }
+                clone.Add(AcceptDeletedCellsTransform(node));
+            }
+            return clone;
         }
 
         private static readonly FrozenSet<XName> BlockLevelElements = FrozenSet.Create<XName>(
@@ -2819,7 +2875,8 @@ namespace Clippit.Word
 ///   Semantics:
 ///     Remove these elements.
 ///   Reject:
-///     If a w:tc contains w:tcPr/w:cellIns, then remove the cell
+///     Replace w:cellIns with w:cellDel; AcceptDeletedCellsTransform then removes the cell and widens the
+///     cell before it.
 ///
 /// cellMerge
 ///   Method: AcceptAllOtherRevisionsTransform
