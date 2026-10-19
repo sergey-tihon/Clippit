@@ -16,7 +16,7 @@ namespace Clippit.Tests.Word.Samples
             var source3 = GetFilePath("Sample1/Source3.docx");
             // Create new document from 10 paragraphs starting at paragraph 5 of Source1.docx
             var sources = new List<ISource> { new Source(new WmlDocument(source1), 5, 10, true) };
-            DocumentBuilder.BuildDocument(sources, Path.Combine(TempDir, "Out1.docx"));
+            DocumentBuilder.BuildDocument(sources, Path.Combine(TempDir, "DocumentBuilderSample-Out1.docx"));
             // Create new document from paragraph 1, and paragraphs 5 through end of Source3.docx.
             // This effectively 'deletes' paragraphs 2-4
             sources =
