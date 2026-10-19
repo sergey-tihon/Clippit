@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.9.2] - October 19, 2026
+
+- perf: optimize element and comparer lookups and reduce directive-counting allocations (#526, #528, #532, #536)
+- fix(word): preserve document structure and correctly accept/reject tracked changes in sections, paragraphs, cells, comments, and nested containers (#550, #551, #552, #553, #554, #555, #556)
+- fix: match XML content types case-insensitively (#533)
+- test: expand coverage for WmlComparer, HTML conversion, and common helpers (#529, #531, #534, #535)
+- chore(deps): update SkiaSharp 4.152.1 → 4.153.1 and TUnit 1.68.17 → 1.72.16 (#530, #537, #543)
+- chore(ci): refresh the Clippy workflow and harden repository-memory validation; use GitHub-generated release notes
+
 ## [3.9.1] - September 21, 2026
 
 - perf: eliminate redundant dictionary, sorted-list, and LINQ iterator lookups across Excel, HTML, PowerPoint, and Word (#472, #475, #477, #482, #484, #489, #491, #517, #520)
