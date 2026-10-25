@@ -178,8 +178,8 @@
     },
     {
       "area": "qa",
-      "checked_at": "2026-10-15",
-      "result": "Backlog only 3 old question issues all already answered; no clear low-risk test/perf gap identified this run",
+      "checked_at": "2026-10-25",
+      "result": "Backlog issues 67/77/103 already answered, no new human activity; no gaps found",
       "follow_up": null
     }
   ],
