@@ -2,7 +2,8 @@
 
 ## [0.10.0] - 2026-10-27
 
-- Build Linux x64 NativeAOT binaries on Ubuntu 22.04 (glibc 2.35) so they run on older Linux systems.
+- Build Linux x64 and ARM64 NativeAOT binaries against Ubuntu 22.04 (glibc 2.35) for older Linux systems.
+- Publish npm packages using Node.js 24 LTS and npm Trusted Publishing.
 - Update `System.CommandLine` from `3.0.0-rc.1.26425.128` to `3.0.0-rc.3.26522.148`.
 - Drop the direct `Microsoft.NET.Test.Sdk` reference and use TUnit's `Microsoft.Testing.Platform` 2.5.1
   runner, selected in `global.json`.
