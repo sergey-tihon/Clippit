@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.10.0] - 2026-10-27
+
+- Build Linux x64 NativeAOT binaries on Ubuntu 22.04 (glibc 2.35) so they run on older Linux systems.
+- Update `System.CommandLine` from `3.0.0-rc.1.26425.128` to `3.0.0-rc.3.26522.148`.
+- Drop the direct `Microsoft.NET.Test.Sdk` reference and use TUnit's `Microsoft.Testing.Platform` 2.5.1
+  runner, selected in `global.json`.
+- Update test dependencies: `JsonSchema.Net` 9.4.0 → 9.5.0 and `TUnit` 1.72.16 → 1.76.28.
+- Include library improvements since 0.9.0: safer acceptance/rejection of tracked changes across Word sections,
+  cells, comments, and nested content; case-insensitive XML content-type and MHT boundary/charset matching;
+  strongly typed numbering formats; and lookup/allocation performance improvements across Word, Excel, HTML,
+  and PowerPoint.
+
 ## [0.9.0] - 2026-08-12
 
 - Updated the `System.CommandLine` dependency from preview.5 to preview.7 (#457).

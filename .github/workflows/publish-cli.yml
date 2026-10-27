@@ -28,8 +28,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # Keep the glibc baseline at 2.35; newer runners can produce binaries that fail on older hosts.
           - rid: linux-x64
-            os: ubuntu-latest
+            os: ubuntu-22.04
             binary: clippit
           - rid: linux-arm64
             os: ubuntu-24.04-arm
