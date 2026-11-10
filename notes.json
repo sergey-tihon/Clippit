@@ -171,15 +171,15 @@
   "fixes": [],
   "checks": [
     {
-      "area": "dependencies",
-      "checked_at": "2026-10-29",
-      "result": "Only TUnit 1.73.19 outdated; recent TUnit bump PRs closed unmerged-churn, skipped",
-      "follow_up": null
-    },
-    {
       "area": "qa",
       "checked_at": "2026-11-04",
       "result": "Issues 67/77/103 answered, no new human activity; no bugs/fixable issues open",
+      "follow_up": null
+    },
+    {
+      "area": "dependencies",
+      "checked_at": "2026-11-10",
+      "result": "dotnet CLI fails in sandbox (NuGet mutex); no check possible; no new issue activity",
       "follow_up": null
     }
   ],
