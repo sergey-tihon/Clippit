@@ -1,41 +1,266 @@
-name: Publish NuGet Package
+name: Publish Release
 
 on:
-    push:
-        tags:
-            - "v[0-9]+.[0-9]+.[0-9]+*"
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
 
 jobs:
-    publish:
-        runs-on: ubuntu-latest
-        permissions:
-            contents: write
-            id-token: write
+  build-native:
+    name: Build ${{ matrix.rid }}
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Keep both Linux builds on glibc 2.35; newer runners can require a newer glibc.
+          - rid: linux-x64
+            os: ubuntu-22.04
+            binary: clippit
+          - rid: linux-arm64
+            os: ubuntu-22.04-arm
+            binary: clippit
+          - rid: win-x64
+            os: windows-latest
+            binary: clippit.exe
+          - rid: win-arm64
+            os: windows-11-arm
+            binary: clippit.exe
+          - rid: osx-x64
+            os: macos-15-intel
+            binary: clippit
+          - rid: osx-arm64
+            os: macos-15
+            binary: clippit
 
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v7
-            - name: Setup .NET SDK
-              uses: actions/setup-dotnet@v6
-              with:
-                  global-json-file: global.json
-            - name: Build and Pack
-              run: dotnet fsi build.fsx -- -p build
-            - name: NuGet login (OIDC → temp API key)
-              uses: NuGet/login@v1
-              id: login
-              with:
-                  user: ${{ secrets.NUGET_USER }}
-            - name: Publish to NuGet
-              run: |
-                  dotnet nuget push bin/*.nupkg \
-                    --api-key ${{ steps.login.outputs.NUGET_API_KEY }} \
-                    --source https://api.nuget.org/v3/index.json \
-                    --skip-duplicate
-            - name: Create GitHub Release
-              env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: |
-                  gh release create "${{ github.ref_name }}" \
-                    --title "$(cat bin/RELEASE_TITLE)" \
-                    --generate-notes
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Install Linux NativeAOT toolchain
+        if: startsWith(matrix.rid, 'linux-')
+        run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+
+      - name: Select Apple Clang for NativeAOT
+        if: startsWith(matrix.rid, 'osx-')
+        run: |
+          echo "CppCompilerAndLinker=/usr/bin/clang" >> "$GITHUB_ENV"
+          xcode-select -p
+          xcodebuild -version
+          echo "PATH clang:"
+          command -v clang
+          clang --version
+          echo "Pinned Apple clang:"
+          /usr/bin/clang --version
+
+      # Xcode 16's classic linker rejects an unaligned pointer in the x64 GSSAPI archive.
+      - name: Use modern Xcode linker for osx-x64 NativeAOT
+        if: matrix.rid == 'osx-x64'
+        run: echo "UseLdClassicXCodeLinker=false" >> "$GITHUB_ENV"
+
+      - name: Publish NativeAOT binary
+        run: dotnet publish Clippit.Cli/Clippit.Cli.csproj -f net11.0 -c Release -r ${{ matrix.rid }} --self-contained -p:NativeAot=true -o bin/cli/${{ matrix.rid }}
+
+      - name: Upload NativeAOT binary
+        uses: actions/upload-artifact@v7
+        with:
+          name: clippit-${{ matrix.rid }}
+          path: bin/cli/${{ matrix.rid }}/${{ matrix.binary }}
+          if-no-files-found: error
+
+  build-and-pack:
+    name: Build, Test, and Pack NuGet Packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+      - name: Build and Pack
+        run: dotnet fsi build.fsx -- -p build
+      - name: Upload NuGet packages and release title
+        uses: actions/upload-artifact@v7
+        with:
+          name: nuget-packages
+          path: |
+            bin/*.nupkg
+            bin/RELEASE_TITLE
+          if-no-files-found: error
+
+  publish-npm:
+    name: Pack and Publish npm Packages
+    runs-on: ubuntu-latest
+    needs: [build-native, build-and-pack]
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+
+      - name: Update npm for Trusted Publishing
+        run: npm install --global npm@latest && npm --version
+
+      - name: Download linux-x64 binary
+        uses: actions/download-artifact@v8
+        with:
+          name: clippit-linux-x64
+          path: bin/cli/linux-x64
+
+      - name: Download linux-arm64 binary
+        uses: actions/download-artifact@v8
+        with:
+          name: clippit-linux-arm64
+          path: bin/cli/linux-arm64
+
+      - name: Download win-x64 binary
+        uses: actions/download-artifact@v8
+        with:
+          name: clippit-win-x64
+          path: bin/cli/win-x64
+
+      - name: Download win-arm64 binary
+        uses: actions/download-artifact@v8
+        with:
+          name: clippit-win-arm64
+          path: bin/cli/win-arm64
+
+      - name: Download osx-x64 binary
+        uses: actions/download-artifact@v8
+        with:
+          name: clippit-osx-x64
+          path: bin/cli/osx-x64
+
+      - name: Download osx-arm64 binary
+        uses: actions/download-artifact@v8
+        with:
+          name: clippit-osx-arm64
+          path: bin/cli/osx-arm64
+
+      - name: Pack npm packages
+        run: dotnet fsi build.fsx -- -p pack-npm
+        env:
+          CLIPPIT_PUBLISH_RIDS: win-x64,win-arm64,osx-x64,osx-arm64,linux-x64,linux-arm64
+
+      - name: Upload npm tarballs
+        uses: actions/upload-artifact@v7
+        with:
+          name: clippit-npm-packages
+          path: bin/npm/*.tgz
+          if-no-files-found: error
+
+      - name: Publish npm packages
+        run: |
+          publish_if_missing() {
+            local tarball="$1"
+            local metadata name version spec error_file
+
+            metadata="$(tar -xOzf "$tarball" package/package.json)"
+            name="$(node -p 'JSON.parse(process.argv[1]).name' "$metadata")"
+            version="$(node -p 'JSON.parse(process.argv[1]).version' "$metadata")"
+            spec="${name}@${version}"
+            error_file="$(mktemp)"
+
+            if npm view "$spec" version >/dev/null 2>"$error_file"; then
+              echo "$spec is already published; skipping"
+              rm -f "$error_file"
+              return 0
+            fi
+
+            if ! grep -Fq 'E404' "$error_file"; then
+              cat "$error_file" >&2
+              rm -f "$error_file"
+              return 1
+            fi
+
+            if npm publish "$tarball" --access public; then
+              rm -f "$error_file"
+              return 0
+            fi
+
+            if npm view "$spec" version >/dev/null 2>"$error_file"; then
+              echo "$spec appeared during publish; treating it as complete"
+              rm -f "$error_file"
+              return 0
+            fi
+
+            cat "$error_file" >&2
+            rm -f "$error_file"
+            return 1
+          }
+
+          for tarball in \
+            bin/npm/sergey-tihon-clippit-bin-win32-x64-*.tgz \
+            bin/npm/sergey-tihon-clippit-bin-darwin-x64-*.tgz \
+            bin/npm/sergey-tihon-clippit-bin-darwin-arm64-*.tgz \
+            bin/npm/sergey-tihon-clippit-bin-linux-x64-*.tgz \
+            bin/npm/sergey-tihon-clippit-bin-linux-arm64-*.tgz \
+            bin/npm/sergey-tihon-clippit-bin-win32-arm64-*.tgz \
+            bin/npm/clippit-[0-9]*.tgz; do
+            publish_if_missing "$tarball"
+          done
+
+  publish:
+    needs: [build-and-pack, publish-npm]
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Download NuGet packages and release title
+        uses: actions/download-artifact@v8
+        with:
+          name: nuget-packages
+          path: bin
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+      - name: Publish to NuGet
+        run: |
+          dotnet nuget push bin/*.nupkg \
+            --api-key ${{ steps.login.outputs.NUGET_API_KEY }} \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.ref_name }}" \
+            --title "$(cat bin/RELEASE_TITLE)" \
+            --generate-notes
