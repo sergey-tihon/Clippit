@@ -75,18 +75,18 @@ let withCiMsBuildLogger (command: string) =
 
 let testFramework = System.Environment.GetEnvironmentVariable("CLIPPIT_TEST_FRAMEWORK")
 
-let testCommand =
+let testCommands =
     // CI runs one framework per matrix job; local builds test both sequentially to avoid shared temp output collisions.
     let command =
         if isGitHubActions then
-            "dotnet test --solution Clippit.slnx -c Release --no-build"
+            "test --solution Clippit.slnx -c Release --no-build"
         else
-            "dotnet test --solution Clippit.slnx"
+            "test --solution Clippit.slnx"
 
     match testFramework with
     | null
-    | "" -> $"{command} -f net10.0 && {command} -f net11.0"
-    | framework -> $"{command} -f {framework}"
+    | "" -> [ $"{command} -f net10.0"; $"{command} -f net11.0" ]
+    | framework -> [ $"{command} -f {framework}" ]
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -264,7 +264,11 @@ pipeline "build" {
 
     stage "Build" { run (withCiMsBuildLogger "dotnet build Clippit.slnx -c Release") }
 
-    stage "RunTests" { run testCommand }
+    stage "RunTests" {
+        run (fun _ ->
+            testCommands
+            |> List.iter (runRequiredCommand __SOURCE_DIRECTORY__ "dotnet"))
+    }
 
     stage "NuGet" {
         run (fun ctx ->
