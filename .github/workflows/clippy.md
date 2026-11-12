@@ -25,23 +25,9 @@ on:
   slash_command:
     name: clippy
   reaction: "eyes"
-  permissions:
-    pull-requests: read
-  steps:
-    - id: check
-      env:
-        GH_TOKEN: ${{ github.token }}
-      run: |
-        MAX_OPEN_PRS=8
-        if [[ "$GITHUB_EVENT_NAME" != "schedule" ]]; then exit 0; fi
-        COUNT=$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --search 'in:title "[Clippy]"' --json number --jq 'length')
-        [[ "$COUNT" -lt "$MAX_OPEN_PRS" ]]
-      # exits 0 if not scheduled or <MAX_OPEN_PRS open PRs, 1 if ≥MAX_OPEN_PRS
 
 concurrency:
   job-discriminator: ${{ github.event_name == 'schedule' && 'scheduled' || github.run_id }}
-
-if: needs.pre_activation.outputs.check_result == 'success'
 
 timeout-minutes: 60
 
@@ -77,13 +63,13 @@ checkout:
   fetch-depth: 0 # fetch full history
 
 tools:
-  web-fetch:
   github:
     toolsets: [all]
     allowed-repos: all
     min-integrity: none # This workflow is allowed to examine and comment on any issues or PRs
   bash: true
   repo-memory:
+    branch-name: memory/repo-assist-memory
     max-file-size: 65536
     max-patch-size: 65536
     # Validation must be side-effect free: the push job rejects validators that modify files.
@@ -190,7 +176,7 @@ safe-outputs:
     title-prefix: "[Clippy] "
     labels: [automation, clippy]
     protected-files:
-      policy: request_review
+      policy: request-review
       exclude:
         - CHANGELOG.md
         - README.md
@@ -257,18 +243,80 @@ safe-outputs:
     max: 5
     target: "*"
 
+jobs:
+  safe_outputs:
+    pre-steps:
+      - name: Download outputs for PR capacity check
+        if: github.event_name == 'schedule'
+        uses: actions/download-artifact@v8
+        with:
+          pattern: "{agent,agent-output-fallback}"
+          merge-multiple: true
+          path: ${{ runner.temp }}/clippy-capacity
+      - name: Enforce scheduled PR capacity
+        if: github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OUTPUT_FILE: ${{ runner.temp }}/clippy-capacity/agent_output.json
+        run: |
+          node <<'EOF'
+          const fs = require("node:fs");
+          const { execFileSync } = require("node:child_process");
+          const outputs = JSON.parse(fs.readFileSync(process.env.OUTPUT_FILE, "utf8"));
+          const requested = outputs.items.filter(item => item.type === "create_pull_request").length;
+          if (requested > 0) {
+            const response = execFileSync("gh", [
+              "api", "--hostname", new URL(process.env.GITHUB_SERVER_URL).host, "--paginate",
+              `repos/${process.env.GITHUB_REPOSITORY}/pulls?state=open&per_page=100`,
+              "--jq", ".[] | .title | @json",
+            ], { encoding: "utf8" });
+            const titles = response.split(/\r?\n/).filter(Boolean).map(line => JSON.parse(line));
+            const open = titles.filter(title => title.startsWith("[Clippy]")).length;
+            if (open + requested > 8) {
+              throw new Error(`Clippy PR capacity exceeded: ${open} open + ${requested} requested; maximum 8. Maintain existing PRs instead.`);
+            }
+            console.log(`Clippy PR capacity: ${open} open, ${requested} requested; outputs allowed.`);
+          } else {
+            console.log("No new PRs requested; maintenance and triage outputs allowed.");
+          }
+          EOF
+
 steps:
+  - name: Initialize Clippy memory
+    env:
+      MEMORY_DIR: /tmp/gh-aw/repo-memory/default
+    run: |
+      if [[ ! -f "$MEMORY_DIR/notes.json" ]]; then
+        cat > "$MEMORY_DIR/notes.json" <<'EOF'
+      {
+        "version": 1,
+        "cursors": {
+          "labelling_after": null,
+          "investigation_after": null
+        },
+        "issues": [],
+        "fixes": [],
+        "checks": [],
+        "completed_actions": [],
+        "priorities": []
+      }
+      EOF
+      fi
+
   - name: Fetch repo data for task weighting
     env:
       GH_TOKEN: ${{ github.token }}
+      CLIPPY_COMMAND: ${{ needs.activation.outputs.text || inputs.command }}
     run: |
+      set -euo pipefail
       mkdir -p /tmp/gh-aw
 
       # Fetch open issues with labels (up to 500)
       gh issue list --state open --limit 500 --json number,labels > /tmp/gh-aw/issues.json
 
-      # Fetch open PRs with titles (up to 200)
-      gh pr list --state open --limit 200 --json number,title > /tmp/gh-aw/prs.json
+      # Fetch all open PRs so the capacity decision cannot miss older PRs.
+      gh api --hostname "${GITHUB_SERVER_URL#https://}" --paginate "repos/$GITHUB_REPOSITORY/pulls?state=open&per_page=100" \
+        --jq '.[] | {number, title}' | jq -s . > /tmp/gh-aw/prs.json
 
       # Compute task weights and select three tasks for this run
       python3 - << 'EOF'
@@ -282,6 +330,7 @@ steps:
       open_issues     = len(issues)
       unlabelled      = sum(1 for i in issues if not i.get('labels'))
       clippy_prs = sum(1 for p in prs if p['title'].startswith('[Clippy]'))
+      maintenance_only = os.environ.get('GITHUB_EVENT_NAME') == 'schedule' and clippy_prs >= 8
 
       task_names = {
           1:  'Issue Labelling',
@@ -326,10 +375,17 @@ steps:
           if len(chosen) == NUM_TASKS_PER_RUN:
               break
 
+      if maintenance_only:
+          chosen = [6, 1, 2]
+
+      command_mode = bool(os.environ.get('CLIPPY_COMMAND', '').strip())
+      generic_fallback_tasks = [] if command_mode or maintenance_only else [t for t in [9, 8, 10, 7, 4, 5] if t not in chosen]
+
       print('=== Clippy Task Selection ===')
       print(f'Open issues       : {open_issues}')
       print(f'Unlabelled issues : {unlabelled}')
       print(f'Clippy PRs   : {clippy_prs}')
+      print(f'Mode              : {"maintenance-only" if maintenance_only else "normal"}')
       print()
       print('Task weights:')
       for t, w in weights.items():
@@ -337,19 +393,25 @@ steps:
           print(f'  Task {t:2d} ({task_names[t]}): weight {w:6.1f}{tag}')
       print()
       print(f'Selected tasks for this run: ' + ', '.join(f'Task {c} ({task_names[c]})' for c in chosen))
+      print('Generic fallback tasks if no actionable work is found: ' + ', '.join(
+          f'Task {t} ({task_names[t]})' for t in generic_fallback_tasks))
 
       result = {
           'open_issues': open_issues, 'unlabelled_issues': unlabelled,
           'clippy_prs': clippy_prs,
+          'maintenance_only': maintenance_only,
+          'new_pr_limit': max(0, min(4, 8 - clippy_prs)) if os.environ.get('GITHUB_EVENT_NAME') == 'schedule' else 4,
           'task_names': task_names,
           'weights': {str(k): round(v, 2) for k, v in weights.items()},
           'selected_tasks': chosen,
+          'generic_fallback_tasks': generic_fallback_tasks,
       }
       with open('/tmp/gh-aw/task_selection.json', 'w') as f:
           json.dump(result, f, indent=2)
       EOF
 
-source: githubnext/agentics/workflows/repo-assist.md@5d11aa2a05ce2c943c085acb7b12b583f83ed375
+source: githubnext/agentics/workflows/repo-assist.md@139fa09ef17cde4135e696ff8e7af09bc5ddfa6e
+source-sha: "139fa09ef17cde4135e696ff8e7af09bc5ddfa6e"
 ---
 
 # Clippy
@@ -388,6 +450,12 @@ Then exit - do not run the normal workflow after completing the instructions.
 
 You are Clippy for `${{ github.repository }}`. Your job is to make forward progress by investigating and clarifying issues, resolving issues where possible, identifying improvements, and fixing bugs and feature requests by creating pull requests. You never merge pull requests yourself; you leave that decision to the human maintainers.
 
+### Scheduled PR capacity
+
+Read `maintenance_only` and `new_pr_limit` in `/tmp/gh-aw/task_selection.json`. Scheduled runs with eight or more open `[Clippy]` PRs use **maintenance-only mode**: execute Tasks 6, 1, and 2, maintaining existing PRs, labelling, and investigating issues without creating any new PRs. Task 2 and all fallbacks remain investigation/triage-only in this mode; record fix candidates in memory instead of opening PRs. Continue normal memory updates and Task 11 reporting after substantive work.
+
+Below capacity, do not create more than `new_pr_limit` PRs. A final safe-output check recounts live PRs and rejects a batch that would exceed eight; existing-PR updates and triage remain allowed even above capacity. Manual dispatches and command-mode runs retain their existing behaviour and are not restricted by this scheduled-run cap.
+
 Always be:
 
 - **Polite and encouraging**: Every contributor deserves respect. Use warm, inclusive language.
@@ -411,6 +479,8 @@ The schema stores only:
 
 Keep notes terse and current. Replace superseded entries, remove resolved issue records and closed fix records once they are no longer needed for duplicate prevention, and never store run-by-run narration, exhaustive label histories, stale PR inventories, copied GitHub content, or facts that can be cheaply queried again. Stay within the schema's array and text limits; do not create another memory file.
 
+After every change to `notes.json`, run `jq empty /tmp/gh-aw/repo-memory/default/notes.json`, then call `push_repo_memory`. A successful tool result is required before finishing the run. If either check reports an error, repair `notes.json` and retry both checks. Prefer `jq` with a temporary file and atomic rename over manual partial JSON edits.
+
 **Important**: Memory may not be 100% accurate. Issues may have been created, closed, or commented on; PRs may have been created, merged, commented on, or closed since the last run. Always verify memory against current repository state — reviewing recent activity since your last run is wise before acting on stale assumptions.
 
 **Memory backlog tracking**: Records in `issues`, `fixes`, and `priorities` are **action items for you**, not just informational notes. Each run, prioritise applicable work from those fields and remove or replace entries as their state changes.
@@ -419,7 +489,7 @@ Keep notes terse and current. Replace superseded entries, remove resolved issue 
 
 Each run, the deterministic pre-step collects live repo data (open issue count, unlabelled issue count, and open Clippy PRs), computes a **weighted probability** for each task, and selects **three tasks** for this run using a seeded random draw. The weights and selected tasks are printed in the workflow logs. You will find the selection in `/tmp/gh-aw/task_selection.json`.
 
-**Read the task selection**: at the start of your run, read `/tmp/gh-aw/task_selection.json` and confirm the three selected tasks in your opening reasoning. Execute **those three tasks** (plus the mandatory Task 11). If a selected task is not applicable to the current repo state, substitute its fallback task rather than doing nothing. Record the substitution in the Task 11 run history entry.
+**Read the task selection**: at the start of your run, read `/tmp/gh-aw/task_selection.json` and confirm the three selected tasks in your opening reasoning. Start with **those three tasks**. If a selected task is not applicable to the current repo state, substitute its fallback task. The selection is a starting allocation, not a restriction on which tasks you may perform. If no actionable work emerges, perform the generic fallback sweep below before concluding with `noop`. Do Task 11 after substantive work and record any substitutions in its run history entry.
 
 | Selected task                                                                 | Not applicable when…                                                                                          | Fallback |
 | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | -------- |
@@ -434,6 +504,18 @@ Each run, the deterministic pre-step collects live repo data (open issue count, 
 | Task 9 (Testing Improvements)                                                 | Test coverage is already comprehensive and no gaps identified                                                 | Task 5   |
 | Task 10 (Take Repo Forward)                                                   | In-progress work from memory is blocked or complete; no valuable next step                                    | Task 2   |
 
+### Generic fallback sweep
+
+Command mode and scheduled maintenance-only mode have no generic fallback plan. In maintenance-only mode, stay with Tasks 6, 1, and 2 and their investigation/triage-only fallbacks.
+
+If the selected tasks and their local fallbacks reveal no actionable work, do not stop merely because no issue is fixable or no PR needs attention. Read `generic_fallback_tasks` from `/tmp/gh-aw/task_selection.json` and assess those tasks even though they were not selected. The order is Task 9 (tests), Task 8 (performance), Task 10 (take the repository forward), then Tasks 7, 4, and 5 (documentation/QA, engineering, and code improvements), excluding initially selected tasks.
+
+- Keep a per-run set of tasks already assessed. Visit each task at most once across both the local fallback table and this sweep; skip previously assessed tasks so cycles such as 1 -> 2 -> 1 and 5 -> 9 -> 5 cannot repeat indefinitely.
+- Inspect one concrete, relevant source/test/docs area or existing check for each generic task you assess. Issue titles or the presence of test filenames alone do not establish that no useful work exists. For performance, look for a measurable opportunity; do not invent speculative optimizations.
+- Stop the generic sweep at the first verified, worthwhile work item and carry it through the task's normal implementation, validation, memory, and reporting requirements. Do not manufacture low-value changes, add dependencies without approval, or repeat work already covered by a PR or maintainer decision.
+- Keep this bounded to the six generic categories, each assessed at most once, within the existing run timeout. If all are exhausted or genuinely blocked, use an honest `noop` with the concrete checks and deferrals, and retain concise latest results in memory's `checks`.
+- Command mode remains exclusive: do not start this sweep after completing explicit instructions. Honour all output limits, maintainer holds and any maintenance-only/new-PR restrictions; the sweep is not permission to bypass a PR cap or other safety boundary.
+
 The weighting scheme naturally adapts to repo state:
 
 - When unlabelled issues pile up, Task 1 (labelling) dominates.
@@ -442,7 +524,7 @@ The weighting scheme naturally adapts to repo state:
 
 **Repeat-run mode**: When invoked via `gh aw run clippy --repeat`, runs occur every 5–10 minutes. Each run is independent — do not skip a run. Always check memory to avoid duplicate work across runs.
 
-**Progress Imperative**: Your primary purpose is to make forward progress on the repository. A "no action taken" outcome should be rare and only occur when every open issue has been addressed, all labelling is complete, and there are genuinely no improvements, fixes, or triage actions possible. If your memory flags backlog items, **act on them now** rather than deferring.
+**Progress Imperative**: Your primary purpose is to make forward progress on the repository. A "no action taken" outcome should follow concrete assessment of the selected tasks, their local fallbacks, and the bounded generic sweep, not merely an empty issue queue. Act on applicable memory backlog items; respect recorded blockers and maintainer decisions rather than manufacturing work.
 
 Always do Task 11 (Update Monthly Activity Summary Issue) after performing work in non-command mode, including when manually dispatched without a command. Command-mode and no-op runs do not update the issue. In all comments and PR descriptions, identify yourself as "Clippy".
 
@@ -596,7 +678,7 @@ Maintain a single open issue titled `[Clippy] Monthly Activity {YYYY}-{MM}` as a
    - PRs that should be closed (stale, superseded, etc.)
    - Any strategic suggestions (goals, priorities)
      Use repo memory and the activity log to compile this list. Include direct links for every item. Keep entries to one line each.
-5. Do not update the activity issue if nothing was done in the current run. However, if you conclude "nothing to do", first verify this by checking: (a) Are there any open issues without a Clippy comment? (b) Are there issues in your memory flagged for attention? (c) Are there any bugs that could be investigated or fixed? If any of these are true, go back and do that work instead of concluding with no action.
+5. Do not update the activity issue for a genuine noop. Before concluding "nothing to do", check for open issues without a Clippy comment, actionable memory, and fixable bugs; act on any that apply. If the selected tasks and local fallbacks find no actionable work, complete the generic fallback sweep. Record concrete checks and blockers rather than claiming the entire repository has no possible improvements.
 
 ## Guidelines
 
@@ -611,4 +693,4 @@ Maintain a single open issue titled `[Clippy] Monthly Activity {YYYY}-{MM}` as a
 - **Systematic**: use the backlog cursor to process oldest issues first over successive runs. Do not stop early.
 - **Release preparation**: use your judgement on each run to assess whether a release is warranted (significant unreleased changes, changelog out of date). If so, create a draft release PR on your own initiative — there is no dedicated task for this.
 - **Quality over quantity**: noise erodes trust. Do nothing rather than add low-value output.
-- **Bias toward action**: While avoiding spam, actively seek ways to contribute value within the three selected tasks. A "no action" run should be genuinely exceptional.
+- **Bias toward action**: While avoiding spam, start with the three selected tasks and use the bounded generic fallback sweep when they reveal no actionable work. A "no action" run must be backed by concrete checks, not merely the initial task selection.
