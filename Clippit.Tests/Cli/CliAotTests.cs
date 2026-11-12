@@ -85,6 +85,8 @@ internal sealed class CliAotTests
                 [
                     "publish",
                     project,
+                    "-f",
+                    "net11.0",
                     "-c",
                     "Release",
                     "--self-contained",

@@ -28,7 +28,7 @@ which runs these stages in order:
 2. `dotnet csharpier check .` (formatting check — build fails if violated)
 3. `dotnet clean` and clean `bin/`
 4. Generate `Clippit/Properties/AssemblyInfo.g.cs` (version from `CHANGELOG.md`)
-5. `dotnet build Clippit.slnx -c Release` (CI builds one test TFM per matrix job)
+5. `dotnet build Clippit.slnx -c Release`
 6. Run `dotnet test --solution Clippit.slnx -f net10.0`, then run it with `-f net11.0`.
 7. `dotnet pack Clippit/Clippit.csproj -o bin/`
 
@@ -38,8 +38,8 @@ runs CSharpier on staged `.cs` files automatically.
 ### Test Runner
 
 Tests use **TUnit** with the `Microsoft.Testing.Platform` runner (configured in `global.json`).
-The library and test projects target `net10.0` and `net11.0`; the CLI targets `net11.0` only. Run tests
-for each framework separately to avoid collisions in the shared temp directory. The `--treenode-filter`
+The library and test projects target `net10.0` and `net11.0`; the CLI targets `net10.0` and `net11.0`. NativeAOT publishes
+use `-f net11.0`. Run tests for each framework separately to avoid collisions in the shared temp directory. The `--treenode-filter`
 flag uses TUnit's tree filter syntax — `/*/*/*/MethodName**` matches any test method starting with
 `MethodName` across all assemblies/namespaces/classes.
 
@@ -56,7 +56,7 @@ Clippit/                    Main library (targets net10.0 and net11.0)
   Core/                     PowerToolsBlock, StronglyTypedBlock
   Internal/                 ColorParser, TextReplacer, Relationships
   Properties/               AssemblyInfo.cs (InternalsVisibleTo), AssemblyInfo.g.cs (generated)
-Clippit.Cli/                CLI tool (targets net11.0)
+Clippit.Cli/                CLI tool (targets net10.0 and net11.0)
   Commands/Pptx/Split/      `pptx split` command and result payload
   Commands/Pptx/Build/      `pptx build init` / `pptx build run`, manifests, sections
   Commands/Pptx/Verify/     `pptx verify` validation command and result payload

@@ -137,7 +137,7 @@ internal static class CliTestRunner
     public static FileInfo GetManagedCliDll()
     {
         var testOutputDirectory = new DirectoryInfo(AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar));
-        const string targetFramework = "net11.0";
+        var targetFramework = testOutputDirectory.Name;
         var configuration = testOutputDirectory.Parent?.Name ?? "Debug";
         var candidates = new[] { configuration, "Release", "Debug" }
             .Distinct(StringComparer.OrdinalIgnoreCase)
