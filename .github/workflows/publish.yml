@@ -157,17 +157,56 @@ jobs:
           path: bin/npm/*.tgz
           if-no-files-found: error
 
-      - name: Publish platform npm packages
+      - name: Publish npm packages
         run: |
-          npm publish bin/npm/sergey-tihon-clippit-bin-win32-x64-*.tgz --access public
-          npm publish bin/npm/sergey-tihon-clippit-bin-darwin-x64-*.tgz --access public
-          npm publish bin/npm/sergey-tihon-clippit-bin-darwin-arm64-*.tgz --access public
-          npm publish bin/npm/sergey-tihon-clippit-bin-linux-x64-*.tgz --access public
-          npm publish bin/npm/sergey-tihon-clippit-bin-linux-arm64-*.tgz --access public
-          npm publish bin/npm/sergey-tihon-clippit-bin-win32-arm64-*.tgz --access public
+          publish_if_missing() {
+            local tarball="$1"
+            local metadata name version spec error_file
 
-      - name: Publish wrapper npm package
-        run: npm publish bin/npm/clippit-[0-9]*.tgz --access public
+            metadata="$(tar -xOzf "$tarball" package/package.json)"
+            name="$(node -p 'JSON.parse(process.argv[1]).name' "$metadata")"
+            version="$(node -p 'JSON.parse(process.argv[1]).version' "$metadata")"
+            spec="${name}@${version}"
+            error_file="$(mktemp)"
+
+            if npm view "$spec" version >/dev/null 2>"$error_file"; then
+              echo "$spec is already published; skipping"
+              rm -f "$error_file"
+              return 0
+            fi
+
+            if ! grep -Fq 'E404' "$error_file"; then
+              cat "$error_file" >&2
+              rm -f "$error_file"
+              return 1
+            fi
+
+            if npm publish "$tarball" --access public; then
+              rm -f "$error_file"
+              return 0
+            fi
+
+            if npm view "$spec" version >/dev/null 2>"$error_file"; then
+              echo "$spec appeared during publish; treating it as complete"
+              rm -f "$error_file"
+              return 0
+            fi
+
+            cat "$error_file" >&2
+            rm -f "$error_file"
+            return 1
+          }
+
+          for tarball in \
+            bin/npm/sergey-tihon-clippit-bin-win32-x64-*.tgz \
+            bin/npm/sergey-tihon-clippit-bin-darwin-x64-*.tgz \
+            bin/npm/sergey-tihon-clippit-bin-darwin-arm64-*.tgz \
+            bin/npm/sergey-tihon-clippit-bin-linux-x64-*.tgz \
+            bin/npm/sergey-tihon-clippit-bin-linux-arm64-*.tgz \
+            bin/npm/sergey-tihon-clippit-bin-win32-arm64-*.tgz \
+            bin/npm/clippit-[0-9]*.tgz; do
+            publish_if_missing "$tarball"
+          done
 
   publish:
     needs: [build-native, publish-npm]
