@@ -584,8 +584,7 @@ namespace Clippit.Word
                 };
 
                 var runContainingTabToReplace = element.Ancestors(W.r).First();
-                var fontNameAtt =
-                    runContainingTabToReplace.Attribute(PtOpenXml.pt + "FontName")
+                var fontNameAtt = runContainingTabToReplace.Attribute(PtOpenXml.pt + "FontName")
                     ?? runContainingTabToReplace.Ancestors(W.p).First().Attribute(PtOpenXml.pt + "FontName");
 
                 var dummyRun = new XElement(
@@ -970,8 +969,9 @@ namespace Clippit.Word
                                 cell2 = tc;
                                 break;
                             }
-                            gridColCount +=
-                                (int?)tc.Elements(W.tcPr).Elements(W.gridSpan).Attributes(W.val).FirstOrDefault() ?? 1;
+                            gridColCount += (int?)
+                                tc.Elements(W.tcPr).Elements(W.gridSpan).Attributes(W.val).FirstOrDefault()
+                                ?? 1;
                         }
                         if (cell2 is null)
                             break;
@@ -2199,8 +2199,7 @@ namespace Clippit.Word
                 if (currentElement.Name == W.tab)
                 {
                     var runContainingTabToReplace = currentElement.Parent;
-                    var fontNameAtt =
-                        runContainingTabToReplace.Attribute(PtOpenXml.pt + "FontName")
+                    var fontNameAtt = runContainingTabToReplace.Attribute(PtOpenXml.pt + "FontName")
                         ?? runContainingTabToReplace.Ancestors(W.p).First().Attribute(PtOpenXml.pt + "FontName");
 
                     var testAmount = twipCounter;
@@ -3516,8 +3515,7 @@ namespace Clippit.Word
 
             var extentCx = (int?)containerElement.Elements(WP.extent).Attributes(NoNamespace.cx).FirstOrDefault();
             var extentCy = (int?)containerElement.Elements(WP.extent).Attributes(NoNamespace.cy).FirstOrDefault();
-            var altText =
-                (string)containerElement.Elements(WP.docPr).Attributes(NoNamespace.descr).FirstOrDefault()
+            var altText = (string)containerElement.Elements(WP.docPr).Attributes(NoNamespace.descr).FirstOrDefault()
                 ?? ((string)containerElement.Elements(WP.docPr).Attributes(NoNamespace.name).FirstOrDefault() ?? "");
 
             var blipFill = containerElement

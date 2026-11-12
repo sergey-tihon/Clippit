@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.9.3] - November 12, 2026
+
+- build: target .NET 10 and .NET 11 with the .NET 11 SDK; CI builds and tests both targets
+
 ## [3.9.2] - October 19, 2026
 
 - perf: optimize element and comparer lookups and reduce directive-counting allocations (#526, #528, #532, #536)

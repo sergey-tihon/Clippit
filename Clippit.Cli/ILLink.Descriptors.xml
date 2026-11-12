@@ -2,7 +2,7 @@
     <!--
     ILLink / NativeAOT root descriptors for Clippit.Cli.
 
-    All DocumentFormat.OpenXml types (3.5.1, net10.0, IsTrimmable=true) and
+    All DocumentFormat.OpenXml types (3.5.1, IsTrimmable=true) and
     SkiaSharp word/HTML paths are handled by static analysis — no manual roots
     needed for those.
 

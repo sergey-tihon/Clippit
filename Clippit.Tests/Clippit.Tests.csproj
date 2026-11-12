@@ -2,15 +2,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Clippit\Clippit.csproj" />
-    <ProjectReference Include="..\Clippit.Cli\Clippit.Cli.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference Include="..\Clippit.Cli\Clippit.Cli.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="JsonSchema.Net" Version="9.5.0" />
-    <PackageReference Include="TUnit" Version="1.76.28" />
+    <PackageReference Include="JsonSchema.Net" Version="9.6.0" />
+    <PackageReference Include="TUnit" Version="1.83.8" />
   </ItemGroup>
 </Project>

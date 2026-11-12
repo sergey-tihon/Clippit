@@ -14,9 +14,9 @@ Clippit is a .NET library providing OpenXml PowerTools for Word, Excel, and Powe
 | Restore tools       | `dotnet tool restore`                                                          |
 | Lint check          | `dotnet csharpier check .`                                                     |
 | Lint fix            | `dotnet csharpier format .`                                                    |
-| Test all            | `dotnet test --project Clippit.Tests/`                                         |
-| Single test         | `dotnet test --project Clippit.Tests/ --treenode-filter "/*/*/*/MethodName**"` |
-| Tests in class      | `dotnet test --project Clippit.Tests/ --treenode-filter "/*/*/ClassName/**"`   |
+| Test all            | Run `dotnet test --project Clippit.Tests/` separately with `-f net10.0` and `-f net11.0` |
+| Single test         | `dotnet test --project Clippit.Tests/ -f net11.0 --treenode-filter "/*/*/*/MethodName**"` |
+| Tests in class      | `dotnet test --project Clippit.Tests/ -f net11.0 --treenode-filter "/*/*/ClassName/**"` |
 | Check outdated deps | `dotnet outdated`                                                              |
 
 ### Build Pipeline
@@ -29,7 +29,7 @@ which runs these stages in order:
 3. `dotnet clean` and clean `bin/`
 4. Generate `Clippit/Properties/AssemblyInfo.g.cs` (version from `CHANGELOG.md`)
 5. `dotnet build Clippit.slnx -c Release`
-6. `dotnet test --solution Clippit.slnx`
+6. Run `dotnet test --solution Clippit.slnx -f net10.0`, then run it with `-f net11.0`.
 7. `dotnet pack Clippit/Clippit.csproj -o bin/`
 
 Always run `dotnet csharpier format .` before committing. A pre-commit hook (Husky.NET)
@@ -38,14 +38,15 @@ runs CSharpier on staged `.cs` files automatically.
 ### Test Runner
 
 Tests use **TUnit** with the `Microsoft.Testing.Platform` runner (configured in `global.json`).
-The test project targets `net10.0` only. The `--treenode-filter` flag uses TUnit's tree
-filter syntax — the pattern `/*/*/*/MethodName**` matches any test method starting with
+The library and test projects target `net10.0` and `net11.0`; the CLI targets `net10.0` and `net11.0`. NativeAOT publishes
+use `-f net11.0`. Run tests for each framework separately to avoid collisions in the shared temp directory. The `--treenode-filter`
+flag uses TUnit's tree filter syntax — `/*/*/*/MethodName**` matches any test method starting with
 `MethodName` across all assemblies/namespaces/classes.
 
 ## Project Structure
 
 ```
-Clippit/                    Main library (targets net10.0)
+Clippit/                    Main library (targets net10.0 and net11.0)
   Word/                     Word/DOCX: DocumentBuilder, DocumentAssembler, WmlComparer, HtmlConverter
     Assembler/              DocumentAssembler helpers (templates, extensions)
   PowerPoint/               PPTX: PresentationBuilder, Fluent API
@@ -55,13 +56,13 @@ Clippit/                    Main library (targets net10.0)
   Core/                     PowerToolsBlock, StronglyTypedBlock
   Internal/                 ColorParser, TextReplacer, Relationships
   Properties/               AssemblyInfo.cs (InternalsVisibleTo), AssemblyInfo.g.cs (generated)
-Clippit.Cli/                CLI tool (targets net10.0)
+Clippit.Cli/                CLI tool (targets net10.0 and net11.0)
   Commands/Pptx/Split/      `pptx split` command and result payload
   Commands/Pptx/Build/      `pptx build init` / `pptx build run`, manifests, sections
   Commands/Pptx/Verify/     `pptx verify` validation command and result payload
   Commands/Version/         `version` command and root `--version` payload
   Infrastructure/           Output format, structured errors, exit codes
-Clippit.Tests/              Test project (targets net10.0)
+Clippit.Tests/              Test project (targets net10.0 and net11.0)
   Word/ PowerPoint/ Excel/ Html/ Common/    Mirror library structure
   Cli/                                      CLI integration and AOT smoke tests
   */Samples/                                Sample/integration tests

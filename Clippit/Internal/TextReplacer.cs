@@ -73,9 +73,8 @@ namespace Clippit.Internal
                         )
                         {
                             var subSequence = subRunArray.SequenceAt(pc.Index).Take(search.Length);
-                            var zipped = subSequence.PtZip(
-                                search,
-                                (pcp, c) => new { ParagraphChildProjection = pcp, CharacterToCompare = c }
+                            var zipped = subSequence.PtZip(search, (pcp, c) =>
+                                new { ParagraphChildProjection = pcp, CharacterToCompare = c }
                             );
                             var dontMatch = zipped.Any(z =>
                             {
@@ -297,9 +296,8 @@ namespace Clippit.Internal
                         )
                         {
                             var subSequence = subRunArray.SequenceAt(pc.Index).Take(search.Length);
-                            var zipped = subSequence.PtZip(
-                                search,
-                                (pcp, c) => new { ParagraphChildProjection = pcp, CharacterToCompare = c }
+                            var zipped = subSequence.PtZip(search, (pcp, c) =>
+                                new { ParagraphChildProjection = pcp, CharacterToCompare = c }
                             );
                             var dontMatch = zipped.Any(z =>
                             {

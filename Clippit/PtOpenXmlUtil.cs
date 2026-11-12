@@ -33,7 +33,7 @@ namespace Clippit
             // HACK: disable Crc32 validation on zip entries to support corrupted content
             // SetLength disables validation on a ProgressiveCrcCalculatingStream (NetFramework)
             // see https://github.com/sergey-tihon/Clippit/issues/55
-            if (stream.CanSeek)
+            if (stream.CanSeek && stream.CanWrite)
                 stream.SetLength(stream.Length);
 
             return System.Security.Cryptography.SHA256.HashData(stream);
@@ -613,16 +613,15 @@ namespace Clippit
                 .Select(t => (decimal)t.Attribute(PtOpenXml.TabWidth))
                 .Sum();
 
-            var fontName =
-                (string)r.Attribute(PtOpenXml.pt + "FontName")
+            var fontName = (string)r.Attribute(PtOpenXml.pt + "FontName")
                 ?? (string)r.Ancestors(W.p).First().Attribute(PtOpenXml.pt + "FontName")
                 ?? throw new OpenXmlPowerToolsException("Internal Error, should have FontName attribute");
 
             if (s_unknownFonts.ContainsKey(fontName))
                 return (0, tabLength);
 
-            var rPr =
-                r.Element(W.rPr) ?? throw new OpenXmlPowerToolsException("Internal Error, should have run properties");
+            var rPr = r.Element(W.rPr)
+                ?? throw new OpenXmlPowerToolsException("Internal Error, should have run properties");
 
             var sz = GetFontSize(r) ?? 22m;
 
@@ -1355,27 +1354,21 @@ namespace Clippit
                             //string input = @"    <![if gte mso 9]><v:imagedata o:relid=""rId15""";
                             var input = sr.ReadToEnd();
                             fixedContent = VmlConditionalTagRegex()
-                                .Replace(
-                                    input,
-                                    m =>
-                                    {
-                                        var g = m.Groups[1].Value;
-                                        if (g.StartsWith("CDATA["))
-                                            return "<![" + g + "]>";
-                                        else
-                                            return "<![CDATA[" + g + "]]>";
-                                    }
-                                );
+                                .Replace(input, m =>
+                                {
+                                    var g = m.Groups[1].Value;
+                                    if (g.StartsWith("CDATA["))
+                                        return "<![" + g + "]>";
+                                    else
+                                        return "<![CDATA[" + g + "]]>";
+                                });
 
                             fixedContent = VmlDuplicateRelIdRegex()
-                                .Replace(
-                                    fixedContent,
-                                    m =>
-                                    {
-                                        var g = m.Groups[1].Value;
-                                        return @"o:relid=""" + g + @"""";
-                                    }
-                                );
+                                .Replace(fixedContent, m =>
+                                {
+                                    var g = m.Groups[1].Value;
+                                    return @"o:relid=""" + g + @"""";
+                                });
 
                             fixedContent = fixedContent.Replace("</xml>ml>", "</xml>");
 

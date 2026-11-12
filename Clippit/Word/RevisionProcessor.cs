@@ -1768,9 +1768,8 @@ namespace Clippit.Word
                         }
                     }
 
-                    var zipped = blockContent.Zip(
-                        deletedParagraphGroupingInfo,
-                        (blc, gi) => new { BlockLevelContent = blc, GroupingInfo = gi }
+                    var zipped = blockContent.Zip(deletedParagraphGroupingInfo, (blc, gi) =>
+                        new { BlockLevelContent = blc, GroupingInfo = gi }
                     );
 
                     var groupedParagraphs = zipped.GroupAdjacent(z => z.GroupingInfo.GroupingKey);
@@ -2372,8 +2371,8 @@ namespace Clippit.Word
                         {
                             if (cellBefore is not null)
                             {
-                                removedColumns +=
-                                    (int?)child.Element(W.tcPr)?.Element(W.gridSpan)?.Attribute(W.val) ?? 1;
+                                removedColumns += (int?)child.Element(W.tcPr)?.Element(W.gridSpan)?.Attribute(W.val)
+                                    ?? 1;
                             }
                             continue;
                         }

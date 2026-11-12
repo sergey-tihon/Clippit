@@ -1953,41 +1953,35 @@ namespace Clippit.Word
                     if (match.Success)
                     {
                         var newValue = TemplateDirectiveSinglelineRegex()
-                            .Replace(
-                                attrValue,
-                                m =>
+                            .Replace(attrValue, m =>
+                            {
+                                var xmlText = m.Groups[1].Value.Trim().Replace('\u201c', '"').Replace('\u201d', '"');
+                                try
                                 {
-                                    var xmlText = m.Groups[1]
-                                        .Value.Trim()
-                                        .Replace('\u201c', '"')
-                                        .Replace('\u201d', '"');
-                                    try
+                                    var directive = XElement.Parse(xmlText);
+                                    if (directive.Name == PA.Content)
                                     {
-                                        var directive = XElement.Parse(xmlText);
-                                        if (directive.Name == PA.Content)
+                                        var schemaError = ValidatePerSchema(directive);
+                                        if (schemaError is not null)
                                         {
-                                            var schemaError = ValidatePerSchema(directive);
-                                            if (schemaError is not null)
-                                            {
-                                                templateError.HasError = true;
-                                                return $"[Template error: Schema Validation Error: {schemaError}]";
-                                            }
-
-                                            var xPath = (string)directive.Attribute(PA.Select);
-                                            var optional = (bool?)directive.Attribute(PA.Optional) ?? false;
-                                            return data.EvaluateXPathToString(xPath, optional);
+                                            templateError.HasError = true;
+                                            return $"[Template error: Schema Validation Error: {schemaError}]";
                                         }
 
-                                        // For non-PA.Content directives, leave the original text unchanged.
-                                        return m.Value;
+                                        var xPath = (string)directive.Attribute(PA.Select);
+                                        var optional = (bool?)directive.Attribute(PA.Optional) ?? false;
+                                        return data.EvaluateXPathToString(xPath, optional);
                                     }
-                                    catch (Exception ex)
-                                    {
-                                        templateError.HasError = true;
-                                        return $"[Template error: {ex.Message}]";
-                                    }
+
+                                    // For non-PA.Content directives, leave the original text unchanged.
+                                    return m.Value;
                                 }
-                            );
+                                catch (Exception ex)
+                                {
+                                    templateError.HasError = true;
+                                    return $"[Template error: {ex.Message}]";
+                                }
+                            });
 
                         return new XElement(
                             element.Name,

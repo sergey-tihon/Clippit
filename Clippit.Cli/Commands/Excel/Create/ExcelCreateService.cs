@@ -12,8 +12,7 @@ internal static class ExcelCreateService
         try
         {
             using var stream = input.OpenSeekable();
-            definition =
-                JsonSerializer.Deserialize(stream, CliJsonContext.Default.WorkbookDefinition)
+            definition = JsonSerializer.Deserialize(stream, CliJsonContext.Default.WorkbookDefinition)
                 ?? throw CliException.InvalidFormat("Workbook definition JSON is null.");
         }
         catch (JsonException ex)

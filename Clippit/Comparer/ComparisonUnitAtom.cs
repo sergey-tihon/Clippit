@@ -178,9 +178,8 @@ namespace Clippit
 
         private static void AppendAncestorsUnidsDump(StringBuilder sb, ComparisonUnitAtom sr)
         {
-            var zipped = sr.AncestorElements.Zip(
-                sr.AncestorUnids,
-                (a, u) => new { AncestorElement = a, AncestorUnid = u }
+            var zipped = sr.AncestorElements.Zip(sr.AncestorUnids, (a, u) =>
+                new { AncestorElement = a, AncestorUnid = u }
             );
 
             var s = zipped

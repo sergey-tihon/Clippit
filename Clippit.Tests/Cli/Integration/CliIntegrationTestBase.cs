@@ -88,8 +88,8 @@ internal abstract class CliIntegrationTestBase : TestsBase
         var xDoc = document.PresentationPart?.GetXDocument();
         XNamespace p14 = "http://schemas.microsoft.com/office/powerpoint/2010/main";
         return xDoc?.Root?.Descendants(p14 + "section")
-                .Select(section => (string?)section.Attribute("name") ?? string.Empty)
-                .ToList()
+            .Select(section => (string?)section.Attribute("name") ?? string.Empty)
+            .ToList()
             ?? [];
     }
 

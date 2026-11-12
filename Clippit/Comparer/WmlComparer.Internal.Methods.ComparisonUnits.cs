@@ -216,57 +216,44 @@ namespace Clippit
             };
 
             IEnumerable<Atgbw> groupingKey = comparisonUnitAtomList
-                .Rollup(
-                    seed,
-                    (sr, prevAtgbw, i) =>
+                .Rollup(seed, (sr, prevAtgbw, i) =>
+                {
+                    int? key;
+                    var nextIndex = prevAtgbw.NextIndex;
+                    if (sr.ContentElement.Name == W.t)
                     {
-                        int? key;
-                        var nextIndex = prevAtgbw.NextIndex;
-                        if (sr.ContentElement.Name == W.t)
+                        var chr = sr.ContentElement.Value;
+                        var ch = chr[0];
+                        if (ch is '.' or ',')
                         {
-                            var chr = sr.ContentElement.Value;
-                            var ch = chr[0];
-                            if (ch is '.' or ',')
+                            var beforeIsDigit = false;
+                            if (i > 0)
                             {
-                                var beforeIsDigit = false;
-                                if (i > 0)
-                                {
-                                    var prev = comparisonUnitAtomList[i - 1];
-                                    if (prev.ContentElement.Name == W.t && char.IsDigit(prev.ContentElement.Value[0]))
-                                        beforeIsDigit = true;
-                                }
-
-                                var afterIsDigit = false;
-                                if (i < comparisonUnitAtomList.Length - 1)
-                                {
-                                    var next = comparisonUnitAtomList[i + 1];
-                                    if (next.ContentElement.Name == W.t && char.IsDigit(next.ContentElement.Value[0]))
-                                        afterIsDigit = true;
-                                }
-
-                                if (beforeIsDigit || afterIsDigit)
-                                {
-                                    key = nextIndex;
-                                }
-                                else
-                                {
-                                    nextIndex++;
-                                    key = nextIndex;
-                                    nextIndex++;
-                                }
+                                var prev = comparisonUnitAtomList[i - 1];
+                                if (prev.ContentElement.Name == W.t && char.IsDigit(prev.ContentElement.Value[0]))
+                                    beforeIsDigit = true;
                             }
-                            else if (settings.WordSeparators.Contains(ch))
+
+                            var afterIsDigit = false;
+                            if (i < comparisonUnitAtomList.Length - 1)
                             {
-                                nextIndex++;
+                                var next = comparisonUnitAtomList[i + 1];
+                                if (next.ContentElement.Name == W.t && char.IsDigit(next.ContentElement.Value[0]))
+                                    afterIsDigit = true;
+                            }
+
+                            if (beforeIsDigit || afterIsDigit)
+                            {
                                 key = nextIndex;
-                                nextIndex++;
                             }
                             else
                             {
+                                nextIndex++;
                                 key = nextIndex;
+                                nextIndex++;
                             }
                         }
-                        else if (s_wordBreakElements.Contains(sr.ContentElement.Name))
+                        else if (settings.WordSeparators.Contains(ch))
                         {
                             nextIndex++;
                             key = nextIndex;
@@ -276,15 +263,25 @@ namespace Clippit
                         {
                             key = nextIndex;
                         }
-
-                        return new Atgbw
-                        {
-                            Key = key,
-                            ComparisonUnitAtomMember = sr,
-                            NextIndex = nextIndex,
-                        };
                     }
-                )
+                    else if (s_wordBreakElements.Contains(sr.ContentElement.Name))
+                    {
+                        nextIndex++;
+                        key = nextIndex;
+                        nextIndex++;
+                    }
+                    else
+                    {
+                        key = nextIndex;
+                    }
+
+                    return new Atgbw
+                    {
+                        Key = key,
+                        ComparisonUnitAtomMember = sr,
+                        NextIndex = nextIndex,
+                    };
+                })
                 .ToArray();
 
             IEnumerable<IGrouping<int?, Atgbw>> groupedByWords = groupingKey.GroupAdjacent(gc => gc.Key).ToArray();

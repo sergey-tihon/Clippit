@@ -340,21 +340,17 @@ namespace Clippit
                         var contentAtomsAfter = cs.ComparisonUnitArray2.SelectMany(ca => ca.DescendantContentAtoms());
 
                         var comparisonUnitAtomList = contentAtomsBefore
-                            .Zip(
-                                contentAtomsAfter,
-                                (before, after) =>
-                                    new ComparisonUnitAtom(
-                                        after.ContentElement,
-                                        after.AncestorElements,
-                                        after.Part,
-                                        settings
-                                    )
-                                    {
-                                        CorrelationStatus = CorrelationStatus.Equal,
-                                        ContentElementBefore = before.ContentElement,
-                                        ComparisonUnitAtomBefore = before,
-                                    }
-                            )
+                            .Zip(contentAtomsAfter, (before, after) => new ComparisonUnitAtom(
+                                    after.ContentElement,
+                                    after.AncestorElements,
+                                    after.Part,
+                                    settings
+                                )
+                                {
+                                    CorrelationStatus = CorrelationStatus.Equal,
+                                    ContentElementBefore = before.ContentElement,
+                                    ComparisonUnitAtomBefore = before,
+                                })
                             .ToList();
 
                         return comparisonUnitAtomList;
@@ -2032,9 +2028,8 @@ namespace Clippit
                 .ComparisonUnitArray1.AsEnumerable()
                 .Reverse()
                 .Take(lengthToCompare)
-                .Zip(
-                    unknown.ComparisonUnitArray2.AsEnumerable().Reverse().Take(lengthToCompare),
-                    (pu1, pu2) => new { Pu1 = pu1, Pu2 = pu2 }
+                .Zip(unknown.ComparisonUnitArray2.AsEnumerable().Reverse().Take(lengthToCompare), (pu1, pu2) =>
+                    new { Pu1 = pu1, Pu2 = pu2 }
                 )
                 .TakeWhile(pair => pair.Pu1.SHA1Hash == pair.Pu2.SHA1Hash)
                 .Count();

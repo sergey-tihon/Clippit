@@ -371,13 +371,10 @@ internal sealed class CliJsonContractTests : TestsBase
     private static EvaluationResults Evaluate(JsonElement payload, string schemaFileName)
     {
         var schema = s_schemaCache
-            .GetOrAdd(
-                schemaFileName,
-                static fileName => new Lazy<JsonSchema>(
-                    () => LoadSchema(fileName),
-                    LazyThreadSafetyMode.ExecutionAndPublication
-                )
-            )
+            .GetOrAdd(schemaFileName, static fileName => new Lazy<JsonSchema>(
+                () => LoadSchema(fileName),
+                LazyThreadSafetyMode.ExecutionAndPublication
+            ))
             .Value;
         return schema.Evaluate(payload, new EvaluationOptions { OutputFormat = OutputFormat.Hierarchical });
     }

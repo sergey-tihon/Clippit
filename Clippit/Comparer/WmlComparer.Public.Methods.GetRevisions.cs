@@ -112,8 +112,7 @@ namespace Clippit
             }
 
             var xDoc = footnotesEndnotesPart.GetXDocument();
-            var footnotesEndnotes =
-                xDoc.Root?.Elements(footnoteEndnoteElementName)
+            var footnotesEndnotes = xDoc.Root?.Elements(footnoteEndnoteElementName)
                 ?? throw new OpenXmlPowerToolsException("Invalid document.");
 
             var revisionsForPart = new List<WmlComparerRevision>();

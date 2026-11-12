@@ -278,12 +278,11 @@ namespace Clippit
             using var stream = new MemoryStream();
             stream.Write(bytes, 0, bytes.Length);
             using var package = Package.Open(stream, FileMode.Open);
-            var relationship =
-                package
-                    .GetRelationshipsByType(
-                        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"
-                    )
-                    .FirstOrDefault()
+            var relationship = package
+                .GetRelationshipsByType(
+                    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"
+                )
+                .FirstOrDefault()
                 ?? package
                     .GetRelationshipsByType("http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument")
                     .FirstOrDefault();
@@ -514,12 +513,11 @@ namespace Clippit
 
         public Type GetDocumentType()
         {
-            var relationship =
-                _docPackage
-                    .GetRelationshipsByType(
-                        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"
-                    )
-                    .FirstOrDefault()
+            var relationship = _docPackage
+                .GetRelationshipsByType(
+                    "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument"
+                )
+                .FirstOrDefault()
                 ?? _docPackage
                     .GetRelationshipsByType("http://purl.oclc.org/ooxml/officeDocument/relationships/officeDocument")
                     .FirstOrDefault();

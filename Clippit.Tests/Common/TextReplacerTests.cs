@@ -169,8 +169,7 @@ public class TextReplacerTests
                 );
 
                 var slidePart = pressPart.AddNewPart<SlidePart>();
-                var slideIdList =
-                    pressPart.Presentation.SlideIdList
+                var slideIdList = pressPart.Presentation.SlideIdList
                     ?? throw new InvalidOperationException("Presentation.SlideIdList was not initialized.");
                 var slideId = slideIdList.AppendChild(new SlideId());
                 slideId.Id = 256;

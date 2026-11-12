@@ -64,94 +64,78 @@ public class FieldRetriever
     {
         var root = part.GetXDocument().Root;
         var r = root.DescendantsAndSelf()
-            .Rollup(
-                new FieldElementTypeStack { Id = 0, FiStack = null },
-                (e, s) =>
+            .Rollup(new FieldElementTypeStack { Id = 0, FiStack = null }, (e, s) =>
+            {
+                if (e.Name == W.fldChar)
                 {
-                    if (e.Name == W.fldChar)
+                    if (e.Attribute(W.fldCharType).Value == "begin")
                     {
-                        if (e.Attribute(W.fldCharType).Value == "begin")
-                        {
-                            Stack<FieldElementTypeInfo> fis;
-                            if (s.FiStack is null)
-                                fis = new Stack<FieldElementTypeInfo>();
-                            else
-                                fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
-                            fis.Push(
-                                new FieldElementTypeInfo
-                                {
-                                    Id = s.Id + 1,
-                                    FieldElementType = FieldElementTypeEnum.Begin,
-                                }
-                            );
-                            return new FieldElementTypeStack { Id = s.Id + 1, FiStack = fis };
-                        }
-                        ;
-                        if (e.Attribute(W.fldCharType).Value == "separate")
-                        {
-                            var fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
-                            var wfi = fis.Pop();
-                            fis.Push(
-                                new FieldElementTypeInfo
-                                {
-                                    Id = wfi.Id,
-                                    FieldElementType = FieldElementTypeEnum.Separate,
-                                }
-                            );
-                            return new FieldElementTypeStack { Id = s.Id, FiStack = fis };
-                        }
-                        if (e.Attribute(W.fldCharType).Value == "end")
-                        {
-                            var fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
-                            var wfi = fis.Pop();
-                            return new FieldElementTypeStack { Id = s.Id, FiStack = fis };
-                        }
+                        Stack<FieldElementTypeInfo> fis;
+                        if (s.FiStack is null)
+                            fis = new Stack<FieldElementTypeInfo>();
+                        else
+                            fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
+                        fis.Push(
+                            new FieldElementTypeInfo { Id = s.Id + 1, FieldElementType = FieldElementTypeEnum.Begin }
+                        );
+                        return new FieldElementTypeStack { Id = s.Id + 1, FiStack = fis };
                     }
-                    if (s.FiStack is null || s.FiStack.Count == 0)
-                        return s;
-                    var wfi3 = s.FiStack.Peek();
-                    if (wfi3.FieldElementType == FieldElementTypeEnum.Begin)
+                    ;
+                    if (e.Attribute(W.fldCharType).Value == "separate")
                     {
                         var fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
-                        var wfi2 = fis.Pop();
+                        var wfi = fis.Pop();
                         fis.Push(
-                            new FieldElementTypeInfo { Id = wfi2.Id, FieldElementType = FieldElementTypeEnum.InstrText }
+                            new FieldElementTypeInfo { Id = wfi.Id, FieldElementType = FieldElementTypeEnum.Separate }
                         );
                         return new FieldElementTypeStack { Id = s.Id, FiStack = fis };
                     }
-                    if (wfi3.FieldElementType == FieldElementTypeEnum.Separate)
+                    if (e.Attribute(W.fldCharType).Value == "end")
                     {
                         var fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
-                        var wfi2 = fis.Pop();
-                        fis.Push(
-                            new FieldElementTypeInfo { Id = wfi2.Id, FieldElementType = FieldElementTypeEnum.Result }
-                        );
+                        var wfi = fis.Pop();
                         return new FieldElementTypeStack { Id = s.Id, FiStack = fis };
                     }
-                    if (wfi3.FieldElementType == FieldElementTypeEnum.End)
-                    {
-                        var fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
-                        fis.Pop();
-                        if (!fis.Any())
-                            fis = null;
-                        return new FieldElementTypeStack { Id = s.Id, FiStack = fis };
-                    }
+                }
+                if (s.FiStack is null || s.FiStack.Count == 0)
                     return s;
-                }
-            );
-        var elementPlusInfo = root.DescendantsAndSelf()
-            .PtZip(
-                r,
-                (t1, t2) =>
+                var wfi3 = s.FiStack.Peek();
+                if (wfi3.FieldElementType == FieldElementTypeEnum.Begin)
                 {
-                    return new
-                    {
-                        Element = t1,
-                        Id = t2.Id,
-                        WmlFieldInfoStack = t2.FiStack,
-                    };
+                    var fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
+                    var wfi2 = fis.Pop();
+                    fis.Push(
+                        new FieldElementTypeInfo { Id = wfi2.Id, FieldElementType = FieldElementTypeEnum.InstrText }
+                    );
+                    return new FieldElementTypeStack { Id = s.Id, FiStack = fis };
                 }
-            );
+                if (wfi3.FieldElementType == FieldElementTypeEnum.Separate)
+                {
+                    var fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
+                    var wfi2 = fis.Pop();
+                    fis.Push(new FieldElementTypeInfo { Id = wfi2.Id, FieldElementType = FieldElementTypeEnum.Result });
+                    return new FieldElementTypeStack { Id = s.Id, FiStack = fis };
+                }
+                if (wfi3.FieldElementType == FieldElementTypeEnum.End)
+                {
+                    var fis = new Stack<FieldElementTypeInfo>(s.FiStack.Reverse());
+                    fis.Pop();
+                    if (!fis.Any())
+                        fis = null;
+                    return new FieldElementTypeStack { Id = s.Id, FiStack = fis };
+                }
+                return s;
+            });
+        var elementPlusInfo = root.DescendantsAndSelf()
+            .PtZip(r, (t1, t2) =>
+            {
+                return new
+                {
+                    Element = t1,
+                    Id = t2.Id,
+                    WmlFieldInfoStack = t2.FiStack,
+                };
+            });
         foreach (var item in elementPlusInfo)
         {
             if (item.WmlFieldInfoStack is not null)

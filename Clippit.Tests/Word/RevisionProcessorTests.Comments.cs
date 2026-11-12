@@ -74,21 +74,18 @@ public partial class RevisionProcessorTests
             ),
             _ => throw new ArgumentOutOfRangeException(nameof(story)),
         };
-        var source = CreateDocument(
-            bodyXml,
-            mainPart =>
+        var source = CreateDocument(bodyXml, mainPart =>
+        {
+            OpenXmlPart storyPart = story switch
             {
-                OpenXmlPart storyPart = story switch
-                {
-                    "header" => mainPart.AddNewPart<HeaderPart>(storyId),
-                    "footer" => mainPart.AddNewPart<FooterPart>(storyId),
-                    "footnote" => mainPart.AddNewPart<FootnotesPart>(storyId),
-                    "endnote" => mainPart.AddNewPart<EndnotesPart>(storyId),
-                    _ => mainPart.AddNewPart<WordprocessingCommentsPart>(storyId),
-                };
-                storyPart.PutXDocument(XDocument.Parse(storyXml));
-            }
-        );
+                "header" => mainPart.AddNewPart<HeaderPart>(storyId),
+                "footer" => mainPart.AddNewPart<FooterPart>(storyId),
+                "footnote" => mainPart.AddNewPart<FootnotesPart>(storyId),
+                "endnote" => mainPart.AddNewPart<EndnotesPart>(storyId),
+                _ => mainPart.AddNewPart<WordprocessingCommentsPart>(storyId),
+            };
+            storyPart.PutXDocument(XDocument.Parse(storyXml));
+        });
 
         var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
 
@@ -260,20 +257,17 @@ public partial class RevisionProcessorTests
                 """,
             _ => throw new ArgumentOutOfRangeException(nameof(story)),
         };
-        var source = CreateDocument(
-            bodyXml,
-            mainPart =>
-            {
-                if (story != "comment")
-                    return;
-                var commentsPart = mainPart.AddNewPart<WordprocessingCommentsPart>("rIdComments");
-                commentsPart.PutXDocument(
-                    XDocument.Parse(
-                        $"<w:comments {s_namespaces}><w:comment w:id=\"0\" w:author=\"Author\">{blockXml}</w:comment></w:comments>"
-                    )
-                );
-            }
-        );
+        var source = CreateDocument(bodyXml, mainPart =>
+        {
+            if (story != "comment")
+                return;
+            var commentsPart = mainPart.AddNewPart<WordprocessingCommentsPart>("rIdComments");
+            commentsPart.PutXDocument(
+                XDocument.Parse(
+                    $"<w:comments {s_namespaces}><w:comment w:id=\"0\" w:author=\"Author\">{blockXml}</w:comment></w:comments>"
+                )
+            );
+        });
 
         var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
 
@@ -302,25 +296,22 @@ public partial class RevisionProcessorTests
             $"<w:p><w:pPr><w:rPr><w:{mark} w:id=\"1\" w:author=\"Author\" w:date=\"2026-10-15T00:00:00Z\"/></w:rPr></w:pPr><w:r><w:t>Before</w:t></w:r></w:p>"
             + "<w:altChunk r:id=\"rIdChunk\"/>"
             + "<w:p><w:r><w:t>After</w:t></w:r></w:p>";
-        var source = CreateDocument(
-            "<w:p/>",
-            mainPart =>
-            {
-                var commentsPart = mainPart.AddNewPart<WordprocessingCommentsPart>("rIdComments");
-                var altChunkPart = commentsPart.AddAlternativeFormatImportPart(
-                    AlternativeFormatImportPartType.TextPlain,
-                    "rIdChunk"
-                );
-                using var altChunkStream = altChunkPart.GetStream(FileMode.Create);
-                using var altChunkWriter = new StreamWriter(altChunkStream);
-                altChunkWriter.Write("chunk");
-                commentsPart.PutXDocument(
-                    XDocument.Parse(
-                        $"<w:comments {s_namespaces}><w:comment w:id=\"0\" w:author=\"Author\">{commentXml}</w:comment></w:comments>"
-                    )
-                );
-            }
-        );
+        var source = CreateDocument("<w:p/>", mainPart =>
+        {
+            var commentsPart = mainPart.AddNewPart<WordprocessingCommentsPart>("rIdComments");
+            var altChunkPart = commentsPart.AddAlternativeFormatImportPart(
+                AlternativeFormatImportPartType.TextPlain,
+                "rIdChunk"
+            );
+            using var altChunkStream = altChunkPart.GetStream(FileMode.Create);
+            using var altChunkWriter = new StreamWriter(altChunkStream);
+            altChunkWriter.Write("chunk");
+            commentsPart.PutXDocument(
+                XDocument.Parse(
+                    $"<w:comments {s_namespaces}><w:comment w:id=\"0\" w:author=\"Author\">{commentXml}</w:comment></w:comments>"
+                )
+            );
+        });
 
         var processed = reject ? RevisionProcessor.RejectRevisions(source) : RevisionProcessor.AcceptRevisions(source);
 

@@ -73,13 +73,20 @@ let withCiMsBuildLogger (command: string) =
     else
         command
 
-let testCommand =
-    if isGitHubActions then
-        // Microsoft.Testing.Platform treats MSBuild logger options as unknown
-        // test-app options. Reuse the Release build stage instead of rebuilding.
-        "dotnet test --solution Clippit.slnx -c Release --no-build"
-    else
-        "dotnet test --solution Clippit.slnx"
+let testFramework = System.Environment.GetEnvironmentVariable("CLIPPIT_TEST_FRAMEWORK")
+
+let testCommands =
+    // CI runs one framework per matrix job; local builds test both sequentially to avoid shared temp output collisions.
+    let command =
+        if isGitHubActions then
+            "test --solution Clippit.slnx -c Release --no-build"
+        else
+            "test --solution Clippit.slnx"
+
+    match testFramework with
+    | null
+    | "" -> [ $"{command} -f net10.0"; $"{command} -f net11.0" ]
+    | framework -> [ $"{command} -f {framework}" ]
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -170,7 +177,7 @@ let publishCliBinaries () =
             __SOURCE_DIRECTORY__
             "dotnet"
             (withCiMsBuildLogger
-                $"publish Clippit.Cli/Clippit.Cli.csproj -c Release -r {runtime.Rid} --self-contained -p:NativeAot=true -o bin/cli/{runtime.Rid}")
+                $"publish Clippit.Cli/Clippit.Cli.csproj -f net11.0 -c Release -r {runtime.Rid} --self-contained -p:NativeAot=true -o bin/cli/{runtime.Rid}")
 
 let packNpmPackages () =
     if not allCliRuntimesRequested then
@@ -257,7 +264,11 @@ pipeline "build" {
 
     stage "Build" { run (withCiMsBuildLogger "dotnet build Clippit.slnx -c Release") }
 
-    stage "RunTests" { run testCommand }
+    stage "RunTests" {
+        run (fun _ ->
+            testCommands
+            |> List.iter (runRequiredCommand __SOURCE_DIRECTORY__ "dotnet"))
+    }
 
     stage "NuGet" {
         run (fun ctx ->

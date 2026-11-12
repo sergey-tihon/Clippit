@@ -97,30 +97,22 @@ namespace Clippit.Tests.Word.Samples
                     .MainDocumentPart.GetXDocument()
                     .Root.Element(W.body)
                     .Elements()
-                    .Rollup(
-                        0,
-                        (pi, last) =>
-                            (string)pi.Elements(W.pPr).Elements(W.pStyle).Attributes(W.val).FirstOrDefault()
-                            == "Heading1"
-                                ? last + 1
-                                : last
+                    .Rollup(0, (pi, last) =>
+                        (string)pi.Elements(W.pPr).Elements(W.pStyle).Attributes(W.val).FirstOrDefault() == "Heading1"
+                            ? last + 1
+                            : last
                     );
                 var beforeZipped = doc
                     .MainDocumentPart.GetXDocument()
                     .Root.Element(W.body)
                     .Elements()
                     .Select((p, i) => new { Paragraph = p, Index = i });
-                var zipped = PtExtensions.PtZip(
-                    beforeZipped,
-                    sectionCounts,
-                    (pi, sc) =>
-                        new
-                        {
-                            Paragraph = pi.Paragraph,
-                            Index = pi.Index,
-                            SectionIndex = sc,
-                        }
-                );
+                var zipped = PtExtensions.PtZip(beforeZipped, sectionCounts, (pi, sc) => new
+                    {
+                        Paragraph = pi.Paragraph,
+                        Index = pi.Index,
+                        SectionIndex = sc,
+                    });
                 documentList = zipped
                     .GroupAdjacent(p => p.SectionIndex)
                     .Select(g => new DocumentInfo

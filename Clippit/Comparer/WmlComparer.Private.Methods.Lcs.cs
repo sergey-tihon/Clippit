@@ -629,41 +629,38 @@ namespace Clippit
                         }
 
                         var newCs = leftContent
-                            .Zip(
-                                rightContent,
-                                (l, r) =>
+                            .Zip(rightContent, (l, r) =>
+                            {
+                                if (l is not null && r is not null)
                                 {
-                                    if (l is not null && r is not null)
+                                    var unknownCorrelatedSequence = new CorrelatedSequence
                                     {
-                                        var unknownCorrelatedSequence = new CorrelatedSequence
-                                        {
-                                            ComparisonUnitArray1 = new[] { l },
-                                            ComparisonUnitArray2 = new[] { r },
-                                            CorrelationStatus = CorrelationStatus.Unknown,
-                                        };
-                                        return new[] { unknownCorrelatedSequence };
-                                    }
-
-                                    if (l is null)
-                                    {
-                                        var insertedCorrelatedSequence = new CorrelatedSequence
-                                        {
-                                            ComparisonUnitArray1 = null,
-                                            ComparisonUnitArray2 = r.Contents.ToArray(),
-                                            CorrelationStatus = CorrelationStatus.Inserted,
-                                        };
-                                        return new[] { insertedCorrelatedSequence };
-                                    }
-
-                                    var deletedCorrelatedSequence = new CorrelatedSequence
-                                    {
-                                        ComparisonUnitArray1 = l.Contents.ToArray(),
-                                        ComparisonUnitArray2 = null,
-                                        CorrelationStatus = CorrelationStatus.Deleted,
+                                        ComparisonUnitArray1 = new[] { l },
+                                        ComparisonUnitArray2 = new[] { r },
+                                        CorrelationStatus = CorrelationStatus.Unknown,
                                     };
-                                    return new[] { deletedCorrelatedSequence };
+                                    return new[] { unknownCorrelatedSequence };
                                 }
-                            )
+
+                                if (l is null)
+                                {
+                                    var insertedCorrelatedSequence = new CorrelatedSequence
+                                    {
+                                        ComparisonUnitArray1 = null,
+                                        ComparisonUnitArray2 = r.Contents.ToArray(),
+                                        CorrelationStatus = CorrelationStatus.Inserted,
+                                    };
+                                    return new[] { insertedCorrelatedSequence };
+                                }
+
+                                var deletedCorrelatedSequence = new CorrelatedSequence
+                                {
+                                    ComparisonUnitArray1 = l.Contents.ToArray(),
+                                    ComparisonUnitArray2 = null,
+                                    CorrelationStatus = CorrelationStatus.Deleted,
+                                };
+                                return new[] { deletedCorrelatedSequence };
+                            })
                             .SelectMany(m => m)
                             .ToList();
 
@@ -1126,9 +1123,8 @@ namespace Clippit
             if (tblGroup1.Contents.Count == tblGroup2.Contents.Count) // if there are the same number of rows
             {
                 var zipped = tblGroup1
-                    .Contents.Zip(
-                        tblGroup2.Contents,
-                        (r1, r2) => new { Row1 = r1 as ComparisonUnitGroup, Row2 = r2 as ComparisonUnitGroup }
+                    .Contents.Zip(tblGroup2.Contents, (r1, r2) =>
+                        new { Row1 = r1 as ComparisonUnitGroup, Row2 = r2 as ComparisonUnitGroup }
                     )
                     .ToList();
 
@@ -1182,9 +1178,8 @@ namespace Clippit
                     && tblGroup1.StructureSHA1Hash == tblGroup2.StructureSHA1Hash
                 )
                 {
-                    var zipped = tblGroup1.Contents.Zip(
-                        tblGroup2.Contents,
-                        (r1, r2) => new { Row1 = r1 as ComparisonUnitGroup, Row2 = r2 as ComparisonUnitGroup }
+                    var zipped = tblGroup1.Contents.Zip(tblGroup2.Contents, (r1, r2) =>
+                        new { Row1 = r1 as ComparisonUnitGroup, Row2 = r2 as ComparisonUnitGroup }
                     );
                     newListOfCorrelatedSequence = zipped
                         .Select(z =>
