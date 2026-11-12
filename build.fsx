@@ -175,7 +175,7 @@ let publishCliBinaries () =
             __SOURCE_DIRECTORY__
             "dotnet"
             (withCiMsBuildLogger
-                $"publish Clippit.Cli/Clippit.Cli.csproj -f net11.0 -c Release -r {runtime.Rid} --self-contained -p:NativeAot=true -o bin/cli/{runtime.Rid}")
+                $"publish Clippit.Cli/Clippit.Cli.csproj -c Release -r {runtime.Rid} --self-contained -p:NativeAot=true -o bin/cli/{runtime.Rid}")
 
 let packNpmPackages () =
     if not allCliRuntimesRequested then
