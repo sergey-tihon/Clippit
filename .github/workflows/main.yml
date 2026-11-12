@@ -79,6 +79,6 @@ jobs:
             - name: Build Test Project
               run: dotnet build Clippit.Tests/Clippit.Tests.csproj -c Release -clp:ErrorsOnly
             - name: Native AOT CLI Smoke Tests
-              run: dotnet test --project Clippit.Tests/Clippit.Tests.csproj -c Release --no-build --treenode-filter "/*/*/CliAotTests/**"
+              run: dotnet test --project Clippit.Tests/Clippit.Tests.csproj -c Release --no-build -f net11.0 --treenode-filter "/*/*/CliAotTests/**"
               env:
                   CLIPPIT_TEST_AOT: "1"

@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.11.0] - 2026-10-27
+
+- Target .NET 10 and .NET 11 using the .NET 11 SDK; NativeAOT publishing targets .NET 11.
+
 ## [0.10.0] - 2026-10-27
 
 - Build Linux x64 and ARM64 NativeAOT binaries against Ubuntu 22.04 (glibc 2.35) for older Linux systems.

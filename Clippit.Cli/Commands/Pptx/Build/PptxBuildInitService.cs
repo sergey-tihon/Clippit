@@ -7,9 +7,8 @@ internal static class PptxBuildInitService
 {
     public static InitResult Execute(string? outputOption, bool force)
     {
-        var target = OutputTarget.FromOption(
-            outputOption,
-            () => Path.Combine(Directory.GetCurrentDirectory(), PptxBuildInitCommand.DefaultManifestName)
+        var target = OutputTarget.FromOption(outputOption, () =>
+            Path.Combine(Directory.GetCurrentDirectory(), PptxBuildInitCommand.DefaultManifestName)
         );
 
         var manifest = new BuildManifest

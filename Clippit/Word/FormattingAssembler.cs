@@ -248,14 +248,11 @@ namespace Clippit.Word
                             // put together run props for list item.
 
                             var lvlStyleRpr = ParaStyleRunPropsStack(wDoc, paragraphStyleName)
-                                .Aggregate(
-                                    new XElement(W.rPr),
-                                    (r, s) =>
-                                    {
-                                        var newCharStyleRunProps = MergeStyleElement(s, r);
-                                        return newCharStyleRunProps;
-                                    }
-                                );
+                                .Aggregate(new XElement(W.rPr), (r, s) =>
+                                {
+                                    var newCharStyleRunProps = MergeStyleElement(s, r);
+                                    return newCharStyleRunProps;
+                                });
 
                             var mergedRunProps = MergeStyleElement(lvlStyleRpr, paraStyleRunProps);
 
@@ -2086,14 +2083,11 @@ namespace Clippit.Word
             {
                 rolledUpParaStyleParaProps = ParaStyleParaPropsStack(stylesXDoc, paraStyle, paragraph)
                     .Reverse()
-                    .Aggregate(
-                        new XElement(W.pPr),
-                        (r, s) =>
-                        {
-                            var newParaProps = MergeStyleElement(s, r);
-                            return newParaProps;
-                        }
-                    );
+                    .Aggregate(new XElement(W.pPr), (r, s) =>
+                    {
+                        var newParaProps = MergeStyleElement(s, r);
+                        return newParaProps;
+                    });
             }
             return rolledUpParaStyleParaProps;
         }
@@ -2402,27 +2396,21 @@ namespace Clippit.Word
             if (charStyle is not null)
             {
                 rolledUpCharStyleRunProps = CharStyleStack(wDoc, charStyle)
-                    .Aggregate(
-                        new XElement(W.rPr),
-                        (r, s) =>
-                        {
-                            var newRunProps = MergeStyleElement(s, r);
-                            return newRunProps;
-                        }
-                    );
+                    .Aggregate(new XElement(W.rPr), (r, s) =>
+                    {
+                        var newRunProps = MergeStyleElement(s, r);
+                        return newRunProps;
+                    });
             }
 
             if (paraStyle is not null)
             {
                 rolledUpParaStyleRunProps = ParaStyleRunPropsStack(wDoc, paraStyle)
-                    .Aggregate(
-                        new XElement(W.rPr),
-                        (r, s) =>
-                        {
-                            var newCharStyleRunProps = MergeStyleElement(s, r);
-                            return newCharStyleRunProps;
-                        }
-                    );
+                    .Aggregate(new XElement(W.rPr), (r, s) =>
+                    {
+                        var newCharStyleRunProps = MergeStyleElement(s, r);
+                        return newCharStyleRunProps;
+                    });
             }
             rolledRunProps = MergeStyleElement(rolledUpCharStyleRunProps, rolledUpParaStyleRunProps);
             fai.RolledCharacterStyles.Add(key, rolledRunProps);

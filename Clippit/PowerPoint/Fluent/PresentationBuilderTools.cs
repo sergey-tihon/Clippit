@@ -199,8 +199,7 @@ namespace Clippit.PowerPoint.Fluent
                 else
                 {
                     //ExternalRelationship oldRelationship = oldChart.GetExternalRelationship(relId);
-                    var oldRel =
-                        oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId)
+                    var oldRel = oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId)
                         ?? throw new PresentationBuilderInternalException("Internal Error 0007");
                     var newRel = newChart.AddExternalRelationship(
                         StrictOoxmlTranslator.TranslateRelationshipType(oldRel.RelationshipType),
@@ -307,8 +306,7 @@ namespace Clippit.PowerPoint.Fluent
                 else
                 {
                     //ExternalRelationship oldRelationship = oldChart.GetExternalRelationship(relId);
-                    var oldRel =
-                        oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId)
+                    var oldRel = oldChart.ExternalRelationships.FirstOrDefault(h => h.Id == relId)
                         ?? throw new PresentationBuilderInternalException("Internal Error 0007");
                     var newRel = newChart.AddExternalRelationship(
                         StrictOoxmlTranslator.TranslateRelationshipType(oldRel.RelationshipType),
@@ -420,8 +418,7 @@ namespace Clippit.PowerPoint.Fluent
                         continue;
                     if (newPart.ExternalRelationships.Any(h => h.Id == relId))
                         continue;
-                    var oldRel =
-                        oldPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId)
+                    var oldRel = oldPart.ExternalRelationships.FirstOrDefault(h => h.Id == relId)
                         ?? throw new PresentationBuilderInternalException("Internal Error 0006");
                     var newRel = newPart.AddExternalRelationship(
                         StrictOoxmlTranslator.TranslateRelationshipType(oldRel.RelationshipType),

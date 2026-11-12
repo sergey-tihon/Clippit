@@ -3,7 +3,7 @@
   "isRoot": true,
   "tools": {
     "csharpier": {
-      "version": "1.3.0",
+      "version": "1.4.0",
       "commands": [
         "csharpier"
       ],
@@ -17,14 +17,14 @@
       "rollForward": true
     },
     "dotnet-outdated-tool": {
-      "version": "4.8.1",
+      "version": "4.9.0",
       "commands": [
         "dotnet-outdated"
       ],
       "rollForward": true
     },
     "docfx": {
-      "version": "2.78.5",
+      "version": "2.81.0",
       "commands": [
         "docfx"
       ],

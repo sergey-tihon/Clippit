@@ -34,8 +34,7 @@ internal static class VersionCommand
 
     private static string GetCleanVersion(Assembly assembly)
     {
-        var version =
-            assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
+        var version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
             ?? assembly.GetName().Version?.ToString()
             ?? "unknown";
 

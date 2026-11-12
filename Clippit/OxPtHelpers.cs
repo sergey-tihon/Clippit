@@ -427,8 +427,7 @@ AAsACwDBAgAAbCwAAAAA";
             }
             var imageDirectoryName = destFileName.FullName.Substring(0, destFileName.FullName.Length - 5) + "_files";
             var imageCounter = 0;
-            var pageTitle =
-                (string)wDoc.CoreFilePropertiesPart.GetXDocument().Descendants(DC.title).FirstOrDefault()
+            var pageTitle = (string)wDoc.CoreFilePropertiesPart.GetXDocument().Descendants(DC.title).FirstOrDefault()
                 ?? fi.FullName;
 
             var settings = new WmlToHtmlConverterSettings

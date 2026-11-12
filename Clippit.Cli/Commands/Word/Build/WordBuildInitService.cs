@@ -7,9 +7,8 @@ internal static class WordBuildInitService
 {
     public static WordBuildInitResult Execute(string? outputOption, bool force)
     {
-        var target = OutputTarget.FromOption(
-            outputOption,
-            () => Path.Combine(Directory.GetCurrentDirectory(), WordBuildInitCommand.DefaultManifestName)
+        var target = OutputTarget.FromOption(outputOption, () =>
+            Path.Combine(Directory.GetCurrentDirectory(), WordBuildInitCommand.DefaultManifestName)
         );
 
         var manifest = new WordBuildManifest

@@ -716,8 +716,8 @@ namespace Clippit.Word
             if (lvlText is null)
                 return null;
 
-            var levelNumbersAnnotation =
-                paragraph.Annotation<LevelNumbers>() ?? throw new OpenXmlPowerToolsException("Internal error");
+            var levelNumbersAnnotation = paragraph.Annotation<LevelNumbers>()
+                ?? throw new OpenXmlPowerToolsException("Internal error");
 
             var levelNumbers = levelNumbersAnnotation.LevelNumbersArray;
             var languageIdentifier = GetLanguageIdentifier(paragraph, stylesXDoc);

@@ -628,8 +628,8 @@ namespace Clippit
         {
             if (element.Annotation<DescendantsTrimmedReverseDocumentOrderInfo>() is null)
             {
-                var ances =
-                    element.AncestorsAndSelf(W.txbxContent).FirstOrDefault() ?? element.AncestorsAndSelf().Last();
+                var ances = element.AncestorsAndSelf(W.txbxContent).FirstOrDefault()
+                    ?? element.AncestorsAndSelf().Last();
                 InitializeDescendantsTrimmedReverseDocumentOrder(ances, trimName);
             }
 

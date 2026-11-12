@@ -214,12 +214,10 @@ public class UnicodeMapper
         if (sym.Name != W.sym)
             throw new ArgumentException($"Not a w:sym: {sym.Name}", nameof(sym));
 
-        var fontAttributeValue =
-            sym.Attribute(W.font)?.Value
+        var fontAttributeValue = sym.Attribute(W.font)?.Value
             ?? throw new ArgumentException("w:sym element has no w:font attribute.", nameof(sym));
 
-        var charAttributeValue =
-            sym.Attribute(W._char)?.Value
+        var charAttributeValue = sym.Attribute(W._char)?.Value
             ?? throw new ArgumentException("w:sym element has no w:char attribute.", nameof(sym));
 
         // Return Unicode value if it is in the dictionary.

@@ -9,20 +9,16 @@ namespace Clippit.Cli.Commands.Excel.Verify;
 internal static class ExcelVerifyService
 {
     public static VerifyResult Execute(InputSource input, FileFormatVersions officeVersion) =>
-        VerifyExecutor.Execute(
-            input,
-            officeVersion,
-            stream =>
-            {
-                using var document = SpreadsheetDocument.Open(
-                    stream,
-                    isEditable: false,
-                    new OpenSettings { AutoSave = false }
-                );
-                return OpenXmlPackageValidator.Validate(
-                    document,
-                    new OpenXmlValidationOptions { OfficeVersion = officeVersion }
-                );
-            }
-        );
+        VerifyExecutor.Execute(input, officeVersion, stream =>
+        {
+            using var document = SpreadsheetDocument.Open(
+                stream,
+                isEditable: false,
+                new OpenSettings { AutoSave = false }
+            );
+            return OpenXmlPackageValidator.Validate(
+                document,
+                new OpenXmlValidationOptions { OfficeVersion = officeVersion }
+            );
+        });
 }

@@ -349,7 +349,7 @@ signatures and code samples.
 
 ## Compatibility
 
-- **Target:** `net10.0`
+- **Targets:** `net10.0` and `net11.0`
 - **Dependency:** [DocumentFormat.OpenXml](https://www.nuget.org/packages/DocumentFormat.OpenXml) (Open XML SDK)
 - **Platforms:** Windows and Linux (continuously tested on both)
 - **Side-by-side:** Can coexist with the original Open-Xml-PowerTools assembly

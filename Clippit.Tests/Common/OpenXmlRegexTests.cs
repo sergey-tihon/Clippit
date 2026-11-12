@@ -498,20 +498,15 @@ public class OpenXmlRegexTests : TestsBase
         var replaced = false;
 
         // Callback returns true for the first match only; count is matches found (not replacements)
-        var count = OpenXmlRegex.Replace(
-            content,
-            regex,
-            "'${words}'",
-            (_, _) =>
+        var count = OpenXmlRegex.Replace(content, regex, "'${words}'", (_, _) =>
+        {
+            if (replaced)
             {
-                if (replaced)
-                {
-                    return false;
-                }
-                replaced = true;
-                return true;
+                return false;
             }
-        );
+            replaced = true;
+            return true;
+        });
 
         var p = partDocument.Descendants(W.p).First();
         var innerText = InnerText(p);

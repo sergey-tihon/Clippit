@@ -38,14 +38,14 @@ runs CSharpier on staged `.cs` files automatically.
 ### Test Runner
 
 Tests use **TUnit** with the `Microsoft.Testing.Platform` runner (configured in `global.json`).
-The test project targets `net10.0` only. The `--treenode-filter` flag uses TUnit's tree
+The library, CLI, and test projects target `net10.0` and `net11.0`. The `--treenode-filter` flag uses TUnit's tree
 filter syntax — the pattern `/*/*/*/MethodName**` matches any test method starting with
 `MethodName` across all assemblies/namespaces/classes.
 
 ## Project Structure
 
 ```
-Clippit/                    Main library (targets net10.0)
+Clippit/                    Main library (targets net10.0 and net11.0)
   Word/                     Word/DOCX: DocumentBuilder, DocumentAssembler, WmlComparer, HtmlConverter
     Assembler/              DocumentAssembler helpers (templates, extensions)
   PowerPoint/               PPTX: PresentationBuilder, Fluent API
@@ -55,13 +55,13 @@ Clippit/                    Main library (targets net10.0)
   Core/                     PowerToolsBlock, StronglyTypedBlock
   Internal/                 ColorParser, TextReplacer, Relationships
   Properties/               AssemblyInfo.cs (InternalsVisibleTo), AssemblyInfo.g.cs (generated)
-Clippit.Cli/                CLI tool (targets net10.0)
+Clippit.Cli/                CLI tool (targets net10.0 and net11.0)
   Commands/Pptx/Split/      `pptx split` command and result payload
   Commands/Pptx/Build/      `pptx build init` / `pptx build run`, manifests, sections
   Commands/Pptx/Verify/     `pptx verify` validation command and result payload
   Commands/Version/         `version` command and root `--version` payload
   Infrastructure/           Output format, structured errors, exit codes
-Clippit.Tests/              Test project (targets net10.0)
+Clippit.Tests/              Test project (targets net10.0 and net11.0)
   Word/ PowerPoint/ Excel/ Html/ Common/    Mirror library structure
   Cli/                                      CLI integration and AOT smoke tests
   */Samples/                                Sample/integration tests

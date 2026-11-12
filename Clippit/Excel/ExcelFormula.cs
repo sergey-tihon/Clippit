@@ -183,9 +183,8 @@ namespace Clippit.Excel
 
         public bool Constant() /*^^Constant: ErrorConstant / LogicalConstant / NumericalConstant / StringConstant / ArrayConstant;*/
         {
-            return TreeNT(
-                (int)EExcelFormula.Constant,
-                () => ErrorConstant() || LogicalConstant() || NumericalConstant() || StringConstant() || ArrayConstant()
+            return TreeNT((int)EExcelFormula.Constant, () =>
+                ErrorConstant() || LogicalConstant() || NumericalConstant() || StringConstant() || ArrayConstant()
             );
         }
 
@@ -253,9 +252,8 @@ namespace Clippit.Excel
 
         public bool ArrayConstant() /*^^ArrayConstant: '{' ConstantListRows '}';*/
         {
-            return TreeNT(
-                (int)EExcelFormula.ArrayConstant,
-                () => And(() => Char('{') && ConstantListRows() && Char('}'))
+            return TreeNT((int)EExcelFormula.ArrayConstant, () =>
+                And(() => Char('{') && ConstantListRows() && Char('}'))
             );
         }
 
@@ -266,9 +264,8 @@ namespace Clippit.Excel
 
         public bool ConstantListRow() /*^^ConstantListRow: Constant (',' Constant)*;*/
         {
-            return TreeNT(
-                (int)EExcelFormula.ConstantListRow,
-                () => And(() => Constant() && OptRepeat(() => And(() => Char(',') && Constant())))
+            return TreeNT((int)EExcelFormula.ConstantListRow, () =>
+                And(() => Constant() && OptRepeat(() => And(() => Char(',') && Constant())))
             );
         }
 
@@ -378,9 +375,8 @@ namespace Clippit.Excel
 
         public bool WorkbookIndex() /*^^WorkbookIndex: '[' WholeNumberPart ']';*/
         {
-            return TreeNT(
-                (int)EExcelFormula.WorkbookIndex,
-                () => And(() => Char('[') && WholeNumberPart() && Char(']'))
+            return TreeNT((int)EExcelFormula.WorkbookIndex, () =>
+                And(() => Char('[') && WholeNumberPart() && Char(']'))
             );
         }
 
@@ -396,13 +392,11 @@ namespace Clippit.Excel
 
         public bool SheetNameSpecial() /*^^SheetNameSpecial: SheetNameBaseCharacter ('\'\''* SheetNameBaseCharacter)*;*/
         {
-            return TreeNT(
-                (int)EExcelFormula.SheetNameSpecial,
-                () =>
-                    And(() =>
-                        SheetNameBaseCharacter()
-                        && OptRepeat(() => And(() => OptRepeat(() => Char('\'', '\'')) && SheetNameBaseCharacter()))
-                    )
+            return TreeNT((int)EExcelFormula.SheetNameSpecial, () =>
+                And(() =>
+                    SheetNameBaseCharacter()
+                    && OptRepeat(() => And(() => OptRepeat(() => Char('\'', '\'')) && SheetNameBaseCharacter()))
+                )
             );
         }
 
@@ -413,13 +407,11 @@ namespace Clippit.Excel
 
         public bool A1Reference() /*^^A1Reference: (A1Column ':' A1Column) / (A1Row ':' A1Row) / A1Area / A1Cell;*/
         {
-            return TreeNT(
-                (int)EExcelFormula.A1Reference,
-                () =>
-                    And(() => A1Column() && Char(':') && A1Column())
-                    || And(() => A1Row() && Char(':') && A1Row())
-                    || A1Area()
-                    || A1Cell()
+            return TreeNT((int)EExcelFormula.A1Reference, () =>
+                And(() => A1Column() && Char(':') && A1Column())
+                || And(() => A1Row() && Char(':') && A1Row())
+                || A1Area()
+                || A1Cell()
             );
         }
 
@@ -469,17 +461,15 @@ namespace Clippit.Excel
 
         public bool CellFunctionCall() /*^^CellFunctionCall: A1Cell '(' ArgumentList ')';*/
         {
-            return TreeNT(
-                (int)EExcelFormula.CellFunctionCall,
-                () => And(() => A1Cell() && Char('(') && ArgumentList() && Char(')'))
+            return TreeNT((int)EExcelFormula.CellFunctionCall, () =>
+                And(() => A1Cell() && Char('(') && ArgumentList() && Char(')'))
             );
         }
 
         public bool UserDefinedFunctionCall() /*^^UserDefinedFunctionCall: UserDefinedFunctionName '(' ArgumentList ')';*/
         {
-            return TreeNT(
-                (int)EExcelFormula.UserDefinedFunctionCall,
-                () => And(() => UserDefinedFunctionName() && Char('(') && ArgumentList() && Char(')'))
+            return TreeNT((int)EExcelFormula.UserDefinedFunctionCall, () =>
+                And(() => UserDefinedFunctionName() && Char('(') && ArgumentList() && Char(')'))
             );
         }
 
@@ -558,9 +548,8 @@ namespace Clippit.Excel
 
         public bool NameReference() /*^^NameReference: (ExternalName / Name) !'[';*/
         {
-            return TreeNT(
-                (int)EExcelFormula.NameReference,
-                () => And(() => (ExternalName() || Name()) && Not(() => Char('[')))
+            return TreeNT((int)EExcelFormula.NameReference, () =>
+                And(() => (ExternalName() || Name()) && Not(() => Char('[')))
             );
         }
 
@@ -591,9 +580,8 @@ namespace Clippit.Excel
 
         public bool StructureReference() /*^^StructureReference: TableIdentifier? IntraTableReference;*/
         {
-            return TreeNT(
-                (int)EExcelFormula.StructureReference,
-                () => And(() => Option(TableIdentifier) && IntraTableReference())
+            return TreeNT((int)EExcelFormula.StructureReference, () =>
+                And(() => Option(TableIdentifier) && IntraTableReference())
             );
         }
 

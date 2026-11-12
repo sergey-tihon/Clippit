@@ -30,10 +30,8 @@ namespace Clippit.Tests.Common.Samples
             // Match content, with callback (paragraph 1)
             content = xDoc.Descendants(W.p).Take(1);
             regex = new Regex("video", RegexOptions.IgnoreCase);
-            OpenXmlRegex.Match(
-                content,
-                regex,
-                (element, match) => Console.WriteLine("Example #3 Found value: >{0}<", match.Value)
+            OpenXmlRegex.Match(content, regex, (element, match) =>
+                Console.WriteLine("Example #3 Found value: >{0}<", match.Value)
             );
             // Replace content, beginning of paragraph (paragraph 2)
             content = xDoc.Descendants(W.p).Skip(1).Take(1);

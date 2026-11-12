@@ -1715,15 +1715,11 @@ public class DocumentAssemblerTests : TestsBase
         {
             XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 
-            DocumentAssembler.RegisterCustomHandler(
-                elementName,
-                schemaXsd: null,
-                handler: (directive, data, part) =>
-                {
-                    var name = (string)data.Element("Name") ?? "World";
-                    return new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", $"Hello, {name}!")));
-                }
-            );
+            DocumentAssembler.RegisterCustomHandler(elementName, schemaXsd: null, handler: (directive, data, part) =>
+            {
+                var name = (string)data.Element("Name") ?? "World";
+                return new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", $"Hello, {name}!")));
+            });
 
             var directive = $"<#<{elementName}/>#>";
             var docxBytes = BuildMinimalDocxWithDirective(directive);
@@ -1757,10 +1753,8 @@ public class DocumentAssemblerTests : TestsBase
         const string elementName = "DA501_BrokenHandler";
         try
         {
-            DocumentAssembler.RegisterCustomHandler(
-                elementName,
-                schemaXsd: null,
-                handler: (_, _, _) => throw new InvalidOperationException("Simulated handler failure")
+            DocumentAssembler.RegisterCustomHandler(elementName, schemaXsd: null, handler: (_, _, _) =>
+                throw new InvalidOperationException("Simulated handler failure")
             );
 
             var directive = $"<#<{elementName}/>#>";
@@ -1864,16 +1858,12 @@ public class DocumentAssemblerTests : TestsBase
             </xs:schema>";
         try
         {
-            DocumentAssembler.RegisterCustomHandler(
-                elementName,
-                schemaXsd: schema,
-                handler: (directive, data, part) =>
-                {
-                    var value = (string)data.XPathSelectElement((string)directive.Attribute("Select"));
-                    XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
-                    return new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", value ?? "")));
-                }
-            );
+            DocumentAssembler.RegisterCustomHandler(elementName, schemaXsd: schema, handler: (directive, data, part) =>
+            {
+                var value = (string)data.XPathSelectElement((string)directive.Attribute("Select"));
+                XNamespace w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+                return new XElement(w + "p", new XElement(w + "r", new XElement(w + "t", value ?? "")));
+            });
 
             var validDirective = $"<#<{elementName} Select=\"./Name\"/>#>";
             var docxBytes = BuildMinimalDocxWithDirective(validDirective);

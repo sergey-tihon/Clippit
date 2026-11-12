@@ -164,8 +164,8 @@ namespace Clippit.Excel
             var columns = tableElement.Element("Columns");
             var dataElement = tableElement.Element("Data");
 
-            var tableName =
-                (string)tableElement.Attribute("DisplayName") ?? (string)tableElement.Attribute("TableName");
+            var tableName = (string)tableElement.Attribute("DisplayName")
+                ?? (string)tableElement.Attribute("TableName");
 
             // Extract column names for header row
             var columnNames = columns?.Elements("Column").Select(c => (string)c.Attribute("Name")).ToList() ?? [];

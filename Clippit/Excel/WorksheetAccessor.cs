@@ -774,9 +774,8 @@ namespace Clippit.Excel
             var cacheDefPart = pivotTablePart.GetPartsOfType<PivotTableCacheDefinitionPart>().First();
             var recordsPart = cacheDefPart.GetPartsOfType<PivotTableCacheRecordsPart>().First();
             var cacheDef = cacheDefPart.GetXDocument();
-            var index = Array.FindIndex(
-                cacheDef.Descendants(S.cacheField).ToArray(),
-                z => z.Attribute(NoNamespace.name).Value == fieldName
+            var index = Array.FindIndex(cacheDef.Descendants(S.cacheField).ToArray(), z =>
+                z.Attribute(NoNamespace.name).Value == fieldName
             );
             var records = recordsPart.GetXDocument();
             var values = new List<XElement>();
@@ -808,9 +807,8 @@ namespace Clippit.Excel
                         S.item,
                         new XAttribute(
                             NoNamespace.x,
-                            Array.FindIndex(
-                                values.ToArray(),
-                                a => a.Attribute(NoNamespace.v).Value == z.Attribute(NoNamespace.v).Value
+                            Array.FindIndex(values.ToArray(), a =>
+                                a.Attribute(NoNamespace.v).Value == z.Attribute(NoNamespace.v).Value
                             )
                         )
                     ))
@@ -944,9 +942,8 @@ namespace Clippit.Excel
             var pivotTablePart = sheet.GetPartsOfType<PivotTablePart>().First();
             var cacheDefPart = pivotTablePart.GetPartsOfType<PivotTableCacheDefinitionPart>().First();
             var cacheDef = cacheDefPart.GetXDocument();
-            var index = Array.FindIndex(
-                cacheDef.Descendants(S.cacheField).ToArray(),
-                z => z.Attribute(NoNamespace.name).Value == fieldName
+            var index = Array.FindIndex(cacheDef.Descendants(S.cacheField).ToArray(), z =>
+                z.Attribute(NoNamespace.name).Value == fieldName
             );
             var pivotTable = pivotTablePart.GetXDocument();
             var pivotField = pivotTable.Descendants(S.pivotField).Skip(index).First();
@@ -1477,9 +1474,8 @@ namespace Clippit.Excel
                 .Attribute(NoNamespace.xfId)
                 .Value;
             var cellXfs = styles.Root.Element(S.cellXfs);
-            var index = Array.FindIndex(
-                cellXfs.Elements(S.xf).ToArray(),
-                z => z.Attribute(NoNamespace.xfId).Value == xfId
+            var index = Array.FindIndex(cellXfs.Elements(S.xf).ToArray(), z =>
+                z.Attribute(NoNamespace.xfId).Value == xfId
             );
             if (index != -1)
                 return index;
