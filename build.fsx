@@ -74,12 +74,17 @@ let withCiMsBuildLogger (command: string) =
         command
 
 let testCommand =
-    if isGitHubActions then
-        // Microsoft.Testing.Platform treats MSBuild logger options as unknown
-        // test-app options. Reuse the Release build stage instead of rebuilding.
-        "dotnet test --solution Clippit.slnx -c Release --no-build"
-    else
-        "dotnet test --solution Clippit.slnx"
+    // CI runs one framework per matrix job; local builds test both sequentially to avoid shared temp output collisions.
+    let command =
+        if isGitHubActions then
+            "dotnet test --solution Clippit.slnx -c Release --no-build"
+        else
+            "dotnet test --solution Clippit.slnx"
+
+    match System.Environment.GetEnvironmentVariable("CLIPPIT_TEST_FRAMEWORK") with
+    | null
+    | "" -> $"{command} -f net10.0 && {command} -f net11.0"
+    | framework -> $"{command} -f {framework}"
 
 // ---------------------------------------------------------------------------
 // Helpers

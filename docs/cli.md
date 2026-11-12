@@ -64,7 +64,7 @@ For full command options and payload contracts, use these docs,
 ## Supported platforms
 
 - **Continuously tested:** Windows, Linux
-- **Runtime requirement:** .NET 10 runtime/toolchain for the `dotnet tool`; the npm package bundles native binaries for supported platforms
+- **Runtime requirement:** .NET 11 runtime for the `dotnet tool`; the npm package bundles native binaries for supported platforms
 - **Package managers:** `dotnet tool` (NuGet) and `npm`
 
 ## Output contract

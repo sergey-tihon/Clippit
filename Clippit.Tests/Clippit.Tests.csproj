@@ -3,12 +3,15 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
-    <TestTfmsInParallel>false</TestTfmsInParallel>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Clippit\Clippit.csproj" />
-    <ProjectReference Include="..\Clippit.Cli\Clippit.Cli.csproj" ReferenceOutputAssembly="false" />
+    <ProjectReference
+      Include="..\Clippit.Cli\Clippit.Cli.csproj"
+      ReferenceOutputAssembly="false"
+      SetTargetFramework="TargetFramework=net11.0"
+    />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="JsonSchema.Net" Version="9.6.0" />

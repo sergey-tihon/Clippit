@@ -17,6 +17,7 @@ jobs:
             fail-fast: false
             matrix:
                 os: [ubuntu-latest, windows-latest]
+                framework: [net10.0, net11.0]
         runs-on: ${{ matrix.os }}
 
         steps:
@@ -26,12 +27,19 @@ jobs:
               uses: actions/setup-dotnet@v6
               with:
                   global-json-file: global.json
+            - name: Setup .NET 10 SDK for net10 tests
+              if: matrix.framework == 'net10.0'
+              uses: actions/setup-dotnet@v6
+              with:
+                  dotnet-version: 10.0.x
             - name: Build and Test
               run: dotnet fsi build.fsx -- -p build
+              env:
+                  CLIPPIT_TEST_FRAMEWORK: ${{ matrix.framework }}
             - name: Upload Artifacts
               uses: actions/upload-artifact@v7
               with:
-                  name: bin-${{matrix.os}}
+                  name: bin-${{matrix.os}}-${{matrix.framework}}
                   path: bin/*.*
 
     generate-docs:
