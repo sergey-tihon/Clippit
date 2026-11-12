@@ -1,0 +1,2553 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class PegByteParser | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class PegByteParser | Clippit ">
+      
+      
+      <link rel="icon" href="../images/logo-site.png">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/new/master/apiSpec/new?filename=Clippit_Excel_PegByteParser.md&amp;value=---%0Auid%3A%20Clippit.Excel.PegByteParser%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Clippit.Excel.PegByteParser">
+
+
+
+  <h1 id="Clippit_Excel_PegByteParser" data-uid="Clippit.Excel.PegByteParser" class="text-break">
+Class PegByteParser  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L910"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Clippit.html">Clippit</a>.<a class="xref" href="Clippit.Excel.html">Excel</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Clippit.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class PegByteParser : PegBaseParser</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a></div>
+      <div><span class="xref">PegByteParser</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser__srcLen">PegBaseParser._srcLen</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser__pos">PegBaseParser._pos</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser__errOut">PegBaseParser._errOut</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser__nodeCreator">PegBaseParser._nodeCreator</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser__maxPos">PegBaseParser._maxPos</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_GetRuleNameFromId_System_Int32_">PegBaseParser.GetRuleNameFromId(int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_GetProperties_Clippit_Excel_EncodingClass__Clippit_Excel_UnicodeDetection__">PegBaseParser.GetProperties(out EncodingClass, out UnicodeDetection)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_GetMaximumPosition">PegBaseParser.GetMaximumPosition()</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_DefaultNodeCreator_Clippit_Excel_ECreatorPhase_Clippit_Excel_PegNode_System_Int32_">PegBaseParser.DefaultNodeCreator(ECreatorPhase, PegNode, int)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_Construct_System_IO_TextWriter_">PegBaseParser.Construct(TextWriter)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_Rewind">PegBaseParser.Rewind()</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_SetErrorDestination_System_IO_TextWriter_">PegBaseParser.SetErrorDestination(TextWriter)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_GetRoot">PegBaseParser.GetRoot()</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_ResetTree">PegBaseParser.ResetTree()</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_TreeChars_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.TreeChars(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_TreeChars_Clippit_Excel_PegBaseParser_Creator_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.TreeChars(PegBaseParser.Creator, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_TreeCharsWithId_System_Int32_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.TreeCharsWithId(int, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_TreeCharsWithId_Clippit_Excel_PegBaseParser_Creator_System_Int32_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.TreeCharsWithId(PegBaseParser.Creator, int, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_TreeNT_System_Int32_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.TreeNT(int, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_TreeNT_Clippit_Excel_PegBaseParser_Creator_System_Int32_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.TreeNT(PegBaseParser.Creator, int, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_TreeAST_System_Int32_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.TreeAST(int, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_TreeAST_Clippit_Excel_PegBaseParser_Creator_System_Int32_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.TreeAST(PegBaseParser.Creator, int, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_TreeNT_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.TreeNT(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_TreeNT_Clippit_Excel_PegBaseParser_Creator_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.TreeNT(PegBaseParser.Creator, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_TreeAST_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.TreeAST(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_TreeAST_Clippit_Excel_PegBaseParser_Creator_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.TreeAST(PegBaseParser.Creator, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_TreeNodeToString_Clippit_Excel_PegNode_">PegBaseParser.TreeNodeToString(PegNode)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_SetNodeCreator_Clippit_Excel_PegBaseParser_Creator_">PegBaseParser.SetNodeCreator(PegBaseParser.Creator)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_And_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.And(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_Peek_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.Peek(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_Not_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.Not(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_PlusRepeat_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.PlusRepeat(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_OptRepeat_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.OptRepeat(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_Option_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.Option(PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_ForRepeat_System_Int32_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.ForRepeat(int, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_ForRepeat_System_Int32_System_Int32_Clippit_Excel_PegBaseParser_Matcher_">PegBaseParser.ForRepeat(int, int, PegBaseParser.Matcher)</a>
+    </div>
+    <div>
+      <a class="xref" href="Clippit.Excel.PegBaseParser.html#Clippit_Excel_PegBaseParser_Any">PegBaseParser.Any()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Clippit_Excel_PegByteParser__ctor_" data-uid="Clippit.Excel.PegByteParser.#ctor*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser__ctor" data-uid="Clippit.Excel.PegByteParser.#ctor">
+  PegByteParser()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1027"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PegByteParser()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser__ctor_" data-uid="Clippit.Excel.PegByteParser.#ctor*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser__ctor_System_Byte___" data-uid="Clippit.Excel.PegByteParser.#ctor(System.Byte[])">
+  PegByteParser(byte[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1030"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PegByteParser(byte[] src)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser__ctor_" data-uid="Clippit.Excel.PegByteParser.#ctor*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser__ctor_System_Byte___System_IO_TextWriter_" data-uid="Clippit.Excel.PegByteParser.#ctor(System.Byte[],System.IO.TextWriter)">
+  PegByteParser(byte[], TextWriter)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1036"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PegByteParser(byte[] src, TextWriter errOut)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+    <dt><code>errOut</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.textwriter">TextWriter</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Clippit_Excel_PegByteParser_Bit_" data-uid="Clippit.Excel.PegByteParser.Bit*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Bit_System_Int32_System_Byte_" data-uid="Clippit.Excel.PegByteParser.Bit(System.Int32,System.Byte)">
+  Bit(int, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1206"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Bit(int bitNo, byte toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>bitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Bits_" data-uid="Clippit.Excel.PegByteParser.Bits*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Bits_System_Int32_System_Int32_Clippit_Excel_PegByteParser_BytesetData_" data-uid="Clippit.Excel.PegByteParser.Bits(System.Int32,System.Int32,Clippit.Excel.PegByteParser.BytesetData)">
+  Bits(int, int, BytesetData)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1175"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Bits(int lowBitNo, int highBitNo, PegByteParser.BytesetData toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>lowBitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>highBitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegByteParser.html">PegByteParser</a>.<a class="xref" href="Clippit.Excel.PegByteParser.BytesetData.html">BytesetData</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Bits_" data-uid="Clippit.Excel.PegByteParser.Bits*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Bits_System_Int32_System_Int32_System_Byte_" data-uid="Clippit.Excel.PegByteParser.Bits(System.Int32,System.Int32,System.Byte)">
+  Bits(int, int, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1165"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Bits(int lowBitNo, int highBitNo, byte toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>lowBitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>highBitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_BitsInto_" data-uid="Clippit.Excel.PegByteParser.BitsInto*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_BitsInto_System_Int32_System_Int32_Clippit_Excel_PegByteParser_BytesetData_System_Int32__" data-uid="Clippit.Excel.PegByteParser.BitsInto(System.Int32,System.Int32,Clippit.Excel.PegByteParser.BytesetData,System.Int32@)">
+  BitsInto(int, int, BytesetData, out int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1131"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool BitsInto(int lowBitNo, int highBitNo, PegByteParser.BytesetData toMatch, out int into)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>lowBitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>highBitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegByteParser.html">PegByteParser</a>.<a class="xref" href="Clippit.Excel.PegByteParser.BytesetData.html">BytesetData</a></dt>
+    <dd></dd>
+    <dt><code>into</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_BitsInto_" data-uid="Clippit.Excel.PegByteParser.BitsInto*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_BitsInto_System_Int32_System_Int32_System_Int32__" data-uid="Clippit.Excel.PegByteParser.BitsInto(System.Int32,System.Int32,System.Int32@)">
+  BitsInto(int, int, out int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1119"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool BitsInto(int lowBitNo, int highBitNo, out int into)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>lowBitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>highBitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>into</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Char_" data-uid="Clippit.Excel.PegByteParser.Char*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Char_System_Byte_" data-uid="Clippit.Excel.PegByteParser.Char(System.Byte)">
+  Char(byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1227"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(byte c1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Char_" data-uid="Clippit.Excel.PegByteParser.Char*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Char_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.Char(System.Byte,System.Byte)">
+  Char(byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1237"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(byte c1, byte c2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Char_" data-uid="Clippit.Excel.PegByteParser.Char*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Char_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.Char(System.Byte,System.Byte,System.Byte)">
+  Char(byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1247"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(byte c1, byte c2, byte c3)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Char_" data-uid="Clippit.Excel.PegByteParser.Char*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Char_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.Char(System.Byte,System.Byte,System.Byte,System.Byte)">
+  Char(byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1257"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(byte c1, byte c2, byte c3, byte c4)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c4</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Char_" data-uid="Clippit.Excel.PegByteParser.Char*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Char_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.Char(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
+  Char(byte, byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1273"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(byte c1, byte c2, byte c3, byte c4, byte c5)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c4</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c5</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Char_" data-uid="Clippit.Excel.PegByteParser.Char*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Char_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.Char(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
+  Char(byte, byte, byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1290"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(byte c1, byte c2, byte c3, byte c4, byte c5, byte c6)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c4</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c5</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c6</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Char_" data-uid="Clippit.Excel.PegByteParser.Char*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Char_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.Char(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
+  Char(byte, byte, byte, byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1308"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(byte c1, byte c2, byte c3, byte c4, byte c5, byte c6, byte c7)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c4</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c5</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c6</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c7</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Char_" data-uid="Clippit.Excel.PegByteParser.Char*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Char_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.Char(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
+  Char(byte, byte, byte, byte, byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1327"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(byte c1, byte c2, byte c3, byte c4, byte c5, byte c6, byte c7, byte c8)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c4</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c5</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c6</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c7</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c8</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Char_" data-uid="Clippit.Excel.PegByteParser.Char*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Char_System_Byte___" data-uid="Clippit.Excel.PegByteParser.Char(System.Byte[])">
+  Char(byte[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1347"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Char(byte[] s)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>s</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Construct_" data-uid="Clippit.Excel.PegByteParser.Construct*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Construct_System_Byte___System_IO_TextWriter_" data-uid="Clippit.Excel.PegByteParser.Construct(System.Byte[],System.IO.TextWriter)">
+  Construct(byte[], TextWriter)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1043"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Construct(byte[] src, TextWriter fOut)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+    <dt><code>fOut</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.textwriter">TextWriter</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Fatal_" data-uid="Clippit.Excel.PegByteParser.Fatal*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Fatal_System_String_" data-uid="Clippit.Excel.PegByteParser.Fatal(System.String)">
+  Fatal(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1152"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual bool Fatal(string sMsg)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sMsg</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_GetSource_" data-uid="Clippit.Excel.PegByteParser.GetSource*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_GetSource" data-uid="Clippit.Excel.PegByteParser.GetSource">
+  GetSource()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1058"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public byte[] GetSource()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_IChar_" data-uid="Clippit.Excel.PegByteParser.IChar*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_IChar_System_Byte_" data-uid="Clippit.Excel.PegByteParser.IChar(System.Byte)">
+  IChar(byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1369"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IChar(byte c1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_IChar_" data-uid="Clippit.Excel.PegByteParser.IChar*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_IChar_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.IChar(System.Byte,System.Byte)">
+  IChar(byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1379"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IChar(byte c1, byte c2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_IChar_" data-uid="Clippit.Excel.PegByteParser.IChar*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_IChar_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.IChar(System.Byte,System.Byte,System.Byte)">
+  IChar(byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1389"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IChar(byte c1, byte c2, byte c3)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_IChar_" data-uid="Clippit.Excel.PegByteParser.IChar*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_IChar_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.IChar(System.Byte,System.Byte,System.Byte,System.Byte)">
+  IChar(byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1404"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IChar(byte c1, byte c2, byte c3, byte c4)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c4</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_IChar_" data-uid="Clippit.Excel.PegByteParser.IChar*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_IChar_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.IChar(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
+  IChar(byte, byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1420"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IChar(byte c1, byte c2, byte c3, byte c4, byte c5)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c4</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c5</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_IChar_" data-uid="Clippit.Excel.PegByteParser.IChar*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_IChar_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.IChar(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
+  IChar(byte, byte, byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1437"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IChar(byte c1, byte c2, byte c3, byte c4, byte c5, byte c6)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c4</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c5</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c6</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_IChar_" data-uid="Clippit.Excel.PegByteParser.IChar*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_IChar_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.IChar(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
+  IChar(byte, byte, byte, byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1455"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IChar(byte c1, byte c2, byte c3, byte c4, byte c5, byte c6, byte c7)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c4</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c5</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c6</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c7</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_IChar_" data-uid="Clippit.Excel.PegByteParser.IChar*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_IChar_System_Byte___" data-uid="Clippit.Excel.PegByteParser.IChar(System.Byte[])">
+  IChar(byte[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1474"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IChar(byte[] s)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>s</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_In_" data-uid="Clippit.Excel.PegByteParser.In*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_In_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.In(System.Byte,System.Byte)">
+  In(byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1488"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool In(byte c0, byte c1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_In_" data-uid="Clippit.Excel.PegByteParser.In*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_In_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.In(System.Byte,System.Byte,System.Byte,System.Byte)">
+  In(byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1498"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool In(byte c0, byte c1, byte c2, byte c3)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_In_" data-uid="Clippit.Excel.PegByteParser.In*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_In_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.In(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
+  In(byte, byte, byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1512"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool In(byte c0, byte c1, byte c2, byte c3, byte c4, byte c5)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c4</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c5</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_In_" data-uid="Clippit.Excel.PegByteParser.In*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_In_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.In(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
+  In(byte, byte, byte, byte, byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1526"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool In(byte c0, byte c1, byte c2, byte c3, byte c4, byte c5, byte c6, byte c7)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c4</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c5</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c6</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c7</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_In_" data-uid="Clippit.Excel.PegByteParser.In*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_In_System_Byte___" data-uid="Clippit.Excel.PegByteParser.In(System.Byte[])">
+  In(byte[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1540"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool In(byte[] s)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>s</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Into_" data-uid="Clippit.Excel.PegByteParser.Into*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Into_Clippit_Excel_PegBaseParser_Matcher_Clippit_Excel_PegBegEnd__" data-uid="Clippit.Excel.PegByteParser.Into(Clippit.Excel.PegBaseParser.Matcher,Clippit.Excel.PegBegEnd@)">
+  Into(Matcher, out PegBegEnd)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1085"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Into(PegBaseParser.Matcher toMatch, out PegBegEnd begEnd)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+    <dt><code>begEnd</code> <a class="xref" href="Clippit.Excel.PegBegEnd.html">PegBegEnd</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Into_" data-uid="Clippit.Excel.PegByteParser.Into*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Into_Clippit_Excel_PegBaseParser_Matcher_System_Byte____" data-uid="Clippit.Excel.PegByteParser.Into(Clippit.Excel.PegBaseParser.Matcher,System.Byte[]@)">
+  Into(Matcher, out byte[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1065"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Into(PegBaseParser.Matcher toMatch, out byte[] into)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+    <dt><code>into</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Into_" data-uid="Clippit.Excel.PegByteParser.Into*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Into_Clippit_Excel_PegBaseParser_Matcher_System_Double__" data-uid="Clippit.Excel.PegByteParser.Into(Clippit.Excel.PegBaseParser.Matcher,System.Double@)">
+  Into(Matcher, out double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1107"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Into(PegBaseParser.Matcher toMatch, out double into)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+    <dt><code>into</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Into_" data-uid="Clippit.Excel.PegByteParser.Into*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Into_Clippit_Excel_PegBaseParser_Matcher_System_Int32__" data-uid="Clippit.Excel.PegByteParser.Into(Clippit.Excel.PegBaseParser.Matcher,System.Int32@)">
+  Into(Matcher, out int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1093"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Into(PegBaseParser.Matcher toMatch, out int into)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegBaseParser.html">PegBaseParser</a>.<a class="xref" href="Clippit.Excel.PegBaseParser.Matcher.html">Matcher</a></dt>
+    <dd></dd>
+    <dt><code>into</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_IntoBits_" data-uid="Clippit.Excel.PegByteParser.IntoBits*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_IntoBits_System_Int32_System_Int32_Clippit_Excel_PegByteParser_BytesetData_System_Int32__" data-uid="Clippit.Excel.PegByteParser.IntoBits(System.Int32,System.Int32,Clippit.Excel.PegByteParser.BytesetData,System.Int32@)">
+  IntoBits(int, int, BytesetData, out int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1201"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IntoBits(int lowBitNo, int highBitNo, PegByteParser.BytesetData toMatch, out int val)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>lowBitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>highBitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="Clippit.Excel.PegByteParser.html">PegByteParser</a>.<a class="xref" href="Clippit.Excel.PegByteParser.BytesetData.html">BytesetData</a></dt>
+    <dd></dd>
+    <dt><code>val</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_IntoBits_" data-uid="Clippit.Excel.PegByteParser.IntoBits*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_IntoBits_System_Int32_System_Int32_System_Int32__" data-uid="Clippit.Excel.PegByteParser.IntoBits(System.Int32,System.Int32,System.Int32@)">
+  IntoBits(int, int, out int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1196"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IntoBits(int lowBitNo, int highBitNo, out int val)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>lowBitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>highBitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>val</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_NotBit_" data-uid="Clippit.Excel.PegByteParser.NotBit*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_NotBit_System_Int32_System_Byte_" data-uid="Clippit.Excel.PegByteParser.NotBit(System.Int32,System.Byte)">
+  NotBit(int, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1221"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool NotBit(int bitNo, byte toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>bitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_NotBits_" data-uid="Clippit.Excel.PegByteParser.NotBits*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_NotBits_System_Int32_System_Int32_System_Byte_" data-uid="Clippit.Excel.PegByteParser.NotBits(System.Int32,System.Int32,System.Byte)">
+  NotBits(int, int, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1191"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool NotBits(int lowBitNo, int highBitNo, byte toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>lowBitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>highBitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_NotIn_" data-uid="Clippit.Excel.PegByteParser.NotIn*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_NotIn_System_Byte___" data-uid="Clippit.Excel.PegByteParser.NotIn(System.Byte[])">
+  NotIn(byte[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1557"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool NotIn(byte[] s)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>s</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_NotOneOf_" data-uid="Clippit.Excel.PegByteParser.NotOneOf*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_NotOneOf_System_Byte___" data-uid="Clippit.Excel.PegByteParser.NotOneOf(System.Byte[])">
+  NotOneOf(byte[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1684"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool NotOneOf(byte[] s)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>s</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_OneOf_" data-uid="Clippit.Excel.PegByteParser.OneOf*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_OneOf_Clippit_Excel_PegByteParser_BytesetData_" data-uid="Clippit.Excel.PegByteParser.OneOf(Clippit.Excel.PegByteParser.BytesetData)">
+  OneOf(BytesetData)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1701"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(PegByteParser.BytesetData bset)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>bset</code> <a class="xref" href="Clippit.Excel.PegByteParser.html">PegByteParser</a>.<a class="xref" href="Clippit.Excel.PegByteParser.BytesetData.html">BytesetData</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_OneOf_" data-uid="Clippit.Excel.PegByteParser.OneOf*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_OneOf_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.OneOf(System.Byte,System.Byte)">
+  OneOf(byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1573"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(byte c0, byte c1)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_OneOf_" data-uid="Clippit.Excel.PegByteParser.OneOf*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_OneOf_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.OneOf(System.Byte,System.Byte,System.Byte)">
+  OneOf(byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1583"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(byte c0, byte c1, byte c2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_OneOf_" data-uid="Clippit.Excel.PegByteParser.OneOf*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_OneOf_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.OneOf(System.Byte,System.Byte,System.Byte,System.Byte)">
+  OneOf(byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1597"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(byte c0, byte c1, byte c2, byte c3)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_OneOf_" data-uid="Clippit.Excel.PegByteParser.OneOf*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_OneOf_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.OneOf(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
+  OneOf(byte, byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1611"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(byte c0, byte c1, byte c2, byte c3, byte c4)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c4</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_OneOf_" data-uid="Clippit.Excel.PegByteParser.OneOf*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_OneOf_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.OneOf(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
+  OneOf(byte, byte, byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1625"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(byte c0, byte c1, byte c2, byte c3, byte c4, byte c5)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c4</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c5</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_OneOf_" data-uid="Clippit.Excel.PegByteParser.OneOf*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_OneOf_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.OneOf(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
+  OneOf(byte, byte, byte, byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1639"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(byte c0, byte c1, byte c2, byte c3, byte c4, byte c5, byte c6)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c4</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c5</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c6</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_OneOf_" data-uid="Clippit.Excel.PegByteParser.OneOf*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_OneOf_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_System_Byte_" data-uid="Clippit.Excel.PegByteParser.OneOf(System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte,System.Byte)">
+  OneOf(byte, byte, byte, byte, byte, byte, byte, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1653"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(byte c0, byte c1, byte c2, byte c3, byte c4, byte c5, byte c6, byte c7)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c0</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c1</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c2</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c3</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c4</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c5</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c6</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+    <dt><code>c7</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_OneOf_" data-uid="Clippit.Excel.PegByteParser.OneOf*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_OneOf_System_Byte___" data-uid="Clippit.Excel.PegByteParser.OneOf(System.Byte[])">
+  OneOf(byte[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1667"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool OneOf(byte[] s)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>s</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_PeekBit_" data-uid="Clippit.Excel.PegByteParser.PeekBit*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_PeekBit_System_Int32_System_Byte_" data-uid="Clippit.Excel.PegByteParser.PeekBit(System.Int32,System.Byte)">
+  PeekBit(int, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1216"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool PeekBit(int bitNo, byte toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>bitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_PeekBits_" data-uid="Clippit.Excel.PegByteParser.PeekBits*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_PeekBits_System_Int32_System_Int32_System_Byte_" data-uid="Clippit.Excel.PegByteParser.PeekBits(System.Int32,System.Int32,System.Byte)">
+  PeekBits(int, int, byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1186"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool PeekBits(int lowBitNo, int highBitNo, byte toMatch)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>lowBitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>highBitNo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>toMatch</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_SetSource_" data-uid="Clippit.Excel.PegByteParser.SetSource*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_SetSource_System_Byte___" data-uid="Clippit.Excel.PegByteParser.SetSource(System.Byte[])">
+  SetSource(byte[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1049"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetSource(byte[] src)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>src</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_ToUpper_" data-uid="Clippit.Excel.PegByteParser.ToUpper*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_ToUpper_System_Byte_" data-uid="Clippit.Excel.PegByteParser.ToUpper(System.Byte)">
+  ToUpper(byte)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1361"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static byte ToUpper(byte c)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>c</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Clippit_Excel_PegByteParser_Warning_" data-uid="Clippit.Excel.PegByteParser.Warning*"></a>
+
+  <h3 id="Clippit_Excel_PegByteParser_Warning_System_String_" data-uid="Clippit.Excel.PegByteParser.Warning(System.String)">
+  Warning(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L1158"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Warning(string sMsg)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sMsg</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/Clippit/Excel/PegBase.cs/#L910" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>RelationshipValidator | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="RelationshipValidator | Clippit ">
+      
+      
+      <link rel="icon" href="../../images/logo-site.png">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../toc.html">
+      
+      <meta name="docfx:rel" content="../../">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/blob/master/docs/tutorials/common/RelationshipValidator.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Tutorial.Common.RelationshipValidator">
+<h1 id="relationshipvalidator">RelationshipValidator</h1>
+
+<p>Namespace: <code>Clippit.Core</code></p>
+<p>Detects <strong>dangling relationship references</strong> in any OpenXml package (DOCX, PPTX, XLSX).</p>
+<pre><code class="lang-csharp">public static class RelationshipValidator
+{
+    // Returns one error per unresolvable relationship attribute value.
+    public static IEnumerable&lt;RelationshipValidationError&gt; Validate(OpenXmlPackage package);
+
+    // Convenience: true when no dangling references are found.
+    public static bool IsValid(OpenXmlPackage package);
+}
+</code></pre>
+<h2 id="background">Background</h2>
+<p>The built-in <a href="https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.validation.openxmlvalidator"><code>OpenXmlValidator</code></a>
+checks element-level schema conformance but does <strong>not</strong> verify relationship-reference integrity.
+A dangling <code>r:id</code> — an attribute whose value does not correspond to any relationship registered
+with that part — silently passes schema validation yet throws <code>KeyNotFoundException</code> at runtime
+when code tries to follow it (e.g., during slide copying or publishing).</p>
+<p><code>RelationshipValidator</code> fills this gap by scanning every XML part of the package and reporting
+any attribute from the relationship namespace (<code>r:id</code>, <code>r:embed</code>, <code>r:link</code>, <code>r:cs</code>, <code>r:dm</code>,
+<code>r:lo</code>, <code>r:qs</code>, <code>r:href</code>, <code>r:pict</code>, <code>r:blip</code>) whose value is not registered on that part.</p>
+<h2 id="relationshipvalidationerror">RelationshipValidationError</h2>
+<p>Each error is a <code>record</code> with the following properties:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PartUri</code></td>
+<td><code>Uri</code></td>
+<td>URI of the part that owns the problematic attribute</td>
+</tr>
+<tr>
+<td><code>ElementName</code></td>
+<td><code>XName</code></td>
+<td>XML element carrying the dangling relationship ID</td>
+</tr>
+<tr>
+<td><code>AttributeName</code></td>
+<td><code>XName</code></td>
+<td>XML attribute holding the unresolved ID</td>
+</tr>
+<tr>
+<td><code>RelationshipId</code></td>
+<td><code>string</code></td>
+<td>The relationship ID value that could not be resolved</td>
+</tr>
+<tr>
+<td><code>Description</code></td>
+<td><code>string</code></td>
+<td>Human-readable diagnostic message</td>
+</tr>
+</tbody>
+</table>
+<h2 id="usage">Usage</h2>
+<h3 id="check-whether-a-package-is-valid">Check whether a package is valid</h3>
+<pre><code class="lang-csharp">using Clippit.Core;
+using DocumentFormat.OpenXml.Packaging;
+
+using var doc = PresentationDocument.Open(&quot;deck.pptx&quot;, false);
+if (!RelationshipValidator.IsValid(doc))
+    Console.WriteLine(&quot;Package contains dangling relationship references!&quot;);
+</code></pre>
+<h3 id="enumerate-and-log-all-errors">Enumerate and log all errors</h3>
+<pre><code class="lang-csharp">using Clippit.Core;
+using DocumentFormat.OpenXml.Packaging;
+
+using var doc = WordprocessingDocument.Open(&quot;document.docx&quot;, false);
+foreach (var error in RelationshipValidator.Validate(doc))
+{
+    Console.WriteLine(error.Description);
+    // e.g.: Part '/word/document.xml': element 'blip' attribute 'embed'
+    //       references relationship ID 'rId999' which is not registered on this part.
+}
+</code></pre>
+<h3 id="guard-before-processing">Guard before processing</h3>
+<p>Running the validator before slide-copy or publish operations lets callers detect the
+problem early and skip or repair the affected element instead of crashing:</p>
+<pre><code class="lang-csharp">using Clippit.Core;
+using Clippit.PowerPoint;
+using DocumentFormat.OpenXml.Packaging;
+
+using var src = PresentationDocument.Open(&quot;source.pptx&quot;, false);
+var danglingParts = RelationshipValidator
+    .Validate(src)
+    .Select(e =&gt; e.PartUri)
+    .ToHashSet();
+
+if (danglingParts.Count &gt; 0)
+    Console.WriteLine($&quot;Warning: {danglingParts.Count} part(s) have dangling references.&quot;);
+</code></pre>
+<h2 id="related">Related</h2>
+<ul>
+<li><a href="https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.validation.openxmlvalidator"><code>OpenXmlValidator</code></a> — schema-level validation (complements <code>RelationshipValidator</code>)</li>
+<li><a href="https://github.com/sergey-tihon/Clippit/issues/155">Issue #155</a> — root-cause issue that motivated this utility</li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/tutorials/common/RelationshipValidator.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

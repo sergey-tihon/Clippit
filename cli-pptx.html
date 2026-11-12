@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>PowerPoint CLI (pptx) | Clippit </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="PowerPoint CLI (pptx) | Clippit ">
+      
+      
+      <link rel="icon" href="images/logo-site.png">
+      <link rel="stylesheet" href="public/docfx.min.css">
+      <link rel="stylesheet" href="public/main.css">
+      <meta name="docfx:navrel" content="toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="">
+      <meta name="docfx:disablenewtab" content="true">
+      
+      <meta name="docfx:docurl" content="https://github.com/sergey-tihon/Clippit/blob/master/docs/cli-pptx.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="index.html">
+            <img id="logo" class="svg" src="images/logo-site.png" alt="Clippit">
+            Clippit
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="powerpoint-cli-pptx">PowerPoint CLI (<code>pptx</code>)</h1>
+
+<p>Use this page for PowerPoint automation commands.</p>
+<ul>
+<li>Back to <a href="cli.html">CLI start page</a></li>
+<li>Schemas and diagnostic kinds: <a href="schemas/README.md">schemas/README.md</a></li>
+</ul>
+<h2 id="commands-at-a-glance">Commands at a glance</h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>clippit pptx split</code></td>
+<td>Split a deck into single-slide <code>.pptx</code> files</td>
+</tr>
+<tr>
+<td><code>clippit pptx build init</code></td>
+<td>Scaffold a deck manifest</td>
+</tr>
+<tr>
+<td><code>clippit pptx build run</code></td>
+<td>Build a final deck from a manifest</td>
+</tr>
+<tr>
+<td><code>clippit pptx verify</code></td>
+<td>Validate package/schema/relationships</td>
+</tr>
+</tbody>
+</table>
+<p>All commands support <code>--format json|text</code> and <code>--quiet</code>.</p>
+<h2 id="pptx-split"><code>pptx split</code></h2>
+<p>Split a <code>.pptx</code> file into single-slide presentations.</p>
+<pre><code class="lang-text">clippit pptx split &lt;input.pptx|-&gt; [--output &lt;dir&gt;] [--slides &lt;expr&gt;] [--manifest] [--force] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Output directory (default: source directory, or current directory for stdin).</td>
+</tr>
+<tr>
+<td><code>--slides</code>, <code>-s</code></td>
+<td>1-based slide numbers/ranges like <code>1,3,6-9</code> (default: all slides).</td>
+</tr>
+<tr>
+<td><code>--manifest</code></td>
+<td>Also write a <code>pptx build run</code> compatible manifest.</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Overwrite existing output files.</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-bash">clippit pptx split deck.pptx --output slides --manifest
+</code></pre>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/deck.pptx&quot;,&quot;outputDir&quot;:&quot;/work/slides&quot;,&quot;manifest&quot;:&quot;/work/slides/deck.manifest.json&quot;,&quot;count&quot;:2,&quot;slides&quot;:[{&quot;index&quot;:1,&quot;file&quot;:&quot;/work/slides/deck-001.pptx&quot;,&quot;title&quot;:&quot;Intro&quot;},{&quot;index&quot;:3,&quot;file&quot;:&quot;/work/slides/deck-003.pptx&quot;,&quot;title&quot;:null}]}
+</code></pre>
+<h2 id="pptx-build-init"><code>pptx build init</code></h2>
+<p>Create an empty deck manifest.</p>
+<pre><code class="lang-text">clippit pptx build init [--output &lt;manifest.json|-&gt;] [--force] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Manifest path (default: <code>./clippit-deck.json</code>). Use <code>-</code> for stdout.</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Overwrite existing manifest file.</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-bash">clippit pptx build init --output deck.json
+</code></pre>
+<p>Minimal manifest:</p>
+<pre><code class="lang-json">{
+  &quot;$schema&quot;: &quot;https://sergey-tihon.github.io/Clippit/schemas/deck-manifest.v1.json&quot;,
+  &quot;title&quot;: &quot;Conference Deck&quot;,
+  &quot;output&quot;: &quot;final.pptx&quot;,
+  &quot;deck&quot;: [
+    { &quot;section&quot;: &quot;Opening&quot; },
+    &quot;intro.pptx&quot;,
+    { &quot;file&quot;: &quot;demo.pptx&quot;, &quot;keepSections&quot;: true }
+  ]
+}
+</code></pre>
+<p>Manifest rules:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Required</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td>Yes</td>
+<td>Output presentation title metadata.</td>
+</tr>
+<tr>
+<td><code>output</code></td>
+<td>Yes</td>
+<td>Relative to manifest directory.</td>
+</tr>
+<tr>
+<td><code>deck</code></td>
+<td>Yes</td>
+<td>Ordered entries; at least one entry.</td>
+</tr>
+<tr>
+<td>string entry</td>
+<td>No</td>
+<td><code>[Section Name]</code> means section divider; otherwise source <code>.pptx</code> path.</td>
+</tr>
+<tr>
+<td><code>{ &quot;section&quot;: &quot;Name&quot; }</code></td>
+<td>No</td>
+<td>Explicit section divider.</td>
+</tr>
+<tr>
+<td><code>{ &quot;file&quot;: &quot;deck.pptx&quot; }</code></td>
+<td>No</td>
+<td>Source deck entry; optional <code>masters</code>, <code>slides</code>, <code>keepSections</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="pptx-build-run"><code>pptx build run</code></h2>
+<p>Build a final <code>.pptx</code> from a manifest.</p>
+<pre><code class="lang-text">clippit pptx build run &lt;manifest.json|-&gt; [--output &lt;file.pptx|-&gt;] [--force] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--output</code>, <code>-o</code></td>
+<td>Override output path. Use <code>-</code> for binary stdout stream.</td>
+</tr>
+<tr>
+<td><code>--force</code></td>
+<td>Overwrite existing output file.</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="lang-bash">clippit pptx build run deck.json --output final.pptx --force
+</code></pre>
+<pre><code class="lang-json">{&quot;output&quot;:&quot;/work/final.pptx&quot;,&quot;totalSlides&quot;:12,&quot;entries&quot;:[{&quot;section&quot;:&quot;Opening&quot;},{&quot;file&quot;:&quot;intro.pptx&quot;,&quot;slides&quot;:3},{&quot;file&quot;:&quot;demo.pptx&quot;,&quot;slides&quot;:9}]}
+</code></pre>
+<h2 id="pptx-verify"><code>pptx verify</code></h2>
+<p>Validate readability and Open XML structure of a <code>.pptx</code> file.</p>
+<pre><code class="lang-text">clippit pptx verify &lt;input.pptx|-&gt; [--office-version &lt;version&gt;] [--format json|text] [--quiet]
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--office-version</code></td>
+<td>Open XML schema version (default: <code>Microsoft365</code>).</td>
+</tr>
+</tbody>
+</table>
+<p>If the deck is readable but has validation diagnostics, output is still emitted and process exits with code <code>4</code>.</p>
+<pre><code class="lang-bash">clippit pptx verify deck.pptx --format json
+</code></pre>
+<pre><code class="lang-json">{&quot;input&quot;:&quot;/work/deck.pptx&quot;,&quot;officeVersion&quot;:&quot;Microsoft365&quot;,&quot;valid&quot;:true,&quot;diagnostics&quot;:[]}
+</code></pre>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/sergey-tihon/Clippit/blob/master/docs/cli-pptx.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          Copyright © Microsoft Corporation 2012-2017, Eric White Inc 2018-2019, Sergey Tihon 2019-2026. Licensed under the MIT License.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
