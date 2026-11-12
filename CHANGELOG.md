@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.10.0] - November 12, 2026
+
+- build: unify release versioning — the library, `Clippit.Cli` dotnet tool, and `clippit` npm packages now share one version from this changelog and publish together from a single `v*` tag (CLI jumps from 0.11.0 to 3.10.0)
+
 ## [3.9.3] - November 12, 2026
 
 - build: target .NET 10 and .NET 11 with the .NET 11 SDK; CI builds and tests both targets

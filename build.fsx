@@ -51,9 +51,6 @@ let version =
     Changelog.GetLastVersion __SOURCE_DIRECTORY__
     |> Option.defaultWith (fun () -> failwith "Version is not found")
 
-let cliVersion =
-    Changelog.GetLastVersion(System.IO.Path.Combine(__SOURCE_DIRECTORY__, "Clippit.Cli"))
-    |> Option.defaultWith (fun () -> failwith "CLI version not found in Clippit.Cli/CHANGELOG.md")
 
 let allCliRuntimesRequested =
     let requested = requestedRids |> List.map _.Rid |> Set.ofList
@@ -200,7 +197,7 @@ let packNpmPackages () =
 
             // Patch version in all package.json files only for npm pack.
             for pkgJson in packageJsonFiles do
-                patchNpmVersion pkgJson cliVersion.Version
+                patchNpmVersion pkgJson version.Version
 
             // Pack platform packages, then the wrapper.
             Shell.mkdir (System.IO.Path.Combine(__SOURCE_DIRECTORY__, "bin", "npm"))
@@ -309,7 +306,7 @@ pipeline "build" {
         run (fun ctx ->
             ctx.RunCommand(
                 withCiMsBuildLogger
-                    $"dotnet pack Clippit.Cli/Clippit.Cli.csproj -o bin/ -p:PackageVersion={cliVersion.Version}"
+                    $"dotnet pack Clippit.Cli/Clippit.Cli.csproj -o bin/ -p:PackageVersion={version.Version}"
             ))
     }
 

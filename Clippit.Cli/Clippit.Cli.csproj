@@ -5,7 +5,7 @@
     <OutputType>Exe</OutputType>
     <IsCliProject>true</IsCliProject>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <CliChangelogPath>$(MSBuildThisFileDirectory)CHANGELOG.md</CliChangelogPath>
+    <CliChangelogPath>$(MSBuildThisFileDirectory)..\CHANGELOG.md</CliChangelogPath>
     <CliChangelogText>$([System.IO.File]::ReadAllText('$(CliChangelogPath)'))</CliChangelogText>
     <VersionPrefix>$([System.Text.RegularExpressions.Regex]::Match('$(CliChangelogText)', '(?m)^## \[([0-9]+\.[0-9]+\.[0-9]+(?:[-+][^\]]+)?)\]').Groups[1].Value)</VersionPrefix>
 
