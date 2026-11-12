@@ -3,6 +3,7 @@
 ## [0.11.0] - 2026-10-27
 
 - Target .NET 10 and .NET 11 using the .NET 11 SDK; NativeAOT npm binaries are published for .NET 11.
+- Exclude PDB debug symbols from the dotnet tool package.
 
 ## [0.10.0] - 2026-10-27
 

@@ -72,4 +72,13 @@
       Condition="Exists('$(PublishDir)$(NativeAotExecutableName)') and '$(NativeAotSourceName)' != '$(NativeAotExecutableName)'"
     />
   </Target>
+  <!-- Tool runtime assets do not need debug symbols. -->
+  <Target Name="ExcludePdbFilesFromToolPackage" AfterTargets="PackTool" Condition="'$(PackAsTool)' == 'true'">
+    <ItemGroup>
+      <TfmSpecificPackageFile
+        Remove="@(TfmSpecificPackageFile)"
+        Condition="'%(TfmSpecificPackageFile.Extension)' == '.pdb'"
+      />
+    </ItemGroup>
+  </Target>
 </Project>
