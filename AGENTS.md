@@ -28,7 +28,7 @@ which runs these stages in order:
 2. `dotnet csharpier check .` (formatting check — build fails if violated)
 3. `dotnet clean` and clean `bin/`
 4. Generate `Clippit/Properties/AssemblyInfo.g.cs` (version from `CHANGELOG.md`)
-5. `dotnet build Clippit.slnx -c Release`
+5. `dotnet build Clippit.slnx -c Release` (CI builds one test TFM per matrix job)
 6. Run `dotnet test --solution Clippit.slnx -f net10.0`, then run it with `-f net11.0`.
 7. `dotnet pack Clippit/Clippit.csproj -o bin/`
 

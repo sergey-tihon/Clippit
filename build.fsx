@@ -73,6 +73,15 @@ let withCiMsBuildLogger (command: string) =
     else
         command
 
+let testFramework = System.Environment.GetEnvironmentVariable("CLIPPIT_TEST_FRAMEWORK")
+
+// Build one TFM per matrix job so test references don't concurrently write the CLI's shared net11 output.
+let buildCommand =
+    match testFramework with
+    | null
+    | "" -> "dotnet build Clippit.slnx -c Release"
+    | framework -> $"dotnet build Clippit.Tests/Clippit.Tests.csproj -c Release -f {framework}"
+
 let testCommand =
     // CI runs one framework per matrix job; local builds test both sequentially to avoid shared temp output collisions.
     let command =
@@ -81,7 +90,7 @@ let testCommand =
         else
             "dotnet test --solution Clippit.slnx"
 
-    match System.Environment.GetEnvironmentVariable("CLIPPIT_TEST_FRAMEWORK") with
+    match testFramework with
     | null
     | "" -> $"{command} -f net10.0 && {command} -f net11.0"
     | framework -> $"{command} -f {framework}"
@@ -260,7 +269,7 @@ pipeline "build" {
             Shell.copyFile "docs/api/CHANGELOG.md" "CHANGELOG.md")
     }
 
-    stage "Build" { run (withCiMsBuildLogger "dotnet build Clippit.slnx -c Release") }
+    stage "Build" { run (withCiMsBuildLogger buildCommand) }
 
     stage "RunTests" { run testCommand }
 
