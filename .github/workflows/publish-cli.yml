@@ -73,6 +73,11 @@ jobs:
           echo "Pinned Apple clang:"
           /usr/bin/clang --version
 
+      # Xcode 16's classic linker rejects an unaligned pointer in the x64 GSSAPI archive.
+      - name: Use modern Xcode linker for osx-x64 NativeAOT
+        if: matrix.rid == 'osx-x64'
+        run: echo "UseLdClassicXCodeLinker=false" >> "$GITHUB_ENV"
+
       - name: Publish NativeAOT binary
         run: dotnet publish Clippit.Cli/Clippit.Cli.csproj -f net11.0 -c Release -r ${{ matrix.rid }} --self-contained -p:NativeAot=true -o bin/cli/${{ matrix.rid }}
 
