@@ -1,5 +1,6 @@
 using System.CommandLine;
 using Clippit.Cli.Commands.Pptx.Build;
+using Clippit.Cli.Commands.Pptx.RenderSvg;
 using Clippit.Cli.Commands.Pptx.Split;
 using Clippit.Cli.Commands.Pptx.Verify;
 
@@ -16,6 +17,7 @@ internal static class PptxCommand
         cmd.Subcommands.Add(PptxSplitCommand.Build());
         cmd.Subcommands.Add(PptxBuildCommand.Build());
         cmd.Subcommands.Add(PptxVerifyCommand.Build());
+        cmd.Subcommands.Add(PptxRenderSvgCommand.Build());
         return cmd;
     }
 }

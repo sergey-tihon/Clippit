@@ -55,6 +55,19 @@ namespace Clippit.PowerPoint.Fluent
                 .ToList();
         }
 
+        /// <summary>
+        /// Gets the next shape-tree ID. Shape IDs are local to a slide, unlike presentation/master IDs.
+        /// </summary>
+        internal static uint GetNextShapeId(XElement shapeTree)
+        {
+            ArgumentNullException.ThrowIfNull(shapeTree);
+            return
+                shapeTree.Descendants(P.cNvPr).Select(element => (uint?)element.Attribute(NoNamespace.id)).Max()
+                    is { } maximum
+                ? maximum + 1
+                : 2;
+        }
+
         internal static readonly FrozenDictionary<XName, int> OrderPresentation = new Dictionary<XName, int>
         {
             { P.sldMasterIdLst, 10 },
