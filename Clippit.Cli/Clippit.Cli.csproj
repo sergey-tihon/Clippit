@@ -24,8 +24,8 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
     <!-- NativeAOT is opt-in via -p:NativeAot=true for npm binaries (dotnet publish -r <rid>) and
-         RID-specific dotnet tool packages (dotnet pack -r <rid>). Plain builds, tests, and the
-         framework-dependent any tool package target net10.0 and net11.0. -->
+         RID-specific dotnet tool packages (dotnet pack -r <rid>). Plain builds and tests target
+         net10.0 and net11.0; the framework-dependent any tool package targets net11.0. -->
     <PublishAot Condition="'$(NativeAot)' == 'true'">true</PublishAot>
     <OptimizationPreference Condition="'$(NativeAot)' == 'true'">Size</OptimizationPreference>
     <StackTraceSupport Condition="'$(NativeAot)' == 'true'">false</StackTraceSupport>
