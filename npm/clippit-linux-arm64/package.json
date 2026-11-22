@@ -11,6 +11,7 @@
   "os": ["linux"],
   "cpu": ["arm64"],
   "files": [
-    "clippit"
+    "clippit",
+    "libSkiaSharp.so"
   ]
 }

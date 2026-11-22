@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using TUnit.Core;
 
@@ -11,7 +12,7 @@ internal sealed class CliAotTests
     [SkipUnlessAotTestsEnabled]
     public async Task CLIAOT001_NativeAotSmokeTests()
     {
-        var executable = await PublishNativeAotAsync().ConfigureAwait(false);
+        var executable = StageNpmPackageFiles(await PublishNativeAotAsync().ConfigureAwait(false));
 
         var version = await RunAotAsync(executable, "version").ConfigureAwait(false);
         await Assert.That(version.ExitCode).IsEqualTo(0);
@@ -73,9 +74,25 @@ internal sealed class CliAotTests
         {
             await Assert.That(json.RootElement.GetProperty("count").GetInt32()).IsEqualTo(1);
         }
+        var htmlOutput = new FileInfo(Path.Combine(directory.FullName, "tabs.html"));
+        var toHtml = await RunAotAsync(
+                executable,
+                "word",
+                "to-html",
+                CliTestRunner.TestFile("HC024-Tabs-01.docx").FullName,
+                "--output",
+                htmlOutput.FullName,
+                "--format",
+                "json"
+            )
+            .ConfigureAwait(false);
+
+        await Assert.That(toHtml.ExitCode).IsEqualTo(0);
+        await Assert.That(toHtml.StandardError).IsEmpty();
+        await Assert.That(htmlOutput.Exists).IsTrue();
     }
 
-    private static async Task<FileInfo> PublishNativeAotAsync()
+    private static async Task<DirectoryInfo> PublishNativeAotAsync()
     {
         var outputDirectory = CliTestRunner.CreateTempDirectory("aot-publish");
         var project = Path.Combine(CliTestRunner.RepositoryRoot.FullName, "Clippit.Cli", "Clippit.Cli.csproj");
@@ -100,23 +117,45 @@ internal sealed class CliAotTests
             .ConfigureAwait(false);
 
         await Assert.That(result.ExitCode).IsEqualTo(0);
+        return outputDirectory;
+    }
 
-        var executableNames = OperatingSystem.IsWindows()
-            ? new[] { "clippit.exe", "Clippit.Cli.exe" }
-            : ["clippit", "Clippit.Cli"];
-        var executable = executableNames
-            .Select(name => new FileInfo(Path.Combine(outputDirectory.FullName, name)))
-            .FirstOrDefault(file => file.Exists);
-
-        if (executable is null)
+    private static FileInfo StageNpmPackageFiles(DirectoryInfo publishDirectory)
+    {
+        var os =
+            OperatingSystem.IsWindows() ? "win32"
+            : OperatingSystem.IsMacOS() ? "darwin"
+            : OperatingSystem.IsLinux() ? "linux"
+            : throw new PlatformNotSupportedException();
+        var arch = RuntimeInformation.OSArchitecture switch
         {
-            throw new FileNotFoundException(
-                "Native AOT executable was not found in publish output: "
-                    + string.Join(", ", outputDirectory.GetFiles().Select(file => file.Name))
-            );
+            Architecture.X64 => "x64",
+            Architecture.Arm64 => "arm64",
+            _ => throw new PlatformNotSupportedException(
+                $"Unsupported architecture: {RuntimeInformation.OSArchitecture}"
+            ),
+        };
+        var packageDirectory = Path.Combine(CliTestRunner.RepositoryRoot.FullName, "npm", $"clippit-{os}-{arch}");
+        using var packageJson = JsonDocument.Parse(File.ReadAllText(Path.Combine(packageDirectory, "package.json")));
+        var stagedDirectory = CliTestRunner.CreateTempDirectory("aot-npm");
+
+        foreach (var file in packageJson.RootElement.GetProperty("files").EnumerateArray())
+        {
+            var name = file.GetString() ?? throw new InvalidDataException("npm package file entries must be strings.");
+            var source = new FileInfo(Path.Combine(publishDirectory.FullName, name));
+
+            if (!source.Exists)
+            {
+                throw new FileNotFoundException(
+                    $"npm package file '{name}' was not found in publish output: {string.Join(", ", publishDirectory.GetFiles().Select(file => file.Name))}"
+                );
+            }
+
+            source.CopyTo(Path.Combine(stagedDirectory.FullName, name));
         }
 
-        return executable;
+        var executableName = OperatingSystem.IsWindows() ? "clippit.exe" : "clippit";
+        return new FileInfo(Path.Combine(stagedDirectory.FullName, executableName));
     }
 
     private static Task<CliResult> RunAotAsync(FileInfo executable, params string[] arguments) =>

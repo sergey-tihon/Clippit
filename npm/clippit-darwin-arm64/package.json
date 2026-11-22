@@ -11,6 +11,7 @@
   "os": ["darwin"],
   "cpu": ["arm64"],
   "files": [
-    "clippit"
+    "clippit",
+    "libSkiaSharp.dylib"
   ]
 }

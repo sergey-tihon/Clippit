@@ -8,27 +8,34 @@ open Fake.DotNet
 type CliRuntime =
     { Rid: string
       NpmDirectory: string
-      BinaryName: string }
+      BinaryName: string
+      NativeLibraryName: string }
 
 let cliRuntimes =
     [ { Rid = "win-x64"
         NpmDirectory = "clippit-win32-x64"
-        BinaryName = "clippit.exe" }
+        BinaryName = "clippit.exe"
+        NativeLibraryName = "libSkiaSharp.dll" }
       { Rid = "osx-x64"
         NpmDirectory = "clippit-darwin-x64"
-        BinaryName = "clippit" }
+        BinaryName = "clippit"
+        NativeLibraryName = "libSkiaSharp.dylib" }
       { Rid = "osx-arm64"
         NpmDirectory = "clippit-darwin-arm64"
-        BinaryName = "clippit" }
+        BinaryName = "clippit"
+        NativeLibraryName = "libSkiaSharp.dylib" }
       { Rid = "linux-x64"
         NpmDirectory = "clippit-linux-x64"
-        BinaryName = "clippit" }
+        BinaryName = "clippit"
+        NativeLibraryName = "libSkiaSharp.so" }
       { Rid = "linux-arm64"
         NpmDirectory = "clippit-linux-arm64"
-        BinaryName = "clippit" }
+        BinaryName = "clippit"
+        NativeLibraryName = "libSkiaSharp.so" }
       { Rid = "win-arm64"
         NpmDirectory = "clippit-win32-arm64"
-        BinaryName = "clippit.exe" } ]
+        BinaryName = "clippit.exe"
+        NativeLibraryName = "libSkiaSharp.dll" } ]
 
 let requestedRids =
     let value = System.Environment.GetEnvironmentVariable("CLIPPIT_PUBLISH_RIDS")
@@ -89,15 +96,18 @@ let testCommands =
 // Helpers
 // ---------------------------------------------------------------------------
 
-/// Copy a native binary from the publish output into the matching npm platform
-/// package directory, making the file executable on non-Windows platforms.
-let copyNativeBinary (runtime: CliRuntime) =
+/// Copy a native binary and its runtime library from publish output into the
+/// matching npm platform package directory, making the binary executable on Unix.
+let copyNativeAssets (runtime: CliRuntime) =
     let rid = runtime.Rid
     let npmPkgDir = runtime.NpmDirectory
     let binName = runtime.BinaryName
     let src = System.IO.Path.Combine(__SOURCE_DIRECTORY__, "bin", "cli", rid, binName)
     let destDir = System.IO.Path.Combine(__SOURCE_DIRECTORY__, "npm", npmPkgDir)
     let dest = System.IO.Path.Combine(destDir, binName)
+    let nativeLibName = runtime.NativeLibraryName
+    let nativeLibSrc = System.IO.Path.Combine(__SOURCE_DIRECTORY__, "bin", "cli", rid, nativeLibName)
+    let nativeLibDest = System.IO.Path.Combine(destDir, nativeLibName)
 
     if not (System.IO.File.Exists(src)) then
         failwith $"Native binary not found for {rid}: {src}"
@@ -117,6 +127,10 @@ let copyNativeBinary (runtime: CliRuntime) =
 
         if chmod.ExitCode <> 0 then
             failwith $"chmod failed ({chmod.ExitCode}) for {dest}"
+    if not (System.IO.File.Exists(nativeLibSrc)) then
+        failwith $"Native library not found for {rid}: {nativeLibSrc}"
+
+    Shell.copyFile nativeLibDest nativeLibSrc
 
 /// Patch package.json version fields for npm pack. Platform packages only need
 /// their top-level version; the wrapper also has clippit-* optional dependencies
@@ -193,7 +207,7 @@ let packNpmPackages () =
         try
             // Copy binaries into platform npm packages.
             for runtime in requestedRids do
-                copyNativeBinary runtime
+                copyNativeAssets runtime
 
             // Patch version in all package.json files only for npm pack.
             for pkgJson in packageJsonFiles do
@@ -212,7 +226,13 @@ let packNpmPackages () =
                     System.IO.Path.Combine(npmDir, runtime.NpmDirectory, runtime.BinaryName)
 
                 if System.IO.File.Exists(generated) then
-                    System.IO.File.Delete(generated))
+                    System.IO.File.Delete(generated)
+
+                let generatedLibrary =
+                    System.IO.Path.Combine(npmDir, runtime.NpmDirectory, runtime.NativeLibraryName)
+
+                if System.IO.File.Exists(generatedLibrary) then
+                    System.IO.File.Delete(generatedLibrary))
 
 // ---------------------------------------------------------------------------
 // Build pipeline
@@ -306,7 +326,12 @@ pipeline "build" {
         run (fun ctx ->
             ctx.RunCommand(
                 withCiMsBuildLogger
-                    $"dotnet pack Clippit.Cli/Clippit.Cli.csproj -o bin/ -p:PackageVersion={version.Version}"
+                    $"dotnet pack Clippit.Cli/Clippit.Cli.csproj -o bin/ -p:PackageVersion={version.Version} -p:CreateRidSpecificToolPackages=false"
+            ))
+        run (fun ctx ->
+            ctx.RunCommand(
+                withCiMsBuildLogger
+                    $"dotnet pack Clippit.Cli/Clippit.Cli.csproj -o bin/ -r any -p:PackageVersion={version.Version}"
             ))
     }
 

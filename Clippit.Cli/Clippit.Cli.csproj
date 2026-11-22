@@ -2,6 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
+    <TargetFrameworks Condition="'$(NativeAot)' == 'true'">net11.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <IsCliProject>true</IsCliProject>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -12,6 +13,7 @@
     <!-- dotnet tool packaging -->
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>clippit</ToolCommandName>
+    <ToolPackageRuntimeIdentifiers>win-x64;win-arm64;osx-x64;osx-arm64;linux-x64;linux-arm64;any</ToolPackageRuntimeIdentifiers>
     <PackageId>Clippit.Cli</PackageId>
     <Description>CLI tool for Clippit — PowerTools for OpenXml (PowerPoint, Word, Excel)</Description>
     <PackageTags>OpenXML;PowerTools;PowerPoint;Word;Excel;CLI;tool</PackageTags>
@@ -21,22 +23,19 @@
     <PackageIcon>logo.jpeg</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
-    <!-- NativeAOT — only when explicitly requested (e.g. npm binary publish pipeline).
-         dotnet tool NuGet (dotnet pack / dotnet tool install) ships a managed DLL
-         so users do not need a native toolchain at install time.
-         Pass -p:NativeAot=true to opt in. -->
+    <!-- NativeAOT is opt-in via -p:NativeAot=true for npm binaries (dotnet publish -r <rid>) and
+         RID-specific dotnet tool packages (dotnet pack -r <rid>). Plain builds, tests, and the
+         framework-dependent any tool package target net10.0 and net11.0. -->
     <PublishAot Condition="'$(NativeAot)' == 'true'">true</PublishAot>
-    <IlcOptimizationPreference Condition="'$(NativeAot)' == 'true'">Size</IlcOptimizationPreference>
+    <OptimizationPreference Condition="'$(NativeAot)' == 'true'">Size</OptimizationPreference>
+    <StackTraceSupport Condition="'$(NativeAot)' == 'true'">false</StackTraceSupport>
+    <XmlResolverIsNetworkingEnabledByDefault Condition="'$(NativeAot)' == 'true'"
+      >false</XmlResolverIsNetworkingEnabledByDefault>
     <InvariantGlobalization Condition="'$(NativeAot)' == 'true'">true</InvariantGlobalization>
     <!-- NativeAOT uses invariant globalization, so localized satellite resources cannot be selected. -->
     <SatelliteResourceLanguages Condition="'$(NativeAot)' == 'true'">en</SatelliteResourceLanguages>
     <StripSymbols Condition="'$(NativeAot)' == 'true'">true</StripSymbols>
   </PropertyGroup>
-
-  <ItemGroup>
-    <!-- Trimming -->
-    <TrimmerRootDescriptor Include="ILLink.Descriptors.xml" />
-  </ItemGroup>
 
   <ItemGroup>
     <None Include="..\docs\images\logo.jpeg" Pack="true" PackagePath="\" />
@@ -53,7 +52,30 @@
     <ProjectReference Include="..\Clippit\Clippit.csproj" />
   </ItemGroup>
 
-  <Target Name="RenameNativeAotExecutable" AfterTargets="Publish" Condition="'$(PublishAot)' == 'true'">
+  <!-- SkiaSharp ships a universal macOS dylib; keep only the slice for the target RID. -->
+  <Target
+    Name="ThinMacOSNativeLibraries"
+    AfterTargets="Publish"
+    Condition="'$(PublishAot)' == 'true' and $([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('osx-'))"
+  >
+    <PropertyGroup>
+      <_ThinArch Condition="'$(RuntimeIdentifier)' == 'osx-arm64'">arm64</_ThinArch>
+      <_ThinArch Condition="'$(RuntimeIdentifier)' == 'osx-x64'">x86_64</_ThinArch>
+    </PropertyGroup>
+    <ItemGroup>
+      <_FatDylib Include="$(PublishDir)*.dylib" />
+    </ItemGroup>
+    <Exec
+      Command="if lipo -info &quot;%(_FatDylib.FullPath)&quot; | grep -q &quot;Architectures in the fat file&quot;; then lipo &quot;%(_FatDylib.FullPath)&quot; -thin $(_ThinArch) -output &quot;%(_FatDylib.FullPath).thin&quot; &amp;&amp; mv -f &quot;%(_FatDylib.FullPath).thin&quot; &quot;%(_FatDylib.FullPath)&quot;; fi"
+      Condition="'@(_FatDylib)' != ''"
+    />
+  </Target>
+
+  <Target
+    Name="RenameNativeAotExecutable"
+    AfterTargets="Publish"
+    Condition="'$(PublishAot)' == 'true' and '$(_IsPacking)' != 'true'"
+  >
     <PropertyGroup>
       <NativeAotSourceName Condition="$([System.String]::Copy('$(RuntimeIdentifier)').StartsWith('win-'))"
         >$(AssemblyName).exe</NativeAotSourceName>
@@ -74,12 +96,12 @@
       Condition="Exists('$(PublishDir)$(NativeAotExecutableName)') and '$(NativeAotSourceName)' != '$(NativeAotExecutableName)'"
     />
   </Target>
-  <!-- Tool runtime assets do not need debug symbols. -->
-  <Target Name="ExcludePdbFilesFromToolPackage" AfterTargets="PackTool" Condition="'$(PackAsTool)' == 'true'">
+  <!-- Tool packages do not need debug symbols (.pdb, Linux .dbg, macOS .dSYM). -->
+  <Target Name="ExcludeDebugSymbolsFromToolPackage" AfterTargets="PackTool" Condition="'$(PackAsTool)' == 'true'">
     <ItemGroup>
       <TfmSpecificPackageFile
         Remove="@(TfmSpecificPackageFile)"
-        Condition="'%(TfmSpecificPackageFile.Extension)' == '.pdb'"
+        Condition="'%(TfmSpecificPackageFile.Extension)' == '.pdb' or '%(TfmSpecificPackageFile.Extension)' == '.dbg' or $([System.String]::Copy('%(TfmSpecificPackageFile.FullPath)').Contains('.dSYM'))"
       />
     </ItemGroup>
   </Target>

@@ -26,21 +26,27 @@ jobs:
           - rid: linux-x64
             os: ubuntu-22.04
             binary: clippit
+            native_lib: libSkiaSharp.so
           - rid: linux-arm64
             os: ubuntu-22.04-arm
             binary: clippit
+            native_lib: libSkiaSharp.so
           - rid: win-x64
             os: windows-latest
             binary: clippit.exe
+            native_lib: libSkiaSharp.dll
           - rid: win-arm64
             os: windows-11-arm
             binary: clippit.exe
+            native_lib: libSkiaSharp.dll
           - rid: osx-x64
             os: macos-15-intel
             binary: clippit
+            native_lib: libSkiaSharp.dylib
           - rid: osx-arm64
             os: macos-15
             binary: clippit
+            native_lib: libSkiaSharp.dylib
 
     steps:
       - name: Checkout
@@ -79,7 +85,18 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: clippit-${{ matrix.rid }}
-          path: bin/cli/${{ matrix.rid }}/${{ matrix.binary }}
+          path: |
+            bin/cli/${{ matrix.rid }}/${{ matrix.binary }}
+            bin/cli/${{ matrix.rid }}/${{ matrix.native_lib }}
+          if-no-files-found: error
+      - name: Pack RID-specific dotnet tool
+        run: dotnet pack Clippit.Cli/Clippit.Cli.csproj -c Release -r ${{ matrix.rid }} -p:NativeAot=true -o bin/tool
+
+      - name: Upload RID-specific dotnet tool
+        uses: actions/upload-artifact@v7
+        with:
+          name: clippit-tool-${{ matrix.rid }}
+          path: bin/tool/Clippit.Cli.${{ matrix.rid }}.*.nupkg
           if-no-files-found: error
 
   build-and-pack:
@@ -230,7 +247,7 @@ jobs:
           done
 
   publish:
-    needs: [build-and-pack, publish-npm]
+    needs: [build-native, build-and-pack, publish-npm]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -244,6 +261,12 @@ jobs:
         with:
           name: nuget-packages
           path: bin
+      - name: Download RID-specific dotnet tool packages
+        uses: actions/download-artifact@v8
+        with:
+          pattern: clippit-tool-*
+          path: bin
+          merge-multiple: true
       - name: NuGet login (OIDC → temp API key)
         uses: NuGet/login@v1
         id: login
@@ -251,10 +274,12 @@ jobs:
           user: ${{ secrets.NUGET_USER }}
       - name: Publish to NuGet
         run: |
-          dotnet nuget push bin/*.nupkg \
-            --api-key ${{ steps.login.outputs.NUGET_API_KEY }} \
-            --source https://api.nuget.org/v3/index.json \
-            --skip-duplicate
+          for rid in win-x64 win-arm64 osx-x64 osx-arm64 linux-x64 linux-arm64 any; do
+            dotnet nuget push bin/Clippit.Cli.$rid.*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} \
+              --source https://api.nuget.org/v3/index.json --skip-duplicate
+          done
+          dotnet nuget push "bin/*.nupkg" --api-key ${{ steps.login.outputs.NUGET_API_KEY }} \
+            --source https://api.nuget.org/v3/index.json --skip-duplicate
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
