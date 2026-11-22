@@ -90,3 +90,45 @@ jobs:
               run: dotnet test --project Clippit.Tests/Clippit.Tests.csproj -c Release --no-build -f net11.0 --treenode-filter "/*/*/CliAotTests/**"
               env:
                   CLIPPIT_TEST_AOT: "1"
+    cli-native-tool-smoke:
+        name: NativeAOT tool install (${{ matrix.rid }})
+        runs-on: ${{ matrix.os }}
+        needs: build
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - os: ubuntu-latest
+                      rid: linux-x64
+                    - os: macos-15
+                      rid: osx-arm64
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v7
+            - name: Setup .NET SDK
+              uses: actions/setup-dotnet@v6
+              with:
+                  global-json-file: global.json
+            - name: Install Linux Native AOT toolchain
+              if: runner.os == 'Linux'
+              run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+            - name: Select Apple Clang for Native AOT
+              if: runner.os == 'macOS'
+              run: |
+                  echo "CppCompilerAndLinker=/usr/bin/clang" >> "$GITHUB_ENV"
+                  xcode-select -p
+                  xcodebuild -version
+            - name: Pack tool pointer package
+              run: |
+                  mkdir -p "$RUNNER_TEMP/clippit-feed"
+                  dotnet pack Clippit.Cli/Clippit.Cli.csproj -c Release -o "$RUNNER_TEMP/clippit-feed" -p:CreateRidSpecificToolPackages=false
+            - name: Pack RID-specific NativeAOT tool
+              run: dotnet pack Clippit.Cli/Clippit.Cli.csproj -c Release -r ${{ matrix.rid }} -p:NativeAot=true -o "$RUNNER_TEMP/clippit-feed"
+            - name: Install and smoke-test RID-specific tool
+              run: |
+                  version="$(awk '/^## \[/ { sub(/^## \[/, ""); sub(/\].*$/, ""); print; exit }' CHANGELOG.md)"
+                  dotnet tool install Clippit.Cli --tool-path "$RUNNER_TEMP/clippit-tool" --add-source "$RUNNER_TEMP/clippit-feed" --version "$version"
+                  "$RUNNER_TEMP/clippit-tool/clippit" version --format json
+                  "$RUNNER_TEMP/clippit-tool/clippit" word to-html TestFiles/HC024-Tabs-01.docx --output "$RUNNER_TEMP/tabs.html" --format json
+                  test -s "$RUNNER_TEMP/tabs.html"
