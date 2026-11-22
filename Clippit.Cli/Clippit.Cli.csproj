@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net10.0;net11.0</TargetFrameworks>
-    <TargetFrameworks Condition="'$(NativeAot)' == 'true'">net11.0</TargetFrameworks>
+    <TargetFrameworks>net11.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <IsCliProject>true</IsCliProject>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -24,8 +23,8 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
 
     <!-- NativeAOT is opt-in via -p:NativeAot=true for npm binaries (dotnet publish -r <rid>) and
-         RID-specific dotnet tool packages (dotnet pack -r <rid>). Plain builds and tests target
-         net10.0 and net11.0; the framework-dependent any tool package targets net11.0. -->
+         RID-specific dotnet tool packages (dotnet pack -r <rid>). The CLI and framework-dependent
+         any tool package target net11.0; the library and tests retain net10.0 and net11.0. -->
     <PublishAot Condition="'$(NativeAot)' == 'true'">true</PublishAot>
     <OptimizationPreference Condition="'$(NativeAot)' == 'true'">Size</OptimizationPreference>
     <StackTraceSupport Condition="'$(NativeAot)' == 'true'">false</StackTraceSupport>

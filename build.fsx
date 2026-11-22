@@ -83,9 +83,9 @@ let testCommands =
     // CI runs one framework per matrix job; local builds test both sequentially to avoid shared temp output collisions.
     let command =
         if isGitHubActions then
-            "test --solution Clippit.slnx -c Release --no-build"
+            "test --project Clippit.Tests/ -c Release --no-build"
         else
-            "test --solution Clippit.slnx"
+            "test --project Clippit.Tests/"
 
     match testFramework with
     | null
