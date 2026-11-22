@@ -331,7 +331,7 @@ pipeline "build" {
         run (fun ctx ->
             ctx.RunCommand(
                 withCiMsBuildLogger
-                    $"dotnet pack Clippit.Cli/Clippit.Cli.csproj -o bin/ -r any -p:TargetFrameworks=net11.0 -p:PackageVersion={version.Version}"
+                    $"dotnet pack Clippit.Cli/Clippit.Cli.csproj -o bin/ -r any -p:PackageVersion={version.Version}"
             ))
     }
 
