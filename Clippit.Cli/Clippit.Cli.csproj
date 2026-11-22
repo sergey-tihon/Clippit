@@ -28,6 +28,8 @@
     <PublishAot Condition="'$(NativeAot)' == 'true'">true</PublishAot>
     <IlcOptimizationPreference Condition="'$(NativeAot)' == 'true'">Size</IlcOptimizationPreference>
     <InvariantGlobalization Condition="'$(NativeAot)' == 'true'">true</InvariantGlobalization>
+    <!-- NativeAOT uses invariant globalization, so localized satellite resources cannot be selected. -->
+    <SatelliteResourceLanguages Condition="'$(NativeAot)' == 'true'">en</SatelliteResourceLanguages>
     <StripSymbols Condition="'$(NativeAot)' == 'true'">true</StripSymbols>
   </PropertyGroup>
 
