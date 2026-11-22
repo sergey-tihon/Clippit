@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.10.1] - November 22, 2026
+
+- perf(cli): reduce NativeAOT binary size and ship SkiaSharp with npm and RID-specific dotnet tool packages
+- build(cli): target .NET 11 only for the CLI and managed fallback; keep the library and tests on .NET 10 and .NET 11
+
 ## [3.10.0] - November 12, 2026
 
 - build: unify release versioning — the library, `Clippit.Cli` dotnet tool, and `clippit` npm packages now share one version from this changelog and publish together from a single `v*` tag (CLI jumps from 0.11.0 to 3.10.0)

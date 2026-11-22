@@ -11,6 +11,7 @@
   "os": ["win32"],
   "cpu": ["x64"],
   "files": [
-    "clippit.exe"
+    "clippit.exe",
+    "libSkiaSharp.dll"
   ]
 }

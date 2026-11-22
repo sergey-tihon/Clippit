@@ -137,12 +137,11 @@ internal static class CliTestRunner
     public static FileInfo GetManagedCliDll()
     {
         var testOutputDirectory = new DirectoryInfo(AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar));
-        var targetFramework = testOutputDirectory.Name;
         var configuration = testOutputDirectory.Parent?.Name ?? "Debug";
         var candidates = new[] { configuration, "Release", "Debug" }
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .Select(config => new FileInfo(
-                Path.Combine(RepositoryRoot.FullName, "Clippit.Cli", "bin", config, targetFramework, "Clippit.Cli.dll")
+                Path.Combine(RepositoryRoot.FullName, "Clippit.Cli", "bin", config, "net11.0", "Clippit.Cli.dll")
             ))
             .ToList();
 

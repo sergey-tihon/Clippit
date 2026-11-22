@@ -7,7 +7,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Clippit\Clippit.csproj" />
-    <ProjectReference Include="..\Clippit.Cli\Clippit.Cli.csproj" />
+    <ProjectReference
+      Include="..\Clippit.Cli\Clippit.Cli.csproj"
+      ReferenceOutputAssembly="false"
+      SetTargetFramework="TargetFramework=net11.0"
+    />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="JsonSchema.Net" Version="9.6.0" />
