@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.10.2] - November 23, 2026
+
+- fix(pptx): copy 3D model parts (`.glb` and raster preview) when extracting slides (#563)
+- fix(pptx): keep namespace declarations of the presentation root so `mc:Ignorable` prefixes from PowerPoint for Mac decks stay declared and extracted slides stay valid (#564)
+- build: stop compiling `Clippit.Cli` twice in parallel during solution builds, which intermittently failed Windows CI with `CS2012`
+- chore(deps): update SkiaSharp 4.153.1 → 4.157.0, TUnit 1.83.8 → 1.87.12, and JsonSchema.Net 9.6.0 → 9.7.0
+
 ## [3.10.1] - November 22, 2026
 
 - perf(cli): reduce NativeAOT binary size and ship SkiaSharp with npm and RID-specific dotnet tool packages

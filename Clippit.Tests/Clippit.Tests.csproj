@@ -10,7 +10,8 @@
     <ProjectReference
       Include="..\Clippit.Cli\Clippit.Cli.csproj"
       ReferenceOutputAssembly="false"
-      SetTargetFramework="TargetFramework=net11.0"
+      SkipGetTargetFrameworkProperties="true"
+      UndefineProperties="TargetFramework"
     />
   </ItemGroup>
   <ItemGroup>
