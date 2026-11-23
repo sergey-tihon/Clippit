@@ -56,8 +56,10 @@ internal sealed partial class FluentPresentationBuilder
 
         foreach (var att in oldPresentationDoc.Root.Attributes())
         {
-            if (!att.IsNamespaceDeclaration && newPresentationRoot.Attribute(att.Name) is null)
-                newPresentationRoot.Add(oldPresentationDoc.Root.Attribute(att.Name));
+            // Namespace declarations are copied too: mc:Ignorable and mc:PreserveAttributes hold
+            // prefixes (for example "mv") that must stay declared on the root element.
+            if (newPresentationRoot.Attribute(att.Name) is null)
+                newPresentationRoot.Add(att);
         }
 
         if (

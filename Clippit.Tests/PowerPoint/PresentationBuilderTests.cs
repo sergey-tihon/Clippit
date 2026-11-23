@@ -130,6 +130,26 @@ public class PresentationBuilderTests : TestsBase
         await Assert.That(extendedParts).HasCount().EqualTo(1);
     }
 
+    [Test]
+    public async Task PB009_IgnorablePrefixStaysDeclared()
+    {
+        // PowerPoint for Mac writes mc:Ignorable="mv" on the presentation root. The prefix must
+        // stay declared in the output, or the Ignorable attribute is invalid.
+        var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+        var sourcePptx = new FileInfo(Path.Combine(sourceDir.FullName, "PB009-MacVmlIgnorable.pptx"));
+        var sources = new List<SlideSource> { new(new PmlDocument(sourcePptx.FullName), 1, 1, true) };
+        var outputPptx = new FileInfo(Path.Combine(TempDir, "PB009-Output.pptx"));
+        PresentationBuilder.BuildPresentation(sources).SaveAs(outputPptx.FullName);
+
+        using var pptx = PresentationDocument.Open(outputPptx.FullName, false);
+        await Validate(pptx);
+
+        var root = pptx.PresentationPart!.GetXDocument().Root!;
+        var ignorable = ((string)root.Attribute(MC.Ignorable)).Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        foreach (var prefix in ignorable)
+            await Assert.That(root.GetNamespaceOfPrefix(prefix)).IsNotNull();
+    }
+
     private static string[] GetMediaDataContentTypes(FileInfo fi)
     {
         using var ptDoc = PresentationDocument.Open(fi.FullName, false);
