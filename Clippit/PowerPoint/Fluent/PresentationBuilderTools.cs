@@ -493,6 +493,24 @@ namespace Clippit.PowerPoint.Fluent
             contentPartReference.Attribute(attributeName).Set(newContentPart.GetIdOfPart(newPart));
         }
 
+        internal static void CopyModel3DPart(
+            OpenXmlPart oldContentPart,
+            OpenXmlPart newContentPart,
+            XElement model3DReference,
+            XName attributeName
+        )
+        {
+            var relId = (string)model3DReference.Attribute(attributeName);
+            if (string.IsNullOrEmpty(relId) || newContentPart.HasRelationship(relId))
+                return;
+
+            var oldPart = oldContentPart.GetPartById(relId);
+
+            var newPart = newContentPart.AddNewPart<Model3DReferenceRelationshipPart>();
+            newPart.FeedDataFrom(oldPart);
+            model3DReference.Attribute(attributeName).Set(newContentPart.GetIdOfPart(newPart));
+        }
+
         internal static void CopyActiveXPart(
             OpenXmlPart oldContentPart,
             OpenXmlPart newContentPart,

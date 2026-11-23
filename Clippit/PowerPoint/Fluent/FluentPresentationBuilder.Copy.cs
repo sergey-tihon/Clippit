@@ -430,6 +430,7 @@ internal sealed partial class FluentPresentationBuilder
                 || name == VML.stroke
                 || name == A.blip
                 || name == SVG.svgBlip
+                || name == AM3D.blip
             )
             {
                 CopyRelatedImage(oldContentPart, newContentPart, element, R.embed);
@@ -463,6 +464,10 @@ internal sealed partial class FluentPresentationBuilder
             else if (name == A14.imgLayer)
             {
                 PBT.CopyExtendedPart(oldContentPart, newContentPart, element, R.embed);
+            }
+            else if (name == AM3D.model3d)
+            {
+                PBT.CopyModel3DPart(oldContentPart, newContentPart, element, R.embed);
             }
             else if (name == P.contentPart)
             {

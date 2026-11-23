@@ -131,6 +131,41 @@ public class PresentationBuilderTests : TestsBase
     }
 
     [Test]
+    public async Task PB008_SlideWith3DModel()
+    {
+        // A 3D model is an <am3d:model3d r:embed> that points to a .glb part, with a raster
+        // preview in <am3d:blip r:embed>. Both relationships must exist in the extracted slide.
+        var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+        var sourcePptx = new FileInfo(Path.Combine(sourceDir.FullName, "PB008-3DModel.pptx"));
+        byte[] sourceModel;
+        using (var source = PresentationDocument.Open(sourcePptx.FullName, false))
+        {
+            var sourceSlide = source.PresentationPart!.SlideParts.Single(s =>
+                s.Model3DReferenceRelationshipParts.Any()
+            );
+            sourceModel = ReadAllBytes(sourceSlide.Model3DReferenceRelationshipParts.Single());
+        }
+
+        var sources = new List<SlideSource> { new(new PmlDocument(sourcePptx.FullName), 1, 1, true) };
+        var outputPptx = new FileInfo(Path.Combine(TempDir, "PB008-Output.pptx"));
+        PresentationBuilder.BuildPresentation(sources).SaveAs(outputPptx.FullName);
+
+        using var pptx = PresentationDocument.Open(outputPptx.FullName, false);
+        await Validate(pptx);
+
+        var slidePart = pptx.PresentationPart!.SlideParts.Single();
+        var modelPart = slidePart.Model3DReferenceRelationshipParts.Single();
+        await Assert.That(ReadAllBytes(modelPart)).IsEquivalentTo(sourceModel);
+
+        var slideXml = slidePart.GetXDocument();
+        var model3d = slideXml.Descendants(AM3D.model3d).Single();
+        await Assert.That((string)model3d.Attribute(R.embed)).IsEqualTo(slidePart.GetIdOfPart(modelPart));
+
+        var rasterId = (string)slideXml.Descendants(AM3D.blip).Single().Attribute(R.embed);
+        await Assert.That(slidePart.GetPartById(rasterId)).IsTypeOf<ImagePart>();
+    }
+
+    [Test]
     public async Task PB009_IgnorablePrefixStaysDeclared()
     {
         // PowerPoint for Mac writes mc:Ignorable="mv" on the presentation root. The prefix must
@@ -148,6 +183,14 @@ public class PresentationBuilderTests : TestsBase
         var ignorable = ((string)root.Attribute(MC.Ignorable)).Split(' ', StringSplitOptions.RemoveEmptyEntries);
         foreach (var prefix in ignorable)
             await Assert.That(root.GetNamespaceOfPrefix(prefix)).IsNotNull();
+    }
+
+    private static byte[] ReadAllBytes(OpenXmlPart part)
+    {
+        using var stream = part.GetStream(FileMode.Open, FileAccess.Read);
+        using var buffer = new MemoryStream();
+        stream.CopyTo(buffer);
+        return buffer.ToArray();
     }
 
     private static string[] GetMediaDataContentTypes(FileInfo fi)
