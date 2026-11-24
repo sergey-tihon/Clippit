@@ -227,8 +227,30 @@ internal sealed partial class FluentPresentationBuilder
         };
 
         var newFontPart = _newDocument.PresentationPart.AddFontPart(fontPartType);
-        newFontPart.FeedDataFrom(oldFontPart);
+        if (fontPartType == FontPartType.FontData && ReadUpgradedFontData(oldFontPart) is { } upgraded)
+        {
+            using var stream = new MemoryStream(upgraded, false);
+            newFontPart.FeedData(stream);
+        }
+        else
+        {
+            newFontPart.FeedDataFrom(oldFontPart);
+        }
         return new XElement(fontXName, new XAttribute(R.id, _newDocument.PresentationPart.GetIdOfPart(newFontPart)));
+    }
+
+    private static byte[]? ReadUpgradedFontData(OpenXmlPart fontPart)
+    {
+        try
+        {
+            using var source = fontPart.GetStream(FileMode.Open, FileAccess.Read);
+            return EmbeddedFontHeader.ReadUpgraded(source);
+        }
+        catch (InvalidDataException)
+        {
+            // Corrupt ZIP entry: FeedDataFrom copies the part and handles the same error.
+            return null;
+        }
     }
 
     // Copies notes master and notesSz element from presentation

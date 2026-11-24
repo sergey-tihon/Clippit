@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+using System.Xml.Linq;
 using Clippit.PowerPoint;
+using Clippit.PowerPoint.Fluent;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace Clippit.Tests.PowerPoint;
@@ -183,6 +185,61 @@ public class PresentationBuilderTests : TestsBase
         var ignorable = ((string)root.Attribute(MC.Ignorable)).Split(' ', StringSplitOptions.RemoveEmptyEntries);
         foreach (var prefix in ignorable)
             await Assert.That(root.GetNamespaceOfPrefix(prefix)).IsNotNull();
+    }
+
+    [Test]
+    public async Task PB010_EmbeddedFontWithEot10Header()
+    {
+        var eot10 = EmbeddedFontHeaderTests.CreateEot(0x00010000, EmbeddedFontHeaderTests.FontData);
+        var eot22 = EmbeddedFontHeaderTests.CreateEot(0x00020002, EmbeddedFontHeaderTests.FontData, new byte[24]);
+
+        var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+        using var sourceStream = new MemoryStream();
+        sourceStream.Write(File.ReadAllBytes(Path.Combine(sourceDir.FullName, "PB001-Input1.pptx")));
+        using (var source = PresentationDocument.Open(sourceStream, true))
+        {
+            var presentationPart = source.PresentationPart!;
+            var fontList = new XElement(P.embeddedFontLst);
+            foreach (
+                var (typeface, style, data) in new[] { ("Old Font", P.regular, eot10), ("New Font", P.bold, eot22) }
+            )
+            {
+                var fontPart = presentationPart.AddFontPart(FontPartType.FontData);
+                using (var fontStream = new MemoryStream(data))
+                    fontPart.FeedData(fontStream);
+                fontList.Add(
+                    new XElement(
+                        P.embeddedFont,
+                        new XElement(P.font, new XAttribute("typeface", typeface)),
+                        new XElement(style, new XAttribute(R.id, presentationPart.GetIdOfPart(fontPart)))
+                    )
+                );
+            }
+            var root = presentationPart.GetXDocument().Root!;
+            root.Element(P.notesSz)!.AddAfterSelf(fontList);
+            presentationPart.PutXDocument();
+        }
+
+        var sources = new List<SlideSource>
+        {
+            new(new PmlDocument("PB010-Input.pptx", sourceStream.ToArray()), 0, 1, true),
+        };
+        var outputPptx = new FileInfo(Path.Combine(TempDir, "PB010-Output.pptx"));
+        PresentationBuilder.BuildPresentation(sources).SaveAs(outputPptx.FullName);
+
+        using var pptx = PresentationDocument.Open(outputPptx.FullName, false);
+        await Validate(pptx);
+
+        var fonts = pptx.PresentationPart!.GetXDocument()
+            .Root!.Element(P.embeddedFontLst)!
+            .Elements(P.embeddedFont)
+            .ToDictionary(
+                f => (string)f.Element(P.font)!.Attribute("typeface"),
+                f => ReadAllBytes(pptx.PresentationPart.GetPartById((string)f.Elements().Last().Attribute(R.id)))
+            );
+
+        await Assert.That(fonts["Old Font"]).IsEquivalentTo(EmbeddedFontHeader.UpgradeToVersion22(eot10)!);
+        await Assert.That(fonts["New Font"]).IsEquivalentTo(eot22);
     }
 
     private static byte[] ReadAllBytes(OpenXmlPart part)
