@@ -6,7 +6,20 @@
   },
   "issues": [],
   "fixes": [],
-  "checks": [],
+  "checks": [
+    {
+      "area": "dependencies",
+      "checked_at": "2026-11-24",
+      "result": "dotnet outdated unusable in sandbox (/run/user/1001 missing); not verified",
+      "follow_up": null
+    },
+    {
+      "area": "qa",
+      "checked_at": "2026-11-24",
+      "result": "4 open issues all labelled; old question issues have no new activity",
+      "follow_up": null
+    }
+  ],
   "completed_actions": [],
   "priorities": []
 }
