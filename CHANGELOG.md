@@ -1,5 +1,9 @@
 # Changelog
 
+## [3.10.3] - November 25, 2026
+
+- fix(pptx): upgrade embedded EOT 1.0 font headers to EOT 2.2 and preserve malformed headers unchanged (#565)
+
 ## [3.10.2] - November 23, 2026
 
 - fix(pptx): copy 3D model parts (`.glb` and raster preview) when extracting slides (#563)
