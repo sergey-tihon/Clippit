@@ -3,6 +3,7 @@ using Clippit.Cli.Commands.Common.Verify;
 using Clippit.Cli.Commands.Excel.Create;
 using Clippit.Cli.Commands.Install;
 using Clippit.Cli.Commands.Pptx.Build;
+using Clippit.Cli.Commands.Pptx.RenderSvg;
 using Clippit.Cli.Commands.Pptx.Split;
 using Clippit.Cli.Commands.Pptx.Verify;
 using Clippit.Cli.Commands.Version;
@@ -30,6 +31,7 @@ namespace Clippit.Cli;
 [JsonSerializable(typeof(BuildEntryResult))]
 [JsonSerializable(typeof(InitResult))]
 [JsonSerializable(typeof(VerifyResult))]
+[JsonSerializable(typeof(RenderSvgResult))]
 [JsonSerializable(typeof(VerifyDiagnostic))]
 [JsonSerializable(typeof(VersionResult))]
 [JsonSerializable(typeof(ConvertResult))]
