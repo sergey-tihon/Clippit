@@ -65,6 +65,28 @@ public class EmbeddedFontHeaderTests
     }
 
     [Test]
+    public async Task Version10_WithNonZeroPadding_IsNotChanged()
+    {
+        var source = CreateEot(0x00010000, FontData);
+        BinaryPrimitives.WriteUInt16LittleEndian(source.AsSpan(80), 1);
+
+        await Assert.That(EmbeddedFontHeader.UpgradeToVersion22(source)).IsNull();
+    }
+
+    [Test]
+    public async Task Version10_WithOddNameSize_IsNotChanged()
+    {
+        // One extra byte after FullName, counted in FullNameSize: the header still ends after FullName.
+        var source = CreateEot(0x00010000, FontData, [0x00]);
+        var fullNameSizeOffset =
+            source.Length - FontData.Length - 1 - Encoding.Unicode.GetByteCount("Test Family Regular") - sizeof(ushort);
+        var fullNameSize = BinaryPrimitives.ReadUInt16LittleEndian(source.AsSpan(fullNameSizeOffset));
+        BinaryPrimitives.WriteUInt16LittleEndian(source.AsSpan(fullNameSizeOffset), (ushort)(fullNameSize + 1));
+
+        await Assert.That(EmbeddedFontHeader.UpgradeToVersion22(source)).IsNull();
+    }
+
+    [Test]
     public async Task ReadUpgraded_ReadsVersion10AndLeavesVersion22()
     {
         var eot10 = CreateEot(0x00010000, FontData);

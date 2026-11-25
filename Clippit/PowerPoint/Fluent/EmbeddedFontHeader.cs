@@ -83,17 +83,24 @@ internal static class EmbeddedFontHeader
         && BinaryPrimitives.ReadUInt32LittleEndian(eot[VersionOffset..]) == Version10
         && BinaryPrimitives.ReadUInt16LittleEndian(eot[MagicNumberOffset..]) == MagicNumber;
 
-    // FamilyName, StyleName, VersionName and FullName: each has 2 bytes of padding, a 2-byte
-    // size and the string. The EOT 1.0 header ends after FullName.
+    // FamilyName, StyleName, VersionName and FullName: each has 2 bytes of padding (must be 0),
+    // a 2-byte size (UTF-16, so even) and the string. The EOT 1.0 header ends after FullName.
     private static bool EndsAfterFullName(ReadOnlySpan<byte> header)
     {
         var position = FamilyNameSizeOffset - sizeof(ushort);
         for (var name = 0; name < NameCount; name++)
         {
-            position += sizeof(ushort);
-            if (position + sizeof(ushort) > header.Length)
+            if (position + 2 * sizeof(ushort) > header.Length)
+            {
                 return false;
-            position += sizeof(ushort) + BinaryPrimitives.ReadUInt16LittleEndian(header[position..]);
+            }
+            var padding = BinaryPrimitives.ReadUInt16LittleEndian(header[position..]);
+            var size = BinaryPrimitives.ReadUInt16LittleEndian(header[(position + sizeof(ushort))..]);
+            if (padding != 0 || size % 2 != 0)
+            {
+                return false;
+            }
+            position += 2 * sizeof(ushort) + size;
         }
         return position == header.Length;
     }
