@@ -103,6 +103,7 @@ namespace Clippit.PowerPoint.Fluent
             { A.hlinkClick, new[] { R.id } },
             { A.hlinkMouseOver, new[] { R.id } },
             { A.hlinkHover, new[] { R.id } },
+            { AM3D.attrSrcUrl, new[] { R.id } },
             { A.relIds, new[] { R.cs, R.dm, R.lo, R.qs } },
             { C.chart, new[] { R.id } },
             { C.externalData, new[] { R.id } },
@@ -383,7 +384,12 @@ namespace Clippit.PowerPoint.Fluent
                 .ToList();
             foreach (var e in relevantElements)
             {
-                if (e.Name == A.hlinkClick || e.Name == A.hlinkHover || e.Name == A.hlinkMouseOver)
+                if (
+                    e.Name == A.hlinkClick
+                    || e.Name == A.hlinkHover
+                    || e.Name == A.hlinkMouseOver
+                    || e.Name == AM3D.attrSrcUrl
+                )
                 {
                     var relId = (string)e.Attribute(R.id);
                     if (string.IsNullOrEmpty(relId))
