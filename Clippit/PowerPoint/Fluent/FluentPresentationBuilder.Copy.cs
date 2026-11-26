@@ -453,12 +453,15 @@ internal sealed partial class FluentPresentationBuilder
                 || name == A.blip
                 || name == SVG.svgBlip
                 || name == AM3D.blip
+                || name == WE.snapshot
             )
             {
                 CopyRelatedImage(oldContentPart, newContentPart, element, R.embed);
                 CopyRelatedImage(oldContentPart, newContentPart, element, R.pict);
                 CopyRelatedImage(oldContentPart, newContentPart, element, R.id);
                 CopyRelatedImage(oldContentPart, newContentPart, element, O.relid);
+                if (name == WE.snapshot)
+                    PBT.CopyRelatedMediaExternalRelationship(oldContentPart, newContentPart, element, R.link);
             }
             else if (name == A.videoFile || name == A.quickTimeFile)
             {
@@ -490,6 +493,10 @@ internal sealed partial class FluentPresentationBuilder
             else if (name == AM3D.model3d)
             {
                 PBT.CopyModel3DPart(oldContentPart, newContentPart, element, R.embed);
+            }
+            else if (name == WE.webextensionref)
+            {
+                CopyWebExtensionPart(oldContentPart, newContentPart, element, R.id);
             }
             else if (name == P.contentPart)
             {
@@ -821,6 +828,30 @@ internal sealed partial class FluentPresentationBuilder
         }
     }
 
+    private void CopyWebExtensionPart(
+        OpenXmlPart oldContentPart,
+        OpenXmlPart newContentPart,
+        XElement webExtensionReference,
+        XName attributeName
+    )
+    {
+        var relId = (string)webExtensionReference.Attribute(attributeName);
+        if (newContentPart.HasRelationship(relId) || newContentPart is not SlidePart newSlidePart)
+            return;
+
+        if (
+            oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId).OpenXmlPart
+            is not WebExtensionPart oldPart
+        )
+            return;
+
+        var newPart = newSlidePart.AddNewPart<WebExtensionPart>();
+        newPart.GetXDocument().Add(oldPart.GetXDocument().Root);
+        webExtensionReference.Attribute(attributeName).Set(newSlidePart.GetIdOfPart(newPart));
+        PBT.AddRelationships(oldPart, newPart, [newPart.GetXDocument().Root]);
+        CopyRelatedPartsForContentParts(oldPart, newPart, [newPart.GetXDocument().Root]);
+    }
+
     private void CopyRelatedImage(
         OpenXmlPart oldContentPart,
         OpenXmlPart newContentPart,
@@ -885,6 +916,7 @@ internal sealed partial class FluentPresentationBuilder
                     ThemeOverridePart part => part.AddImagePart(contentType),
                     ThemePart part => part.AddImagePart(contentType),
                     VmlDrawingPart part => part.AddImagePart(contentType),
+                    WebExtensionPart part => part.AddImagePart(contentType),
                     WorksheetPart part => part.AddImagePart(contentType),
                     _ => null,
                 };

@@ -242,6 +242,155 @@ public class PresentationBuilderTests : TestsBase
         await Assert.That(fonts["New Font"]).IsEquivalentTo(eot22);
     }
 
+    [Test]
+    public async Task PB011_SlideWith3DModelSourceUrl()
+    {
+        var sourceUrl = new Uri("https://example.com/models/cube");
+
+        var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+        using var sourceStream = new MemoryStream();
+        sourceStream.Write(File.ReadAllBytes(Path.Combine(sourceDir.FullName, "PB008-3DModel.pptx")));
+        using (var source = PresentationDocument.Open(sourceStream, true))
+        {
+            var sourceSlide = source.PresentationPart!.SlideParts.Single(s =>
+                s.Model3DReferenceRelationshipParts.Any()
+            );
+            var hyperlink = sourceSlide.AddHyperlinkRelationship(sourceUrl, true);
+            var raster = sourceSlide.GetXDocument().Descendants(AM3D.blip).Single().Parent!;
+            raster.AddBeforeSelf(new XElement(AM3D.attrSrcUrl, new XAttribute(R.id, hyperlink.Id)));
+            sourceSlide.PutXDocument();
+        }
+
+        var sources = new List<SlideSource>
+        {
+            new(new PmlDocument("PB011-Input.pptx", sourceStream.ToArray()), 1, 1, true),
+        };
+        var outputPptx = new FileInfo(Path.Combine(TempDir, "PB011-Output.pptx"));
+        PresentationBuilder.BuildPresentation(sources).SaveAs(outputPptx.FullName);
+
+        using var pptx = PresentationDocument.Open(outputPptx.FullName, false);
+        await Validate(pptx);
+
+        var slidePart = pptx.PresentationPart!.SlideParts.Single();
+        var relId = (string)slidePart.GetXDocument().Descendants(AM3D.attrSrcUrl).Single().Attribute(R.id);
+        var copied = slidePart.HyperlinkRelationships.Single(h => h.Id == relId);
+        await Assert.That(copied.Uri).IsEqualTo(sourceUrl);
+        await Assert.That(copied.IsExternal).IsTrue();
+    }
+
+    [Test]
+    public async Task PB012_SlideWithWebExtension()
+    {
+        var snapshotUrl = new Uri("https://example.com/snapshot.png");
+        var snapshot = Convert.FromBase64String(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
+        );
+        var webExtension = new XElement(
+            WE.webextension,
+            new XAttribute(XNamespace.Xmlns + "we", WE.we),
+            new XAttribute(XNamespace.Xmlns + "r", R.r),
+            new XAttribute("id", "{6F1B2A5C-0B5E-4C0E-9A57-2D0C3E6B7A11}"),
+            new XElement(
+                WE.reference,
+                new XAttribute("id", "wa000000000"),
+                new XAttribute("version", "1.0.0.0"),
+                new XAttribute("store", "en-US"),
+                new XAttribute("storeType", "OMEX")
+            ),
+            new XElement(WE.alternateReferences),
+            new XElement(WE.properties),
+            new XElement(WE.bindings),
+            new XElement(WE.snapshot)
+        );
+
+        var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+        using var sourceStream = new MemoryStream();
+        sourceStream.Write(File.ReadAllBytes(Path.Combine(sourceDir.FullName, "PB001-Input1.pptx")));
+        using (var source = PresentationDocument.Open(sourceStream, true))
+        {
+            var presentationPart = source.PresentationPart!;
+            var firstSlideId = (string)
+                presentationPart.GetXDocument().Root!.Element(P.sldIdLst)!.Elements(P.sldId).First().Attribute(R.id);
+            var sourceSlide = (SlidePart)presentationPart.GetPartById(firstSlideId);
+
+            var webExtensionPart = sourceSlide.AddNewPart<WebExtensionPart>();
+            var snapshotPart = webExtensionPart.AddImagePart(ImagePartType.Png);
+            using (var snapshotStream = new MemoryStream(snapshot))
+                snapshotPart.FeedData(snapshotStream);
+            var snapshotLink = webExtensionPart.AddExternalRelationship(
+                "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+                snapshotUrl
+            );
+            webExtension
+                .Element(WE.snapshot)!
+                .Add(
+                    new XAttribute(R.embed, webExtensionPart.GetIdOfPart(snapshotPart)),
+                    new XAttribute(R.link, snapshotLink.Id)
+                );
+            webExtensionPart.PutXDocument(new XDocument(webExtension));
+
+            var spTree = sourceSlide.GetXDocument().Descendants(P.spTree).Single();
+            spTree.Add(
+                new XElement(
+                    P.graphicFrame,
+                    new XElement(
+                        P.nvGraphicFramePr,
+                        new XElement(P.cNvPr, new XAttribute("id", "1000"), new XAttribute("name", "Add-in")),
+                        new XElement(P.cNvGraphicFramePr),
+                        new XElement(P.nvPr)
+                    ),
+                    new XElement(
+                        P.xfrm,
+                        new XElement(A.off, new XAttribute("x", "0"), new XAttribute("y", "0")),
+                        new XElement(A.ext, new XAttribute("cx", "914400"), new XAttribute("cy", "914400"))
+                    ),
+                    new XElement(
+                        A.graphic,
+                        new XElement(
+                            A.graphicData,
+                            new XAttribute("uri", WE.we.NamespaceName),
+                            new XElement(
+                                WE.webextensionref,
+                                new XAttribute(XNamespace.Xmlns + "we", WE.we),
+                                new XAttribute(R.id, sourceSlide.GetIdOfPart(webExtensionPart))
+                            )
+                        )
+                    )
+                )
+            );
+            sourceSlide.PutXDocument();
+        }
+
+        var sources = new List<SlideSource>
+        {
+            new(new PmlDocument("PB012-Input.pptx", sourceStream.ToArray()), 0, 1, true),
+        };
+        var outputPptx = new FileInfo(Path.Combine(TempDir, "PB012-Output.pptx"));
+        PresentationBuilder.BuildPresentation(sources).SaveAs(outputPptx.FullName);
+
+        using var pptx = PresentationDocument.Open(outputPptx.FullName, false);
+        await Validate(pptx, DocumentFormat.OpenXml.FileFormatVersions.Office2013);
+
+        var slidePart = pptx.PresentationPart!.SlideParts.Single();
+        var relId = (string)slidePart.GetXDocument().Descendants(WE.webextensionref).Single().Attribute(R.id);
+        var copiedPart = slidePart.WebExtensionParts.Single();
+        await Assert.That(slidePart.GetIdOfPart(copiedPart)).IsEqualTo(relId);
+
+        var copiedXml = copiedPart.GetXDocument().Root!;
+        await Assert.That((string)copiedXml.Attribute("id")).IsEqualTo((string)webExtension.Attribute("id"));
+        await Assert
+            .That((string)copiedXml.Element(WE.reference)!.Attribute("id"))
+            .IsEqualTo((string)webExtension.Element(WE.reference)!.Attribute("id"));
+
+        var copiedSnapshot = copiedXml.Element(WE.snapshot)!;
+        var snapshotId = (string)copiedSnapshot.Attribute(R.embed);
+        await Assert.That(ReadAllBytes(copiedPart.GetPartById(snapshotId))).IsEquivalentTo(snapshot);
+
+        var linkedSnapshotId = (string)copiedSnapshot.Attribute(R.link);
+        var copiedSnapshotLink = copiedPart.ExternalRelationships.Single(r => r.Id == linkedSnapshotId);
+        await Assert.That(copiedSnapshotLink.Uri).IsEqualTo(snapshotUrl);
+    }
+
     private static byte[] ReadAllBytes(OpenXmlPart part)
     {
         using var stream = part.GetStream(FileMode.Open, FileAccess.Read);

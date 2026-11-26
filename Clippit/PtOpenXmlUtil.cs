@@ -4049,6 +4049,7 @@ namespace Clippit
         public static readonly XNamespace am3d = "http://schemas.microsoft.com/office/drawing/2017/model3d";
         public static readonly XName model3d = am3d + "model3d";
         public static readonly XName blip = am3d + "blip";
+        public static readonly XName attrSrcUrl = am3d + "attrSrcUrl";
     }
 
     public static class A1611
