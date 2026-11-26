@@ -359,7 +359,7 @@ public class PresentationBuilderTests : TestsBase
         PresentationBuilder.BuildPresentation(sources).SaveAs(outputPptx.FullName);
 
         using var pptx = PresentationDocument.Open(outputPptx.FullName, false);
-        await Validate(pptx);
+        await Validate(pptx, DocumentFormat.OpenXml.FileFormatVersions.Office2013);
 
         var slidePart = pptx.PresentationPart!.SlideParts.Single();
         var relId = (string)slidePart.GetXDocument().Descendants(WE.webextensionref).Single().Attribute(R.id);
