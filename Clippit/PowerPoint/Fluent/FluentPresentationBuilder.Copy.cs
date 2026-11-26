@@ -460,6 +460,8 @@ internal sealed partial class FluentPresentationBuilder
                 CopyRelatedImage(oldContentPart, newContentPart, element, R.pict);
                 CopyRelatedImage(oldContentPart, newContentPart, element, R.id);
                 CopyRelatedImage(oldContentPart, newContentPart, element, O.relid);
+                if (name == WE.snapshot)
+                    PBT.CopyRelatedMediaExternalRelationship(oldContentPart, newContentPart, element, R.link);
             }
             else if (name == A.videoFile || name == A.quickTimeFile)
             {

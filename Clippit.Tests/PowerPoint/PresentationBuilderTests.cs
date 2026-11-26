@@ -281,6 +281,7 @@ public class PresentationBuilderTests : TestsBase
     [Test]
     public async Task PB012_SlideWithWebExtension()
     {
+        var snapshotUrl = new Uri("https://example.com/snapshot.png");
         var snapshot = Convert.FromBase64String(
             "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
         );
@@ -316,7 +317,16 @@ public class PresentationBuilderTests : TestsBase
             var snapshotPart = webExtensionPart.AddImagePart(ImagePartType.Png);
             using (var snapshotStream = new MemoryStream(snapshot))
                 snapshotPart.FeedData(snapshotStream);
-            webExtension.Element(WE.snapshot)!.Add(new XAttribute(R.embed, webExtensionPart.GetIdOfPart(snapshotPart)));
+            var snapshotLink = webExtensionPart.AddExternalRelationship(
+                "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image",
+                snapshotUrl
+            );
+            webExtension
+                .Element(WE.snapshot)!
+                .Add(
+                    new XAttribute(R.embed, webExtensionPart.GetIdOfPart(snapshotPart)),
+                    new XAttribute(R.link, snapshotLink.Id)
+                );
             webExtensionPart.PutXDocument(new XDocument(webExtension));
 
             var spTree = sourceSlide.GetXDocument().Descendants(P.spTree).Single();
@@ -372,8 +382,13 @@ public class PresentationBuilderTests : TestsBase
             .That((string)copiedXml.Element(WE.reference)!.Attribute("id"))
             .IsEqualTo((string)webExtension.Element(WE.reference)!.Attribute("id"));
 
-        var snapshotId = (string)copiedXml.Element(WE.snapshot)!.Attribute(R.embed);
+        var copiedSnapshot = copiedXml.Element(WE.snapshot)!;
+        var snapshotId = (string)copiedSnapshot.Attribute(R.embed);
         await Assert.That(ReadAllBytes(copiedPart.GetPartById(snapshotId))).IsEquivalentTo(snapshot);
+
+        var linkedSnapshotId = (string)copiedSnapshot.Attribute(R.link);
+        var copiedSnapshotLink = copiedPart.ExternalRelationships.Single(r => r.Id == linkedSnapshotId);
+        await Assert.That(copiedSnapshotLink.Uri).IsEqualTo(snapshotUrl);
     }
 
     private static byte[] ReadAllBytes(OpenXmlPart part)
