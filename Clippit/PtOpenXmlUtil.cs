@@ -5472,6 +5472,16 @@ namespace Clippit
         public static XNamespace w16se = "http://schemas.microsoft.com/office/word/2015/wordml/symex";
     }
 
+    public static class P188
+    {
+        public static readonly XNamespace p188 = "http://schemas.microsoft.com/office/powerpoint/2018/8/main";
+        public static readonly XName author = p188 + "author";
+        public static readonly XName authorLst = p188 + "authorLst";
+        public static readonly XName cm = p188 + "cm";
+        public static readonly XName cmLst = p188 + "cmLst";
+        public static readonly XName commentRel = p188 + "commentRel";
+    }
+
     public static class WE
     {
         public static readonly XNamespace we = "http://schemas.microsoft.com/office/webextensions/webextension/2010/11";

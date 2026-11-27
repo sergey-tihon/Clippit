@@ -498,6 +498,10 @@ internal sealed partial class FluentPresentationBuilder
             {
                 CopyWebExtensionPart(oldContentPart, newContentPart, element, R.id);
             }
+            else if (name == P188.commentRel)
+            {
+                CopyModernCommentPart(oldContentPart, newContentPart, element, R.id);
+            }
             else if (name == P.contentPart)
             {
                 PBT.CopyInkPart(oldContentPart, newContentPart, element, R.id);
@@ -850,6 +854,71 @@ internal sealed partial class FluentPresentationBuilder
         webExtensionReference.Attribute(attributeName).Set(newSlidePart.GetIdOfPart(newPart));
         PBT.AddRelationships(oldPart, newPart, [newPart.GetXDocument().Root]);
         CopyRelatedPartsForContentParts(oldPart, newPart, [newPart.GetXDocument().Root]);
+    }
+
+    private void CopyModernCommentPart(
+        OpenXmlPart oldContentPart,
+        OpenXmlPart newContentPart,
+        XElement commentReference,
+        XName attributeName
+    )
+    {
+        var relId = (string)commentReference.Attribute(attributeName);
+        if (newContentPart.HasRelationship(relId) || newContentPart is not SlidePart newSlidePart)
+            return;
+
+        if (
+            oldContentPart.Parts.FirstOrDefault(p => p.RelationshipId == relId).OpenXmlPart
+            is not PowerPointCommentPart oldPart
+        )
+            return;
+
+        var newPart = newSlidePart.AddNewPart<PowerPointCommentPart>();
+        newPart.GetXDocument().Add(oldPart.GetXDocument().Root);
+        commentReference.Attribute(attributeName).Set(newSlidePart.GetIdOfPart(newPart));
+        PBT.AddRelationships(oldPart, newPart, [newPart.GetXDocument().Root]);
+        CopyModernCommentAuthors((PresentationDocument)oldContentPart.OpenXmlPackage, newPart.GetXDocument().Root);
+    }
+
+    private void CopyModernCommentAuthors(PresentationDocument oldDocument, XElement comments)
+    {
+        if (oldDocument.PresentationPart.authorsPart is not { } oldAuthorsPart)
+            return;
+
+        var referencedIds = comments
+            .DescendantsAndSelf()
+            .Attributes()
+            .Where(a => !a.IsNamespaceDeclaration)
+            .Select(a => a.Value)
+            .ToHashSet();
+        var oldAuthors = oldAuthorsPart
+            .GetXDocument()
+            .Root.Elements(P188.author)
+            .Where(author => referencedIds.Contains((string)author.Attribute(NoNamespace.id)))
+            .ToList();
+        if (oldAuthors.Count == 0)
+            return;
+
+        var newAuthorsPart = _newDocument.PresentationPart.authorsPart
+            ?? _newDocument.PresentationPart.AddNewPart<PowerPointAuthorsPart>();
+        var newAuthors = newAuthorsPart.GetXDocument();
+        if (newAuthors.Root is null)
+        {
+            newAuthors.Add(
+                new XElement(
+                    P188.authorLst,
+                    new XAttribute(XNamespace.Xmlns + "a", A.a),
+                    new XAttribute(XNamespace.Xmlns + "r", R.r),
+                    new XAttribute(XNamespace.Xmlns + "p188", P188.p188)
+                )
+            );
+        }
+
+        var existingIds = newAuthors
+            .Root.Elements(P188.author)
+            .Select(a => (string)a.Attribute(NoNamespace.id))
+            .ToHashSet();
+        newAuthors.Root.Add(oldAuthors.Where(a => existingIds.Add((string)a.Attribute(NoNamespace.id))));
     }
 
     private void CopyRelatedImage(

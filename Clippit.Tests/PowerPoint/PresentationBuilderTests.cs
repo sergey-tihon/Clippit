@@ -391,6 +391,50 @@ public class PresentationBuilderTests : TestsBase
         await Assert.That(copiedSnapshotLink.Uri).IsEqualTo(snapshotUrl);
     }
 
+    [Test]
+    public async Task PB013_SlideWithModernComment()
+    {
+        var sourceDir = new DirectoryInfo("../../../../TestFiles/");
+        var sourcePath = Path.Combine(sourceDir.FullName, "PB013-ModernComment.pptx");
+
+        XElement sourceComment;
+        List<string> sourceAuthorIds;
+        using (var source = PresentationDocument.Open(sourcePath, false))
+        {
+            var commentedSlide = source.PresentationPart!.SlideParts.Single(s => s.commentParts.Any());
+            sourceComment = commentedSlide.commentParts.Single().GetXDocument().Root!.Elements(P188.cm).Single();
+            sourceAuthorIds = source
+                .PresentationPart.authorsPart!.GetXDocument()
+                .Root!.Elements(P188.author)
+                .Select(a => (string)a.Attribute("id"))
+                .ToList();
+        }
+
+        var sources = new List<SlideSource> { new(new PmlDocument(sourcePath), 1, 1, true) };
+        var outputPptx = new FileInfo(Path.Combine(TempDir, "PB013-Output.pptx"));
+        PresentationBuilder.BuildPresentation(sources).SaveAs(outputPptx.FullName);
+
+        using var pptx = PresentationDocument.Open(outputPptx.FullName, false);
+        await Validate(pptx);
+
+        var slidePart = pptx.PresentationPart!.SlideParts.Single();
+        var relId = (string)slidePart.GetXDocument().Descendants(P188.commentRel).Single().Attribute(R.id);
+        var copiedPart = slidePart.commentParts.Single();
+        await Assert.That(slidePart.GetIdOfPart(copiedPart)).IsEqualTo(relId);
+
+        var copiedComment = copiedPart.GetXDocument().Root!.Elements(P188.cm).Single();
+        await Assert.That((string)copiedComment.Attribute("id")).IsEqualTo((string)sourceComment.Attribute("id"));
+        await Assert
+            .That(copiedComment.Descendants(A.t).Select(t => t.Value))
+            .IsEquivalentTo(["Review this slide", "Done"]);
+
+        var copiedAuthorIds = pptx
+            .PresentationPart.authorsPart!.GetXDocument()
+            .Root!.Elements(P188.author)
+            .Select(a => (string)a.Attribute("id"));
+        await Assert.That(copiedAuthorIds).IsEquivalentTo(sourceAuthorIds);
+    }
+
     private static byte[] ReadAllBytes(OpenXmlPart part)
     {
         using var stream = part.GetStream(FileMode.Open, FileAccess.Read);
