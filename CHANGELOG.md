@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.10.4] - November 27, 2026
+
+- fix(pptx): copy 3D model source links and web extension parts when extracting slides (#566)
+- chore(deps): update SkiaSharp 4.157.0 → 4.158.0
+
 ## [3.10.3] - November 25, 2026
 
 - fix(pptx): upgrade embedded EOT 1.0 font headers to EOT 2.2 and preserve malformed headers unchanged (#565)
