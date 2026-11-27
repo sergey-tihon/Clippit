@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://sergey-tihon.github.io/Clippit/schemas/build-result.v1.json",
+  "title": "Clippit pptx build run result",
+  "description": "Result payload of `clippit pptx build run` written to stdout on success (JSON mode).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["output", "totalSlides", "entries"],
+  "properties": {
+    "output": {
+      "type": "string",
+      "description": "Absolute path of the produced .pptx file, or '<stdout>' when written to stdout."
+    },
+    "totalSlides": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of slides copied across all entries."
+    },
+    "entries": {
+      "type": "array",
+      "description": "Per-entry breakdown in deck order. Each entry is either a section divider or a file contribution.",
+      "items": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "section": {
+          "type": "string",
+          "description": "Name of a PPTX section divider (mutually exclusive with 'file')."
+        },
+        "file": {
+          "type": "string",
+          "description": "Manifest-relative path of a source .pptx file (mutually exclusive with 'section')."
+        },
+        "slides": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of slides copied from this file entry. 0 for section entries or for file entries with slides=false."
+        }
+      },
+      "oneOf": [
+        { "required": ["section"] },
+        { "required": ["file", "slides"] }
+      ]
+    }
+  }
+}
