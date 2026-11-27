@@ -15,7 +15,7 @@
     },
     {
       "area": "qa",
-      "checked_at": "2026-11-25",
+      "checked_at": "2026-11-27",
       "result": "3 open question issues, no new activity; no bug/fixable issues; no Clippy PRs; no worthwhile change found",
       "follow_up": null
     }
